@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="header">
+    <div class="brand">
+      <h1>AgroRuta</h1>
+      <span class="version">Panel principal</span>
+    </div>
+    <div class="user-info">
+      <span class="nombre">{{ usuario?.nombre }}</span>
+      <span class="rol">{{ usuario?.rol }}</span>
+      <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <div class="welcome">
+    <h2>Bienvenido, {{ usuario?.nombre }} 👋</h2>
+    <p>Has iniciado sesión como <strong>{{ usuario?.rol }}</strong></p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🌱</div>
+      <h3>Cultivos</h3>
+      <p>Gestiona tus cultivos activos</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">👷</div>
+      <h3>Trabajadores</h3>
+      <p>Administra tu equipo de trabajo</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <h3>Reportes</h3>
+      <p>Visualiza el rendimiento</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚙️</div>
+      <h3>Configuración</h3>
+      <p>Ajusta tu cuenta y preferencias</p>
+    </div>
+  </div>
+</div>

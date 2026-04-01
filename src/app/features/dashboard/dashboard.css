@@ -1,0 +1,107 @@
+.container {
+  min-height: 100vh;
+  background-color: #f0f4f8;
+}
+
+.header {
+  background-color: #2e7d32;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand h1 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.version {
+  color: #a5d6a7;
+  font-size: 0.8rem;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nombre {
+  color: white;
+  font-weight: 500;
+}
+
+.rol {
+  background-color: #1b5e20;
+  color: #a5d6a7;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.btn-logout {
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #1b5e20;
+}
+
+.welcome {
+  padding: 2rem;
+}
+
+.welcome h2 {
+  color: #2e7d32;
+  margin-bottom: 0.25rem;
+}
+
+.welcome p {
+  color: #666;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 0 2rem 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.card h3 {
+  color: #2e7d32;
+  margin: 0 0 0.5rem;
+}
+
+.card p {
+  color: #888;
+  font-size: 0.875rem;
+  margin: 0;
+}

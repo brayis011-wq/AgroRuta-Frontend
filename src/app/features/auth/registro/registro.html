@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="card">
+    <h2>AgroRuta</h2>
+    <h3>Crear cuenta</h3>
+
+    <div class="error" *ngIf="error">{{ error }}</div>
+    <div class="success" *ngIf="exito">{{ exito }}</div>
+
+    <form (ngSubmit)="onSubmit()" #registroForm="ngForm">
+      <div class="field">
+        <label>Nombre completo</label>
+        <input
+          type="text"
+          [(ngModel)]="form.nombre"
+          name="nombre"
+          placeholder="Tu nombre"
+        />
+      </div>
+
+      <div class="field">
+        <label>Correo electrónico</label>
+        <input
+          type="email"
+          [(ngModel)]="form.email"
+          name="email"
+          placeholder="tu@email.com"
+        />
+      </div>
+
+      <div class="field">
+        <label>Contraseña</label>
+        <input
+          type="password"
+          [(ngModel)]="form.password"
+          name="password"
+          placeholder="••••••••"
+        />
+      </div>
+
+      <div class="field">
+        <label>Rol</label>
+        <select [(ngModel)]="form.rol" name="rol">
+          <option value="Agricultor">Agricultor</option>
+          <option value="Trabajador">Trabajador</option>
+        </select>
+      </div>
+
+      <button type="submit" [disabled]="cargando">
+        {{ cargando ? 'Registrando...' : 'Crear cuenta' }}
+      </button>
+    </form>
+
+    <p class="link">¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión</a></p>  </div>
+</div>
