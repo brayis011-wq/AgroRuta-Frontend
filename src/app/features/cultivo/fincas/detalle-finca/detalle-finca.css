@@ -1,0 +1,138 @@
+.container {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #2e7d32;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+}
+
+.btn-back:hover {
+  text-decoration: underline;
+}
+
+.finca-header {
+  margin-bottom: 2rem;
+}
+
+.finca-header h2 {
+  font-size: 1.8rem;
+  color: #2e7d32;
+  margin: 0 0 0.25rem;
+}
+
+.finca-header p {
+  color: #888;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-header h3 {
+  color: #333;
+  margin: 0;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lote-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.lote-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.lote-info {
+  flex: 1;
+}
+
+.lote-info h4 {
+  margin: 0 0 0.25rem;
+  color: #333;
+  font-size: 1rem;
+}
+
+.lote-info p {
+  margin: 0;
+  color: #888;
+  font-size: 0.875rem;
+}
+
+.lote-estado {
+  display: flex;
+  align-items: center;
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.estado-disponible {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.estado-cultivo {
+  background-color: #fff8e1;
+  color: #f57f17;
+}
+
+.estado-descanso {
+  background-color: #f5f5f5;
+  color: #616161;
+}
+
+.lote-arrow {
+  font-size: 1.5rem;
+  color: #aaa;
+}
+
+.loading {
+  text-align: center;
+  color: #888;
+  padding: 2rem;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+
+.empty {
+  text-align: center;
+  padding: 2rem;
+  color: #888;
+}

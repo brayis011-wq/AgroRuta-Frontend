@@ -1,0 +1,38 @@
+<div class="container">
+  <button class="btn-back" (click)="volver()">← Mis Fincas</button>
+
+  <div class="loading" *ngIf="cargando">Cargando...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <div *ngIf="!cargando && finca">
+    <div class="finca-header">
+      <div>
+        <h2>🏡 {{ finca.nombre }}</h2>
+        <p>📍 {{ finca.ubicacion }} · 📐 {{ finca.hectareas }} hectáreas</p>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h3>Lotes</h3>
+    </div>
+
+    <div class="empty" *ngIf="lotes.length === 0">
+      <p>No hay lotes registrados en esta finca.</p>
+    </div>
+
+    <div class="grid" *ngIf="lotes.length > 0">
+      <div class="lote-card" *ngFor="let lote of lotes" (click)="entrarLote(lote.id!)">
+        <div class="lote-info">
+          <h4>{{ lote.nombre }}</h4>
+          <p>📐 {{ lote.area }} hectáreas</p>
+        </div>
+        <div class="lote-estado">
+          <span class="badge" [ngClass]="getEstadoColor(lote.estado)">
+            {{ getEstadoLabel(lote.estado) }}
+          </span>
+        </div>
+        <div class="lote-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</div>

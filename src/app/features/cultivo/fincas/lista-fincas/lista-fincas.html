@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="header">
+    <div>
+      <h2>🌱 Mis Fincas</h2>
+      <p class="subtitle">Gestiona tus fincas de uchuva</p>
+    </div>
+    <button class="btn-primary" (click)="nuevaFinca()">+ Nueva Finca</button>
+  </div>
+
+  <div class="loading" *ngIf="cargando">Cargando fincas...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <div class="empty" *ngIf="!cargando && fincas.length === 0">
+    <p>No tienes fincas registradas aún.</p>
+    <button class="btn-primary" (click)="nuevaFinca()">Registrar primera finca</button>
+  </div>
+
+  <div class="grid" *ngIf="!cargando && fincas.length > 0">
+    <div class="finca-card" *ngFor="let finca of fincas" (click)="entrarFinca(finca.id!)">
+      <div class="finca-icon">🏡</div>
+      <div class="finca-info">
+        <h3>{{ finca.nombre }}</h3>
+        <p>📍 {{ finca.ubicacion }}</p>
+        <p>📐 {{ finca.hectareas }} hectáreas</p>
+      </div>
+      <div class="finca-arrow">→</div>
+    </div>
+  </div>
+</div>

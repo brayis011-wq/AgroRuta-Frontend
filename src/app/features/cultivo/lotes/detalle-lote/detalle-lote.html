@@ -1,0 +1,69 @@
+<div class="container">
+  <button class="btn-back" (click)="volver()">← Volver a la finca</button>
+
+  <div class="loading" *ngIf="cargando">Cargando...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <div *ngIf="!cargando && lote">
+    <div class="lote-header">
+      <h2>🌿 {{ lote.nombre }}</h2>
+      <p>📐 {{ lote.area }} hectáreas</p>
+    </div>
+
+    <!-- Sin siembra -->
+    <div class="sin-siembra" *ngIf="!siembra">
+      <div class="sin-siembra-icon">🌱</div>
+      <h3>Sin siembra activa</h3>
+      <p>Este lote está disponible para iniciar una nueva siembra de uchuva.</p>
+      <button class="btn-primary" (click)="nuevaSiembra()">+ Iniciar siembra</button>
+    </div>
+
+    <!-- Con siembra -->
+    <div *ngIf="siembra">
+      <div class="siembra-card">
+        <div class="siembra-top">
+          <div>
+            <h3>Siembra activa</h3>
+            <p>🌿 Variedad: <strong>{{ siembra.variedad }}</strong></p>
+            <p>📅 Fecha de siembra: <strong>{{ siembra.fechaSiembra }}</strong></p>
+            <p>🌱 Plantas: <strong>{{ siembra.cantidadPlantas }}</strong></p>
+            <p>⏱ Días transcurridos: <strong>{{ getDiasTranscurridos() }} días</strong></p>
+          </div>
+        </div>
+
+        <!-- Progreso del ciclo -->
+        <div class="ciclo">
+          <h4>Ciclo del cultivo</h4>
+          <div class="etapas">
+            <div class="etapa" [class.activa]="getEtapaIndex() >= 0" [class.actual]="getEtapaIndex() === 0">
+              <div class="etapa-dot"></div>
+              <span>Germinación</span>
+            </div>
+            <div class="etapa-linea" [class.completada]="getEtapaIndex() >= 1"></div>
+            <div class="etapa" [class.activa]="getEtapaIndex() >= 1" [class.actual]="getEtapaIndex() === 1">
+              <div class="etapa-dot"></div>
+              <span>Crecimiento</span>
+            </div>
+            <div class="etapa-linea" [class.completada]="getEtapaIndex() >= 2"></div>
+            <div class="etapa" [class.activa]="getEtapaIndex() >= 2" [class.actual]="getEtapaIndex() === 2">
+              <div class="etapa-dot"></div>
+              <span>Producción</span>
+            </div>
+            <div class="etapa-linea" [class.completada]="getEtapaIndex() >= 3"></div>
+            <div class="etapa" [class.activa]="getEtapaIndex() >= 3" [class.actual]="getEtapaIndex() === 3">
+              <div class="etapa-dot"></div>
+              <span>Cosecha</span>
+            </div>
+            <div class="etapa-linea" [class.completada]="getEtapaIndex() >= 4"></div>
+            <div class="etapa" [class.activa]="getEtapaIndex() >= 4" [class.actual]="getEtapaIndex() === 4">
+              <div class="etapa-dot"></div>
+              <span>Finalizado</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" (click)="entrarSiembra()">Ver detalle de siembra →</button>
+      </div>
+    </div>
+  </div>
+</div>

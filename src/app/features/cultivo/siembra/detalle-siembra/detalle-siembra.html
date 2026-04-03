@@ -1,0 +1,108 @@
+<div class="container">
+  <button class="btn-back" (click)="volver()">← Volver al lote</button>
+
+  <div class="loading" *ngIf="cargando">Cargando...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <div *ngIf="!cargando && siembra">
+
+    <!-- Header -->
+    <div class="siembra-header">
+      <div>
+        <h2>🌱 Siembra de Uchuva</h2>
+        <p>Variedad: <strong>{{ siembra.variedad }}</strong> · {{ siembra.cantidadPlantas }} plantas</p>
+      </div>
+      <div class="dias-badge">
+        <span>{{ getDiasTranscurridos() }}</span>
+        <small>días</small>
+      </div>
+    </div>
+
+    <!-- Alerta -->
+    <div class="alerta">{{ getAlerta() }}</div>
+
+    <!-- Resumen -->
+    <div class="resumen-grid">
+      <div class="resumen-card">
+        <div class="resumen-icon">💨</div>
+        <div class="resumen-info">
+          <span class="resumen-numero">{{ fumigaciones.length }}</span>
+          <span class="resumen-label">Fumigaciones</span>
+          <small>{{ getUltimaFumigacion() }}</small>
+        </div>
+      </div>
+      <div class="resumen-card">
+        <div class="resumen-icon">📋</div>
+        <div class="resumen-info">
+          <span class="resumen-numero">{{ actividades.length }}</span>
+          <span class="resumen-label">Actividades</span>
+          <small>{{ getUltimaActividad() }}</small>
+        </div>
+      </div>
+      <div class="resumen-card">
+        <div class="resumen-icon">⚖️</div>
+        <div class="resumen-info">
+          <span class="resumen-numero">{{ totalKg }}</span>
+          <span class="resumen-label">Kg cosechados</span>
+          <small>{{ cosechas.length }} cosechas</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="acciones">
+      <button class="btn-accion" (click)="registrarActividad()">
+        <span>📋</span>
+        <strong>Registrar Actividad</strong>
+        <small>Poda, riego, revisión...</small>
+      </button>
+      <button class="btn-accion" (click)="registrarFumigacion()">
+        <span>💨</span>
+        <strong>Registrar Fumigación</strong>
+        <small>Producto, dosis, área</small>
+      </button>
+      <button class="btn-accion" (click)="registrarCosecha()">
+        <span>⚖️</span>
+        <strong>Registrar Cosecha</strong>
+        <small>Kg, calidad</small>
+      </button>
+    </div>
+
+    <!-- Actividades recientes -->
+    <div class="seccion" *ngIf="actividades.length > 0">
+      <h3>Actividades recientes</h3>
+      <div class="lista">
+        <div class="item" *ngFor="let actividad of actividades">
+          <span class="item-tipo">{{ actividad.tipo }}</span>
+          <span class="item-desc">{{ actividad.descripcion }}</span>
+          <span class="item-fecha">{{ actividad.fecha }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fumigaciones recientes -->
+    <div class="seccion" *ngIf="fumigaciones.length > 0">
+      <h3>Fumigaciones recientes</h3>
+      <div class="lista">
+        <div class="item" *ngFor="let fumigacion of fumigaciones">
+          <span class="item-tipo">{{ fumigacion.producto }}</span>
+          <span class="item-desc">{{ fumigacion.dosis }} {{ fumigacion.unidadMedida }}</span>
+          <span class="item-fecha">{{ fumigacion.fecha }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cosechas -->
+    <div class="seccion" *ngIf="cosechas.length > 0">
+      <h3>Cosechas registradas</h3>
+      <div class="lista">
+        <div class="item" *ngFor="let cosecha of cosechas">
+          <span class="item-tipo">{{ cosecha.calidad }}</span>
+          <span class="item-desc">{{ cosecha.cantidadKg }} kg</span>
+          <span class="item-fecha">{{ cosecha.fecha }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

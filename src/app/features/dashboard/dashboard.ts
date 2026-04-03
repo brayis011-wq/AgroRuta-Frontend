@@ -25,4 +25,7 @@ export class DashboardComponent {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
+  irA(ruta: string): void {
+    this.router.navigate([ruta]);
+  }
 }

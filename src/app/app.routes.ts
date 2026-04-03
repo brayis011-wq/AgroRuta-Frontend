@@ -11,4 +11,8 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
   },
+  {
+    path: 'cultivo',
+    loadChildren: () => import('./features/cultivo/cultivo.routes').then((m) => m.cultivoRoutes),
+  },
 ];
