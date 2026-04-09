@@ -4,7 +4,7 @@
 }
 
 .header {
-  background-color: #2e7d32;
+  background-color: #2e617d;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
@@ -18,7 +18,7 @@
 }
 
 .version {
-  color: #a5d6a7;
+  color: #90caf9; /* antes verde */
   font-size: 0.8rem;
 }
 
@@ -34,8 +34,8 @@
 }
 
 .rol {
-  background-color: #1b5e20;
-  color: #a5d6a7;
+  background-color: #1565c0; /* antes verde oscuro */
+  color: #e3f2fd; /* antes verde claro */
   padding: 2px 10px;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -53,7 +53,7 @@
 }
 
 .btn-logout:hover {
-  background-color: #1b5e20;
+  background-color: #1976d2; /* antes verde */
 }
 
 .welcome {
@@ -61,7 +61,7 @@
 }
 
 .welcome h2 {
-  color: #2e7d32;
+  color: #1565c0; /* antes verde */
   margin-bottom: 0.25rem;
 }
 
@@ -96,7 +96,7 @@
 }
 
 .card h3 {
-  color: #2e7d32;
+  color: #1565c0; /* antes verde */
   margin: 0 0 0.5rem;
 }
 

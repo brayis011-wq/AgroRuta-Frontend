@@ -1,1 +1,85 @@
-<p>registrar-fumigacion works!</p>
+<div class="container">
+  <button class="btn-back" (click)="volver()">← Volver a la siembra</button>
+
+  <div class="form-header">
+    <h2>💨 Registrar Fumigación</h2>
+    <p>Registra una fumigación realizada en el cultivo</p>
+  </div>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="success" *ngIf="exito">{{ exito }}</div>
+
+  <div class="form-card">
+    <form (ngSubmit)="onSubmit()" #fumigacionForm="ngForm">
+
+      <div class="field">
+        <label>Fecha</label>
+        <input
+          type="date"
+          [(ngModel)]="form.fecha"
+          name="fecha"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label>Producto</label>
+        <input
+          type="text"
+          [(ngModel)]="form.producto"
+          name="producto"
+          placeholder="Nombre del producto"
+          required
+        />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Dosis</label>
+          <input
+            type="number"
+            [(ngModel)]="form.dosis"
+            name="dosis"
+            placeholder="0.0"
+            step="0.1"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label>Unidad de medida</label>
+          <select [(ngModel)]="form.unidadMedida" name="unidadMedida" required>
+            <option value="">Selecciona</option>
+            <option *ngFor="let unidad of unidades" [value]="unidad">{{ unidad }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Área aplicada (hectáreas)</label>
+        <input
+          type="number"
+          [(ngModel)]="form.areaAplicada"
+          name="areaAplicada"
+          placeholder="0.0"
+          step="0.1"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label>Observaciones (opcional)</label>
+        <textarea
+          [(ngModel)]="form.observaciones"
+          name="observaciones"
+          placeholder="Observaciones adicionales..."
+          rows="3"
+        ></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="cargando">
+        {{ cargando ? 'Registrando...' : 'Registrar fumigación' }}
+      </button>
+    </form>
+  </div>
+</div>

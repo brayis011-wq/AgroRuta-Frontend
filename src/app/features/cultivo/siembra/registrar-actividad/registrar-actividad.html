@@ -1,1 +1,49 @@
-<p>registrar-actividad works!</p>
+<div class="container">
+  <button class="btn-back" (click)="volver()">← Volver a la siembra</button>
+
+  <div class="form-header">
+    <h2>📋 Registrar Actividad</h2>
+    <p>Registra una actividad realizada en el cultivo</p>
+  </div>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="success" *ngIf="exito">{{ exito }}</div>
+
+  <div class="form-card">
+    <form (ngSubmit)="onSubmit()" #actividadForm="ngForm">
+
+      <div class="field">
+        <label>Tipo de actividad</label>
+        <select [(ngModel)]="form.tipo" name="tipo" required>
+          <option value="">Selecciona un tipo</option>
+          <option *ngFor="let tipo of tiposActividad" [value]="tipo">{{ tipo }}</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Descripción</label>
+        <textarea
+          [(ngModel)]="form.descripcion"
+          name="descripcion"
+          placeholder="Describe la actividad realizada..."
+          rows="4"
+          required
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label>Fecha</label>
+        <input
+          type="date"
+          [(ngModel)]="form.fecha"
+          name="fecha"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="cargando">
+        {{ cargando ? 'Registrando...' : 'Registrar actividad' }}
+      </button>
+    </form>
+  </div>
+</div>
