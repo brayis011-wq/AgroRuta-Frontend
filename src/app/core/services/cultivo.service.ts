@@ -32,6 +32,10 @@ export class CultivoService {
     return this.http.get<Finca>(`${this.apiUrl}/api/fincas/${id}`);
   }
 
+  eliminarFinca(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/api/fincas/${id}`);
+  }
+
   // Lotes
   registrarLote(lote: Partial<Lote>): Observable<Lote> {
     return this.http.post<Lote>(`${this.apiUrl}/api/lotes`, lote);
@@ -43,6 +47,10 @@ export class CultivoService {
 
   buscarLote(id: number): Observable<Lote> {
     return this.http.get<Lote>(`${this.apiUrl}/api/lotes/${id}`);
+  }
+
+  eliminarLote(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/api/lotes/${id}`);
   }
 
   // Siembras
@@ -60,6 +68,10 @@ export class CultivoService {
 
   avanzarEtapa(siembraId: number): Observable<Siembra> {
     return this.http.put<Siembra>(`${this.apiUrl}/api/siembras/${siembraId}/avanzar-etapa`, {});
+  }
+
+  eliminarSiembra(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/api/siembras/${id}`);
   }
 
   // Actividades

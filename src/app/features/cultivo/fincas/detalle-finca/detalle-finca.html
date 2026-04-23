@@ -14,10 +14,12 @@
 
     <div class="section-header">
       <h3>Lotes</h3>
+      <button class="btn-primary" (click)="nuevoLote()">+ Nuevo Lote</button>
     </div>
 
     <div class="empty" *ngIf="lotes.length === 0">
       <p>No hay lotes registrados en esta finca.</p>
+      <button class="btn-primary" (click)="nuevoLote()">Registrar primer lote</button>
     </div>
 
     <div class="grid" *ngIf="lotes.length > 0">
@@ -26,13 +28,44 @@
           <h4>{{ lote.nombre }}</h4>
           <p>📐 {{ lote.area }} hectáreas</p>
         </div>
+
         <div class="lote-estado">
           <span class="badge" [ngClass]="getEstadoColor(lote.estado)">
             {{ getEstadoLabel(lote.estado) }}
           </span>
         </div>
+
+        <button class="btn-eliminar-lote"
+                (click)="iniciarEliminacionLote($event, lote)">
+          🗑️
+        </button>
+
         <div class="lote-arrow">→</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Panel confirmación eliminar lote -->
+<div class="overlay" *ngIf="loteAEliminar" (click)="cancelarEliminacion()">
+  <div class="confirm-panel" (click)="$event.stopPropagation()">
+    <h3>⚠️ Eliminar lote</h3>
+    <p>Estás a punto de eliminar el lote <strong>{{ loteAEliminar.nombre }}</strong>.</p>
+    <p>Esta acción no se puede deshacer. Escribe <strong>confirmar</strong> para continuar:</p>
+
+    <input
+      type="text"
+      [(ngModel)]="textoConfirmacion"
+      placeholder="Escribe confirmar"
+      class="input-confirmacion" />
+
+    <div class="confirm-actions">
+      <button class="btn-secondary" (click)="cancelarEliminacion()">Cancelar</button>
+      <button class="btn-danger"
+              [disabled]="textoConfirmacion !== 'confirmar' || eliminando"
+              (click)="confirmarEliminacionLote()">
+        {{ eliminando ? 'Eliminando...' : 'Eliminar lote' }}
+      </button>
     </div>
   </div>
 </div>

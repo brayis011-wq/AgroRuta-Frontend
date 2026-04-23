@@ -8,13 +8,28 @@ export const cultivoRoutes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'nueva-finca',
+    loadComponent: () => import('./fincas/nueva-finca/nueva-finca').then(m => m.NuevaFincaComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'finca/:id',
     loadComponent: () => import('./fincas/detalle-finca/detalle-finca').then(m => m.DetalleFincaComponent),
     canActivate: [authGuard]
   },
   {
+    path: 'finca/:fincaId/nuevo-lote',
+    loadComponent: () => import('./lotes/nuevo-lote/nuevo-lote').then(m => m.NuevoLoteComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'lote/:id',
     loadComponent: () => import('./lotes/detalle-lote/detalle-lote').then(m => m.DetalleLoteComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'finca/:fincaId/lote/:loteId/nueva-siembra',
+    loadComponent: () => import('./siembra/nueva-siembra/nueva-siembra').then(m => m.NuevaSiembraComponent),
     canActivate: [authGuard]
   },
   {

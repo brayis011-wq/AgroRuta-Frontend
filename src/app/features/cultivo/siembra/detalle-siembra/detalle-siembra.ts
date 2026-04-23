@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import {
@@ -12,7 +13,7 @@ import {
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './detalle-siembra.html',
   styleUrl: './detalle-siembra.css',
 })
@@ -24,6 +25,9 @@ export class DetalleSiembraComponent implements OnInit {
   totalKg = 0;
   cargando = true;
   error = '';
+  mostrarConfirmacion = false;
+  textoConfirmacion = '';
+  eliminando = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -49,30 +53,41 @@ export class DetalleSiembraComponent implements OnInit {
 
   cargarDatos(siembraId: number): void {
     this.cultivoService.listarActividades(siembraId).subscribe({
-      next: (a) => {
-        this.actividades = a;
-        this.cdr.detectChanges();
-      },
+      next: (a) => { this.actividades = a; this.cdr.detectChanges(); },
     });
-
     this.cultivoService.listarFumigaciones(siembraId).subscribe({
-      next: (f) => {
-        this.fumigaciones = f;
-        this.cdr.detectChanges();
-      },
+      next: (f) => { this.fumigaciones = f; this.cdr.detectChanges(); },
     });
-
     this.cultivoService.listarCosechas(siembraId).subscribe({
-      next: (c) => {
-        this.cosechas = c;
-        this.cargando = false;
-        this.cdr.detectChanges();
-      },
+      next: (c) => { this.cosechas = c; this.cargando = false; this.cdr.detectChanges(); },
     });
-
     this.cultivoService.totalKgCosechado(siembraId).subscribe({
-      next: (t) => {
-        this.totalKg = t || 0;
+      next: (t) => { this.totalKg = t || 0; this.cdr.detectChanges(); },
+    });
+  }
+
+  iniciarEliminacion(): void {
+    this.mostrarConfirmacion = true;
+    this.textoConfirmacion = '';
+  }
+
+  cancelarEliminacion(): void {
+    this.mostrarConfirmacion = false;
+    this.textoConfirmacion = '';
+  }
+
+  confirmarEliminacion(): void {
+    if (this.textoConfirmacion !== 'confirmar' || !this.siembra) return;
+
+    this.eliminando = true;
+    this.cultivoService.eliminarSiembra(this.siembra.id!).subscribe({
+      next: () => {
+        this.router.navigate(['/cultivo/lote', this.siembra!.loteId]);
+      },
+      error: () => {
+        this.error = 'Error al eliminar la siembra.';
+        this.eliminando = false;
+        this.mostrarConfirmacion = false;
         this.cdr.detectChanges();
       },
     });

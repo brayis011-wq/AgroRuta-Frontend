@@ -104,5 +104,40 @@
       </div>
     </div>
 
+    <!-- Zona de peligro -->
+    <div class="danger-zone">
+      <div class="danger-zone-info">
+        <strong>Eliminar siembra</strong>
+        <p>Se eliminarán todas las actividades, fumigaciones y cosechas asociadas.</p>
+      </div>
+      <button class="btn-eliminar-siembra" (click)="iniciarEliminacion()">
+        🗑️ Eliminar siembra
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Panel confirmación eliminar siembra -->
+<div class="overlay" *ngIf="mostrarConfirmacion" (click)="cancelarEliminacion()">
+  <div class="confirm-panel" (click)="$event.stopPropagation()">
+    <h3>⚠️ Eliminar siembra</h3>
+    <p>Estás a punto de eliminar la siembra de <strong>{{ siembra?.variedad }}</strong>.</p>
+    <p>Se eliminarán todas las actividades, fumigaciones y cosechas asociadas. Escribe <strong>confirmar</strong> para continuar:</p>
+
+    <input
+      type="text"
+      [(ngModel)]="textoConfirmacion"
+      placeholder="Escribe confirmar"
+      class="input-confirmacion" />
+
+    <div class="confirm-actions">
+      <button class="btn-secondary" (click)="cancelarEliminacion()">Cancelar</button>
+      <button class="btn-danger"
+              [disabled]="textoConfirmacion !== 'confirmar' || eliminando"
+              (click)="confirmarEliminacion()">
+        {{ eliminando ? 'Eliminando...' : 'Eliminar siembra' }}
+      </button>
+    </div>
   </div>
 </div>

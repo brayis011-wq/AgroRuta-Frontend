@@ -23,7 +23,37 @@
         <p>📍 {{ finca.ubicacion }}</p>
         <p>📐 {{ finca.hectareas }} hectáreas</p>
       </div>
+      <button class="btn-eliminar"
+              (click)="iniciarEliminacion($event, finca)"
+              [disabled]="eliminandoId === finca.id"
+              title="Eliminar finca">
+        🗑️
+      </button>
       <div class="finca-arrow">→</div>
+    </div>
+  </div>
+</div>
+
+<!-- Panel de confirmación -->
+<div class="overlay" *ngIf="fincaAEliminar" (click)="cancelarEliminacion()">
+  <div class="confirm-panel" (click)="$event.stopPropagation()">
+    <h3>⚠️ Eliminar finca</h3>
+    <p>Estás a punto de eliminar <strong>{{ fincaAEliminar.nombre }}</strong> y todos sus lotes.</p>
+    <p>Esta acción no se puede deshacer. Escribe <strong>confirmar</strong> para continuar:</p>
+
+    <input
+      type="text"
+      [(ngModel)]="textoConfirmacion"
+      placeholder="Escribe confirmar"
+      class="input-confirmacion" />
+
+    <div class="confirm-actions">
+      <button class="btn-secondary" (click)="cancelarEliminacion()">Cancelar</button>
+      <button class="btn-danger"
+              [disabled]="textoConfirmacion !== 'confirmar' || eliminandoId !== null"
+              (click)="confirmarEliminacion()">
+        {{ eliminandoId !== null ? 'Eliminando...' : 'Eliminar finca' }}
+      </button>
     </div>
   </div>
 </div>

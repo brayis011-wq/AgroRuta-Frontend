@@ -71,7 +71,27 @@ export class DetalleLoteComponent implements OnInit {
   }
 
   nuevaSiembra(): void {
-    this.router.navigate(['/cultivo/siembra/nueva', this.lote!.id]);
+    this.router.navigate([
+      '/cultivo/finca', this.lote!.fincaId,
+      'lote', this.lote!.id,
+      'nueva-siembra'
+    ]);
+  }
+
+  eliminarSiembra(): void {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta siembra?')) return;
+    if (!confirm('Se eliminarán todos los datos del ciclo del cultivo. ¿Confirmas?')) return;
+
+    this.cultivoService.eliminarSiembra(this.siembra!.id!).subscribe({
+      next: () => {
+        this.siembra = null;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.error = 'Error al eliminar la siembra.';
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   volver(): void {
