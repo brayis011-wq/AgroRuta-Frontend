@@ -1,1 +1,60 @@
-<p>registrar-cosecha works!</p>
+<div class="container">
+  <button class="btn-back" (click)="volver()">← Volver a la siembra</button>
+
+  <div class="form-header">
+    <h2>⚖️ Registrar Cosecha</h2>
+    <p>Registra una cosecha realizada en el cultivo</p>
+  </div>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="success" *ngIf="exito">{{ exito }}</div>
+
+  <div class="form-card">
+    <form (ngSubmit)="onSubmit()" #cosechaForm="ngForm">
+
+      <div class="field">
+        <label>Fecha</label>
+        <input
+          type="date"
+          [(ngModel)]="form.fecha"
+          name="fecha"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label>Cantidad (kg)</label>
+        <input
+          type="number"
+          [(ngModel)]="form.cantidadKg"
+          name="cantidadKg"
+          placeholder="0.0"
+          step="0.1"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label>Calidad</label>
+        <select [(ngModel)]="form.calidad" name="calidad" required>
+          <option value="">Selecciona la calidad</option>
+          <option *ngFor="let calidad of calidades" [value]="calidad">{{ calidad }}</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Observaciones (opcional)</label>
+        <textarea
+          [(ngModel)]="form.observaciones"
+          name="observaciones"
+          placeholder="Observaciones adicionales..."
+          rows="3"
+        ></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="cargando">
+        {{ cargando ? 'Registrando...' : 'Registrar cosecha' }}
+      </button>
+    </form>
+  </div>
+</div>
