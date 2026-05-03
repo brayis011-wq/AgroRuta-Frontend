@@ -1,0 +1,443 @@
+<div class="page">
+
+  <!-- ── Header ── -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">👷 Trabajadores</h1>
+      <p class="page-subtitle">Administra tu equipo de trabajo</p>
+    </div>
+    <div class="header-acciones">
+      <button class="btn-secundario" (click)="irA('actividades')">⚡ Actividades</button>
+      <button class="btn-secundario" (click)="irA('cargos')">🏷️ Cargos</button>
+      <button class="btn-primary" (click)="abrirNuevo()">＋ Nuevo Trabajador</button>
+    </div>
+  </div>
+
+  <!-- ── Tabs ── -->
+  <div class="tabs">
+    <button class="tab" [class.tab-activo]="tabActivo === 'trabajadores'" (click)="tabActivo = 'trabajadores'">
+      👥 Trabajadores
+    </button>
+    <button class="tab" [class.tab-activo]="tabActivo === 'nominas'" (click)="tabActivo = 'nominas'">
+      📋 Nóminas
+    </button>
+    <button class="tab" [class.tab-activo]="tabActivo === 'pagos'" (click)="tabActivo = 'pagos'">
+      💳 Pagos
+    </button>
+  </div>
+
+  <div *ngIf="error" class="alerta-error">{{ error }}</div>
+  <div *ngIf="exito" class="alerta-exito">{{ exito }}</div>
+
+  <!-- ══ TAB: TRABAJADORES ══ -->
+  <ng-container *ngIf="tabActivo === 'trabajadores'">
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-valor">{{ cantidadActivos }}</div>
+        <div class="stat-label">Activos</div>
+      </div>
+      <div class="stat-card" [class.stat-alerta]="cantidadSuspendidos > 0">
+        <div class="stat-valor">{{ cantidadSuspendidos }}</div>
+        <div class="stat-label">Suspendidos</div>
+      </div>
+      <div class="stat-card stat-destacado">
+        <div class="stat-valor">{{ nominasPendientes }}</div>
+        <div class="stat-label">Nóminas en borrador</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-valor">${{ totalPagado | number }}</div>
+        <div class="stat-label">Total pagado</div>
+      </div>
+    </div>
+
+    <div class="buscador-wrap" style="display:flex; gap:0.75rem; align-items:center">
+      <input class="buscador" type="text"
+             placeholder="🔍 Buscar por nombre, cédula o cargo..."
+             [(ngModel)]="busqueda" style="flex:1"/>
+      <div class="filtro-estado">
+        <button class="filtro-btn" [class.activo]="filtroEstado === 'ACTIVO'"
+                (click)="filtroEstado = 'ACTIVO'">Activos</button>
+        <button class="filtro-btn" [class.activo]="filtroEstado === 'SUSPENDIDO'"
+                (click)="filtroEstado = 'SUSPENDIDO'">Suspendidos</button>
+        <button class="filtro-btn" [class.activo]="filtroEstado === 'TODOS'"
+                (click)="filtroEstado = 'TODOS'">Todos</button>
+      </div>
+    </div>
+
+    <div *ngIf="cargando" class="estado-vacio"><p>Cargando trabajadores...</p></div>
+
+    <div *ngIf="!cargando && trabajadoresFiltrados.length === 0" class="estado-vacio">
+      <div class="vacio-icono">👷</div>
+      <p *ngIf="filtroEstado === 'SUSPENDIDO'">No hay trabajadores suspendidos.</p>
+      <p *ngIf="filtroEstado !== 'SUSPENDIDO' && !busqueda">No hay trabajadores registrados aún.</p>
+      <p *ngIf="busqueda">No se encontraron resultados para "{{ busqueda }}"</p>
+      <button *ngIf="filtroEstado !== 'SUSPENDIDO' && !busqueda"
+              class="btn-primary" style="margin-top:1rem" (click)="abrirNuevo()">
+        ＋ Registrar primer trabajador
+      </button>
+    </div>
+
+    <div class="trabajadores-lista" *ngIf="!cargando && trabajadoresFiltrados.length > 0">
+      <div class="trabajador-card"
+           *ngFor="let t of trabajadoresFiltrados"
+           [class.card-suspendido]="t.estado === 'SUSPENDIDO'"
+           (click)="abrirDetalle(t)">
+
+        <div class="trabajador-avatar" [class.avatar-suspendido]="t.estado === 'SUSPENDIDO'">
+          {{ t.nombre[0] }}{{ t.apellido[0] }}
+        </div>
+
+        <div class="trabajador-info">
+          <div class="trabajador-nombre">{{ t.nombreCompleto }}</div>
+          <div class="trabajador-meta">
+            <span>📄 {{ t.cedula }}</span>
+            <span *ngIf="t.cargo" class="cargo-tag">{{ t.cargo.nombre }}</span>
+            <span class="badge"
+                  [class.badge-activo]="t.estado === 'ACTIVO'"
+                  [class.badge-suspendido]="t.estado === 'SUSPENDIDO'">
+              {{ t.estado }}
+            </span>
+          </div>
+          <div *ngIf="t.cargo" class="trabajador-jornal">
+            Jornal: <strong>${{ t.cargo.valorJornal | number }}</strong>/día
+          </div>
+        </div>
+
+        <!-- ✅ Tres acciones rápidas en la card -->
+        <div class="trabajador-acciones" (click)="$event.stopPropagation()">
+          <button class="btn-accion btn-jornal" title="Registrar jornal"
+                  [disabled]="t.estado === 'SUSPENDIDO'"
+                  (click)="registrarJornal(t)">🗓️</button>
+          <button class="btn-accion" title="Ver jornales"
+                  (click)="verJornales(t)">📅</button>
+          <button class="btn-accion btn-nomina" title="Ver nóminas"
+                  (click)="verNominas(t)">📋</button>
+        </div>
+
+        <div class="trabajador-arrow">→</div>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- ══ TAB: NÓMINAS ══ -->
+  <ng-container *ngIf="tabActivo === 'nominas'">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-valor">{{ nominas.length }}</div>
+        <div class="stat-label">Total nóminas</div>
+      </div>
+      <div class="stat-card stat-destacado">
+        <div class="stat-valor">{{ nominasPendientes }}</div>
+        <div class="stat-label">En borrador</div>
+      </div>
+    </div>
+    <div *ngIf="nominas.length === 0" class="estado-vacio">
+      <div class="vacio-icono">📋</div>
+      <p>No hay nóminas generadas aún.</p>
+    </div>
+    <div class="trabajadores-lista" *ngIf="nominas.length > 0">
+      <div class="trabajador-card" *ngFor="let n of nominas"
+           (click)="verNominas(n.trabajador!)" style="cursor:pointer">
+        <div class="trabajador-info">
+          <div class="trabajador-nombre">Nómina #{{ n.id }} — {{ n.trabajador?.nombreCompleto }}</div>
+          <div class="trabajador-meta">
+            <span>📅 {{ n.periodoInicio | date:'dd/MM/yyyy' }} → {{ n.periodoFin | date:'dd/MM/yyyy' }}</span>
+            <span class="badge"
+                  [class.badge-activo]="n.estado === 'APROBADA'"
+                  [class.badge-borrador]="n.estado === 'BORRADOR'"
+                  [class.badge-suspendido]="n.estado === 'ANULADA'">
+              {{ n.estado }}
+            </span>
+          </div>
+          <div class="trabajador-jornal">Total: <strong>${{ n.valorTotal | number }}</strong></div>
+        </div>
+        <div class="trabajador-arrow">→</div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ══ TAB: PAGOS ══ -->
+  <ng-container *ngIf="tabActivo === 'pagos'">
+    <div class="stats-grid">
+      <div class="stat-card stat-destacado">
+        <div class="stat-valor">${{ totalPagado | number }}</div>
+        <div class="stat-label">Total pagado</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-valor">{{ pagos.length }}</div>
+        <div class="stat-label">Pagos realizados</div>
+      </div>
+    </div>
+    <div *ngIf="pagos.length === 0" class="estado-vacio">
+      <div class="vacio-icono">💳</div>
+      <p>No hay pagos registrados aún.</p>
+    </div>
+    <div class="trabajadores-lista" *ngIf="pagos.length > 0">
+      <div class="trabajador-card" *ngFor="let p of pagos">
+        <div class="trabajador-info">
+          <div class="trabajador-nombre">{{ p.trabajadorNombre ?? 'Pago #' + p.id }}</div>
+          <div class="trabajador-meta">
+            <span>📅 {{ p.fechaPago | date:'dd/MM/yyyy' }}</span>
+            <span *ngIf="p.metodoPago" class="cargo-tag">{{ p.metodoPago }}</span>
+          </div>
+          <div class="trabajador-jornal">Monto: <strong>${{ p.monto | number }}</strong></div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+</div>
+
+<!-- ══ PANEL LATERAL ══ -->
+<div class="overlay" *ngIf="modoPanel" (click)="cerrarPanel()">
+  <div class="panel-detalle" (click)="$event.stopPropagation()">
+
+    <!-- DETALLE -->
+    <ng-container *ngIf="modoPanel === 'detalle' && trabajadorSeleccionado">
+      <div class="panel-header" [class.panel-header-suspendido]="trabajadorSeleccionado.estado === 'SUSPENDIDO'">
+        <div class="panel-avatar" [class.avatar-suspendido]="trabajadorSeleccionado.estado === 'SUSPENDIDO'">
+          {{ trabajadorSeleccionado.nombre[0] }}{{ trabajadorSeleccionado.apellido[0] }}
+        </div>
+        <div class="panel-header-info">
+          <div class="panel-nombre">{{ trabajadorSeleccionado.nombreCompleto }}</div>
+          <div class="panel-doc">
+            📄 {{ trabajadorSeleccionado.cedula }}
+            <span class="badge"
+                  [class.badge-activo]="trabajadorSeleccionado.estado === 'ACTIVO'"
+                  [class.badge-suspendido]="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
+                  style="margin-left:6px">
+              {{ trabajadorSeleccionado.estado }}
+            </span>
+          </div>
+        </div>
+        <button class="btn-cerrar" (click)="cerrarPanel()">✕</button>
+      </div>
+
+      <div class="panel-body">
+        <div *ngIf="exito" class="alerta-exito" style="margin-bottom:1rem">{{ exito }}</div>
+        <div *ngIf="error" class="alerta-error" style="margin-bottom:1rem">{{ error }}</div>
+
+        <div *ngIf="trabajadorSeleccionado.estado === 'SUSPENDIDO'" class="alerta-suspendido">
+          ⚠️ Este trabajador está suspendido. No puede registrar jornales nuevos.
+        </div>
+
+        <div class="detalle-seccion" *ngIf="trabajadorSeleccionado.cargo">
+          <div class="detalle-titulo">Cargo actual</div>
+          <div class="detalle-cargo-card">
+            <div class="cargo-nombre">{{ trabajadorSeleccionado.cargo.nombre }}</div>
+            <div class="cargo-desc">{{ trabajadorSeleccionado.cargo.descripcion }}</div>
+            <div class="cargo-jornal">${{ trabajadorSeleccionado.cargo.valorJornal | number }}/jornal</div>
+          </div>
+        </div>
+
+        <div class="detalle-seccion">
+          <div class="detalle-titulo">Acciones rápidas</div>
+          <!-- ✅ 5 acciones — incluye Ver Jornales -->
+          <div class="acciones-grid">
+            <button class="accion-btn"
+                    [disabled]="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
+                    [class.accion-disabled]="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
+                    (click)="registrarJornal(trabajadorSeleccionado)">
+              <span class="accion-icono">🗓️</span><span>Registrar Jornal</span>
+            </button>
+            <button class="accion-btn" (click)="verJornales(trabajadorSeleccionado)">
+              <span class="accion-icono">📅</span><span>Ver Jornales</span>
+            </button>
+            <button class="accion-btn" (click)="verNominas(trabajadorSeleccionado)">
+              <span class="accion-icono">📋</span><span>Ver Nóminas</span>
+            </button>
+            <button class="accion-btn" (click)="abrirEditar(trabajadorSeleccionado)">
+              <span class="accion-icono">✏️</span><span>Editar datos</span>
+            </button>
+            <button class="accion-btn" (click)="abrirCambiarCargo(trabajadorSeleccionado)">
+              <span class="accion-icono">🏷️</span><span>Cambiar cargo</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="detalle-seccion">
+          <div class="detalle-titulo">Gestión de estado</div>
+          <div class="zona-peligro">
+            <button *ngIf="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
+                    class="btn-zona btn-reactivar"
+                    (click)="reactivar(trabajadorSeleccionado)">
+              ▶ Reactivar trabajador
+            </button>
+            <button *ngIf="trabajadorSeleccionado.estado === 'ACTIVO'"
+                    class="btn-zona btn-suspender"
+                    (click)="suspender(trabajadorSeleccionado)">
+              ⏸ Suspender trabajador
+            </button>
+            <button class="btn-zona btn-desactivar"
+                    (click)="desactivar(trabajadorSeleccionado)">
+              🗑️ Desactivar trabajador
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- NUEVO -->
+    <ng-container *ngIf="modoPanel === 'nuevo'">
+      <div class="panel-header panel-header-verde">
+        <div class="panel-header-info">
+          <div class="panel-nombre">＋ Nuevo Trabajador</div>
+          <div class="panel-doc">Completa los datos del trabajador</div>
+        </div>
+        <button class="btn-cerrar" (click)="cerrarPanel()">✕</button>
+      </div>
+      <div class="panel-body">
+        <div *ngIf="error" class="alerta-error" style="margin-bottom:1rem">{{ error }}</div>
+        <form [formGroup]="formNuevo" (ngSubmit)="guardarNuevo()">
+          <div class="form-seccion">
+            <div class="form-seccion-titulo">Información personal</div>
+            <div class="campo"><label>Nombre *</label>
+              <input formControlName="nombre" type="text" placeholder="Ej: Carlos"
+                     [class.invalido]="invalido(formNuevo, 'nombre')"/>
+              <span *ngIf="invalido(formNuevo, 'nombre')" class="error-msg">Requerido</span>
+            </div>
+            <div class="campo"><label>Apellido *</label>
+              <input formControlName="apellido" type="text" placeholder="Ej: Pérez"
+                     [class.invalido]="invalido(formNuevo, 'apellido')"/>
+              <span *ngIf="invalido(formNuevo, 'apellido')" class="error-msg">Requerido</span>
+            </div>
+            <div class="campo"><label>Cédula *</label>
+              <input formControlName="cedula" type="text" placeholder="Número de documento"
+                     [class.invalido]="invalido(formNuevo, 'cedula')"/>
+              <span *ngIf="invalido(formNuevo, 'cedula')" class="error-msg">Requerido</span>
+            </div>
+            <div class="campo"><label>Teléfono</label>
+              <input formControlName="telefono" type="text" placeholder="Opcional"/>
+            </div>
+            <div class="campo"><label>Dirección</label>
+              <input formControlName="direccion" type="text" placeholder="Opcional"/>
+            </div>
+          </div>
+          <div class="form-seccion">
+            <div class="form-seccion-titulo">Contrato y cargo</div>
+            <div class="campo"><label>Fecha de ingreso *</label>
+              <input formControlName="fechaIngreso" type="date"
+                     [class.invalido]="invalido(formNuevo, 'fechaIngreso')"/>
+              <span *ngIf="invalido(formNuevo, 'fechaIngreso')" class="error-msg">Requerido</span>
+            </div>
+            <div class="campo"><label>Tipo de contrato *</label>
+              <select formControlName="tipoContrato"
+                      [class.invalido]="invalido(formNuevo, 'tipoContrato')">
+                <option *ngFor="let t of tiposContrato" [value]="t">{{ t }}</option>
+              </select>
+            </div>
+            <div class="campo"><label>Cargo *</label>
+              <select formControlName="cargoId" [class.invalido]="invalido(formNuevo, 'cargoId')">
+                <option [ngValue]="null" disabled>Selecciona un cargo...</option>
+                <option *ngFor="let c of cargos" [ngValue]="c.id">
+                  {{ c.nombre }} — ${{ c.valorJornal | number }}/jornal
+                </option>
+              </select>
+              <span *ngIf="invalido(formNuevo, 'cargoId')" class="error-msg">Selecciona un cargo</span>
+            </div>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn-secundario" (click)="cerrarPanel()">Cancelar</button>
+            <button type="submit" class="btn-primary" [disabled]="guardando">
+              {{ guardando ? 'Registrando...' : 'Registrar trabajador' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+
+    <!-- EDITAR -->
+    <ng-container *ngIf="modoPanel === 'editar' && trabajadorSeleccionado">
+      <div class="panel-header panel-header-azul">
+        <div class="panel-avatar">
+          {{ trabajadorSeleccionado.nombre[0] }}{{ trabajadorSeleccionado.apellido[0] }}
+        </div>
+        <div class="panel-header-info">
+          <div class="panel-nombre">✏️ Editar trabajador</div>
+          <div class="panel-doc">{{ trabajadorSeleccionado.nombreCompleto }}</div>
+        </div>
+        <button class="btn-cerrar" (click)="cerrarPanel()">✕</button>
+      </div>
+      <div class="panel-body">
+        <div *ngIf="error" class="alerta-error" style="margin-bottom:1rem">{{ error }}</div>
+        <form [formGroup]="formEditar" (ngSubmit)="guardarEdicion()">
+          <div class="campo"><label>Nombre *</label>
+            <input formControlName="nombre" type="text"
+                   [class.invalido]="invalido(formEditar, 'nombre')"/>
+            <span *ngIf="invalido(formEditar, 'nombre')" class="error-msg">Requerido</span>
+          </div>
+          <div class="campo"><label>Apellido *</label>
+            <input formControlName="apellido" type="text"
+                   [class.invalido]="invalido(formEditar, 'apellido')"/>
+            <span *ngIf="invalido(formEditar, 'apellido')" class="error-msg">Requerido</span>
+          </div>
+          <div class="campo"><label>Teléfono</label>
+            <input formControlName="telefono" type="text" placeholder="Opcional"/>
+          </div>
+          <div class="campo"><label>Dirección</label>
+            <input formControlName="direccion" type="text" placeholder="Opcional"/>
+          </div>
+          <div class="campo"><label>Tipo de contrato *</label>
+            <select formControlName="tipoContrato">
+              <option *ngFor="let t of tiposContrato" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn-secundario"
+                    (click)="abrirDetalle(trabajadorSeleccionado)">← Volver</button>
+            <button type="submit" class="btn-primary" [disabled]="guardando">
+              {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+
+    <!-- CAMBIAR CARGO -->
+    <ng-container *ngIf="modoPanel === 'cambiarCargo' && trabajadorSeleccionado">
+      <div class="panel-header panel-header-azul">
+        <div class="panel-avatar">
+          {{ trabajadorSeleccionado.nombre[0] }}{{ trabajadorSeleccionado.apellido[0] }}
+        </div>
+        <div class="panel-header-info">
+          <div class="panel-nombre">🏷️ Cambiar cargo</div>
+          <div class="panel-doc">{{ trabajadorSeleccionado.nombreCompleto }}</div>
+        </div>
+        <button class="btn-cerrar" (click)="cerrarPanel()">✕</button>
+      </div>
+      <div class="panel-body">
+        <div *ngIf="error" class="alerta-error" style="margin-bottom:1rem">{{ error }}</div>
+        <div *ngIf="trabajadorSeleccionado.cargo" class="cargo-actual-info">
+          <div class="detalle-titulo">Cargo actual</div>
+          <div class="detalle-cargo-card">
+            <div class="cargo-nombre">{{ trabajadorSeleccionado.cargo.nombre }}</div>
+            <div class="cargo-jornal">
+              ${{ trabajadorSeleccionado.cargo.valorJornal | number }}/jornal
+            </div>
+          </div>
+        </div>
+        <form [formGroup]="formCargo" (ngSubmit)="guardarCargo()" style="margin-top:1.25rem">
+          <div class="campo"><label>Nuevo cargo *</label>
+            <select formControlName="cargoId" [class.invalido]="invalido(formCargo, 'cargoId')">
+              <option [ngValue]="null" disabled>Selecciona un cargo...</option>
+              <option *ngFor="let c of cargos" [ngValue]="c.id">
+                {{ c.nombre }} — ${{ c.valorJornal | number }}/jornal
+              </option>
+            </select>
+            <span *ngIf="invalido(formCargo, 'cargoId')" class="error-msg">Selecciona un cargo</span>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn-secundario"
+                    (click)="abrirDetalle(trabajadorSeleccionado)">← Volver</button>
+            <button type="submit" class="btn-primary" [disabled]="guardando">
+              {{ guardando ? 'Guardando...' : 'Cambiar cargo' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+
+  </div>
+</div>

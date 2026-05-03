@@ -1,0 +1,81 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <a routerLink="../" class="btn-back">← Jornales</a>
+      <h1 class="page-title">Registrar Jornal</h1>
+      <p class="page-subtitle">Registra el trabajo diario de un trabajador</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div *ngIf="error" class="alerta-error">{{ error }}</div>
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+
+      <div class="seccion">
+        <h3 class="seccion-titulo">👷 Información del Jornal</h3>
+        <div class="grid-2">
+          <div class="campo">
+            <label>Trabajador *</label>
+            <select formControlName="trabajadorId" [class.invalido]="invalido('trabajadorId')">
+              <option [ngValue]="null" disabled>Selecciona un trabajador</option>
+              <option *ngFor="let t of trabajadores" [ngValue]="t.id">
+                {{ t.nombreCompleto }}{{ t.cargo ? ' — ' + t.cargo.nombre : '' }}
+              </option>
+            </select>
+            <span *ngIf="invalido('trabajadorId')" class="error-msg">Requerido</span>
+          </div>
+          <div class="campo">
+            <label>Fecha *</label>
+            <input formControlName="fecha" type="date" [class.invalido]="invalido('fecha')"/>
+            <span *ngIf="invalido('fecha')" class="error-msg">Requerido</span>
+          </div>
+          <div class="campo">
+            <label>ID del Cultivo *</label>
+            <input formControlName="cultivoId" type="number" placeholder="ID del cultivo" [class.invalido]="invalido('cultivoId')"/>
+            <span *ngIf="invalido('cultivoId')" class="error-msg">Requerido</span>
+          </div>
+          <div class="campo">
+            <label>Nombre del Cultivo *</label>
+            <input formControlName="nombreCultivo" type="text" placeholder="Ej: Café Arábiga Lote 3" [class.invalido]="invalido('nombreCultivo')"/>
+            <span *ngIf="invalido('nombreCultivo')" class="error-msg">Requerido</span>
+          </div>
+          <div class="campo campo-full">
+            <label>Observaciones</label>
+            <input formControlName="observaciones" type="text" placeholder="Notas adicionales (opcional)"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="seccion">
+        <h3 class="seccion-titulo">✅ Actividades Realizadas *</h3>
+        <div class="actividades-grid">
+          <div
+            *ngFor="let a of actividades"
+            class="actividad-chip"
+            [class.seleccionada]="a.id != null && actividadesSeleccionadas.has(a.id)"
+            (click)="toggleActividad(a.id)">
+            <span class="chip-check">{{ (a.id != null && actividadesSeleccionadas.has(a.id)) ? '✔' : '○' }}</span>
+            <div>
+              <div class="chip-nombre">{{ a.nombre }}</div>
+              <div class="chip-desc">{{ a.descripcion }}</div>
+            </div>
+          </div>
+        </div>
+        <p *ngIf="actividadesSeleccionadas.size === 0" class="texto-suave" style="margin-top:0.5rem">
+          Selecciona al menos una actividad
+        </p>
+        <p *ngIf="actividadesSeleccionadas.size > 0" class="texto-verde" style="margin-top:0.5rem">
+          {{ actividadesSeleccionadas.size }} actividad(es) seleccionada(s)
+        </p>
+      </div>
+
+      <div class="form-footer">
+        <a routerLink="../" class="btn-secundario">Cancelar</a>
+        <button type="submit" class="btn-primary" [disabled]="guardando">
+          {{ guardando ? 'Registrando...' : 'Registrar Jornal' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

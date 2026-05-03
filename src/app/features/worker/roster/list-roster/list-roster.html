@@ -1,0 +1,149 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Nóminas</h1>
+      <p class="page-subtitle" *ngIf="trabajadorFiltrado">
+        Nóminas de <strong>{{ trabajadorFiltrado.nombreCompleto }}</strong>
+      </p>
+      <p class="page-subtitle" *ngIf="!trabajadorFiltrado">
+        Gestión y generación de nóminas por período
+      </p>
+    </div>
+    <div class="header-acciones">
+      <button *ngIf="trabajadorFiltrado" class="btn-secundario" (click)="verTodas()">
+        Ver todas
+      </button>
+      <button class="btn-primary"
+              *ngIf="!trabajadorFiltrado || puedeGenerarNomina"
+              (click)="mostrarForm = !mostrarForm">＋ Generar Nómina</button>
+    </div>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="error" class="alerta-error">{{ error }}</div>
+  <div *ngIf="exito" class="alerta-exito">{{ exito }}</div>
+
+  <!-- Formulario generar nómina -->
+  <div *ngIf="mostrarForm" class="form-card">
+    <h3 class="form-titulo">Generar nómina</h3>
+    <form [formGroup]="form" (ngSubmit)="generar()">
+      <div class="grid-3">
+        <div class="campo">
+          <label>Trabajador *</label>
+          <select formControlName="trabajadorId" [class.invalido]="invalido('trabajadorId')">
+            <option [ngValue]="null" disabled>Selecciona...</option>
+            <option *ngFor="let t of trabajadores" [ngValue]="t.id">{{ t.nombreCompleto }}</option>
+          </select>
+          <span *ngIf="invalido('trabajadorId')" class="error-msg">Requerido</span>
+        </div>
+        <div class="campo">
+          <label>Período inicio *</label>
+          <input formControlName="periodoInicio" type="date" [class.invalido]="invalido('periodoInicio')"/>
+          <span *ngIf="invalido('periodoInicio')" class="error-msg">Requerido</span>
+        </div>
+        <div class="campo">
+          <label>Período fin *</label>
+          <input formControlName="periodoFin" type="date" [class.invalido]="invalido('periodoFin')"/>
+          <span *ngIf="invalido('periodoFin')" class="error-msg">Requerido</span>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button type="button" class="btn-secundario" (click)="mostrarForm = false">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="guardando">
+          {{ guardando ? 'Generando...' : 'Generar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabla -->
+  <div class="tabla-wrap">
+    <table class="tabla">
+      <thead>
+      <tr>
+        <th>Trabajador</th>
+        <th>Período</th>
+        <th>Jornales</th>
+        <th>Total</th>
+        <th>Estado</th>
+        <th>Generada</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let n of nominas" class="fila">
+        <td>
+          <div class="trabajador-cell">
+            <div class="avatar">{{ n.trabajador?.nombre?.[0] }}{{ n.trabajador?.apellido?.[0] }}</div>
+            <span class="negrita">{{ n.trabajador?.nombreCompleto }}</span>
+          </div>
+        </td>
+        <td class="texto-suave">
+          {{ n.periodoInicio | date:'dd/MM/yy' }} → {{ n.periodoFin | date:'dd/MM/yy' }}
+        </td>
+        <td class="centrado">{{ n.totalJornales }}</td>
+        <td class="valor">${{ n.valorTotal | number }}</td>
+        <td>
+          <span class="badge" [ngClass]="estadoClass(n.estado)">{{ n.estado }}</span>
+        </td>
+        <td class="texto-suave">{{ n.fechaGeneracion | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <div class="acciones">
+
+            <!-- Ver detalle (siempre visible) -->
+            <a [routerLink]="['/worker/nominas', n.id]"
+               class="btn-accion btn-ver"
+               title="Ver detalle">👁</a>
+
+            <!-- PENDIENTE: aprobar -->
+            <button *ngIf="n.estado === 'PENDIENTE'"
+                    class="btn-accion btn-reactivar"
+                    title="Aprobar y registrar pago"
+                    [disabled]="aprobando === n.id"
+                    (click)="aprobar(n.id)">
+              {{ aprobando === n.id ? '⏳' : '✔' }}
+            </button>
+
+            <!-- PENDIENTE: anular -->
+            <button *ngIf="n.estado === 'PENDIENTE'"
+                    class="btn-accion btn-desactivar"
+                    title="Anular"
+                    (click)="anular(n.id)">✖</button>
+
+            <!-- APROBADA o PAGADA: ver pago -->
+            <a *ngIf="n.estado === 'APROBADA' || n.estado === 'PAGADA'"
+               [routerLink]="['/worker/pagos']"
+               [queryParams]="{ nominaId: n.id }"
+               class="btn-accion btn-pago"
+               title="Ver pago">💰</a>
+
+            <!-- APROBADA o PAGADA: anular -->
+            <button *ngIf="n.estado === 'APROBADA' || n.estado === 'PAGADA'"
+                    class="btn-accion btn-desactivar"
+                    title="Anular"
+                    (click)="anular(n.id)">✖</button>
+
+            <!-- ANULADA: reactivar (vuelve a BORRADOR) -->
+            <button *ngIf="n.estado === 'ANULADA'"
+                    class="btn-accion btn-reactivar"
+                    title="Reactivar como PENDIENTE"
+                    (click)="reactivar(n.id)">♻</button>
+
+            <!-- ANULADA: eliminar definitivamente -->
+            <button *ngIf="n.estado === 'ANULADA'"
+                    class="btn-accion btn-eliminar"
+                    title="Eliminar definitivamente"
+                    (click)="eliminar(n.id)">🗑</button>
+
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="nominas.length === 0">
+        <td colspan="7" class="sin-resultados">
+          {{ trabajadorFiltrado ? 'Este trabajador no tiene nóminas generadas' : 'No hay nóminas generadas' }}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

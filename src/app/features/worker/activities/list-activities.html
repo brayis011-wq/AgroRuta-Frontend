@@ -1,0 +1,50 @@
+<div class="page">
+  <div class="page-header">
+    <div><h1 class="page-title">Actividades</h1><p class="page-subtitle">Gestión de actividades realizadas en campo</p></div>
+    <button class="btn-primary" (click)="abrirNuevo()">＋ Nueva Actividad</button>
+  </div>
+
+  <div *ngIf="error" class="alerta-error">{{ error }}</div>
+
+  <div *ngIf="mostrarForm" class="form-card">
+    <h3 class="form-titulo">{{ modoEdicion ? 'Editar actividad' : 'Nueva actividad' }}</h3>
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="grid-2">
+        <div class="campo">
+          <label>Nombre *</label>
+          <input formControlName="nombre" type="text" placeholder="Ej: Deshierbe" [class.invalido]="invalido('nombre')"/>
+          <span *ngIf="invalido('nombre')" class="error-msg">Requerido</span>
+        </div>
+        <div class="campo">
+          <label>Descripción *</label>
+          <input formControlName="descripcion" type="text" placeholder="Descripción de la actividad" [class.invalido]="invalido('descripcion')"/>
+          <span *ngIf="invalido('descripcion')" class="error-msg">Requerido</span>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button type="button" class="btn-secundario" (click)="mostrarForm = false">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="guardando">{{ guardando ? 'Guardando...' : 'Guardar' }}</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="tabla-wrap">
+    <table class="tabla">
+      <thead><tr><th>Actividad</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+      <tr *ngFor="let a of actividades" class="fila">
+        <td class="negrita">{{ a.nombre }}</td>
+        <td class="texto-suave">{{ a.descripcion }}</td>
+        <td><span class="badge" [ngClass]="a.activa ? 'badge-activo' : 'badge-inactivo'">{{ a.activa ? 'Activa' : 'Inactiva' }}</span></td>
+        <td>
+          <div class="acciones">
+            <button class="btn-accion btn-ver" (click)="abrirEditar(a)" title="Editar">✎</button>
+            <button class="btn-accion btn-desactivar" (click)="desactivar(a)" title="Desactivar">✖</button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="actividades.length === 0"><td colspan="4" class="sin-resultados">No hay actividades registradas</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

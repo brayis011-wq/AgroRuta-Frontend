@@ -1,3 +1,5 @@
+// src/app/app.routes.ts
+
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -8,11 +10,14 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    loadChildren: () =>
-      import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
+    loadChildren: () => import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
   },
   {
     path: 'cultivo',
     loadChildren: () => import('./features/cultivo/cultivo.routes').then((m) => m.cultivoRoutes),
+  },
+  {
+    path: 'worker',
+    loadChildren: () => import('./features/worker/worker.routes').then((m) => m.workerRoutes),
   },
 ];
