@@ -1,7 +1,9 @@
 .container {
   padding: 2rem;
-  max-width: 600px;
+  max-width: 9000px;
   margin: 0 auto;
+  min-height: 100vh;        /* ← esto es lo que faltaba */
+  background-color: #f0f4f8;
 }
 
 .header {

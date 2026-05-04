@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 import { AuthResponse } from '../../core/models/auth.model';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, DatePipe],
-  templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css',
+  imports: [CommonModule, RouterModule],
+  templateUrl: './layout.html',
+  styleUrl: './layout.css',
 })
-export class DashboardComponent {
+export class LayoutComponent {
   usuario: AuthResponse | null = null;
-  today = new Date();
+  sidebarCollapsed = false;
 
   constructor(
     private authService: AuthService,
@@ -22,12 +22,12 @@ export class DashboardComponent {
     this.usuario = this.authService.getUsuario();
   }
 
+  toggleSidebar(): void {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
-  }
-
-  irA(ruta: string): void {
-    this.router.navigate([ruta]);
   }
 }

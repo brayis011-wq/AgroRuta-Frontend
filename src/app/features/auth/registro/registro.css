@@ -14,7 +14,9 @@
   width: 100%;
   max-width: 400px;
 }
-
+.card {
+  transform: scale(1.5);
+}
 h2 {
   color: #2e7d32;
   font-size: 1.8rem;

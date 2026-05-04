@@ -1,0 +1,69 @@
+<div class="dashboard-layout" [class.sidebar-collapsed]="sidebarCollapsed">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+      <img class="brand-logo" src="logo.png" alt="AgroRuta" />
+      <div class="brand-text">
+        <h1 class="brand-name">AgroRuta</h1>
+        <span class="brand-sub">Sistema de gestión</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Gestión</span>
+      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Inicio</span>
+      </a>
+      <a class="nav-item" routerLink="/cultivo" routerLinkActive="active">
+        <span class="nav-icon">🌱</span>
+        <span class="nav-label">Cultivos</span>
+      </a>
+      <a class="nav-item" routerLink="/worker" routerLinkActive="active">
+        <span class="nav-icon">👷</span>
+        <span class="nav-label">Trabajadores</span>
+      </a>
+
+      <span class="nav-section-label">Análisis</span>
+      <a class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Reportes</span>
+      </a>
+
+      <span class="nav-section-label">Sistema</span>
+      <a class="nav-item">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Configuración</span>
+      </a>
+    </nav>
+
+    <!-- Botón cerrar sesión -->
+    <button class="btn-logout" (click)="logout()">
+      <span class="nav-icon">⏏</span>
+      <span class="nav-label">Cerrar sesión</span>
+    </button>
+
+    <!-- Usuario -->
+    <div class="sidebar-footer">
+      <div class="user-avatar">{{ usuario?.nombre?.charAt(0) }}</div>
+      <div class="user-details">
+        <span class="user-name">{{ usuario?.nombre }}</span>
+        <span class="user-role">{{ usuario?.rol }}</span>
+      </div>
+    </div>
+
+    <!-- Botón toggle -->
+    <button class="toggle-btn" (click)="toggleSidebar()" [title]="sidebarCollapsed ? 'Expandir' : 'Colapsar'">
+      <span class="toggle-icon">{{ sidebarCollapsed ? '›' : '‹' }}</span>
+    </button>
+
+  </aside>
+
+  <!-- ===== CONTENIDO DINÁMICO ===== -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

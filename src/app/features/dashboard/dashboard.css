@@ -1,79 +1,51 @@
-.container {
-  min-height: 100vh;
-  background-color: #f0f4f8;
-}
-
-.header {
-  background-color: #2e7d32; /* verde principal */
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.brand h1 {
-  color: white;
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.version {
-  color: #a5d6a7; /* verde claro */
-  font-size: 0.8rem;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nombre {
-  color: white;
-  font-weight: 500;
-}
-
-.rol {
-  background-color: #1b5e20; /* verde oscuro */
-  color: #c8e6c9; /* verde suave */
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-}
-
-.btn-logout {
-  background-color: transparent;
-  color: white;
-  border: 1px solid white;
-  padding: 6px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: background-color 0.2s;
-}
-
-.btn-logout:hover {
-  background-color: #1b5e20; /* verde oscuro */
-}
-
-.welcome {
+.dashboard-page {
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.welcome h2 {
-  color: #2e7d32; /* verde principal */
-  margin-bottom: 0.25rem;
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.welcome p {
+.page-title { color: #2e7d32; font-size: 1.5rem; font-weight: 700; }
+.page-subtitle { color: #666; font-size: 0.875rem; margin-top: 4px; }
+
+.date-chip {
+  background: white;
+  border: 1px solid #c8e6c9;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
   color: #666;
+  white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
+
+.welcome-banner {
+  background-color: #2e7d32;
+  border-radius: 12px;
+  padding: 1.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.welcome-text h3 { font-size: 1.25rem; color: white; margin-bottom: 0.25rem; }
+.welcome-text p { font-size: 0.875rem; color: #a5d6a7; }
+.welcome-text strong { color: #c8e6c9; font-weight: 600; }
+.welcome-illustration { font-size: 48px; line-height: 1; opacity: 0.85; }
 
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-  padding: 0 2rem 2rem;
 }
 
 .card {
@@ -90,18 +62,6 @@
   box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
 
-.card-icon {
-  font-size: 2rem;
-  margin-bottom: 0.75rem;
-}
-
-.card h3 {
-  color: #2e7d32; /* verde principal */
-  margin: 0 0 0.5rem;
-}
-
-.card p {
-  color: #888;
-  font-size: 0.875rem;
-  margin: 0;
-}
+.card-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+.card h3 { color: #2e7d32; margin: 0 0 0.5rem; }
+.card p { color: #888; font-size: 0.875rem; margin: 0; }
