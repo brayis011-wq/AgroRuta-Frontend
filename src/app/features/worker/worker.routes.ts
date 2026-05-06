@@ -19,7 +19,7 @@ export const workerRoutes: Routes = [
   {
     path: 'cargos',
     loadComponent: () =>
-      import('./post/List-post').then((m) => m.ListaCargosComponent),
+      import('./post/list-post').then((m) => m.ListaCargosComponent),
   },
 
   // ── Nóminas global (ver todas, aprobar, eliminar) — SIN generar aquí

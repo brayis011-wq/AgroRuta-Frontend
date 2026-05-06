@@ -9,7 +9,7 @@ import { Cargo } from '../../../core/models/worker.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './list-post.html',
-  styleUrls: ['./List-post.css']
+  styleUrls: ['./list-post.css']
 })
 export class ListaCargosComponent implements OnInit {
   cargos: Cargo[] = [];
