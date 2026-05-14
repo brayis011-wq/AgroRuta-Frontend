@@ -1,0 +1,53 @@
+<div class="weather-widget">
+
+  <!-- Loading -->
+  @if (loading()) {
+  <div class="weather-widget__loading">
+    <span class="spinner"></span>
+    <p>Cargando clima...</p>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+  <div class="weather-widget__error">
+    <span>⚠️ {{ error() }}</span>
+    <button (click)="loadWeather()">Reintentar</button>
+  </div>
+  }
+
+  <!-- Data -->
+  @if (weather(); as w) {
+  <div class="weather-widget__content">
+    <div class="weather-widget__header">
+      <div class="weather-widget__location">
+        <span class="weather-widget__icon">📍</span>
+        <span>{{ w.city }}, {{ w.country }}</span>
+      </div>
+      <img [src]="w.iconUrl" [alt]="w.description" class="weather-widget__img" />
+    </div>
+
+    <div class="weather-widget__temp">
+      {{ w.temperature | number:'1.0-0' }}°C
+    </div>
+
+    <p class="weather-widget__description">{{ w.description | titlecase }}</p>
+
+    <div class="weather-widget__details">
+      <div class="weather-widget__detail">
+        <span class="label">💧 Humedad</span>
+        <span class="value">{{ w.humidity }}%</span>
+      </div>
+      <div class="weather-widget__detail">
+        <span class="label">🌡️ Sensación</span>
+        <span class="value">{{ w.feelsLike | number:'1.0-0' }}°C</span>
+      </div>
+      <div class="weather-widget__detail">
+        <span class="label">💨 Viento</span>
+        <span class="value">{{ w.windSpeed }} m/s</span>
+      </div>
+    </div>
+  </div>
+  }
+
+</div>

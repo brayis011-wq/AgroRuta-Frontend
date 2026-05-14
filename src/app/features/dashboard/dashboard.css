@@ -65,3 +65,12 @@
 .card-icon { font-size: 2rem; margin-bottom: 0.75rem; }
 .card h3 { color: #2e7d32; margin: 0 0 0.5rem; }
 .card p { color: #888; font-size: 0.875rem; margin: 0; }
+.weather-bar {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.weather-bar app-weather-widget {
+  display: block;
+  width: 100%;
+}
