@@ -1,0 +1,55 @@
+<div class="report-container">
+
+  <div class="report-header">
+    <div>
+      <h2>Reporte de Nómina</h2>
+      <span class="generated-at" *ngIf="report">
+        Generado: {{ report.generatedAt | date:'d MMM yyyy, h:mm a' }}
+      </span>
+    </div>
+    <button class="btn-download" (click)="downloadPdf()" [disabled]="downloading || loading">
+      {{ downloading ? 'Descargando...' : '⬇ Descargar PDF' }}
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="estado">Cargando datos...</div>
+  <div *ngIf="error" class="estado error">Error al cargar los datos.</div>
+
+  <div *ngIf="report && !loading">
+
+    <div class="summary-card">
+      <div class="summary-item">
+        <span class="summary-label">Total acumulado</span>
+        <span class="summary-value">${{ report.totalAccumulated | number:'1.2-2' }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Trabajadores</span>
+        <span class="summary-value">{{ report.workerDetails.length }}</span>
+      </div>
+    </div>
+
+    <table class="report-table">
+      <thead>
+      <tr>
+        <th>Trabajador</th>
+        <th>Período</th>
+        <th>Días cubiertos</th>
+        <th>Jornales</th>
+        <th>Pagos</th>
+        <th>Total pagado</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let d of report.workerDetails">
+        <td class="worker-name">{{ d.workerName }}</td>
+        <td>{{ d.periodoInicio | date:'d MMM yyyy' }} — {{ d.periodoFin | date:'d MMM yyyy' }}</td>
+        <td>{{ calcularDias(d.periodoInicio, d.periodoFin) }} días</td>
+        <td>{{ d.totalJornales }}</td>
+        <td>{{ d.totalPagos }}</td>
+        <td class="total-paid">${{ d.totalPaid | number:'1.2-2' }}</td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>

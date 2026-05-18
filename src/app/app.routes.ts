@@ -30,7 +30,11 @@ export const routes: Routes = [
         loadChildren: () => import('./features/worker/worker.routes').then((m) => m.workerRoutes),
       },
       // Rutas sin módulo aún — redirigen al dashboard sin salir de la app
-      { path: 'reportes',      redirectTo: 'dashboard' },
+{
+  path: 'reportes',
+  loadChildren: () => import('./features/report/report.routes').then(m => m.REPORT_ROUTES),
+  runGuardsAndResolvers: 'always'
+},
       { path: 'configuracion', redirectTo: 'dashboard' },
     ],
   },

@@ -1,0 +1,18 @@
+<div class="report-home">
+  <div class="tabs">
+    <button class="tab" [class.active]="activeTab === 'payroll'" (click)="setTab('payroll')">
+      💰 Nómina
+    </button>
+    <button class="tab" [class.active]="activeTab === 'crops'" (click)="setTab('crops')">
+      🌱 Cultivos
+    </button>
+  </div>
+
+  <div *ngIf="activeTab === 'payroll'">
+    <app-payroll-report />
+  </div>
+
+  <div *ngIf="activeTab === 'crops'">
+    <app-crop-report />
+  </div>
+</div>
