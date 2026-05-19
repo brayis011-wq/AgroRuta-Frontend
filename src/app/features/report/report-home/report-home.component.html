@@ -1,17 +1,24 @@
 <div class="report-home">
-  <div class="tabs">
-    <button class="tab" [class.active]="activeTab === 'payroll'" (click)="setTab('payroll')">
-      💰 Nómina
+  <div class="tabs-wrap">
+    <button class="tab-btn payroll" [class.active]="activeTab === 'payroll'" (click)="setTab('payroll')">
+      <div class="tab-icon"><i class="ti ti-report-money"></i></div>
+      <div class="tab-label">
+        <span class="tab-name">Nómina</span>
+        <span class="tab-sub">Pagos y jornales</span>
+      </div>
     </button>
-    <button class="tab" [class.active]="activeTab === 'crops'" (click)="setTab('crops')">
-      🌱 Cultivos
+    <button class="tab-btn crops" [class.active]="activeTab === 'crops'" (click)="setTab('crops')">
+      <div class="tab-icon"><i class="ti ti-plant"></i></div>
+      <div class="tab-label">
+        <span class="tab-name">Cultivos</span>
+        <span class="tab-sub">Cosechas e insumos</span>
+      </div>
     </button>
   </div>
 
   <div *ngIf="activeTab === 'payroll'">
     <app-payroll-report />
   </div>
-
   <div *ngIf="activeTab === 'crops'">
     <app-crop-report />
   </div>

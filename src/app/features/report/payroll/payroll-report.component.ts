@@ -69,4 +69,16 @@ export class PayrollReportComponent implements OnInit {
     a.click();
     window.URL.revokeObjectURL(url);
   }
+get totalJornales(): number {
+  return this.report?.workerDetails.reduce((s, w) => s + w.totalJornales, 0) ?? 0;
+}
+
+get promedioPago(): number {
+  if (!this.report || !this.report.workerDetails.length) return 0;
+  return this.report.totalAccumulated / this.report.workerDetails.length;
+}
+
+get maxPago(): number {
+  return Math.max(...(this.report?.workerDetails.map(w => w.totalPaid) ?? [1]));
+}
 }

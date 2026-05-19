@@ -1,0 +1,100 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="profile-form" novalidate>
+
+  <!-- Avatar preview -->
+  <div class="avatar-section">
+    <div class="avatar-wrapper">
+      <img
+        *ngIf="hasValidImage"
+        [src]="fotoUrl"
+        alt="Foto de perfil"
+        class="avatar-img"
+        (error)="onImageError()"
+      />
+      <div *ngIf="!hasValidImage" class="avatar-placeholder">
+        {{ initials || '?' }}
+      </div>
+    </div>
+    <div class="avatar-info">
+      <p class="avatar-hint">Ingresa una URL de imagen para actualizar tu foto</p>
+    </div>
+  </div>
+
+  <!-- Foto URL -->
+  <div class="field-group">
+    <label class="field-label" for="fotoPerfil">URL de foto de perfil</label>
+    <input
+      id="fotoPerfil"
+      type="url"
+      class="field-input"
+      formControlName="fotoPerfil"
+      placeholder="https://ejemplo.com/mi-foto.jpg"
+      (input)="onFotoChange()"
+    />
+  </div>
+
+  <!-- Nombre -->
+  <div class="field-group">
+    <label class="field-label" for="nombre">Nombre completo <span class="required">*</span></label>
+    <input
+      id="nombre"
+      type="text"
+      class="field-input"
+      [class.field-error]="isInvalid('nombre')"
+      formControlName="nombre"
+      placeholder="Tu nombre completo"
+    />
+    <span class="error-msg" *ngIf="isInvalid('nombre')">
+      El nombre es obligatorio (mínimo 2 caracteres)
+    </span>
+  </div>
+
+  <!-- Email (readonly) -->
+  <div class="field-group">
+    <label class="field-label" for="email">Correo electrónico</label>
+    <input
+      id="email"
+      type="email"
+      class="field-input field-readonly"
+      formControlName="email"
+      readonly
+    />
+    <span class="field-hint">El correo no puede modificarse</span>
+  </div>
+
+  <!-- Teléfono -->
+  <div class="field-group">
+    <label class="field-label" for="telefono">Teléfono <span class="required">*</span></label>
+    <input
+      id="telefono"
+      type="tel"
+      class="field-input"
+      [class.field-error]="isInvalid('telefono')"
+      formControlName="telefono"
+      placeholder="3001234567"
+    />
+    <span class="error-msg" *ngIf="isInvalid('telefono')">
+      Ingresa un número de teléfono válido (7–15 dígitos)
+    </span>
+  </div>
+
+  <!-- Rol (readonly) -->
+  <div class="field-group">
+    <label class="field-label" for="rol">Rol</label>
+    <input
+      id="rol"
+      type="text"
+      class="field-input field-readonly"
+      formControlName="rol"
+      readonly
+    />
+    <span class="field-hint">El rol es asignado por el administrador</span>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn-primary" [disabled]="loading">
+      <span *ngIf="!loading">💾 Guardar cambios</span>
+      <span *ngIf="loading">Guardando…</span>
+    </button>
+  </div>
+
+</form>

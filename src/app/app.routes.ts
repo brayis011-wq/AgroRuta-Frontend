@@ -5,13 +5,11 @@ import { authGuard } from './core/guards/auth-guard';
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 
-  // Rutas públicas
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
 
-  // Rutas protegidas bajo el Layout (sidebar persistente)
   {
     path: '',
     loadComponent: () => import('./features/layout/layout').then((m) => m.LayoutComponent),
@@ -29,16 +27,18 @@ export const routes: Routes = [
         path: 'worker',
         loadChildren: () => import('./features/worker/worker.routes').then((m) => m.workerRoutes),
       },
-      // Rutas sin módulo aún — redirigen al dashboard sin salir de la app
-{
-  path: 'reportes',
-  loadChildren: () => import('./features/report/report.routes').then(m => m.REPORT_ROUTES),
-  runGuardsAndResolvers: 'always'
-},
-      { path: 'configuracion', redirectTo: 'dashboard' },
-    ],
-  },
+      {
+        path: 'reportes',
+        loadChildren: () => import('./features/report/report.routes').then(m => m.REPORT_ROUTES),
+        runGuardsAndResolvers: 'always'
+      },
+      {
+        path: 'configuracion',
+        loadChildren: () =>
+          import('./features/configuration/configuration.routes').then((m) => m.configurationRoutes),
+      },
+    ],                           // ← cierra children[]
+  },                             // ← cierra el objeto de ruta layout
 
-  // Fallback — redirige al dashboard en vez de login
   { path: '**', redirectTo: 'dashboard' },
 ];

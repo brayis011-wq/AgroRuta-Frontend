@@ -63,4 +63,21 @@ export class CropReportComponent implements OnInit {
     a.click();
     window.URL.revokeObjectURL(url);
   }
+get cultivosActivos(): number {
+  return this.report?.cropDetails.filter(c => c.estado === 'ACTIVO').length ?? 0;
+}
+
+get totalKg(): number {
+  return this.report?.cropDetails.reduce((s, c) => s + c.totalKgCosechado, 0) ?? 0;
+}
+
+get maxKg(): number {
+  return Math.max(...(this.report?.cropDetails.map(c => c.totalKgCosechado) ?? [1]));
+}
+
+get promedioDias(): number {
+  if (!this.report?.cropDetails.length) return 0;
+  const suma = this.report.cropDetails.reduce((s, c) => s + c.diasDesdeSiembra, 0);
+  return Math.round(suma / this.report.cropDetails.length);
+}
 }
