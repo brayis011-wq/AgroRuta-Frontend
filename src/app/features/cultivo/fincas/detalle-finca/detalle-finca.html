@@ -4,61 +4,60 @@
   <div class="loading" *ngIf="cargando">Cargando...</div>
   <div class="error" *ngIf="error">{{ error }}</div>
 
+  <!-- Mapa SIEMPRE en el DOM -->
+  <div class="mapa-wrapper" [style.display]="cargando ? 'none' : 'block'">
+    <div id="mapa-finca" class="mapa-finca"></div>
+    <div class="leyenda">
+      <div class="leyenda-item"><span class="dot disponible"></span> Disponible</div>
+      <div class="leyenda-item"><span class="dot cultivo"></span> En cultivo</div>
+      <div class="leyenda-item"><span class="dot descanso"></span> En descanso</div>
+    </div>
+  </div>
+
   <div *ngIf="!cargando && finca">
     <div class="finca-header">
       <div>
         <h2>🏡 {{ finca.nombre }}</h2>
         <p>📍 {{ finca.ubicacion }} · 📐 {{ finca.hectareas }} hectáreas</p>
       </div>
-    </div>
-
-    <div class="section-header">
-      <h3>Lotes</h3>
       <button class="btn-primary" (click)="nuevoLote()">+ Nuevo Lote</button>
     </div>
 
+    <div class="section-header" style="margin-top: 1.5rem;">
+      <h3>Lotes ({{ lotes.length }})</h3>
+    </div>
+
     <div class="empty" *ngIf="lotes.length === 0">
-      <p>No hay lotes registrados en esta finca.</p>
-      <button class="btn-primary" (click)="nuevoLote()">Registrar primer lote</button>
+      <p>No hay lotes registrados. Usa el botón para agregar el primero.</p>
     </div>
 
     <div class="grid" *ngIf="lotes.length > 0">
       <div class="lote-card" *ngFor="let lote of lotes" (click)="entrarLote(lote.id!)">
         <div class="lote-info">
           <h4>{{ lote.nombre }}</h4>
-          <p>📐 {{ lote.area }} hectáreas</p>
+          <p>📐 {{ lote.area }} ha
+            <span *ngIf="!lote.coordenadas" class="sin-mapa">· Sin polígono</span>
+          </p>
         </div>
-
         <div class="lote-estado">
           <span class="badge" [ngClass]="getEstadoColor(lote.estado)">
             {{ getEstadoLabel(lote.estado) }}
           </span>
         </div>
-
-        <button class="btn-eliminar-lote"
-                (click)="iniciarEliminacionLote($event, lote)">
-          🗑️
-        </button>
-
+        <button class="btn-eliminar-lote" (click)="iniciarEliminacionLote($event, lote)">🗑️</button>
         <div class="lote-arrow">→</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Panel confirmación eliminar lote -->
 <div class="overlay" *ngIf="loteAEliminar" (click)="cancelarEliminacion()">
   <div class="confirm-panel" (click)="$event.stopPropagation()">
     <h3>⚠️ Eliminar lote</h3>
     <p>Estás a punto de eliminar el lote <strong>{{ loteAEliminar.nombre }}</strong>.</p>
     <p>Esta acción no se puede deshacer. Escribe <strong>confirmar</strong> para continuar:</p>
-
-    <input
-      type="text"
-      [(ngModel)]="textoConfirmacion"
-      placeholder="Escribe confirmar"
-      class="input-confirmacion" />
-
+    <input type="text" [(ngModel)]="textoConfirmacion"
+           placeholder="Escribe confirmar" class="input-confirmacion" />
     <div class="confirm-actions">
       <button class="btn-secondary" (click)="cancelarEliminacion()">Cancelar</button>
       <button class="btn-danger"

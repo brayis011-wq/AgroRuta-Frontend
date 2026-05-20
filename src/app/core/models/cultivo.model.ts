@@ -5,6 +5,8 @@ export interface Finca {
   hectareas: number;
   agricultorId: number;
   fechaRegistro?: string;
+  centroideLat?: number;
+  centroideLng?: number;
 }
 
 export interface Lote {
@@ -13,6 +15,9 @@ export interface Lote {
   area: number;
   estado: 'DISPONIBLE' | 'EN_CULTIVO' | 'EN_DESCANSO';
   fincaId: number;
+  coordenadas?: string;
+  centroideLat?: number;
+  centroideLng?: number;
 }
 
 export interface Siembra {

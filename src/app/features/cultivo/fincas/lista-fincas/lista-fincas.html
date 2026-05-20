@@ -33,7 +33,21 @@
     </div>
   </div>
 </div>
-
+<!-- Resumen general -->
+<div class="resumen-grid" *ngIf="!cargando && fincas.length > 0">
+  <div class="resumen-card">
+    <span class="resumen-num">{{ fincas.length }}</span>
+    <span class="resumen-lbl">Fincas registradas</span>
+  </div>
+  <div class="resumen-card">
+    <span class="resumen-num">{{ totalHectareas() | number:'1.1-1' }}</span>
+    <span class="resumen-lbl">Hectáreas totales</span>
+  </div>
+  <div class="resumen-card">
+    <span class="resumen-num">{{ promedioHectareas() | number:'1.1-1' }}</span>
+    <span class="resumen-lbl">Promedio por finca</span>
+  </div>
+</div>
 <!-- Panel de confirmación -->
 <div class="overlay" *ngIf="fincaAEliminar" (click)="cancelarEliminacion()">
   <div class="confirm-panel" (click)="$event.stopPropagation()">

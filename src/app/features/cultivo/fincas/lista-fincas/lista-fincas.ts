@@ -68,7 +68,14 @@ export class ListaFincasComponent implements OnInit {
     this.fincaAEliminar = null;
     this.textoConfirmacion = '';
   }
+totalHectareas(): number {
+  return this.fincas.reduce((sum, f) => sum + (f.hectareas ?? 0), 0);
+}
 
+promedioHectareas(): number {
+  if (this.fincas.length === 0) return 0;
+  return this.totalHectareas() / this.fincas.length;
+}
   confirmarEliminacion(): void {
     if (this.textoConfirmacion !== 'confirmar' || !this.fincaAEliminar) return;
 

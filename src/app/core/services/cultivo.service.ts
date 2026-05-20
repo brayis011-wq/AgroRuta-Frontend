@@ -104,4 +104,18 @@ export class CultivoService {
   totalKgCosechado(siembraId: number): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/api/cosechas/siembra/${siembraId}/total-kg`);
   }
+  actualizarGeometriaLote(loteId: number, body: {
+    coordenadas: string;
+    area: number;
+    centroideLat: number;
+    centroideLng: number;
+  }): Observable<Lote> {
+    return this.http.patch<Lote>(`${this.apiUrl}/api/lotes/${loteId}/geometria`, body);
+  }
+actualizarCentroideFinca(fincaId: number, body: {
+  centroideLat: number;
+  centroideLng: number;
+}): Observable<Finca> {
+  return this.http.patch<Finca>(`${this.apiUrl}/api/fincas/${fincaId}/centroide`, body);
+}
 }

@@ -181,3 +181,351 @@
   padding: 0.75rem 1rem;
   border-radius: 8px;
 }
+.container {
+  padding: 2rem;
+  max-width: 9000px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #f0f4f8;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #2e7d32;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+}
+.btn-back:hover { text-decoration: underline; }
+
+/* Header */
+.lote-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.lote-header h2 {
+  font-size: 1.8rem;
+  color: #2e7d32;
+  margin: 0 0 0.25rem;
+}
+.lote-header p {
+  color: #888;
+  margin: 0;
+  font-size: 0.9rem;
+}
+.lote-estado {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.lote-estado.activo  { background: #e8f5e9; color: #2e7d32; }
+.lote-estado.vacio   { background: #f5f5f5; color: #aaa; }
+
+/* Sin siembra */
+.sin-siembra {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.sin-siembra-icon { font-size: 4rem; margin-bottom: 1rem; }
+.sin-siembra h3   { color: #333; margin-bottom: 0.5rem; }
+.sin-siembra p    { color: #888; margin-bottom: 1.5rem; }
+
+/* Fila superior info + días */
+.siembra-top-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: stretch;
+}
+
+.siembra-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.siembra-info {
+  flex: 1;
+}
+
+.siembra-info h3 {
+  color: #2e7d32;
+  margin: 0 0 1.25rem;
+  font-size: 1.1rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.info-valor {
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.etapa-badge {
+  display: inline-block;
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+/* Card de días */
+.dias-card {
+  background: linear-gradient(135deg, #2e7d32, #43a047);
+  color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  text-align: center;
+}
+
+.dias-numero {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.dias-label {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 0.4rem;
+  line-height: 1.4;
+}
+
+/* Ciclo */
+.ciclo-card {
+  margin-bottom: 1rem;
+}
+
+.ciclo-card h4 {
+  color: #333;
+  margin: 0 0 1.25rem;
+  font-size: 1rem;
+}
+
+.etapas {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.etapa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 90px;
+}
+
+.etapa span {
+  font-size: 0.75rem;
+  color: #bbb;
+  text-align: center;
+}
+.etapa.activa span  { color: #2e7d32; font-weight: 500; }
+.etapa.actual span  { color: #1b5e20; font-weight: 700; }
+
+.etapa-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: white;
+  font-weight: 700;
+  transition: all 0.3s;
+}
+
+.etapa.activa .etapa-dot {
+  background-color: #2e7d32;
+  border-color: #2e7d32;
+}
+
+.etapa.actual .etapa-dot {
+  background-color: #2e7d32;
+  border-color: #1b5e20;
+  width: 34px;
+  height: 34px;
+  box-shadow: 0 0 0 5px rgba(46,125,50,0.2);
+  animation: pulso 1.8s ease-in-out infinite;
+}
+
+@keyframes pulso {
+  0%, 100% { box-shadow: 0 0 0 5px rgba(46,125,50,0.2); }
+  50%       { box-shadow: 0 0 0 10px rgba(46,125,50,0.08); }
+}
+
+.etapa-linea {
+  flex: 1;
+  height: 3px;
+  background-color: #e0e0e0;
+  margin-bottom: 1.5rem;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+.etapa-linea.completada  { background-color: #2e7d32; }
+.etapa-linea.en-progreso {
+  background: linear-gradient(to right, #2e7d32 50%, #e0e0e0 50%);
+}
+
+/* Texto progreso */
+.ciclo-progreso-texto {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #aaa;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+.ciclo-porcentaje { color: #2e7d32; font-weight: 600; }
+
+/* Botón */
+.btn-primary {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 0.85rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s, transform 0.1s;
+  width: 100%;
+}
+.btn-primary:hover {
+  background-color: #1b5e20;
+  transform: translateY(-1px);
+}
+
+.loading {
+  text-align: center;
+  color: #888;
+  padding: 2rem;
+}
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+.ciclo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.ciclo-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.btn-avanzar {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-avanzar:hover:not(:disabled) {
+  background: #2e7d32;
+  color: white;
+}
+
+.btn-avanzar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mapa-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.mapa-lote {
+  width: 100%;
+  height: 300px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  z-index: 0;
+}
+
+.sin-poligono-aviso {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #f59e0b;
+  margin-top: 0.5rem;
+}
+.mapa-controles {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1000;
+}
+
+.btn-ndvi {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-ndvi:hover {
+  background: #f0fdf4;
+  border-color: #16a34a;
+}
+
+.btn-ndvi.activo {
+  background: #16a34a;
+  color: white;
+  border-color: #16a34a;
+}

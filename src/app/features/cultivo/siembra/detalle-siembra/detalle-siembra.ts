@@ -9,11 +9,12 @@ import {
   Fumigacion,
   Cosecha,
 } from '../../../../core/models/cultivo.model';
+import { WeatherWidgetComponent } from '../../../weather/weather-widget/weather-widget.component';
 
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, WeatherWidgetComponent],
   templateUrl: './detalle-siembra.html',
   styleUrl: './detalle-siembra.css',
 })

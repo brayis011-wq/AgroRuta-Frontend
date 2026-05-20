@@ -1,9 +1,8 @@
-<!-- dashboard.html — ya NO necesita sidebar, el layout lo provee -->
 <div class="dashboard-page">
 
   <div class="topbar">
     <div>
-      <h2 class="page-title">Panel De Control</h2>
+      <h2 class="page-title">Panel de control</h2>
       <p class="page-subtitle">Resumen general de tu operación</p>
     </div>
     <div class="date-chip">📅 {{ today | date:'EEEE, d MMM yyyy' }}</div>
@@ -14,29 +13,60 @@
       <h3>Bienvenido, {{ usuario?.nombre }} 👋</h3>
       <p>Has iniciado sesión como <strong>{{ usuario?.rol }}</strong></p>
     </div>
-    <div class="welcome-illustration">🌾</div>
+    <div class="welcome-right">
+      <div class="welcome-illustration">🌾</div>
+      <span class="welcome-tag">Temporada activa</span>
+    </div>
+  </div>
+
+  <div class="stats-row" *ngIf="!cargandoStats">
+    <div class="stat-card">
+      <div class="stat-icon green">🏡</div>
+      <div class="stat-body">
+        <span class="stat-num">{{ totalFincas }}</span>
+        <span class="stat-lbl">Fincas registradas</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">🌿</div>
+      <div class="stat-body">
+        <span class="stat-num">{{ totalLotes }}</span>
+        <span class="stat-lbl">Lotes activos</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber">📐</div>
+      <div class="stat-body">
+        <span class="stat-num">{{ totalHectareas | number:'1.1-1' }} ha</span>
+        <span class="stat-lbl">Hectáreas totales</span>
+      </div>
+    </div>
   </div>
 
   <div class="cards">
-    <div class="card" (click)="irA('/cultivo')">
+    <div class="card c1" (click)="irA('/cultivo')">
       <div class="card-icon">🌱</div>
       <h3>Cultivos</h3>
       <p>Gestiona tus cultivos activos</p>
+      <span class="card-arrow">Ver →</span>
     </div>
-    <div class="card" (click)="irA('/worker')">
+    <div class="card c2" (click)="irA('/worker')">
       <div class="card-icon">👷</div>
       <h3>Trabajadores</h3>
       <p>Administra tu equipo de trabajo</p>
+      <span class="card-arrow">Ver →</span>
     </div>
-    <div class="card" (click)="irA('/reportes')">
+    <div class="card c3" (click)="irA('/reportes')">
       <div class="card-icon">📊</div>
       <h3>Reportes</h3>
       <p>Visualiza el rendimiento</p>
+      <span class="card-arrow">Ver →</span>
     </div>
-    <div class="card" (click)="irA('/configuracion')">
+    <div class="card c4" (click)="irA('/configuracion')">
       <div class="card-icon">⚙️</div>
       <h3>Configuración</h3>
       <p>Ajusta tu cuenta y preferencias</p>
+      <span class="card-arrow">Ver →</span>
     </div>
   </div>
 
@@ -45,4 +75,3 @@
   </div>
 
 </div>
-

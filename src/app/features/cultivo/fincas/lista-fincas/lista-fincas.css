@@ -2,7 +2,7 @@
   padding: 2rem;
   max-width: 9000px;
   margin: 0 auto;
-  min-height: 100vh;        /* ← esto es lo que faltaba */
+  min-height: auto;        /* ← esto es lo que faltaba */
   background-color: #f0f4f8;
 }
 
@@ -234,4 +234,33 @@
 
 .btn-secondary:hover {
   background: #f3f4f6;
+}
+.resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.resumen-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.resumen-num {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2e7d32;
+  line-height: 1.1;
+}
+
+.resumen-lbl {
+  font-size: 0.75rem;
+  color: #888;
 }
