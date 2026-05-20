@@ -11,6 +11,14 @@ import {
 } from '../../../../core/models/cultivo.model';
 import { WeatherWidgetComponent } from '../../../weather/weather-widget/weather-widget.component';
 
+interface TimelineItem {
+  fecha: string;
+  tipo: 'actividad' | 'fumigacion' | 'cosecha';
+  titulo: string;
+  detalle: string;
+  extra?: string;
+}
+
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
@@ -29,6 +37,14 @@ export class DetalleSiembraComponent implements OnInit {
   mostrarConfirmacion = false;
   textoConfirmacion = '';
   eliminando = false;
+
+  timelineCompleto: TimelineItem[] = [];
+  filtroActivo: 'todo' | 'actividad' | 'fumigacion' | 'cosecha' = 'todo';
+
+  get timelineFiltrado(): TimelineItem[] {
+    if (this.filtroActivo === 'todo') return this.timelineCompleto;
+    return this.timelineCompleto.filter(i => i.tipo === this.filtroActivo);
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -53,18 +69,76 @@ export class DetalleSiembraComponent implements OnInit {
   }
 
   cargarDatos(siembraId: number): void {
+    let cargados = 0;
+    const verificar = () => {
+      cargados++;
+      if (cargados === 3) {
+        this.construirTimeline();
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    };
+
     this.cultivoService.listarActividades(siembraId).subscribe({
-      next: (a) => { this.actividades = a; this.cdr.detectChanges(); },
+      next: (a) => { this.actividades = a; verificar(); },
+      error: () => verificar(),
     });
     this.cultivoService.listarFumigaciones(siembraId).subscribe({
-      next: (f) => { this.fumigaciones = f; this.cdr.detectChanges(); },
+      next: (f) => { this.fumigaciones = f; verificar(); },
+      error: () => verificar(),
     });
     this.cultivoService.listarCosechas(siembraId).subscribe({
-      next: (c) => { this.cosechas = c; this.cargando = false; this.cdr.detectChanges(); },
+      next: (c) => { this.cosechas = c; verificar(); },
+      error: () => verificar(),
     });
     this.cultivoService.totalKgCosechado(siembraId).subscribe({
       next: (t) => { this.totalKg = t || 0; this.cdr.detectChanges(); },
     });
+  }
+
+  private construirTimeline(): void {
+    const items: TimelineItem[] = [];
+
+    this.actividades.forEach(a => items.push({
+      fecha: a.fecha,
+      tipo: 'actividad',
+      titulo: a.tipo,
+      detalle: a.descripcion,
+    }));
+
+    this.fumigaciones.forEach(f => items.push({
+      fecha: f.fecha,
+      tipo: 'fumigacion',
+      titulo: f.producto,
+      detalle: `${f.dosis} ${f.unidadMedida} · ${f.areaAplicada} ha`,
+      extra: f.observaciones,
+    }));
+
+    this.cosechas.forEach(c => items.push({
+      fecha: c.fecha,
+      tipo: 'cosecha',
+      titulo: `${c.cantidadKg} kg`,
+      detalle: `Calidad: ${c.calidad}`,
+      extra: c.observaciones,
+    }));
+
+    // Ordenar por fecha descendente (más reciente primero)
+    this.timelineCompleto = items.sort((a, b) =>
+      new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+    );
+  }
+
+  getIcono(tipo: string): string {
+    switch (tipo) {
+      case 'actividad':  return '📋';
+      case 'fumigacion': return '💨';
+      case 'cosecha':    return '⚖️';
+      default: return '•';
+    }
+  }
+
+  setFiltro(filtro: 'todo' | 'actividad' | 'fumigacion' | 'cosecha'): void {
+    this.filtroActivo = filtro;
   }
 
   iniciarEliminacion(): void {
@@ -79,7 +153,6 @@ export class DetalleSiembraComponent implements OnInit {
 
   confirmarEliminacion(): void {
     if (this.textoConfirmacion !== 'confirmar' || !this.siembra) return;
-
     this.eliminando = true;
     this.cultivoService.eliminarSiembra(this.siembra.id!).subscribe({
       next: () => {
@@ -97,8 +170,7 @@ export class DetalleSiembraComponent implements OnInit {
   getDiasTranscurridos(): number {
     if (!this.siembra?.fechaSiembra) return 0;
     const inicio = new Date(this.siembra.fechaSiembra);
-    const hoy = new Date();
-    return Math.floor((hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.floor((new Date().getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24));
   }
 
   getUltimaActividad(): string {

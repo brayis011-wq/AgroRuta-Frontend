@@ -6,7 +6,6 @@
 
   <div *ngIf="!cargando && siembra">
 
-    <!-- Header -->
     <div class="siembra-header">
       <div>
         <h2>🌱 Siembra de Uchuva</h2>
@@ -18,24 +17,12 @@
       </div>
     </div>
 
-    <!-- Alerta -->
     <div class="alerta">{{ getAlerta() }}</div>
 
-    <!-- Clima + Resumen mitad y mitad -->
     <div style="display: flex; gap: 1rem; align-items: stretch; margin-bottom: 1.5rem;">
-
-      <!-- Widget del clima -->
-      <div style="
-        flex: 1 1 50%;
-        overflow: hidden;
-        display: flex;
-        align-items: stretch;
-        min-height: 160px;
-      ">
+      <div style="flex: 1 1 50%; overflow: hidden; display: flex; align-items: stretch; min-height: 160px;">
         <app-weather-widget city="bogota" style="width: 100%; display: block;" />
       </div>
-
-      <!-- Resumen -->
       <div style="flex: 1 1 50%; display: flex; flex-direction: column; gap: 1rem; justify-content: center;">
         <div class="resumen-card">
           <div class="resumen-icon">💨</div>
@@ -62,10 +49,8 @@
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- Acciones -->
     <div class="acciones">
       <button class="btn-accion" (click)="registrarActividad()">
         <span>📋</span>
@@ -84,69 +69,55 @@
       </button>
     </div>
 
-    <!-- Timeline general -->
-    <div class="seccion" *ngIf="actividades.length > 0 || fumigaciones.length > 0 || cosechas.length > 0">
-      <h3>Historial del cultivo</h3>
+    <!-- Timeline unificado -->
+    <div class="seccion" *ngIf="timelineCompleto.length > 0">
+      <div class="timeline-header">
+        <h3>Historial del cultivo</h3>
+        <div class="filtros">
+          <button class="filtro-btn" [class.activo]="filtroActivo === 'todo'"
+                  (click)="setFiltro('todo')">Todo</button>
+          <button class="filtro-btn actividad" [class.activo]="filtroActivo === 'actividad'"
+                  (click)="setFiltro('actividad')">📋 Actividades</button>
+          <button class="filtro-btn fumigacion" [class.activo]="filtroActivo === 'fumigacion'"
+                  (click)="setFiltro('fumigacion')">💨 Fumigaciones</button>
+          <button class="filtro-btn cosecha" [class.activo]="filtroActivo === 'cosecha'"
+                  (click)="setFiltro('cosecha')">⚖️ Cosechas</button>
+        </div>
+      </div>
+
+      <div class="timeline-count">
+        {{ timelineFiltrado.length }} registro{{ timelineFiltrado.length !== 1 ? 's' : '' }}
+      </div>
+
       <div class="timeline">
-
-        <!-- Actividades -->
-        <div class="timeline-grupo" *ngIf="actividades.length > 0">
-          <div class="timeline-grupo-titulo">📋 Actividades</div>
-          <div class="timeline-item" *ngFor="let actividad of actividades; let last = last">
-            <div class="timeline-left">
-              <div class="timeline-dot verde"></div>
-              <div class="timeline-line" *ngIf="!last"></div>
-            </div>
-            <div class="timeline-card">
-              <div class="timeline-card-header">
-                <span class="item-tipo">{{ actividad.tipo }}</span>
-                <span class="item-fecha">{{ actividad.fecha }}</span>
+        <div class="timeline-item" *ngFor="let item of timelineFiltrado; let last = last">
+          <div class="timeline-left">
+            <div class="timeline-dot" [ngClass]="item.tipo"></div>
+            <div class="timeline-line" *ngIf="!last"></div>
+          </div>
+          <div class="timeline-card" [ngClass]="item.tipo">
+            <div class="timeline-card-header">
+              <div class="timeline-titulo">
+                <span class="timeline-icono">{{ getIcono(item.tipo) }}</span>
+                <span class="item-tipo" [ngClass]="item.tipo">{{ item.titulo }}</span>
               </div>
-              <p class="timeline-desc">{{ actividad.descripcion }}</p>
+              <span class="item-fecha">{{ item.fecha }}</span>
             </div>
+            <p class="timeline-desc">{{ item.detalle }}</p>
+            <p class="timeline-extra" *ngIf="item.extra">{{ item.extra }}</p>
           </div>
         </div>
+      </div>
 
-        <!-- Fumigaciones -->
-        <div class="timeline-grupo" *ngIf="fumigaciones.length > 0">
-          <div class="timeline-grupo-titulo">💨 Fumigaciones</div>
-          <div class="timeline-item" *ngFor="let fumigacion of fumigaciones; let last = last">
-            <div class="timeline-left">
-              <div class="timeline-dot azul"></div>
-              <div class="timeline-line" *ngIf="!last"></div>
-            </div>
-            <div class="timeline-card">
-              <div class="timeline-card-header">
-                <span class="item-tipo azul">{{ fumigacion.producto }}</span>
-                <span class="item-fecha">{{ fumigacion.fecha }}</span>
-              </div>
-              <p class="timeline-desc">{{ fumigacion.dosis }} {{ fumigacion.unidadMedida }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Cosechas -->
-        <div class="timeline-grupo" *ngIf="cosechas.length > 0">
-          <div class="timeline-grupo-titulo">⚖️ Cosechas</div>
-          <div class="timeline-item" *ngFor="let cosecha of cosechas; let last = last">
-            <div class="timeline-left">
-              <div class="timeline-dot naranja"></div>
-              <div class="timeline-line" *ngIf="!last"></div>
-            </div>
-            <div class="timeline-card">
-              <div class="timeline-card-header">
-                <span class="item-tipo naranja">{{ cosecha.calidad }}</span>
-                <span class="item-fecha">{{ cosecha.fecha }}</span>
-              </div>
-              <p class="timeline-desc">{{ cosecha.cantidadKg }} kg cosechados</p>
-            </div>
-          </div>
-        </div>
-
+      <div class="timeline-vacio" *ngIf="timelineFiltrado.length === 0">
+        No hay registros de este tipo aún.
       </div>
     </div>
 
-    <!-- Zona de peligro -->
+    <div class="seccion empty-timeline" *ngIf="timelineCompleto.length === 0">
+      <p>📭 Aún no hay registros. Usa los botones de arriba para comenzar.</p>
+    </div>
+
     <div class="danger-zone">
       <div class="danger-zone-info">
         <strong>Eliminar siembra</strong>
@@ -160,19 +131,13 @@
   </div>
 </div>
 
-<!-- Panel confirmación eliminar siembra -->
 <div class="overlay" *ngIf="mostrarConfirmacion" (click)="cancelarEliminacion()">
   <div class="confirm-panel" (click)="$event.stopPropagation()">
     <h3>⚠️ Eliminar siembra</h3>
     <p>Estás a punto de eliminar la siembra de <strong>{{ siembra?.variedad }}</strong>.</p>
-    <p>Se eliminarán todas las actividades, fumigaciones y cosechas asociadas. Escribe <strong>confirmar</strong> para continuar:</p>
-
-    <input
-      type="text"
-      [(ngModel)]="textoConfirmacion"
-      placeholder="Escribe confirmar"
-      class="input-confirmacion" />
-
+    <p>Se eliminarán todas las actividades, fumigaciones y cosechas. Escribe <strong>confirmar</strong> para continuar:</p>
+    <input type="text" [(ngModel)]="textoConfirmacion"
+           placeholder="Escribe confirmar" class="input-confirmacion" />
     <div class="confirm-actions">
       <button class="btn-secondary" (click)="cancelarEliminacion()">Cancelar</button>
       <button class="btn-danger"
