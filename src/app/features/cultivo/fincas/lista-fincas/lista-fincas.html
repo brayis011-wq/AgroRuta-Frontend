@@ -10,62 +10,98 @@
   <div class="loading" *ngIf="cargando">Cargando fincas...</div>
   <div class="error" *ngIf="error">{{ error }}</div>
 
+  <!-- Mapa siempre en DOM -->
+  <div class="mapa-wrapper" [style.display]="cargando ? 'none' : 'block'">
+    <div id="mapa-fincas" class="mapa-fincas"></div>
+    <div class="mapa-footer" *ngIf="!cargando && fincas.length > 0">
+      <span class="mapa-hint">💡 Haz clic en un marcador para ver el entorno y entrar a la finca</span>
+      <span class="mapa-sin-ubicacion" *ngIf="fincasSinUbicacion() > 0">
+        ⚠️ {{ fincasSinUbicacion() }} finca(s) sin ubicación en mapa
+      </span>
+    </div>
+  </div>
+
+  <!-- Resumen -->
+  <div class="resumen-grid" *ngIf="!cargando && fincas.length > 0">
+    <div class="resumen-card">
+      <span class="resumen-num">{{ fincas.length }}</span>
+      <span class="resumen-lbl">Fincas registradas</span>
+    </div>
+    <div class="resumen-card">
+      <span class="resumen-num">{{ totalHectareas() | number:'1.1-1' }}</span>
+      <span class="resumen-lbl">Hectáreas totales</span>
+    </div>
+    <div class="resumen-card">
+      <span class="resumen-num">{{ promedioHectareas() | number:'1.1-1' }}</span>
+      <span class="resumen-lbl">Promedio por finca</span>
+    </div>
+  </div>
+
+  <!-- Lista -->
   <div class="empty" *ngIf="!cargando && fincas.length === 0">
     <p>No tienes fincas registradas aún.</p>
     <button class="btn-primary" (click)="nuevaFinca()">Registrar primera finca</button>
   </div>
 
   <div class="grid" *ngIf="!cargando && fincas.length > 0">
-    <div class="finca-card" *ngFor="let finca of fincas" (click)="entrarFinca(finca.id!)">
+    <div
+      class="finca-card"
+      *ngFor="let finca of fincas"
+      [class.finca-card--activa]="fincaResaltada === finca.id"
+      (click)="entrarFinca(finca.id!)"
+      (mouseenter)="resaltarFinca(finca)"
+      (mouseleave)="quitarResaltado()">
+
       <div class="finca-icon">🏡</div>
+
       <div class="finca-info">
         <h3>{{ finca.nombre }}</h3>
         <p>📍 {{ finca.ubicacion }}</p>
         <p>📐 {{ finca.hectareas }} hectáreas</p>
+        <span class="sin-ubicacion-badge" *ngIf="!finca.centroideLat">Sin ubicación en mapa</span>
       </div>
-      <button class="btn-eliminar"
-              (click)="iniciarEliminacion($event, finca)"
-              [disabled]="eliminandoId === finca.id"
-              title="Eliminar finca">
-        🗑️
-      </button>
+
+      <div class="finca-actions">
+        <!-- Botón zoom al mapa (solo si tiene ubicación) -->
+        <button
+          *ngIf="finca.centroideLat"
+          class="btn-zoom"
+          title="Ver en mapa"
+          (click)="$event.stopPropagation(); centrarEnFinca(finca)">
+          🗺️
+        </button>
+
+        <button
+          class="btn-eliminar"
+          (click)="iniciarEliminacion($event, finca)"
+          [disabled]="eliminandoId === finca.id"
+          title="Eliminar finca">
+          🗑️
+        </button>
+      </div>
+
       <div class="finca-arrow">→</div>
     </div>
   </div>
 </div>
-<!-- Resumen general -->
-<div class="resumen-grid" *ngIf="!cargando && fincas.length > 0">
-  <div class="resumen-card">
-    <span class="resumen-num">{{ fincas.length }}</span>
-    <span class="resumen-lbl">Fincas registradas</span>
-  </div>
-  <div class="resumen-card">
-    <span class="resumen-num">{{ totalHectareas() | number:'1.1-1' }}</span>
-    <span class="resumen-lbl">Hectáreas totales</span>
-  </div>
-  <div class="resumen-card">
-    <span class="resumen-num">{{ promedioHectareas() | number:'1.1-1' }}</span>
-    <span class="resumen-lbl">Promedio por finca</span>
-  </div>
-</div>
+
 <!-- Panel de confirmación -->
 <div class="overlay" *ngIf="fincaAEliminar" (click)="cancelarEliminacion()">
   <div class="confirm-panel" (click)="$event.stopPropagation()">
     <h3>⚠️ Eliminar finca</h3>
     <p>Estás a punto de eliminar <strong>{{ fincaAEliminar.nombre }}</strong> y todos sus lotes.</p>
     <p>Esta acción no se puede deshacer. Escribe <strong>confirmar</strong> para continuar:</p>
-
     <input
       type="text"
       [(ngModel)]="textoConfirmacion"
       placeholder="Escribe confirmar"
       class="input-confirmacion" />
-
     <div class="confirm-actions">
       <button class="btn-secondary" (click)="cancelarEliminacion()">Cancelar</button>
-      <button class="btn-danger"
-              [disabled]="textoConfirmacion !== 'confirmar' || eliminandoId !== null"
-              (click)="confirmarEliminacion()">
+      <button
+        class="btn-danger"
+        [disabled]="textoConfirmacion !== 'confirmar' || eliminandoId !== null"
+        (click)="confirmarEliminacion()">
         {{ eliminandoId !== null ? 'Eliminando...' : 'Eliminar finca' }}
       </button>
     </div>

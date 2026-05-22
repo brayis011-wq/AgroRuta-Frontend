@@ -29,6 +29,15 @@ export class RegistrarActividad implements OnInit {
     'PODA', 'TUTOREO', 'DESHIERBE', 'RIEGO', 'REVISION', 'OTRO'
   ];
 
+  tipoIconos: Record<string, string> = {
+    PODA:     '✂️',
+    TUTOREO:  '🪜',
+    DESHIERBE:'🌿',
+    RIEGO:    '💧',
+    REVISION: '🔍',
+    OTRO:     '📝'
+  };
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,

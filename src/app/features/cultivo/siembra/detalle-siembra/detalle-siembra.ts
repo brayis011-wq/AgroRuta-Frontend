@@ -38,6 +38,9 @@ export class DetalleSiembraComponent implements OnInit {
   textoConfirmacion = '';
   eliminando = false;
 
+  fincaLat: number | null = null;
+  fincaLng: number | null = null;
+nombreLote: string | null = null;
   timelineCompleto: TimelineItem[] = [];
   filtroActivo: 'todo' | 'actividad' | 'fumigacion' | 'cosecha' = 'todo';
 
@@ -59,6 +62,16 @@ export class DetalleSiembraComponent implements OnInit {
       next: (siembra) => {
         this.siembra = siembra;
         this.cargarDatos(id);
+        // Cargar coordenadas reales del lote/finca
+        this.cultivoService.buscarLote(siembra.loteId).subscribe({
+          next: (lote) => {
+            if (lote.centroideLat && lote.centroideLng) {
+              this.fincaLat = lote.centroideLat;
+              this.fincaLng = lote.centroideLng;
+              this.cdr.detectChanges();
+            }
+          }
+        });
       },
       error: () => {
         this.error = 'Error al cargar la siembra.';
@@ -122,7 +135,6 @@ export class DetalleSiembraComponent implements OnInit {
       extra: c.observaciones,
     }));
 
-    // Ordenar por fecha descendente (más reciente primero)
     this.timelineCompleto = items.sort((a, b) =>
       new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
     );

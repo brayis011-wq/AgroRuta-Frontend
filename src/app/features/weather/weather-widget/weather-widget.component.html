@@ -22,7 +22,7 @@
     <div class="weather-widget__header">
       <div class="weather-widget__location">
         <span class="weather-widget__icon">📍</span>
-        <span>{{ w.city }}, {{ w.country }}</span>
+        <span>{{ displayCity() }}, {{ w.country }}</span>  <!-- 👈 solo este cambio -->
       </div>
       <img [src]="w.iconUrl" [alt]="w.description" class="weather-widget__img" />
     </div>
