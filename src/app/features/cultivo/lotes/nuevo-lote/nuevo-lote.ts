@@ -140,7 +140,8 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.map.addControl(drawControl);
 
-    this.map.on((L as any).Draw.Event.CREATED, (event: any) => {
+    // ✅ Usando strings en lugar de L.Draw.Event
+    this.map.on('draw:created', (event: any) => {
       this.drawnItems.clearLayers();
       const layer = event.layer;
       this.drawnItems.addLayer(layer);
@@ -153,7 +154,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       this.error = '';
     });
 
-    this.map.on((L as any).Draw.Event.DELETED, () => {
+    this.map.on('draw:deleted', () => {
       this.coordenadas   = null;
       this.areaCalculada = null;
       this.centroideLat  = null;
