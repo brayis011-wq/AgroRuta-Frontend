@@ -9,8 +9,7 @@ import { AgriculturalInput, AgriculturalInputRequest } from '../models/Agricultu
 @Injectable({ providedIn: 'root' })
 export class AgriculturalInputService {
   private readonly http    = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiUrl}/agricultural-inputs`;
-
+private readonly baseUrl = `${environment.apiUrl}/api/agricultural-inputs`;
   getAll(): Observable<AgriculturalInput[]> {
     return this.http.get<AgriculturalInput[]>(this.baseUrl);
   }
