@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Perfil, UpdateProfileRequest, ChangePasswordRequest } from '../models/profile.model';
+import { environment } from '../../../environments/environment';  // 👈 agrega esto
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
-private readonly base = `${environment.apiUrl}/api/configuration`;
+  private readonly base = `${environment.apiUrl}/api/configuration`;
   constructor(private http: HttpClient) {}
 
   getPerfil(): Observable<Perfil> {
