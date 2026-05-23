@@ -5,8 +5,7 @@ import { Perfil, UpdateProfileRequest, ChangePasswordRequest } from '../models/p
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
-  private readonly base = 'http://localhost:8080/api/configuration';
-
+private readonly base = `${environment.apiUrl}/api/configuration`;
   constructor(private http: HttpClient) {}
 
   getPerfil(): Observable<Perfil> {
