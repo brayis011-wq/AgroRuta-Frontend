@@ -1,0 +1,81 @@
+<div class="report-container">
+  <div class="report-header">
+    <div>
+      <h2>Reporte de nómina</h2>
+      <span class="generated-at" *ngIf="report">
+        Generado: {{ report.generatedAt | date:'d MMM yyyy, h:mm a' }}
+      </span>
+    </div>
+    <button class="btn-download" (click)="downloadPdf()" [disabled]="downloading || loading">
+      {{ downloading ? 'Descargando...' : '⬇ Descargar PDF' }}
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="estado">Cargando datos...</div>
+  <div *ngIf="error" class="estado error">Error al cargar los datos.</div>
+
+  <ng-container *ngIf="report && !loading">
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <span class="kpi-label">Total acumulado</span>
+        <span class="kpi-val">${{ report.totalAccumulated | number:'1.0-0' }}</span>
+        <span class="kpi-sub">en todos los trabajadores</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Trabajadores</span>
+        <span class="kpi-val">{{ report.workerDetails.length }}</span>
+        <span class="kpi-sub">con registros activos</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Total jornales</span>
+        <span class="kpi-val">{{ totalJornales }}</span>
+        <span class="kpi-sub">registrados en el período</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Promedio por trabajador</span>
+        <span class="kpi-val">${{ promedioPago | number:'1.0-0' }}</span>
+        <span class="kpi-sub">pago promedio</span>
+      </div>
+    </div>
+
+    <!-- Barras por trabajador -->
+    <div class="section-card">
+      <div class="section-title">Pago por trabajador</div>
+      <div class="bar-row" *ngFor="let w of report.workerDetails">
+        <span class="bar-name" [title]="w.workerName">{{ w.workerName }}</span>
+        <div class="bar-track">
+          <div class="bar-fill" [style.width.%]="(w.totalPaid / maxPago) * 100"></div>
+        </div>
+        <span class="bar-amount">${{ w.totalPaid | number:'1.0-0' }}</span>
+      </div>
+    </div>
+
+    <!-- Tabla detalle -->
+    <div class="section-card">
+      <div class="section-title">Detalle por trabajador</div>
+      <table class="report-table">
+        <thead>
+        <tr>
+          <th>Trabajador</th>
+          <th>Período</th>
+          <th>Jornales</th>
+          <th>Pagos</th>
+          <th>Total pagado</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let d of report.workerDetails">
+          <td class="worker-name">{{ d.workerName }}</td>
+          <td>{{ d.periodoInicio | date:'d MMM' }} — {{ d.periodoFin | date:'d MMM yyyy' }}</td>
+          <td>{{ d.totalJornales }}</td>
+          <td>{{ d.totalPagos }}</td>
+          <td class="total-paid">${{ d.totalPaid | number:'1.0-0' }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </ng-container>
+</div>

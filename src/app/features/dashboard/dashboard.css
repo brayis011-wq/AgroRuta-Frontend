@@ -1,0 +1,245 @@
+.dashboard-page {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page-title { color: #2e7d32; font-size: 1.5rem; font-weight: 700; }
+.page-subtitle { color: #666; font-size: 0.875rem; margin-top: 4px; }
+
+.date-chip {
+  background: white;
+  border: 1px solid #c8e6c9;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  color: #666;
+  white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.welcome-banner {
+  background-color: #2e7d32;
+  border-radius: 12px;
+  padding: 1.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.welcome-text h3 { font-size: 1.25rem; color: white; margin-bottom: 0.25rem; }
+.welcome-text p { font-size: 0.875rem; color: #a5d6a7; }
+.welcome-text strong { color: #c8e6c9; font-weight: 600; }
+.welcome-illustration { font-size: 48px; line-height: 1; opacity: 0.85; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.card-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+.card h3 { color: #2e7d32; margin: 0 0 0.5rem; }
+.card p { color: #888; font-size: 0.875rem; margin: 0; }
+.weather-bar {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.weather-bar app-weather-widget {
+  display: block;
+  width: 100%;
+}
+.dashboard-page {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: #f0f4f8;
+  min-height: 100vh;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page-title { color: #2e7d32; font-size: 1.5rem; font-weight: 700; }
+.page-subtitle { color: #666; font-size: 0.875rem; margin-top: 4px; }
+
+.date-chip {
+  background: white;
+  border: 1px solid #c8e6c9;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  color: #666;
+  white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+/* Welcome banner */
+.welcome-banner {
+  background-color: #2e7d32;
+  border-radius: 12px;
+  padding: 1.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-banner::before {
+  content: '';
+  position: absolute;
+  right: -20px;
+  top: -20px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+
+.welcome-banner::after {
+  content: '';
+  position: absolute;
+  right: 60px;
+  bottom: -30px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+
+.welcome-text h3 { font-size: 1.25rem; color: white; margin-bottom: 0.25rem; }
+.welcome-text p { font-size: 0.875rem; color: #a5d6a7; }
+.welcome-text strong { color: #c8e6c9; font-weight: 600; }
+
+.welcome-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-illustration { font-size: 48px; line-height: 1; opacity: 0.85; }
+
+.welcome-tag {
+  background: rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  color: #c8e6c9;
+}
+
+/* Stats */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.stat-icon.green { background: #e8f5e9; }
+.stat-icon.blue  { background: #e3f2fd; }
+.stat-icon.amber { background: #fff8e1; }
+
+.stat-num { font-size: 1.4rem; font-weight: 700; color: #1a1a1a; line-height: 1.1; display: block; }
+.stat-lbl { font-size: 0.72rem; color: #999; margin-top: 2px; display: block; }
+
+/* Nav cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-top: 3px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.card.c1 { border-top-color: #2e7d32; }
+.card.c2 { border-top-color: #1565c0; }
+.card.c3 { border-top-color: #f57c00; }
+.card.c4 { border-top-color: #6a1b9a; }
+
+.card-icon { font-size: 1.75rem; margin-bottom: 0.25rem; }
+.card h3 { color: #1a1a1a; font-size: 0.875rem; font-weight: 600; margin: 0; }
+.card p  { color: #999; font-size: 0.78rem; margin: 0; line-height: 1.4; }
+
+.card-arrow {
+  font-size: 0.78rem;
+  color: #ccc;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+/* Weather */
+.weather-bar { width: 100%; }
+.weather-bar app-weather-widget { display: block; width: 100%; }

@@ -1,0 +1,97 @@
+<div class="report-container">
+  <div class="report-header">
+    <div>
+      <h2>Reporte de cultivos</h2>
+      <span class="generated-at" *ngIf="report">
+        Generado: {{ report.generatedAt | date:'d MMM yyyy, h:mm a' }}
+      </span>
+    </div>
+    <button class="btn-download" (click)="downloadPdf()" [disabled]="downloading || loading">
+      {{ downloading ? 'Descargando...' : '⬇ Descargar PDF' }}
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="estado">Cargando datos...</div>
+  <div *ngIf="error" class="estado error">Error al cargar los datos.</div>
+
+  <ng-container *ngIf="report && !loading">
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <span class="kpi-label">Total cultivos</span>
+        <span class="kpi-val">{{ report.cropDetails.length }}</span>
+        <span class="kpi-sub">registrados</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Cultivos activos</span>
+        <span class="kpi-val">{{ cultivosActivos }}</span>
+        <span class="kpi-sub">en crecimiento</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Kg cosechados</span>
+        <span class="kpi-val">{{ totalKg | number:'1.0-0' }}</span>
+        <span class="kpi-sub">kg totales</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Promedio días</span>
+        <span class="kpi-val">{{ promedioDias }}</span>
+        <span class="kpi-sub">desde siembra</span>
+      </div>
+    </div>
+
+    <!-- Barras kg por variedad -->
+    <div class="section-card">
+      <div class="section-title">Kg cosechados por variedad</div>
+      <div class="bar-row" *ngFor="let c of report.cropDetails">
+        <span class="bar-name" [title]="c.variedad">{{ c.variedad }}</span>
+        <div class="bar-track">
+          <div class="bar-fill"
+               [style.width.%]="maxKg > 0 ? (c.totalKgCosechado / maxKg) * 100 : 0"
+               [class.bar-fill-empty]="c.totalKgCosechado === 0">
+          </div>
+        </div>
+        <span class="bar-amount">
+          {{ c.totalKgCosechado > 0 ? (c.totalKgCosechado | number:'1.0-0') + ' kg' : '—' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Tabla detalle -->
+    <div class="section-card">
+      <div class="section-title">Detalle de cultivos</div>
+      <table class="report-table">
+        <thead>
+        <tr>
+          <th>Variedad</th>
+          <th>Estado</th>
+          <th>Fecha siembra</th>
+          <th>Días</th>
+          <th>Cosechas</th>
+          <th>Kg totales</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let c of report.cropDetails">
+          <td class="worker-name">{{ c.variedad }}</td>
+          <td>
+              <span class="badge" [ngClass]="{
+                'badge-activo': c.estado === 'ACTIVO',
+                'badge-cosechado': c.estado === 'COSECHADO',
+                'badge-inactivo': c.estado !== 'ACTIVO' && c.estado !== 'COSECHADO'
+              }">{{ c.estado }}</span>
+          </td>
+          <td>{{ c.fechaSiembra | date:'d MMM yyyy' }}</td>
+          <td>{{ c.diasDesdeSiembra }}</td>
+          <td>{{ c.totalCosechas }}</td>
+          <td class="total-paid">
+            <span *ngIf="c.totalKgCosechado > 0">{{ c.totalKgCosechado | number:'1.0-0' }} kg</span>
+            <span *ngIf="c.totalKgCosechado === 0" class="sin-cosecha">Sin cosecha</span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </ng-container>
+</div>

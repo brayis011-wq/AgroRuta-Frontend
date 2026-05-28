@@ -1,0 +1,359 @@
+/* ─── Layout base ─── */
+.container {
+  padding: 2rem;
+  max-width: 9000px;
+  margin: 0 auto;
+  background-color: #f0f4f8;
+}
+
+/* ─── Header ─── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header h2 {
+  font-size: 1.8rem;
+  color: #2e7d32;
+  margin: 0;
+}
+
+.subtitle {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0;
+}
+
+/* ─── Botones globales ─── */
+.btn-primary {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.btn-primary:hover { background-color: #1b5e20; }
+
+.btn-secondary {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-secondary:hover { background: #f3f4f6; }
+
+.btn-danger {
+  background: #b91c1c;
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-danger:hover:not(:disabled) { background: #991b1b; }
+.btn-danger:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ─── Mapa ─── */
+.mapa-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.mapa-fincas {
+  width: 100%;
+  height: 420px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  z-index: 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.mapa-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.mapa-hint {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.mapa-sin-ubicacion {
+  font-size: 0.8rem;
+  color: #b45309;
+}
+
+/* ─── Popup personalizado del mapa ─── */
+:host ::ng-deep .leaflet-popup-content-wrapper {
+  border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+  min-width: 200px;
+}
+
+:host ::ng-deep .popup-finca {
+  font-family: inherit;
+}
+
+:host ::ng-deep .popup-finca-header {
+  background: #2e7d32;
+  color: white;
+  padding: 0.6rem 0.9rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+:host ::ng-deep .popup-finca-body {
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
+:host ::ng-deep .popup-finca-btn {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.45rem 0;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+:host ::ng-deep .popup-finca-btn:hover { background: #1b5e20; }
+
+/* ─── Resumen ─── */
+.resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.resumen-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.resumen-num {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2e7d32;
+  line-height: 1.1;
+}
+
+.resumen-lbl {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* ─── Lista de fincas ─── */
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.finca-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  border: 2px solid transparent;
+}
+
+.finca-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+/* Resaltado cuando el mouse está sobre la tarjeta */
+.finca-card--activa {
+  border-color: #2e7d32;
+  box-shadow: 0 4px 16px rgba(46,125,50,0.18);
+}
+
+.finca-icon { font-size: 2.5rem; }
+
+.finca-info { flex: 1; }
+
+.finca-info h3 {
+  margin: 0 0 0.25rem;
+  color: #2e7d32;
+  font-size: 1.1rem;
+}
+
+.finca-info p {
+  margin: 0.15rem 0;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.sin-ubicacion-badge {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  margin-top: 0.25rem;
+}
+
+/* Botones de acción en la tarjeta */
+.finca-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  /* visibles solo en hover */
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.finca-card:hover .finca-actions { opacity: 1; }
+
+.btn-zoom,
+.btn-eliminar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 5px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+  line-height: 1;
+}
+
+.btn-zoom:hover        { background: #dcfce7; }
+.btn-eliminar:hover    { background: #fee2e2; }
+.btn-eliminar:disabled { cursor: not-allowed; opacity: 0.3; }
+
+.finca-arrow {
+  font-size: 1.5rem;
+  color: #aaa;
+  transition: color 0.2s;
+}
+.finca-card:hover .finca-arrow { color: #2e7d32; }
+
+/* ─── Estados vacío / carga / error ─── */
+.loading {
+  text-align: center;
+  color: #888;
+  padding: 2rem;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem;
+  color: #888;
+}
+.empty p { margin-bottom: 1rem; }
+
+/* ─── Modal de confirmación ─── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-panel h3 {
+  margin: 0 0 1rem;
+  color: #b91c1c;
+}
+
+.confirm-panel p {
+  color: #444;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.input-confirmacion {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  margin: 0.5rem 0 1.25rem;
+  box-sizing: border-box;
+}
+
+.input-confirmacion:focus {
+  outline: none;
+  border-color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+/* ─── Marcador personalizado (Leaflet DivIcon) ─── */
+:host ::ng-deep .marcador-finca {
+  font-size: 1.8rem;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+  transition: transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:host ::ng-deep .marcador-finca:hover    { transform: scale(1.25); }
+:host ::ng-deep .marcador-finca--activo  { transform: scale(1.3); filter: drop-shadow(0 3px 8px rgba(46,125,50,0.6)); }

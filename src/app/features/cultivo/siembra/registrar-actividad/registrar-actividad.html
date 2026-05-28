@@ -1,0 +1,99 @@
+<div class="page-bg">
+  <div class="container">
+
+    <button class="btn-back" (click)="volver()">
+      <span class="btn-back__arrow">←</span>
+      <span>Volver a la siembra</span>
+    </button>
+
+    <div class="form-header">
+      <div class="form-header__icon">🌱</div>
+      <div>
+        <h2>Registrar Actividad</h2>
+        <p>Registra una actividad realizada en el cultivo</p>
+      </div>
+    </div>
+
+    <div class="alert alert--error" *ngIf="error">
+      <span class="alert__icon">⚠️</span>
+      {{ error }}
+    </div>
+    <div class="alert alert--success" *ngIf="exito">
+      <span class="alert__icon">✅</span>
+      {{ exito }}
+    </div>
+
+    <div class="form-card">
+
+      <div class="form-card__accent"></div>
+
+      <form (ngSubmit)="onSubmit()" #actividadForm="ngForm">
+
+        <!-- Tipo de actividad: selector visual -->
+        <div class="field">
+          <label class="field__label">Tipo de actividad</label>
+          <div class="tipo-grid">
+            <button
+              type="button"
+              *ngFor="let tipo of tiposActividad"
+              class="tipo-chip"
+              [class.tipo-chip--active]="form.tipo === tipo"
+              (click)="form.tipo = tipo"
+            >
+              <span class="tipo-chip__icon">{{ tipoIconos[tipo] }}</span>
+              <span class="tipo-chip__label">{{ tipo }}</span>
+            </button>
+          </div>
+          <!-- campo oculto para validación -->
+          <input type="hidden" [(ngModel)]="form.tipo" name="tipo" required />
+        </div>
+
+        <!-- Descripción -->
+        <div class="field">
+          <label class="field__label" for="descripcion">Descripción</label>
+          <div class="field__input-wrap">
+            <textarea
+              id="descripcion"
+              [(ngModel)]="form.descripcion"
+              name="descripcion"
+              placeholder="Describe la actividad realizada..."
+              rows="4"
+              required
+            ></textarea>
+            <div class="field__underline"></div>
+          </div>
+        </div>
+
+        <!-- Fecha -->
+        <div class="field">
+          <label class="field__label" for="fecha">
+            <span>📅</span> Fecha de la actividad
+          </label>
+          <div class="field__input-wrap">
+            <input
+              id="fecha"
+              type="date"
+              [(ngModel)]="form.fecha"
+              name="fecha"
+              required
+            />
+            <div class="field__underline"></div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="cargando || !form.tipo">
+          <span class="btn-submit__text" *ngIf="!cargando">
+            <span>Registrar actividad</span>
+            <span class="btn-submit__arrow">→</span>
+          </span>
+          <span class="btn-submit__loader" *ngIf="cargando">
+            <span class="spinner"></span>
+            Registrando...
+          </span>
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+</div>

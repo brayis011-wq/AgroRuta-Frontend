@@ -1,0 +1,67 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Cargos</h1>
+      <p class="page-subtitle">Define los roles y el valor de jornal por cargo</p>
+    </div>
+    <button class="btn-primary" (click)="abrirNuevo()">＋ Nuevo Cargo</button>
+  </div>
+
+  <div *ngIf="error" class="alerta-error">{{ error }}</div>
+
+  <!-- Modal / Form inline -->
+  <div *ngIf="mostrarForm" class="form-card">
+    <h3 class="form-titulo">{{ modoEdicion ? 'Editar cargo' : 'Nuevo cargo' }}</h3>
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="grid-3">
+        <div class="campo">
+          <label>Nombre *</label>
+          <input formControlName="nombre" type="text" placeholder="Ej: Jornalero" [class.invalido]="invalido('nombre')"/>
+          <span *ngIf="invalido('nombre')" class="error-msg">Requerido</span>
+        </div>
+        <div class="campo">
+          <label>Descripción *</label>
+          <input formControlName="descripcion" type="text" placeholder="Descripción del cargo" [class.invalido]="invalido('descripcion')"/>
+          <span *ngIf="invalido('descripcion')" class="error-msg">Requerido</span>
+        </div>
+        <div class="campo">
+          <label>Valor Jornal ($) *</label>
+          <input formControlName="valorJornal" type="number" min="1" placeholder="0" [class.invalido]="invalido('valorJornal')"/>
+          <span *ngIf="invalido('valorJornal')" class="error-msg">Ingresa un valor válido</span>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button type="button" class="btn-secundario" (click)="mostrarForm = false">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="guardando">{{ guardando ? 'Guardando...' : 'Guardar' }}</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabla -->
+  <div class="tabla-wrap">
+    <table class="tabla">
+      <thead>
+      <tr>
+        <th>Cargo</th><th>Descripción</th><th>Valor Jornal</th><th>Estado</th><th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let c of cargos" class="fila">
+        <td class="negrita">{{ c.nombre }}</td>
+        <td class="texto-suave">{{ c.descripcion }}</td>
+        <td class="valor">${{ c.valorJornal | number }}</td>
+        <td><span class="badge" [ngClass]="c.activo ? 'badge-activo' : 'badge-inactivo'">{{ c.activo ? 'Activo' : 'Inactivo' }}</span></td>
+        <td>
+          <div class="acciones">
+            <button class="btn-accion btn-ver" (click)="abrirEditar(c)" title="Editar">✎</button>
+            <button class="btn-accion btn-desactivar" (click)="desactivar(c)" title="Desactivar">✖</button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="cargos.length === 0">
+        <td colspan="5" class="sin-resultados">No hay cargos registrados</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

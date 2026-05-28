@@ -1,0 +1,152 @@
+<div class="container">
+  <button class="btn-back" (click)="volver()">← Volver al lote</button>
+
+  <div class="loading" *ngIf="cargando">Cargando...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <div *ngIf="!cargando && siembra">
+
+    <div class="siembra-header">
+      <div>
+        <h2>🌱 Siembra de Uchuva</h2>
+        <p>Variedad: <strong>{{ siembra.variedad }}</strong> · {{ siembra.cantidadPlantas }} plantas</p>
+      </div>
+      <div class="dias-badge">
+        <span>{{ getDiasTranscurridos() }}</span>
+        <small>días</small>
+      </div>
+    </div>
+
+    <div class="alerta">{{ getAlerta() }}</div>
+
+    <div style="display: flex; gap: 1rem; align-items: stretch; margin-bottom: 1.5rem;">
+      <div style="flex: 1 1 50%; overflow: hidden; display: flex; align-items: stretch; min-height: 160px;">
+        <app-weather-widget
+          [lat]="fincaLat"
+          [lng]="fincaLng"
+          style="width: 100%; display: block;" />
+      </div>
+      <div style="flex: 1 1 50%; display: flex; flex-direction: column; gap: 1rem; justify-content: center;">
+        <div class="resumen-card">
+          <div class="resumen-icon">💨</div>
+          <div class="resumen-info">
+            <span class="resumen-numero">{{ fumigaciones.length }}</span>
+            <span class="resumen-label">Fumigaciones</span>
+            <small>{{ getUltimaFumigacion() }}</small>
+          </div>
+        </div>
+        <div class="resumen-card">
+          <div class="resumen-icon">📋</div>
+          <div class="resumen-info">
+            <span class="resumen-numero">{{ actividades.length }}</span>
+            <span class="resumen-label">Actividades</span>
+            <small>{{ getUltimaActividad() }}</small>
+          </div>
+        </div>
+        <div class="resumen-card">
+          <div class="resumen-icon">⚖️</div>
+          <div class="resumen-info">
+            <span class="resumen-numero">{{ totalKg }}</span>
+            <span class="resumen-label">Kg cosechados</span>
+            <small>{{ cosechas.length }} cosechas</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button class="btn-accion" (click)="registrarActividad()">
+        <span>📋</span>
+        <strong>Registrar Actividad</strong>
+        <small>Poda, riego, revisión...</small>
+      </button>
+      <button class="btn-accion" (click)="registrarFumigacion()">
+        <span>💨</span>
+        <strong>Registrar Fumigación</strong>
+        <small>Producto, dosis, área</small>
+      </button>
+      <button class="btn-accion" (click)="registrarCosecha()">
+        <span>⚖️</span>
+        <strong>Registrar Cosecha</strong>
+        <small>Kg, calidad</small>
+      </button>
+    </div>
+
+    <div class="seccion" *ngIf="timelineCompleto.length > 0">
+      <div class="timeline-header">
+        <h3>Historial del cultivo</h3>
+        <div class="filtros">
+          <button class="filtro-btn" [class.activo]="filtroActivo === 'todo'"
+                  (click)="setFiltro('todo')">Todo</button>
+          <button class="filtro-btn actividad" [class.activo]="filtroActivo === 'actividad'"
+                  (click)="setFiltro('actividad')">📋 Actividades</button>
+          <button class="filtro-btn fumigacion" [class.activo]="filtroActivo === 'fumigacion'"
+                  (click)="setFiltro('fumigacion')">💨 Fumigaciones</button>
+          <button class="filtro-btn cosecha" [class.activo]="filtroActivo === 'cosecha'"
+                  (click)="setFiltro('cosecha')">⚖️ Cosechas</button>
+        </div>
+      </div>
+
+      <div class="timeline-count">
+        {{ timelineFiltrado.length }} registro{{ timelineFiltrado.length !== 1 ? 's' : '' }}
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item" *ngFor="let item of timelineFiltrado; let last = last">
+          <div class="timeline-left">
+            <div class="timeline-dot" [ngClass]="item.tipo"></div>
+            <div class="timeline-line" *ngIf="!last"></div>
+          </div>
+          <div class="timeline-card" [ngClass]="item.tipo">
+            <div class="timeline-card-header">
+              <div class="timeline-titulo">
+                <span class="timeline-icono">{{ getIcono(item.tipo) }}</span>
+                <span class="item-tipo" [ngClass]="item.tipo">{{ item.titulo }}</span>
+              </div>
+              <span class="item-fecha">{{ item.fecha }}</span>
+            </div>
+            <p class="timeline-desc">{{ item.detalle }}</p>
+            <p class="timeline-extra" *ngIf="item.extra">{{ item.extra }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-vacio" *ngIf="timelineFiltrado.length === 0">
+        No hay registros de este tipo aún.
+      </div>
+    </div>
+
+    <div class="seccion empty-timeline" *ngIf="timelineCompleto.length === 0">
+      <p>📭 Aún no hay registros. Usa los botones de arriba para comenzar.</p>
+    </div>
+
+    <div class="danger-zone">
+      <div class="danger-zone-info">
+        <strong>Eliminar siembra</strong>
+        <p>Se eliminarán todas las actividades, fumigaciones y cosechas asociadas.</p>
+      </div>
+      <button class="btn-eliminar-siembra" (click)="iniciarEliminacion()">
+        🗑️ Eliminar siembra
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="overlay" *ngIf="mostrarConfirmacion" (click)="cancelarEliminacion()">
+  <div class="confirm-panel" (click)="$event.stopPropagation()">
+    <h3>⚠️ Eliminar siembra</h3>
+    <p>Estás a punto de eliminar la siembra de <strong>{{ siembra?.variedad }}</strong>.</p>
+    <p>Se eliminarán todas las actividades, fumigaciones y cosechas. Escribe <strong>confirmar</strong> para continuar:</p>
+    <input type="text" [(ngModel)]="textoConfirmacion"
+           placeholder="Escribe confirmar" class="input-confirmacion" />
+    <div class="confirm-actions">
+      <button class="btn-secondary" (click)="cancelarEliminacion()">Cancelar</button>
+      <button class="btn-danger"
+              [disabled]="textoConfirmacion !== 'confirmar' || eliminando"
+              (click)="confirmarEliminacion()">
+        {{ eliminando ? 'Eliminando...' : 'Eliminar siembra' }}
+      </button>
+    </div>
+  </div>
+</div>

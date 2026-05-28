@@ -1,0 +1,251 @@
+<!-- registrar-fumigacion.html -->
+<div class="page-bg">
+  <div class="container">
+
+    <button class="btn-back" (click)="volver()">
+      <span class="btn-back__arrow">←</span>
+      <span>Volver a la siembra</span>
+    </button>
+
+    <div class="form-header">
+      <div class="form-header__icon">💨</div>
+      <div>
+        <h2>Registrar Fumigación</h2>
+        <p>Registra una fumigación realizada en el cultivo</p>
+      </div>
+    </div>
+
+    <!-- Alertas -->
+    <div class="alert alert--error" *ngIf="error">
+      <span class="alert__icon">⚠️</span>{{ error }}
+    </div>
+    <div class="alert alert--success" *ngIf="exito">
+      <span class="alert__icon">✅</span>{{ exito }}
+    </div>
+
+    <div class="form-card">
+      <div class="form-card__accent"></div>
+
+      <form (ngSubmit)="onSubmit()" #fumigacionForm="ngForm">
+
+        <!-- Fecha -->
+        <div class="field">
+          <label class="field__label" for="fecha">
+            <span>📅</span> Fecha
+          </label>
+          <div class="field__input-wrap">
+            <input id="fecha" type="date"
+                   [(ngModel)]="form.fecha" name="fecha" required />
+          </div>
+        </div>
+
+        <!-- Producto: buscador conectado al API -->
+        <div class="field">
+          <label class="field__label">
+            <span>🧪</span> Producto
+          </label>
+
+          <!-- Buscador (visible si no hay insumo seleccionado) -->
+          <ng-container *ngIf="!insumoSeleccionado()">
+
+            <div class="producto-buscador">
+              <div class="input-search-wrapper">
+                <input
+                  type="text"
+                  [(ngModel)]="busquedaProducto"
+                  name="busquedaProducto"
+                  placeholder="Buscar en catálogo... ej: fungicida, mancozeb"
+                  (input)="onBusquedaChange()"
+                  (blur)="usarProductoManual()"
+                  autocomplete="off"
+                />
+                <span class="search-icon" *ngIf="!cargandoCatalogo()">🔍</span>
+                <span class="spinner search-icon" *ngIf="cargandoCatalogo()"></span>
+              </div>
+
+              <!-- Resultados búsqueda rápida -->
+              <div class="catalogo-lista" *ngIf="mostrarCatalogo()">
+                <div
+                  class="catalogo-item"
+                  *ngFor="let insumo of catalogoFiltrado()"
+                  (mousedown)="seleccionarInsumo(insumo)"
+                >
+                  <div class="catalogo-item-info">
+                    <span class="catalogo-nombre">{{ insumo.nombre }}</span>
+                    <span class="catalogo-dosis">
+                      Dosis sugerida: {{ insumo.dosisSugerida }} {{ insumo.unidadSugerida }}
+                    </span>
+                  </div>
+                  <span class="badge" [ngClass]="getTipoBadgeClass(insumo.tipo)">
+                    {{ insumo.tipoDisplay }}
+                  </span>
+                </div>
+
+                <div class="catalogo-empty"
+                     *ngIf="catalogoFiltrado().length === 0 && !cargandoCatalogo()">
+                  <span>Sin resultados. Se registrará como producto manual.</span>
+                </div>
+              </div>
+
+              <small class="campo-hint">
+                Busca en el catálogo o escribe el nombre manualmente
+              </small>
+
+              <!-- ✅ Botón ver catálogo completo -->
+              <button type="button" class="btn-catalogo" (click)="verCatalogoCompleto()">
+                <span *ngIf="!cargandoCompleto()">
+                  {{ mostrarCatalogoCompleto() ? '✖ Cerrar catálogo' : '📋 Ver catálogo completo' }}
+                </span>
+                <span class="catalogo-cargando" *ngIf="cargandoCompleto()">
+                  <span class="spinner"></span> Cargando...
+                </span>
+              </button>
+
+              <!-- ✅ Catálogo completo agrupado -->
+              <div class="catalogo-completo" *ngIf="mostrarCatalogoCompleto()">
+
+                <!-- Filtro interno -->
+                <div class="catalogo-completo__filtro">
+                  <input
+                    type="text"
+                    class="catalogo-filtro"
+                    [(ngModel)]="filtroCatalogo"
+                    name="filtroCatalogo"
+                    placeholder="🔍 Filtrar por nombre o tipo..."
+                  />
+                </div>
+
+                <!-- Sin resultados del filtro -->
+                <div class="catalogo-empty"
+                     *ngIf="getCatalogoAgrupado().length === 0">
+                  <span>Sin resultados para "{{ filtroCatalogo }}"</span>
+                </div>
+
+                <!-- Grupos por tipo -->
+                <ng-container *ngFor="let grupo of getCatalogoAgrupado()">
+                  <div class="catalogo-grupo">
+
+                    <div class="catalogo-grupo__titulo">
+                      <span>{{ grupo.tipo }}</span>
+                      <span class="catalogo-grupo__count">{{ grupo.items.length }}</span>
+                    </div>
+
+                    <div
+                      class="catalogo-item"
+                      *ngFor="let insumo of grupo.items"
+                      (click)="seleccionarInsumo(insumo); mostrarCatalogoCompleto.set(false)"
+                    >
+                      <div class="catalogo-item-info">
+                        <span class="catalogo-nombre">{{ insumo.nombre }}</span>
+                        <span class="catalogo-dosis">
+                          Dosis: {{ insumo.dosisSugerida }} {{ insumo.unidadSugerida }}
+                          <span *ngIf="insumo.reentradaHoras > 0">
+                            · ⚠️ Reentrada: {{ insumo.reentradaHoras }}h
+                          </span>
+                        </span>
+                      </div>
+                      <span class="badge" [ngClass]="getTipoBadgeClass(insumo.tipo)">
+                        {{ insumo.tipoDisplay }}
+                      </span>
+                    </div>
+
+                  </div>
+                </ng-container>
+
+              </div>
+              <!-- fin catálogo completo -->
+
+            </div>
+          </ng-container>
+
+          <!-- Insumo seleccionado del catálogo -->
+          <ng-container *ngIf="insumoSeleccionado() as insumo">
+            <div class="insumo-seleccionado">
+              <div class="insumo-seleccionado-info">
+                <span class="insumo-nombre">{{ insumo.nombre }}</span>
+                <span class="badge" [ngClass]="tipoBadgeClass()">
+                  {{ insumo.tipoDisplay }}
+                </span>
+              </div>
+              <button type="button" class="btn-cambiar" (click)="limpiarInsumo()">
+                Cambiar
+              </button>
+            </div>
+
+            <!-- Alerta período de reentrada -->
+            <div class="reentrada-aviso" *ngIf="insumo.reentradaHoras > 0">
+              ⚠️ Período de reentrada:
+              <strong>{{ insumo.reentradaHoras }} horas</strong>
+              — no ingresar al lote antes de ese tiempo
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Dosis y Unidad -->
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="dosis">💊 Dosis</label>
+            <div class="field__input-wrap">
+              <input id="dosis" type="number"
+                     [(ngModel)]="form.dosis" name="dosis"
+                     placeholder="0.0" step="0.1" required />
+            </div>
+            <small class="campo-hint" *ngIf="insumoSeleccionado() as insumo">
+              Sugerida: {{ insumo.dosisSugerida }} {{ insumo.unidadSugerida }} / 200L agua
+            </small>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="unidad">📐 Unidad</label>
+            <div class="field__input-wrap">
+              <select id="unidad"
+                      [(ngModel)]="form.unidadMedida" name="unidadMedida" required>
+                <option value="">Selecciona</option>
+                <option *ngFor="let u of unidades" [value]="u">{{ u }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Área -->
+        <div class="field">
+          <label class="field__label" for="area">
+            <span>🌾</span> Área aplicada (hectáreas)
+          </label>
+          <div class="field__input-wrap">
+            <input id="area" type="number"
+                   [(ngModel)]="form.areaAplicada" name="areaAplicada"
+                   placeholder="0.0" step="0.1" required />
+          </div>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="field">
+          <label class="field__label" for="observaciones">
+            <span>📝</span> Observaciones
+            <span class="label-optional">(opcional)</span>
+          </label>
+          <div class="field__input-wrap">
+            <textarea id="observaciones"
+                      [(ngModel)]="form.observaciones" name="observaciones"
+                      placeholder="Condiciones climáticas, estado del cultivo..."
+                      rows="3">
+            </textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="cargando">
+          <span class="btn-submit__text" *ngIf="!cargando">
+            <span>Registrar fumigación</span>
+            <span class="btn-submit__arrow">→</span>
+          </span>
+          <span class="btn-submit__loader" *ngIf="cargando">
+            <span class="spinner"></span>
+            Registrando...
+          </span>
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>

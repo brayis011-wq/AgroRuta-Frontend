@@ -1,0 +1,368 @@
+:root {
+  --verde: #2e7d32;
+  --verde-claro: #a5d6a7;
+  --verde-oscuro: #1b5e20;
+  --verde-suave: #c8e6c9;
+  --verde-bg: #f0f4f8;
+  --gris: #888;
+  --gris-borde: #ddd;
+  --rojo: #c62828;
+  --rojo-bg: #ffebee;
+  --amarillo: #f57f17;
+  --amarillo-bg: #fffde7;
+  --sombra: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.page {
+  padding: 2rem;
+  background-color: var(--verde-bg);
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  color: var(--verde);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+}
+
+.page-subtitle {
+  color: var(--gris);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  background-color: var(--verde);
+  color: white;
+  padding: 0.6rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--verde-oscuro);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secundario {
+  background: transparent;
+  border: 1px solid var(--gris-borde);
+  color: #555;
+  padding: 0.6rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-secundario:hover {
+  background-color: var(--verde-bg);
+}
+
+.form-card {
+  background: white;
+  border-radius: 14px;
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--verde);
+  margin: 0 0 1rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.campo label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.campo input,
+.campo select {
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--gris-borde);
+  border-radius: 9px;
+  font-size: 0.9rem;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.campo input:focus,
+.campo select:focus {
+  outline: none;
+  border-color: var(--verde);
+}
+
+.campo input.invalido,
+.campo select.invalido {
+  border-color: var(--rojo);
+}
+
+.error-msg {
+  font-size: 0.78rem;
+  color: var(--rojo);
+}
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gris-borde);
+  margin-top: 1rem;
+}
+
+.tabla-wrap {
+  background: white;
+  border-radius: 14px;
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tabla thead tr {
+  background-color: var(--verde-bg);
+  border-bottom: 2px solid var(--verde-suave);
+}
+
+.tabla th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  color: var(--verde-oscuro);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fila {
+  border-bottom: 1px solid var(--gris-borde);
+  transition: background-color 0.15s;
+}
+
+.fila:hover {
+  background-color: #fafafa;
+}
+
+.fila:last-child {
+  border-bottom: none;
+}
+
+.tabla td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+}
+
+.trabajador-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: var(--verde-suave);
+  color: var(--verde-oscuro);
+  font-weight: 700;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.negrita {
+  font-weight: 600;
+  color: #333;
+}
+
+.texto-suave {
+  color: var(--gris);
+  font-size: 0.875rem;
+}
+
+.valor {
+  color: var(--verde);
+  font-weight: 700;
+}
+
+.centrado {
+  text-align: center;
+}
+
+.badge {
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-activo {
+  background-color: var(--verde-suave);
+  color: var(--verde-oscuro);
+}
+
+.badge-inactivo {
+  background-color: #eceff1;
+  color: #546e7a;
+}
+
+.badge-borrador {
+  background-color: var(--amarillo-bg);
+  color: var(--amarillo);
+}
+
+.acciones {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-accion {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.btn-accion:hover {
+  opacity: 0.75;
+}
+
+.btn-ver {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.btn-reactivar {
+  background-color: var(--verde-suave);
+  color: var(--verde-oscuro);
+}
+
+.btn-desactivar {
+  background-color: #ffebee;
+  color: var(--rojo);
+}
+
+.sin-resultados {
+  text-align: center;
+  padding: 2.5rem;
+  color: var(--gris);
+  font-size: 0.9rem;
+}
+
+.alerta-error {
+  background-color: var(--rojo-bg);
+  color: var(--rojo);
+  padding: 0.85rem 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.estado-vacio {
+  text-align: center;
+  padding: 3rem;
+  color: var(--gris);
+}
+
+.spinner {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--verde-suave);
+  border-top-color: var(--verde);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+/* Agregar al final de list-roster.css */
+
+/* ── Botón Ver Pago ─────────────────────────────── */
+.btn-accion.btn-pago {
+  background: #fff8e1;
+  color: #f59e0b;
+  border: 1px solid #fde68a;
+}
+.btn-accion.btn-pago:hover {
+  background: #fef3c7;
+}
+
+/* ── Botón Eliminar ─────────────────────────────── */
+.btn-accion.btn-eliminar {
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+}
+.btn-accion.btn-eliminar:hover {
+  background: #ffe4e6;
+}
+
+/* ── Alerta éxito ───────────────────────────────── */
+.alerta-exito {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}

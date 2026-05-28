@@ -1,0 +1,111 @@
+<div class="container">
+  <button class="btn-back" (click)="volver()">← Volver a la finca</button>
+
+  <div class="loading" *ngIf="cargando">Cargando...</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <!-- Mapa siempre en DOM -->
+  <div class="mapa-wrapper" [style.display]="cargando ? 'none' : 'block'">
+    <div id="mapa-lote" class="mapa-lote"></div>
+
+    <div class="mapa-controles">
+      <button class="btn-ndvi"
+              [class.activo]="ndviActivo"
+              (click)="toggleNdvi()">
+        🌿 {{ ndviActivo ? 'Ocultar NDVI' : 'Ver NDVI' }}
+      </button>
+    </div>
+
+    <div class="sin-poligono-aviso" *ngIf="lote && !lote.coordenadas">
+      📍 Este lote no tiene polígono definido
+    </div>
+  </div>
+
+  <div *ngIf="!cargando && lote">
+
+    <div class="lote-header">
+      <div>
+        <h2>🌿 {{ lote.nombre }}</h2>
+        <p>📐 {{ lote.area }} hectáreas</p>
+      </div>
+      <div class="lote-estado" [class.activo]="siembra" [class.vacio]="!siembra">
+        {{ siembra ? '🟢 Siembra activa' : '⚪ Sin siembra' }}
+      </div>
+    </div>
+
+    <div class="sin-siembra" *ngIf="!siembra">
+      <div class="sin-siembra-icon">🌱</div>
+      <h3>Sin siembra activa</h3>
+      <p>Este lote está disponible para iniciar una nueva siembra de uchuva.</p>
+      <button class="btn-primary" (click)="nuevaSiembra()">+ Iniciar siembra</button>
+    </div>
+
+    <div *ngIf="siembra">
+
+      <div class="siembra-top-row">
+        <div class="siembra-card siembra-info">
+          <h3>🌾 Siembra activa</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Variedad</span>
+              <span class="info-valor">{{ siembra.variedad }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Fecha de siembra</span>
+              <span class="info-valor">{{ siembra.fechaSiembra }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Plantas</span>
+              <span class="info-valor">{{ siembra.cantidadPlantas }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Etapa actual</span>
+              <span class="info-valor etapa-badge">{{ siembra.estadoCultivo }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dias-card">
+          <span class="dias-numero">{{ getDiasTranscurridos() }}</span>
+          <span class="dias-label">días<br>en campo</span>
+        </div>
+      </div>
+
+      <div class="siembra-card ciclo-card">
+        <div class="ciclo-header">
+          <h4>🔄 Ciclo del cultivo</h4>
+          <button class="btn-avanzar"
+                  (click)="avanzarEtapa()"
+                  [disabled]="avanzando || esFinalizado()">
+            {{ avanzando ? 'Avanzando...' : esFinalizado() ? '✅ Finalizado' : 'Avanzar etapa →' }}
+          </button>
+        </div>
+
+        <div class="etapas">
+          <ng-container *ngFor="let etapa of etapasList; let i = index; let last = last">
+            <div class="etapa"
+                 [class.activa]="getEtapaIndex() >= i"
+                 [class.actual]="getEtapaIndex() === i">
+              <div class="etapa-dot">
+                <span *ngIf="getEtapaIndex() > i">✓</span>
+              </div>
+              <span>{{ etapa.label }}</span>
+            </div>
+            <div class="etapa-linea" *ngIf="!last"
+                 [class.completada]="getEtapaIndex() > i"
+                 [class.en-progreso]="getEtapaIndex() === i">
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="ciclo-progreso-texto">
+          <span>{{ getEtapaIndex() + 1 }} de {{ etapasList.length }} etapas</span>
+          <span class="ciclo-porcentaje">{{ ((getEtapaIndex() + 1) / etapasList.length * 100).toFixed(0) }}%</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" (click)="entrarSiembra()">Ver detalle de siembra →</button>
+
+    </div>
+  </div>
+</div>

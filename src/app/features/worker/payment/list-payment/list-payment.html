@@ -1,0 +1,188 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Pagos</h1>
+      <p class="page-subtitle" *ngIf="!nominaIdFiltro">Historial de pagos realizados a trabajadores</p>
+      <p class="page-subtitle" *ngIf="nominaIdFiltro">
+        Pago de nómina <strong>#{{ nominaIdFiltro }}</strong>
+        <button class="btn-link" (click)="verTodos()">← Ver todos</button>
+      </p>
+    </div>
+
+    <!-- Resumen global -->
+    <div class="resumen-header" *ngIf="!cargando">
+      <div class="resumen-item">
+        <span class="resumen-label">Total pagado</span>
+        <span class="resumen-valor">${{ totalGlobal | number }}</span>
+      </div>
+      <div class="resumen-item">
+        <span class="resumen-label">Trabajadores</span>
+        <span class="resumen-valor">{{ grupos.length }}</span>
+      </div>
+      <div class="resumen-item">
+        <span class="resumen-label">Pagos</span>
+        <span class="resumen-valor">{{ totalPagos }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alerta-error">{{ error }}</div>
+
+  <!-- Cargando -->
+  <div *ngIf="cargando" class="estado-vacio">
+    <span class="spinner"></span>
+    <p>Cargando pagos...</p>
+  </div>
+
+  <!-- Sin pagos -->
+  <div *ngIf="!cargando && grupos.length === 0" class="estado-vacio">
+    <span class="icono-vacio">💳</span>
+    <p>No hay pagos registrados</p>
+  </div>
+
+  <!-- Layout principal: tarjetas + panel detalle -->
+  <div class="layout-principal" *ngIf="!cargando && grupos.length > 0">
+
+    <!-- Tarjetas por trabajador -->
+    <div class="tarjetas-grid" [class.con-panel]="pagoSeleccionado">
+      <div class="tarjeta-trabajador" *ngFor="let grupo of grupos">
+
+        <!-- Cabecera tarjeta -->
+        <div class="tarjeta-header">
+          <div class="trabajador-info">
+            <div class="avatar-grande">{{ iniciales(grupo.trabajadorNombre) }}</div>
+            <div>
+              <div class="trabajador-nombre">{{ grupo.trabajadorNombre }}</div>
+              <div class="trabajador-meta">{{ grupo.pagos.length }} pago(s)</div>
+            </div>
+          </div>
+          <div class="tarjeta-total">
+            <span class="total-label">Total</span>
+            <span class="total-valor">${{ grupo.total | number }}</span>
+          </div>
+        </div>
+
+        <!-- Lista de pagos — cada fila es clickeable -->
+        <div class="pagos-lista">
+          <div class="pago-fila"
+               *ngFor="let p of grupo.pagos"
+               [class.activo]="pagoSeleccionado?.id === p.id"
+               (click)="abrirDetalle(p)"
+               title="Ver detalle del pago">
+            <div class="pago-izq">
+              <span class="metodo-icono">{{ metodoPagoIcon(p.metodoPago) }}</span>
+              <div>
+                <div class="pago-metodo">{{ p.metodoPago }}</div>
+                <div class="pago-fecha">{{ p.fechaPago | date:'dd/MM/yyyy' }}</div>
+              </div>
+            </div>
+            <div class="pago-der">
+              <span class="pago-monto">${{ p.monto | number }}</span>
+              <span class="link-nomina">#{{ p.nominaId }}</span>
+              <span class="chevron">›</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Panel lateral de detalle -->
+    <div class="panel-detalle" *ngIf="pagoSeleccionado">
+
+      <!-- Header panel -->
+      <div class="panel-header">
+        <div>
+          <div class="panel-titulo">Detalle del pago</div>
+          <div class="panel-subtitulo">Nómina #{{ pagoSeleccionado.nominaId }}</div>
+        </div>
+        <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
+      </div>
+
+      <!-- Datos del pago -->
+      <div class="panel-seccion">
+        <div class="panel-seccion-titulo">Información del pago</div>
+        <div class="dato-fila">
+          <span class="dato-label">Trabajador</span>
+          <span class="dato-valor">{{ pagoSeleccionado.trabajadorNombre }}</span>
+        </div>
+        <div class="dato-fila">
+          <span class="dato-label">Fecha de pago</span>
+          <span class="dato-valor">{{ pagoSeleccionado.fechaPago | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="dato-fila">
+          <span class="dato-label">Método</span>
+          <span class="dato-valor">
+            {{ metodoPagoIcon(pagoSeleccionado.metodoPago) }} {{ pagoSeleccionado.metodoPago }}
+          </span>
+        </div>
+        <div class="dato-fila" *ngIf="pagoSeleccionado.comprobante">
+          <span class="dato-label">Comprobante</span>
+          <span class="dato-valor mono">{{ pagoSeleccionado.comprobante }}</span>
+        </div>
+        <div class="dato-fila" *ngIf="pagoSeleccionado.observaciones">
+          <span class="dato-label">Observaciones</span>
+          <span class="dato-valor">{{ pagoSeleccionado.observaciones }}</span>
+        </div>
+        <div class="dato-fila destacado">
+          <span class="dato-label">Monto total pagado</span>
+          <span class="dato-valor monto-grande">${{ pagoSeleccionado.monto | number }}</span>
+        </div>
+      </div>
+
+      <!-- Spinner cargando nómina -->
+      <div *ngIf="cargandoDetalle" class="panel-cargando">
+        <span class="spinner"></span>
+        <p>Cargando jornales...</p>
+      </div>
+
+      <!-- Jornales de la nómina -->
+      <div class="panel-seccion" *ngIf="!cargandoDetalle && nominaDetalle">
+        <div class="panel-seccion-titulo">
+          Jornales incluidos
+          <span class="badge-count">{{ nominaDetalle.jornales?.length ?? 0 }}</span>
+        </div>
+
+        <!-- Período -->
+        <div class="dato-fila">
+          <span class="dato-label">Período</span>
+          <span class="dato-valor">
+            {{ nominaDetalle.periodoInicio | date:'dd/MM/yyyy' }} →
+            {{ nominaDetalle.periodoFin | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
+
+        <!-- Lista de jornales -->
+        <div class="jornal-item" *ngFor="let j of nominaDetalle.jornales">
+          <div class="jornal-fecha">{{ j.fecha | date:'dd/MM/yyyy' }}</div>
+          <div class="jornal-info">
+            <span class="jornal-cultivo">🌱 {{ j.nombreCultivo }}</span>
+            <span class="jornal-actividades">
+              <span *ngFor="let a of j.actividades" class="cargo-tag">{{ a.nombre }}</span>
+            </span>
+          </div>
+          <div class="jornal-valor">${{ j.valorJornal | number }}</div>
+        </div>
+
+        <div *ngIf="!nominaDetalle.jornales || nominaDetalle.jornales.length === 0"
+             class="sin-resultados">Sin jornales registrados</div>
+
+        <!-- Total nómina -->
+        <div class="jornal-total">
+          <span>Total nómina</span>
+          <span>${{ nominaDetalle.valorTotal | number }}</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Barra sticky total global -->
+  <div class="total-global-bar" *ngIf="!cargando && grupos.length > 0">
+    <span class="total-global-label">Total general pagado</span>
+    <span class="total-global-valor">${{ totalGlobal | number }}</span>
+  </div>
+
+</div>

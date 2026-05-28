@@ -1,0 +1,62 @@
+<div class="container">
+  <div class="header">
+    <div>
+      <h2>🌿 Nuevo Lote</h2>
+      <p class="subtitle">Dibuja el lote directamente sobre la finca</p>
+    </div>
+    <button class="btn-secondary" (click)="cancelar()">← Volver</button>
+  </div>
+
+  <div class="form-card">
+
+    <div class="form-group">
+      <label for="nombre">Nombre del lote *</label>
+      <input id="nombre" type="text" [(ngModel)]="form.nombre"
+             name="nombre" placeholder="Ej: Lote A" required />
+    </div>
+
+    <!-- Instrucciones -->
+    <div class="map-instructions">
+      <span>🖊️</span>
+      <p>Usa el ícono de polígono en el mapa para trazar los límites del lote.
+        El área se calculará automáticamente.</p>
+    </div>
+    <div class="buscador-mapa">
+      <input type="text"
+             [(ngModel)]="busquedaMapa"
+             name="busquedaMapa"
+             placeholder="Buscar vereda, municipio... ej: Silvania, Cundinamarca"
+             (keyup.enter)="buscarUbicacion()" />
+      <button type="button" (click)="buscarUbicacion()">🔍</button>
+    </div>
+    <!-- Mapa -->
+    <div id="mapa-nuevo-lote" class="mapa-container"></div>
+
+    <!-- Área calculada -->
+    <div class="area-resultado" *ngIf="areaCalculada !== null">
+      <span class="area-label">📐 Área calculada:</span>
+      <span class="area-valor">{{ areaCalculada }} ha</span>
+      <span class="area-ok" *ngIf="hectareasFinca && areaCalculada <= hectareasFinca">✓ dentro del límite</span>
+      <span class="area-error" *ngIf="hectareasFinca && areaCalculada > hectareasFinca">
+        ✗ supera el límite de {{ hectareasFinca }} ha
+      </span>
+    </div>
+
+    <div class="area-pendiente" *ngIf="areaCalculada === null">
+      📍 Aún no has dibujado el polígono del lote
+    </div>
+
+    <div class="error" *ngIf="error">{{ error }}</div>
+    <div class="success" *ngIf="exito">¡Lote registrado exitosamente! Redirigiendo...</div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="cancelar()">Cancelar</button>
+      <button type="button" class="btn-primary"
+              (click)="registrar()"
+              [disabled]="guardando || !areaCalculada">
+        {{ guardando ? 'Guardando...' : 'Registrar Lote' }}
+      </button>
+    </div>
+
+  </div>
+</div>

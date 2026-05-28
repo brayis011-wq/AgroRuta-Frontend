@@ -1,0 +1,115 @@
+<div class="page-bg">
+  <div class="container">
+
+    <button class="btn-back" (click)="volver()">
+      <span class="btn-back__arrow">←</span>
+      <span>Volver a la siembra</span>
+    </button>
+
+    <div class="form-header">
+      <div class="form-header__icon">⚖️</div>
+      <div>
+        <h2>Registrar Cosecha</h2>
+        <p>Registra una cosecha realizada en el cultivo</p>
+      </div>
+    </div>
+
+    <div class="alert alert--error" *ngIf="error">
+      <span class="alert__icon">⚠️</span>
+      {{ error }}
+    </div>
+    <div class="alert alert--success" *ngIf="exito">
+      <span class="alert__icon">✅</span>
+      {{ exito }}
+    </div>
+
+    <div class="form-card">
+      <div class="form-card__accent"></div>
+
+      <form (ngSubmit)="onSubmit()" #cosechaForm="ngForm">
+
+        <!-- Fecha -->
+        <div class="field">
+          <label class="field__label" for="fecha">
+            <span>📅</span> Fecha
+          </label>
+          <div class="field__input-wrap">
+            <input
+              id="fecha"
+              type="date"
+              [(ngModel)]="form.fecha"
+              name="fecha"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Cantidad -->
+        <div class="field">
+          <label class="field__label" for="cantidadKg">
+            <span>🌿</span> Cantidad (kg)
+          </label>
+          <div class="field__input-wrap">
+            <input
+              id="cantidadKg"
+              type="number"
+              [(ngModel)]="form.cantidadKg"
+              name="cantidadKg"
+              placeholder="0.0"
+              step="0.1"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Calidad -->
+        <div class="field">
+          <label class="field__label" for="calidad">
+            <span>🏅</span> Calidad
+          </label>
+          <div class="field__input-wrap">
+            <select
+              id="calidad"
+              [(ngModel)]="form.calidad"
+              name="calidad"
+              required
+            >
+              <option value="">Selecciona la calidad</option>
+              <option *ngFor="let calidad of calidades" [value]="calidad">{{ calidad }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="field">
+          <label class="field__label" for="observaciones">
+            <span>📝</span> Observaciones
+            <span class="label-optional">(opcional)</span>
+          </label>
+          <div class="field__input-wrap">
+            <textarea
+              id="observaciones"
+              [(ngModel)]="form.observaciones"
+              name="observaciones"
+              placeholder="Observaciones adicionales..."
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="cargando">
+          <span class="btn-submit__text" *ngIf="!cargando">
+            <span>Registrar cosecha</span>
+            <span class="btn-submit__arrow">→</span>
+          </span>
+          <span class="btn-submit__loader" *ngIf="cargando">
+            <span class="spinner"></span>
+            Registrando...
+          </span>
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+</div>

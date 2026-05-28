@@ -1,0 +1,139 @@
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Avatar ─────────────────────────────── */
+.avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #e8f5e9;
+}
+
+.avatar-wrapper {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #a5d6a7;
+  box-shadow: 0 2px 10px rgba(46, 125, 50, 0.15);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #2e7d32;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.05em;
+}
+
+.avatar-info {
+  flex: 1;
+}
+
+.avatar-hint {
+  font-size: 0.8rem;
+  color: #888;
+  line-height: 1.4;
+}
+
+/* ── Fields ──────────────────────────────── */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #444;
+  letter-spacing: 0.02em;
+
+  .required {
+    color: #e53935;
+    margin-left: 2px;
+  }
+}
+
+.field-input {
+  height: 42px;
+  padding: 0 12px;
+  border: 1.5px solid #c8e6c9;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #333;
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  width: 100%;
+
+  &:focus {
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+  }
+
+  &.field-error {
+    border-color: #e53935;
+    box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.08);
+  }
+
+  &.field-readonly {
+    background-color: #f5f5f5;
+    color: #888;
+    cursor: not-allowed;
+  }
+}
+
+.error-msg {
+  font-size: 0.75rem;
+  color: #e53935;
+}
+
+.field-hint {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+/* ── Actions ─────────────────────────────── */
+.form-actions {
+  margin-top: 0.5rem;
+}
+
+.btn-primary {
+  height: 42px;
+  padding: 0 24px;
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+
+  &:hover:not(:disabled) {
+    background-color: #1b5e20;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

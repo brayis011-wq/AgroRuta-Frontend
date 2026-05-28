@@ -1,0 +1,86 @@
+.report-home {
+  padding: 1.5rem 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tabs-wrap {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 2rem;
+  padding: 4px;
+  background-color: #f1f5f1;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;   /* antes: 10px 18px */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.18s;
+}
+
+.tab-icon {
+  width: 42px;           /* antes: 34px */
+  height: 42px;          /* antes: 34px */
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;       /* antes: 17px */
+  flex-shrink: 0;
+}
+
+.tab-btn.payroll .tab-icon {
+  background-color: #fff8e1;
+  color: #b45309;
+}
+
+.tab-btn.crops .tab-icon {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.tab-label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+.tab-name {
+  font-size: 16px;       /* antes: 14px */
+  font-weight: 600;
+  color: #555;
+  line-height: 1.2;
+}
+
+.tab-sub {
+  font-size: 12px;       /* antes: 11px */
+  color: #999;
+  line-height: 1.2;
+}
+
+.tab-btn:hover {
+  background-color: #fff;
+}
+
+.tab-btn.active {
+  background-color: #fff;
+  box-shadow: 0 0 0 1px #c8e6c9;
+}
+
+.tab-btn.active .tab-name {
+  color: #2e7d32;
+}
+
+.tab-btn.active.payroll .tab-icon {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}

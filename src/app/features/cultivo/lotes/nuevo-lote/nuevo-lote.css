@@ -1,0 +1,217 @@
+.container {
+  padding: 2rem;
+  max-width: 9000px;
+  margin: 0 auto;
+  min-height: 100vh;        /* ← esto es lo que faltaba */
+  background-color: #f0f4f8;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.header h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 1px solid #e8e8e8;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  background: #fafafa;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #16a34a;
+  background: white;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.btn-primary {
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 0.625rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) { background: #15803d; }
+.btn-primary:disabled { background: #86efac; cursor: not-allowed; }
+
+.btn-secondary {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 0.625rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover { background: #f3f4f6; }
+
+.error {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  border: 1px solid #fecaca;
+}
+
+.success {
+  background: #f0fdf4;
+  color: #16a34a;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  border: 1px solid #bbf7d0;
+}
+.mapa-container {
+  width: 100%;
+  height: 450px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 1rem;
+  z-index: 0;
+}
+
+.map-instructions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: #1e40af;
+}
+
+.map-instructions p { margin: 0; }
+
+.area-resultado {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.area-label { color: #374151; font-weight: 500; }
+.area-valor { font-size: 1.1rem; font-weight: 700; color: #16a34a; }
+.area-ok    { color: #16a34a; font-size: 0.8rem; }
+.area-error { color: #dc2626; font-size: 0.8rem; }
+
+.area-pendiente {
+  background: #fafafa;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  text-align: center;
+}
+.locate-btn {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+.locate-btn:hover { background: #f3f4f6; }
+.buscador-mapa {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.buscador-mapa input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  background: #fafafa;
+  transition: border-color 0.2s;
+}
+
+.buscador-mapa input:focus {
+  outline: none;
+  border-color: #16a34a;
+  background: white;
+}
+
+.buscador-mapa button {
+  padding: 0.5rem 0.875rem;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.buscador-mapa button:hover { background: #15803d; }

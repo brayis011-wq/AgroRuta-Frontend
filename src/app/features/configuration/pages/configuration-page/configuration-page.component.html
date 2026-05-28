@@ -1,0 +1,61 @@
+<div class="config-page">
+
+  <div class="topbar">
+    <div>
+      <h2 class="page-title">⚙️ Configuración</h2>
+      <p class="page-subtitle">Administra tu perfil y seguridad de cuenta</p>
+    </div>
+  </div>
+
+  <div class="toast" *ngIf="toast"
+       [class.toast-success]="toast.type === 'success'"
+       [class.toast-error]="toast.type === 'error'">
+    {{ toast.message }}
+  </div>
+
+  <div class="skeleton-wrapper" *ngIf="loadingPage">
+    <div class="skeleton-card">
+      <div class="skeleton-line wide"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line short"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton-line wide"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line short"></div>
+    </div>
+  </div>
+
+  <div class="config-grid" *ngIf="!loadingPage">
+
+    <div class="config-card">
+      <div class="card-header">
+        <span class="card-icon">👤</span>
+        <div>
+          <h3 class="card-title">Datos del perfil</h3>
+          <p class="card-desc">Actualiza tu información personal</p>
+        </div>
+      </div>
+      <app-profile-form
+        [perfil]="perfil"
+        [loading]="loadingProfile"
+        (save)="onSaveProfile($event)"
+      />
+    </div>
+
+    <div class="config-card">
+      <div class="card-header">
+        <span class="card-icon">🔐</span>
+        <div>
+          <h3 class="card-title">Cambiar contraseña</h3>
+          <p class="card-desc">Actualiza tus credenciales de acceso</p>
+        </div>
+      </div>
+      <app-change-password-form
+        [loading]="loadingPassword"
+        (changePassword)="onChangePassword($event)"
+      />
+    </div>
+
+  </div>
+</div>
