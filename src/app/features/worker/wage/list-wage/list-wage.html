@@ -24,7 +24,7 @@
   <!-- Banner trabajador -->
   <div *ngIf="trabajador" class="trabajador-banner">
     <div class="trabajador-avatar">
-      {{ trabajador.nombre[0] }}{{ trabajador.apellido[0] }}
+      {{ trabajador?.nombre?.[0] }}{{ trabajador?.apellido?.[0] }}
     </div>
     <div class="banner-info">
       <div class="banner-nombre">{{ trabajador.nombreCompleto }}</div>

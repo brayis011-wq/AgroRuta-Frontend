@@ -1,6 +1,6 @@
 projectKey=AgrorutaFrontend
 serverUrl=http://localhost:9000
-serverVersion=26.5.0.122743
+serverVersion=26.4.0.121862
 dashboardUrl=http://localhost:9000/dashboard?id=AgrorutaFrontend
-ceTaskId=ebd7d5c0-0a5f-4d14-bbc7-9a444bae7014
-ceTaskUrl=http://localhost:9000/api/ce/task?id=ebd7d5c0-0a5f-4d14-bbc7-9a444bae7014
+ceTaskId=257cd6b3-1b2f-4c9e-8c5c-f93df7cdbeed
+ceTaskUrl=http://localhost:9000/api/ce/task?id=257cd6b3-1b2f-4c9e-8c5c-f93df7cdbeed

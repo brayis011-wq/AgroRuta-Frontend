@@ -53,8 +53,10 @@ describe('ListaJornalesComponent', () => {
 
     fixture   = TestBed.createComponent(ListaJornalesComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();           // 👈 detectChanges ANTES de emitir queryParams
     queryParamsSubject.next({});
-    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();           // 👈 segundo detectChanges para estabilizar
   });
 
   it('should create', () => expect(component).toBeTruthy());
