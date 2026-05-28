@@ -26,7 +26,6 @@ export class ListaJornalesComponent implements OnInit {
   error       = '';
   exito       = '';
 
-  // Panel generar nómina
   panelNomina  = false;
   generando    = false;
   formNomina!: FormGroup;
@@ -121,10 +120,7 @@ export class ListaJornalesComponent implements OnInit {
       .reduce((a, j) => a + (j.valorJornal ?? 0), 0);
   }
 
-  // ── Panel nómina ─────────────────────────────────────────────────────────
-
   abrirGenerarNomina(): void {
-    // Precargar fechas con el rango de jornales pendientes si existen
     const pendientes = this.filtrados.filter(j => !j.liquidado);
     if (pendientes.length > 0) {
       const fechas = pendientes
@@ -177,7 +173,6 @@ export class ListaJornalesComponent implements OnInit {
       next: (n) => {
         this.nominaGenerada = n;
         this.generando      = false;
-        // Recargar jornales — algunos pasarán a liquidado: true
         this.cargarJornales();
         this.cdr.detectChanges();
       },

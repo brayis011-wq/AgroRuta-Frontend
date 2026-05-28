@@ -11,10 +11,10 @@ describe('DetalleFincaComponent', () => {
   let routeMock: any;
   let cdrMock: any;
 
-  const fincaMock: Finca = { id: 1, nombre: 'Finca El Rosal' };
+  const fincaMock: Finca = { id: 1, nombre: 'Finca El Rosal', ubicacion: 'Huila', hectareas: 10, agricultorId: 101 };
   const lotesMock: Lote[] = [
-    { id: 10, nombre: 'Lote A', estado: 'DISPONIBLE', fincaId: 1 },
-    { id: 11, nombre: 'Lote B', estado: 'EN_CULTIVO',  fincaId: 1 },
+    { id: 10, nombre: 'Lote A', estado: 'DISPONIBLE', fincaId: 1, area: 5 },
+    { id: 11, nombre: 'Lote B', estado: 'EN_CULTIVO',  fincaId: 1, area: 4 },
   ];
 
   beforeEach(() => {

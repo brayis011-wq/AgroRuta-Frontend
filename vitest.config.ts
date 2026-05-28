@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [
     angular({
       tsconfig: 'tsconfig.spec.json',
-      jit: true,                        // ← activa compilación JIT para tests
+      jit: true,
     }),
   ],
   test: {
@@ -13,5 +13,18 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['src/**/*.spec.ts'],
     setupFiles: ['src/test-setup.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['lcov', 'text'],
+      reportsDirectory: './coverage',
+      include: ['src/app/**/*.ts'],
+      exclude: [
+        '**/*.spec.ts',
+        '**/*.routes.ts',
+        '**/*.module.ts',
+        '**/*.css',
+        '**/*.html',
+      ],
+    },
   },
 });

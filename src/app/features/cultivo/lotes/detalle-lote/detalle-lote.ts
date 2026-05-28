@@ -63,7 +63,6 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private initMap(): void {
     this.map = L.map('mapa-lote').setView([4.5709, -74.2973], 15);
-
     const google = L.tileLayer(
       'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
       { attribution: 'Google Satellite', maxZoom: 21, maxNativeZoom: 20 }
@@ -72,19 +71,14 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 }
     );
-
     google.addTo(this.map);
-
     L.control.layers(
       { 'Google Satellite': google, 'Esri Satellite': esri },
       {},
       { position: 'bottomleft' }
     ).addTo(this.map);
-
-    // Capa NDVI Sentinel Hub
     const instanceId = '5838490d-ec4b-482d-84b8-f3ebc19fb69c';
     const baseWMS = `https://sh.dataspace.copernicus.eu/ogc/wms/${instanceId}`;
-
     this.ndviLayer = L.tileLayer.wms(baseWMS, {
       tileSize: 512,
       attribution: '© Copernicus/Sentinel Hub',
@@ -98,17 +92,14 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private dibujarPoligono(): void {
     if (!this.lote?.coordenadas || !this.map) return;
-
     try {
       const coords: [number, number][] = JSON.parse(this.lote.coordenadas);
       const latlngs: L.LatLngTuple[] = coords.map(c => [c[0], c[1]]);
-
       const poligono = L.polygon(latlngs, {
         color: '#16a34a',
         fillOpacity: 0.25,
         weight: 2,
       }).addTo(this.map);
-
       this.map.fitBounds(poligono.getBounds(), { padding: [40, 40] });
     } catch (e) {
       console.warn('Coordenadas inválidas');
