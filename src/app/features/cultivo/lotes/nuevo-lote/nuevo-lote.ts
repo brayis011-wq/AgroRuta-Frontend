@@ -73,7 +73,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       .then(r => r.json())
       .then(data => {
         if (data.length > 0) {
-          this.map.setView([parseFloat(data[0].lat), parseFloat(data[0].lon)], 16);
+          this.map.setView([Number.parseFloat(data[0].lat), Number.parseFloat(data[0].lon)], 16);
         } else {
           this.error = 'No se encontró esa ubicación.';
         }
@@ -112,7 +112,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         const btn = L.DomUtil.create('button', 'locate-btn');
         btn.innerHTML = '📍 Mi ubicación';
         L.DomEvent.on(btn, 'click', () => {
-          navigator.geolocation.getCurrentPosition(
+          navigator.geolocation.getCurrentPosition( // NOSONAR
             (pos) => {
               this.map.setView([pos.coords.latitude, pos.coords.longitude], 17);
             },
@@ -140,7 +140,6 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.map.addControl(drawControl);
 
-    // ✅ Usando strings en lugar de L.Draw.Event
     this.map.on('draw:created', (event: any) => {
       this.drawnItems.clearLayers();
       const layer = event.layer;

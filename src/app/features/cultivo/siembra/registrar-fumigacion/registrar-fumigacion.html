@@ -3,12 +3,12 @@
   <div class="container">
 
     <button class="btn-back" (click)="volver()">
-      <span class="btn-back__arrow">←</span>
+      <span class="btn-back__arrow" aria-hidden="true">←</span>
       <span>Volver a la siembra</span>
     </button>
 
     <div class="form-header">
-      <div class="form-header__icon">💨</div>
+      <div class="form-header__icon" aria-hidden="true">💨</div>
       <div>
         <h2>Registrar Fumigación</h2>
         <p>Registra una fumigación realizada en el cultivo</p>
@@ -16,22 +16,22 @@
     </div>
 
     <!-- Alertas -->
-    <div class="alert alert--error" *ngIf="error">
-      <span class="alert__icon">⚠️</span>{{ error }}
+    <div class="alert alert--error" *ngIf="error" role="alert">
+      <span class="alert__icon" aria-hidden="true">⚠️</span>{{ error }}
     </div>
-    <div class="alert alert--success" *ngIf="exito">
-      <span class="alert__icon">✅</span>{{ exito }}
+    <div class="alert alert--success" *ngIf="exito" role="alert">
+      <span class="alert__icon" aria-hidden="true">✅</span>{{ exito }}
     </div>
 
     <div class="form-card">
-      <div class="form-card__accent"></div>
+      <div class="form-card__accent" aria-hidden="true"></div>
 
       <form (ngSubmit)="onSubmit()" #fumigacionForm="ngForm">
 
         <!-- Fecha -->
         <div class="field">
           <label class="field__label" for="fecha">
-            <span>📅</span> Fecha
+            <span aria-hidden="true">📅</span> Fecha
           </label>
           <div class="field__input-wrap">
             <input id="fecha" type="date"
@@ -40,10 +40,10 @@
         </div>
 
         <!-- Producto: buscador conectado al API -->
-        <div class="field">
-          <label class="field__label">
-            <span>🧪</span> Producto
-          </label>
+        <fieldset class="field">
+          <legend class="field__label">
+            <span aria-hidden="true">🧪</span> Producto
+          </legend>
 
           <!-- Buscador (visible si no hay insumo seleccionado) -->
           <ng-container *ngIf="!insumoSeleccionado()">
@@ -59,13 +59,14 @@
                   (blur)="usarProductoManual()"
                   autocomplete="off"
                 />
-                <span class="search-icon" *ngIf="!cargandoCatalogo()">🔍</span>
-                <span class="spinner search-icon" *ngIf="cargandoCatalogo()"></span>
+                <span class="search-icon" aria-hidden="true" *ngIf="!cargandoCatalogo()">🔍</span>
+                <span class="spinner search-icon" aria-hidden="true" *ngIf="cargandoCatalogo()"></span>
               </div>
 
               <!-- Resultados búsqueda rápida -->
               <div class="catalogo-lista" *ngIf="mostrarCatalogo()">
-                <div
+                <button
+                  type="button"
                   class="catalogo-item"
                   *ngFor="let insumo of catalogoFiltrado()"
                   (mousedown)="seleccionarInsumo(insumo)"
@@ -79,7 +80,7 @@
                   <span class="badge" [ngClass]="getTipoBadgeClass(insumo.tipo)">
                     {{ insumo.tipoDisplay }}
                   </span>
-                </div>
+                </button>
 
                 <div class="catalogo-empty"
                      *ngIf="catalogoFiltrado().length === 0 && !cargandoCatalogo()">
@@ -91,17 +92,16 @@
                 Busca en el catálogo o escribe el nombre manualmente
               </small>
 
-              <!-- ✅ Botón ver catálogo completo -->
               <button type="button" class="btn-catalogo" (click)="verCatalogoCompleto()">
                 <span *ngIf="!cargandoCompleto()">
                   {{ mostrarCatalogoCompleto() ? '✖ Cerrar catálogo' : '📋 Ver catálogo completo' }}
                 </span>
-                <span class="catalogo-cargando" *ngIf="cargandoCompleto()">
-                  <span class="spinner"></span> Cargando...
+                <span class="catalogo-cargando" *ngIf="cargandoCompleto()" aria-live="polite">
+                  <span class="spinner" aria-hidden="true"></span> Cargando...
                 </span>
               </button>
 
-              <!-- ✅ Catálogo completo agrupado -->
+              <!-- Catálogo completo agrupado -->
               <div class="catalogo-completo" *ngIf="mostrarCatalogoCompleto()">
 
                 <!-- Filtro interno -->
@@ -111,7 +111,7 @@
                     class="catalogo-filtro"
                     [(ngModel)]="filtroCatalogo"
                     name="filtroCatalogo"
-                    placeholder="🔍 Filtrar por nombre o tipo..."
+                    placeholder="Filtrar por nombre o tipo..."
                   />
                 </div>
 
@@ -130,7 +130,8 @@
                       <span class="catalogo-grupo__count">{{ grupo.items.length }}</span>
                     </div>
 
-                    <div
+                    <button
+                      type="button"
                       class="catalogo-item"
                       *ngFor="let insumo of grupo.items"
                       (click)="seleccionarInsumo(insumo); mostrarCatalogoCompleto.set(false)"
@@ -140,14 +141,14 @@
                         <span class="catalogo-dosis">
                           Dosis: {{ insumo.dosisSugerida }} {{ insumo.unidadSugerida }}
                           <span *ngIf="insumo.reentradaHoras > 0">
-                            · ⚠️ Reentrada: {{ insumo.reentradaHoras }}h
+                            · <span aria-hidden="true">⚠️</span> Reentrada: {{ insumo.reentradaHoras }}h
                           </span>
                         </span>
                       </div>
                       <span class="badge" [ngClass]="getTipoBadgeClass(insumo.tipo)">
                         {{ insumo.tipoDisplay }}
                       </span>
-                    </div>
+                    </button>
 
                   </div>
                 </ng-container>
@@ -173,18 +174,21 @@
             </div>
 
             <!-- Alerta período de reentrada -->
-            <div class="reentrada-aviso" *ngIf="insumo.reentradaHoras > 0">
-              ⚠️ Período de reentrada:
+            <div class="reentrada-aviso" *ngIf="insumo.reentradaHoras > 0" role="note">
+              <span aria-hidden="true">⚠️</span> Período de reentrada:
               <strong>{{ insumo.reentradaHoras }} horas</strong>
               — no ingresar al lote antes de ese tiempo
             </div>
           </ng-container>
-        </div>
+
+        </fieldset>
 
         <!-- Dosis y Unidad -->
         <div class="field-row">
           <div class="field">
-            <label class="field__label" for="dosis">💊 Dosis</label>
+            <label class="field__label" for="dosis">
+              <span aria-hidden="true">💊</span> Dosis
+            </label>
             <div class="field__input-wrap">
               <input id="dosis" type="number"
                      [(ngModel)]="form.dosis" name="dosis"
@@ -196,7 +200,9 @@
           </div>
 
           <div class="field">
-            <label class="field__label" for="unidad">📐 Unidad</label>
+            <label class="field__label" for="unidad">
+              <span aria-hidden="true">📐</span> Unidad
+            </label>
             <div class="field__input-wrap">
               <select id="unidad"
                       [(ngModel)]="form.unidadMedida" name="unidadMedida" required>
@@ -210,7 +216,7 @@
         <!-- Área -->
         <div class="field">
           <label class="field__label" for="area">
-            <span>🌾</span> Área aplicada (hectáreas)
+            <span aria-hidden="true">🌾</span> Área aplicada (hectáreas)
           </label>
           <div class="field__input-wrap">
             <input id="area" type="number"
@@ -222,7 +228,7 @@
         <!-- Observaciones -->
         <div class="field">
           <label class="field__label" for="observaciones">
-            <span>📝</span> Observaciones
+            <span aria-hidden="true">📝</span> Observaciones
             <span class="label-optional">(opcional)</span>
           </label>
           <div class="field__input-wrap">
@@ -237,10 +243,10 @@
         <button type="submit" class="btn-submit" [disabled]="cargando">
           <span class="btn-submit__text" *ngIf="!cargando">
             <span>Registrar fumigación</span>
-            <span class="btn-submit__arrow">→</span>
+            <span class="btn-submit__arrow" aria-hidden="true">→</span>
           </span>
-          <span class="btn-submit__loader" *ngIf="cargando">
-            <span class="spinner"></span>
+          <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">
+            <span class="spinner" aria-hidden="true"></span>
             Registrando...
           </span>
         </button>

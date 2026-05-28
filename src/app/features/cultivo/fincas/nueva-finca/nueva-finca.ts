@@ -133,8 +133,7 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
       .then(r => r.json())
       .then(data => {
         if (data.length > 0) {
-          const latlng = L.latLng(parseFloat(data[0].lat), parseFloat(data[0].lon));
-          this.map.setView(latlng, 15);
+const latlng = L.latLng(Number.parseFloat(data[0].lat), Number.parseFloat(data[0].lon));          this.map.setView(latlng, 15);
         } else {
           this.error = 'No se encontró esa ubicación.';
         }

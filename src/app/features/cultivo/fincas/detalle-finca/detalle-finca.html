@@ -32,7 +32,10 @@
     </div>
 
     <div class="grid" *ngIf="lotes.length > 0">
-      <div class="lote-card" *ngFor="let lote of lotes" (click)="entrarLote(lote.id!)">
+      <button class="lote-card"
+              *ngFor="let lote of lotes"
+              (click)="entrarLote(lote.id!)"
+              type="button">
         <div class="lote-info">
           <h4>{{ lote.nombre }}</h4>
           <p>📐 {{ lote.area }} ha
@@ -44,15 +47,20 @@
             {{ getEstadoLabel(lote.estado) }}
           </span>
         </div>
-        <button class="btn-eliminar-lote" (click)="iniciarEliminacionLote($event, lote)">🗑️</button>
+        <button class="btn-eliminar-lote" type="button" (click)="iniciarEliminacionLote($event, lote)">🗑️</button>
         <div class="lote-arrow">→</div>
-      </div>
+      </button>
     </div>
   </div>
 </div>
 
-<div class="overlay" *ngIf="loteAEliminar" (click)="cancelarEliminacion()">
-  <div class="confirm-panel" (click)="$event.stopPropagation()">
+<dialog class="overlay" *ngIf="loteAEliminar"
+        (click)="cancelarEliminacion()"
+        (keydown.escape)="cancelarEliminacion()"
+        open>
+  <div class="confirm-panel"
+       (click)="$event.stopPropagation()"
+       (keydown)="$event.stopPropagation()">
     <h3>⚠️ Eliminar lote</h3>
     <p>Estás a punto de eliminar el lote <strong>{{ loteAEliminar.nombre }}</strong>.</p>
     <p>Esta acción no se puede deshacer. Escribe <strong>confirmar</strong> para continuar:</p>
@@ -67,4 +75,4 @@
       </button>
     </div>
   </div>
-</div>
+</dialog>

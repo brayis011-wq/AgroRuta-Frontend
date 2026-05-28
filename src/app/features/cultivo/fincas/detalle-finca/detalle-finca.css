@@ -315,3 +315,11 @@
   color: #f59e0b;
   font-size: 0.8rem;
 }
+.lote-card {
+  background: none;
+  border: none;
+  padding: 0;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}

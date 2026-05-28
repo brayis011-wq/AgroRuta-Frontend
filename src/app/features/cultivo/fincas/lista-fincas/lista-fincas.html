@@ -44,9 +44,10 @@
   </div>
 
   <div class="grid" *ngIf="!cargando && fincas.length > 0">
-    <div
+    <button
       class="finca-card"
-      *ngFor="let finca of fincas"
+      *ngFor="let finca de fincas"
+      type="button"
       [class.finca-card--activa]="fincaResaltada === finca.id"
       (click)="entrarFinca(finca.id!)"
       (mouseenter)="resaltarFinca(finca)"
@@ -62,10 +63,10 @@
       </div>
 
       <div class="finca-actions">
-        <!-- Botón zoom al mapa (solo si tiene ubicación) -->
         <button
           *ngIf="finca.centroideLat"
           class="btn-zoom"
+          type="button"
           title="Ver en mapa"
           (click)="$event.stopPropagation(); centrarEnFinca(finca)">
           🗺️
@@ -73,6 +74,7 @@
 
         <button
           class="btn-eliminar"
+          type="button"
           (click)="iniciarEliminacion($event, finca)"
           [disabled]="eliminandoId === finca.id"
           title="Eliminar finca">
@@ -81,13 +83,18 @@
       </div>
 
       <div class="finca-arrow">→</div>
-    </div>
+    </button>
   </div>
 </div>
 
 <!-- Panel de confirmación -->
-<div class="overlay" *ngIf="fincaAEliminar" (click)="cancelarEliminacion()">
-  <div class="confirm-panel" (click)="$event.stopPropagation()">
+<dialog class="overlay" *ngIf="fincaAEliminar"
+        (click)="cancelarEliminacion()"
+        (keydown.escape)="cancelarEliminacion()"
+        open>
+  <div class="confirm-panel"
+       (click)="$event.stopPropagation()"
+       (keydown)="$event.stopPropagation()">
     <h3>⚠️ Eliminar finca</h3>
     <p>Estás a punto de eliminar <strong>{{ fincaAEliminar.nombre }}</strong> y todos sus lotes.</p>
     <p>Esta acción no se puede deshacer. Escribe <strong>confirmar</strong> para continuar:</p>
@@ -106,4 +113,4 @@
       </button>
     </div>
   </div>
-</div>
+</dialog>
