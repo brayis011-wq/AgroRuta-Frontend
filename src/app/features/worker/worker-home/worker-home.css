@@ -685,3 +685,10 @@
   color: white;
   box-shadow: 0 1px 4px rgba(46, 125, 50, 0.3);
 }
+button.overlay {
+  all: unset;
+  position: fixed;
+  inset: 0;
+  cursor: pointer;
+  /* el resto de estilos del overlay */
+}

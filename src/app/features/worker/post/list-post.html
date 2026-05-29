@@ -9,30 +9,38 @@
 
   <div *ngIf="error" class="alerta-error">{{ error }}</div>
 
-  <!-- Modal / Form inline -->
   <div *ngIf="mostrarForm" class="form-card">
     <h3 class="form-titulo">{{ modoEdicion ? 'Editar cargo' : 'Nuevo cargo' }}</h3>
     <form [formGroup]="form" (ngSubmit)="guardar()">
       <div class="grid-3">
+
         <div class="campo">
-          <label>Nombre *</label>
-          <input formControlName="nombre" type="text" placeholder="Ej: Jornalero" [class.invalido]="invalido('nombre')"/>
+          <label for="nombre">Nombre *</label>
+          <input id="nombre" formControlName="nombre" type="text"
+                 placeholder="Ej: Jornalero" [class.invalido]="invalido('nombre')"/>
           <span *ngIf="invalido('nombre')" class="error-msg">Requerido</span>
         </div>
+
         <div class="campo">
-          <label>Descripción *</label>
-          <input formControlName="descripcion" type="text" placeholder="Descripción del cargo" [class.invalido]="invalido('descripcion')"/>
+          <label for="descripcion">Descripción *</label>
+          <input id="descripcion" formControlName="descripcion" type="text"
+                 placeholder="Descripción del cargo" [class.invalido]="invalido('descripcion')"/>
           <span *ngIf="invalido('descripcion')" class="error-msg">Requerido</span>
         </div>
+
         <div class="campo">
-          <label>Valor Jornal ($) *</label>
-          <input formControlName="valorJornal" type="number" min="1" placeholder="0" [class.invalido]="invalido('valorJornal')"/>
+          <label for="valorJornal">Valor Jornal ($) *</label>
+          <input id="valorJornal" formControlName="valorJornal" type="number"
+                 min="1" placeholder="0" [class.invalido]="invalido('valorJornal')"/>
           <span *ngIf="invalido('valorJornal')" class="error-msg">Ingresa un valor válido</span>
         </div>
+
       </div>
       <div class="form-footer">
         <button type="button" class="btn-secundario" (click)="mostrarForm = false">Cancelar</button>
-        <button type="submit" class="btn-primary" [disabled]="guardando">{{ guardando ? 'Guardando...' : 'Guardar' }}</button>
+        <button type="submit" class="btn-primary" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : 'Guardar' }}
+        </button>
       </div>
     </form>
   </div>
@@ -50,7 +58,11 @@
         <td class="negrita">{{ c.nombre }}</td>
         <td class="texto-suave">{{ c.descripcion }}</td>
         <td class="valor">${{ c.valorJornal | number }}</td>
-        <td><span class="badge" [ngClass]="c.activo ? 'badge-activo' : 'badge-inactivo'">{{ c.activo ? 'Activo' : 'Inactivo' }}</span></td>
+        <td>
+            <span class="badge" [ngClass]="c.activo ? 'badge-activo' : 'badge-inactivo'">
+              {{ c.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+        </td>
         <td>
           <div class="acciones">
             <button class="btn-accion btn-ver" (click)="abrirEditar(c)" title="Editar">✎</button>

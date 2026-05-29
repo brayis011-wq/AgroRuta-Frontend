@@ -28,24 +28,30 @@
     <h3 class="form-titulo">Generar nómina</h3>
     <form [formGroup]="form" (ngSubmit)="generar()">
       <div class="grid-3">
+
         <div class="campo">
-          <label>Trabajador *</label>
-          <select formControlName="trabajadorId" [class.invalido]="invalido('trabajadorId')">
+          <label for="trabajadorId">Trabajador *</label>
+          <select id="trabajadorId" formControlName="trabajadorId" [class.invalido]="invalido('trabajadorId')">
             <option [ngValue]="null" disabled>Selecciona...</option>
             <option *ngFor="let t of trabajadores" [ngValue]="t.id">{{ t.nombreCompleto }}</option>
           </select>
           <span *ngIf="invalido('trabajadorId')" class="error-msg">Requerido</span>
         </div>
+
         <div class="campo">
-          <label>Período inicio *</label>
-          <input formControlName="periodoInicio" type="date" [class.invalido]="invalido('periodoInicio')"/>
+          <label for="periodoInicio">Período inicio *</label>
+          <input id="periodoInicio" formControlName="periodoInicio" type="date"
+                 [class.invalido]="invalido('periodoInicio')"/>
           <span *ngIf="invalido('periodoInicio')" class="error-msg">Requerido</span>
         </div>
+
         <div class="campo">
-          <label>Período fin *</label>
-          <input formControlName="periodoFin" type="date" [class.invalido]="invalido('periodoFin')"/>
+          <label for="periodoFin">Período fin *</label>
+          <input id="periodoFin" formControlName="periodoFin" type="date"
+                 [class.invalido]="invalido('periodoFin')"/>
           <span *ngIf="invalido('periodoFin')" class="error-msg">Requerido</span>
         </div>
+
       </div>
       <div class="form-footer">
         <button type="button" class="btn-secundario" (click)="mostrarForm = false">Cancelar</button>

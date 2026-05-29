@@ -459,3 +459,11 @@
   color: var(--text-muted, #888);
   font-size: 0.85rem;
 }
+button.pago-fila {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+}

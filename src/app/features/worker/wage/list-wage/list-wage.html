@@ -4,17 +4,18 @@
   <div class="page-header">
     <div>
       <button class="btn-back" (click)="volver()">← Trabajadores</button>
-      <h1 class="page-title">🗓️ Jornales</h1>
+      <h1 class="page-title">
+        <span aria-hidden="true">🗓️</span> Jornales
+      </h1>
       <p class="page-subtitle" *ngIf="!trabajador && !trabajadorId">
         Registro diario de trabajo en campo
       </p>
     </div>
     <div style="display:flex; gap:0.75rem; align-items:center">
-      <!-- ✅ Solo aparece si hay jornales pendientes -->
       <button class="btn-secundario"
               *ngIf="trabajadorId && pendientes > 0"
               (click)="abrirGenerarNomina()">
-        📋 Generar Nómina
+        <span aria-hidden="true">📋</span> Generar Nómina
         <span class="badge-contador">{{ pendientes }}</span>
       </button>
       <button class="btn-primary" (click)="irANuevoJornal()">＋ Registrar Jornal</button>
@@ -23,13 +24,13 @@
 
   <!-- Banner trabajador -->
   <div *ngIf="trabajador" class="trabajador-banner">
-    <div class="trabajador-avatar">
+    <div class="trabajador-avatar" aria-hidden="true">
       {{ trabajador?.nombre?.[0] }}{{ trabajador?.apellido?.[0] }}
     </div>
     <div class="banner-info">
       <div class="banner-nombre">{{ trabajador.nombreCompleto }}</div>
       <div class="banner-meta">
-        <span>📄 {{ trabajador.cedula }}</span>
+        <span><span aria-hidden="true">📄</span> {{ trabajador.cedula }}</span>
         <span *ngIf="trabajador.cargo" class="cargo-tag">{{ trabajador.cargo.nombre }}</span>
         <span *ngIf="trabajador.cargo" class="banner-jornal">
           ${{ trabajador.cargo.valorJornal | number }}/jornal
@@ -46,7 +47,7 @@
   <!-- Sin trabajadorId -->
   <ng-container *ngIf="!trabajadorId">
     <div class="info-card aviso-info">
-      <span class="aviso-icon">ℹ️</span>
+      <span class="aviso-icon" aria-hidden="true">ℹ️</span>
       <div>
         <strong>Selecciona un trabajador</strong>
         <p>Los jornales se consultan por trabajador. Ve al listado y selecciona uno.</p>
@@ -83,31 +84,31 @@
     <!-- Filtros -->
     <div class="filtros-bar" style="display:flex; gap:0.75rem; align-items:flex-end; flex-wrap:wrap">
       <div class="campo" style="flex:1; min-width:200px">
-        <label>Buscar</label>
-        <input class="buscador" type="text"
-               placeholder="🔍 Cultivo..."
+        <label for="filtroBusqueda">Buscar</label>
+        <input id="filtroBusqueda" class="buscador" type="text"
+               placeholder="Cultivo..."
                [(ngModel)]="busqueda"/>
       </div>
       <div class="campo">
-        <label>Desde</label>
-        <input type="date" class="buscador" [(ngModel)]="fechaInicio"/>
+        <label for="filtroDesde">Desde</label>
+        <input id="filtroDesde" type="date" class="buscador" [(ngModel)]="fechaInicio"/>
       </div>
       <div class="campo">
-        <label>Hasta</label>
-        <input type="date" class="buscador" [(ngModel)]="fechaFin"/>
+        <label for="filtroHasta">Hasta</label>
+        <input id="filtroHasta" type="date" class="buscador" [(ngModel)]="fechaFin"/>
       </div>
       <div style="display:flex; gap:0.5rem">
-        <button class="btn-primary"    (click)="filtrarFechas()">Filtrar</button>
+        <button class="btn-primary" (click)="filtrarFechas()">Filtrar</button>
         <button class="btn-secundario" (click)="limpiarFiltros()">Limpiar</button>
       </div>
     </div>
 
-    <div *ngIf="error && !panelNomina" class="alerta-error">{{ error }}</div>
+    <div *ngIf="error && !panelNomina" class="alerta-error" role="alert">{{ error }}</div>
     <div *ngIf="cargando" class="estado-vacio"><p>Cargando jornales...</p></div>
 
     <!-- Vacío -->
     <div *ngIf="!cargando && filtrados.length === 0" class="estado-vacio">
-      <div class="vacio-icono">🗓️</div>
+      <div class="vacio-icono" aria-hidden="true">🗓️</div>
       <p>No hay jornales registrados para este período.</p>
       <button class="btn-primary" style="margin-top:1rem" (click)="irANuevoJornal()">
         ＋ Registrar primer jornal
@@ -133,7 +134,7 @@
           <td>{{ j.fecha | date:'dd/MM/yyyy' }}</td>
           <td>
             <div class="trabajador-cell">
-              <div class="avatar">
+              <div class="avatar" aria-hidden="true">
                 {{ j.trabajador?.nombre?.[0] }}{{ j.trabajador?.apellido?.[0] }}
               </div>
               <div>
@@ -176,15 +177,20 @@
 </div>
 
 <!-- ══ PANEL: GENERAR NÓMINA ══ -->
-<div class="overlay" *ngIf="panelNomina" (click)="cerrarPanel()">
-  <div class="panel-detalle" (click)="$event.stopPropagation()">
+<ng-container *ngIf="panelNomina">
+  <button type="button" class="overlay" (click)="cerrarPanel()" aria-label="Cerrar panel"></button>
+  <dialog class="panel-detalle" open
+          (click)="$event.stopPropagation()"
+          (keydown.escape)="cerrarPanel()">
 
     <div class="panel-header panel-header-verde">
       <div class="panel-header-info">
-        <div class="panel-nombre">📋 Generar Nómina</div>
+        <div class="panel-nombre">
+          <span aria-hidden="true">📋</span> Generar Nómina
+        </div>
         <div class="panel-doc" *ngIf="trabajador">{{ trabajador.nombreCompleto }}</div>
       </div>
-      <button class="btn-cerrar" (click)="cerrarPanel()">✕</button>
+      <button class="btn-cerrar" (click)="cerrarPanel()" aria-label="Cerrar panel">✕</button>
     </div>
 
     <div class="panel-body">
@@ -201,10 +207,9 @@
         </div>
       </div>
 
-      <!-- Error -->
-      <div *ngIf="error" class="alerta-error" style="margin-bottom:1rem">{{ error }}</div>
+      <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error }}</div>
 
-      <!-- Formulario — solo si no se generó aún -->
+      <!-- Formulario -->
       <ng-container *ngIf="!nominaGenerada">
         <form [formGroup]="formNomina" (ngSubmit)="generarNomina()">
           <div class="form-seccion">
@@ -213,14 +218,14 @@
               El sistema calculará el total de todos los jornales sin liquidar dentro de este período.
             </p>
             <div class="campo">
-              <label>Fecha inicio *</label>
-              <input formControlName="periodoInicio" type="date"
+              <label for="periodoInicio">Fecha inicio *</label>
+              <input id="periodoInicio" formControlName="periodoInicio" type="date"
                      [class.invalido]="invalido('periodoInicio')"/>
               <span *ngIf="invalido('periodoInicio')" class="error-msg">Requerido</span>
             </div>
             <div class="campo" style="margin-top:0.75rem">
-              <label>Fecha fin *</label>
-              <input formControlName="periodoFin" type="date"
+              <label for="periodoFin">Fecha fin *</label>
+              <input id="periodoFin" formControlName="periodoFin" type="date"
                      [class.invalido]="invalido('periodoFin')"/>
               <span *ngIf="invalido('periodoFin')" class="error-msg">Requerido</span>
             </div>
@@ -229,16 +234,16 @@
           <div class="panel-footer">
             <button type="button" class="btn-secundario" (click)="cerrarPanel()">Cancelar</button>
             <button type="submit" class="btn-primary" [disabled]="generando">
-              {{ generando ? 'Generando...' : '📋 Generar Nómina' }}
+              {{ generando ? 'Generando...' : 'Generar Nómina' }}
             </button>
           </div>
         </form>
       </ng-container>
 
-      <!-- ✅ Resultado exitoso -->
+      <!-- Resultado exitoso -->
       <ng-container *ngIf="nominaGenerada">
         <div class="nomina-exito">
-          <div class="exito-icono">✅</div>
+          <div class="exito-icono" aria-hidden="true">✅</div>
           <div class="exito-titulo">¡Nómina generada!</div>
 
           <div class="resumen-card" style="margin-top:1rem">
@@ -250,7 +255,7 @@
               <span class="resumen-label">Período</span>
               <span class="resumen-valor">
                 {{ nominaGenerada.periodoInicio | date:'dd/MM/yyyy' }} →
-                {{ nominaGenerada.periodoFin    | date:'dd/MM/yyyy' }}
+                {{ nominaGenerada.periodoFin | date:'dd/MM/yyyy' }}
               </span>
             </div>
             <div class="resumen-fila">
@@ -277,5 +282,5 @@
       </ng-container>
 
     </div>
-  </div>
-</div>
+  </dialog>
+</ng-container>

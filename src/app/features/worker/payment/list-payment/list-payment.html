@@ -66,11 +66,12 @@
 
         <!-- Lista de pagos — cada fila es clickeable -->
         <div class="pagos-lista">
-          <div class="pago-fila"
-               *ngFor="let p of grupo.pagos"
-               [class.activo]="pagoSeleccionado?.id === p.id"
-               (click)="abrirDetalle(p)"
-               title="Ver detalle del pago">
+          <button class="pago-fila"
+                  type="button"
+                  *ngFor="let p of grupo.pagos"
+                  [class.activo]="pagoSeleccionado?.id === p.id"
+                  (click)="abrirDetalle(p)"
+                  title="Ver detalle del pago">
             <div class="pago-izq">
               <span class="metodo-icono">{{ metodoPagoIcon(p.metodoPago) }}</span>
               <div>
@@ -83,7 +84,7 @@
               <span class="link-nomina">#{{ p.nominaId }}</span>
               <span class="chevron">›</span>
             </div>
-          </div>
+          </button>
         </div>
 
       </div>
