@@ -690,5 +690,16 @@ button.overlay {
   position: fixed;
   inset: 0;
   cursor: pointer;
-  /* el resto de estilos del overlay */
+}
+
+dialog.panel-detalle {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 360px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  z-index: 1001;
 }
