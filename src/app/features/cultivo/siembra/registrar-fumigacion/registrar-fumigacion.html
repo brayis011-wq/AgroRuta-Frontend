@@ -4,23 +4,23 @@
 
     <button class="btn-back" (click)="volver()">
       <span class="btn-back__arrow" aria-hidden="true">←</span>
-      <span>Volver a la siembra</span>
+      <span>{{ 'siembra.spray.back' | translate }}</span>
     </button>
 
     <div class="form-header">
       <div class="form-header__icon" aria-hidden="true">💨</div>
       <div>
-        <h2>Registrar Fumigación</h2>
-        <p>Registra una fumigación realizada en el cultivo</p>
+        <h2>{{ 'siembra.spray.title' | translate }}</h2>
+        <p>{{ 'siembra.spray.subtitle' | translate }}</p>
       </div>
     </div>
 
     <!-- Alertas -->
     <div class="alert alert--error" *ngIf="error" role="alert">
-      <span class="alert__icon" aria-hidden="true">⚠️</span>{{ error }}
+      <span class="alert__icon" aria-hidden="true">⚠️</span>{{ error | translate }}
     </div>
     <div class="alert alert--success" *ngIf="exito" role="alert">
-      <span class="alert__icon" aria-hidden="true">✅</span>{{ exito }}
+      <span class="alert__icon" aria-hidden="true">✅</span>{{ exito | translate }}
     </div>
 
     <div class="form-card">
@@ -31,7 +31,7 @@
         <!-- Fecha -->
         <div class="field">
           <label class="field__label" for="fecha">
-            <span aria-hidden="true">📅</span> Fecha
+            <span aria-hidden="true">📅</span> {{ 'siembra.spray.date' | translate }}
           </label>
           <div class="field__input-wrap">
             <input id="fecha" type="date"
@@ -42,7 +42,7 @@
         <!-- Producto: buscador conectado al API -->
         <fieldset class="field">
           <legend class="field__label">
-            <span aria-hidden="true">🧪</span> Producto
+            <span aria-hidden="true">🧪</span> {{ 'siembra.spray.product' | translate }}
           </legend>
 
           <!-- Buscador (visible si no hay insumo seleccionado) -->
@@ -54,7 +54,7 @@
                   type="text"
                   [(ngModel)]="busquedaProducto"
                   name="busquedaProducto"
-                  placeholder="Buscar en catálogo... ej: fungicida, mancozeb"
+                  [placeholder]="'siembra.spray.searchPlaceholder' | translate"
                   (input)="onBusquedaChange()"
                   (blur)="usarProductoManual()"
                   autocomplete="off"
@@ -74,30 +74,30 @@
                   <div class="catalogo-item-info">
                     <span class="catalogo-nombre">{{ insumo.nombre }}</span>
                     <span class="catalogo-dosis">
-                      Dosis sugerida: {{ insumo.dosisSugerida }} {{ insumo.unidadSugerida }}
+                      {{ 'siembra.spray.doseSuggested' | translate: { dose: insumo.dosisSugerida, unit: ('enums.unidadMedida.' + insumo.unidadSugerida | translate) } }}
                     </span>
                   </div>
                   <span class="badge" [ngClass]="getTipoBadgeClass(insumo.tipo)">
-                    {{ insumo.tipoDisplay }}
+                    {{ 'enums.tipoInsumo.' + insumo.tipo | translate }}
                   </span>
                 </button>
 
                 <div class="catalogo-empty"
                      *ngIf="catalogoFiltrado().length === 0 && !cargandoCatalogo()">
-                  <span>Sin resultados. Se registrará como producto manual.</span>
+                  <span>{{ 'siembra.spray.noResultsManual' | translate }}</span>
                 </div>
               </div>
 
               <small class="campo-hint">
-                Busca en el catálogo o escribe el nombre manualmente
+                {{ 'siembra.spray.searchHint' | translate }}
               </small>
 
               <button type="button" class="btn-catalogo" (click)="verCatalogoCompleto()">
                 <span *ngIf="!cargandoCompleto()">
-                  {{ mostrarCatalogoCompleto() ? '✖ Cerrar catálogo' : '📋 Ver catálogo completo' }}
+                  {{ (mostrarCatalogoCompleto() ? 'siembra.spray.catalogClose' : 'siembra.spray.catalogOpen') | translate }}
                 </span>
                 <span class="catalogo-cargando" *ngIf="cargandoCompleto()" aria-live="polite">
-                  <span class="spinner" aria-hidden="true"></span> Cargando...
+                  <span class="spinner" aria-hidden="true"></span> {{ 'common.loading' | translate }}
                 </span>
               </button>
 
@@ -111,14 +111,14 @@
                     class="catalogo-filtro"
                     [(ngModel)]="filtroCatalogo"
                     name="filtroCatalogo"
-                    placeholder="Filtrar por nombre o tipo..."
+                    [placeholder]="'siembra.spray.filterPlaceholder' | translate"
                   />
                 </div>
 
                 <!-- Sin resultados del filtro -->
                 <div class="catalogo-empty"
                      *ngIf="getCatalogoAgrupado().length === 0">
-                  <span>Sin resultados para "{{ filtroCatalogo }}"</span>
+                  <span>{{ 'siembra.spray.noResultsFor' | translate: { filter: filtroCatalogo } }}</span>
                 </div>
 
                 <!-- Grupos por tipo -->
@@ -126,7 +126,7 @@
                   <div class="catalogo-grupo">
 
                     <div class="catalogo-grupo__titulo">
-                      <span>{{ grupo.tipo }}</span>
+                      <span>{{ 'enums.tipoInsumo.' + grupo.tipo | translate }}</span>
                       <span class="catalogo-grupo__count">{{ grupo.items.length }}</span>
                     </div>
 
@@ -139,14 +139,14 @@
                       <div class="catalogo-item-info">
                         <span class="catalogo-nombre">{{ insumo.nombre }}</span>
                         <span class="catalogo-dosis">
-                          Dosis: {{ insumo.dosisSugerida }} {{ insumo.unidadSugerida }}
+                          {{ 'siembra.spray.doseShort' | translate: { dose: insumo.dosisSugerida, unit: ('enums.unidadMedida.' + insumo.unidadSugerida | translate) } }}
                           <span *ngIf="insumo.reentradaHoras > 0">
-                            · <span aria-hidden="true">⚠️</span> Reentrada: {{ insumo.reentradaHoras }}h
+                            · <span aria-hidden="true">⚠️</span> {{ 'siembra.spray.reentryShort' | translate: { hours: insumo.reentradaHoras } }}
                           </span>
                         </span>
                       </div>
                       <span class="badge" [ngClass]="getTipoBadgeClass(insumo.tipo)">
-                        {{ insumo.tipoDisplay }}
+                        {{ 'enums.tipoInsumo.' + insumo.tipo | translate }}
                       </span>
                     </button>
 
@@ -165,19 +165,19 @@
               <div class="insumo-seleccionado-info">
                 <span class="insumo-nombre">{{ insumo.nombre }}</span>
                 <span class="badge" [ngClass]="tipoBadgeClass()">
-                  {{ insumo.tipoDisplay }}
+                  {{ 'enums.tipoInsumo.' + insumo.tipo | translate }}
                 </span>
               </div>
               <button type="button" class="btn-cambiar" (click)="limpiarInsumo()">
-                Cambiar
+                {{ 'siembra.spray.change' | translate }}
               </button>
             </div>
 
             <!-- Alerta período de reentrada -->
             <div class="reentrada-aviso" *ngIf="insumo.reentradaHoras > 0" role="note">
-              <span aria-hidden="true">⚠️</span> Período de reentrada:
-              <strong>{{ insumo.reentradaHoras }} horas</strong>
-              — no ingresar al lote antes de ese tiempo
+              <span aria-hidden="true">⚠️</span> {{ 'siembra.spray.reentryLabel' | translate }}
+              <strong>{{ 'siembra.spray.reentryHours' | translate: { hours: insumo.reentradaHoras } }}</strong>
+              — {{ 'siembra.spray.reentryNote' | translate }}
             </div>
           </ng-container>
 
@@ -187,7 +187,7 @@
         <div class="field-row">
           <div class="field">
             <label class="field__label" for="dosis">
-              <span aria-hidden="true">💊</span> Dosis
+              <span aria-hidden="true">💊</span> {{ 'siembra.spray.dose' | translate }}
             </label>
             <div class="field__input-wrap">
               <input id="dosis" type="number"
@@ -195,19 +195,19 @@
                      placeholder="0.0" step="0.1" required />
             </div>
             <small class="campo-hint" *ngIf="insumoSeleccionado() as insumo">
-              Sugerida: {{ insumo.dosisSugerida }} {{ insumo.unidadSugerida }} / 200L agua
+              {{ 'siembra.spray.doseHint' | translate: { dose: insumo.dosisSugerida, unit: ('enums.unidadMedida.' + insumo.unidadSugerida | translate) } }}
             </small>
           </div>
 
           <div class="field">
             <label class="field__label" for="unidad">
-              <span aria-hidden="true">📐</span> Unidad
+              <span aria-hidden="true">📐</span> {{ 'siembra.spray.unit' | translate }}
             </label>
             <div class="field__input-wrap">
               <select id="unidad"
                       [(ngModel)]="form.unidadMedida" name="unidadMedida" required>
-                <option value="">Selecciona</option>
-                <option *ngFor="let u of unidades" [value]="u">{{ u }}</option>
+                <option value="">{{ 'siembra.spray.unitPlaceholder' | translate }}</option>
+                <option *ngFor="let u of unidades" [value]="u">{{ 'enums.unidadMedida.' + u | translate }}</option>
               </select>
             </div>
           </div>
@@ -216,7 +216,7 @@
         <!-- Área -->
         <div class="field">
           <label class="field__label" for="area">
-            <span aria-hidden="true">🌾</span> Área aplicada (hectáreas)
+            <span aria-hidden="true">🌾</span> {{ 'siembra.spray.area' | translate }}
           </label>
           <div class="field__input-wrap">
             <input id="area" type="number"
@@ -228,13 +228,13 @@
         <!-- Observaciones -->
         <div class="field">
           <label class="field__label" for="observaciones">
-            <span aria-hidden="true">📝</span> Observaciones
-            <span class="label-optional">(opcional)</span>
+            <span aria-hidden="true">📝</span> {{ 'siembra.spray.notes' | translate }}
+            <span class="label-optional">({{ 'common.optional' | translate }})</span>
           </label>
           <div class="field__input-wrap">
             <textarea id="observaciones"
                       [(ngModel)]="form.observaciones" name="observaciones"
-                      placeholder="Condiciones climáticas, estado del cultivo..."
+                      [placeholder]="'siembra.spray.notesPlaceholder' | translate"
                       rows="3">
             </textarea>
           </div>
@@ -242,12 +242,12 @@
 
         <button type="submit" class="btn-submit" [disabled]="cargando">
           <span class="btn-submit__text" *ngIf="!cargando">
-            <span>Registrar fumigación</span>
+            <span>{{ 'siembra.spray.submit' | translate }}</span>
             <span class="btn-submit__arrow" aria-hidden="true">→</span>
           </span>
           <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">
             <span class="spinner" aria-hidden="true"></span>
-            Registrando...
+            {{ 'siembra.spray.saving' | translate }}
           </span>
         </button>
 

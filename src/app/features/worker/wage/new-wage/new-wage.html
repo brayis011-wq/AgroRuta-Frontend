@@ -1,63 +1,63 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <a routerLink="../" class="btn-back">← Jornales</a>
-      <h1 class="page-title">Registrar Jornal</h1>
-      <p class="page-subtitle">Registra el trabajo diario de un trabajador</p>
+      <a routerLink="../" class="btn-back">{{ 'workers.wages.new.back' | translate }}</a>
+      <h1 class="page-title">{{ 'workers.wages.new.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'workers.wages.new.subtitle' | translate }}</p>
     </div>
   </div>
 
   <div class="form-card">
-    <div *ngIf="error" class="alerta-error" role="alert">{{ error }}</div>
+    <div *ngIf="error" class="alerta-error" role="alert">{{ error | translate }}</div>
     <form [formGroup]="form" (ngSubmit)="guardar()">
 
       <div class="seccion">
         <h3 class="seccion-titulo">
-          <span aria-hidden="true">👷</span> Información del Jornal
+          <span aria-hidden="true">👷</span> {{ 'workers.wages.new.info' | translate }}
         </h3>
         <div class="grid-2">
           <div class="campo">
-            <label for="trabajadorId">Trabajador *</label>
+            <label for="trabajadorId">{{ 'workers.wages.new.worker' | translate }}</label>
             <select id="trabajadorId" formControlName="trabajadorId"
                     [class.invalido]="invalido('trabajadorId')">
-              <option [ngValue]="null" disabled>Selecciona un trabajador</option>
+              <option [ngValue]="null" disabled>{{ 'workers.wages.new.selectWorker' | translate }}</option>
               <option *ngFor="let t of trabajadores" [ngValue]="t.id">
                 {{ t.nombreCompleto }}{{ t.cargo ? ' — ' + t.cargo.nombre : '' }}
               </option>
             </select>
-            <span *ngIf="invalido('trabajadorId')" class="error-msg">Requerido</span>
+            <span *ngIf="invalido('trabajadorId')" class="error-msg">{{ 'common.required' | translate }}</span>
           </div>
           <div class="campo">
-            <label for="fecha">Fecha *</label>
+            <label for="fecha">{{ 'workers.wages.new.date' | translate }}</label>
             <input id="fecha" formControlName="fecha" type="date"
                    [class.invalido]="invalido('fecha')"/>
-            <span *ngIf="invalido('fecha')" class="error-msg">Requerido</span>
+            <span *ngIf="invalido('fecha')" class="error-msg">{{ 'common.required' | translate }}</span>
           </div>
           <div class="campo">
-            <label for="cultivoId">ID del Cultivo *</label>
+            <label for="cultivoId">{{ 'workers.wages.new.cropId' | translate }}</label>
             <input id="cultivoId" formControlName="cultivoId" type="number"
-                   placeholder="ID del cultivo"
+                   [placeholder]="'workers.wages.new.cropIdPlaceholder' | translate"
                    [class.invalido]="invalido('cultivoId')"/>
-            <span *ngIf="invalido('cultivoId')" class="error-msg">Requerido</span>
+            <span *ngIf="invalido('cultivoId')" class="error-msg">{{ 'common.required' | translate }}</span>
           </div>
           <div class="campo">
-            <label for="nombreCultivo">Nombre del Cultivo *</label>
+            <label for="nombreCultivo">{{ 'workers.wages.new.cropName' | translate }}</label>
             <input id="nombreCultivo" formControlName="nombreCultivo" type="text"
-                   placeholder="Ej: Café Arábiga Lote 3"
+                   [placeholder]="'workers.wages.new.cropNamePlaceholder' | translate"
                    [class.invalido]="invalido('nombreCultivo')"/>
-            <span *ngIf="invalido('nombreCultivo')" class="error-msg">Requerido</span>
+            <span *ngIf="invalido('nombreCultivo')" class="error-msg">{{ 'common.required' | translate }}</span>
           </div>
           <div class="campo campo-full">
-            <label for="observaciones">Observaciones</label>
+            <label for="observaciones">{{ 'workers.wages.new.notes' | translate }}</label>
             <input id="observaciones" formControlName="observaciones" type="text"
-                   placeholder="Notas adicionales (opcional)"/>
+                   [placeholder]="'workers.wages.new.notesPlaceholder' | translate"/>
           </div>
         </div>
       </div>
 
       <div class="seccion">
         <h3 class="seccion-titulo">
-          <span aria-hidden="true">✅</span> Actividades Realizadas *
+          <span aria-hidden="true">✅</span> {{ 'workers.wages.new.activitiesTitle' | translate }}
         </h3>
         <div class="actividades-grid">
           <button
@@ -78,18 +78,18 @@
         </div>
         <p *ngIf="actividadesSeleccionadas.size === 0" class="texto-suave"
            style="margin-top:0.5rem">
-          Selecciona al menos una actividad
+          {{ 'workers.wages.new.selectAtLeast' | translate }}
         </p>
         <p *ngIf="actividadesSeleccionadas.size > 0" class="texto-verde"
            style="margin-top:0.5rem">
-          {{ actividadesSeleccionadas.size }} actividad(es) seleccionada(s)
+          {{ 'workers.wages.new.selectedCount' | translate: { count: actividadesSeleccionadas.size } }}
         </p>
       </div>
 
       <div class="form-footer">
-        <a routerLink="../" class="btn-secundario">Cancelar</a>
+        <a routerLink="../" class="btn-secundario">{{ 'common.cancel' | translate }}</a>
         <button type="submit" class="btn-primary" [disabled]="guardando">
-          {{ guardando ? 'Registrando...' : 'Registrar Jornal' }}
+          {{ (guardando ? 'workers.wages.new.saving' : 'workers.wages.new.submit') | translate }}
         </button>
       </div>
 

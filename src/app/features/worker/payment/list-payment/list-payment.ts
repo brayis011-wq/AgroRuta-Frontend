@@ -3,11 +3,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { PagoService, NominaService } from '../../../../core/services/worker.service';
 import { Pago, Nomina } from '../../../../core/models/worker.model';
 
 export interface GrupoPago {
-  trabajadorNombre: string;
+  trabajadorNombre: string;   // vacío = sin nombre (la plantilla muestra el texto traducido)
   pagos: Pago[];
   total: number;
 }
@@ -15,7 +16,7 @@ export interface GrupoPago {
 @Component({
   selector: 'app-lista-pagos',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './list-payment.html',
   styleUrls: ['./list-payment.css']
 })
@@ -23,7 +24,7 @@ export class ListaPagosComponent implements OnInit {
   pagos: Pago[] = [];
   grupos: GrupoPago[] = [];
   cargando = false;
-  error = '';
+  error = '';   // clave de traducción
 
   // Filtro por nominaId desde query param
   nominaIdFiltro: number | null = null;
@@ -61,7 +62,7 @@ export class ListaPagosComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error = 'Error al cargar pagos';
+        this.error = 'workers.payments.errors.load';
         this.cargando = false;
         this.cdr.detectChanges();
       }
@@ -75,7 +76,7 @@ export class ListaPagosComponent implements OnInit {
 
     const mapa = new Map<string, Pago[]>();
     for (const p of pagosVer) {
-      const nombre = p.trabajadorNombre ?? 'Sin nombre';
+      const nombre = p.trabajadorNombre ?? '';
       if (!mapa.has(nombre)) mapa.set(nombre, []);
       mapa.get(nombre)!.push(p);
     }
@@ -136,6 +137,7 @@ export class ListaPagosComponent implements OnInit {
   }
 
   iniciales(nombre: string): string {
+    if (!nombre) return '?';
     return nombre.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
   }
 }

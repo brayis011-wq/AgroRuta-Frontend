@@ -8,6 +8,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ChangePasswordRequest } from '../../../core/models/profile.model';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
@@ -19,7 +20,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-change-password-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './change-password-form.component.html',
   styleUrls: ['./change-password-form.component.scss'],
 })

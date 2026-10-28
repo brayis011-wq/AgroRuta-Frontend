@@ -3,24 +3,24 @@
 
     <button class="btn-back" (click)="volver()">
       <span class="btn-back__arrow" aria-hidden="true">←</span>
-      <span>Volver a la siembra</span>
+      <span>{{ 'siembra.activity.back' | translate }}</span>
     </button>
 
     <div class="form-header">
       <div class="form-header__icon" aria-hidden="true">🌱</div>
       <div>
-        <h2>Registrar Actividad</h2>
-        <p>Registra una actividad realizada en el cultivo</p>
+        <h2>{{ 'siembra.activity.title' | translate }}</h2>
+        <p>{{ 'siembra.activity.subtitle' | translate }}</p>
       </div>
     </div>
 
     <div class="alert alert--error" *ngIf="error" role="alert">
       <span class="alert__icon" aria-hidden="true">⚠️</span>
-      {{ error }}
+      {{ error | translate }}
     </div>
     <div class="alert alert--success" *ngIf="exito" role="alert">
       <span class="alert__icon" aria-hidden="true">✅</span>
-      {{ exito }}
+      {{ exito | translate }}
     </div>
 
     <div class="form-card">
@@ -31,7 +31,7 @@
 
         <!-- Tipo de actividad: selector visual -->
         <fieldset class="field">
-          <legend class="field__label">Tipo de actividad</legend>
+          <legend class="field__label">{{ 'siembra.activity.type' | translate }}</legend>
           <div class="tipo-grid">
             <button
               type="button"
@@ -42,7 +42,7 @@
               (click)="form.tipo = tipo"
             >
               <span class="tipo-chip__icon" aria-hidden="true">{{ tipoIconos[tipo] }}</span>
-              <span class="tipo-chip__label">{{ tipo }}</span>
+              <span class="tipo-chip__label">{{ 'enums.tipoActividad.' + tipo | translate }}</span>
             </button>
           </div>
           <input type="hidden" [(ngModel)]="form.tipo" name="tipo" required />
@@ -50,13 +50,13 @@
 
         <!-- Descripción -->
         <div class="field">
-          <label class="field__label" for="descripcion">Descripción</label>
+          <label class="field__label" for="descripcion">{{ 'siembra.activity.description' | translate }}</label>
           <div class="field__input-wrap">
             <textarea
               id="descripcion"
               [(ngModel)]="form.descripcion"
               name="descripcion"
-              placeholder="Describe la actividad realizada..."
+              [placeholder]="'siembra.activity.descriptionPlaceholder' | translate"
               rows="4"
               required
             ></textarea>
@@ -67,7 +67,7 @@
         <!-- Fecha -->
         <div class="field">
           <label class="field__label" for="fecha">
-            <span aria-hidden="true">📅</span> Fecha de la actividad
+            <span aria-hidden="true">📅</span> {{ 'siembra.activity.date' | translate }}
           </label>
           <div class="field__input-wrap">
             <input
@@ -83,12 +83,12 @@
 
         <button type="submit" class="btn-submit" [disabled]="cargando || !form.tipo">
           <span class="btn-submit__text" *ngIf="!cargando">
-            <span>Registrar actividad</span>
+            <span>{{ 'siembra.activity.submit' | translate }}</span>
             <span class="btn-submit__arrow" aria-hidden="true">→</span>
           </span>
           <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">
             <span class="spinner" aria-hidden="true"></span>
-            Registrando...
+            {{ 'siembra.activity.saving' | translate }}
           </span>
         </button>
 

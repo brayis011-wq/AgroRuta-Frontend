@@ -1,62 +1,62 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Nóminas</h1>
+      <h1 class="page-title">{{ 'workers.rosters.list.title' | translate }}</h1>
       <p class="page-subtitle" *ngIf="trabajadorFiltrado">
-        Nóminas de <strong>{{ trabajadorFiltrado.nombreCompleto }}</strong>
+        {{ 'workers.rosters.list.subtitleOf' | translate }} <strong>{{ trabajadorFiltrado.nombreCompleto }}</strong>
       </p>
       <p class="page-subtitle" *ngIf="!trabajadorFiltrado">
-        Gestión y generación de nóminas por período
+        {{ 'workers.rosters.list.subtitleAll' | translate }}
       </p>
     </div>
     <div class="header-acciones">
       <button *ngIf="trabajadorFiltrado" class="btn-secundario" (click)="verTodas()">
-        Ver todas
+        {{ 'workers.rosters.list.showAll' | translate }}
       </button>
       <button class="btn-primary"
               *ngIf="!trabajadorFiltrado || puedeGenerarNomina"
-              (click)="mostrarForm = !mostrarForm">＋ Generar Nómina</button>
+              (click)="mostrarForm = !mostrarForm">{{ 'workers.rosters.list.generate' | translate }}</button>
     </div>
   </div>
 
   <!-- Mensajes -->
-  <div *ngIf="error" class="alerta-error">{{ error }}</div>
-  <div *ngIf="exito" class="alerta-exito">{{ exito }}</div>
+  <div *ngIf="error" class="alerta-error">{{ error | translate }}</div>
+  <div *ngIf="exito" class="alerta-exito">{{ exito | translate: exitoParams }}</div>
 
   <!-- Formulario generar nómina -->
   <div *ngIf="mostrarForm" class="form-card">
-    <h3 class="form-titulo">Generar nómina</h3>
+    <h3 class="form-titulo">{{ 'workers.rosters.list.formTitle' | translate }}</h3>
     <form [formGroup]="form" (ngSubmit)="generar()">
       <div class="grid-3">
 
         <div class="campo">
-          <label for="trabajadorId">Trabajador *</label>
+          <label for="trabajadorId">{{ 'workers.rosters.list.worker' | translate }}</label>
           <select id="trabajadorId" formControlName="trabajadorId" [class.invalido]="invalido('trabajadorId')">
-            <option [ngValue]="null" disabled>Selecciona...</option>
+            <option [ngValue]="null" disabled>{{ 'workers.rosters.list.select' | translate }}</option>
             <option *ngFor="let t of trabajadores" [ngValue]="t.id">{{ t.nombreCompleto }}</option>
           </select>
-          <span *ngIf="invalido('trabajadorId')" class="error-msg">Requerido</span>
+          <span *ngIf="invalido('trabajadorId')" class="error-msg">{{ 'common.required' | translate }}</span>
         </div>
 
         <div class="campo">
-          <label for="periodoInicio">Período inicio *</label>
+          <label for="periodoInicio">{{ 'workers.rosters.list.periodStart' | translate }}</label>
           <input id="periodoInicio" formControlName="periodoInicio" type="date"
                  [class.invalido]="invalido('periodoInicio')"/>
-          <span *ngIf="invalido('periodoInicio')" class="error-msg">Requerido</span>
+          <span *ngIf="invalido('periodoInicio')" class="error-msg">{{ 'common.required' | translate }}</span>
         </div>
 
         <div class="campo">
-          <label for="periodoFin">Período fin *</label>
+          <label for="periodoFin">{{ 'workers.rosters.list.periodEnd' | translate }}</label>
           <input id="periodoFin" formControlName="periodoFin" type="date"
                  [class.invalido]="invalido('periodoFin')"/>
-          <span *ngIf="invalido('periodoFin')" class="error-msg">Requerido</span>
+          <span *ngIf="invalido('periodoFin')" class="error-msg">{{ 'common.required' | translate }}</span>
         </div>
 
       </div>
       <div class="form-footer">
-        <button type="button" class="btn-secundario" (click)="mostrarForm = false">Cancelar</button>
+        <button type="button" class="btn-secundario" (click)="mostrarForm = false">{{ 'common.cancel' | translate }}</button>
         <button type="submit" class="btn-primary" [disabled]="guardando">
-          {{ guardando ? 'Generando...' : 'Generar' }}
+          {{ (guardando ? 'workers.rosters.list.generating' : 'workers.rosters.list.generateSubmit') | translate }}
         </button>
       </div>
     </form>
@@ -67,13 +67,13 @@
     <table class="tabla">
       <thead>
       <tr>
-        <th>Trabajador</th>
-        <th>Período</th>
-        <th>Jornales</th>
-        <th>Total</th>
-        <th>Estado</th>
-        <th>Generada</th>
-        <th>Acciones</th>
+        <th>{{ 'workers.rosters.list.table.worker' | translate }}</th>
+        <th>{{ 'workers.rosters.list.table.period' | translate }}</th>
+        <th>{{ 'workers.rosters.list.table.wages' | translate }}</th>
+        <th>{{ 'workers.rosters.list.table.total' | translate }}</th>
+        <th>{{ 'common.status' | translate }}</th>
+        <th>{{ 'workers.rosters.list.table.generated' | translate }}</th>
+        <th>{{ 'common.actions' | translate }}</th>
       </tr>
       </thead>
       <tbody>
@@ -90,7 +90,7 @@
         <td class="centrado">{{ n.totalJornales }}</td>
         <td class="valor">${{ n.valorTotal | number }}</td>
         <td>
-          <span class="badge" [ngClass]="estadoClass(n.estado)">{{ n.estado }}</span>
+          <span class="badge" [ngClass]="estadoClass(n.estado)">{{ 'enums.estadoNomina.' + n.estado | translate }}</span>
         </td>
         <td class="texto-suave">{{ n.fechaGeneracion | date:'dd/MM/yyyy' }}</td>
         <td>
@@ -99,12 +99,12 @@
             <!-- Ver detalle (siempre visible) -->
             <a [routerLink]="['/worker/nominas', n.id]"
                class="btn-accion btn-ver"
-               title="Ver detalle">👁</a>
+               [title]="'workers.rosters.list.actions.viewDetail' | translate">👁</a>
 
             <!-- PENDIENTE: aprobar -->
             <button *ngIf="n.estado === 'PENDIENTE'"
                     class="btn-accion btn-reactivar"
-                    title="Aprobar y registrar pago"
+                    [title]="'workers.rosters.list.actions.approve' | translate"
                     [disabled]="aprobando === n.id"
                     (click)="aprobar(n.id)">
               {{ aprobando === n.id ? '⏳' : '✔' }}
@@ -113,7 +113,7 @@
             <!-- PENDIENTE: anular -->
             <button *ngIf="n.estado === 'PENDIENTE'"
                     class="btn-accion btn-desactivar"
-                    title="Anular"
+                    [title]="'workers.rosters.list.actions.cancel' | translate"
                     (click)="anular(n.id)">✖</button>
 
             <!-- APROBADA o PAGADA: ver pago -->
@@ -121,24 +121,24 @@
                [routerLink]="['/worker/pagos']"
                [queryParams]="{ nominaId: n.id }"
                class="btn-accion btn-pago"
-               title="Ver pago">💰</a>
+               [title]="'workers.rosters.list.actions.viewPayment' | translate">💰</a>
 
             <!-- APROBADA o PAGADA: anular -->
             <button *ngIf="n.estado === 'APROBADA' || n.estado === 'PAGADA'"
                     class="btn-accion btn-desactivar"
-                    title="Anular"
+                    [title]="'workers.rosters.list.actions.cancel' | translate"
                     (click)="anular(n.id)">✖</button>
 
-            <!-- ANULADA: reactivar (vuelve a BORRADOR) -->
+            <!-- ANULADA: reactivar (vuelve a PENDIENTE) -->
             <button *ngIf="n.estado === 'ANULADA'"
                     class="btn-accion btn-reactivar"
-                    title="Reactivar como PENDIENTE"
+                    [title]="'workers.rosters.list.actions.reactivate' | translate"
                     (click)="reactivar(n.id)">♻</button>
 
             <!-- ANULADA: eliminar definitivamente -->
             <button *ngIf="n.estado === 'ANULADA'"
                     class="btn-accion btn-eliminar"
-                    title="Eliminar definitivamente"
+                    [title]="'workers.rosters.list.actions.deleteForever' | translate"
                     (click)="eliminar(n.id)">🗑</button>
 
           </div>
@@ -146,7 +146,7 @@
       </tr>
       <tr *ngIf="nominas.length === 0">
         <td colspan="7" class="sin-resultados">
-          {{ trabajadorFiltrado ? 'Este trabajador no tiene nóminas generadas' : 'No hay nóminas generadas' }}
+          {{ (trabajadorFiltrado ? 'workers.rosters.list.emptyFiltered' : 'workers.rosters.list.empty') | translate }}
         </td>
       </tr>
       </tbody>

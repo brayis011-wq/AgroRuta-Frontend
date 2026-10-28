@@ -2,13 +2,15 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth';
 import { LoginRequest } from '../../../core/models/auth.model';
+import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, LanguageSwitcher],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -40,8 +42,8 @@ export class LoginComponent {
         this.cargando = false;
         this.error =
           err.status === 401 || err.status === 403
-            ? 'Correo o contraseña incorrectos.'
-            : 'Error al conectar con el servidor.';
+            ? 'auth.login.invalidCredentials'
+            : 'auth.login.serverError';
         this.cdr.detectChanges();
       },
     });

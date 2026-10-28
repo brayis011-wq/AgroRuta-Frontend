@@ -4,18 +4,18 @@
   <div class="page-header">
     <div>
       <h1 class="page-title">
-        <span aria-hidden="true">👷</span> Trabajadores
+        <span aria-hidden="true">👷</span> {{ 'workers.home.title' | translate }}
       </h1>
-      <p class="page-subtitle">Administra tu equipo de trabajo</p>
+      <p class="page-subtitle">{{ 'workers.home.subtitle' | translate }}</p>
     </div>
     <div class="header-acciones">
       <button class="btn-secundario" (click)="irA('actividades')">
-        <span aria-hidden="true">⚡</span> Actividades
+        <span aria-hidden="true">⚡</span> {{ 'workers.home.activities' | translate }}
       </button>
       <button class="btn-secundario" (click)="irA('cargos')">
-        <span aria-hidden="true">🏷️</span> Cargos
+        <span aria-hidden="true">🏷️</span> {{ 'workers.home.posts' | translate }}
       </button>
-      <button class="btn-primary" (click)="abrirNuevo()">＋ Nuevo Trabajador</button>
+      <button class="btn-primary" (click)="abrirNuevo()">{{ 'workers.home.newWorker' | translate }}</button>
     </div>
   </div>
 
@@ -25,24 +25,24 @@
             [class.tab-activo]="tabActivo === 'trabajadores'"
             [attr.aria-selected]="tabActivo === 'trabajadores'"
             (click)="tabActivo = 'trabajadores'">
-      <span aria-hidden="true">👥</span> Trabajadores
+      <span aria-hidden="true">👥</span> {{ 'workers.home.tabs.workers' | translate }}
     </button>
     <button class="tab" role="tab"
             [class.tab-activo]="tabActivo === 'nominas'"
             [attr.aria-selected]="tabActivo === 'nominas'"
             (click)="tabActivo = 'nominas'">
-      <span aria-hidden="true">📋</span> Nóminas
+      <span aria-hidden="true">📋</span> {{ 'workers.home.tabs.rosters' | translate }}
     </button>
     <button class="tab" role="tab"
             [class.tab-activo]="tabActivo === 'pagos'"
             [attr.aria-selected]="tabActivo === 'pagos'"
             (click)="tabActivo = 'pagos'">
-      <span aria-hidden="true">💳</span> Pagos
+      <span aria-hidden="true">💳</span> {{ 'workers.home.tabs.payments' | translate }}
     </button>
   </div>
 
-  <div *ngIf="error" class="alerta-error" role="alert">{{ error }}</div>
-  <div *ngIf="exito" class="alerta-exito" role="alert">{{ exito }}</div>
+  <div *ngIf="error" class="alerta-error" role="alert">{{ error | translate }}</div>
+  <div *ngIf="exito" class="alerta-exito" role="alert">{{ exito | translate: exitoParams }}</div>
 
   <!-- ══ TAB: TRABAJADORES ══ -->
   <ng-container *ngIf="tabActivo === 'trabajadores'">
@@ -50,47 +50,47 @@
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-valor">{{ cantidadActivos }}</div>
-        <div class="stat-label">Activos</div>
+        <div class="stat-label">{{ 'workers.home.stats.active' | translate }}</div>
       </div>
       <div class="stat-card" [class.stat-alerta]="cantidadSuspendidos > 0">
         <div class="stat-valor">{{ cantidadSuspendidos }}</div>
-        <div class="stat-label">Suspendidos</div>
+        <div class="stat-label">{{ 'workers.home.stats.suspended' | translate }}</div>
       </div>
       <div class="stat-card stat-destacado">
         <div class="stat-valor">{{ nominasPendientes }}</div>
-        <div class="stat-label">Nóminas en borrador</div>
+        <div class="stat-label">{{ 'workers.home.stats.draftRosters' | translate }}</div>
       </div>
       <div class="stat-card">
         <div class="stat-valor">${{ totalPagado | number }}</div>
-        <div class="stat-label">Total pagado</div>
+        <div class="stat-label">{{ 'workers.home.stats.totalPaid' | translate }}</div>
       </div>
     </div>
 
     <div class="buscador-wrap" style="display:flex; gap:0.75rem; align-items:center">
-      <label for="buscadorTrabajadores" class="sr-only">Buscar trabajadores</label>
+      <label for="buscadorTrabajadores" class="sr-only">{{ 'workers.home.list.searchLabel' | translate }}</label>
       <input id="buscadorTrabajadores" class="buscador" type="text"
-             placeholder="Buscar por nombre, cédula o cargo..."
+             [placeholder]="'workers.home.list.searchPlaceholder' | translate"
              [(ngModel)]="busqueda" style="flex:1"/>
       <div class="filtro-estado">
         <button class="filtro-btn" [class.activo]="filtroEstado === 'ACTIVO'"
-                (click)="filtroEstado = 'ACTIVO'">Activos</button>
+                (click)="filtroEstado = 'ACTIVO'">{{ 'workers.home.list.filterActive' | translate }}</button>
         <button class="filtro-btn" [class.activo]="filtroEstado === 'SUSPENDIDO'"
-                (click)="filtroEstado = 'SUSPENDIDO'">Suspendidos</button>
+                (click)="filtroEstado = 'SUSPENDIDO'">{{ 'workers.home.list.filterSuspended' | translate }}</button>
         <button class="filtro-btn" [class.activo]="filtroEstado === 'TODOS'"
-                (click)="filtroEstado = 'TODOS'">Todos</button>
+                (click)="filtroEstado = 'TODOS'">{{ 'workers.home.list.filterAll' | translate }}</button>
       </div>
     </div>
 
-    <div *ngIf="cargando" class="estado-vacio"><p>Cargando trabajadores...</p></div>
+    <div *ngIf="cargando" class="estado-vacio"><p>{{ 'workers.home.list.loading' | translate }}</p></div>
 
     <div *ngIf="!cargando && trabajadoresFiltrados.length === 0" class="estado-vacio">
       <div class="vacio-icono" aria-hidden="true">👷</div>
-      <p *ngIf="filtroEstado === 'SUSPENDIDO'">No hay trabajadores suspendidos.</p>
-      <p *ngIf="filtroEstado !== 'SUSPENDIDO' && !busqueda">No hay trabajadores registrados aún.</p>
-      <p *ngIf="busqueda">No se encontraron resultados para "{{ busqueda }}"</p>
+      <p *ngIf="filtroEstado === 'SUSPENDIDO'">{{ 'workers.home.list.emptySuspended' | translate }}</p>
+      <p *ngIf="filtroEstado !== 'SUSPENDIDO' && !busqueda">{{ 'workers.home.list.emptyNone' | translate }}</p>
+      <p *ngIf="busqueda">{{ 'workers.home.list.emptySearch' | translate: { query: busqueda } }}</p>
       <button *ngIf="filtroEstado !== 'SUSPENDIDO' && !busqueda"
               class="btn-primary" style="margin-top:1rem" (click)="abrirNuevo()">
-        ＋ Registrar primer trabajador
+        {{ 'workers.home.list.registerFirst' | translate }}
       </button>
     </div>
 
@@ -113,29 +113,29 @@
             <span class="badge"
                   [class.badge-activo]="t.estado === 'ACTIVO'"
                   [class.badge-suspendido]="t.estado === 'SUSPENDIDO'">
-              {{ t.estado }}
+              {{ t.estado ? ('enums.estadoTrabajador.' + t.estado | translate) : '' }}
             </span>
           </div>
           <div *ngIf="t.cargo" class="trabajador-jornal">
-            Jornal: <strong>${{ t.cargo.valorJornal | number }}</strong>/día
+            {{ 'workers.home.list.wageLabel' | translate }} <strong>${{ t.cargo.valorJornal | number }}</strong>{{ 'workers.home.list.perDay' | translate }}
           </div>
         </div>
         <div class="trabajador-acciones"
              (click)="$event.stopPropagation()"
              (keydown)="$event.stopPropagation()">
-          <button class="btn-accion btn-jornal" title="Registrar jornal"
+          <button class="btn-accion btn-jornal" [title]="'workers.home.list.registerWage' | translate"
                   [disabled]="t.estado === 'SUSPENDIDO'"
                   (click)="registrarJornal(t)">
             <span aria-hidden="true">🗓️</span>
-            <span class="sr-only">Registrar jornal</span>
+            <span class="sr-only">{{ 'workers.home.list.registerWage' | translate }}</span>
           </button>
-          <button class="btn-accion" title="Ver jornales" (click)="verJornales(t)">
+          <button class="btn-accion" [title]="'workers.home.list.viewWages' | translate" (click)="verJornales(t)">
             <span aria-hidden="true">📅</span>
-            <span class="sr-only">Ver jornales</span>
+            <span class="sr-only">{{ 'workers.home.list.viewWages' | translate }}</span>
           </button>
-          <button class="btn-accion btn-nomina" title="Ver nóminas" (click)="verNominas(t)">
+          <button class="btn-accion btn-nomina" [title]="'workers.home.list.viewRosters' | translate" (click)="verNominas(t)">
             <span aria-hidden="true">📋</span>
-            <span class="sr-only">Ver nóminas</span>
+            <span class="sr-only">{{ 'workers.home.list.viewRosters' | translate }}</span>
           </button>
         </div>
         <div class="trabajador-arrow" aria-hidden="true">→</div>
@@ -149,22 +149,24 @@
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-valor">{{ nominas.length }}</div>
-        <div class="stat-label">Total nóminas</div>
+        <div class="stat-label">{{ 'workers.home.stats.totalRosters' | translate }}</div>
       </div>
       <div class="stat-card stat-destacado">
         <div class="stat-valor">{{ nominasPendientes }}</div>
-        <div class="stat-label">En borrador</div>
+        <div class="stat-label">{{ 'workers.home.stats.draft' | translate }}</div>
       </div>
     </div>
     <div *ngIf="nominas.length === 0" class="estado-vacio">
       <div class="vacio-icono" aria-hidden="true">📋</div>
-      <p>No hay nóminas generadas aún.</p>
+      <p>{{ 'workers.home.rostersTab.empty' | translate }}</p>
     </div>
     <div class="trabajadores-lista" *ngIf="nominas.length > 0">
       <button type="button" class="trabajador-card" *ngFor="let n of nominas"
               (click)="verNominas(n.trabajador!)">
         <div class="trabajador-info">
-          <div class="trabajador-nombre">Nómina #{{ n.id }} — {{ n.trabajador?.nombreCompleto }}</div>
+          <div class="trabajador-nombre">
+            {{ 'workers.home.rostersTab.rosterOf' | translate: { id: n.id, name: n.trabajador?.nombreCompleto } }}
+          </div>
           <div class="trabajador-meta">
             <span>
               <span aria-hidden="true">📅</span>
@@ -172,12 +174,12 @@
             </span>
             <span class="badge"
                   [class.badge-activo]="n.estado === 'APROBADA'"
-                  [class.badge-borrador]="n.estado === 'BORRADOR'"
+                  [class.badge-borrador]="n.estado === 'PENDIENTE'"
                   [class.badge-suspendido]="n.estado === 'ANULADA'">
-              {{ n.estado }}
+              {{ 'enums.estadoNomina.' + n.estado | translate }}
             </span>
           </div>
-          <div class="trabajador-jornal">Total: <strong>${{ n.valorTotal | number }}</strong></div>
+          <div class="trabajador-jornal">{{ 'workers.home.rostersTab.total' | translate }} <strong>${{ n.valorTotal | number }}</strong></div>
         </div>
         <div class="trabajador-arrow" aria-hidden="true">→</div>
       </button>
@@ -189,26 +191,26 @@
     <div class="stats-grid">
       <div class="stat-card stat-destacado">
         <div class="stat-valor">${{ totalPagado | number }}</div>
-        <div class="stat-label">Total pagado</div>
+        <div class="stat-label">{{ 'workers.home.stats.totalPaid' | translate }}</div>
       </div>
       <div class="stat-card">
         <div class="stat-valor">{{ pagos.length }}</div>
-        <div class="stat-label">Pagos realizados</div>
+        <div class="stat-label">{{ 'workers.home.stats.paymentsMade' | translate }}</div>
       </div>
     </div>
     <div *ngIf="pagos.length === 0" class="estado-vacio">
       <div class="vacio-icono" aria-hidden="true">💳</div>
-      <p>No hay pagos registrados aún.</p>
+      <p>{{ 'workers.home.paymentsTab.empty' | translate }}</p>
     </div>
     <div class="trabajadores-lista" *ngIf="pagos.length > 0">
       <div class="trabajador-card" *ngFor="let p of pagos">
         <div class="trabajador-info">
-          <div class="trabajador-nombre">{{ p.trabajadorNombre ?? 'Pago #' + p.id }}</div>
+          <div class="trabajador-nombre">{{ p.trabajadorNombre ?? ('workers.home.paymentsTab.paymentNo' | translate: { id: p.id }) }}</div>
           <div class="trabajador-meta">
             <span><span aria-hidden="true">📅</span> {{ p.fechaPago | date:'dd/MM/yyyy' }}</span>
-            <span *ngIf="p.metodoPago" class="cargo-tag">{{ p.metodoPago }}</span>
+            <span *ngIf="p.metodoPago" class="cargo-tag">{{ 'enums.metodoPago.' + p.metodoPago | translate }}</span>
           </div>
-          <div class="trabajador-jornal">Monto: <strong>${{ p.monto | number }}</strong></div>
+          <div class="trabajador-jornal">{{ 'workers.home.paymentsTab.amount' | translate }} <strong>${{ p.monto | number }}</strong></div>
         </div>
       </div>
     </div>
@@ -219,7 +221,7 @@
 <!-- ══ PANEL LATERAL ══ -->
 
 <ng-container *ngIf="modoPanel">
-  <button type="button" class="overlay" (click)="cerrarPanel()" aria-label="Cerrar panel"></button>
+  <button type="button" class="overlay" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"></button>
   <dialog class="panel-detalle" open
           (click)="$event.stopPropagation()"
           (keydown.escape)="cerrarPanel()">
@@ -241,72 +243,72 @@
                   [class.badge-activo]="trabajadorSeleccionado.estado === 'ACTIVO'"
                   [class.badge-suspendido]="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
                   style="margin-left:6px">
-              {{ trabajadorSeleccionado.estado }}
+              {{ trabajadorSeleccionado.estado ? ('enums.estadoTrabajador.' + trabajadorSeleccionado.estado | translate) : '' }}
             </span>
           </div>
         </div>
-        <button class="btn-cerrar" (click)="cerrarPanel()" aria-label="Cerrar panel">✕</button>
+        <button class="btn-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate">✕</button>
       </div>
 
       <div class="panel-body">
-        <div *ngIf="exito" class="alerta-exito" role="alert" style="margin-bottom:1rem">{{ exito }}</div>
-        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error }}</div>
+        <div *ngIf="exito" class="alerta-exito" role="alert" style="margin-bottom:1rem">{{ exito | translate: exitoParams }}</div>
+        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error | translate }}</div>
 
         <div *ngIf="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
              class="alerta-suspendido" role="note">
           <span aria-hidden="true">⚠️</span>
-          Este trabajador está suspendido. No puede registrar jornales nuevos.
+          {{ 'workers.home.panel.suspendedNotice' | translate }}
         </div>
 
         <div class="detalle-seccion" *ngIf="trabajadorSeleccionado.cargo">
-          <div class="detalle-titulo">Cargo actual</div>
+          <div class="detalle-titulo">{{ 'workers.home.panel.currentPost' | translate }}</div>
           <div class="detalle-cargo-card">
             <div class="cargo-nombre">{{ trabajadorSeleccionado.cargo.nombre }}</div>
             <div class="cargo-desc">{{ trabajadorSeleccionado.cargo.descripcion }}</div>
-            <div class="cargo-jornal">${{ trabajadorSeleccionado.cargo.valorJornal | number }}/jornal</div>
+            <div class="cargo-jornal">{{ 'workers.home.panel.perWage' | translate: { amount: (trabajadorSeleccionado.cargo.valorJornal | number) } }}</div>
           </div>
         </div>
 
         <div class="detalle-seccion">
-          <div class="detalle-titulo">Acciones rápidas</div>
+          <div class="detalle-titulo">{{ 'workers.home.panel.quickActions' | translate }}</div>
           <div class="acciones-grid">
             <button class="accion-btn"
                     [disabled]="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
                     [class.accion-disabled]="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
                     (click)="registrarJornal(trabajadorSeleccionado)">
-              <span class="accion-icono" aria-hidden="true">🗓️</span><span>Registrar Jornal</span>
+              <span class="accion-icono" aria-hidden="true">🗓️</span><span>{{ 'workers.home.panel.registerWage' | translate }}</span>
             </button>
             <button class="accion-btn" (click)="verJornales(trabajadorSeleccionado)">
-              <span class="accion-icono" aria-hidden="true">📅</span><span>Ver Jornales</span>
+              <span class="accion-icono" aria-hidden="true">📅</span><span>{{ 'workers.home.panel.viewWages' | translate }}</span>
             </button>
             <button class="accion-btn" (click)="verNominas(trabajadorSeleccionado)">
-              <span class="accion-icono" aria-hidden="true">📋</span><span>Ver Nóminas</span>
+              <span class="accion-icono" aria-hidden="true">📋</span><span>{{ 'workers.home.panel.viewRosters' | translate }}</span>
             </button>
             <button class="accion-btn" (click)="abrirEditar(trabajadorSeleccionado)">
-              <span class="accion-icono" aria-hidden="true">✏️</span><span>Editar datos</span>
+              <span class="accion-icono" aria-hidden="true">✏️</span><span>{{ 'workers.home.panel.edit' | translate }}</span>
             </button>
             <button class="accion-btn" (click)="abrirCambiarCargo(trabajadorSeleccionado)">
-              <span class="accion-icono" aria-hidden="true">🏷️</span><span>Cambiar cargo</span>
+              <span class="accion-icono" aria-hidden="true">🏷️</span><span>{{ 'workers.home.panel.changePost' | translate }}</span>
             </button>
           </div>
         </div>
 
         <div class="detalle-seccion">
-          <div class="detalle-titulo">Gestión de estado</div>
+          <div class="detalle-titulo">{{ 'workers.home.panel.stateManagement' | translate }}</div>
           <div class="zona-peligro">
             <button *ngIf="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
                     class="btn-zona btn-reactivar"
                     (click)="reactivar(trabajadorSeleccionado)">
-              <span aria-hidden="true">▶</span> Reactivar trabajador
+              <span aria-hidden="true">▶</span> {{ 'workers.home.panel.reactivate' | translate }}
             </button>
             <button *ngIf="trabajadorSeleccionado.estado === 'ACTIVO'"
                     class="btn-zona btn-suspender"
                     (click)="suspender(trabajadorSeleccionado)">
-              <span aria-hidden="true">⏸</span> Suspender trabajador
+              <span aria-hidden="true">⏸</span> {{ 'workers.home.panel.suspend' | translate }}
             </button>
             <button class="btn-zona btn-desactivar"
                     (click)="desactivar(trabajadorSeleccionado)">
-              <span aria-hidden="true">🗑️</span> Desactivar trabajador
+              <span aria-hidden="true">🗑️</span> {{ 'workers.home.panel.deactivate' | translate }}
             </button>
           </div>
         </div>
@@ -317,79 +319,79 @@
     <ng-container *ngIf="modoPanel === 'nuevo'">
       <div class="panel-header panel-header-verde">
         <div class="panel-header-info">
-          <div class="panel-nombre">＋ Nuevo Trabajador</div>
-          <div class="panel-doc">Completa los datos del trabajador</div>
+          <div class="panel-nombre">{{ 'workers.home.new.title' | translate }}</div>
+          <div class="panel-doc">{{ 'workers.home.new.subtitle' | translate }}</div>
         </div>
-        <button class="btn-cerrar" (click)="cerrarPanel()" aria-label="Cerrar panel">✕</button>
+        <button class="btn-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate">✕</button>
       </div>
       <div class="panel-body">
-        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error }}</div>
+        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error | translate }}</div>
         <form [formGroup]="formNuevo" (ngSubmit)="guardarNuevo()">
           <div class="form-seccion">
-            <div class="form-seccion-titulo">Información personal</div>
+            <div class="form-seccion-titulo">{{ 'workers.home.new.personalInfo' | translate }}</div>
             <div class="campo">
-              <label for="nuevo-nombre">Nombre *</label>
+              <label for="nuevo-nombre">{{ 'workers.home.new.firstName' | translate }}</label>
               <input id="nuevo-nombre" formControlName="nombre" type="text"
-                     placeholder="Ej: Carlos"
+                     [placeholder]="'workers.home.new.firstNamePlaceholder' | translate"
                      [class.invalido]="invalido(formNuevo, 'nombre')"/>
-              <span *ngIf="invalido(formNuevo, 'nombre')" class="error-msg">Requerido</span>
+              <span *ngIf="invalido(formNuevo, 'nombre')" class="error-msg">{{ 'common.required' | translate }}</span>
             </div>
             <div class="campo">
-              <label for="nuevo-apellido">Apellido *</label>
+              <label for="nuevo-apellido">{{ 'workers.home.new.lastName' | translate }}</label>
               <input id="nuevo-apellido" formControlName="apellido" type="text"
-                     placeholder="Ej: Pérez"
+                     [placeholder]="'workers.home.new.lastNamePlaceholder' | translate"
                      [class.invalido]="invalido(formNuevo, 'apellido')"/>
-              <span *ngIf="invalido(formNuevo, 'apellido')" class="error-msg">Requerido</span>
+              <span *ngIf="invalido(formNuevo, 'apellido')" class="error-msg">{{ 'common.required' | translate }}</span>
             </div>
             <div class="campo">
-              <label for="nuevo-cedula">Cédula *</label>
+              <label for="nuevo-cedula">{{ 'workers.home.new.idNumber' | translate }}</label>
               <input id="nuevo-cedula" formControlName="cedula" type="text"
-                     placeholder="Número de documento"
+                     [placeholder]="'workers.home.new.idNumberPlaceholder' | translate"
                      [class.invalido]="invalido(formNuevo, 'cedula')"/>
-              <span *ngIf="invalido(formNuevo, 'cedula')" class="error-msg">Requerido</span>
+              <span *ngIf="invalido(formNuevo, 'cedula')" class="error-msg">{{ 'common.required' | translate }}</span>
             </div>
             <div class="campo">
-              <label for="nuevo-telefono">Teléfono</label>
+              <label for="nuevo-telefono">{{ 'workers.home.new.phone' | translate }}</label>
               <input id="nuevo-telefono" formControlName="telefono" type="text"
-                     placeholder="Opcional"/>
+                     [placeholder]="'workers.home.new.optional' | translate"/>
             </div>
             <div class="campo">
-              <label for="nuevo-direccion">Dirección</label>
+              <label for="nuevo-direccion">{{ 'workers.home.new.address' | translate }}</label>
               <input id="nuevo-direccion" formControlName="direccion" type="text"
-                     placeholder="Opcional"/>
+                     [placeholder]="'workers.home.new.optional' | translate"/>
             </div>
           </div>
           <div class="form-seccion">
-            <div class="form-seccion-titulo">Contrato y cargo</div>
+            <div class="form-seccion-titulo">{{ 'workers.home.new.contractAndPost' | translate }}</div>
             <div class="campo">
-              <label for="nuevo-fechaIngreso">Fecha de ingreso *</label>
+              <label for="nuevo-fechaIngreso">{{ 'workers.home.new.hireDate' | translate }}</label>
               <input id="nuevo-fechaIngreso" formControlName="fechaIngreso" type="date"
                      [class.invalido]="invalido(formNuevo, 'fechaIngreso')"/>
-              <span *ngIf="invalido(formNuevo, 'fechaIngreso')" class="error-msg">Requerido</span>
+              <span *ngIf="invalido(formNuevo, 'fechaIngreso')" class="error-msg">{{ 'common.required' | translate }}</span>
             </div>
             <div class="campo">
-              <label for="nuevo-tipoContrato">Tipo de contrato *</label>
+              <label for="nuevo-tipoContrato">{{ 'workers.home.new.contractType' | translate }}</label>
               <select id="nuevo-tipoContrato" formControlName="tipoContrato"
                       [class.invalido]="invalido(formNuevo, 'tipoContrato')">
-                <option *ngFor="let t of tiposContrato" [value]="t">{{ t }}</option>
+                <option *ngFor="let t of tiposContrato" [value]="t">{{ 'enums.tipoContrato.' + t | translate }}</option>
               </select>
             </div>
             <div class="campo">
-              <label for="nuevo-cargoId">Cargo *</label>
+              <label for="nuevo-cargoId">{{ 'workers.home.new.post' | translate }}</label>
               <select id="nuevo-cargoId" formControlName="cargoId"
                       [class.invalido]="invalido(formNuevo, 'cargoId')">
-                <option [ngValue]="null" disabled>Selecciona un cargo...</option>
+                <option [ngValue]="null" disabled>{{ 'workers.home.new.selectPost' | translate }}</option>
                 <option *ngFor="let c of cargos" [ngValue]="c.id">
-                  {{ c.nombre }} — ${{ c.valorJornal | number }}/jornal
+                  {{ c.nombre }} — {{ 'workers.home.panel.perWage' | translate: { amount: (c.valorJornal | number) } }}
                 </option>
               </select>
-              <span *ngIf="invalido(formNuevo, 'cargoId')" class="error-msg">Selecciona un cargo</span>
+              <span *ngIf="invalido(formNuevo, 'cargoId')" class="error-msg">{{ 'workers.home.new.selectPostError' | translate }}</span>
             </div>
           </div>
           <div class="panel-footer">
-            <button type="button" class="btn-secundario" (click)="cerrarPanel()">Cancelar</button>
+            <button type="button" class="btn-secundario" (click)="cerrarPanel()">{{ 'common.cancel' | translate }}</button>
             <button type="submit" class="btn-primary" [disabled]="guardando">
-              {{ guardando ? 'Registrando...' : 'Registrar trabajador' }}
+              {{ (guardando ? 'workers.home.new.registering' : 'workers.home.new.submit') | translate }}
             </button>
           </div>
         </form>
@@ -404,48 +406,48 @@
         </div>
         <div class="panel-header-info">
           <div class="panel-nombre">
-            <span aria-hidden="true">✏️</span> Editar trabajador
+            <span aria-hidden="true">✏️</span> {{ 'workers.home.edit.title' | translate }}
           </div>
           <div class="panel-doc">{{ trabajadorSeleccionado.nombreCompleto }}</div>
         </div>
-        <button class="btn-cerrar" (click)="cerrarPanel()" aria-label="Cerrar panel">✕</button>
+        <button class="btn-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate">✕</button>
       </div>
       <div class="panel-body">
-        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error }}</div>
+        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error | translate }}</div>
         <form [formGroup]="formEditar" (ngSubmit)="guardarEdicion()">
           <div class="campo">
-            <label for="editar-nombre">Nombre *</label>
+            <label for="editar-nombre">{{ 'workers.home.new.firstName' | translate }}</label>
             <input id="editar-nombre" formControlName="nombre" type="text"
                    [class.invalido]="invalido(formEditar, 'nombre')"/>
-            <span *ngIf="invalido(formEditar, 'nombre')" class="error-msg">Requerido</span>
+            <span *ngIf="invalido(formEditar, 'nombre')" class="error-msg">{{ 'common.required' | translate }}</span>
           </div>
           <div class="campo">
-            <label for="editar-apellido">Apellido *</label>
+            <label for="editar-apellido">{{ 'workers.home.new.lastName' | translate }}</label>
             <input id="editar-apellido" formControlName="apellido" type="text"
                    [class.invalido]="invalido(formEditar, 'apellido')"/>
-            <span *ngIf="invalido(formEditar, 'apellido')" class="error-msg">Requerido</span>
+            <span *ngIf="invalido(formEditar, 'apellido')" class="error-msg">{{ 'common.required' | translate }}</span>
           </div>
           <div class="campo">
-            <label for="editar-telefono">Teléfono</label>
+            <label for="editar-telefono">{{ 'workers.home.new.phone' | translate }}</label>
             <input id="editar-telefono" formControlName="telefono" type="text"
-                   placeholder="Opcional"/>
+                   [placeholder]="'workers.home.new.optional' | translate"/>
           </div>
           <div class="campo">
-            <label for="editar-direccion">Dirección</label>
+            <label for="editar-direccion">{{ 'workers.home.new.address' | translate }}</label>
             <input id="editar-direccion" formControlName="direccion" type="text"
-                   placeholder="Opcional"/>
+                   [placeholder]="'workers.home.new.optional' | translate"/>
           </div>
           <div class="campo">
-            <label for="editar-tipoContrato">Tipo de contrato *</label>
+            <label for="editar-tipoContrato">{{ 'workers.home.new.contractType' | translate }}</label>
             <select id="editar-tipoContrato" formControlName="tipoContrato">
-              <option *ngFor="let t of tiposContrato" [value]="t">{{ t }}</option>
+              <option *ngFor="let t of tiposContrato" [value]="t">{{ 'enums.tipoContrato.' + t | translate }}</option>
             </select>
           </div>
           <div class="panel-footer">
             <button type="button" class="btn-secundario"
-                    (click)="abrirDetalle(trabajadorSeleccionado)">← Volver</button>
+                    (click)="abrirDetalle(trabajadorSeleccionado)">{{ 'workers.home.edit.back' | translate }}</button>
             <button type="submit" class="btn-primary" [disabled]="guardando">
-              {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+              {{ (guardando ? 'workers.home.edit.saving' : 'workers.home.edit.submit') | translate }}
             </button>
           </div>
         </form>
@@ -460,40 +462,40 @@
         </div>
         <div class="panel-header-info">
           <div class="panel-nombre">
-            <span aria-hidden="true">🏷️</span> Cambiar cargo
+            <span aria-hidden="true">🏷️</span> {{ 'workers.home.changePost.title' | translate }}
           </div>
           <div class="panel-doc">{{ trabajadorSeleccionado.nombreCompleto }}</div>
         </div>
-        <button class="btn-cerrar" (click)="cerrarPanel()" aria-label="Cerrar panel">✕</button>
+        <button class="btn-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate">✕</button>
       </div>
       <div class="panel-body">
-        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error }}</div>
+        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error | translate }}</div>
         <div *ngIf="trabajadorSeleccionado.cargo" class="cargo-actual-info">
-          <div class="detalle-titulo">Cargo actual</div>
+          <div class="detalle-titulo">{{ 'workers.home.panel.currentPost' | translate }}</div>
           <div class="detalle-cargo-card">
             <div class="cargo-nombre">{{ trabajadorSeleccionado.cargo.nombre }}</div>
             <div class="cargo-jornal">
-              ${{ trabajadorSeleccionado.cargo.valorJornal | number }}/jornal
+              {{ 'workers.home.panel.perWage' | translate: { amount: (trabajadorSeleccionado.cargo.valorJornal | number) } }}
             </div>
           </div>
         </div>
         <form [formGroup]="formCargo" (ngSubmit)="guardarCargo()" style="margin-top:1.25rem">
           <div class="campo">
-            <label for="cargo-cargoId">Nuevo cargo *</label>
+            <label for="cargo-cargoId">{{ 'workers.home.changePost.newPost' | translate }}</label>
             <select id="cargo-cargoId" formControlName="cargoId"
                     [class.invalido]="invalido(formCargo, 'cargoId')">
-              <option [ngValue]="null" disabled>Selecciona un cargo...</option>
+              <option [ngValue]="null" disabled>{{ 'workers.home.new.selectPost' | translate }}</option>
               <option *ngFor="let c of cargos" [ngValue]="c.id">
-                {{ c.nombre }} — ${{ c.valorJornal | number }}/jornal
+                {{ c.nombre }} — {{ 'workers.home.panel.perWage' | translate: { amount: (c.valorJornal | number) } }}
               </option>
             </select>
-            <span *ngIf="invalido(formCargo, 'cargoId')" class="error-msg">Selecciona un cargo</span>
+            <span *ngIf="invalido(formCargo, 'cargoId')" class="error-msg">{{ 'workers.home.new.selectPostError' | translate }}</span>
           </div>
           <div class="panel-footer">
             <button type="button" class="btn-secundario"
-                    (click)="abrirDetalle(trabajadorSeleccionado)">← Volver</button>
+                    (click)="abrirDetalle(trabajadorSeleccionado)">{{ 'workers.home.edit.back' | translate }}</button>
             <button type="submit" class="btn-primary" [disabled]="guardando">
-              {{ guardando ? 'Guardando...' : 'Cambiar cargo' }}
+              {{ (guardando ? 'workers.home.edit.saving' : 'workers.home.changePost.submit') | translate }}
             </button>
           </div>
         </form>

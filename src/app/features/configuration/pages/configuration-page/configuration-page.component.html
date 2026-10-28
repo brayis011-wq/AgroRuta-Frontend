@@ -2,15 +2,15 @@
 
   <div class="topbar">
     <div>
-      <h2 class="page-title">⚙️ Configuración</h2>
-      <p class="page-subtitle">Administra tu perfil y seguridad de cuenta</p>
+      <h2 class="page-title">⚙️ {{ 'config.title' | translate }}</h2>
+      <p class="page-subtitle">{{ 'config.subtitle' | translate }}</p>
     </div>
   </div>
 
   <div class="toast" *ngIf="toast"
        [class.toast-success]="toast.type === 'success'"
        [class.toast-error]="toast.type === 'error'">
-    {{ toast.message }}
+    {{ toast.message | translate }}
   </div>
 
   <div class="skeleton-wrapper" *ngIf="loadingPage">
@@ -32,8 +32,8 @@
       <div class="card-header">
         <span class="card-icon">👤</span>
         <div>
-          <h3 class="card-title">Datos del perfil</h3>
-          <p class="card-desc">Actualiza tu información personal</p>
+          <h3 class="card-title">{{ 'config.profileCard.title' | translate }}</h3>
+          <p class="card-desc">{{ 'config.profileCard.desc' | translate }}</p>
         </div>
       </div>
       <app-profile-form
@@ -47,8 +47,8 @@
       <div class="card-header">
         <span class="card-icon">🔐</span>
         <div>
-          <h3 class="card-title">Cambiar contraseña</h3>
-          <p class="card-desc">Actualiza tus credenciales de acceso</p>
+          <h3 class="card-title">{{ 'config.passwordCard.title' | translate }}</h3>
+          <p class="card-desc">{{ 'config.passwordCard.desc' | translate }}</p>
         </div>
       </div>
       <app-change-password-form

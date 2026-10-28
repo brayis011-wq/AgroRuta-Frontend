@@ -7,42 +7,42 @@
       <img class="brand-logo" src="logo.png" alt="AgroRuta" />
       <div class="brand-text">
         <h1 class="brand-name">AgroRuta</h1>
-        <span class="brand-sub">Sistema de gestión</span>
+        <span class="brand-sub">{{ 'layout.subtitle' | translate }}</span>
       </div>
     </div>
 
     <nav class="sidebar-nav">
-      <span class="nav-section-label">Gestión</span>
+      <span class="nav-section-label">{{ 'layout.sections.management' | translate }}</span>
       <a class="nav-item" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span class="nav-icon">🏠</span>
-        <span class="nav-label">Inicio</span>
+        <span class="nav-label">{{ 'layout.nav.home' | translate }}</span>
       </a>
       <a class="nav-item" routerLink="/cultivo" routerLinkActive="active">
         <span class="nav-icon">🌱</span>
-        <span class="nav-label">Cultivos</span>
+        <span class="nav-label">{{ 'layout.nav.crops' | translate }}</span>
       </a>
       <a class="nav-item" routerLink="/worker" routerLinkActive="active">
         <span class="nav-icon">👷</span>
-        <span class="nav-label">Trabajadores</span>
+        <span class="nav-label">{{ 'layout.nav.workers' | translate }}</span>
       </a>
 
-      <span class="nav-section-label">Análisis</span>
+      <span class="nav-section-label">{{ 'layout.sections.analysis' | translate }}</span>
       <a class="nav-item" routerLink="/reportes" routerLinkActive="active">
         <span class="nav-icon">📊</span>
-        <span class="nav-label">Reportes</span>
+        <span class="nav-label">{{ 'layout.nav.reports' | translate }}</span>
       </a>
 
-      <span class="nav-section-label">Sistema</span>
+      <span class="nav-section-label">{{ 'layout.sections.system' | translate }}</span>
       <a class="nav-item" routerLink="/configuracion" routerLinkActive="active">
         <span class="nav-icon">⚙️</span>
-        <span class="nav-label">Configuración</span>
+        <span class="nav-label">{{ 'layout.nav.settings' | translate }}</span>
       </a>
     </nav>
 
     <!-- Botón cerrar sesión -->
     <button class="btn-logout" (click)="logout()">
       <span class="nav-icon">⏏</span>
-      <span class="nav-label">Cerrar sesión</span>
+      <span class="nav-label">{{ 'layout.logout' | translate }}</span>
     </button>
 
     <!-- Usuario -->
@@ -50,12 +50,14 @@
       <div class="user-avatar">{{ usuario?.nombre?.charAt(0) }}</div>
       <div class="user-details">
         <span class="user-name">{{ usuario?.nombre }}</span>
-        <span class="user-role">{{ usuario?.rol }}</span>
+        <span class="user-role">{{ 'enums.rol.' + usuario?.rol | translate }}</span>
       </div>
+      <app-language-switcher />
     </div>
 
     <!-- Botón toggle -->
-    <button class="toggle-btn" (click)="toggleSidebar()" [title]="sidebarCollapsed ? 'Expandir' : 'Colapsar'">
+    <button class="toggle-btn" (click)="toggleSidebar()"
+            [title]="(sidebarCollapsed ? 'layout.expand' : 'layout.collapse') | translate">
       <span class="toggle-icon">{{ sidebarCollapsed ? '›' : '‹' }}</span>
     </button>
 

@@ -1,39 +1,56 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../core/services/auth';
 import { AuthResponse } from '../../core/models/auth.model';
 import { CultivoService } from '../../core/services/cultivo.service';
+import { LanguageService } from '../../core/services/language.service';
 import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget.component';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, DatePipe, DecimalPipe, WeatherWidgetComponent],
+  imports: [CommonModule, TranslatePipe, WeatherWidgetComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
 export class DashboardComponent implements OnInit {
 
-  private authService   = inject(AuthService);
+  private authService    = inject(AuthService);
   private cultivoService = inject(CultivoService);
-  private router        = inject(Router);
-  private cdr           = inject(ChangeDetectorRef);
+  private router         = inject(Router);
+  private cdr            = inject(ChangeDetectorRef);
+  private lang           = inject(LanguageService);
 
   usuario: AuthResponse | null = null;
   today = new Date();
 
-  cargandoStats = true;
-  totalFincas   = 0;
+  cargandoStats  = true;
+  totalFincas    = 0;
   totalHectareas = 0;
-  totalLotes    = 0;
+  totalLotes     = 0;
 
   ngOnInit(): void {
     this.usuario = this.authService.getUsuario();
     this.cargarStats();
+  }
+
+  // Fecha según el idioma activo (Intl nativo, no requiere registerLocaleData)
+  fechaHoy(): string {
+    return new Intl.DateTimeFormat(this.lang.current(), {
+      weekday: 'long', day: 'numeric', month: 'short', year: 'numeric',
+    }).format(this.today);
+  }
+
+  // Número con 1 decimal según el idioma activo
+  formatHa(valor: number): string {
+    return new Intl.NumberFormat(this.lang.current(), {
+      minimumFractionDigits: 1, maximumFractionDigits: 1,
+    }).format(valor);
   }
 
   cargarStats(): void {

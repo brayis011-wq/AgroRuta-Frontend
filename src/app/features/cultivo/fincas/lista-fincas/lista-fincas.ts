@@ -1,25 +1,31 @@
 import {
-  Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef
+  Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { AuthService } from '../../../../core/services/auth';
+import { LanguageService } from '../../../../core/services/language.service';
 import { Finca } from '../../../../core/models/cultivo.model';
 import * as L from 'leaflet';
 
 @Component({
   selector: 'app-lista-fincas',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './lista-fincas.html',
   styleUrl: './lista-fincas.css',
 })
 export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
+  private translate = inject(TranslateService);
+  private lang = inject(LanguageService);
+
   fincas: Finca[] = [];
   cargando = true;
-  error = '';
+  error = '';                       // clave de traducción
   eliminandoId: number | null = null;
   fincaAEliminar: Finca | null = null;
   textoConfirmacion = '';
@@ -27,6 +33,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private map!: L.Map;
   private marcadores: Map<number, L.Marker> = new Map();
+  private langSub?: Subscription;
 
   constructor(
     private cultivoService: CultivoService,
@@ -35,7 +42,17 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdr: ChangeDetectorRef,
   ) {}
 
+  /** Palabra que el usuario debe escribir para confirmar (cambia con el idioma) */
+  get palabraConfirmacion(): string {
+    return this.translate.instant('cultivo.fincas.delete.confirmWord');
+  }
+
   ngOnInit(): void {
+    // Al cambiar de idioma se redibujan los marcadores para actualizar los popups
+    this.langSub = this.translate.onLangChange.subscribe(() => {
+      if (this.map && this.fincas.length > 0) this.dibujarMarcadores(false);
+    });
+
     const usuario = this.authService.getUsuario();
     if (usuario?.id) {
       this.cultivoService.listarFincasPorAgricultor(usuario.id).subscribe({
@@ -51,13 +68,13 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
           }, 100);
         },
         error: () => {
-          this.error = 'Error al cargar las fincas.';
+          this.error = 'cultivo.fincas.errors.load';
           this.cargando = false;
           this.cdr.detectChanges();
         },
       });
     } else {
-      this.error = 'No se encontró el usuario. Por favor inicia sesión de nuevo.';
+      this.error = 'cultivo.fincas.errors.noUser';
       this.cargando = false;
       this.cdr.detectChanges();
     }
@@ -68,6 +85,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
     if (this.map) this.map.remove();
   }
 
@@ -91,12 +109,14 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
     ).addTo(this.map);
   }
 
-  private dibujarMarcadores(): void {
+  private dibujarMarcadores(ajustarVista = true): void {
     // Limpiar marcadores anteriores
     this.marcadores.forEach(m => this.map.removeLayer(m));
     this.marcadores.clear();
 
     const fincasConUbicacion = this.fincas.filter(f => f.centroideLat && f.centroideLng);
+    const tEnter = this.translate.instant('cultivo.fincas.list.enterFarm');
+    const tHa = this.translate.instant('cultivo.units.hectares');
 
     fincasConUbicacion.forEach(finca => {
       const icono = L.divIcon({
@@ -118,9 +138,9 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
           <div class="popup-finca-header">🏡 ${finca.nombre}</div>
           <div class="popup-finca-body">
             📍 ${finca.ubicacion}<br>
-            📐 ${finca.hectareas} hectáreas
+            📐 ${finca.hectareas} ${tHa}
             <button class="popup-finca-btn" id="btn-entrar-${finca.id}">
-              Entrar a la finca →
+              ${tEnter}
             </button>
           </div>
         </div>`;
@@ -136,8 +156,8 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
       this.marcadores.set(finca.id!, marcador);
     });
 
-    // Centrar para ver todos los marcadores
-    if (fincasConUbicacion.length > 0) {
+    // Centrar para ver todos los marcadores (solo la primera vez / al eliminar)
+    if (ajustarVista && fincasConUbicacion.length > 0) {
       const grupo = L.featureGroup([...this.marcadores.values()]);
       this.map.fitBounds(grupo.getBounds(), { padding: [60, 60], maxZoom: 14 });
     }
@@ -156,6 +176,13 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   promedioHectareas(): number {
     if (this.fincas.length === 0) return 0;
     return this.totalHectareas() / this.fincas.length;
+  }
+
+  /** Número con 1 decimal según el idioma activo */
+  fmtDec(valor: number): string {
+    return new Intl.NumberFormat(this.lang.current(), {
+      minimumFractionDigits: 1, maximumFractionDigits: 1,
+    }).format(valor);
   }
 
   // ── Interacción tarjeta ↔ mapa ───────────────────────────────
@@ -211,7 +238,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   confirmarEliminacion(): void {
-    if (this.textoConfirmacion !== 'confirmar' || !this.fincaAEliminar) return;
+    if (this.textoConfirmacion !== this.palabraConfirmacion || !this.fincaAEliminar) return;
     this.eliminandoId = this.fincaAEliminar.id!;
     this.cultivoService.eliminarFinca(this.fincaAEliminar.id!).subscribe({
       next: () => {
@@ -223,7 +250,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error = 'Error al eliminar la finca.';
+        this.error = 'cultivo.fincas.errors.delete';
         this.eliminandoId = null;
         this.cdr.detectChanges();
       },

@@ -3,22 +3,22 @@
   <!-- Header -->
   <div class="page-header">
     <div>
-      <button class="btn-back" (click)="volver()">← Trabajadores</button>
+      <button class="btn-back" (click)="volver()">{{ 'workers.wages.list.back' | translate }}</button>
       <h1 class="page-title">
-        <span aria-hidden="true">🗓️</span> Jornales
+        <span aria-hidden="true">🗓️</span> {{ 'workers.wages.list.title' | translate }}
       </h1>
       <p class="page-subtitle" *ngIf="!trabajador && !trabajadorId">
-        Registro diario de trabajo en campo
+        {{ 'workers.wages.list.subtitleNoWorker' | translate }}
       </p>
     </div>
     <div style="display:flex; gap:0.75rem; align-items:center">
       <button class="btn-secundario"
               *ngIf="trabajadorId && pendientes > 0"
               (click)="abrirGenerarNomina()">
-        <span aria-hidden="true">📋</span> Generar Nómina
+        <span aria-hidden="true">📋</span> {{ 'workers.wages.list.generatePayroll' | translate }}
         <span class="badge-contador">{{ pendientes }}</span>
       </button>
-      <button class="btn-primary" (click)="irANuevoJornal()">＋ Registrar Jornal</button>
+      <button class="btn-primary" (click)="irANuevoJornal()">{{ 'workers.wages.list.register' | translate }}</button>
     </div>
   </div>
 
@@ -33,12 +33,12 @@
         <span><span aria-hidden="true">📄</span> {{ trabajador.cedula }}</span>
         <span *ngIf="trabajador.cargo" class="cargo-tag">{{ trabajador.cargo.nombre }}</span>
         <span *ngIf="trabajador.cargo" class="banner-jornal">
-          ${{ trabajador.cargo.valorJornal | number }}/jornal
+          {{ 'workers.wages.list.perWage' | translate: { amount: (trabajador.cargo.valorJornal | number) } }}
         </span>
         <span class="badge"
               [class.badge-activo]="trabajador.estado === 'ACTIVO'"
               [class.badge-suspendido]="trabajador.estado === 'SUSPENDIDO'">
-          {{ trabajador.estado }}
+          {{ trabajador.estado ? ('enums.estadoTrabajador.' + trabajador.estado | translate) : '' }}
         </span>
       </div>
     </div>
@@ -49,10 +49,10 @@
     <div class="info-card aviso-info">
       <span class="aviso-icon" aria-hidden="true">ℹ️</span>
       <div>
-        <strong>Selecciona un trabajador</strong>
-        <p>Los jornales se consultan por trabajador. Ve al listado y selecciona uno.</p>
+        <strong>{{ 'workers.wages.list.selectWorkerTitle' | translate }}</strong>
+        <p>{{ 'workers.wages.list.selectWorkerDesc' | translate }}</p>
         <button class="btn-primary" style="margin-top:0.75rem" (click)="volver()">
-          Ir a Trabajadores →
+          {{ 'workers.wages.list.goToWorkers' | translate }}
         </button>
       </div>
     </div>
@@ -65,53 +65,53 @@
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-valor">{{ filtrados.length }}</div>
-        <div class="stat-label">Total jornales</div>
+        <div class="stat-label">{{ 'workers.wages.list.stats.total' | translate }}</div>
       </div>
       <div class="stat-card" [class.stat-alerta]="pendientes > 0">
         <div class="stat-valor">{{ pendientes }}</div>
-        <div class="stat-label">Sin liquidar</div>
+        <div class="stat-label">{{ 'workers.wages.list.stats.unsettled' | translate }}</div>
       </div>
       <div class="stat-card stat-destacado">
         <div class="stat-valor">${{ totalPendiente | number }}</div>
-        <div class="stat-label">Pendiente de pago</div>
+        <div class="stat-label">{{ 'workers.wages.list.stats.pendingPay' | translate }}</div>
       </div>
       <div class="stat-card">
         <div class="stat-valor">${{ totalJornales | number }}</div>
-        <div class="stat-label">Total acumulado</div>
+        <div class="stat-label">{{ 'workers.wages.list.stats.accumulated' | translate }}</div>
       </div>
     </div>
 
     <!-- Filtros -->
     <div class="filtros-bar" style="display:flex; gap:0.75rem; align-items:flex-end; flex-wrap:wrap">
       <div class="campo" style="flex:1; min-width:200px">
-        <label for="filtroBusqueda">Buscar</label>
+        <label for="filtroBusqueda">{{ 'workers.wages.list.filters.search' | translate }}</label>
         <input id="filtroBusqueda" class="buscador" type="text"
-               placeholder="Cultivo..."
+               [placeholder]="'workers.wages.list.filters.searchPlaceholder' | translate"
                [(ngModel)]="busqueda"/>
       </div>
       <div class="campo">
-        <label for="filtroDesde">Desde</label>
+        <label for="filtroDesde">{{ 'workers.wages.list.filters.from' | translate }}</label>
         <input id="filtroDesde" type="date" class="buscador" [(ngModel)]="fechaInicio"/>
       </div>
       <div class="campo">
-        <label for="filtroHasta">Hasta</label>
+        <label for="filtroHasta">{{ 'workers.wages.list.filters.to' | translate }}</label>
         <input id="filtroHasta" type="date" class="buscador" [(ngModel)]="fechaFin"/>
       </div>
       <div style="display:flex; gap:0.5rem">
-        <button class="btn-primary" (click)="filtrarFechas()">Filtrar</button>
-        <button class="btn-secundario" (click)="limpiarFiltros()">Limpiar</button>
+        <button class="btn-primary" (click)="filtrarFechas()">{{ 'workers.wages.list.filters.filter' | translate }}</button>
+        <button class="btn-secundario" (click)="limpiarFiltros()">{{ 'workers.wages.list.filters.clear' | translate }}</button>
       </div>
     </div>
 
-    <div *ngIf="error && !panelNomina" class="alerta-error" role="alert">{{ error }}</div>
-    <div *ngIf="cargando" class="estado-vacio"><p>Cargando jornales...</p></div>
+    <div *ngIf="error && !panelNomina" class="alerta-error" role="alert">{{ error | translate }}</div>
+    <div *ngIf="cargando" class="estado-vacio"><p>{{ 'workers.wages.list.loading' | translate }}</p></div>
 
     <!-- Vacío -->
     <div *ngIf="!cargando && filtrados.length === 0" class="estado-vacio">
       <div class="vacio-icono" aria-hidden="true">🗓️</div>
-      <p>No hay jornales registrados para este período.</p>
+      <p>{{ 'workers.wages.list.empty' | translate }}</p>
       <button class="btn-primary" style="margin-top:1rem" (click)="irANuevoJornal()">
-        ＋ Registrar primer jornal
+        {{ 'workers.wages.list.registerFirst' | translate }}
       </button>
     </div>
 
@@ -120,12 +120,12 @@
       <table class="tabla">
         <thead>
         <tr>
-          <th>Fecha</th>
-          <th>Trabajador</th>
-          <th>Cultivo</th>
-          <th>Actividades</th>
-          <th>Valor</th>
-          <th>Estado</th>
+          <th>{{ 'workers.wages.list.table.date' | translate }}</th>
+          <th>{{ 'workers.wages.list.table.worker' | translate }}</th>
+          <th>{{ 'workers.wages.list.table.crop' | translate }}</th>
+          <th>{{ 'workers.wages.list.table.activities' | translate }}</th>
+          <th>{{ 'workers.wages.list.table.value' | translate }}</th>
+          <th>{{ 'common.status' | translate }}</th>
         </tr>
         </thead>
         <tbody>
@@ -157,14 +157,14 @@
               <span class="badge"
                     [class.badge-activo]="j.liquidado"
                     [class.badge-borrador]="!j.liquidado">
-                {{ j.liquidado ? 'Liquidado' : 'Pendiente' }}
+                {{ (j.liquidado ? 'workers.wages.list.settled' : 'workers.wages.list.pending') | translate }}
               </span>
           </td>
         </tr>
         </tbody>
         <tfoot>
         <tr>
-          <td colspan="4"><strong>Total</strong></td>
+          <td colspan="4"><strong>{{ 'workers.wages.list.table.total' | translate }}</strong></td>
           <td class="valor"><strong>${{ totalJornales | number }}</strong></td>
           <td></td>
         </tr>
@@ -178,7 +178,7 @@
 
 <!-- ══ PANEL: GENERAR NÓMINA ══ -->
 <ng-container *ngIf="panelNomina">
-  <button type="button" class="overlay" (click)="cerrarPanel()" aria-label="Cerrar panel"></button>
+  <button type="button" class="overlay" (click)="cerrarPanel()" [attr.aria-label]="'workers.wages.list.panel.close' | translate"></button>
   <dialog class="panel-detalle" open
           (click)="$event.stopPropagation()"
           (keydown.escape)="cerrarPanel()">
@@ -186,11 +186,11 @@
     <div class="panel-header panel-header-verde">
       <div class="panel-header-info">
         <div class="panel-nombre">
-          <span aria-hidden="true">📋</span> Generar Nómina
+          <span aria-hidden="true">📋</span> {{ 'workers.wages.list.panel.title' | translate }}
         </div>
         <div class="panel-doc" *ngIf="trabajador">{{ trabajador.nombreCompleto }}</div>
       </div>
-      <button class="btn-cerrar" (click)="cerrarPanel()" aria-label="Cerrar panel">✕</button>
+      <button class="btn-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'workers.wages.list.panel.close' | translate">✕</button>
     </div>
 
     <div class="panel-body">
@@ -198,43 +198,43 @@
       <!-- Resumen de jornales pendientes -->
       <div class="resumen-card" *ngIf="!nominaGenerada">
         <div class="resumen-fila">
-          <span class="resumen-label">Jornales sin liquidar</span>
+          <span class="resumen-label">{{ 'workers.wages.list.panel.unsettledWages' | translate }}</span>
           <span class="resumen-valor">{{ pendientes }}</span>
         </div>
         <div class="resumen-fila resumen-total">
-          <span class="resumen-label">Total a generar</span>
+          <span class="resumen-label">{{ 'workers.wages.list.panel.totalToGenerate' | translate }}</span>
           <span class="resumen-valor valor">${{ totalPendiente | number }}</span>
         </div>
       </div>
 
-      <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error }}</div>
+      <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error | translate }}</div>
 
       <!-- Formulario -->
       <ng-container *ngIf="!nominaGenerada">
         <form [formGroup]="formNomina" (ngSubmit)="generarNomina()">
           <div class="form-seccion">
-            <div class="form-seccion-titulo">Período de la nómina</div>
+            <div class="form-seccion-titulo">{{ 'workers.wages.list.panel.periodTitle' | translate }}</div>
             <p class="texto-suave" style="margin:0 0 1rem; font-size:0.85rem">
-              El sistema calculará el total de todos los jornales sin liquidar dentro de este período.
+              {{ 'workers.wages.list.panel.periodHelp' | translate }}
             </p>
             <div class="campo">
-              <label for="periodoInicio">Fecha inicio *</label>
+              <label for="periodoInicio">{{ 'workers.wages.list.panel.startDate' | translate }}</label>
               <input id="periodoInicio" formControlName="periodoInicio" type="date"
                      [class.invalido]="invalido('periodoInicio')"/>
-              <span *ngIf="invalido('periodoInicio')" class="error-msg">Requerido</span>
+              <span *ngIf="invalido('periodoInicio')" class="error-msg">{{ 'common.required' | translate }}</span>
             </div>
             <div class="campo" style="margin-top:0.75rem">
-              <label for="periodoFin">Fecha fin *</label>
+              <label for="periodoFin">{{ 'workers.wages.list.panel.endDate' | translate }}</label>
               <input id="periodoFin" formControlName="periodoFin" type="date"
                      [class.invalido]="invalido('periodoFin')"/>
-              <span *ngIf="invalido('periodoFin')" class="error-msg">Requerido</span>
+              <span *ngIf="invalido('periodoFin')" class="error-msg">{{ 'common.required' | translate }}</span>
             </div>
           </div>
 
           <div class="panel-footer">
-            <button type="button" class="btn-secundario" (click)="cerrarPanel()">Cancelar</button>
+            <button type="button" class="btn-secundario" (click)="cerrarPanel()">{{ 'common.cancel' | translate }}</button>
             <button type="submit" class="btn-primary" [disabled]="generando">
-              {{ generando ? 'Generando...' : 'Generar Nómina' }}
+              {{ (generando ? 'workers.wages.list.panel.generating' : 'workers.wages.list.panel.generate') | translate }}
             </button>
           </div>
         </form>
@@ -244,39 +244,39 @@
       <ng-container *ngIf="nominaGenerada">
         <div class="nomina-exito">
           <div class="exito-icono" aria-hidden="true">✅</div>
-          <div class="exito-titulo">¡Nómina generada!</div>
+          <div class="exito-titulo">{{ 'workers.wages.list.panel.success' | translate }}</div>
 
           <div class="resumen-card" style="margin-top:1rem">
             <div class="resumen-fila">
-              <span class="resumen-label">Nómina #</span>
+              <span class="resumen-label">{{ 'workers.wages.list.panel.payrollNo' | translate }}</span>
               <span class="resumen-valor">{{ nominaGenerada.id }}</span>
             </div>
             <div class="resumen-fila">
-              <span class="resumen-label">Período</span>
+              <span class="resumen-label">{{ 'workers.wages.list.panel.period' | translate }}</span>
               <span class="resumen-valor">
                 {{ nominaGenerada.periodoInicio | date:'dd/MM/yyyy' }} →
                 {{ nominaGenerada.periodoFin | date:'dd/MM/yyyy' }}
               </span>
             </div>
             <div class="resumen-fila">
-              <span class="resumen-label">Jornales incluidos</span>
+              <span class="resumen-label">{{ 'workers.wages.list.panel.includedWages' | translate }}</span>
               <span class="resumen-valor">{{ nominaGenerada.totalJornales }}</span>
             </div>
             <div class="resumen-fila resumen-total">
-              <span class="resumen-label">Total</span>
+              <span class="resumen-label">{{ 'workers.wages.list.panel.total' | translate }}</span>
               <span class="resumen-valor valor">${{ nominaGenerada.valorTotal | number }}</span>
             </div>
             <div class="resumen-fila">
-              <span class="resumen-label">Estado</span>
-              <span class="badge badge-borrador">{{ nominaGenerada.estado }}</span>
+              <span class="resumen-label">{{ 'common.status' | translate }}</span>
+              <span class="badge badge-borrador">{{ 'enums.estadoNomina.' + nominaGenerada.estado | translate }}</span>
             </div>
           </div>
         </div>
 
         <div class="panel-footer">
-          <button type="button" class="btn-secundario" (click)="cerrarPanel()">Cerrar</button>
+          <button type="button" class="btn-secundario" (click)="cerrarPanel()">{{ 'workers.wages.list.panel.close2' | translate }}</button>
           <button type="button" class="btn-primary" (click)="verNominaCompleta()">
-            Ver nóminas del trabajador →
+            {{ 'workers.wages.list.panel.viewPayrolls' | translate }}
           </button>
         </div>
       </ng-container>
