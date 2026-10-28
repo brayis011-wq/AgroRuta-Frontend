@@ -1,13 +1,14 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CargoService } from '../../../core/services/worker.service';
 import { Cargo } from '../../../core/models/worker.model';
 
 @Component({
   selector: 'app-lista-cargos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './list-post.html',
   styleUrls: ['./list-post.css']
 })
@@ -17,12 +18,13 @@ export class ListaCargosComponent implements OnInit {
   modoEdicion: Cargo | null = null;
   mostrarForm = false;
   guardando = false;
-  error = '';
+  error = '';   // clave de traducción
 
   constructor(
     private fb: FormBuilder,
     private cargoService: CargoService,
-    private cdr: ChangeDetectorRef  // ← agrega esto
+    private cdr: ChangeDetectorRef,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -41,12 +43,13 @@ export class ListaCargosComponent implements OnInit {
   cargar(): void {
     this.cargoService.listar().subscribe({
       next: (d) => {
-        this.cargos = [...d];        // ← spread para forzar nueva referencia
-        this.cdr.detectChanges();    // ← fuerza detección de cambios
+        this.cargos = [...d];        // spread para forzar nueva referencia
+        this.cdr.detectChanges();    // fuerza detección de cambios
       },
       error: (e) => {
         console.error('Error cargos:', e);
-        this.error = 'Error al cargar cargos';
+        this.error = 'workers.posts.errors.load';
+        this.cdr.detectChanges();
       }
     });
   }
@@ -73,13 +76,18 @@ export class ListaCargosComponent implements OnInit {
 
     op.subscribe({
       next: () => { this.cargar(); this.mostrarForm = false; this.guardando = false; },
-      error: () => { this.error = 'Error al guardar'; this.guardando = false; }
+      error: () => {
+        this.error = 'workers.posts.errors.save';
+        this.guardando = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
   desactivar(c: Cargo): void {
     if (c.id == null) return;
-    if (!confirm(`¿Desactivar el cargo "${c.nombre}"?`)) return;
+    const msg = this.translate.instant('workers.posts.confirmDeactivate', { name: c.nombre });
+    if (!confirm(msg)) return;
     this.cargoService.desactivar(c.id).subscribe({ next: () => this.cargar() });
   }
 

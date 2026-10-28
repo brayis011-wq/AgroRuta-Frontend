@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 
 @Component({
   selector: 'app-nueva-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './nueva-siembra.html',
   styleUrl: './nueva-siembra.css',
 })
@@ -21,13 +22,14 @@ export class NuevaSiembraComponent implements OnInit {
   loteId!: number;
   fincaId!: number;
   guardando = false;
-  error = '';
+  error = '';        // clave de traducción
   exito = false;
 
   constructor(
     private cultivoService: CultivoService,
     private router: Router,
     private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +40,7 @@ export class NuevaSiembraComponent implements OnInit {
 
   registrar(): void {
     if (!this.form.fechaSiembra || !this.form.cantidadPlantas || !this.form.variedad) {
-      this.error = 'Por favor completa todos los campos.';
+      this.error = 'siembra.new.errors.required';
       return;
     }
 
@@ -54,11 +56,13 @@ export class NuevaSiembraComponent implements OnInit {
       next: () => {
         this.exito = true;
         this.guardando = false;
+        this.cdr.detectChanges();
         setTimeout(() => this.router.navigate(['/cultivo/finca', this.fincaId]), 1500);
       },
       error: () => {
-        this.error = 'Error al registrar la siembra. Intenta de nuevo.';
+        this.error = 'siembra.new.errors.register';
         this.guardando = false;
+        this.cdr.detectChanges();
       },
     });
   }

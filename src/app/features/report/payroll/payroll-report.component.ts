@@ -1,11 +1,13 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ReportService, PayrollReport } from '../../../core/services/report.service';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-payroll-report',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './payroll-report.component.html',
   styleUrl: './payroll-report.component.css'
 })
@@ -13,6 +15,7 @@ export class PayrollReportComponent implements OnInit {
 
   private reportService = inject(ReportService);
   private cdr = inject(ChangeDetectorRef);
+  private lang = inject(LanguageService);
 
   report: PayrollReport | null = null;
   loading = false;
@@ -69,16 +72,40 @@ export class PayrollReportComponent implements OnInit {
     a.click();
     window.URL.revokeObjectURL(url);
   }
-get totalJornales(): number {
-  return this.report?.workerDetails.reduce((s, w) => s + w.totalJornales, 0) ?? 0;
-}
 
-get promedioPago(): number {
-  if (!this.report || !this.report.workerDetails.length) return 0;
-  return this.report.totalAccumulated / this.report.workerDetails.length;
-}
+  // ===== Formato según idioma activo (Intl nativo) =====
 
-get maxPago(): number {
-  return Math.max(...(this.report?.workerDetails.map(w => w.totalPaid) ?? [1]));
-}
+  // Las fechas "yyyy-MM-dd" se leen como fecha local (evita que se corra un día por zona horaria)
+  private toDate(v: string): Date {
+    return /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T00:00:00') : new Date(v);
+  }
+
+  fmtNum(v: number): string {
+    return new Intl.NumberFormat(this.lang.current(), { maximumFractionDigits: 0 }).format(v);
+  }
+
+  fmtDate(v: string, withYear = true): string {
+    return new Intl.DateTimeFormat(this.lang.current(), {
+      day: 'numeric', month: 'short', ...(withYear ? { year: 'numeric' } : {}),
+    }).format(this.toDate(v));
+  }
+
+  fmtDateTime(v: string): string {
+    return new Intl.DateTimeFormat(this.lang.current(), {
+      day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit',
+    }).format(this.toDate(v));
+  }
+
+  get totalJornales(): number {
+    return this.report?.workerDetails.reduce((s, w) => s + w.totalJornales, 0) ?? 0;
+  }
+
+  get promedioPago(): number {
+    if (!this.report || !this.report.workerDetails.length) return 0;
+    return this.report.totalAccumulated / this.report.workerDetails.length;
+  }
+
+  get maxPago(): number {
+    return Math.max(...(this.report?.workerDetails.map(w => w.totalPaid) ?? [1]));
+  }
 }

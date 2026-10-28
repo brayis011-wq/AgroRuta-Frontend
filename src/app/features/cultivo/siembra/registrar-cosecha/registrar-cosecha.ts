@@ -2,12 +2,13 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 
 @Component({
   selector: 'app-registrar-cosecha',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './registrar-cosecha.html',
   styleUrl: './registrar-cosecha.css'
 })
@@ -15,8 +16,8 @@ export class RegistrarCosecha implements OnInit {
 
   siembraId!: number;
   cargando = false;
-  error = '';
-  exito = '';
+  error = '';   // clave de traducción (o mensaje crudo del backend)
+  exito = '';   // clave de traducción
 
   form: any = {
     fecha: '',
@@ -49,7 +50,7 @@ export class RegistrarCosecha implements OnInit {
     this.cultivoService.registrarCosecha(this.form).subscribe({
       next: () => {
         this.cargando = false;
-        this.exito = '¡Cosecha registrada exitosamente!';
+        this.exito = 'siembra.harvest.success';
         this.cdr.detectChanges();
         setTimeout(() => {
           this.router.navigate(['/cultivo/siembra', this.siembraId]);
@@ -57,7 +58,7 @@ export class RegistrarCosecha implements OnInit {
       },
       error: (err) => {
         this.cargando = false;
-        this.error = err.error?.message || 'Error al registrar la cosecha.';
+        this.error = err.error?.message || 'siembra.harvest.errors.register';
         this.cdr.detectChanges();
       }
     });

@@ -2,13 +2,14 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { JornalService, TrabajadorService, NominaService, NominaRequest } from '../../../../core/services/worker.service';
 import { Jornal, Trabajador, Nomina } from '../../../../core/models/worker.model';
 
 @Component({
   selector: 'app-lista-jornales',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './list-wage.html',
   styleUrls: ['./list-wage.css']
 })
@@ -23,7 +24,7 @@ export class ListaJornalesComponent implements OnInit {
   fechaInicio = '';
   fechaFin    = '';
   cargando    = false;
-  error       = '';
+  error       = '';   // clave de traducción
   exito       = '';
 
   panelNomina  = false;
@@ -82,7 +83,7 @@ export class ListaJornalesComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error    = 'Error al cargar jornales';
+        this.error    = 'workers.wages.list.errors.load';
         this.cargando = false;
         this.cdr.detectChanges();
       }
@@ -156,7 +157,7 @@ export class ListaJornalesComponent implements OnInit {
 
     const { periodoInicio, periodoFin } = this.formNomina.value;
     if (periodoFin < periodoInicio) {
-      this.error = 'La fecha fin no puede ser anterior a la fecha inicio';
+      this.error = 'workers.wages.list.errors.endBeforeStart';
       return;
     }
 
@@ -177,7 +178,7 @@ export class ListaJornalesComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error     = 'Error al generar nómina. Verifica que haya jornales sin liquidar en el período.';
+        this.error     = 'workers.wages.list.errors.generate';
         this.generando = false;
         this.cdr.detectChanges();
       }

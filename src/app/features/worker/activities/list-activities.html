@@ -1,32 +1,32 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Actividades</h1>
-      <p class="page-subtitle">Gestión de actividades realizadas en campo</p>
+      <h1 class="page-title">{{ 'workers.activities.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'workers.activities.subtitle' | translate }}</p>
     </div>
-    <button class="btn-primary" (click)="abrirNuevo()">＋ Nueva Actividad</button>
+    <button class="btn-primary" (click)="abrirNuevo()">{{ 'workers.activities.new' | translate }}</button>
   </div>
 
-  <div *ngIf="error" class="alerta-error" role="alert">{{ error }}</div>
+  <div *ngIf="error" class="alerta-error" role="alert">{{ error | translate }}</div>
 
   <div *ngIf="mostrarForm" class="form-card">
-    <h3 class="form-titulo">{{ modoEdicion ? 'Editar actividad' : 'Nueva actividad' }}</h3>
+    <h3 class="form-titulo">{{ (modoEdicion ? 'workers.activities.formEdit' : 'workers.activities.formNew') | translate }}</h3>
     <form [formGroup]="form" (ngSubmit)="guardar()">
       <div class="grid-2">
         <div class="campo">
-          <label for="nombre">Nombre *</label>
-          <input id="nombre" formControlName="nombre" type="text" placeholder="Ej: Deshierbe" [class.invalido]="invalido('nombre')"/>
-          <span *ngIf="invalido('nombre')" class="error-msg">Requerido</span>
+          <label for="nombre">{{ 'workers.activities.name' | translate }}</label>
+          <input id="nombre" formControlName="nombre" type="text" [placeholder]="'workers.activities.namePlaceholder' | translate" [class.invalido]="invalido('nombre')"/>
+          <span *ngIf="invalido('nombre')" class="error-msg">{{ 'common.required' | translate }}</span>
         </div>
         <div class="campo">
-          <label for="descripcion">Descripción *</label>
-          <input id="descripcion" formControlName="descripcion" type="text" placeholder="Descripción de la actividad" [class.invalido]="invalido('descripcion')"/>
-          <span *ngIf="invalido('descripcion')" class="error-msg">Requerido</span>
+          <label for="descripcion">{{ 'workers.activities.description' | translate }}</label>
+          <input id="descripcion" formControlName="descripcion" type="text" [placeholder]="'workers.activities.descriptionPlaceholder' | translate" [class.invalido]="invalido('descripcion')"/>
+          <span *ngIf="invalido('descripcion')" class="error-msg">{{ 'common.required' | translate }}</span>
         </div>
       </div>
       <div class="form-footer">
-        <button type="button" class="btn-secundario" (click)="mostrarForm = false">Cancelar</button>
-        <button type="submit" class="btn-primary" [disabled]="guardando">{{ guardando ? 'Guardando...' : 'Guardar' }}</button>
+        <button type="button" class="btn-secundario" (click)="mostrarForm = false">{{ 'common.cancel' | translate }}</button>
+        <button type="submit" class="btn-primary" [disabled]="guardando">{{ (guardando ? 'common.saving' : 'common.save') | translate }}</button>
       </div>
     </form>
   </div>
@@ -35,10 +35,10 @@
     <table class="tabla">
       <thead>
       <tr>
-        <th>Actividad</th>
-        <th>Descripción</th>
-        <th>Estado</th>
-        <th>Acciones</th>
+        <th>{{ 'workers.activities.table.activity' | translate }}</th>
+        <th>{{ 'workers.activities.table.description' | translate }}</th>
+        <th>{{ 'common.status' | translate }}</th>
+        <th>{{ 'common.actions' | translate }}</th>
       </tr>
       </thead>
       <tbody>
@@ -47,24 +47,24 @@
         <td class="texto-suave">{{ a.descripcion }}</td>
         <td>
             <span class="badge" [ngClass]="a.activa ? 'badge-activo' : 'badge-inactivo'">
-              {{ a.activa ? 'Activa' : 'Inactiva' }}
+              {{ (a.activa ? 'workers.activities.active' : 'workers.activities.inactive') | translate }}
             </span>
         </td>
         <td>
           <div class="acciones">
-            <button class="btn-accion btn-ver" (click)="abrirEditar(a)" title="Editar">
+            <button class="btn-accion btn-ver" (click)="abrirEditar(a)" [title]="'common.edit' | translate">
               <span aria-hidden="true">✎</span>
-              <span class="sr-only">Editar</span>
+              <span class="sr-only">{{ 'common.edit' | translate }}</span>
             </button>
-            <button class="btn-accion btn-desactivar" (click)="desactivar(a)" title="Desactivar">
+            <button class="btn-accion btn-desactivar" (click)="desactivar(a)" [title]="'common.deactivate' | translate">
               <span aria-hidden="true">✖</span>
-              <span class="sr-only">Desactivar</span>
+              <span class="sr-only">{{ 'common.deactivate' | translate }}</span>
             </button>
           </div>
         </td>
       </tr>
       <tr *ngIf="actividades.length === 0">
-        <td colspan="4" class="sin-resultados">No hay actividades registradas</td>
+        <td colspan="4" class="sin-resultados">{{ 'workers.activities.empty' | translate }}</td>
       </tr>
       </tbody>
     </table>

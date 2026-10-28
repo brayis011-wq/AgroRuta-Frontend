@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProfileFormComponent } from '../../profile-form/profile-form.component';
 import { ChangePasswordFormComponent } from '../../change-password-form/change-password-form.component';
 import { ProfileService } from '../../../../core/services/profile.service';
@@ -13,7 +14,7 @@ interface Toast {
 @Component({
   selector: 'app-configuration-page',
   standalone: true,
-  imports: [CommonModule, ProfileFormComponent, ChangePasswordFormComponent],
+  imports: [CommonModule, ProfileFormComponent, ChangePasswordFormComponent, TranslatePipe],
   templateUrl: './configuration-page.component.html',
   styleUrls: ['./configuration-page.component.scss'],
 })
@@ -42,7 +43,7 @@ export class ConfigurationPageComponent implements OnInit {
       },
       error: () => {
         this.loadingPage = false;
-        this.showToast('No se pudo cargar el perfil. Inténtalo de nuevo.', 'error');
+        this.showToast('config.toast.loadError', 'error');
         this.cdr.detectChanges();
       },
     });
@@ -54,12 +55,12 @@ export class ConfigurationPageComponent implements OnInit {
       next: (updated: Perfil) => {
         this.perfil = updated;
         this.loadingProfile = false;
-        this.showToast('Perfil actualizado correctamente ✓', 'success');
+        this.showToast('config.toast.profileSaved', 'success');
         this.cdr.detectChanges();
       },
       error: () => {
         this.loadingProfile = false;
-        this.showToast('Error al actualizar el perfil. Inténtalo de nuevo.', 'error');
+        this.showToast('config.toast.profileError', 'error');
         this.cdr.detectChanges();
       },
     });
@@ -70,14 +71,14 @@ export class ConfigurationPageComponent implements OnInit {
     this.profileService.changePassword(data).subscribe({
       next: () => {
         this.loadingPassword = false;
-        this.showToast('Contraseña cambiada correctamente ✓', 'success');
+        this.showToast('config.toast.passwordSaved', 'success');
         this.cdr.detectChanges();
       },
       error: (err: { status: number }) => {
         this.loadingPassword = false;
         const msg = err?.status === 400
-          ? 'La contraseña actual es incorrecta.'
-          : 'Error al cambiar la contraseña. Inténtalo de nuevo.';
+          ? 'config.toast.passwordWrong'
+          : 'config.toast.passwordError';
         this.showToast(msg, 'error');
         this.cdr.detectChanges();
       },

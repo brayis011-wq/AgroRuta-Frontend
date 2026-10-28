@@ -1,19 +1,26 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { AuthService } from '../../../../core/services/auth';
+import { LanguageService } from '../../../../core/services/language.service';
 import * as L from 'leaflet';
 
 @Component({
   selector: 'app-nueva-finca',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './nueva-finca.html',
   styleUrl: './nueva-finca.css',
 })
 export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
+
+  private translate = inject(TranslateService);
+  private lang = inject(LanguageService);
+  private cdr = inject(ChangeDetectorRef);
 
   form = {
     nombre: '',
@@ -26,11 +33,13 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
   centroideLng: number | null = null;
 
   guardando = false;
-  error = '';
+  error = '';          // clave de traducción
   exito = false;
 
   private map!: L.Map;
   private marcador: L.Marker | null = null;
+  private locateBtnEl: HTMLElement | null = null;
+  private langSub?: Subscription;
 
   constructor(
     private cultivoService: CultivoService,
@@ -40,10 +49,26 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.initMap();
+    // Actualiza el texto del botón del mapa al cambiar de idioma
+    this.langSub = this.translate.onLangChange.subscribe(() => this.actualizarTextoBotonGps());
   }
 
   ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
     if (this.map) this.map.remove();
+  }
+
+  /** Coordenadas con 4 decimales según el idioma activo */
+  fmtCoord(v: number): string {
+    return new Intl.NumberFormat(this.lang.current(), {
+      minimumFractionDigits: 4, maximumFractionDigits: 4,
+    }).format(v);
+  }
+
+  private actualizarTextoBotonGps(): void {
+    if (this.locateBtnEl) {
+      this.locateBtnEl.innerHTML = '📍 ' + this.translate.instant('cultivo.fincas.new.myLocation');
+    }
   }
 
   private initMap(): void {
@@ -74,7 +99,8 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
       options: { position: 'topright' },
       onAdd: () => {
         const btn = L.DomUtil.create('button', 'locate-btn');
-        btn.innerHTML = '📍 Mi ubicación';
+        this.locateBtnEl = btn;
+        this.actualizarTextoBotonGps();
         L.DomEvent.on(btn, 'click', () => {
           navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -82,7 +108,7 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
               this.map.setView(latlng, 16);
               this.colocarMarcador(latlng);
             },
-            () => alert('No se pudo obtener tu ubicación.')
+            () => alert(this.translate.instant('cultivo.fincas.new.geoError'))
           );
         });
         return btn;
@@ -110,6 +136,7 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
 
     this.centroideLat = latlng.lat;
     this.centroideLng = latlng.lng;
+    this.cdr.detectChanges();
 
     // Reverse geocoding para llenar ubicacion automáticamente
     fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json`)
@@ -123,6 +150,7 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
             a.state || ''
           ].filter(Boolean);
           this.form.ubicacion = partes.join(', ');
+          this.cdr.detectChanges();
         }
       });
   }
@@ -133,26 +161,28 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
       .then(r => r.json())
       .then(data => {
         if (data.length > 0) {
-const latlng = L.latLng(Number.parseFloat(data[0].lat), Number.parseFloat(data[0].lon));          this.map.setView(latlng, 15);
+          const latlng = L.latLng(Number.parseFloat(data[0].lat), Number.parseFloat(data[0].lon));
+          this.map.setView(latlng, 15);
         } else {
-          this.error = 'No se encontró esa ubicación.';
+          this.error = 'cultivo.fincas.new.errors.notFound';
+          this.cdr.detectChanges();
         }
       });
   }
 
   registrar(): void {
     if (!this.form.nombre || !this.form.ubicacion || !this.form.hectareas) {
-      this.error = 'Por favor completa todos los campos.';
+      this.error = 'cultivo.fincas.new.errors.required';
       return;
     }
     if (!this.centroideLat || !this.centroideLng) {
-      this.error = 'Marca la ubicación de la finca en el mapa.';
+      this.error = 'cultivo.fincas.new.errors.noMapLocation';
       return;
     }
 
     const usuario = this.authService.getUsuario();
     if (!usuario?.id) {
-      this.error = 'No se encontró el usuario. Por favor inicia sesión de nuevo.';
+      this.error = 'cultivo.fincas.errors.noUser';
       return;
     }
 
@@ -173,17 +203,20 @@ const latlng = L.latLng(Number.parseFloat(data[0].lat), Number.parseFloat(data[0
         }).subscribe({
           next: () => {
             this.exito = true;
+            this.cdr.detectChanges();
             setTimeout(() => this.router.navigate(['/cultivo']), 1200);
           },
           error: () => {
             this.exito = true;
+            this.cdr.detectChanges();
             setTimeout(() => this.router.navigate(['/cultivo']), 1200);
           }
         });
       },
       error: () => {
-        this.error = 'Error al registrar la finca. Intenta de nuevo.';
+        this.error = 'cultivo.fincas.new.errors.register';
         this.guardando = false;
+        this.cdr.detectChanges();
       },
     });
   }

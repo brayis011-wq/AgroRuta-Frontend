@@ -4,6 +4,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   NominaService,
   TrabajadorService,
@@ -16,7 +17,7 @@ import { Nomina, Trabajador } from '../../../../core/models/worker.model';
 @Component({
   selector: 'app-lista-nominas',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './list-roster.html',
   styleUrls: ['./list-roster.css']
 })
@@ -29,8 +30,9 @@ export class ListaNominasComponent implements OnInit {
   mostrarForm = false;
   guardando = false;
   aprobando: number | null = null;
-  error = '';
-  exito = '';
+  error = '';                                   // clave de traducción
+  exito = '';                                   // clave de traducción
+  exitoParams: Record<string, unknown> = {};    // parámetros de la clave de éxito
 
   constructor(
     private fb: FormBuilder,
@@ -38,7 +40,8 @@ export class ListaNominasComponent implements OnInit {
     private trabajadorService: TrabajadorService,
     private pagoService: PagoService,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -75,7 +78,7 @@ export class ListaNominasComponent implements OnInit {
         this.aplicarFiltro();
         this.cdr.detectChanges();
       },
-      error: () => { this.error = 'Error al cargar nóminas'; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.rosters.list.errors.load'; this.cdr.detectChanges(); }
     });
   }
 
@@ -120,13 +123,13 @@ export class ListaNominasComponent implements OnInit {
     };
     this.nominaService.generar(req).subscribe({
       next: () => { this.cargar(); this.mostrarForm = false; this.guardando = false; },
-      error: () => { this.error = 'Error al generar nómina'; this.guardando = false; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.rosters.list.errors.generate'; this.guardando = false; this.cdr.detectChanges(); }
     });
   }
 
   aprobar(id: number | undefined): void {
     if (id == null) return;
-    if (!confirm('¿Aprobar esta nómina? Se registrará el pago automáticamente en efectivo.')) return;
+    if (!confirm(this.translate.instant('workers.rosters.list.confirm.approve'))) return;
 
     this.aprobando = id;
     this.error = '';
@@ -142,21 +145,22 @@ export class ListaNominasComponent implements OnInit {
         this.pagoService.registrar(pagoReq).subscribe({
           next: () => {
             this.aprobando = null;
-            this.exito = `✅ Nómina aprobada y pago de $${nominaAprobada.valorTotal.toLocaleString()} registrado`;
+            this.exito = 'workers.rosters.list.success.approved';
+            this.exitoParams = { amount: nominaAprobada.valorTotal.toLocaleString() };
             this.cargar();
             this.cdr.detectChanges();
             setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 4000);
           },
           error: () => {
             this.aprobando = null;
-            this.error = '⚠️ Nómina aprobada pero ocurrió un error al registrar el pago.';
+            this.error = 'workers.rosters.list.errors.paymentAfterApprove';
             this.cargar();
             this.cdr.detectChanges();
           }
         });
       },
       error: () => {
-        this.error = 'Error al aprobar la nómina';
+        this.error = 'workers.rosters.list.errors.approve';
         this.aprobando = null;
         this.cdr.detectChanges();
       }
@@ -165,39 +169,41 @@ export class ListaNominasComponent implements OnInit {
 
   anular(id: number | undefined): void {
     if (id == null) return;
-    if (!confirm('¿Anular esta nómina?')) return;
+    if (!confirm(this.translate.instant('workers.rosters.list.confirm.cancel'))) return;
     this.nominaService.anular(id).subscribe({
       next: () => { this.cargar(); },
-      error: () => { this.error = 'Error al anular nómina'; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.rosters.list.errors.cancel'; this.cdr.detectChanges(); }
     });
   }
 
   reactivar(id: number | undefined): void {
     if (id == null) return;
-    if (!confirm('¿Reactivar esta nómina? Volverá a estado PENDIENTE.')) return;
+    if (!confirm(this.translate.instant('workers.rosters.list.confirm.reactivate'))) return;
     this.nominaService.reactivar(id).subscribe({
       next: () => {
-        this.exito = '✅ Nómina reactivada como PENDIENTE';
+        this.exito = 'workers.rosters.list.success.reactivated';
+        this.exitoParams = {};
         this.cargar();
         this.cdr.detectChanges();
         setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
       },
-      error: () => { this.error = 'Error al reactivar nómina'; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.rosters.list.errors.reactivate'; this.cdr.detectChanges(); }
     });
   }
 
   eliminar(id: number | undefined): void {
     if (id == null) return;
-    if (!confirm('¿Eliminar esta nómina definitivamente? Esta acción no se puede deshacer.')) return;
+    if (!confirm(this.translate.instant('workers.rosters.list.confirm.delete'))) return;
     this.nominaService.eliminar(id).subscribe({
       next: () => {
         this.todasLasNominas = this.todasLasNominas.filter(n => n.id !== id);
         this.aplicarFiltro();
-        this.exito = '🗑 Nómina eliminada';
+        this.exito = 'workers.rosters.list.success.deleted';
+        this.exitoParams = {};
         this.cdr.detectChanges();
         setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
       },
-      error: () => { this.error = 'Error al eliminar nómina'; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.rosters.list.errors.delete'; this.cdr.detectChanges(); }
     });
   }
 

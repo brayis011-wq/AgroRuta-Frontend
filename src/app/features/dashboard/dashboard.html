@@ -2,22 +2,22 @@
 
   <div class="topbar">
     <div>
-      <h2 class="page-title">Panel de control</h2>
-      <p class="page-subtitle">Resumen general de tu operación</p>
+      <h2 class="page-title">{{ 'dashboard.title' | translate }}</h2>
+      <p class="page-subtitle">{{ 'dashboard.subtitle' | translate }}</p>
     </div>
     <div class="date-chip">
-      <span aria-hidden="true">📅</span> {{ today | date:'EEEE, d MMM yyyy' }}
+      <span aria-hidden="true">📅</span> {{ fechaHoy() }}
     </div>
   </div>
 
   <div class="welcome-banner">
     <div class="welcome-text">
-      <h3>Bienvenido, {{ usuario?.nombre }} <span aria-hidden="true">👋</span></h3>
-      <p>Has iniciado sesión como <strong>{{ usuario?.rol }}</strong></p>
+      <h3>{{ 'dashboard.welcome' | translate: { name: usuario?.nombre } }} <span aria-hidden="true">👋</span></h3>
+      <p>{{ 'dashboard.loggedInAs' | translate }} <strong>{{ 'enums.rol.' + usuario?.rol | translate }}</strong></p>
     </div>
     <div class="welcome-right">
       <div class="welcome-illustration" aria-hidden="true">🌾</div>
-      <span class="welcome-tag">Temporada activa</span>
+      <span class="welcome-tag">{{ 'dashboard.season' | translate }}</span>
     </div>
   </div>
 
@@ -26,21 +26,21 @@
       <div class="stat-icon green" aria-hidden="true">🏡</div>
       <div class="stat-body">
         <span class="stat-num">{{ totalFincas }}</span>
-        <span class="stat-lbl">Fincas registradas</span>
+        <span class="stat-lbl">{{ 'dashboard.stats.farms' | translate }}</span>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-icon blue" aria-hidden="true">🌿</div>
       <div class="stat-body">
         <span class="stat-num">{{ totalLotes }}</span>
-        <span class="stat-lbl">Lotes activos</span>
+        <span class="stat-lbl">{{ 'dashboard.stats.activeLots' | translate }}</span>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-icon amber" aria-hidden="true">📐</div>
       <div class="stat-body">
-        <span class="stat-num">{{ totalHectareas | number:'1.1-1' }} ha</span>
-        <span class="stat-lbl">Hectáreas totales</span>
+        <span class="stat-num">{{ formatHa(totalHectareas) }} ha</span>
+        <span class="stat-lbl">{{ 'dashboard.stats.totalHectares' | translate }}</span>
       </div>
     </div>
   </div>
@@ -48,27 +48,27 @@
   <div class="cards">
     <button type="button" class="card c1" (click)="irA('/cultivo')">
       <div class="card-icon" aria-hidden="true">🌱</div>
-      <h3>Cultivos</h3>
-      <p>Gestiona tus cultivos activos</p>
-      <span class="card-arrow" aria-hidden="true">Ver →</span>
+      <h3>{{ 'layout.nav.crops' | translate }}</h3>
+      <p>{{ 'dashboard.cards.crops' | translate }}</p>
+      <span class="card-arrow" aria-hidden="true">{{ 'common.view' | translate }} →</span>
     </button>
     <button type="button" class="card c2" (click)="irA('/worker')">
       <div class="card-icon" aria-hidden="true">👷</div>
-      <h3>Trabajadores</h3>
-      <p>Administra tu equipo de trabajo</p>
-      <span class="card-arrow" aria-hidden="true">Ver →</span>
+      <h3>{{ 'layout.nav.workers' | translate }}</h3>
+      <p>{{ 'dashboard.cards.workers' | translate }}</p>
+      <span class="card-arrow" aria-hidden="true">{{ 'common.view' | translate }} →</span>
     </button>
     <button type="button" class="card c3" (click)="irA('/reportes')">
       <div class="card-icon" aria-hidden="true">📊</div>
-      <h3>Reportes</h3>
-      <p>Visualiza el rendimiento</p>
-      <span class="card-arrow" aria-hidden="true">Ver →</span>
+      <h3>{{ 'layout.nav.reports' | translate }}</h3>
+      <p>{{ 'dashboard.cards.reports' | translate }}</p>
+      <span class="card-arrow" aria-hidden="true">{{ 'common.view' | translate }} →</span>
     </button>
     <button type="button" class="card c4" (click)="irA('/configuracion')">
       <div class="card-icon" aria-hidden="true">⚙️</div>
-      <h3>Configuración</h3>
-      <p>Ajusta tu cuenta y preferencias</p>
-      <span class="card-arrow" aria-hidden="true">Ver →</span>
+      <h3>{{ 'layout.nav.settings' | translate }}</h3>
+      <p>{{ 'dashboard.cards.settings' | translate }}</p>
+      <span class="card-arrow" aria-hidden="true">{{ 'common.view' | translate }} →</span>
     </button>
   </div>
 
