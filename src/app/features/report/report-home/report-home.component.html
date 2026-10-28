@@ -3,15 +3,15 @@
     <button class="tab-btn payroll" [class.active]="activeTab === 'payroll'" (click)="setTab('payroll')">
       <div class="tab-icon"><i class="ti ti-report-money"></i></div>
       <div class="tab-label">
-        <span class="tab-name">Nómina</span>
-        <span class="tab-sub">Pagos y jornales</span>
+        <span class="tab-name">{{ 'reports.tabs.payroll.name' | translate }}</span>
+        <span class="tab-sub">{{ 'reports.tabs.payroll.sub' | translate }}</span>
       </div>
     </button>
     <button class="tab-btn crops" [class.active]="activeTab === 'crops'" (click)="setTab('crops')">
       <div class="tab-icon"><i class="ti ti-plant"></i></div>
       <div class="tab-label">
-        <span class="tab-name">Cultivos</span>
-        <span class="tab-sub">Cosechas e insumos</span>
+        <span class="tab-name">{{ 'reports.tabs.crops.name' | translate }}</span>
+        <span class="tab-sub">{{ 'reports.tabs.crops.sub' | translate }}</span>
       </div>
     </button>
   </div>

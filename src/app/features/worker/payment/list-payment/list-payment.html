@@ -3,43 +3,43 @@
   <!-- Header -->
   <div class="page-header">
     <div>
-      <h1 class="page-title">Pagos</h1>
-      <p class="page-subtitle" *ngIf="!nominaIdFiltro">Historial de pagos realizados a trabajadores</p>
+      <h1 class="page-title">{{ 'workers.payments.title' | translate }}</h1>
+      <p class="page-subtitle" *ngIf="!nominaIdFiltro">{{ 'workers.payments.subtitleAll' | translate }}</p>
       <p class="page-subtitle" *ngIf="nominaIdFiltro">
-        Pago de nómina <strong>#{{ nominaIdFiltro }}</strong>
-        <button class="btn-link" (click)="verTodos()">← Ver todos</button>
+        {{ 'workers.payments.subtitleOf' | translate }} <strong>#{{ nominaIdFiltro }}</strong>
+        <button class="btn-link" (click)="verTodos()">{{ 'workers.payments.seeAll' | translate }}</button>
       </p>
     </div>
 
     <!-- Resumen global -->
     <div class="resumen-header" *ngIf="!cargando">
       <div class="resumen-item">
-        <span class="resumen-label">Total pagado</span>
+        <span class="resumen-label">{{ 'workers.payments.summary.totalPaid' | translate }}</span>
         <span class="resumen-valor">${{ totalGlobal | number }}</span>
       </div>
       <div class="resumen-item">
-        <span class="resumen-label">Trabajadores</span>
+        <span class="resumen-label">{{ 'workers.payments.summary.workers' | translate }}</span>
         <span class="resumen-valor">{{ grupos.length }}</span>
       </div>
       <div class="resumen-item">
-        <span class="resumen-label">Pagos</span>
+        <span class="resumen-label">{{ 'workers.payments.summary.payments' | translate }}</span>
         <span class="resumen-valor">{{ totalPagos }}</span>
       </div>
     </div>
   </div>
 
-  <div *ngIf="error" class="alerta-error">{{ error }}</div>
+  <div *ngIf="error" class="alerta-error">{{ error | translate }}</div>
 
   <!-- Cargando -->
   <div *ngIf="cargando" class="estado-vacio">
     <span class="spinner"></span>
-    <p>Cargando pagos...</p>
+    <p>{{ 'workers.payments.loading' | translate }}</p>
   </div>
 
   <!-- Sin pagos -->
   <div *ngIf="!cargando && grupos.length === 0" class="estado-vacio">
     <span class="icono-vacio">💳</span>
-    <p>No hay pagos registrados</p>
+    <p>{{ 'workers.payments.empty' | translate }}</p>
   </div>
 
   <!-- Layout principal: tarjetas + panel detalle -->
@@ -54,12 +54,12 @@
           <div class="trabajador-info">
             <div class="avatar-grande">{{ iniciales(grupo.trabajadorNombre) }}</div>
             <div>
-              <div class="trabajador-nombre">{{ grupo.trabajadorNombre }}</div>
-              <div class="trabajador-meta">{{ grupo.pagos.length }} pago(s)</div>
+              <div class="trabajador-nombre">{{ grupo.trabajadorNombre || ('workers.payments.noName' | translate) }}</div>
+              <div class="trabajador-meta">{{ 'workers.payments.paymentsCount' | translate: { count: grupo.pagos.length } }}</div>
             </div>
           </div>
           <div class="tarjeta-total">
-            <span class="total-label">Total</span>
+            <span class="total-label">{{ 'workers.payments.total' | translate }}</span>
             <span class="total-valor">${{ grupo.total | number }}</span>
           </div>
         </div>
@@ -71,11 +71,11 @@
                   *ngFor="let p of grupo.pagos"
                   [class.activo]="pagoSeleccionado?.id === p.id"
                   (click)="abrirDetalle(p)"
-                  title="Ver detalle del pago">
+                  [title]="'workers.payments.viewDetail' | translate">
             <div class="pago-izq">
               <span class="metodo-icono">{{ metodoPagoIcon(p.metodoPago) }}</span>
               <div>
-                <div class="pago-metodo">{{ p.metodoPago }}</div>
+                <div class="pago-metodo">{{ p.metodoPago ? ('enums.metodoPago.' + p.metodoPago | translate) : '' }}</div>
                 <div class="pago-fecha">{{ p.fechaPago | date:'dd/MM/yyyy' }}</div>
               </div>
             </div>
@@ -96,39 +96,40 @@
       <!-- Header panel -->
       <div class="panel-header">
         <div>
-          <div class="panel-titulo">Detalle del pago</div>
-          <div class="panel-subtitulo">Nómina #{{ pagoSeleccionado.nominaId }}</div>
+          <div class="panel-titulo">{{ 'workers.payments.panel.title' | translate }}</div>
+          <div class="panel-subtitulo">{{ 'workers.payments.panel.payrollNo' | translate: { id: pagoSeleccionado.nominaId } }}</div>
         </div>
-        <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
+        <button class="btn-cerrar" (click)="cerrarDetalle()" [attr.aria-label]="'workers.payments.panel.close' | translate">✕</button>
       </div>
 
       <!-- Datos del pago -->
       <div class="panel-seccion">
-        <div class="panel-seccion-titulo">Información del pago</div>
+        <div class="panel-seccion-titulo">{{ 'workers.payments.panel.info' | translate }}</div>
         <div class="dato-fila">
-          <span class="dato-label">Trabajador</span>
-          <span class="dato-valor">{{ pagoSeleccionado.trabajadorNombre }}</span>
+          <span class="dato-label">{{ 'workers.payments.panel.worker' | translate }}</span>
+          <span class="dato-valor">{{ pagoSeleccionado.trabajadorNombre || ('workers.payments.noName' | translate) }}</span>
         </div>
         <div class="dato-fila">
-          <span class="dato-label">Fecha de pago</span>
+          <span class="dato-label">{{ 'workers.payments.panel.paymentDate' | translate }}</span>
           <span class="dato-valor">{{ pagoSeleccionado.fechaPago | date:'dd/MM/yyyy' }}</span>
         </div>
         <div class="dato-fila">
-          <span class="dato-label">Método</span>
+          <span class="dato-label">{{ 'workers.payments.panel.method' | translate }}</span>
           <span class="dato-valor">
-            {{ metodoPagoIcon(pagoSeleccionado.metodoPago) }} {{ pagoSeleccionado.metodoPago }}
+            {{ metodoPagoIcon(pagoSeleccionado.metodoPago) }}
+            {{ pagoSeleccionado.metodoPago ? ('enums.metodoPago.' + pagoSeleccionado.metodoPago | translate) : '' }}
           </span>
         </div>
         <div class="dato-fila" *ngIf="pagoSeleccionado.comprobante">
-          <span class="dato-label">Comprobante</span>
+          <span class="dato-label">{{ 'workers.payments.panel.receipt' | translate }}</span>
           <span class="dato-valor mono">{{ pagoSeleccionado.comprobante }}</span>
         </div>
         <div class="dato-fila" *ngIf="pagoSeleccionado.observaciones">
-          <span class="dato-label">Observaciones</span>
+          <span class="dato-label">{{ 'workers.payments.panel.notes' | translate }}</span>
           <span class="dato-valor">{{ pagoSeleccionado.observaciones }}</span>
         </div>
         <div class="dato-fila destacado">
-          <span class="dato-label">Monto total pagado</span>
+          <span class="dato-label">{{ 'workers.payments.panel.totalPaid' | translate }}</span>
           <span class="dato-valor monto-grande">${{ pagoSeleccionado.monto | number }}</span>
         </div>
       </div>
@@ -136,19 +137,19 @@
       <!-- Spinner cargando nómina -->
       <div *ngIf="cargandoDetalle" class="panel-cargando">
         <span class="spinner"></span>
-        <p>Cargando jornales...</p>
+        <p>{{ 'workers.payments.panel.loadingWages' | translate }}</p>
       </div>
 
       <!-- Jornales de la nómina -->
       <div class="panel-seccion" *ngIf="!cargandoDetalle && nominaDetalle">
         <div class="panel-seccion-titulo">
-          Jornales incluidos
+          {{ 'workers.payments.panel.wagesIncluded' | translate }}
           <span class="badge-count">{{ nominaDetalle.jornales?.length ?? 0 }}</span>
         </div>
 
         <!-- Período -->
         <div class="dato-fila">
-          <span class="dato-label">Período</span>
+          <span class="dato-label">{{ 'workers.payments.panel.period' | translate }}</span>
           <span class="dato-valor">
             {{ nominaDetalle.periodoInicio | date:'dd/MM/yyyy' }} →
             {{ nominaDetalle.periodoFin | date:'dd/MM/yyyy' }}
@@ -168,11 +169,11 @@
         </div>
 
         <div *ngIf="!nominaDetalle.jornales || nominaDetalle.jornales.length === 0"
-             class="sin-resultados">Sin jornales registrados</div>
+             class="sin-resultados">{{ 'workers.payments.panel.noWages' | translate }}</div>
 
         <!-- Total nómina -->
         <div class="jornal-total">
-          <span>Total nómina</span>
+          <span>{{ 'workers.payments.panel.payrollTotal' | translate }}</span>
           <span>${{ nominaDetalle.valorTotal | number }}</span>
         </div>
       </div>
@@ -182,7 +183,7 @@
 
   <!-- Barra sticky total global -->
   <div class="total-global-bar" *ngIf="!cargando && grupos.length > 0">
-    <span class="total-global-label">Total general pagado</span>
+    <span class="total-global-label">{{ 'workers.payments.grandTotal' | translate }}</span>
     <span class="total-global-valor">${{ totalGlobal | number }}</span>
   </div>
 

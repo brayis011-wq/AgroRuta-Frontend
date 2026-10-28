@@ -1,25 +1,26 @@
 <div class="container">
   <div class="card">
+    <app-language-switcher />
     <h2>AgroRuta</h2>
-    <h3>Crear cuenta</h3>
+    <h3>{{ 'auth.register.title' | translate }}</h3>
 
-    <div class="error" *ngIf="error">{{ error }}</div>
-    <div class="success" *ngIf="exito">{{ exito }}</div>
+    <div class="error" *ngIf="error">{{ error | translate }}</div>
+    <div class="success" *ngIf="exito">{{ exito | translate }}</div>
 
     <form (ngSubmit)="onSubmit()" #registroForm="ngForm">
       <div class="field">
-        <label for="nombre">Nombre completo</label>
+        <label for="nombre">{{ 'auth.register.fullName' | translate }}</label>
         <input
           id="nombre"
           type="text"
           [(ngModel)]="form.nombre"
           name="nombre"
-          placeholder="Tu nombre"
+          [placeholder]="'auth.register.fullNamePlaceholder' | translate"
         />
       </div>
 
       <div class="field">
-        <label for="email">Correo electrónico</label>
+        <label for="email">{{ 'auth.register.email' | translate }}</label>
         <input
           id="email"
           type="email"
@@ -30,7 +31,7 @@
       </div>
 
       <div class="field">
-        <label for="password">Contraseña</label>
+        <label for="password">{{ 'auth.register.password' | translate }}</label>
         <input
           id="password"
           type="password"
@@ -41,18 +42,21 @@
       </div>
 
       <div class="field">
-        <label for="rol">Rol</label>
+        <label for="rol">{{ 'auth.register.role' | translate }}</label>
         <select id="rol" [(ngModel)]="form.rol" name="rol">
-          <option value="Agricultor">Agricultor</option>
-          <option value="Trabajador">Trabajador</option>
+          <option value="Agricultor">{{ 'enums.rol.Agricultor' | translate }}</option>
+          <option value="Trabajador">{{ 'enums.rol.Trabajador' | translate }}</option>
         </select>
       </div>
 
       <button type="submit" [disabled]="cargando">
-        {{ cargando ? 'Registrando...' : 'Crear cuenta' }}
+        {{ (cargando ? 'auth.register.submitting' : 'auth.register.submit') | translate }}
       </button>
     </form>
 
-    <p class="link">¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión</a></p>
+    <p class="link">
+      {{ 'auth.register.haveAccount' | translate }}
+      <a routerLink="/auth/login">{{ 'auth.register.signIn' | translate }}</a>
+    </p>
   </div>
 </div>

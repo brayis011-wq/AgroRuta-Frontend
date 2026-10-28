@@ -4,6 +4,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   NominaService,
   PagoService,
@@ -14,7 +15,7 @@ import { Nomina, Pago } from '../../../../core/models/worker.model';
 @Component({
   selector: 'app-detalle-nomina',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './detail-roster.html',
   styleUrls: ['./detail-roster.css']
 })
@@ -23,8 +24,9 @@ export class DetalleNominaComponent implements OnInit {
   pagos: Pago[] = [];
   cargando = true;
   guardando = false;
-  error = '';
-  exito = '';
+  error = '';                                   // clave de traducción
+  exito = '';                                   // clave de traducción
+  exitoParams: Record<string, unknown> = {};    // parámetros de la clave de éxito
 
   constructor(
     private route: ActivatedRoute,
@@ -32,7 +34,8 @@ export class DetalleNominaComponent implements OnInit {
     private nominaService: NominaService,
     private pagoService: PagoService,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +56,7 @@ export class DetalleNominaComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error = 'Error al cargar la nómina';
+        this.error = 'workers.rosters.detail.errors.load';
         this.cargando = false;
         this.cdr.detectChanges();
       }
@@ -76,7 +79,7 @@ export class DetalleNominaComponent implements OnInit {
    */
   aprobar(): void {
     if (!this.nomina?.id) return;
-    if (!confirm('¿Confirmar y aprobar esta nómina? Se registrará el pago automáticamente en efectivo.')) return;
+    if (!confirm(this.translate.instant('workers.rosters.detail.confirm.approve'))) return;
 
     this.guardando = true;
     this.error = '';
@@ -96,19 +99,20 @@ export class DetalleNominaComponent implements OnInit {
           next: (p: Pago) => {
             this.pagos = [p];
             this.guardando = false;
-            this.exito = `✅ Nómina aprobada y pago de $${nominaAprobada.valorTotal.toLocaleString()} registrado en efectivo`;
+            this.exito = 'workers.rosters.detail.success.approvedCash';
+            this.exitoParams = { amount: nominaAprobada.valorTotal.toLocaleString() };
             this.cdr.detectChanges();
             setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 4000);
           },
           error: () => {
             this.guardando = false;
-            this.error = '⚠️ Nómina aprobada pero ocurrió un error al registrar el pago. Ve a Pagos para registrarlo manualmente.';
+            this.error = 'workers.rosters.detail.errors.paymentAfterApprove';
             this.cdr.detectChanges();
           }
         });
       },
       error: () => {
-        this.error = 'Error al aprobar la nómina';
+        this.error = 'workers.rosters.detail.errors.approve';
         this.guardando = false;
         this.cdr.detectChanges();
       }
@@ -116,7 +120,7 @@ export class DetalleNominaComponent implements OnInit {
   }
 
   anular(): void {
-    if (!this.nomina?.id || !confirm('¿Anular esta nómina? Esta acción no se puede deshacer.')) return;
+    if (!this.nomina?.id || !confirm(this.translate.instant('workers.rosters.detail.confirm.cancel'))) return;
     this.guardando = true;
     this.nominaService.anular(this.nomina.id).subscribe({
       next: () => {
@@ -124,7 +128,7 @@ export class DetalleNominaComponent implements OnInit {
         this.guardando = false;
       },
       error: () => {
-        this.error = 'Error al anular la nómina';
+        this.error = 'workers.rosters.detail.errors.cancel';
         this.guardando = false;
         this.cdr.detectChanges();
       }

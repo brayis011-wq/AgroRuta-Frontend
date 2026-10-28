@@ -1,7 +1,9 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { Finca, Lote } from '../../../../core/models/cultivo.model';
 import * as L from 'leaflet';
@@ -9,15 +11,17 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-detalle-finca',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './detalle-finca.html',
   styleUrl: './detalle-finca.css',
 })
 export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
+  private translate = inject(TranslateService);
+
   finca: Finca | null = null;
   lotes: Lote[] = [];
   cargando = true;
-  error = '';
+  error = '';                 // clave de traducción
   fincaId!: number;
   eliminando = false;
   loteAEliminar: Lote | null = null;
@@ -25,6 +29,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private map!: L.Map;
   private poligonosLayer: L.FeatureGroup = new L.FeatureGroup();
+  private langSub?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,7 +38,17 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdr: ChangeDetectorRef,
   ) {}
 
+  /** Palabra que el usuario debe escribir para confirmar (cambia con el idioma) */
+  get palabraConfirmacion(): string {
+    return this.translate.instant('cultivo.fincas.delete.confirmWord');
+  }
+
   ngOnInit(): void {
+    // Al cambiar de idioma se redibujan los polígonos para actualizar los tooltips
+    this.langSub = this.translate.onLangChange.subscribe(() => {
+      if (this.map && this.lotes.length > 0) this.dibujarLotes(false);
+    });
+
     this.fincaId = Number(this.route.snapshot.paramMap.get('id'));
     this.cultivoService.buscarFinca(this.fincaId).subscribe({
       next: (finca) => {
@@ -41,7 +56,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cargarLotes(this.fincaId);
       },
       error: () => {
-        this.error = 'Error al cargar la finca.';
+        this.error = 'cultivo.fincas.detail.errors.loadFarm';
         this.cargando = false;
         this.cdr.detectChanges();
       },
@@ -53,6 +68,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
     if (this.map) this.map.remove();
   }
 
@@ -79,7 +95,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
     this.poligonosLayer.addTo(this.map);
   }
 
-  private dibujarLotes(): void {
+  private dibujarLotes(recentrar = true): void {
     this.poligonosLayer.clearLayers();
 
     this.lotes.forEach(lote => {
@@ -95,7 +111,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
           weight: 2,
         });
 
-        // Popup con nombre y estado
+        // Tooltip con nombre y estado
         poligono.bindTooltip(
           `<strong>${lote.nombre}</strong><br>${this.getEstadoLabel(lote.estado)}<br>📐 ${lote.area} ha`,
           { permanent: false, direction: 'center' }
@@ -121,34 +137,36 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    // Centrar mapa según finca o polígonos
-    if (this.finca?.centroideLat && this.finca?.centroideLng) {
-      this.map.setView([this.finca.centroideLat, this.finca.centroideLng], 16);
-    } else if (this.poligonosLayer.getLayers().length > 0) {
-      this.map.fitBounds(this.poligonosLayer.getBounds(), { padding: [30, 30] });
+    // Centrar mapa según finca o polígonos (solo en la carga inicial)
+    if (recentrar) {
+      if (this.finca?.centroideLat && this.finca?.centroideLng) {
+        this.map.setView([this.finca.centroideLat, this.finca.centroideLng], 16);
+      } else if (this.poligonosLayer.getLayers().length > 0) {
+        this.map.fitBounds(this.poligonosLayer.getBounds(), { padding: [30, 30] });
+      }
     }
   }
 
-cargarLotes(fincaId: number): void {
-  this.cultivoService.listarLotesPorFinca(fincaId).subscribe({
-    next: (lotes) => {
-      this.lotes = lotes;
-      this.cargando = false;
-      this.cdr.detectChanges();
-      setTimeout(() => {
-        if (this.map) {
-          this.map.invalidateSize();
-          this.dibujarLotes();
-        }
-      }, 100);
-    },
-    error: () => {
-      this.error = 'Error al cargar los lotes.';
-      this.cargando = false;
-      this.cdr.detectChanges();
-    },
-  });
-}
+  cargarLotes(fincaId: number): void {
+    this.cultivoService.listarLotesPorFinca(fincaId).subscribe({
+      next: (lotes) => {
+        this.lotes = lotes;
+        this.cargando = false;
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          if (this.map) {
+            this.map.invalidateSize();
+            this.dibujarLotes();
+          }
+        }, 100);
+      },
+      error: () => {
+        this.error = 'cultivo.fincas.detail.errors.loadLots';
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
 
   private getColorEstado(estado: string): string {
     switch (estado) {
@@ -168,13 +186,19 @@ cargarLotes(fincaId: number): void {
     }
   }
 
-  getEstadoLabel(estado: string): string {
+  getEstadoEmoji(estado: string): string {
     switch (estado) {
-      case 'DISPONIBLE': return '🟢 Disponible';
-      case 'EN_CULTIVO': return '🟡 En cultivo';
-      case 'EN_DESCANSO': return '⚫ En descanso';
-      default: return estado;
+      case 'DISPONIBLE': return '🟢';
+      case 'EN_CULTIVO': return '🟡';
+      case 'EN_DESCANSO': return '⚫';
+      default: return '';
     }
+  }
+
+  /** Etiqueta traducida con emoji (se usa en el tooltip del mapa) */
+  getEstadoLabel(estado: string): string {
+    const texto = this.translate.instant('enums.loteEstado.' + estado);
+    return `${this.getEstadoEmoji(estado)} ${texto}`;
   }
 
   entrarLote(id: number): void {
@@ -197,7 +221,7 @@ cargarLotes(fincaId: number): void {
   }
 
   confirmarEliminacionLote(): void {
-    if (this.textoConfirmacion !== 'confirmar' || !this.loteAEliminar) return;
+    if (this.textoConfirmacion !== this.palabraConfirmacion || !this.loteAEliminar) return;
     this.eliminando = true;
     this.cultivoService.eliminarLote(this.loteAEliminar.id!).subscribe({
       next: () => {
@@ -209,7 +233,7 @@ cargarLotes(fincaId: number): void {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error = 'Error al eliminar el lote.';
+        this.error = 'cultivo.fincas.detail.errors.deleteLot';
         this.eliminando = false;
         this.cdr.detectChanges();
       },

@@ -1,0 +1,978 @@
+{
+  "common": {
+    "language": "Language",
+    "spanish": "Spanish",
+    "english": "English",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "view": "View",
+    "optional": "optional",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "edit": "Edit",
+    "deactivate": "Deactivate",
+    "actions": "Actions",
+    "status": "Status",
+    "required": "Required"
+  },
+  "layout": {
+    "subtitle": "Management system",
+    "sections": { "management": "Management", "analysis": "Analysis", "system": "System" },
+    "nav": {
+      "home": "Home",
+      "crops": "Crops",
+      "workers": "Workers",
+      "reports": "Reports",
+      "settings": "Settings"
+    },
+    "logout": "Log out",
+    "expand": "Expand",
+    "collapse": "Collapse"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "email": "Email",
+      "emailPlaceholder": "you@email.com",
+      "password": "Password",
+      "submit": "Sign in",
+      "loggingIn": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "register": "Sign up",
+      "invalidCredentials": "Incorrect email or password.",
+      "serverError": "Could not connect to the server."
+    },
+    "register": {
+      "title": "Create account",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Your name",
+      "email": "Email",
+      "password": "Password",
+      "role": "Role",
+      "submit": "Create account",
+      "submitting": "Registering...",
+      "success": "User registered successfully! Redirecting...",
+      "error": "Error registering user.",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    }
+  },
+  "enums": {
+    "rol": {
+      "Administrador": "Administrator",
+      "Agricultor": "Farmer",
+      "Trabajador": "Worker"
+    },
+    "cropReportStatus": {
+      "ACTIVO": "Active",
+      "COSECHADO": "Harvested",
+      "INACTIVO": "Inactive"
+    },
+    "loteEstado": {
+      "DISPONIBLE": "Available",
+      "EN_CULTIVO": "In crop",
+      "EN_DESCANSO": "Resting"
+    },
+    "etapaCultivo": {
+      "GERMINACION": "Germination",
+      "CRECIMIENTO": "Growth",
+      "PRODUCCION": "Production",
+      "COSECHA": "Harvest",
+      "FINALIZADO": "Finished"
+    },
+    "variedad": {
+      "COLOMBIA": "Colombia",
+      "GIGANTE": "Giant",
+      "KENYA": "Kenya"
+    },
+    "tipoActividad": {
+      "PODA": "Pruning",
+      "TUTOREO": "Staking",
+      "DESHIERBE": "Weeding",
+      "RIEGO": "Irrigation",
+      "REVISION": "Inspection",
+      "OTRO": "Other"
+    },
+    "calidadCosecha": {
+      "PRIMERA": "First grade",
+      "SEGUNDA": "Second grade",
+      "TERCERA": "Third grade"
+    },
+    "unidadMedida": {
+      "LITROS": "Liters",
+      "ML": "mL",
+      "GRAMOS": "Grams",
+      "KG": "kg"
+    },
+    "tipoInsumo": {
+      "FUNGICIDA": "Fungicide",
+      "INSECTICIDA": "Insecticide",
+      "ACARICIDA": "Acaricide",
+      "NEMATICIDA": "Nematicide",
+      "HERBICIDA": "Herbicide",
+      "FERTILIZANTE_FOLIAR": "Foliar fertilizer",
+      "FERTILIZANTE_SUELO": "Soil fertilizer",
+      "REGULADOR_CRECIMIENTO": "Growth regulator",
+      "COADYUVANTE": "Adjuvant"
+    },
+    "estadoNomina": {
+      "PENDIENTE": "Pending",
+      "APROBADA": "Approved",
+      "PAGADA": "Paid",
+      "ANULADA": "Cancelled"
+    },
+    "metodoPago": {
+      "EFECTIVO": "Cash",
+      "TRANSFERENCIA": "Bank transfer",
+      "CHEQUE": "Check",
+      "DAVIPLATA": "Daviplata",
+      "NEQUI": "Nequi"
+    },
+    "estadoTrabajador": {
+      "ACTIVO": "Active",
+      "SUSPENDIDO": "Suspended",
+      "INACTIVO": "Inactive"
+    },
+    "tipoContrato": {
+      "FIJO": "Permanent",
+      "TEMPORAL": "Temporary",
+      "JORNAL": "Daily wage"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "General overview of your operation",
+    "welcome": "Welcome, {{name}}",
+    "loggedInAs": "You signed in as",
+    "season": "Active season",
+    "stats": {
+      "farms": "Registered farms",
+      "activeLots": "Active lots",
+      "totalHectares": "Total hectares"
+    },
+    "cards": {
+      "crops": "Manage your active crops",
+      "workers": "Manage your work team",
+      "reports": "View your performance",
+      "settings": "Adjust your account and preferences"
+    }
+  },
+  "weather": {
+    "loading": "Loading weather...",
+    "error": "Could not load the weather",
+    "humidity": "Humidity",
+    "feelsLike": "Feels like",
+    "wind": "Wind",
+    "conditions": {
+      "c01": "Clear sky",
+      "c02": "Few clouds",
+      "c03": "Scattered clouds",
+      "c04": "Cloudy",
+      "c09": "Showers",
+      "c10": "Rain",
+      "c11": "Thunderstorm",
+      "c13": "Snow",
+      "c50": "Mist or fog"
+    }
+  },
+  "reports": {
+    "tabs": {
+      "payroll": { "name": "Payroll", "sub": "Payments and workdays" },
+      "crops": { "name": "Crops", "sub": "Harvests and inputs" }
+    },
+    "generated": "Generated:",
+    "downloadPdf": "Download PDF",
+    "downloading": "Downloading...",
+    "loading": "Loading data...",
+    "error": "Error loading the data.",
+    "payroll": {
+      "title": "Payroll report",
+      "kpi": {
+        "total": { "label": "Total accumulated", "sub": "across all workers" },
+        "workers": { "label": "Workers", "sub": "with active records" },
+        "workdays": { "label": "Total workdays", "sub": "recorded in the period" },
+        "average": { "label": "Average per worker", "sub": "average payment" }
+      },
+      "chartTitle": "Payment per worker",
+      "detailTitle": "Detail by worker",
+      "table": {
+        "worker": "Worker",
+        "period": "Period",
+        "workdays": "Workdays",
+        "payments": "Payments",
+        "totalPaid": "Total paid"
+      }
+    },
+    "crops": {
+      "title": "Crops report",
+      "kpi": {
+        "total": { "label": "Total crops", "sub": "registered" },
+        "active": { "label": "Active crops", "sub": "growing" },
+        "kg": { "label": "Kg harvested", "sub": "total kg" },
+        "avgDays": { "label": "Average days", "sub": "since planting" }
+      },
+      "chartTitle": "Kg harvested by variety",
+      "detailTitle": "Crop details",
+      "table": {
+        "variety": "Variety",
+        "status": "Status",
+        "plantingDate": "Planting date",
+        "days": "Days",
+        "harvests": "Harvests",
+        "totalKg": "Total kg"
+      },
+      "noHarvest": "No harvest"
+    }
+  },
+  "cultivo": {
+    "units": { "hectares": "hectares" },
+    "fincas": {
+      "list": {
+        "title": "My farms",
+        "subtitle": "Manage your cape gooseberry farms",
+        "newFarm": "+ New farm",
+        "loading": "Loading farms...",
+        "mapHint": "Click a marker to see the surroundings and enter the farm",
+        "noLocationCount": "{{count}} farm(s) without a map location",
+        "noLocationBadge": "No map location",
+        "viewOnMap": "View on map",
+        "deleteTitle": "Delete farm",
+        "enterFarm": "Enter the farm →",
+        "empty": "You don't have any registered farms yet.",
+        "registerFirst": "Register first farm",
+        "summary": {
+          "farms": "Registered farms",
+          "totalHectares": "Total hectares",
+          "average": "Average per farm"
+        }
+      },
+      "delete": {
+        "title": "Delete farm",
+        "aboutTo": "You are about to delete",
+        "andLots": "and all its lots.",
+        "warnPrefix": "This action cannot be undone. Type",
+        "confirmWord": "confirm",
+        "warnSuffix": "to continue:",
+        "placeholder": "Type confirm",
+        "cancel": "Cancel",
+        "submit": "Delete farm",
+        "deleting": "Deleting..."
+      },
+      "errors": {
+        "load": "Error loading the farms.",
+        "noUser": "User not found. Please sign in again.",
+        "delete": "Error deleting the farm."
+      },
+      "new": {
+        "title": "New farm",
+        "subtitle": "Register a new cape gooseberry farm",
+        "back": "← Back",
+        "name": "Farm name *",
+        "namePlaceholder": "E.g.: El Paraíso Farm",
+        "hectares": "Total hectares *",
+        "hectaresPlaceholder": "E.g.: 2.5",
+        "mapHelpPrefix": "Search for your farm and",
+        "mapHelpBold": "click on the map",
+        "mapHelpSuffix": "to mark its location. The address will be filled in automatically.",
+        "searchPlaceholder": "Search village, municipality... e.g.: Silvania, Cundinamarca",
+        "myLocation": "My location",
+        "geoError": "Could not get your location.",
+        "locationMarked": "Location marked",
+        "locationPending": "Click on the map to mark the farm's location",
+        "locationText": "Location (text) *",
+        "locationTextPlaceholder": "Filled in automatically when you mark the map",
+        "cancel": "Cancel",
+        "submit": "Register farm",
+        "saving": "Saving...",
+        "success": "Farm registered successfully! Redirecting...",
+        "errors": {
+          "notFound": "Location not found.",
+          "required": "Please fill in all fields.",
+          "noMapLocation": "Mark the farm's location on the map.",
+          "register": "Error registering the farm. Try again."
+        }
+      },
+      "detail": {
+        "back": "← My farms",
+        "loading": "Loading...",
+        "newLot": "+ New lot",
+        "lotsTitle": "Lots ({{count}})",
+        "empty": "No lots registered. Use the button to add the first one.",
+        "noPolygon": "· No polygon",
+        "deleteLot": {
+          "title": "Delete lot",
+          "aboutTo": "You are about to delete the lot",
+          "submit": "Delete lot"
+        },
+        "errors": {
+          "loadFarm": "Error loading the farm.",
+          "loadLots": "Error loading the lots.",
+          "deleteLot": "Error deleting the lot."
+        }
+      }
+    }
+  },
+  "lotes": {
+    "new": {
+      "title": "New lot",
+      "subtitle": "Draw the lot directly on the farm",
+      "back": "← Back",
+      "name": "Lot name *",
+      "namePlaceholder": "E.g.: Lot A",
+      "mapHelp": "Use the polygon icon on the map to draw the lot boundaries. The area will be calculated automatically.",
+      "areaLabel": "Calculated area:",
+      "withinLimit": "✓ within the limit",
+      "exceedsLimit": "✗ exceeds the limit of {{max}} ha",
+      "pending": "You haven't drawn the lot polygon yet",
+      "cancel": "Cancel",
+      "submit": "Register lot",
+      "saving": "Saving...",
+      "success": "Lot registered successfully! Redirecting...",
+      "errors": {
+        "loadFarm": "Could not load the farm information.",
+        "nameRequired": "Please enter the lot name.",
+        "drawRequired": "Draw the lot polygon on the map before continuing.",
+        "exceeds": "The lot ({{area}} ha) exceeds the farm area ({{max}} ha).",
+        "register": "Error registering the lot. Try again."
+      }
+    },
+    "detail": {
+      "back": "← Back to the farm",
+      "loading": "Loading...",
+      "showNdvi": "Show NDVI",
+      "hideNdvi": "Hide NDVI",
+      "noPolygon": "This lot has no polygon defined",
+      "statusActive": "Active planting",
+      "statusNone": "No planting",
+      "noPlanting": {
+        "title": "No active planting",
+        "desc": "This lot is available to start a new cape gooseberry planting.",
+        "start": "+ Start planting"
+      },
+      "planting": {
+        "title": "Active planting",
+        "variety": "Variety",
+        "date": "Planting date",
+        "plants": "Plants",
+        "stage": "Current stage"
+      },
+      "daysLine1": "days",
+      "daysLine2": "in the field",
+      "cycle": {
+        "title": "Crop cycle",
+        "advance": "Advance stage →",
+        "advancing": "Advancing...",
+        "finished": "✅ Finished",
+        "progress": "{{current}} of {{total}} stages"
+      },
+      "viewPlanting": "View planting details →",
+      "errors": {
+        "load": "Error loading the lot.",
+        "advance": "Error advancing the stage."
+      }
+    }
+  },
+  "mapDraw": {
+    "cancelTitle": "Cancel drawing",
+    "cancel": "Cancel",
+    "finishTitle": "Finish drawing",
+    "finish": "Finish",
+    "undoTitle": "Delete last point drawn",
+    "undo": "Delete last point",
+    "polygon": "Draw a polygon",
+    "start": "Click to start drawing shape.",
+    "cont": "Click to continue drawing shape.",
+    "end": "Click first point to close this shape.",
+    "crossError": "<strong>Error:</strong> shape edges cannot cross!",
+    "saveTitle": "Save changes",
+    "save": "Save",
+    "cancelEditTitle": "Cancel editing, discards all changes",
+    "clearAllTitle": "Clear all layers",
+    "clearAll": "Clear all",
+    "edit": "Edit layers",
+    "editDisabled": "No layers to edit",
+    "remove": "Delete layers",
+    "removeDisabled": "No layers to delete",
+    "editText": "Drag handles or markers to edit features.",
+    "editSubtext": "Click cancel to undo changes.",
+    "removeText": "Click on a feature to remove."
+  },
+  "siembra": {
+    "new": {
+      "title": "New planting",
+      "subtitle": "Register a planting in the lot",
+      "back": "← Back",
+      "date": "Planting date *",
+      "plants": "Number of plants *",
+      "plantsPlaceholder": "E.g.: 500",
+      "variety": "Cape gooseberry variety *",
+      "varietyPlaceholder": "Select a variety",
+      "cancel": "Cancel",
+      "submit": "Register planting",
+      "saving": "Saving...",
+      "success": "Planting registered successfully!",
+      "errors": {
+        "required": "Please fill in all fields.",
+        "register": "Error registering the planting. Try again."
+      }
+    },
+    "detail": {
+      "back": "← Back to the lot",
+      "loading": "Loading...",
+      "title": "Cape gooseberry planting",
+      "varietyLabel": "Variety",
+      "plantsCount": "{{count}} plants",
+      "days": "days",
+      "alert": {
+        "noSprays": "No sprayings recorded",
+        "overdue": "{{days}} days without spraying",
+        "upToDate": "Crop up to date"
+      },
+      "cards": {
+        "sprays": "Sprayings",
+        "activities": "Activities",
+        "harvested": "Kg harvested",
+        "harvestsCount": "{{count}} harvest(s)",
+        "noActivities": "No activities",
+        "noSprays": "No sprayings"
+      },
+      "actions": {
+        "activity": { "title": "Log activity", "desc": "Pruning, irrigation, inspection..." },
+        "spray": { "title": "Log spraying", "desc": "Product, dose, area" },
+        "harvest": { "title": "Log harvest", "desc": "Kg, quality" }
+      },
+      "history": {
+        "title": "Crop history",
+        "filterAll": "All",
+        "filterActivities": "Activities",
+        "filterSprays": "Sprayings",
+        "filterHarvests": "Harvests",
+        "recordOne": "{{count}} record",
+        "recordMany": "{{count}} records",
+        "quality": "Quality",
+        "emptyFilter": "No records of this type yet.",
+        "emptyAll": "No records yet. Use the buttons above to get started."
+      },
+      "danger": {
+        "title": "Delete planting",
+        "desc": "All associated activities, sprayings and harvests will be deleted.",
+        "button": "Delete planting"
+      },
+      "delete": {
+        "title": "Delete planting",
+        "aboutTo": "You are about to delete the planting of",
+        "warnPrefix": "All activities, sprayings and harvests will be deleted. Type",
+        "submit": "Delete planting"
+      },
+      "errors": {
+        "load": "Error loading the planting.",
+        "delete": "Error deleting the planting."
+      }
+    },
+    "activity": {
+      "back": "Back to the planting",
+      "title": "Log activity",
+      "subtitle": "Record an activity performed on the crop",
+      "type": "Activity type",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe the activity performed...",
+      "date": "Activity date",
+      "submit": "Log activity",
+      "saving": "Saving...",
+      "success": "Activity logged successfully!",
+      "errors": { "register": "Error logging the activity." }
+    },
+    "harvest": {
+      "back": "Back to the planting",
+      "title": "Log harvest",
+      "subtitle": "Record a harvest from the crop",
+      "date": "Date",
+      "kg": "Amount (kg)",
+      "quality": "Quality",
+      "qualityPlaceholder": "Select the quality",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional notes...",
+      "submit": "Log harvest",
+      "saving": "Saving...",
+      "success": "Harvest logged successfully!",
+      "errors": { "register": "Error logging the harvest." }
+    },
+    "spray": {
+      "back": "Back to the planting",
+      "title": "Log spraying",
+      "subtitle": "Record a spraying performed on the crop",
+      "date": "Date",
+      "product": "Product",
+      "searchPlaceholder": "Search the catalog... e.g.: fungicide, mancozeb",
+      "searchHint": "Search the catalog or type the name manually",
+      "noResultsManual": "No results. It will be logged as a manual product.",
+      "catalogOpen": "📋 View full catalog",
+      "catalogClose": "✖ Close catalog",
+      "filterPlaceholder": "Filter by name or type...",
+      "noResultsFor": "No results for \"{{filter}}\"",
+      "doseSuggested": "Suggested dose: {{dose}} {{unit}}",
+      "doseShort": "Dose: {{dose}} {{unit}}",
+      "doseHint": "Suggested: {{dose}} {{unit}} / 200 L of water",
+      "reentryShort": "Re-entry: {{hours}} h",
+      "reentryLabel": "Re-entry period:",
+      "reentryHours": "{{hours}} hours",
+      "reentryNote": "do not enter the lot before that time",
+      "change": "Change",
+      "dose": "Dose",
+      "unit": "Unit",
+      "unitPlaceholder": "Select",
+      "area": "Applied area (hectares)",
+      "notes": "Notes",
+      "notesPlaceholder": "Weather conditions, crop condition...",
+      "submit": "Log spraying",
+      "saving": "Saving...",
+      "success": "Spraying logged successfully!",
+      "errors": {
+        "search": "Error searching the catalog.",
+        "loadCatalog": "Error loading the full catalog.",
+        "productRequired": "Please select or type a product.",
+        "unitRequired": "Please select a unit of measure.",
+        "register": "Error logging the spraying."
+      }
+    }
+  },
+  "workers": {
+    "posts": {
+      "title": "Positions",
+      "subtitle": "Define roles and the daily wage for each position",
+      "new": "＋ New Position",
+      "formNew": "New position",
+      "formEdit": "Edit position",
+      "name": "Name *",
+      "namePlaceholder": "E.g.: Laborer",
+      "description": "Description *",
+      "descriptionPlaceholder": "Position description",
+      "dailyWage": "Daily wage ($) *",
+      "invalidValue": "Enter a valid value",
+      "table": {
+        "post": "Position",
+        "description": "Description",
+        "dailyWage": "Daily wage"
+      },
+      "active": "Active",
+      "inactive": "Inactive",
+      "empty": "No positions registered",
+      "confirmDeactivate": "Deactivate the position \"{{name}}\"?",
+      "errors": {
+        "load": "Error loading positions",
+        "save": "Error saving"
+      }
+    },
+    "activities": {
+      "title": "Activities",
+      "subtitle": "Management of activities performed in the field",
+      "new": "＋ New Activity",
+      "formNew": "New activity",
+      "formEdit": "Edit activity",
+      "name": "Name *",
+      "namePlaceholder": "E.g.: Weeding",
+      "description": "Description *",
+      "descriptionPlaceholder": "Activity description",
+      "table": {
+        "activity": "Activity",
+        "description": "Description"
+      },
+      "active": "Active",
+      "inactive": "Inactive",
+      "empty": "No activities registered",
+      "confirmDeactivate": "Deactivate the activity \"{{name}}\"?",
+      "errors": {
+        "load": "Error loading activities",
+        "save": "Error saving"
+      }
+    },
+    "rosters": {
+      "list": {
+        "title": "Payroll",
+        "subtitleOf": "Payroll for",
+        "subtitleAll": "Payroll management and generation by period",
+        "showAll": "Show all",
+        "generate": "＋ Generate Payroll",
+        "formTitle": "Generate payroll",
+        "worker": "Worker *",
+        "select": "Select...",
+        "periodStart": "Period start *",
+        "periodEnd": "Period end *",
+        "generating": "Generating...",
+        "generateSubmit": "Generate",
+        "table": {
+          "worker": "Worker",
+          "period": "Period",
+          "wages": "Workdays",
+          "total": "Total",
+          "generated": "Generated"
+        },
+        "actions": {
+          "viewDetail": "View details",
+          "approve": "Approve and record payment",
+          "cancel": "Cancel",
+          "viewPayment": "View payment",
+          "reactivate": "Reactivate as pending",
+          "deleteForever": "Delete permanently"
+        },
+        "empty": "No payrolls generated",
+        "emptyFiltered": "This worker has no payrolls generated",
+        "confirm": {
+          "approve": "Approve this payroll? The payment will be recorded automatically in cash.",
+          "cancel": "Cancel this payroll?",
+          "reactivate": "Reactivate this payroll? It will go back to Pending status.",
+          "delete": "Permanently delete this payroll? This action cannot be undone."
+        },
+        "success": {
+          "approved": "✅ Payroll approved and payment of ${{amount}} recorded",
+          "reactivated": "✅ Payroll reactivated as Pending",
+          "deleted": "🗑 Payroll deleted"
+        },
+        "errors": {
+          "load": "Error loading payrolls",
+          "generate": "Error generating payroll",
+          "approve": "Error approving the payroll",
+          "paymentAfterApprove": "⚠️ Payroll approved but an error occurred while recording the payment.",
+          "cancel": "Error cancelling payroll",
+          "reactivate": "Error reactivating payroll",
+          "delete": "Error deleting payroll"
+        }
+      },
+      "detail": {
+        "back": "← Payroll",
+        "title": "Payroll #{{id}}",
+        "approve": "✔ Confirm and Approve",
+        "processing": "⏳ Processing...",
+        "viewPayment": "💰 View Payment",
+        "cancel": "✖ Cancel",
+        "summary": {
+          "totalWages": "Total Workdays",
+          "totalValue": "Total Value",
+          "generatedDate": "Generation Date",
+          "post": "Position"
+        },
+        "paymentRegistered": "Payment recorded",
+        "wagesIncluded": "Included workdays",
+        "table": {
+          "date": "Date",
+          "crop": "Crop",
+          "activities": "Activities",
+          "value": "Value"
+        },
+        "settled": "Settled",
+        "pending": "Pending",
+        "emptyWages": "No workdays in this payroll",
+        "loading": "Loading payroll...",
+        "notFound": "Payroll not found.",
+        "backShort": "← Back",
+        "confirm": {
+          "approve": "Confirm and approve this payroll? The payment will be recorded automatically in cash.",
+          "cancel": "Cancel this payroll? This action cannot be undone."
+        },
+        "success": {
+          "approvedCash": "✅ Payroll approved and payment of ${{amount}} recorded in cash"
+        },
+        "errors": {
+          "load": "Error loading the payroll",
+          "approve": "Error approving the payroll",
+          "paymentAfterApprove": "⚠️ Payroll approved but an error occurred while recording the payment. Go to Payments to record it manually.",
+          "cancel": "Error cancelling the payroll"
+        }
+      }
+    },
+    "wages": {
+      "new": {
+        "back": "← Workdays",
+        "title": "Log Workday",
+        "subtitle": "Record a worker's daily work",
+        "info": "Workday Information",
+        "worker": "Worker *",
+        "selectWorker": "Select a worker",
+        "date": "Date *",
+        "cropId": "Crop ID *",
+        "cropIdPlaceholder": "Crop ID",
+        "cropName": "Crop Name *",
+        "cropNamePlaceholder": "E.g.: Cape gooseberry Lot 3",
+        "notes": "Notes",
+        "notesPlaceholder": "Additional notes (optional)",
+        "activitiesTitle": "Activities Performed *",
+        "selectAtLeast": "Select at least one activity",
+        "selectedCount": "{{count}} activity(ies) selected",
+        "submit": "Log Workday",
+        "saving": "Saving...",
+        "errors": {
+          "loadWorkers": "Error loading workers",
+          "loadActivities": "Error loading activities",
+          "noActivity": "Select at least one activity",
+          "register": "Error logging workday"
+        }
+      },
+      "list": {
+        "back": "← Workers",
+        "title": "Workdays",
+        "subtitleNoWorker": "Daily field work log",
+        "generatePayroll": "Generate Payroll",
+        "register": "＋ Log Workday",
+        "perWage": "${{amount}}/workday",
+        "selectWorkerTitle": "Select a worker",
+        "selectWorkerDesc": "Workdays are viewed per worker. Go to the list and select one.",
+        "goToWorkers": "Go to Workers →",
+        "stats": {
+          "total": "Total workdays",
+          "unsettled": "Unsettled",
+          "pendingPay": "Pending payment",
+          "accumulated": "Total accumulated"
+        },
+        "filters": {
+          "search": "Search",
+          "searchPlaceholder": "Crop...",
+          "from": "From",
+          "to": "To",
+          "filter": "Filter",
+          "clear": "Clear"
+        },
+        "loading": "Loading workdays...",
+        "empty": "No workdays recorded for this period.",
+        "registerFirst": "＋ Log first workday",
+        "table": {
+          "date": "Date",
+          "worker": "Worker",
+          "crop": "Crop",
+          "activities": "Activities",
+          "value": "Value",
+          "total": "Total"
+        },
+        "settled": "Settled",
+        "pending": "Pending",
+        "panel": {
+          "close": "Close panel",
+          "title": "Generate Payroll",
+          "unsettledWages": "Unsettled workdays",
+          "totalToGenerate": "Total to generate",
+          "periodTitle": "Payroll period",
+          "periodHelp": "The system will calculate the total of all unsettled workdays within this period.",
+          "startDate": "Start date *",
+          "endDate": "End date *",
+          "generating": "Generating...",
+          "generate": "Generate Payroll",
+          "success": "Payroll generated!",
+          "payrollNo": "Payroll #",
+          "period": "Period",
+          "includedWages": "Included workdays",
+          "total": "Total",
+          "close2": "Close",
+          "viewPayrolls": "View worker's payrolls →"
+        },
+        "errors": {
+          "load": "Error loading workdays",
+          "endBeforeStart": "The end date cannot be earlier than the start date",
+          "generate": "Error generating payroll. Check that there are unsettled workdays in the period."
+        }
+      }
+    },
+    "payments": {
+      "title": "Payments",
+      "subtitleAll": "History of payments made to workers",
+      "subtitleOf": "Payment for payroll",
+      "seeAll": "← Show all",
+      "summary": {
+        "totalPaid": "Total paid",
+        "workers": "Workers",
+        "payments": "Payments"
+      },
+      "loading": "Loading payments...",
+      "empty": "No payments recorded",
+      "noName": "No name",
+      "paymentsCount": "{{count}} payment(s)",
+      "total": "Total",
+      "viewDetail": "View payment details",
+      "panel": {
+        "title": "Payment details",
+        "payrollNo": "Payroll #{{id}}",
+        "close": "Close",
+        "info": "Payment information",
+        "worker": "Worker",
+        "paymentDate": "Payment date",
+        "method": "Method",
+        "receipt": "Receipt",
+        "notes": "Notes",
+        "totalPaid": "Total amount paid",
+        "loadingWages": "Loading workdays...",
+        "wagesIncluded": "Included workdays",
+        "period": "Period",
+        "noWages": "No workdays recorded",
+        "payrollTotal": "Payroll total"
+      },
+      "grandTotal": "Grand total paid",
+      "errors": {
+        "load": "Error loading payments"
+      }
+    },
+    "home": {
+      "title": "Workers",
+    "subtitle": "Manage your work team",
+    "activities": "Activities",
+    "posts": "Positions",
+    "newWorker": "＋ New Worker",
+    "tabs": {
+      "workers": "Workers",
+      "rosters": "Payroll",
+      "payments": "Payments"
+    },
+    "stats": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "draftRosters": "Draft payrolls",
+      "totalPaid": "Total paid",
+      "totalRosters": "Total payrolls",
+      "draft": "Draft",
+      "paymentsMade": "Payments made"
+    },
+    "list": {
+      "searchLabel": "Search workers",
+      "searchPlaceholder": "Search by name, ID number or position...",
+      "filterActive": "Active",
+      "filterSuspended": "Suspended",
+      "filterAll": "All",
+      "loading": "Loading workers...",
+      "emptySuspended": "There are no suspended workers.",
+      "emptyNone": "No workers registered yet.",
+      "emptySearch": "No results found for \"{{query}}\"",
+      "registerFirst": "＋ Register first worker",
+      "wageLabel": "Daily wage:",
+      "perDay": "/day",
+      "registerWage": "Log workday",
+      "viewWages": "View workdays",
+      "viewRosters": "View payrolls"
+    },
+    "rostersTab": {
+      "empty": "No payrolls generated yet.",
+      "rosterOf": "Payroll #{{id}} — {{name}}",
+      "total": "Total:"
+    },
+    "paymentsTab": {
+      "empty": "No payments recorded yet.",
+      "paymentNo": "Payment #{{id}}",
+      "amount": "Amount:"
+    },
+    "panel": {
+      "close": "Close panel",
+      "suspendedNotice": "This worker is suspended. They cannot log new workdays.",
+      "currentPost": "Current position",
+      "perWage": "${{amount}}/workday",
+      "quickActions": "Quick actions",
+      "registerWage": "Log Workday",
+      "viewWages": "View Workdays",
+      "viewRosters": "View Payrolls",
+      "edit": "Edit details",
+      "changePost": "Change position",
+      "stateManagement": "Status management",
+      "reactivate": "Reactivate worker",
+      "suspend": "Suspend worker",
+      "deactivate": "Deactivate worker"
+    },
+    "new": {
+      "title": "＋ New Worker",
+      "subtitle": "Fill in the worker's details",
+      "personalInfo": "Personal information",
+      "firstName": "First name *",
+      "firstNamePlaceholder": "E.g.: Carlos",
+      "lastName": "Last name *",
+      "lastNamePlaceholder": "E.g.: Pérez",
+      "idNumber": "ID number *",
+      "idNumberPlaceholder": "Document number",
+      "phone": "Phone",
+      "address": "Address",
+      "optional": "Optional",
+      "contractAndPost": "Contract and position",
+      "hireDate": "Hire date *",
+      "contractType": "Contract type *",
+      "post": "Position *",
+      "selectPost": "Select a position...",
+      "selectPostError": "Select a position",
+      "registering": "Registering...",
+      "submit": "Register worker"
+    },
+    "edit": {
+      "title": "Edit worker",
+      "back": "← Back",
+      "saving": "Saving...",
+      "submit": "Save changes"
+    },
+    "changePost": {
+      "title": "Change position",
+      "newPost": "New position *",
+      "submit": "Change position"
+    },
+    "confirm": {
+      "deactivate": "Deactivate {{name}}? They cannot be reactivated from here.",
+      "suspend": "Suspend {{name}}?",
+      "reactivate": "Reactivate {{name}}?"
+    },
+    "success": {
+      "rosterGenerated": "✅ Payroll generated successfully",
+      "registered": "✅ {{name}} registered successfully",
+      "updated": "✅ Worker updated",
+      "postUpdated": "✅ Position updated",
+      "deactivated": "⚠️ Worker deactivated",
+      "suspended": "⚠️ Worker suspended",
+      "reactivated": "✅ Worker reactivated"
+    },
+    "errors": {
+      "load": "Error loading workers",
+      "generateRoster": "Error generating payroll",
+      "register": "Error registering worker",
+      "update": "Error updating",
+      "changePost": "Error changing position",
+      "deactivate": "Error deactivating",
+      "suspend": "Error suspending",
+      "reactivate": "Error reactivating"
+    }
+    }
+  },
+  "config": {
+    "title": "Settings",
+    "subtitle": "Manage your profile and account security",
+    "profileCard": { "title": "Profile details", "desc": "Update your personal information" },
+    "passwordCard": { "title": "Change password", "desc": "Update your access credentials" },
+    "toast": {
+      "loadError": "Could not load the profile. Please try again.",
+      "profileSaved": "Profile updated successfully ✓",
+      "profileError": "Error updating the profile. Please try again.",
+      "passwordSaved": "Password changed successfully ✓",
+      "passwordWrong": "The current password is incorrect.",
+      "passwordError": "Error changing the password. Please try again."
+    },
+    "profile": {
+      "photoAlt": "Profile photo",
+      "photoHint": "Enter an image URL to update your photo",
+      "photoUrl": "Profile photo URL",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Your full name",
+      "nameError": "Name is required (minimum 2 characters)",
+      "email": "Email",
+      "emailHint": "The email cannot be changed",
+      "phone": "Phone",
+      "phoneError": "Enter a valid phone number (7–15 digits)",
+      "role": "Role",
+      "roleHint": "The role is assigned by the administrator",
+      "save": "Save changes",
+      "saving": "Saving…"
+    },
+    "password": {
+      "current": "Current password",
+      "currentPlaceholder": "Your current password",
+      "currentRequired": "The current password is required",
+      "new": "New password",
+      "newPlaceholder": "Minimum 8 characters",
+      "newError": "The password must be at least 8 characters",
+      "confirm": "Confirm new password",
+      "confirmPlaceholder": "Repeat the new password",
+      "mismatch": "Passwords do not match",
+      "confirmRequired": "You must confirm the password",
+      "submit": "Change password",
+      "submitting": "Changing…"
+    }
+  }
+}

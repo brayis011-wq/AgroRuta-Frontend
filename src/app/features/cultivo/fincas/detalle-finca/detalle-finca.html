@@ -1,16 +1,16 @@
 <div class="container">
-  <button class="btn-back" (click)="volver()">← Mis Fincas</button>
+  <button class="btn-back" (click)="volver()">{{ 'cultivo.fincas.detail.back' | translate }}</button>
 
-  <div class="loading" *ngIf="cargando">Cargando...</div>
-  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="loading" *ngIf="cargando">{{ 'cultivo.fincas.detail.loading' | translate }}</div>
+  <div class="error" *ngIf="error">{{ error | translate }}</div>
 
   <!-- Mapa SIEMPRE en el DOM -->
   <div class="mapa-wrapper" [style.display]="cargando ? 'none' : 'block'">
     <div id="mapa-finca" class="mapa-finca"></div>
     <div class="leyenda">
-      <div class="leyenda-item"><span class="dot disponible"></span> Disponible</div>
-      <div class="leyenda-item"><span class="dot cultivo"></span> En cultivo</div>
-      <div class="leyenda-item"><span class="dot descanso"></span> En descanso</div>
+      <div class="leyenda-item"><span class="dot disponible"></span> {{ 'enums.loteEstado.DISPONIBLE' | translate }}</div>
+      <div class="leyenda-item"><span class="dot cultivo"></span> {{ 'enums.loteEstado.EN_CULTIVO' | translate }}</div>
+      <div class="leyenda-item"><span class="dot descanso"></span> {{ 'enums.loteEstado.EN_DESCANSO' | translate }}</div>
     </div>
   </div>
 
@@ -18,17 +18,17 @@
     <div class="finca-header">
       <div>
         <h2>🏡 {{ finca.nombre }}</h2>
-        <p>📍 {{ finca.ubicacion }} · 📐 {{ finca.hectareas }} hectáreas</p>
+        <p>📍 {{ finca.ubicacion }} · 📐 {{ finca.hectareas }} {{ 'cultivo.units.hectares' | translate }}</p>
       </div>
-      <button class="btn-primary" (click)="nuevoLote()">+ Nuevo Lote</button>
+      <button class="btn-primary" (click)="nuevoLote()">{{ 'cultivo.fincas.detail.newLot' | translate }}</button>
     </div>
 
     <div class="section-header" style="margin-top: 1.5rem;">
-      <h3>Lotes ({{ lotes.length }})</h3>
+      <h3>{{ 'cultivo.fincas.detail.lotsTitle' | translate: { count: lotes.length } }}</h3>
     </div>
 
     <div class="empty" *ngIf="lotes.length === 0">
-      <p>No hay lotes registrados. Usa el botón para agregar el primero.</p>
+      <p>{{ 'cultivo.fincas.detail.empty' | translate }}</p>
     </div>
 
     <div class="grid" *ngIf="lotes.length > 0">
@@ -39,12 +39,12 @@
         <div class="lote-info">
           <h4>{{ lote.nombre }}</h4>
           <p>📐 {{ lote.area }} ha
-            <span *ngIf="!lote.coordenadas" class="sin-mapa">· Sin polígono</span>
+            <span *ngIf="!lote.coordenadas" class="sin-mapa">{{ 'cultivo.fincas.detail.noPolygon' | translate }}</span>
           </p>
         </div>
         <div class="lote-estado">
           <span class="badge" [ngClass]="getEstadoColor(lote.estado)">
-            {{ getEstadoLabel(lote.estado) }}
+            {{ getEstadoEmoji(lote.estado) }} {{ 'enums.loteEstado.' + lote.estado | translate }}
           </span>
         </div>
         <button class="btn-eliminar-lote" type="button" (click)="iniciarEliminacionLote($event, lote)">🗑️</button>
@@ -61,17 +61,17 @@
   <div class="confirm-panel"
        (click)="$event.stopPropagation()"
        (keydown)="$event.stopPropagation()">
-    <h3>⚠️ Eliminar lote</h3>
-    <p>Estás a punto de eliminar el lote <strong>{{ loteAEliminar.nombre }}</strong>.</p>
-    <p>Esta acción no se puede deshacer. Escribe <strong>confirmar</strong> para continuar:</p>
+    <h3>⚠️ {{ 'cultivo.fincas.detail.deleteLot.title' | translate }}</h3>
+    <p>{{ 'cultivo.fincas.detail.deleteLot.aboutTo' | translate }} <strong>{{ loteAEliminar.nombre }}</strong>.</p>
+    <p>{{ 'cultivo.fincas.delete.warnPrefix' | translate }} <strong>{{ 'cultivo.fincas.delete.confirmWord' | translate }}</strong> {{ 'cultivo.fincas.delete.warnSuffix' | translate }}</p>
     <input type="text" [(ngModel)]="textoConfirmacion"
-           placeholder="Escribe confirmar" class="input-confirmacion" />
+           [placeholder]="'cultivo.fincas.delete.placeholder' | translate" class="input-confirmacion" />
     <div class="confirm-actions">
-      <button class="btn-secondary" (click)="cancelarEliminacion()">Cancelar</button>
+      <button class="btn-secondary" (click)="cancelarEliminacion()">{{ 'cultivo.fincas.delete.cancel' | translate }}</button>
       <button class="btn-danger"
-              [disabled]="textoConfirmacion !== 'confirmar' || eliminando"
+              [disabled]="textoConfirmacion !== palabraConfirmacion || eliminando"
               (click)="confirmarEliminacionLote()">
-        {{ eliminando ? 'Eliminando...' : 'Eliminar lote' }}
+        {{ (eliminando ? 'cultivo.fincas.delete.deleting' : 'cultivo.fincas.detail.deleteLot.submit') | translate }}
       </button>
     </div>
   </div>

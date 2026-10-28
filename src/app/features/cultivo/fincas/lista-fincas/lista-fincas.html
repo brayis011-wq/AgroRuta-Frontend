@@ -1,22 +1,22 @@
 <div class="container">
   <div class="header">
     <div>
-      <h2>🌱 Mis Fincas</h2>
-      <p class="subtitle">Gestiona tus fincas de uchuva</p>
+      <h2>🌱 {{ 'cultivo.fincas.list.title' | translate }}</h2>
+      <p class="subtitle">{{ 'cultivo.fincas.list.subtitle' | translate }}</p>
     </div>
-    <button class="btn-primary" (click)="nuevaFinca()">+ Nueva Finca</button>
+    <button class="btn-primary" (click)="nuevaFinca()">{{ 'cultivo.fincas.list.newFarm' | translate }}</button>
   </div>
 
-  <div class="loading" *ngIf="cargando">Cargando fincas...</div>
-  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="loading" *ngIf="cargando">{{ 'cultivo.fincas.list.loading' | translate }}</div>
+  <div class="error" *ngIf="error">{{ error | translate }}</div>
 
   <!-- Mapa siempre en DOM -->
   <div class="mapa-wrapper" [style.display]="cargando ? 'none' : 'block'">
     <div id="mapa-fincas" class="mapa-fincas"></div>
     <div class="mapa-footer" *ngIf="!cargando && fincas.length > 0">
-      <span class="mapa-hint">💡 Haz clic en un marcador para ver el entorno y entrar a la finca</span>
+      <span class="mapa-hint">💡 {{ 'cultivo.fincas.list.mapHint' | translate }}</span>
       <span class="mapa-sin-ubicacion" *ngIf="fincasSinUbicacion() > 0">
-        ⚠️ {{ fincasSinUbicacion() }} finca(s) sin ubicación en mapa
+        ⚠️ {{ 'cultivo.fincas.list.noLocationCount' | translate: { count: fincasSinUbicacion() } }}
       </span>
     </div>
   </div>
@@ -25,28 +25,28 @@
   <div class="resumen-grid" *ngIf="!cargando && fincas.length > 0">
     <div class="resumen-card">
       <span class="resumen-num">{{ fincas.length }}</span>
-      <span class="resumen-lbl">Fincas registradas</span>
+      <span class="resumen-lbl">{{ 'cultivo.fincas.list.summary.farms' | translate }}</span>
     </div>
     <div class="resumen-card">
-      <span class="resumen-num">{{ totalHectareas() | number:'1.1-1' }}</span>
-      <span class="resumen-lbl">Hectáreas totales</span>
+      <span class="resumen-num">{{ fmtDec(totalHectareas()) }}</span>
+      <span class="resumen-lbl">{{ 'cultivo.fincas.list.summary.totalHectares' | translate }}</span>
     </div>
     <div class="resumen-card">
-      <span class="resumen-num">{{ promedioHectareas() | number:'1.1-1' }}</span>
-      <span class="resumen-lbl">Promedio por finca</span>
+      <span class="resumen-num">{{ fmtDec(promedioHectareas()) }}</span>
+      <span class="resumen-lbl">{{ 'cultivo.fincas.list.summary.average' | translate }}</span>
     </div>
   </div>
 
   <!-- Lista -->
   <div class="empty" *ngIf="!cargando && fincas.length === 0">
-    <p>No tienes fincas registradas aún.</p>
-    <button class="btn-primary" (click)="nuevaFinca()">Registrar primera finca</button>
+    <p>{{ 'cultivo.fincas.list.empty' | translate }}</p>
+    <button class="btn-primary" (click)="nuevaFinca()">{{ 'cultivo.fincas.list.registerFirst' | translate }}</button>
   </div>
 
   <div class="grid" *ngIf="!cargando && fincas.length > 0">
     <button
       class="finca-card"
-      *ngFor="let finca de fincas"
+      *ngFor="let finca of fincas"
       type="button"
       [class.finca-card--activa]="fincaResaltada === finca.id"
       (click)="entrarFinca(finca.id!)"
@@ -58,8 +58,8 @@
       <div class="finca-info">
         <h3>{{ finca.nombre }}</h3>
         <p>📍 {{ finca.ubicacion }}</p>
-        <p>📐 {{ finca.hectareas }} hectáreas</p>
-        <span class="sin-ubicacion-badge" *ngIf="!finca.centroideLat">Sin ubicación en mapa</span>
+        <p>📐 {{ finca.hectareas }} {{ 'cultivo.units.hectares' | translate }}</p>
+        <span class="sin-ubicacion-badge" *ngIf="!finca.centroideLat">{{ 'cultivo.fincas.list.noLocationBadge' | translate }}</span>
       </div>
 
       <div class="finca-actions">
@@ -67,7 +67,7 @@
           *ngIf="finca.centroideLat"
           class="btn-zoom"
           type="button"
-          title="Ver en mapa"
+          [title]="'cultivo.fincas.list.viewOnMap' | translate"
           (click)="$event.stopPropagation(); centrarEnFinca(finca)">
           🗺️
         </button>
@@ -77,7 +77,7 @@
           type="button"
           (click)="iniciarEliminacion($event, finca)"
           [disabled]="eliminandoId === finca.id"
-          title="Eliminar finca">
+          [title]="'cultivo.fincas.list.deleteTitle' | translate">
           🗑️
         </button>
       </div>
@@ -95,21 +95,21 @@
   <div class="confirm-panel"
        (click)="$event.stopPropagation()"
        (keydown)="$event.stopPropagation()">
-    <h3>⚠️ Eliminar finca</h3>
-    <p>Estás a punto de eliminar <strong>{{ fincaAEliminar.nombre }}</strong> y todos sus lotes.</p>
-    <p>Esta acción no se puede deshacer. Escribe <strong>confirmar</strong> para continuar:</p>
+    <h3>⚠️ {{ 'cultivo.fincas.delete.title' | translate }}</h3>
+    <p>{{ 'cultivo.fincas.delete.aboutTo' | translate }} <strong>{{ fincaAEliminar.nombre }}</strong> {{ 'cultivo.fincas.delete.andLots' | translate }}</p>
+    <p>{{ 'cultivo.fincas.delete.warnPrefix' | translate }} <strong>{{ 'cultivo.fincas.delete.confirmWord' | translate }}</strong> {{ 'cultivo.fincas.delete.warnSuffix' | translate }}</p>
     <input
       type="text"
       [(ngModel)]="textoConfirmacion"
-      placeholder="Escribe confirmar"
+      [placeholder]="'cultivo.fincas.delete.placeholder' | translate"
       class="input-confirmacion" />
     <div class="confirm-actions">
-      <button class="btn-secondary" (click)="cancelarEliminacion()">Cancelar</button>
+      <button class="btn-secondary" (click)="cancelarEliminacion()">{{ 'cultivo.fincas.delete.cancel' | translate }}</button>
       <button
         class="btn-danger"
-        [disabled]="textoConfirmacion !== 'confirmar' || eliminandoId !== null"
+        [disabled]="textoConfirmacion !== palabraConfirmacion || eliminandoId !== null"
         (click)="confirmarEliminacion()">
-        {{ eliminandoId !== null ? 'Eliminando...' : 'Eliminar finca' }}
+        {{ (eliminandoId !== null ? 'cultivo.fincas.delete.deleting' : 'cultivo.fincas.delete.submit') | translate }}
       </button>
     </div>
   </div>

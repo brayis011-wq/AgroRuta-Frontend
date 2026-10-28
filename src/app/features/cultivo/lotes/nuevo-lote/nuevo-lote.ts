@@ -1,19 +1,27 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { CultivoService } from '../../../../core/services/cultivo.service';
+import { LanguageService } from '../../../../core/services/language.service';
+import { aplicarTextosDibujo } from '../../../../shared/leaflet-draw-i18n';
 import * as L from 'leaflet';
 import 'leaflet-draw';
 
 @Component({
   selector: 'app-nuevo-lote',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './nuevo-lote.html',
   styleUrl: './nuevo-lote.css',
 })
 export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  private translate = inject(TranslateService);
+  private lang = inject(LanguageService);
+  private cdr = inject(ChangeDetectorRef);
 
   form = { nombre: '' };
 
@@ -29,17 +37,34 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   busquedaMapa = '';
 
   guardando = false;
-  error = '';
+  error = '';                                  // clave de traducción
+  errorParams: Record<string, unknown> = {};   // parámetros del mensaje
   exito = false;
 
   private map!: L.Map;
   private drawnItems!: L.FeatureGroup;
+  private drawControl: any = null;
+  private locateBtnEl: HTMLElement | null = null;
+  private langSub?: Subscription;
 
   constructor(
     private cultivoService: CultivoService,
     private router: Router,
     private route: ActivatedRoute,
   ) {}
+
+  private setError(key: string, params: Record<string, unknown> = {}): void {
+    this.error = key;
+    this.errorParams = params;
+    this.cdr.detectChanges();
+  }
+
+  /** Número con hasta 2 decimales según el idioma activo */
+  fmtArea(v: number): string {
+    return new Intl.NumberFormat(this.lang.current(), {
+      minimumFractionDigits: 0, maximumFractionDigits: 2,
+    }).format(v);
+  }
 
   ngOnInit(): void {
     this.fincaId = Number(this.route.snapshot.paramMap.get('fincaId'));
@@ -54,17 +79,54 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
             this.centroFinca = [finca.centroideLat, finca.centroideLng];
           }
         }
+        this.cdr.detectChanges();
       },
-      error: () => this.error = 'No se pudo cargar la información de la finca.',
+      error: () => this.setError('cultivo.lotes.new.errors.loadFarm'),
     });
   }
 
   ngAfterViewInit(): void {
     this.initMap();
+    // Al cambiar de idioma: textos de la barra de dibujo y del botón GPS
+    this.langSub = this.translate.onLangChange.subscribe(() => {
+      this.actualizarTextoBotonGps();
+      this.crearControlDibujo();
+    });
   }
 
   ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
     if (this.map) this.map.remove();
+  }
+
+  private actualizarTextoBotonGps(): void {
+    if (this.locateBtnEl) {
+      this.locateBtnEl.innerHTML = '📍 ' + this.translate.instant('cultivo.fincas.new.myLocation');
+    }
+  }
+
+  /** (Re)crea la barra de dibujo con los textos del idioma activo */
+  private crearControlDibujo(): void {
+    if (!this.map) return;
+    aplicarTextosDibujo(this.translate);
+
+    if (this.drawControl) this.map.removeControl(this.drawControl);
+
+    this.drawControl = new (L as any).Control.Draw({
+      edit: { featureGroup: this.drawnItems, remove: true },
+      draw: {
+        polygon: {
+          showArea: true,
+          shapeOptions: { color: '#16a34a', fillOpacity: 0.25 },
+        },
+        polyline: false,
+        rectangle: false,
+        circle: false,
+        marker: false,
+        circlemarker: false,
+      },
+    });
+    this.map.addControl(this.drawControl);
   }
 
   buscarUbicacion(): void {
@@ -75,7 +137,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         if (data.length > 0) {
           this.map.setView([Number.parseFloat(data[0].lat), Number.parseFloat(data[0].lon)], 16);
         } else {
-          this.error = 'No se encontró esa ubicación.';
+          this.setError('cultivo.fincas.new.errors.notFound');
         }
       });
   }
@@ -110,13 +172,14 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       options: { position: 'topright' },
       onAdd: () => {
         const btn = L.DomUtil.create('button', 'locate-btn');
-        btn.innerHTML = '📍 Mi ubicación';
+        this.locateBtnEl = btn;
+        this.actualizarTextoBotonGps();
         L.DomEvent.on(btn, 'click', () => {
           navigator.geolocation.getCurrentPosition( // NOSONAR
             (pos) => {
               this.map.setView([pos.coords.latitude, pos.coords.longitude], 17);
             },
-            () => alert('No se pudo obtener tu ubicación.')
+            () => alert(this.translate.instant('cultivo.fincas.new.geoError'))
           );
         });
         return btn;
@@ -124,21 +187,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     }))();
     locateBtn.addTo(this.map);
 
-    const drawControl = new (L as any).Control.Draw({
-      edit: { featureGroup: this.drawnItems, remove: true },
-      draw: {
-        polygon: {
-          showArea: true,
-          shapeOptions: { color: '#16a34a', fillOpacity: 0.25 },
-        },
-        polyline: false,
-        rectangle: false,
-        circle: false,
-        marker: false,
-        circlemarker: false,
-      },
-    });
-    this.map.addControl(drawControl);
+    this.crearControlDibujo();
 
     this.map.on('draw:created', (event: any) => {
       this.drawnItems.clearLayers();
@@ -151,6 +200,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       this.centroideLat  = c.lat;
       this.centroideLng  = c.lng;
       this.error = '';
+      this.cdr.detectChanges();
     });
 
     this.map.on('draw:deleted', () => {
@@ -158,6 +208,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       this.areaCalculada = null;
       this.centroideLat  = null;
       this.centroideLng  = null;
+      this.cdr.detectChanges();
     });
 
     if (this.centroFinca) {
@@ -188,15 +239,18 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   registrar(): void {
     if (!this.form.nombre) {
-      this.error = 'Por favor ingresa el nombre del lote.';
+      this.setError('cultivo.lotes.new.errors.nameRequired');
       return;
     }
     if (!this.coordenadas || !this.areaCalculada) {
-      this.error = 'Dibuja el polígono del lote en el mapa antes de continuar.';
+      this.setError('cultivo.lotes.new.errors.drawRequired');
       return;
     }
     if (this.hectareasFinca !== null && this.areaCalculada > this.hectareasFinca) {
-      this.error = `El lote (${this.areaCalculada} ha) supera el area de la finca (${this.hectareasFinca} ha).`;
+      this.setError('cultivo.lotes.new.errors.exceeds', {
+        area: this.fmtArea(this.areaCalculada),
+        max: this.fmtArea(this.hectareasFinca),
+      });
       return;
     }
 
@@ -217,17 +271,19 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         }).subscribe({
           next: () => {
             this.exito = true;
+            this.cdr.detectChanges();
             setTimeout(() => this.router.navigate(['/cultivo/finca', this.fincaId]), 1200);
           },
           error: () => {
             this.exito = true;
+            this.cdr.detectChanges();
             setTimeout(() => this.router.navigate(['/cultivo/finca', this.fincaId]), 1200);
           }
         });
       },
       error: () => {
-        this.error = 'Error al registrar el lote. Intenta de nuevo.';
         this.guardando = false;
+        this.setError('cultivo.lotes.new.errors.register');
       },
     });
   }

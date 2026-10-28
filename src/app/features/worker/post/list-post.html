@@ -1,45 +1,45 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Cargos</h1>
-      <p class="page-subtitle">Define los roles y el valor de jornal por cargo</p>
+      <h1 class="page-title">{{ 'workers.posts.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'workers.posts.subtitle' | translate }}</p>
     </div>
-    <button class="btn-primary" (click)="abrirNuevo()">＋ Nuevo Cargo</button>
+    <button class="btn-primary" (click)="abrirNuevo()">{{ 'workers.posts.new' | translate }}</button>
   </div>
 
-  <div *ngIf="error" class="alerta-error">{{ error }}</div>
+  <div *ngIf="error" class="alerta-error" role="alert">{{ error | translate }}</div>
 
   <div *ngIf="mostrarForm" class="form-card">
-    <h3 class="form-titulo">{{ modoEdicion ? 'Editar cargo' : 'Nuevo cargo' }}</h3>
+    <h3 class="form-titulo">{{ (modoEdicion ? 'workers.posts.formEdit' : 'workers.posts.formNew') | translate }}</h3>
     <form [formGroup]="form" (ngSubmit)="guardar()">
       <div class="grid-3">
 
         <div class="campo">
-          <label for="nombre">Nombre *</label>
+          <label for="nombre">{{ 'workers.posts.name' | translate }}</label>
           <input id="nombre" formControlName="nombre" type="text"
-                 placeholder="Ej: Jornalero" [class.invalido]="invalido('nombre')"/>
-          <span *ngIf="invalido('nombre')" class="error-msg">Requerido</span>
+                 [placeholder]="'workers.posts.namePlaceholder' | translate" [class.invalido]="invalido('nombre')"/>
+          <span *ngIf="invalido('nombre')" class="error-msg">{{ 'common.required' | translate }}</span>
         </div>
 
         <div class="campo">
-          <label for="descripcion">Descripción *</label>
+          <label for="descripcion">{{ 'workers.posts.description' | translate }}</label>
           <input id="descripcion" formControlName="descripcion" type="text"
-                 placeholder="Descripción del cargo" [class.invalido]="invalido('descripcion')"/>
-          <span *ngIf="invalido('descripcion')" class="error-msg">Requerido</span>
+                 [placeholder]="'workers.posts.descriptionPlaceholder' | translate" [class.invalido]="invalido('descripcion')"/>
+          <span *ngIf="invalido('descripcion')" class="error-msg">{{ 'common.required' | translate }}</span>
         </div>
 
         <div class="campo">
-          <label for="valorJornal">Valor Jornal ($) *</label>
+          <label for="valorJornal">{{ 'workers.posts.dailyWage' | translate }}</label>
           <input id="valorJornal" formControlName="valorJornal" type="number"
                  min="1" placeholder="0" [class.invalido]="invalido('valorJornal')"/>
-          <span *ngIf="invalido('valorJornal')" class="error-msg">Ingresa un valor válido</span>
+          <span *ngIf="invalido('valorJornal')" class="error-msg">{{ 'workers.posts.invalidValue' | translate }}</span>
         </div>
 
       </div>
       <div class="form-footer">
-        <button type="button" class="btn-secundario" (click)="mostrarForm = false">Cancelar</button>
+        <button type="button" class="btn-secundario" (click)="mostrarForm = false">{{ 'common.cancel' | translate }}</button>
         <button type="submit" class="btn-primary" [disabled]="guardando">
-          {{ guardando ? 'Guardando...' : 'Guardar' }}
+          {{ (guardando ? 'common.saving' : 'common.save') | translate }}
         </button>
       </div>
     </form>
@@ -50,7 +50,11 @@
     <table class="tabla">
       <thead>
       <tr>
-        <th>Cargo</th><th>Descripción</th><th>Valor Jornal</th><th>Estado</th><th>Acciones</th>
+        <th>{{ 'workers.posts.table.post' | translate }}</th>
+        <th>{{ 'workers.posts.table.description' | translate }}</th>
+        <th>{{ 'workers.posts.table.dailyWage' | translate }}</th>
+        <th>{{ 'common.status' | translate }}</th>
+        <th>{{ 'common.actions' | translate }}</th>
       </tr>
       </thead>
       <tbody>
@@ -60,18 +64,18 @@
         <td class="valor">${{ c.valorJornal | number }}</td>
         <td>
             <span class="badge" [ngClass]="c.activo ? 'badge-activo' : 'badge-inactivo'">
-              {{ c.activo ? 'Activo' : 'Inactivo' }}
+              {{ (c.activo ? 'workers.posts.active' : 'workers.posts.inactive') | translate }}
             </span>
         </td>
         <td>
           <div class="acciones">
-            <button class="btn-accion btn-ver" (click)="abrirEditar(c)" title="Editar">✎</button>
-            <button class="btn-accion btn-desactivar" (click)="desactivar(c)" title="Desactivar">✖</button>
+            <button class="btn-accion btn-ver" (click)="abrirEditar(c)" [title]="'common.edit' | translate">✎</button>
+            <button class="btn-accion btn-desactivar" (click)="desactivar(c)" [title]="'common.deactivate' | translate">✖</button>
           </div>
         </td>
       </tr>
       <tr *ngIf="cargos.length === 0">
-        <td colspan="5" class="sin-resultados">No hay cargos registrados</td>
+        <td colspan="5" class="sin-resultados">{{ 'workers.posts.empty' | translate }}</td>
       </tr>
       </tbody>
     </table>

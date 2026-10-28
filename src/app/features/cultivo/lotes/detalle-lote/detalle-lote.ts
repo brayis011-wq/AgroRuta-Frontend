@@ -1,34 +1,39 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CultivoService } from '../../../../core/services/cultivo.service';
+import { LanguageService } from '../../../../core/services/language.service';
 import { Lote, Siembra } from '../../../../core/models/cultivo.model';
 import * as L from 'leaflet';
 
 @Component({
   selector: 'app-detalle-lote',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './detalle-lote.html',
   styleUrl: './detalle-lote.css',
 })
 export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
+  private lang = inject(LanguageService);
+
   lote: Lote | null = null;
   siembra: Siembra | null = null;
   cargando = true;
-  error = '';
+  error = '';               // clave de traducción
   avanzando = false;
   ndviActivo = false;
 
   private map!: L.Map;
   private ndviLayer!: L.TileLayer.WMS;
 
+  // La etiqueta de cada etapa sale de enums.etapaCultivo.<key>
   etapasList = [
-    { key: 'GERMINACION', label: 'Germinación' },
-    { key: 'CRECIMIENTO', label: 'Crecimiento' },
-    { key: 'PRODUCCION',  label: 'Producción' },
-    { key: 'COSECHA',     label: 'Cosecha' },
-    { key: 'FINALIZADO',  label: 'Finalizado' },
+    { key: 'GERMINACION' },
+    { key: 'CRECIMIENTO' },
+    { key: 'PRODUCCION' },
+    { key: 'COSECHA' },
+    { key: 'FINALIZADO' },
   ];
 
   constructor(
@@ -46,7 +51,7 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cargarSiembra(id);
       },
       error: () => {
-        this.error = 'Error al cargar el lote.';
+        this.error = 'lotes.detail.errors.load';
         this.cargando = false;
         this.cdr.detectChanges();
       },
@@ -143,8 +148,7 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getEtapaIndex(): number {
-    const etapas = ['GERMINACION', 'CRECIMIENTO', 'PRODUCCION', 'COSECHA', 'FINALIZADO'];
-    return etapas.indexOf(this.siembra?.estadoCultivo || '');
+    return this.etapasList.findIndex(e => e.key === (this.siembra?.estadoCultivo || ''));
   }
 
   getDiasTranscurridos(): number {
@@ -152,6 +156,15 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     const inicio = new Date(this.siembra.fechaSiembra);
     const hoy = new Date();
     return Math.floor((hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24));
+  }
+
+  /** Fecha de siembra según el idioma activo (las "yyyy-MM-dd" se leen como fecha local) */
+  fmtFecha(v: string | undefined | null): string {
+    if (!v) return '';
+    const fecha = /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T00:00:00') : new Date(v);
+    return new Intl.DateTimeFormat(this.lang.current(), {
+      day: 'numeric', month: 'short', year: 'numeric',
+    }).format(fecha);
   }
 
   avanzarEtapa(): void {
@@ -164,7 +177,7 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error = 'Error al avanzar la etapa.';
+        this.error = 'lotes.detail.errors.advance';
         this.avanzando = false;
         this.cdr.detectChanges();
       },

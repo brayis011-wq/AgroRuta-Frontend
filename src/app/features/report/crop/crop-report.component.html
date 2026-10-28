@@ -1,48 +1,48 @@
 <div class="report-container">
   <div class="report-header">
     <div>
-      <h2>Reporte de cultivos</h2>
+      <h2>{{ 'reports.crops.title' | translate }}</h2>
       <span class="generated-at" *ngIf="report">
-        Generado: {{ report.generatedAt | date:'d MMM yyyy, h:mm a' }}
+        {{ 'reports.generated' | translate }} {{ fmtDateTime(report.generatedAt) }}
       </span>
     </div>
     <button class="btn-download" (click)="downloadPdf()" [disabled]="downloading || loading">
-      {{ downloading ? 'Descargando...' : '⬇ Descargar PDF' }}
+      {{ downloading ? ('reports.downloading' | translate) : ('⬇ ' + ('reports.downloadPdf' | translate)) }}
     </button>
   </div>
 
-  <div *ngIf="loading" class="estado">Cargando datos...</div>
-  <div *ngIf="error" class="estado error">Error al cargar los datos.</div>
+  <div *ngIf="loading" class="estado">{{ 'reports.loading' | translate }}</div>
+  <div *ngIf="error" class="estado error">{{ 'reports.error' | translate }}</div>
 
   <ng-container *ngIf="report && !loading">
 
     <!-- KPIs -->
     <div class="kpi-grid">
       <div class="kpi">
-        <span class="kpi-label">Total cultivos</span>
+        <span class="kpi-label">{{ 'reports.crops.kpi.total.label' | translate }}</span>
         <span class="kpi-val">{{ report.cropDetails.length }}</span>
-        <span class="kpi-sub">registrados</span>
+        <span class="kpi-sub">{{ 'reports.crops.kpi.total.sub' | translate }}</span>
       </div>
       <div class="kpi">
-        <span class="kpi-label">Cultivos activos</span>
+        <span class="kpi-label">{{ 'reports.crops.kpi.active.label' | translate }}</span>
         <span class="kpi-val">{{ cultivosActivos }}</span>
-        <span class="kpi-sub">en crecimiento</span>
+        <span class="kpi-sub">{{ 'reports.crops.kpi.active.sub' | translate }}</span>
       </div>
       <div class="kpi">
-        <span class="kpi-label">Kg cosechados</span>
-        <span class="kpi-val">{{ totalKg | number:'1.0-0' }}</span>
-        <span class="kpi-sub">kg totales</span>
+        <span class="kpi-label">{{ 'reports.crops.kpi.kg.label' | translate }}</span>
+        <span class="kpi-val">{{ fmtNum(totalKg) }}</span>
+        <span class="kpi-sub">{{ 'reports.crops.kpi.kg.sub' | translate }}</span>
       </div>
       <div class="kpi">
-        <span class="kpi-label">Promedio días</span>
+        <span class="kpi-label">{{ 'reports.crops.kpi.avgDays.label' | translate }}</span>
         <span class="kpi-val">{{ promedioDias }}</span>
-        <span class="kpi-sub">desde siembra</span>
+        <span class="kpi-sub">{{ 'reports.crops.kpi.avgDays.sub' | translate }}</span>
       </div>
     </div>
 
     <!-- Barras kg por variedad -->
     <div class="section-card">
-      <div class="section-title">Kg cosechados por variedad</div>
+      <div class="section-title">{{ 'reports.crops.chartTitle' | translate }}</div>
       <div class="bar-row" *ngFor="let c of report.cropDetails">
         <span class="bar-name" [title]="c.variedad">{{ c.variedad }}</span>
         <div class="bar-track">
@@ -52,23 +52,23 @@
           </div>
         </div>
         <span class="bar-amount">
-          {{ c.totalKgCosechado > 0 ? (c.totalKgCosechado | number:'1.0-0') + ' kg' : '—' }}
+          {{ c.totalKgCosechado > 0 ? fmtNum(c.totalKgCosechado) + ' kg' : '—' }}
         </span>
       </div>
     </div>
 
     <!-- Tabla detalle -->
     <div class="section-card">
-      <div class="section-title">Detalle de cultivos</div>
+      <div class="section-title">{{ 'reports.crops.detailTitle' | translate }}</div>
       <table class="report-table">
         <thead>
         <tr>
-          <th>Variedad</th>
-          <th>Estado</th>
-          <th>Fecha siembra</th>
-          <th>Días</th>
-          <th>Cosechas</th>
-          <th>Kg totales</th>
+          <th>{{ 'reports.crops.table.variety' | translate }}</th>
+          <th>{{ 'reports.crops.table.status' | translate }}</th>
+          <th>{{ 'reports.crops.table.plantingDate' | translate }}</th>
+          <th>{{ 'reports.crops.table.days' | translate }}</th>
+          <th>{{ 'reports.crops.table.harvests' | translate }}</th>
+          <th>{{ 'reports.crops.table.totalKg' | translate }}</th>
         </tr>
         </thead>
         <tbody>
@@ -79,14 +79,14 @@
                 'badge-activo': c.estado === 'ACTIVO',
                 'badge-cosechado': c.estado === 'COSECHADO',
                 'badge-inactivo': c.estado !== 'ACTIVO' && c.estado !== 'COSECHADO'
-              }">{{ c.estado }}</span>
+              }">{{ 'enums.cropReportStatus.' + c.estado | translate }}</span>
           </td>
-          <td>{{ c.fechaSiembra | date:'d MMM yyyy' }}</td>
+          <td>{{ fmtDate(c.fechaSiembra) }}</td>
           <td>{{ c.diasDesdeSiembra }}</td>
           <td>{{ c.totalCosechas }}</td>
           <td class="total-paid">
-            <span *ngIf="c.totalKgCosechado > 0">{{ c.totalKgCosechado | number:'1.0-0' }} kg</span>
-            <span *ngIf="c.totalKgCosechado === 0" class="sin-cosecha">Sin cosecha</span>
+            <span *ngIf="c.totalKgCosechado > 0">{{ fmtNum(c.totalKgCosechado) }} kg</span>
+            <span *ngIf="c.totalKgCosechado === 0" class="sin-cosecha">{{ 'reports.crops.noHarvest' | translate }}</span>
           </td>
         </tr>
         </tbody>

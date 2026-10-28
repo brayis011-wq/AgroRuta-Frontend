@@ -8,12 +8,13 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Perfil, UpdateProfileRequest } from '../../../core/models/profile.model';
 
 @Component({
   selector: 'app-profile-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './profile-form.component.html',
   styleUrls: ['./profile-form.component.scss'],
 })
@@ -31,7 +32,6 @@ export class ProfileFormComponent implements OnChanges {
       email: [{ value: '', disabled: true }],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{7,15}$/)]],
       fotoPerfil: [''],
-      rol: [{ value: '', disabled: true }],
     });
   }
 
@@ -42,7 +42,6 @@ export class ProfileFormComponent implements OnChanges {
         email: this.perfil.email,
         telefono: this.perfil.telefono,
         fotoPerfil: this.perfil.fotoPerfil,
-        rol: this.perfil.rol,
       });
       this.imageError = false;
     }

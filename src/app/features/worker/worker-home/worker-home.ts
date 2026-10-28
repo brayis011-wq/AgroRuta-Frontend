@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   TrabajadorService,
   NominaService,
@@ -18,7 +19,7 @@ type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 @Component({
   selector: 'app-worker-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './worker-home.html',
   styleUrl: './worker-home.css'
 })
@@ -34,8 +35,9 @@ export class WorkerHomeComponent implements OnInit {
   filtroEstado: 'TODOS' | 'ACTIVO' | 'SUSPENDIDO' = 'ACTIVO';
   cargando  = true;
   guardando = false;
-  error     = '';
-  exito     = '';
+  error     = '';                                   // clave de traducción
+  exito     = '';                                   // clave de traducción
+  exitoParams: Record<string, unknown> = {};        // parámetros de la clave de éxito
 
   modoPanel: ModoPanel = null;
   trabajadorSeleccionado: Trabajador | null = null;
@@ -48,8 +50,8 @@ export class WorkerHomeComponent implements OnInit {
   formNomina!:       FormGroup;
   mostrarFormNomina  = false;
   guardandoNomina    = false;
-  exitoNomina        = '';
-  errorNomina        = '';
+  exitoNomina        = '';   // clave de traducción
+  errorNomina        = '';   // clave de traducción (o mensaje crudo del backend)
 
   tiposContrato = ['FIJO', 'TEMPORAL', 'JORNAL'];
 
@@ -57,6 +59,7 @@ export class WorkerHomeComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
     private trabajadorService: TrabajadorService,
     private cargoService: CargoService,
     private nominaService: NominaService,
@@ -101,7 +104,7 @@ export class WorkerHomeComponent implements OnInit {
 
     this.trabajadorService.listarTodos().subscribe({
       next: (t) => { this.trabajadores = t; this.cargando = false; this.cdr.detectChanges(); },
-      error: () => { this.error = 'Error al cargar trabajadores'; this.cargando = false; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.home.errors.load'; this.cargando = false; this.cdr.detectChanges(); }
     });
 
     this.cargoService.listar().subscribe({
@@ -187,6 +190,7 @@ export class WorkerHomeComponent implements OnInit {
   limpiarMensajes(): void {
     this.error = '';
     this.exito = '';
+    this.exitoParams = {};
     this.errorNomina = '';
     this.exitoNomina = '';
   }
@@ -244,13 +248,13 @@ export class WorkerHomeComponent implements OnInit {
         this.guardandoNomina = false;
         this.mostrarFormNomina = false;
         this.formNomina.reset();
-        this.exitoNomina = '✅ Nómina generada correctamente';
+        this.exitoNomina = 'workers.home.success.rosterGenerated';
         this.cdr.detectChanges();
         setTimeout(() => { this.exitoNomina = ''; this.cdr.detectChanges(); }, 3500);
       },
       error: (err) => {
         this.guardandoNomina = false;
-        this.errorNomina = err?.error?.message ?? 'Error al generar nómina';
+        this.errorNomina = err?.error?.message ?? 'workers.home.errors.generateRoster';
         this.cdr.detectChanges();
       }
     });
@@ -259,6 +263,15 @@ export class WorkerHomeComponent implements OnInit {
   invalidoNomina(campo: string): boolean {
     const c = this.formNomina.get(campo);
     return !!(c?.invalid && c.touched);
+  }
+
+  // ── Mensaje de éxito temporal ────────────────────────────────────────────
+
+  private mostrarExito(clave: string, params: Record<string, unknown> = {}): void {
+    this.exito = clave;
+    this.exitoParams = params;
+    this.cdr.detectChanges();
+    setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
   }
 
   // ── CRUD ─────────────────────────────────────────────────────────────────
@@ -272,11 +285,9 @@ export class WorkerHomeComponent implements OnInit {
         this.trabajadores = [...this.trabajadores, t];
         this.guardando = false;
         this.modoPanel = null;
-        this.exito = `✅ ${t.nombreCompleto} registrado exitosamente`;
-        this.cdr.detectChanges();
-        setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
+        this.mostrarExito('workers.home.success.registered', { name: t.nombreCompleto });
       },
-      error: () => { this.error = 'Error al registrar trabajador'; this.guardando = false; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.home.errors.register'; this.guardando = false; this.cdr.detectChanges(); }
     });
   }
 
@@ -291,11 +302,9 @@ export class WorkerHomeComponent implements OnInit {
         this.trabajadores = this.trabajadores.map(x => x.id === t.id ? t : x);
         this.guardando = false;
         this.modoPanel = null;
-        this.exito = '✅ Trabajador actualizado';
-        this.cdr.detectChanges();
-        setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
+        this.mostrarExito('workers.home.success.updated');
       },
-      error: () => { this.error = 'Error al actualizar'; this.guardando = false; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.home.errors.update'; this.guardando = false; this.cdr.detectChanges(); }
     });
   }
 
@@ -308,57 +317,49 @@ export class WorkerHomeComponent implements OnInit {
         this.trabajadores = this.trabajadores.map(x => x.id === t.id ? t : x);
         this.guardando = false;
         this.modoPanel = null;
-        this.exito = '✅ Cargo actualizado';
-        this.cdr.detectChanges();
-        setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
+        this.mostrarExito('workers.home.success.postUpdated');
       },
-      error: () => { this.error = 'Error al cambiar cargo'; this.guardando = false; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.home.errors.changePost'; this.guardando = false; this.cdr.detectChanges(); }
     });
   }
 
   desactivar(t: Trabajador): void {
-    if (!t.id || !confirm(`¿Desactivar a ${t.nombreCompleto}? No podrá reactivarse desde aquí.`)) return;
+    if (!t.id || !confirm(this.translate.instant('workers.home.confirm.deactivate', { name: t.nombreCompleto }))) return;
     this.trabajadorService.desactivar(t.id).subscribe({
       next: () => {
         this.trabajadores = this.trabajadores.filter(x => x.id !== t.id);
         this.cerrarPanel();
-        this.exito = '⚠️ Trabajador desactivado';
-        this.cdr.detectChanges();
-        setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
+        this.mostrarExito('workers.home.success.deactivated');
       },
-      error: () => { this.error = 'Error al desactivar'; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.home.errors.deactivate'; this.cdr.detectChanges(); }
     });
   }
 
   suspender(t: Trabajador): void {
-    if (!t.id || !confirm(`¿Suspender a ${t.nombreCompleto}?`)) return;
+    if (!t.id || !confirm(this.translate.instant('workers.home.confirm.suspend', { name: t.nombreCompleto }))) return;
     this.trabajadorService.suspender(t.id).subscribe({
       next: () => {
         this.trabajadores = this.trabajadores.map(x =>
           x.id === t.id ? { ...x, estado: 'SUSPENDIDO' } : x
         );
         this.trabajadorSeleccionado = this.trabajadores.find(x => x.id === t.id) ?? null;
-        this.exito = '⚠️ Trabajador suspendido';
-        this.cdr.detectChanges();
-        setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
+        this.mostrarExito('workers.home.success.suspended');
       },
-      error: () => { this.error = 'Error al suspender'; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.home.errors.suspend'; this.cdr.detectChanges(); }
     });
   }
 
   reactivar(t: Trabajador): void {
-    if (!t.id || !confirm(`¿Reactivar a ${t.nombreCompleto}?`)) return;
+    if (!t.id || !confirm(this.translate.instant('workers.home.confirm.reactivate', { name: t.nombreCompleto }))) return;
     this.trabajadorService.reactivar(t.id).subscribe({
       next: () => {
         this.trabajadores = this.trabajadores.map(x =>
           x.id === t.id ? { ...x, estado: 'ACTIVO' } : x
         );
         this.trabajadorSeleccionado = this.trabajadores.find(x => x.id === t.id) ?? null;
-        this.exito = '✅ Trabajador reactivado';
-        this.cdr.detectChanges();
-        setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
+        this.mostrarExito('workers.home.success.reactivated');
       },
-      error: () => { this.error = 'Error al reactivar'; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.home.errors.reactivate'; this.cdr.detectChanges(); }
     });
   }
 

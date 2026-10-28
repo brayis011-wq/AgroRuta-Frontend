@@ -1,77 +1,77 @@
 <div class="report-container">
   <div class="report-header">
     <div>
-      <h2>Reporte de nómina</h2>
+      <h2>{{ 'reports.payroll.title' | translate }}</h2>
       <span class="generated-at" *ngIf="report">
-        Generado: {{ report.generatedAt | date:'d MMM yyyy, h:mm a' }}
+        {{ 'reports.generated' | translate }} {{ fmtDateTime(report.generatedAt) }}
       </span>
     </div>
     <button class="btn-download" (click)="downloadPdf()" [disabled]="downloading || loading">
-      {{ downloading ? 'Descargando...' : '⬇ Descargar PDF' }}
+      {{ downloading ? ('reports.downloading' | translate) : ('⬇ ' + ('reports.downloadPdf' | translate)) }}
     </button>
   </div>
 
-  <div *ngIf="loading" class="estado">Cargando datos...</div>
-  <div *ngIf="error" class="estado error">Error al cargar los datos.</div>
+  <div *ngIf="loading" class="estado">{{ 'reports.loading' | translate }}</div>
+  <div *ngIf="error" class="estado error">{{ 'reports.error' | translate }}</div>
 
   <ng-container *ngIf="report && !loading">
 
     <!-- KPIs -->
     <div class="kpi-grid">
       <div class="kpi">
-        <span class="kpi-label">Total acumulado</span>
-        <span class="kpi-val">${{ report.totalAccumulated | number:'1.0-0' }}</span>
-        <span class="kpi-sub">en todos los trabajadores</span>
+        <span class="kpi-label">{{ 'reports.payroll.kpi.total.label' | translate }}</span>
+        <span class="kpi-val">${{ fmtNum(report.totalAccumulated) }}</span>
+        <span class="kpi-sub">{{ 'reports.payroll.kpi.total.sub' | translate }}</span>
       </div>
       <div class="kpi">
-        <span class="kpi-label">Trabajadores</span>
+        <span class="kpi-label">{{ 'reports.payroll.kpi.workers.label' | translate }}</span>
         <span class="kpi-val">{{ report.workerDetails.length }}</span>
-        <span class="kpi-sub">con registros activos</span>
+        <span class="kpi-sub">{{ 'reports.payroll.kpi.workers.sub' | translate }}</span>
       </div>
       <div class="kpi">
-        <span class="kpi-label">Total jornales</span>
+        <span class="kpi-label">{{ 'reports.payroll.kpi.workdays.label' | translate }}</span>
         <span class="kpi-val">{{ totalJornales }}</span>
-        <span class="kpi-sub">registrados en el período</span>
+        <span class="kpi-sub">{{ 'reports.payroll.kpi.workdays.sub' | translate }}</span>
       </div>
       <div class="kpi">
-        <span class="kpi-label">Promedio por trabajador</span>
-        <span class="kpi-val">${{ promedioPago | number:'1.0-0' }}</span>
-        <span class="kpi-sub">pago promedio</span>
+        <span class="kpi-label">{{ 'reports.payroll.kpi.average.label' | translate }}</span>
+        <span class="kpi-val">${{ fmtNum(promedioPago) }}</span>
+        <span class="kpi-sub">{{ 'reports.payroll.kpi.average.sub' | translate }}</span>
       </div>
     </div>
 
     <!-- Barras por trabajador -->
     <div class="section-card">
-      <div class="section-title">Pago por trabajador</div>
+      <div class="section-title">{{ 'reports.payroll.chartTitle' | translate }}</div>
       <div class="bar-row" *ngFor="let w of report.workerDetails">
         <span class="bar-name" [title]="w.workerName">{{ w.workerName }}</span>
         <div class="bar-track">
           <div class="bar-fill" [style.width.%]="(w.totalPaid / maxPago) * 100"></div>
         </div>
-        <span class="bar-amount">${{ w.totalPaid | number:'1.0-0' }}</span>
+        <span class="bar-amount">${{ fmtNum(w.totalPaid) }}</span>
       </div>
     </div>
 
     <!-- Tabla detalle -->
     <div class="section-card">
-      <div class="section-title">Detalle por trabajador</div>
+      <div class="section-title">{{ 'reports.payroll.detailTitle' | translate }}</div>
       <table class="report-table">
         <thead>
         <tr>
-          <th>Trabajador</th>
-          <th>Período</th>
-          <th>Jornales</th>
-          <th>Pagos</th>
-          <th>Total pagado</th>
+          <th>{{ 'reports.payroll.table.worker' | translate }}</th>
+          <th>{{ 'reports.payroll.table.period' | translate }}</th>
+          <th>{{ 'reports.payroll.table.workdays' | translate }}</th>
+          <th>{{ 'reports.payroll.table.payments' | translate }}</th>
+          <th>{{ 'reports.payroll.table.totalPaid' | translate }}</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let d of report.workerDetails">
           <td class="worker-name">{{ d.workerName }}</td>
-          <td>{{ d.periodoInicio | date:'d MMM' }} — {{ d.periodoFin | date:'d MMM yyyy' }}</td>
+          <td>{{ fmtDate(d.periodoInicio, false) }} — {{ fmtDate(d.periodoFin) }}</td>
           <td>{{ d.totalJornales }}</td>
           <td>{{ d.totalPagos }}</td>
-          <td class="total-paid">${{ d.totalPaid | number:'1.0-0' }}</td>
+          <td class="total-paid">${{ fmtNum(d.totalPaid) }}</td>
         </tr>
         </tbody>
       </table>

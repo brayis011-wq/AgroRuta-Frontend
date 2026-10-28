@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { PayrollReportComponent } from '../payroll/payroll-report.component';
 import { CropReportComponent } from '../crop/crop-report.component';
 
 @Component({
   selector: 'app-report-home',
   standalone: true,
-  imports: [CommonModule, PayrollReportComponent, CropReportComponent],
+  imports: [CommonModule, TranslatePipe, PayrollReportComponent, CropReportComponent],
   templateUrl: './report-home.component.html',
   styleUrl: './report-home.component.css'
 })

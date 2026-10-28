@@ -1,0 +1,978 @@
+{
+  "common": {
+    "language": "Idioma",
+    "spanish": "Español",
+    "english": "Inglés",
+    "loading": "Cargando...",
+    "retry": "Reintentar",
+    "view": "Ver",
+    "optional": "opcional",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "edit": "Editar",
+    "deactivate": "Desactivar",
+    "actions": "Acciones",
+    "status": "Estado",
+    "required": "Requerido"
+  },
+  "layout": {
+    "subtitle": "Sistema de gestión",
+    "sections": { "management": "Gestión", "analysis": "Análisis", "system": "Sistema" },
+    "nav": {
+      "home": "Inicio",
+      "crops": "Cultivos",
+      "workers": "Trabajadores",
+      "reports": "Reportes",
+      "settings": "Configuración"
+    },
+    "logout": "Cerrar sesión",
+    "expand": "Expandir",
+    "collapse": "Colapsar"
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión",
+      "loggingIn": "Ingresando...",
+      "noAccount": "¿No tienes cuenta?",
+      "register": "Regístrate",
+      "invalidCredentials": "Correo o contraseña incorrectos.",
+      "serverError": "Error al conectar con el servidor."
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "fullName": "Nombre completo",
+      "fullNamePlaceholder": "Tu nombre",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "role": "Rol",
+      "submit": "Crear cuenta",
+      "submitting": "Registrando...",
+      "success": "¡Usuario registrado exitosamente! Redirigiendo...",
+      "error": "Error al registrar usuario.",
+      "haveAccount": "¿Ya tienes cuenta?",
+      "signIn": "Inicia sesión"
+    }
+  },
+  "enums": {
+    "rol": {
+      "Administrador": "Administrador",
+      "Agricultor": "Agricultor",
+      "Trabajador": "Trabajador"
+    },
+    "cropReportStatus": {
+      "ACTIVO": "Activo",
+      "COSECHADO": "Cosechado",
+      "INACTIVO": "Inactivo"
+    },
+    "loteEstado": {
+      "DISPONIBLE": "Disponible",
+      "EN_CULTIVO": "En cultivo",
+      "EN_DESCANSO": "En descanso"
+    },
+    "etapaCultivo": {
+      "GERMINACION": "Germinación",
+      "CRECIMIENTO": "Crecimiento",
+      "PRODUCCION": "Producción",
+      "COSECHA": "Cosecha",
+      "FINALIZADO": "Finalizado"
+    },
+    "variedad": {
+      "COLOMBIA": "Colombia",
+      "GIGANTE": "Gigante",
+      "KENYA": "Kenya"
+    },
+    "tipoActividad": {
+      "PODA": "Poda",
+      "TUTOREO": "Tutoreo",
+      "DESHIERBE": "Deshierbe",
+      "RIEGO": "Riego",
+      "REVISION": "Revisión",
+      "OTRO": "Otro"
+    },
+    "calidadCosecha": {
+      "PRIMERA": "Primera",
+      "SEGUNDA": "Segunda",
+      "TERCERA": "Tercera"
+    },
+    "unidadMedida": {
+      "LITROS": "Litros",
+      "ML": "ml",
+      "GRAMOS": "Gramos",
+      "KG": "kg"
+    },
+    "tipoInsumo": {
+      "FUNGICIDA": "Fungicida",
+      "INSECTICIDA": "Insecticida",
+      "ACARICIDA": "Acaricida",
+      "NEMATICIDA": "Nematicida",
+      "HERBICIDA": "Herbicida",
+      "FERTILIZANTE_FOLIAR": "Fertilizante foliar",
+      "FERTILIZANTE_SUELO": "Fertilizante de suelo",
+      "REGULADOR_CRECIMIENTO": "Regulador de crecimiento",
+      "COADYUVANTE": "Coadyuvante"
+    },
+    "estadoNomina": {
+      "PENDIENTE": "Pendiente",
+      "APROBADA": "Aprobada",
+      "PAGADA": "Pagada",
+      "ANULADA": "Anulada"
+    },
+    "metodoPago": {
+      "EFECTIVO": "Efectivo",
+      "TRANSFERENCIA": "Transferencia",
+      "CHEQUE": "Cheque",
+      "DAVIPLATA": "Daviplata",
+      "NEQUI": "Nequi"
+    },
+    "estadoTrabajador": {
+      "ACTIVO": "Activo",
+      "SUSPENDIDO": "Suspendido",
+      "INACTIVO": "Inactivo"
+    },
+    "tipoContrato": {
+      "FIJO": "Fijo",
+      "TEMPORAL": "Temporal",
+      "JORNAL": "Por jornal"
+    }
+  },
+  "dashboard": {
+    "title": "Panel de control",
+    "subtitle": "Resumen general de tu operación",
+    "welcome": "Bienvenido, {{name}}",
+    "loggedInAs": "Has iniciado sesión como",
+    "season": "Temporada activa",
+    "stats": {
+      "farms": "Fincas registradas",
+      "activeLots": "Lotes activos",
+      "totalHectares": "Hectáreas totales"
+    },
+    "cards": {
+      "crops": "Gestiona tus cultivos activos",
+      "workers": "Administra tu equipo de trabajo",
+      "reports": "Visualiza el rendimiento",
+      "settings": "Ajusta tu cuenta y preferencias"
+    }
+  },
+  "weather": {
+    "loading": "Cargando clima...",
+    "error": "No se pudo cargar el clima",
+    "humidity": "Humedad",
+    "feelsLike": "Sensación",
+    "wind": "Viento",
+    "conditions": {
+      "c01": "Cielo despejado",
+      "c02": "Pocas nubes",
+      "c03": "Nubes dispersas",
+      "c04": "Nublado",
+      "c09": "Chubascos",
+      "c10": "Lluvia",
+      "c11": "Tormenta",
+      "c13": "Nieve",
+      "c50": "Neblina o niebla"
+    }
+  },
+  "reports": {
+    "tabs": {
+      "payroll": { "name": "Nómina", "sub": "Pagos y jornales" },
+      "crops": { "name": "Cultivos", "sub": "Cosechas e insumos" }
+    },
+    "generated": "Generado:",
+    "downloadPdf": "Descargar PDF",
+    "downloading": "Descargando...",
+    "loading": "Cargando datos...",
+    "error": "Error al cargar los datos.",
+    "payroll": {
+      "title": "Reporte de nómina",
+      "kpi": {
+        "total": { "label": "Total acumulado", "sub": "en todos los trabajadores" },
+        "workers": { "label": "Trabajadores", "sub": "con registros activos" },
+        "workdays": { "label": "Total jornales", "sub": "registrados en el período" },
+        "average": { "label": "Promedio por trabajador", "sub": "pago promedio" }
+      },
+      "chartTitle": "Pago por trabajador",
+      "detailTitle": "Detalle por trabajador",
+      "table": {
+        "worker": "Trabajador",
+        "period": "Período",
+        "workdays": "Jornales",
+        "payments": "Pagos",
+        "totalPaid": "Total pagado"
+      }
+    },
+    "crops": {
+      "title": "Reporte de cultivos",
+      "kpi": {
+        "total": { "label": "Total cultivos", "sub": "registrados" },
+        "active": { "label": "Cultivos activos", "sub": "en crecimiento" },
+        "kg": { "label": "Kg cosechados", "sub": "kg totales" },
+        "avgDays": { "label": "Promedio días", "sub": "desde siembra" }
+      },
+      "chartTitle": "Kg cosechados por variedad",
+      "detailTitle": "Detalle de cultivos",
+      "table": {
+        "variety": "Variedad",
+        "status": "Estado",
+        "plantingDate": "Fecha siembra",
+        "days": "Días",
+        "harvests": "Cosechas",
+        "totalKg": "Kg totales"
+      },
+      "noHarvest": "Sin cosecha"
+    }
+  },
+  "cultivo": {
+    "units": { "hectares": "hectáreas" },
+    "fincas": {
+      "list": {
+        "title": "Mis fincas",
+        "subtitle": "Gestiona tus fincas de uchuva",
+        "newFarm": "+ Nueva finca",
+        "loading": "Cargando fincas...",
+        "mapHint": "Haz clic en un marcador para ver el entorno y entrar a la finca",
+        "noLocationCount": "{{count}} finca(s) sin ubicación en mapa",
+        "noLocationBadge": "Sin ubicación en mapa",
+        "viewOnMap": "Ver en mapa",
+        "deleteTitle": "Eliminar finca",
+        "enterFarm": "Entrar a la finca →",
+        "empty": "No tienes fincas registradas aún.",
+        "registerFirst": "Registrar primera finca",
+        "summary": {
+          "farms": "Fincas registradas",
+          "totalHectares": "Hectáreas totales",
+          "average": "Promedio por finca"
+        }
+      },
+      "delete": {
+        "title": "Eliminar finca",
+        "aboutTo": "Estás a punto de eliminar",
+        "andLots": "y todos sus lotes.",
+        "warnPrefix": "Esta acción no se puede deshacer. Escribe",
+        "confirmWord": "confirmar",
+        "warnSuffix": "para continuar:",
+        "placeholder": "Escribe confirmar",
+        "cancel": "Cancelar",
+        "submit": "Eliminar finca",
+        "deleting": "Eliminando..."
+      },
+      "errors": {
+        "load": "Error al cargar las fincas.",
+        "noUser": "No se encontró el usuario. Por favor inicia sesión de nuevo.",
+        "delete": "Error al eliminar la finca."
+      },
+      "new": {
+        "title": "Nueva finca",
+        "subtitle": "Registra una nueva finca de uchuva",
+        "back": "← Volver",
+        "name": "Nombre de la finca *",
+        "namePlaceholder": "Ej: Finca El Paraíso",
+        "hectares": "Hectáreas totales *",
+        "hectaresPlaceholder": "Ej: 2.5",
+        "mapHelpPrefix": "Busca tu finca y haz",
+        "mapHelpBold": "clic en el mapa",
+        "mapHelpSuffix": "para marcar su ubicación. La dirección se completará automáticamente.",
+        "searchPlaceholder": "Buscar vereda, municipio... ej: Silvania, Cundinamarca",
+        "myLocation": "Mi ubicación",
+        "geoError": "No se pudo obtener tu ubicación.",
+        "locationMarked": "Ubicación marcada",
+        "locationPending": "Haz clic en el mapa para marcar la ubicación de la finca",
+        "locationText": "Ubicación (texto) *",
+        "locationTextPlaceholder": "Se completa automáticamente al marcar en el mapa",
+        "cancel": "Cancelar",
+        "submit": "Registrar finca",
+        "saving": "Guardando...",
+        "success": "¡Finca registrada exitosamente! Redirigiendo...",
+        "errors": {
+          "notFound": "No se encontró esa ubicación.",
+          "required": "Por favor completa todos los campos.",
+          "noMapLocation": "Marca la ubicación de la finca en el mapa.",
+          "register": "Error al registrar la finca. Intenta de nuevo."
+        }
+      },
+      "detail": {
+        "back": "← Mis fincas",
+        "loading": "Cargando...",
+        "newLot": "+ Nuevo lote",
+        "lotsTitle": "Lotes ({{count}})",
+        "empty": "No hay lotes registrados. Usa el botón para agregar el primero.",
+        "noPolygon": "· Sin polígono",
+        "deleteLot": {
+          "title": "Eliminar lote",
+          "aboutTo": "Estás a punto de eliminar el lote",
+          "submit": "Eliminar lote"
+        },
+        "errors": {
+          "loadFarm": "Error al cargar la finca.",
+          "loadLots": "Error al cargar los lotes.",
+          "deleteLot": "Error al eliminar el lote."
+        }
+      }
+    }
+  },
+  "lotes": {
+    "new": {
+      "title": "Nuevo lote",
+      "subtitle": "Dibuja el lote directamente sobre la finca",
+      "back": "← Volver",
+      "name": "Nombre del lote *",
+      "namePlaceholder": "Ej: Lote A",
+      "mapHelp": "Usa el ícono de polígono en el mapa para trazar los límites del lote. El área se calculará automáticamente.",
+      "areaLabel": "Área calculada:",
+      "withinLimit": "✓ dentro del límite",
+      "exceedsLimit": "✗ supera el límite de {{max}} ha",
+      "pending": "Aún no has dibujado el polígono del lote",
+      "cancel": "Cancelar",
+      "submit": "Registrar lote",
+      "saving": "Guardando...",
+      "success": "¡Lote registrado exitosamente! Redirigiendo...",
+      "errors": {
+        "loadFarm": "No se pudo cargar la información de la finca.",
+        "nameRequired": "Por favor ingresa el nombre del lote.",
+        "drawRequired": "Dibuja el polígono del lote en el mapa antes de continuar.",
+        "exceeds": "El lote ({{area}} ha) supera el área de la finca ({{max}} ha).",
+        "register": "Error al registrar el lote. Intenta de nuevo."
+      }
+    },
+    "detail": {
+      "back": "← Volver a la finca",
+      "loading": "Cargando...",
+      "showNdvi": "Ver NDVI",
+      "hideNdvi": "Ocultar NDVI",
+      "noPolygon": "Este lote no tiene polígono definido",
+      "statusActive": "Siembra activa",
+      "statusNone": "Sin siembra",
+      "noPlanting": {
+        "title": "Sin siembra activa",
+        "desc": "Este lote está disponible para iniciar una nueva siembra de uchuva.",
+        "start": "+ Iniciar siembra"
+      },
+      "planting": {
+        "title": "Siembra activa",
+        "variety": "Variedad",
+        "date": "Fecha de siembra",
+        "plants": "Plantas",
+        "stage": "Etapa actual"
+      },
+      "daysLine1": "días",
+      "daysLine2": "en campo",
+      "cycle": {
+        "title": "Ciclo del cultivo",
+        "advance": "Avanzar etapa →",
+        "advancing": "Avanzando...",
+        "finished": "✅ Finalizado",
+        "progress": "{{current}} de {{total}} etapas"
+      },
+      "viewPlanting": "Ver detalle de siembra →",
+      "errors": {
+        "load": "Error al cargar el lote.",
+        "advance": "Error al avanzar la etapa."
+      }
+    }
+  },
+  "mapDraw": {
+    "cancelTitle": "Cancelar dibujo",
+    "cancel": "Cancelar",
+    "finishTitle": "Terminar dibujo",
+    "finish": "Terminar",
+    "undoTitle": "Borrar el último punto dibujado",
+    "undo": "Borrar último punto",
+    "polygon": "Dibujar un polígono",
+    "start": "Haz clic para empezar a dibujar la forma.",
+    "cont": "Haz clic para seguir dibujando la forma.",
+    "end": "Haz clic en el primer punto para cerrar la forma.",
+    "crossError": "<strong>Error:</strong> ¡los bordes de la forma no pueden cruzarse!",
+    "saveTitle": "Guardar cambios",
+    "save": "Guardar",
+    "cancelEditTitle": "Cancelar la edición y descartar los cambios",
+    "clearAllTitle": "Borrar todas las capas",
+    "clearAll": "Borrar todo",
+    "edit": "Editar capas",
+    "editDisabled": "No hay capas para editar",
+    "remove": "Eliminar capas",
+    "removeDisabled": "No hay capas para eliminar",
+    "editText": "Arrastra los puntos para editar la forma.",
+    "editSubtext": "Haz clic en cancelar para deshacer los cambios.",
+    "removeText": "Haz clic en una forma para eliminarla."
+  },
+  "siembra": {
+    "new": {
+      "title": "Nueva siembra",
+      "subtitle": "Registra una siembra en el lote",
+      "back": "← Volver",
+      "date": "Fecha de siembra *",
+      "plants": "Cantidad de plantas *",
+      "plantsPlaceholder": "Ej: 500",
+      "variety": "Variedad de uchuva *",
+      "varietyPlaceholder": "Selecciona una variedad",
+      "cancel": "Cancelar",
+      "submit": "Registrar siembra",
+      "saving": "Guardando...",
+      "success": "¡Siembra registrada exitosamente!",
+      "errors": {
+        "required": "Por favor completa todos los campos.",
+        "register": "Error al registrar la siembra. Intenta de nuevo."
+      }
+    },
+    "detail": {
+      "back": "← Volver al lote",
+      "loading": "Cargando...",
+      "title": "Siembra de uchuva",
+      "varietyLabel": "Variedad",
+      "plantsCount": "{{count}} plantas",
+      "days": "días",
+      "alert": {
+        "noSprays": "Sin fumigaciones registradas",
+        "overdue": "Hace {{days}} días sin fumigación",
+        "upToDate": "Cultivo al día"
+      },
+      "cards": {
+        "sprays": "Fumigaciones",
+        "activities": "Actividades",
+        "harvested": "Kg cosechados",
+        "harvestsCount": "{{count}} cosecha(s)",
+        "noActivities": "Sin actividades",
+        "noSprays": "Sin fumigaciones"
+      },
+      "actions": {
+        "activity": { "title": "Registrar actividad", "desc": "Poda, riego, revisión..." },
+        "spray": { "title": "Registrar fumigación", "desc": "Producto, dosis, área" },
+        "harvest": { "title": "Registrar cosecha", "desc": "Kg, calidad" }
+      },
+      "history": {
+        "title": "Historial del cultivo",
+        "filterAll": "Todo",
+        "filterActivities": "Actividades",
+        "filterSprays": "Fumigaciones",
+        "filterHarvests": "Cosechas",
+        "recordOne": "{{count}} registro",
+        "recordMany": "{{count}} registros",
+        "quality": "Calidad",
+        "emptyFilter": "No hay registros de este tipo aún.",
+        "emptyAll": "Aún no hay registros. Usa los botones de arriba para comenzar."
+      },
+      "danger": {
+        "title": "Eliminar siembra",
+        "desc": "Se eliminarán todas las actividades, fumigaciones y cosechas asociadas.",
+        "button": "Eliminar siembra"
+      },
+      "delete": {
+        "title": "Eliminar siembra",
+        "aboutTo": "Estás a punto de eliminar la siembra de",
+        "warnPrefix": "Se eliminarán todas las actividades, fumigaciones y cosechas. Escribe",
+        "submit": "Eliminar siembra"
+      },
+      "errors": {
+        "load": "Error al cargar la siembra.",
+        "delete": "Error al eliminar la siembra."
+      }
+    },
+    "activity": {
+      "back": "Volver a la siembra",
+      "title": "Registrar actividad",
+      "subtitle": "Registra una actividad realizada en el cultivo",
+      "type": "Tipo de actividad",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Describe la actividad realizada...",
+      "date": "Fecha de la actividad",
+      "submit": "Registrar actividad",
+      "saving": "Registrando...",
+      "success": "¡Actividad registrada exitosamente!",
+      "errors": { "register": "Error al registrar la actividad." }
+    },
+    "harvest": {
+      "back": "Volver a la siembra",
+      "title": "Registrar cosecha",
+      "subtitle": "Registra una cosecha realizada en el cultivo",
+      "date": "Fecha",
+      "kg": "Cantidad (kg)",
+      "quality": "Calidad",
+      "qualityPlaceholder": "Selecciona la calidad",
+      "notes": "Observaciones",
+      "notesPlaceholder": "Observaciones adicionales...",
+      "submit": "Registrar cosecha",
+      "saving": "Registrando...",
+      "success": "¡Cosecha registrada exitosamente!",
+      "errors": { "register": "Error al registrar la cosecha." }
+    },
+    "spray": {
+      "back": "Volver a la siembra",
+      "title": "Registrar fumigación",
+      "subtitle": "Registra una fumigación realizada en el cultivo",
+      "date": "Fecha",
+      "product": "Producto",
+      "searchPlaceholder": "Buscar en catálogo... ej: fungicida, mancozeb",
+      "searchHint": "Busca en el catálogo o escribe el nombre manualmente",
+      "noResultsManual": "Sin resultados. Se registrará como producto manual.",
+      "catalogOpen": "📋 Ver catálogo completo",
+      "catalogClose": "✖ Cerrar catálogo",
+      "filterPlaceholder": "Filtrar por nombre o tipo...",
+      "noResultsFor": "Sin resultados para \"{{filter}}\"",
+      "doseSuggested": "Dosis sugerida: {{dose}} {{unit}}",
+      "doseShort": "Dosis: {{dose}} {{unit}}",
+      "doseHint": "Sugerida: {{dose}} {{unit}} / 200 L de agua",
+      "reentryShort": "Reentrada: {{hours}} h",
+      "reentryLabel": "Período de reentrada:",
+      "reentryHours": "{{hours}} horas",
+      "reentryNote": "no ingresar al lote antes de ese tiempo",
+      "change": "Cambiar",
+      "dose": "Dosis",
+      "unit": "Unidad",
+      "unitPlaceholder": "Selecciona",
+      "area": "Área aplicada (hectáreas)",
+      "notes": "Observaciones",
+      "notesPlaceholder": "Condiciones climáticas, estado del cultivo...",
+      "submit": "Registrar fumigación",
+      "saving": "Registrando...",
+      "success": "¡Fumigación registrada exitosamente!",
+      "errors": {
+        "search": "Error al buscar en el catálogo.",
+        "loadCatalog": "Error al cargar el catálogo completo.",
+        "productRequired": "Por favor selecciona o escribe un producto.",
+        "unitRequired": "Por favor selecciona una unidad de medida.",
+        "register": "Error al registrar la fumigación."
+      }
+    }
+  },
+  "workers": {
+    "posts": {
+      "title": "Cargos",
+      "subtitle": "Define los roles y el valor de jornal por cargo",
+      "new": "＋ Nuevo Cargo",
+      "formNew": "Nuevo cargo",
+      "formEdit": "Editar cargo",
+      "name": "Nombre *",
+      "namePlaceholder": "Ej: Jornalero",
+      "description": "Descripción *",
+      "descriptionPlaceholder": "Descripción del cargo",
+      "dailyWage": "Valor Jornal ($) *",
+      "invalidValue": "Ingresa un valor válido",
+      "table": {
+        "post": "Cargo",
+        "description": "Descripción",
+        "dailyWage": "Valor Jornal"
+      },
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "empty": "No hay cargos registrados",
+      "confirmDeactivate": "¿Desactivar el cargo \"{{name}}\"?",
+      "errors": {
+        "load": "Error al cargar cargos",
+        "save": "Error al guardar"
+      }
+    },
+    "activities": {
+      "title": "Actividades",
+      "subtitle": "Gestión de actividades realizadas en campo",
+      "new": "＋ Nueva Actividad",
+      "formNew": "Nueva actividad",
+      "formEdit": "Editar actividad",
+      "name": "Nombre *",
+      "namePlaceholder": "Ej: Deshierbe",
+      "description": "Descripción *",
+      "descriptionPlaceholder": "Descripción de la actividad",
+      "table": {
+        "activity": "Actividad",
+        "description": "Descripción"
+      },
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "empty": "No hay actividades registradas",
+      "confirmDeactivate": "¿Desactivar la actividad \"{{name}}\"?",
+      "errors": {
+        "load": "Error al cargar actividades",
+        "save": "Error al guardar"
+      }
+    },
+    "rosters": {
+      "list": {
+        "title": "Nóminas",
+        "subtitleOf": "Nóminas de",
+        "subtitleAll": "Gestión y generación de nóminas por período",
+        "showAll": "Ver todas",
+        "generate": "＋ Generar Nómina",
+        "formTitle": "Generar nómina",
+        "worker": "Trabajador *",
+        "select": "Selecciona...",
+        "periodStart": "Período inicio *",
+        "periodEnd": "Período fin *",
+        "generating": "Generando...",
+        "generateSubmit": "Generar",
+        "table": {
+          "worker": "Trabajador",
+          "period": "Período",
+          "wages": "Jornales",
+          "total": "Total",
+          "generated": "Generada"
+        },
+        "actions": {
+          "viewDetail": "Ver detalle",
+          "approve": "Aprobar y registrar pago",
+          "cancel": "Anular",
+          "viewPayment": "Ver pago",
+          "reactivate": "Reactivar como pendiente",
+          "deleteForever": "Eliminar definitivamente"
+        },
+        "empty": "No hay nóminas generadas",
+        "emptyFiltered": "Este trabajador no tiene nóminas generadas",
+        "confirm": {
+          "approve": "¿Aprobar esta nómina? Se registrará el pago automáticamente en efectivo.",
+          "cancel": "¿Anular esta nómina?",
+          "reactivate": "¿Reactivar esta nómina? Volverá a estado Pendiente.",
+          "delete": "¿Eliminar esta nómina definitivamente? Esta acción no se puede deshacer."
+        },
+        "success": {
+          "approved": "✅ Nómina aprobada y pago de ${{amount}} registrado",
+          "reactivated": "✅ Nómina reactivada como Pendiente",
+          "deleted": "🗑 Nómina eliminada"
+        },
+        "errors": {
+          "load": "Error al cargar nóminas",
+          "generate": "Error al generar nómina",
+          "approve": "Error al aprobar la nómina",
+          "paymentAfterApprove": "⚠️ Nómina aprobada pero ocurrió un error al registrar el pago.",
+          "cancel": "Error al anular nómina",
+          "reactivate": "Error al reactivar nómina",
+          "delete": "Error al eliminar nómina"
+        }
+      },
+      "detail": {
+        "back": "← Nóminas",
+        "title": "Nómina #{{id}}",
+        "approve": "✔ Confirmar y Aprobar",
+        "processing": "⏳ Procesando...",
+        "viewPayment": "💰 Ver Pago",
+        "cancel": "✖ Anular",
+        "summary": {
+          "totalWages": "Total Jornales",
+          "totalValue": "Valor Total",
+          "generatedDate": "Fecha Generación",
+          "post": "Cargo"
+        },
+        "paymentRegistered": "Pago registrado",
+        "wagesIncluded": "Jornales incluidos",
+        "table": {
+          "date": "Fecha",
+          "crop": "Cultivo",
+          "activities": "Actividades",
+          "value": "Valor"
+        },
+        "settled": "Liquidado",
+        "pending": "Pendiente",
+        "emptyWages": "Sin jornales en esta nómina",
+        "loading": "Cargando nómina...",
+        "notFound": "No se encontró la nómina.",
+        "backShort": "← Volver",
+        "confirm": {
+          "approve": "¿Confirmar y aprobar esta nómina? Se registrará el pago automáticamente en efectivo.",
+          "cancel": "¿Anular esta nómina? Esta acción no se puede deshacer."
+        },
+        "success": {
+          "approvedCash": "✅ Nómina aprobada y pago de ${{amount}} registrado en efectivo"
+        },
+        "errors": {
+          "load": "Error al cargar la nómina",
+          "approve": "Error al aprobar la nómina",
+          "paymentAfterApprove": "⚠️ Nómina aprobada pero ocurrió un error al registrar el pago. Ve a Pagos para registrarlo manualmente.",
+          "cancel": "Error al anular la nómina"
+        }
+      }
+    },
+    "wages": {
+      "new": {
+        "back": "← Jornales",
+        "title": "Registrar Jornal",
+        "subtitle": "Registra el trabajo diario de un trabajador",
+        "info": "Información del Jornal",
+        "worker": "Trabajador *",
+        "selectWorker": "Selecciona un trabajador",
+        "date": "Fecha *",
+        "cropId": "ID del Cultivo *",
+        "cropIdPlaceholder": "ID del cultivo",
+        "cropName": "Nombre del Cultivo *",
+        "cropNamePlaceholder": "Ej: Uchuva Lote 3",
+        "notes": "Observaciones",
+        "notesPlaceholder": "Notas adicionales (opcional)",
+        "activitiesTitle": "Actividades Realizadas *",
+        "selectAtLeast": "Selecciona al menos una actividad",
+        "selectedCount": "{{count}} actividad(es) seleccionada(s)",
+        "submit": "Registrar Jornal",
+        "saving": "Registrando...",
+        "errors": {
+          "loadWorkers": "Error al cargar trabajadores",
+          "loadActivities": "Error al cargar actividades",
+          "noActivity": "Selecciona al menos una actividad",
+          "register": "Error al registrar jornal"
+        }
+      },
+      "list": {
+        "back": "← Trabajadores",
+        "title": "Jornales",
+        "subtitleNoWorker": "Registro diario de trabajo en campo",
+        "generatePayroll": "Generar Nómina",
+        "register": "＋ Registrar Jornal",
+        "perWage": "${{amount}}/jornal",
+        "selectWorkerTitle": "Selecciona un trabajador",
+        "selectWorkerDesc": "Los jornales se consultan por trabajador. Ve al listado y selecciona uno.",
+        "goToWorkers": "Ir a Trabajadores →",
+        "stats": {
+          "total": "Total jornales",
+          "unsettled": "Sin liquidar",
+          "pendingPay": "Pendiente de pago",
+          "accumulated": "Total acumulado"
+        },
+        "filters": {
+          "search": "Buscar",
+          "searchPlaceholder": "Cultivo...",
+          "from": "Desde",
+          "to": "Hasta",
+          "filter": "Filtrar",
+          "clear": "Limpiar"
+        },
+        "loading": "Cargando jornales...",
+        "empty": "No hay jornales registrados para este período.",
+        "registerFirst": "＋ Registrar primer jornal",
+        "table": {
+          "date": "Fecha",
+          "worker": "Trabajador",
+          "crop": "Cultivo",
+          "activities": "Actividades",
+          "value": "Valor",
+          "total": "Total"
+        },
+        "settled": "Liquidado",
+        "pending": "Pendiente",
+        "panel": {
+          "close": "Cerrar panel",
+          "title": "Generar Nómina",
+          "unsettledWages": "Jornales sin liquidar",
+          "totalToGenerate": "Total a generar",
+          "periodTitle": "Período de la nómina",
+          "periodHelp": "El sistema calculará el total de todos los jornales sin liquidar dentro de este período.",
+          "startDate": "Fecha inicio *",
+          "endDate": "Fecha fin *",
+          "generating": "Generando...",
+          "generate": "Generar Nómina",
+          "success": "¡Nómina generada!",
+          "payrollNo": "Nómina #",
+          "period": "Período",
+          "includedWages": "Jornales incluidos",
+          "total": "Total",
+          "close2": "Cerrar",
+          "viewPayrolls": "Ver nóminas del trabajador →"
+        },
+        "errors": {
+          "load": "Error al cargar jornales",
+          "endBeforeStart": "La fecha fin no puede ser anterior a la fecha inicio",
+          "generate": "Error al generar nómina. Verifica que haya jornales sin liquidar en el período."
+        }
+      }
+    },
+    "payments": {
+      "title": "Pagos",
+      "subtitleAll": "Historial de pagos realizados a trabajadores",
+      "subtitleOf": "Pago de nómina",
+      "seeAll": "← Ver todos",
+      "summary": {
+        "totalPaid": "Total pagado",
+        "workers": "Trabajadores",
+        "payments": "Pagos"
+      },
+      "loading": "Cargando pagos...",
+      "empty": "No hay pagos registrados",
+      "noName": "Sin nombre",
+      "paymentsCount": "{{count}} pago(s)",
+      "total": "Total",
+      "viewDetail": "Ver detalle del pago",
+      "panel": {
+        "title": "Detalle del pago",
+        "payrollNo": "Nómina #{{id}}",
+        "close": "Cerrar",
+        "info": "Información del pago",
+        "worker": "Trabajador",
+        "paymentDate": "Fecha de pago",
+        "method": "Método",
+        "receipt": "Comprobante",
+        "notes": "Observaciones",
+        "totalPaid": "Monto total pagado",
+        "loadingWages": "Cargando jornales...",
+        "wagesIncluded": "Jornales incluidos",
+        "period": "Período",
+        "noWages": "Sin jornales registrados",
+        "payrollTotal": "Total nómina"
+      },
+      "grandTotal": "Total general pagado",
+      "errors": {
+        "load": "Error al cargar pagos"
+      }
+    },
+    "home": {
+      "title": "Trabajadores",
+      "subtitle": "Administra tu equipo de trabajo",
+      "activities": "Actividades",
+      "posts": "Cargos",
+      "newWorker": "＋ Nuevo Trabajador",
+      "tabs": {
+        "workers": "Trabajadores",
+        "rosters": "Nóminas",
+        "payments": "Pagos"
+      },
+      "stats": {
+        "active": "Activos",
+        "suspended": "Suspendidos",
+        "draftRosters": "Nóminas en borrador",
+        "totalPaid": "Total pagado",
+        "totalRosters": "Total nóminas",
+        "draft": "En borrador",
+        "paymentsMade": "Pagos realizados"
+      },
+      "list": {
+        "searchLabel": "Buscar trabajadores",
+        "searchPlaceholder": "Buscar por nombre, cédula o cargo...",
+        "filterActive": "Activos",
+        "filterSuspended": "Suspendidos",
+        "filterAll": "Todos",
+        "loading": "Cargando trabajadores...",
+        "emptySuspended": "No hay trabajadores suspendidos.",
+        "emptyNone": "No hay trabajadores registrados aún.",
+        "emptySearch": "No se encontraron resultados para \"{{query}}\"",
+        "registerFirst": "＋ Registrar primer trabajador",
+        "wageLabel": "Jornal:",
+        "perDay": "/día",
+        "registerWage": "Registrar jornal",
+        "viewWages": "Ver jornales",
+        "viewRosters": "Ver nóminas"
+      },
+      "rostersTab": {
+        "empty": "No hay nóminas generadas aún.",
+        "rosterOf": "Nómina #{{id}} — {{name}}",
+        "total": "Total:"
+      },
+      "paymentsTab": {
+        "empty": "No hay pagos registrados aún.",
+        "paymentNo": "Pago #{{id}}",
+        "amount": "Monto:"
+      },
+      "panel": {
+        "close": "Cerrar panel",
+        "suspendedNotice": "Este trabajador está suspendido. No puede registrar jornales nuevos.",
+        "currentPost": "Cargo actual",
+        "perWage": "${{amount}}/jornal",
+        "quickActions": "Acciones rápidas",
+        "registerWage": "Registrar Jornal",
+        "viewWages": "Ver Jornales",
+        "viewRosters": "Ver Nóminas",
+        "edit": "Editar datos",
+        "changePost": "Cambiar cargo",
+        "stateManagement": "Gestión de estado",
+        "reactivate": "Reactivar trabajador",
+        "suspend": "Suspender trabajador",
+        "deactivate": "Desactivar trabajador"
+      },
+      "new": {
+        "title": "＋ Nuevo Trabajador",
+        "subtitle": "Completa los datos del trabajador",
+        "personalInfo": "Información personal",
+        "firstName": "Nombre *",
+        "firstNamePlaceholder": "Ej: Carlos",
+        "lastName": "Apellido *",
+        "lastNamePlaceholder": "Ej: Pérez",
+        "idNumber": "Cédula *",
+        "idNumberPlaceholder": "Número de documento",
+        "phone": "Teléfono",
+        "address": "Dirección",
+        "optional": "Opcional",
+        "contractAndPost": "Contrato y cargo",
+        "hireDate": "Fecha de ingreso *",
+        "contractType": "Tipo de contrato *",
+        "post": "Cargo *",
+        "selectPost": "Selecciona un cargo...",
+        "selectPostError": "Selecciona un cargo",
+        "registering": "Registrando...",
+        "submit": "Registrar trabajador"
+      },
+      "edit": {
+        "title": "Editar trabajador",
+        "back": "← Volver",
+        "saving": "Guardando...",
+        "submit": "Guardar cambios"
+      },
+      "changePost": {
+        "title": "Cambiar cargo",
+        "newPost": "Nuevo cargo *",
+        "submit": "Cambiar cargo"
+      },
+      "confirm": {
+        "deactivate": "¿Desactivar a {{name}}? No podrá reactivarse desde aquí.",
+        "suspend": "¿Suspender a {{name}}?",
+        "reactivate": "¿Reactivar a {{name}}?"
+      },
+      "success": {
+        "rosterGenerated": "✅ Nómina generada correctamente",
+        "registered": "✅ {{name}} registrado exitosamente",
+        "updated": "✅ Trabajador actualizado",
+        "postUpdated": "✅ Cargo actualizado",
+        "deactivated": "⚠️ Trabajador desactivado",
+        "suspended": "⚠️ Trabajador suspendido",
+        "reactivated": "✅ Trabajador reactivado"
+      },
+      "errors": {
+        "load": "Error al cargar trabajadores",
+        "generateRoster": "Error al generar nómina",
+        "register": "Error al registrar trabajador",
+        "update": "Error al actualizar",
+        "changePost": "Error al cambiar cargo",
+        "deactivate": "Error al desactivar",
+        "suspend": "Error al suspender",
+        "reactivate": "Error al reactivar"
+      }
+    }
+  },
+  "config": {
+    "title": "Configuración",
+    "subtitle": "Administra tu perfil y seguridad de cuenta",
+    "profileCard": { "title": "Datos del perfil", "desc": "Actualiza tu información personal" },
+    "passwordCard": { "title": "Cambiar contraseña", "desc": "Actualiza tus credenciales de acceso" },
+    "toast": {
+      "loadError": "No se pudo cargar el perfil. Inténtalo de nuevo.",
+      "profileSaved": "Perfil actualizado correctamente ✓",
+      "profileError": "Error al actualizar el perfil. Inténtalo de nuevo.",
+      "passwordSaved": "Contraseña cambiada correctamente ✓",
+      "passwordWrong": "La contraseña actual es incorrecta.",
+      "passwordError": "Error al cambiar la contraseña. Inténtalo de nuevo."
+    },
+    "profile": {
+      "photoAlt": "Foto de perfil",
+      "photoHint": "Ingresa una URL de imagen para actualizar tu foto",
+      "photoUrl": "URL de foto de perfil",
+      "fullName": "Nombre completo",
+      "fullNamePlaceholder": "Tu nombre completo",
+      "nameError": "El nombre es obligatorio (mínimo 2 caracteres)",
+      "email": "Correo electrónico",
+      "emailHint": "El correo no puede modificarse",
+      "phone": "Teléfono",
+      "phoneError": "Ingresa un número de teléfono válido (7–15 dígitos)",
+      "role": "Rol",
+      "roleHint": "El rol es asignado por el administrador",
+      "save": "Guardar cambios",
+      "saving": "Guardando…"
+    },
+    "password": {
+      "current": "Contraseña actual",
+      "currentPlaceholder": "Tu contraseña actual",
+      "currentRequired": "La contraseña actual es obligatoria",
+      "new": "Nueva contraseña",
+      "newPlaceholder": "Mínimo 8 caracteres",
+      "newError": "La contraseña debe tener al menos 8 caracteres",
+      "confirm": "Confirmar nueva contraseña",
+      "confirmPlaceholder": "Repite la nueva contraseña",
+      "mismatch": "Las contraseñas no coinciden",
+      "confirmRequired": "Debes confirmar la contraseña",
+      "submit": "Cambiar contraseña",
+      "submitting": "Cambiando…"
+    }
+  }
+}

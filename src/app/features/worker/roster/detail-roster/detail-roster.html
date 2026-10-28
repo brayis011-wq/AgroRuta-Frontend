@@ -1,16 +1,16 @@
 <div class="page" *ngIf="!cargando && nomina">
-  <a routerLink="../" class="btn-back">← Nóminas</a>
+  <a routerLink="../" class="btn-back">{{ 'workers.rosters.detail.back' | translate }}</a>
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">Nómina #{{ nomina.id }}</h1>
+      <h1 class="page-title">{{ 'workers.rosters.detail.title' | translate: { id: nomina.id } }}</h1>
       <p class="page-subtitle">
         {{ nomina.trabajador?.nombreCompleto }} ·
         {{ nomina.periodoInicio | date:'dd/MM/yyyy' }} → {{ nomina.periodoFin | date:'dd/MM/yyyy' }}
       </p>
     </div>
     <div class="header-acciones">
-      <span class="badge badge-lg" [ngClass]="estadoClass(nomina.estado)">{{ nomina.estado }}</span>
+      <span class="badge badge-lg" [ngClass]="estadoClass(nomina.estado)">{{ 'enums.estadoNomina.' + nomina.estado | translate }}</span>
 
       <!-- PENDIENTE: confirmar/aprobar -->
       <button
@@ -18,8 +18,8 @@
         class="btn-primary btn-confirmar"
         [disabled]="guardando"
         (click)="aprobar()">
-        <span *ngIf="!guardando">✔ Confirmar y Aprobar</span>
-        <span *ngIf="guardando">⏳ Procesando...</span>
+        <span *ngIf="!guardando">{{ 'workers.rosters.detail.approve' | translate }}</span>
+        <span *ngIf="guardando">{{ 'workers.rosters.detail.processing' | translate }}</span>
       </button>
 
       <!-- APROBADA o PAGADA: ver pago -->
@@ -27,7 +27,7 @@
         *ngIf="nomina.estado === 'APROBADA' || nomina.estado === 'PAGADA'"
         class="btn-primary btn-ver-pago"
         (click)="verPago()">
-        💰 Ver Pago
+        {{ 'workers.rosters.detail.viewPayment' | translate }}
       </button>
 
       <!-- Anular: si no está ya ANULADA -->
@@ -36,32 +36,32 @@
         class="btn-secundario"
         [disabled]="guardando"
         (click)="anular()">
-        ✖ Anular
+        {{ 'workers.rosters.detail.cancel' | translate }}
       </button>
     </div>
   </div>
 
   <!-- Mensajes -->
-  <div *ngIf="error" class="alerta-error">{{ error }}</div>
-  <div *ngIf="exito" class="alerta-exito">{{ exito }}</div>
+  <div *ngIf="error" class="alerta-error">{{ error | translate }}</div>
+  <div *ngIf="exito" class="alerta-exito">{{ exito | translate: exitoParams }}</div>
 
   <!-- Resumen -->
   <div class="resumen-grid">
     <div class="resumen-card">
       <div class="resumen-valor">{{ nomina.totalJornales }}</div>
-      <div class="resumen-label">Total Jornales</div>
+      <div class="resumen-label">{{ 'workers.rosters.detail.summary.totalWages' | translate }}</div>
     </div>
     <div class="resumen-card resumen-destacado">
       <div class="resumen-valor">${{ nomina.valorTotal | number }}</div>
-      <div class="resumen-label">Valor Total</div>
+      <div class="resumen-label">{{ 'workers.rosters.detail.summary.totalValue' | translate }}</div>
     </div>
     <div class="resumen-card">
       <div class="resumen-valor">{{ nomina.fechaGeneracion | date:'dd/MM/yyyy' }}</div>
-      <div class="resumen-label">Fecha Generación</div>
+      <div class="resumen-label">{{ 'workers.rosters.detail.summary.generatedDate' | translate }}</div>
     </div>
     <div class="resumen-card">
       <div class="resumen-valor">{{ nomina.trabajador?.cargo?.nombre ?? '—' }}</div>
-      <div class="resumen-label">Cargo</div>
+      <div class="resumen-label">{{ 'workers.rosters.detail.summary.post' | translate }}</div>
     </div>
   </div>
 
@@ -70,9 +70,9 @@
     <div class="pago-banner-izq">
       <span class="pago-banner-icono">💵</span>
       <div>
-        <div class="pago-banner-titulo">Pago registrado</div>
+        <div class="pago-banner-titulo">{{ 'workers.rosters.detail.paymentRegistered' | translate }}</div>
         <div class="pago-banner-meta">
-          {{ pagos[0].metodoPago }} · {{ pagos[0].fechaPago | date:'dd/MM/yyyy' }}
+          {{ pagos[0].metodoPago ? ('enums.metodoPago.' + pagos[0].metodoPago | translate) : '' }} · {{ pagos[0].fechaPago | date:'dd/MM/yyyy' }}
         </div>
       </div>
     </div>
@@ -80,16 +80,16 @@
   </div>
 
   <!-- Detalle jornales -->
-  <div class="seccion-titulo" style="margin-top:1.5rem">Jornales incluidos</div>
+  <div class="seccion-titulo" style="margin-top:1.5rem">{{ 'workers.rosters.detail.wagesIncluded' | translate }}</div>
   <div class="tabla-wrap">
     <table class="tabla">
       <thead>
       <tr>
-        <th>Fecha</th>
-        <th>Cultivo</th>
-        <th>Actividades</th>
-        <th>Valor</th>
-        <th>Estado</th>
+        <th>{{ 'workers.rosters.detail.table.date' | translate }}</th>
+        <th>{{ 'workers.rosters.detail.table.crop' | translate }}</th>
+        <th>{{ 'workers.rosters.detail.table.activities' | translate }}</th>
+        <th>{{ 'workers.rosters.detail.table.value' | translate }}</th>
+        <th>{{ 'common.status' | translate }}</th>
       </tr>
       </thead>
       <tbody>
@@ -104,12 +104,12 @@
         <td class="valor">${{ j.valorJornal | number }}</td>
         <td>
             <span class="badge" [ngClass]="j.liquidado ? 'badge-activo' : 'badge-borrador'">
-              {{ j.liquidado ? 'Liquidado' : 'Pendiente' }}
+              {{ (j.liquidado ? 'workers.rosters.detail.settled' : 'workers.rosters.detail.pending') | translate }}
             </span>
         </td>
       </tr>
       <tr *ngIf="!nomina.jornales || nomina.jornales.length === 0">
-        <td colspan="5" class="sin-resultados">Sin jornales en esta nómina</td>
+        <td colspan="5" class="sin-resultados">{{ 'workers.rosters.detail.emptyWages' | translate }}</td>
       </tr>
       </tbody>
     </table>
@@ -118,10 +118,10 @@
 
 <div *ngIf="cargando" class="estado-vacio">
   <span class="spinner"></span>
-  <p>Cargando nómina...</p>
+  <p>{{ 'workers.rosters.detail.loading' | translate }}</p>
 </div>
 
 <div *ngIf="!cargando && !nomina" class="estado-vacio">
-  <p>No se encontró la nómina.</p>
-  <a routerLink="../" class="btn-secundario">← Volver</a>
+  <p>{{ 'workers.rosters.detail.notFound' | translate }}</p>
+  <a routerLink="../" class="btn-secundario">{{ 'workers.rosters.detail.backShort' | translate }}</a>
 </div>

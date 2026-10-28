@@ -3,13 +3,14 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ActividadService } from '../../../core/services/worker.service';
 import { Actividad } from '../../../core/models/worker.model';
 
 @Component({
   selector: 'app-lista-actividades',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './list-activities.html',
   styleUrls: ['./list-activities.css']
 })
@@ -19,12 +20,13 @@ export class ListaActividadesComponent implements OnInit {
   modoEdicion: Actividad | null = null;
   mostrarForm = false;
   guardando = false;
-  error = '';
+  error = '';   // clave de traducción
 
   constructor(
     private fb: FormBuilder,
     private actividadService: ActividadService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -46,7 +48,7 @@ export class ListaActividadesComponent implements OnInit {
         this.cdr.detectChanges(); // ✅ forzar render
       },
       error: () => {
-        this.error = 'Error al cargar actividades';
+        this.error = 'workers.activities.errors.load';
         this.cdr.detectChanges();
       }
     });
@@ -77,7 +79,7 @@ export class ListaActividadesComponent implements OnInit {
         this.cargar(); // ya llama detectChanges internamente
       },
       error: () => {
-        this.error = 'Error al guardar';
+        this.error = 'workers.activities.errors.save';
         this.guardando = false;
         this.cdr.detectChanges();
       }
@@ -86,7 +88,8 @@ export class ListaActividadesComponent implements OnInit {
 
   desactivar(a: Actividad): void {
     if (a.id == null) return;
-    if (!confirm(`¿Desactivar la actividad "${a.nombre}"?`)) return;
+    const msg = this.translate.instant('workers.activities.confirmDeactivate', { name: a.nombre });
+    if (!confirm(msg)) return;
     this.actividadService.desactivar(a.id).subscribe({
       next: () => this.cargar()
     });

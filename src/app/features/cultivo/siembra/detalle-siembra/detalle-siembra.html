@@ -1,19 +1,19 @@
 <div class="container">
-  <button class="btn-back" (click)="volver()">← Volver al lote</button>
+  <button class="btn-back" (click)="volver()">{{ 'siembra.detail.back' | translate }}</button>
 
-  <div class="loading" *ngIf="cargando">Cargando...</div>
-  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="loading" *ngIf="cargando">{{ 'siembra.detail.loading' | translate }}</div>
+  <div class="error" *ngIf="error">{{ error | translate }}</div>
 
   <div *ngIf="!cargando && siembra">
 
     <div class="siembra-header">
       <div>
-        <h2>🌱 Siembra de Uchuva</h2>
-        <p>Variedad: <strong>{{ siembra.variedad }}</strong> · {{ siembra.cantidadPlantas }} plantas</p>
+        <h2>🌱 {{ 'siembra.detail.title' | translate }}</h2>
+        <p>{{ 'siembra.detail.varietyLabel' | translate }}: <strong>{{ 'enums.variedad.' + siembra.variedad | translate }}</strong> · {{ 'siembra.detail.plantsCount' | translate: { count: siembra.cantidadPlantas } }}</p>
       </div>
       <div class="dias-badge">
         <span>{{ getDiasTranscurridos() }}</span>
-        <small>días</small>
+        <small>{{ 'siembra.detail.days' | translate }}</small>
       </div>
     </div>
 
@@ -31,7 +31,7 @@
           <div class="resumen-icon">💨</div>
           <div class="resumen-info">
             <span class="resumen-numero">{{ fumigaciones.length }}</span>
-            <span class="resumen-label">Fumigaciones</span>
+            <span class="resumen-label">{{ 'siembra.detail.cards.sprays' | translate }}</span>
             <small>{{ getUltimaFumigacion() }}</small>
           </div>
         </div>
@@ -39,16 +39,16 @@
           <div class="resumen-icon">📋</div>
           <div class="resumen-info">
             <span class="resumen-numero">{{ actividades.length }}</span>
-            <span class="resumen-label">Actividades</span>
+            <span class="resumen-label">{{ 'siembra.detail.cards.activities' | translate }}</span>
             <small>{{ getUltimaActividad() }}</small>
           </div>
         </div>
         <div class="resumen-card">
           <div class="resumen-icon">⚖️</div>
           <div class="resumen-info">
-            <span class="resumen-numero">{{ totalKg }}</span>
-            <span class="resumen-label">Kg cosechados</span>
-            <small>{{ cosechas.length }} cosechas</small>
+            <span class="resumen-numero">{{ fmtNum(totalKg) }}</span>
+            <span class="resumen-label">{{ 'siembra.detail.cards.harvested' | translate }}</span>
+            <small>{{ 'siembra.detail.cards.harvestsCount' | translate: { count: cosechas.length } }}</small>
           </div>
         </div>
       </div>
@@ -57,38 +57,38 @@
     <div class="acciones">
       <button class="btn-accion" (click)="registrarActividad()">
         <span>📋</span>
-        <strong>Registrar Actividad</strong>
-        <small>Poda, riego, revisión...</small>
+        <strong>{{ 'siembra.detail.actions.activity.title' | translate }}</strong>
+        <small>{{ 'siembra.detail.actions.activity.desc' | translate }}</small>
       </button>
       <button class="btn-accion" (click)="registrarFumigacion()">
         <span>💨</span>
-        <strong>Registrar Fumigación</strong>
-        <small>Producto, dosis, área</small>
+        <strong>{{ 'siembra.detail.actions.spray.title' | translate }}</strong>
+        <small>{{ 'siembra.detail.actions.spray.desc' | translate }}</small>
       </button>
       <button class="btn-accion" (click)="registrarCosecha()">
         <span>⚖️</span>
-        <strong>Registrar Cosecha</strong>
-        <small>Kg, calidad</small>
+        <strong>{{ 'siembra.detail.actions.harvest.title' | translate }}</strong>
+        <small>{{ 'siembra.detail.actions.harvest.desc' | translate }}</small>
       </button>
     </div>
 
     <div class="seccion" *ngIf="timelineCompleto.length > 0">
       <div class="timeline-header">
-        <h3>Historial del cultivo</h3>
+        <h3>{{ 'siembra.detail.history.title' | translate }}</h3>
         <div class="filtros">
           <button class="filtro-btn" [class.activo]="filtroActivo === 'todo'"
-                  (click)="setFiltro('todo')">Todo</button>
+                  (click)="setFiltro('todo')">{{ 'siembra.detail.history.filterAll' | translate }}</button>
           <button class="filtro-btn actividad" [class.activo]="filtroActivo === 'actividad'"
-                  (click)="setFiltro('actividad')">📋 Actividades</button>
+                  (click)="setFiltro('actividad')">📋 {{ 'siembra.detail.history.filterActivities' | translate }}</button>
           <button class="filtro-btn fumigacion" [class.activo]="filtroActivo === 'fumigacion'"
-                  (click)="setFiltro('fumigacion')">💨 Fumigaciones</button>
+                  (click)="setFiltro('fumigacion')">💨 {{ 'siembra.detail.history.filterSprays' | translate }}</button>
           <button class="filtro-btn cosecha" [class.activo]="filtroActivo === 'cosecha'"
-                  (click)="setFiltro('cosecha')">⚖️ Cosechas</button>
+                  (click)="setFiltro('cosecha')">⚖️ {{ 'siembra.detail.history.filterHarvests' | translate }}</button>
         </div>
       </div>
 
       <div class="timeline-count">
-        {{ timelineFiltrado.length }} registro{{ timelineFiltrado.length !== 1 ? 's' : '' }}
+        {{ (timelineFiltrado.length === 1 ? 'siembra.detail.history.recordOne' : 'siembra.detail.history.recordMany') | translate: { count: timelineFiltrado.length } }}
       </div>
 
       <div class="timeline">
@@ -101,32 +101,36 @@
             <div class="timeline-card-header">
               <div class="timeline-titulo">
                 <span class="timeline-icono">{{ getIcono(item.tipo) }}</span>
-                <span class="item-tipo" [ngClass]="item.tipo">{{ item.titulo }}</span>
+                <span class="item-tipo" [ngClass]="item.tipo">{{ item.tituloKey ? (item.tituloKey | translate) : item.titulo }}</span>
               </div>
-              <span class="item-fecha">{{ item.fecha }}</span>
+              <span class="item-fecha">{{ fmtFecha(item.fecha) }}</span>
             </div>
-            <p class="timeline-desc">{{ item.detalle }}</p>
+            <p class="timeline-desc">
+              <ng-container *ngIf="item.tipo === 'actividad'">{{ item.detalle }}</ng-container>
+              <ng-container *ngIf="item.tipo === 'fumigacion'">{{ item.dosis }} {{ 'enums.unidadMedida.' + item.unidad | translate }} · {{ item.area }} ha</ng-container>
+              <ng-container *ngIf="item.tipo === 'cosecha'">{{ 'siembra.detail.history.quality' | translate }}: {{ 'enums.calidadCosecha.' + item.calidad | translate }}</ng-container>
+            </p>
             <p class="timeline-extra" *ngIf="item.extra">{{ item.extra }}</p>
           </div>
         </div>
       </div>
 
       <div class="timeline-vacio" *ngIf="timelineFiltrado.length === 0">
-        No hay registros de este tipo aún.
+        {{ 'siembra.detail.history.emptyFilter' | translate }}
       </div>
     </div>
 
     <div class="seccion empty-timeline" *ngIf="timelineCompleto.length === 0">
-      <p>📭 Aún no hay registros. Usa los botones de arriba para comenzar.</p>
+      <p>📭 {{ 'siembra.detail.history.emptyAll' | translate }}</p>
     </div>
 
     <div class="danger-zone">
       <div class="danger-zone-info">
-        <strong>Eliminar siembra</strong>
-        <p>Se eliminarán todas las actividades, fumigaciones y cosechas asociadas.</p>
+        <strong>{{ 'siembra.detail.danger.title' | translate }}</strong>
+        <p>{{ 'siembra.detail.danger.desc' | translate }}</p>
       </div>
       <button class="btn-eliminar-siembra" (click)="iniciarEliminacion()">
-        🗑️ Eliminar siembra
+        🗑️ {{ 'siembra.detail.danger.button' | translate }}
       </button>
     </div>
 
@@ -140,17 +144,17 @@
   <div class="confirm-panel"
        (click)="$event.stopPropagation()"
        (keydown)="$event.stopPropagation()">
-    <h3>⚠️ Eliminar siembra</h3>
-    <p>Estás a punto de eliminar la siembra de <strong>{{ siembra?.variedad }}</strong>.</p>
-    <p>Se eliminarán todas las actividades, fumigaciones y cosechas. Escribe <strong>confirmar</strong> para continuar:</p>
+    <h3>⚠️ {{ 'siembra.detail.delete.title' | translate }}</h3>
+    <p>{{ 'siembra.detail.delete.aboutTo' | translate }} <strong>{{ siembra ? ('enums.variedad.' + siembra.variedad | translate) : '' }}</strong>.</p>
+    <p>{{ 'siembra.detail.delete.warnPrefix' | translate }} <strong>{{ 'cultivo.fincas.delete.confirmWord' | translate }}</strong> {{ 'cultivo.fincas.delete.warnSuffix' | translate }}</p>
     <input type="text" [(ngModel)]="textoConfirmacion"
-           placeholder="Escribe confirmar" class="input-confirmacion" />
+           [placeholder]="'cultivo.fincas.delete.placeholder' | translate" class="input-confirmacion" />
     <div class="confirm-actions">
-      <button class="btn-secondary" (click)="cancelarEliminacion()">Cancelar</button>
+      <button class="btn-secondary" (click)="cancelarEliminacion()">{{ 'cultivo.fincas.delete.cancel' | translate }}</button>
       <button class="btn-danger"
-              [disabled]="textoConfirmacion !== 'confirmar' || eliminando"
+              [disabled]="textoConfirmacion !== palabraConfirmacion || eliminando"
               (click)="confirmarEliminacion()">
-        {{ eliminando ? 'Eliminando...' : 'Eliminar siembra' }}
+        {{ (eliminando ? 'cultivo.fincas.delete.deleting' : 'siembra.detail.delete.submit') | translate }}
       </button>
     </div>
   </div>

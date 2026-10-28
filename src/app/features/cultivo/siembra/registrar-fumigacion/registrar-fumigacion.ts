@@ -23,6 +23,7 @@ import {
   catchError,
 } from 'rxjs';
 
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CultivoService }           from '../../../../core/services/cultivo.service';
 import { AgriculturalInputService } from '../../../../core/services/AgriculturalInput.service';
 import { AgriculturalInput, MeasurementUnit } from '../../../../core/models/AgriculturalInput.model';
@@ -41,7 +42,7 @@ interface FumigacionForm {
 @Component({
   selector: 'app-registrar-fumigacion',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './registrar-fumigacion.html',
   styleUrl: './registrar-fumigacion.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,11 +54,12 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   private readonly cdr        = inject(ChangeDetectorRef);
   private readonly cultivoSvc = inject(CultivoService);
   private readonly inputSvc: AgriculturalInputService = inject(AgriculturalInputService);
+  private readonly translate = inject(TranslateService);
 
   siembraId!: number;
   cargando = false;
-  error    = '';
-  exito    = '';
+  error    = '';   // clave de traducción (o mensaje crudo del backend)
+  exito    = '';   // clave de traducción
 
   // ── Búsqueda rápida ──────────────────────────────────────────
   busquedaProducto = '';
@@ -111,7 +113,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           this.cargandoCatalogo.set(true);
           return this.inputSvc.search(query).pipe(
             catchError(() => {
-              this.error = 'Error al buscar en el catálogo.';
+              this.error = 'siembra.spray.errors.search';
               return of<AgriculturalInput[]>([]);
             })
           );
@@ -187,7 +189,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: () => {
-          this.error = 'Error al cargar el catálogo completo.';
+          this.error = 'siembra.spray.errors.loadCatalog';
           this.cargandoCompleto.set(false);
           this.cdr.markForCheck();
         }
@@ -196,34 +198,36 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
 
   getCatalogoAgrupado(): { tipo: string; items: AgriculturalInput[] }[] {
     const filtro = this.filtroCatalogo.toLowerCase().trim();
+    const label = (tipo: string) =>
+      this.translate.instant('enums.tipoInsumo.' + tipo) as string;
 
     const items = filtro
       ? this.catalogoCompleto().filter(i =>
           i.nombre.toLowerCase().includes(filtro) ||
-          i.tipo.toLowerCase().includes(filtro)
+          i.tipo.toLowerCase().includes(filtro) ||
+          label(i.tipo).toLowerCase().includes(filtro)
         )
       : this.catalogoCompleto();
 
+    // Se agrupa por la clave del enum (no por tipoDisplay, que viene del backend en un solo idioma)
     const grupos = items.reduce((acc, item) => {
-      const tipo = item.tipoDisplay ?? item.tipo;
-      if (!acc[tipo]) acc[tipo] = [];
-      acc[tipo].push(item);
+      (acc[item.tipo] ??= []).push(item);
       return acc;
     }, {} as Record<string, AgriculturalInput[]>);
 
     return Object.entries(grupos)
       .map(([tipo, items]) => ({ tipo, items }))
-      .sort((a, b) => a.tipo.localeCompare(b.tipo));
+      .sort((a, b) => label(a.tipo).localeCompare(label(b.tipo)));
   }
 
   // ── Submit ───────────────────────────────────────────────────
   onSubmit(): void {
     if (!this.form.producto?.trim()) {
-      this.error = 'Por favor selecciona o escribe un producto.';
+      this.error = 'siembra.spray.errors.productRequired';
       return;
     }
     if (!this.form.unidadMedida) {
-      this.error = 'Por favor selecciona una unidad de medida.';
+      this.error = 'siembra.spray.errors.unitRequired';
       return;
     }
     this.error    = '';
@@ -246,13 +250,13 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.cargando = false;
-          this.exito    = '¡Fumigación registrada exitosamente!';
+          this.exito    = 'siembra.spray.success';
           this.cdr.markForCheck();
           setTimeout(() => this.router.navigate(['/cultivo/siembra', this.siembraId]), 1500);
         },
         error: (err: { error?: { message?: string } }) => {
           this.cargando = false;
-          this.error    = err.error?.message ?? 'Error al registrar la fumigación.';
+          this.error    = err.error?.message ?? 'siembra.spray.errors.register';
           this.cdr.markForCheck();
         },
       });

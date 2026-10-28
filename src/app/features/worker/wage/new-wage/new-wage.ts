@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   JornalService,
   JornalRequest,
@@ -13,7 +14,7 @@ import { Trabajador, Actividad } from '../../../../core/models/worker.model';
 @Component({
   selector: 'app-nuevo-jornal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe],
   templateUrl: './new-wage.html',
   styleUrls: ['./new-wage.css']
 })
@@ -23,7 +24,7 @@ export class NuevoJornalComponent implements OnInit {
   actividades: Actividad[] = [];
   actividadesSeleccionadas: Set<number> = new Set();
   guardando = false;
-  error = '';
+  error = '';   // clave de traducción
 
   // Guardamos el trabajadorId que vino por queryParam para redirigir de vuelta
   private trabajadorIdOrigen: number | null = null;
@@ -59,12 +60,12 @@ export class NuevoJornalComponent implements OnInit {
           this.form.patchValue({ trabajadorId: this.trabajadorIdOrigen });
         }
       },
-      error: () => { this.error = 'Error al cargar trabajadores'; }
+      error: () => { this.error = 'workers.wages.new.errors.loadWorkers'; }
     });
 
     this.actividadService.listar().subscribe({
       next: (a: Actividad[]) => this.actividades = a,
-      error: () => { this.error = 'Error al cargar actividades'; }
+      error: () => { this.error = 'workers.wages.new.errors.loadActivities'; }
     });
   }
 
@@ -83,7 +84,7 @@ export class NuevoJornalComponent implements OnInit {
     if (this.form.invalid || this.actividadesSeleccionadas.size === 0) {
       this.form.markAllAsTouched();
       if (this.actividadesSeleccionadas.size === 0) {
-        this.error = 'Selecciona al menos una actividad';
+        this.error = 'workers.wages.new.errors.noActivity';
       }
       return;
     }
@@ -115,7 +116,7 @@ export class NuevoJornalComponent implements OnInit {
         }
       },
       error: () => {
-        this.error = 'Error al registrar jornal';
+        this.error = 'workers.wages.new.errors.register';
         this.guardando = false;
       }
     });
