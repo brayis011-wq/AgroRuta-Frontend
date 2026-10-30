@@ -1,7 +1,7 @@
 // src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
-
+import { adminGuard } from './core/guards/admin-guard';
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 
@@ -31,6 +31,11 @@ export const routes: Routes = [
         path: 'reportes',
         loadChildren: () => import('./features/report/report.routes').then(m => m.REPORT_ROUTES),
         runGuardsAndResolvers: 'always'
+      },
+      {
+            path: 'backups',
+            canActivate: [adminGuard],
+            loadChildren: () => import('./features/backup/backup.routes').then((m) => m.BACKUP_ROUTES),
       },
       {
         path: 'configuracion',

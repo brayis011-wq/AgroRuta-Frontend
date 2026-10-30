@@ -1,0 +1,103 @@
+<div class="backup-home">
+  <div class="backup-header">
+    <div>
+      <h2>{{ 'backups.title' | translate }}</h2>
+      <span class="subtitle">{{ 'backups.subtitle' | translate }}</span>
+    </div>
+    <button class="btn-primary" (click)="crear()" [disabled]="creating || loading">
+      <i class="ti ti-database-plus"></i>
+      {{ (creating ? 'backups.creating' : 'backups.create') | translate }}
+    </button>
+  </div>
+
+  <div class="banner" *ngIf="message" [class.error]="message.type === 'error'">
+    <span>{{ message.text }}</span>
+    <button class="banner-close" (click)="message = null">×</button>
+  </div>
+
+  <div class="estado" *ngIf="loading">{{ 'backups.loading' | translate }}</div>
+  <div class="estado error" *ngIf="loadError">
+    {{ 'backups.errors.load' | translate }}
+    <button class="link-btn" (click)="load()">{{ 'common.retry' | translate }}</button>
+  </div>
+
+  <div class="section-card" *ngIf="!loading && !loadError">
+    <div class="section-title">
+      {{ 'backups.listTitle' | translate }} ({{ backups.length }})
+    </div>
+
+    <div class="estado" *ngIf="backups.length === 0">{{ 'backups.empty' | translate }}</div>
+
+    <div class="table-wrap" *ngIf="backups.length > 0">
+      <table class="backup-table">
+        <thead>
+        <tr>
+          <th>{{ 'backups.table.name' | translate }}</th>
+          <th>{{ 'backups.table.type' | translate }}</th>
+          <th>{{ 'backups.table.date' | translate }}</th>
+          <th>{{ 'backups.table.size' | translate }}</th>
+          <th class="col-actions">{{ 'backups.table.actions' | translate }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let b of backups">
+          <td class="file-name">{{ b.name }}</td>
+          <td>
+              <span class="badge" [ngClass]="'badge-' + b.type.toLowerCase()">
+                {{ 'backups.types.' + b.type | translate }}
+              </span>
+          </td>
+          <td>{{ fmtDateTime(b.createdAt) }}</td>
+          <td>{{ fmtSize(b.sizeBytes) }}</td>
+          <td class="col-actions">
+            <button class="icon-btn" (click)="descargar(b)"
+                    [disabled]="busyName === b.name"
+                    [title]="'backups.actions.download' | translate">
+              <i class="ti ti-download"></i>
+            </button>
+            <button class="icon-btn warn" (click)="abrirModal('restore', b)"
+                    [disabled]="busyName !== null || creating"
+                    [title]="'backups.actions.restore' | translate">
+              <i class="ti ti-history"></i>
+            </button>
+            <button class="icon-btn danger" (click)="abrirModal('delete', b)"
+                    [disabled]="busyName !== null || creating"
+                    [title]="'backups.actions.delete' | translate">
+              <i class="ti ti-trash"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal-backdrop" *ngIf="modal" (click)="cerrarModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h3>
+      {{ (modal.mode === 'restore' ? 'backups.restoreModal.title' : 'backups.deleteModal.title') | translate }}
+    </h3>
+    <p class="modal-file">{{ modal.backup.name }}</p>
+
+    <ng-container *ngIf="modal.mode === 'restore'">
+      <p class="modal-warn">{{ 'backups.restoreModal.warning' | translate }}</p>
+      <label for="confirmText">
+        {{ 'backups.restoreModal.typeToConfirm' | translate: { word: confirmWord } }}
+      </label>
+      <input id="confirmText" type="text" [(ngModel)]="confirmText" autocomplete="off" />
+    </ng-container>
+
+    <p class="modal-warn" *ngIf="modal.mode === 'delete'">
+      {{ 'backups.deleteModal.warning' | translate }}
+    </p>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="cerrarModal()">{{ 'common.cancel' | translate }}</button>
+      <button class="btn-danger" (click)="confirmarModal()" [disabled]="!canConfirm">
+        {{ (modal.mode === 'restore' ? 'backups.actions.restore' : 'backups.actions.delete') | translate }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -24,11 +24,59 @@
       "crops": "Cultivos",
       "workers": "Trabajadores",
       "reports": "Reportes",
-      "settings": "Configuración"
+      "settings": "Configuración",
+      "backups": "Copias de seguridad"
     },
     "logout": "Cerrar sesión",
     "expand": "Expandir",
     "collapse": "Colapsar"
+  },
+  "backups": {
+    "title": "Copias de seguridad",
+    "subtitle": "Respalda y restaura la base de datos del sistema",
+    "create": "Crear copia ahora",
+    "creating": "Creando copia...",
+    "loading": "Cargando copias...",
+    "empty": "Aún no hay copias de seguridad. Crea la primera.",
+    "listTitle": "Copias disponibles",
+    "table": {
+      "name": "Archivo",
+      "type": "Tipo",
+      "date": "Fecha",
+      "size": "Tamaño",
+      "actions": "Acciones"
+    },
+    "types": {
+      "MANUAL": "Manual",
+      "AUTOMATIC": "Automática",
+      "PRE_RESTORE": "Previa a restauración"
+    },
+    "actions": {
+      "download": "Descargar",
+      "restore": "Restaurar",
+      "delete": "Eliminar"
+    },
+    "restoreModal": {
+      "title": "Restaurar copia de seguridad",
+      "warning": "Esto reemplazará TODOS los datos actuales por los de esta copia. Antes se guardará automáticamente una copia del estado actual.",
+      "typeToConfirm": "Escribe {{word}} para confirmar:"
+    },
+    "deleteModal": {
+      "title": "Eliminar copia de seguridad",
+      "warning": "Esta copia se eliminará de forma permanente."
+    },
+    "success": {
+      "created": "Copia creada correctamente.",
+      "restored": "Base de datos restaurada. Se guardó una copia previa automáticamente.",
+      "deleted": "Copia eliminada."
+    },
+    "errors": {
+      "load": "No se pudieron cargar las copias.",
+      "create": "No se pudo crear la copia.",
+      "download": "No se pudo descargar la copia.",
+      "restore": "No se pudo restaurar la copia.",
+      "delete": "No se pudo eliminar la copia."
+    }
   },
   "auth": {
     "login": {

@@ -24,11 +24,59 @@
       "crops": "Crops",
       "workers": "Workers",
       "reports": "Reports",
-      "settings": "Settings"
+      "settings": "Settings",
+      "backups": "backups"
     },
     "logout": "Log out",
     "expand": "Expand",
     "collapse": "Collapse"
+  },
+  "backups": {
+    "title": "Backups",
+    "subtitle": "Back up and restore the system database",
+    "create": "Create backup now",
+    "creating": "Creating backup...",
+    "loading": "Loading backups...",
+    "empty": "There are no backups yet. Create the first one.",
+    "listTitle": "Available backups",
+    "table": {
+      "name": "File",
+      "type": "Type",
+      "date": "Date",
+      "size": "Size",
+      "actions": "Actions"
+    },
+    "types": {
+      "MANUAL": "Manual",
+      "AUTOMATIC": "Automatic",
+      "PRE_RESTORE": "Before restore"
+    },
+    "actions": {
+      "download": "Download",
+      "restore": "Restore",
+      "delete": "Delete"
+    },
+    "restoreModal": {
+      "title": "Restore backup",
+      "warning": "This will replace ALL current data with the contents of this backup. A backup of the current state is saved automatically first.",
+      "typeToConfirm": "Type {{word}} to confirm:"
+    },
+    "deleteModal": {
+      "title": "Delete backup",
+      "warning": "This backup will be permanently deleted."
+    },
+    "success": {
+      "created": "Backup created successfully.",
+      "restored": "Database restored. A backup of the previous state was saved automatically.",
+      "deleted": "Backup deleted."
+    },
+    "errors": {
+      "load": "Could not load the backups.",
+      "create": "Could not create the backup.",
+      "download": "Could not download the backup.",
+      "restore": "Could not restore the backup.",
+      "delete": "Could not delete the backup."
+    }
   },
   "auth": {
     "login": {
