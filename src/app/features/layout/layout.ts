@@ -32,4 +32,7 @@ export class LayoutComponent {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
+  get esAdmin(): boolean {
+    return this.usuario?.rol === 'Administrador';
+  }
 }
