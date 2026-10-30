@@ -113,9 +113,11 @@
       "Trabajador": "Trabajador"
     },
     "cropReportStatus": {
+      "GERMINACION": "Germinación",
       "ACTIVO": "Activo",
       "COSECHADO": "Cosechado",
-      "INACTIVO": "Inactivo"
+      "INACTIVO": "Inactivo",
+      "PRODUCCION": "En producción"
     },
     "loteEstado": {
       "DISPONIBLE": "Disponible",
