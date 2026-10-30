@@ -117,7 +117,9 @@
       "ACTIVO": "Activo",
       "COSECHADO": "Cosechado",
       "INACTIVO": "Inactivo",
-      "PRODUCCION": "En producción"
+      "PRODUCCION": "En producción",
+      "CRECIMIENTO": "Crecimiento",
+      "FINALIZADO": "Finalizado"
     },
     "loteEstado": {
       "DISPONIBLE": "Disponible",
