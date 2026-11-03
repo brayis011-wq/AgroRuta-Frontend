@@ -89,7 +89,8 @@
       "noAccount": "¿No tienes cuenta?",
       "register": "Regístrate",
       "invalidCredentials": "Correo o contraseña incorrectos.",
-      "serverError": "Error al conectar con el servidor."
+      "serverError": "Error al conectar con el servidor.",
+      "sessionExpired": "Tu sesión expiró. Inicia sesión de nuevo."
     },
     "register": {
       "title": "Crear cuenta",

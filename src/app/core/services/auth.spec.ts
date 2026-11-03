@@ -55,6 +55,22 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
+    it('isLoggedIn() should return false when the token is expired', () => {
+      const haceUnMinuto = Math.floor(Date.now() / 1000) - 60;
+      localStorage.setItem('token', jwtConExp(haceUnMinuto));
+      expect(service.isLoggedIn()).toBe(false);
+    });
+
+    it('isLoggedIn() should return true when the token has not expired', () => {
+      const enUnaHora = Math.floor(Date.now() / 1000) + 3600;
+      localStorage.setItem('token', jwtConExp(enUnaHora));
+      expect(service.isLoggedIn()).toBe(true);
+    });
+
+    it('isLoggedIn() should return true when the token has no readable exp', () => {
+      localStorage.setItem('token', 'no.es.unjwt');
+      expect(service.isLoggedIn()).toBe(true);
+    });
   // ── registro ────────────────────────────────────────────
   it('registro() should POST and return AuthResponse', () => {
     service.registro(mockRegisterRequest).subscribe(r => {
@@ -118,7 +134,12 @@ describe('AuthService', () => {
   it('isLoggedIn() should return false when no token', () => {
     expect(service.isLoggedIn()).toBe(false);
   });
-
+    // Construye un JWT de prueba (sin firma real) con el exp indicado, en segundos
+    const jwtConExp = (expSegundos: number): string => {
+      const b64 = (o: object) =>
+        btoa(JSON.stringify(o)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+      return `${b64({ alg: 'HS256' })}.${b64({ exp: expSegundos })}.firma`;
+    };
   // ── getUsuario ──────────────────────────────────────────
   it('getUsuario() should return parsed usuario from localStorage', () => {
     localStorage.setItem('usuario', JSON.stringify(mockAuthResponse));
