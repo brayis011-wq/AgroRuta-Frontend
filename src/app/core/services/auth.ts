@@ -34,12 +34,38 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  /** Hay token y todavía no venció. El servidor sigue siendo quien decide en última instancia. */
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    return !!token && !this.tokenVencido(token);
   }
 
   getUsuario(): AuthResponse | null {
     const u = localStorage.getItem('usuario');
     return u ? JSON.parse(u) : null;
+  }
+
+  /**
+   * Lee el campo `exp` (segundos desde 1970) del payload del JWT.
+   * Si el token no se puede leer, se considera vigente y deja que el servidor
+   * lo rechace con 401 (el interceptor cierra la sesión en ese caso).
+   */
+  private tokenVencido(token: string): boolean {
+    try {
+      const payload = token.split('.')[1];
+      if (!payload) return false;
+
+      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const json = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join(''),
+      );
+      const exp = JSON.parse(json).exp;
+      return typeof exp === 'number' && exp * 1000 <= Date.now();
+    } catch {
+      return false;
+    }
   }
 }

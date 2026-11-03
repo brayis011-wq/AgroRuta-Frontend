@@ -89,7 +89,8 @@
       "noAccount": "Don't have an account?",
       "register": "Sign up",
       "invalidCredentials": "Incorrect email or password.",
-      "serverError": "Could not connect to the server."
+      "serverError": "Could not connect to the server.",
+      "sessionExpired": "Your session expired. Please sign in again."
     },
     "register": {
       "title": "Create account",
