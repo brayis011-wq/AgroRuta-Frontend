@@ -5,14 +5,14 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { ResumenAdmin } from '../../../core/models/admin.model';
-import { formatoNumero, formatoPesos } from '../formato';
+import { formatoNumero, formatoPesos } from '../../../shared/formato';
 
 @Component({
   selector: 'app-admin-resumen',
   standalone: true,
   imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './admin-resumen.html',
-  styleUrls: ['../admin-page.css', './admin-resumen.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', './admin-resumen.css'],
 })
 export class AdminResumenComponent implements OnInit {
   private readonly adminService = inject(AdminService);

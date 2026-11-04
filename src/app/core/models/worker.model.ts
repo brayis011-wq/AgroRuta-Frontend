@@ -39,6 +39,10 @@ export interface Trabajador {
   tipoContrato?: string;
   estado?: string;
   cargo?: Cargo;
+  /** Acceso al portal del trabajador: null, PENDIENTE, APROBADO o RECHAZADO */
+  accesoEstado?: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | null;
+  accesoNombre?: string | null;
+  accesoEmail?: string | null;
 }
 
 export interface Nomina {

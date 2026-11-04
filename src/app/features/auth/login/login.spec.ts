@@ -64,6 +64,12 @@ describe('LoginComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/admin']);
   });
 
+  it('onSubmit() should navigate a worker to /portal', () => {
+    authServiceMock.login.mockReturnValue(of({ rol: 'Trabajador' } as any));
+    component.onSubmit();
+    expect(router.navigate).toHaveBeenCalledWith(['/portal']);
+  });
+
   it('onSubmit() should explain when the account is disabled', () => {
     authServiceMock.login.mockReturnValue(throwError(() => ({
       status: 401,
