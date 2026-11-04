@@ -81,6 +81,11 @@
       </div>
     </div>
 
+    <div *ngIf="solicitudesAcceso.length > 0" class="aviso-acceso" role="status">
+      <span aria-hidden="true">🔔</span>
+      <span>{{ (solicitudesAcceso.length === 1 ? 'workers.home.access.bannerOne' : 'workers.home.access.banner') | translate: { count: solicitudesAcceso.length } }}</span>
+    </div>
+
     <div *ngIf="cargando" class="estado-vacio"><p>{{ 'workers.home.list.loading' | translate }}</p></div>
 
     <div *ngIf="!cargando && trabajadoresFiltrados.length === 0" class="estado-vacio">
@@ -115,6 +120,8 @@
                   [class.badge-suspendido]="t.estado === 'SUSPENDIDO'">
               {{ t.estado ? ('enums.estadoTrabajador.' + t.estado | translate) : '' }}
             </span>
+            <span *ngIf="t.accesoEstado === 'PENDIENTE'" class="badge badge-acceso-pendiente">{{ 'workers.home.access.requestsBadge' | translate }}</span>
+            <span *ngIf="t.accesoEstado === 'APROBADO'" class="badge badge-acceso-ok">{{ 'workers.home.access.hasAccessBadge' | translate }}</span>
           </div>
           <div *ngIf="t.cargo" class="trabajador-jornal">
             {{ 'workers.home.list.wageLabel' | translate }} <strong>${{ t.cargo.valorJornal | number }}</strong>{{ 'workers.home.list.perDay' | translate }}
@@ -258,6 +265,32 @@
              class="alerta-suspendido" role="note">
           <span aria-hidden="true">⚠️</span>
           {{ 'workers.home.panel.suspendedNotice' | translate }}
+        </div>
+
+        <!-- Acceso a la app (portal del trabajador) -->
+        <div class="detalle-seccion">
+          <div class="detalle-titulo">{{ 'workers.home.access.title' | translate }}</div>
+          <div class="acceso-card" [ngClass]="'acceso-' + (trabajadorSeleccionado.accesoEstado || 'NINGUNO')">
+            <ng-container [ngSwitch]="trabajadorSeleccionado.accesoEstado">
+              <ng-container *ngSwitchCase="'PENDIENTE'">
+                <p>{{ 'workers.home.access.pendingText' | translate: { account: trabajadorSeleccionado.accesoNombre, email: trabajadorSeleccionado.accesoEmail } }}</p>
+                <p class="acceso-nota">{{ 'workers.home.access.pendingHint' | translate }}</p>
+                <div class="acceso-acciones">
+                  <button type="button" class="btn-primary" [disabled]="guardando" (click)="aprobarAcceso(trabajadorSeleccionado)">{{ 'workers.home.access.approve' | translate }}</button>
+                  <button type="button" class="btn-secundario" [disabled]="guardando" (click)="rechazarAcceso(trabajadorSeleccionado)">{{ 'workers.home.access.reject' | translate }}</button>
+                </div>
+              </ng-container>
+              <ng-container *ngSwitchCase="'APROBADO'">
+                <p>{{ 'workers.home.access.approvedText' | translate: { email: trabajadorSeleccionado.accesoEmail } }}</p>
+                <div class="acceso-acciones">
+                  <button type="button" class="btn-secundario" [disabled]="guardando" (click)="rechazarAcceso(trabajadorSeleccionado)">{{ 'workers.home.access.revoke' | translate }}</button>
+                </div>
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                <p>{{ 'workers.home.access.noneText' | translate: { cedula: trabajadorSeleccionado.cedula } }}</p>
+              </ng-container>
+            </ng-container>
+          </div>
         </div>
 
         <div class="detalle-seccion" *ngIf="trabajadorSeleccionado.cargo">

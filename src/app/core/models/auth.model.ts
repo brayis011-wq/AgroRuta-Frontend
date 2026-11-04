@@ -3,6 +3,8 @@ export interface RegisterRequest {
   email: string;
   password: string;
   rol: string;
+  /** Obligatoria si rol = Trabajador: la cédula con la que lo registró su empleador */
+  cedula?: string;
 }
 
 export interface LoginRequest {

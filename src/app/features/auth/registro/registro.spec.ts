@@ -73,7 +73,7 @@ describe('RegistroComponent', () => {
   it('onSubmit() should set exito message and cargando=false on success', () => {
     authServiceMock.registro.mockReturnValue(of({} as any));
     component.onSubmit();
-    expect(component.exito).toBe('¡Usuario registrado exitosamente! Redirigiendo...');
+    expect(component.exito).toBe('auth.register.success');
     expect(component.cargando).toBe(false);
   });
 
@@ -109,7 +109,7 @@ describe('RegistroComponent', () => {
       throwError(() => ({ error: {} }))
     );
     component.onSubmit();
-    expect(component.error).toBe('Error al registrar usuario.');
+    expect(component.error).toBe('auth.register.error');
   });
 
   it('onSubmit() should set generic error when err.error is null', () => {
@@ -117,6 +117,28 @@ describe('RegistroComponent', () => {
       throwError(() => ({}))
     );
     component.onSubmit();
-    expect(component.error).toBe('Error al registrar usuario.');
+    expect(component.error).toBe('auth.register.error');
+  });
+
+  it('onSubmit() should require the cédula for a worker', () => {
+    component.form = { nombre: 'Luis', email: 'luis@test.com', password: '12345678', rol: 'Trabajador', cedula: '  ' };
+    component.onSubmit();
+    expect(authServiceMock.registro).not.toHaveBeenCalled();
+    expect(component.error).toBe('auth.register.cedulaRequired');
+  });
+
+  it('onSubmit() should send the trimmed cédula for a worker and explain the approval', () => {
+    authServiceMock.registro.mockReturnValue(of({} as any));
+    component.form = { nombre: 'Luis', email: 'luis@test.com', password: '12345678', rol: 'Trabajador', cedula: ' 1052334120 ' };
+    component.onSubmit();
+    expect(authServiceMock.registro).toHaveBeenCalledWith(expect.objectContaining({ cedula: '1052334120', rol: 'Trabajador' }));
+    expect(component.exito).toBe('auth.register.successWorker');
+  });
+
+  it('onSubmit() should not send a cédula for a farmer', () => {
+    authServiceMock.registro.mockReturnValue(of({} as any));
+    component.form = { nombre: 'Ana', email: 'ana@test.com', password: '12345678', rol: 'Agricultor', cedula: '999999' };
+    component.onSubmit();
+    expect(authServiceMock.registro.mock.calls[0][0].cedula).toBeUndefined();
   });
 });

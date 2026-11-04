@@ -10,14 +10,14 @@ import {
   AgriculturalInputType,
   MeasurementUnit,
 } from '../../../core/models/AgriculturalInput.model';
-import { formatoNumero } from '../formato';
+import { formatoNumero } from '../../../shared/formato';
 
 @Component({
   selector: 'app-admin-insumos',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './admin-insumos.html',
-  styleUrls: ['../admin-page.css', './admin-insumos.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', './admin-insumos.css'],
 })
 export class AdminInsumosComponent implements OnInit {
   private readonly insumoService = inject(AgriculturalInputService);
