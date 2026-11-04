@@ -185,4 +185,49 @@ describe('jwtInterceptor', () => {
       });
     });
   });
+
+  it('should NOT add Authorization header to /api/auth/login even with an old token', () => {
+    return new Promise<void>((resolve) => {
+      authServiceMock.getToken.mockReturnValue('expired-jwt-token');
+
+      const req = {
+        url: 'http://localhost:8080/api/auth/login',
+        headers: { set: vi.fn() },
+        clone: vi.fn(),
+      } as any;
+
+      const next = vi.fn().mockReturnValue(of({ type: 4 }));
+
+      interceptor(req, next).subscribe({
+        next: () => {
+          expect(req.clone).not.toHaveBeenCalled();
+          expect(req.headers.set).not.toHaveBeenCalled();
+          expect(next).toHaveBeenCalledWith(req);
+          resolve();
+        },
+      });
+    });
+  });
+
+  it('should NOT add Authorization header to /api/auth/registro', () => {
+    return new Promise<void>((resolve) => {
+      authServiceMock.getToken.mockReturnValue('expired-jwt-token');
+
+      const req = {
+        url: 'http://localhost:8080/api/auth/registro',
+        headers: { set: vi.fn() },
+        clone: vi.fn(),
+      } as any;
+
+      const next = vi.fn().mockReturnValue(of({ type: 4 }));
+
+      interceptor(req, next).subscribe({
+        next: () => {
+          expect(req.clone).not.toHaveBeenCalled();
+          expect(next).toHaveBeenCalledWith(req);
+          resolve();
+        },
+      });
+    });
+  });
 });

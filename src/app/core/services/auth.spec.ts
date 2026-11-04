@@ -107,6 +107,16 @@ describe('AuthService', () => {
   });
 
   // ── logout ──────────────────────────────────────────────
+  it('login() should discard an old session token before calling the API', () => {
+    localStorage.setItem('token', 'old-expired-token');
+    localStorage.setItem('usuario', '{"id":9}');
+    service.login(mockLoginRequest).subscribe({ error: () => {} });
+    expect(localStorage.getItem('token')).toBeNull();
+    expect(localStorage.getItem('usuario')).toBeNull();
+    const req = httpMock.expectOne(`${apiUrl}/login`);
+    req.flush({ message: 'Credenciales inválidas' }, { status: 401, statusText: 'Unauthorized' });
+  });
+
   it('logout() should remove token and usuario from localStorage', () => {
     localStorage.setItem('token', 'fake-jwt-token');
     localStorage.setItem('usuario', JSON.stringify(mockAuthResponse));
