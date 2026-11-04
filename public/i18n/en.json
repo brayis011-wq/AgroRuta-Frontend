@@ -25,11 +25,21 @@
       "workers": "Workers",
       "reports": "Reports",
       "settings": "Settings",
-      "backups": "backups"
+      "backups": "backups",
+      "team": "Team",
+      "wages": "Work days",
+      "payrolls": "Payrolls",
+      "payments": "Payments",
+      "positions": "Positions",
+      "activities": "Activities",
+      "more": "More"
     },
     "logout": "Log out",
     "expand": "Expand",
-    "collapse": "Collapse"
+    "collapse": "Collapse",
+    "menu": "Main menu",
+    "closeMenu": "Close menu",
+    "pendingPayrolls": "Payrolls awaiting approval"
   },
   "backups": {
     "title": "Backups",
@@ -288,7 +298,7 @@
     "fincas": {
       "list": {
         "title": "My farms",
-        "subtitle": "Manage your cape gooseberry farms",
+        "subtitle": "Manage your farms and crops",
         "newFarm": "+ New farm",
         "loading": "Loading farms...",
         "mapHint": "Click a marker to see the surroundings and enter the farm",
@@ -324,7 +334,7 @@
       },
       "new": {
         "title": "New farm",
-        "subtitle": "Register a new cape gooseberry farm",
+        "subtitle": "Register a new farm",
         "back": "← Back",
         "name": "Farm name *",
         "namePlaceholder": "E.g.: El Paraíso Farm",
@@ -405,7 +415,7 @@
       "statusNone": "No planting",
       "noPlanting": {
         "title": "No active planting",
-        "desc": "This lot is available to start a new cape gooseberry planting.",
+        "desc": "This lot is available to start a new planting.",
         "start": "+ Start planting"
       },
       "planting": {
@@ -464,7 +474,10 @@
       "date": "Planting date *",
       "plants": "Number of plants *",
       "plantsPlaceholder": "E.g.: 500",
-      "variety": "Cape gooseberry variety *",
+      "crop": "Crop *",
+      "cropPlaceholder": "Select the crop",
+      "cropFirst": "Choose the crop first",
+      "variety": "Variety *",
       "varietyPlaceholder": "Select a variety",
       "cancel": "Cancel",
       "submit": "Register planting",
@@ -472,13 +485,15 @@
       "success": "Planting registered successfully!",
       "errors": {
         "required": "Please fill in all fields.",
-        "register": "Error registering the planting. Try again."
+        "register": "Error registering the planting. Try again.",
+        "loadCatalog": "The crop catalog could not be loaded."
       }
     },
     "detail": {
       "back": "← Back to the lot",
       "loading": "Loading...",
-      "title": "Cape gooseberry planting",
+      "title": "{{cultivo}} planting",
+      "cropFallback": "Crop",
       "varietyLabel": "Variety",
       "plantsCount": "{{count}} plants",
       "days": "days",
@@ -1084,6 +1099,7 @@
       "users": "Users",
       "farmers": "Farmers",
       "inputs": "Inputs",
+      "crops": "Crops",
       "backups": "Backups",
       "account": "My account"
     },
@@ -1205,6 +1221,28 @@
       "noFarms": "This farmer has no farms.",
       "noWorkers": "This farmer has no workers.",
       "noPayrolls": "This farmer hasn't generated payrolls."
+    },
+    "crops": {
+      "title": "Crops and varieties",
+      "subtitle": "What farmers can choose when registering a planting. Deactivating deletes nothing: existing plantings keep their crop.",
+      "new": "Add crop",
+      "newPlaceholder": "New crop, e.g. Blueberry",
+      "newVariety": "New variety",
+      "newVarietyFor": "New {{crop}} variety",
+      "add": "Add",
+      "varietiesCount": "{{active}} of {{total}} varieties active",
+      "noVarieties": "No varieties yet.",
+      "inactive": "Inactive",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "clickToActivate": "Click to activate",
+      "clickToDeactivate": "Click to deactivate",
+      "created": "Crop {{name}} added.",
+      "varietyCreated": "Variety {{name}} added to {{crop}}.",
+      "activated": "{{name}} activated.",
+      "deactivated": "{{name}} deactivated.",
+      "saveError": "The change could not be saved.",
+      "loadError": "The crop catalog could not be loaded."
     },
     "inputs": {
       "title": "Agricultural inputs",

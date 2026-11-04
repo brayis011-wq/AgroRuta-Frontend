@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { LanguageService } from '../../../../core/services/language.service';
-import { Lote, Siembra } from '../../../../core/models/cultivo.model';
+import { Lote, Siembra, nombreCultivo as nombreDeCultivo } from '../../../../core/models/cultivo.model';
 import * as L from 'leaflet';
 import { environment } from '../../../../../environments/environment';
 import { rangoNdvi } from '../../../../shared/ndvi';
@@ -17,6 +17,8 @@ import { rangoNdvi } from '../../../../shared/ndvi';
   styleUrl: './detalle-lote.css',
 })
 export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
+  /** \"Café · Castillo\" */
+  readonly nombreCultivo = nombreDeCultivo;
   private lang = inject(LanguageService);
 
   lote: Lote | null = null;

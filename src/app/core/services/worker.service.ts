@@ -43,6 +43,7 @@ export interface CultivoDisponible {
   fincaNombre: string;
   loteId:      number;
   loteNombre:  string;
+  tipoCultivo: string | null;
   variedad:    string | null;
   estado:      string | null;
 }

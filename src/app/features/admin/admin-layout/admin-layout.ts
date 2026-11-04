@@ -40,6 +40,7 @@ export class AdminLayoutComponent {
       items: [
         { ruta: 'usuarios', icono: 'ti-users', etiqueta: 'admin.nav.users' },
         { ruta: 'agricultores', icono: 'ti-plant-2', etiqueta: 'admin.nav.farmers' },
+        { ruta: 'cultivos', icono: 'ti-seeding', etiqueta: 'admin.nav.crops' },
         { ruta: 'insumos', icono: 'ti-flask', etiqueta: 'admin.nav.inputs' },
       ],
     },

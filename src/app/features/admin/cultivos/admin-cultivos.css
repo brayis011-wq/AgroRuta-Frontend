@@ -1,0 +1,20 @@
+.nuevo { display: flex; gap: .5rem; flex-wrap: wrap; }
+.nuevo .input { width: 220px; max-width: 100%; }
+.estado { padding: 1.5rem; display: flex; gap: .75rem; align-items: center; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+.cultivo { display: flex; flex-direction: column; box-shadow: var(--ar-sombra-1); }
+.cultivo.apagado { opacity: .7; }
+.cultivo .card-head { align-items: flex-start; }
+.acciones { display: flex; align-items: center; gap: .5rem; }
+.pill.ok { color: var(--a-green-dark); background: var(--a-green-soft); }
+.variedades { list-style: none; margin: 0; padding: .9rem 1.1rem; display: flex; flex-wrap: wrap; gap: .4rem; flex: 1; }
+.chip {
+  display: inline-flex; align-items: center; gap: .3rem; padding: .3rem .65rem; border-radius: 999px;
+  border: 1px solid #cfe5d0; background: var(--a-green-soft); color: var(--a-green-dark);
+  font: inherit; font-size: .82rem; font-weight: 600; cursor: pointer; transition: background .15s, border-color .15s;
+}
+.chip:hover:not(:disabled) { border-color: var(--a-green); }
+.chip.off { background: #f3f4f3; border-color: var(--a-line); color: var(--a-muted); font-weight: 500; text-decoration: line-through; }
+.chip:focus-visible { outline: 2px solid var(--a-green); outline-offset: 2px; }
+.nueva-variedad { display: flex; gap: .5rem; padding: 0 1.1rem 1.1rem; }
+.nueva-variedad .input { flex: 1; min-width: 0; }

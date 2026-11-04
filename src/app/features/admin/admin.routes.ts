@@ -31,6 +31,10 @@ export const ADMIN_ROUTES: Routes = [
         loadComponent: () => import('./insumos/admin-insumos').then((m) => m.AdminInsumosComponent),
       },
       {
+        path: 'cultivos',
+        loadComponent: () => import('./cultivos/admin-cultivos').then((m) => m.AdminCultivosComponent),
+      },
+      {
         path: 'backups',
         loadChildren: () => import('../backup/backup.routes').then((m) => m.BACKUP_ROUTES),
       },
