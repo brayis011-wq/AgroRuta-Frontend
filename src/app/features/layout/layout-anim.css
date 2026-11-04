@@ -1,0 +1,22 @@
+/* Panel: animaciones de submenús y contadores */
+/* ── Submenú que se despliega con altura animada ───── */
+.sub-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .28s cubic-bezier(.2, .8, .2, 1); }
+.sub-wrap.abierta { grid-template-rows: 1fr; }
+.sub-wrap > .sub { overflow: hidden; min-height: 0; animation: none; margin-top: 0; margin-bottom: 0; }
+.sub-wrap.abierta > .sub { margin-top: 2px; margin-bottom: 6px; }
+.sub-wrap .sub a { opacity: 0; transform: translateX(-6px); transition: opacity .2s ease, transform .2s ease, background .15s, color .15s; }
+.sub-wrap.abierta .sub a { opacity: 1; transform: none; }
+.sub-wrap.abierta .sub a:nth-child(2) { transition-delay: 30ms, 30ms, 0s, 0s; }
+.sub-wrap.abierta .sub a:nth-child(3) { transition-delay: 60ms, 60ms, 0s, 0s; }
+.sub-wrap.abierta .sub a:nth-child(4) { transition-delay: 90ms, 90ms, 0s, 0s; }
+.sub-wrap.abierta .sub a:nth-child(5) { transition-delay: 120ms, 120ms, 0s, 0s; }
+.sub-wrap.abierta .sub a:nth-child(n+6) { transition-delay: 150ms, 150ms, 0s, 0s; }
+.badge { animation: pop .35s cubic-bezier(.2, .9, .3, 1.4); }
+
+@keyframes menu-in { from { opacity: 0; transform: translateY(-6px) scale(.97); } }
+@keyframes item-in { from { opacity: 0; transform: translateY(3px); } }
+@keyframes pop { from { transform: scale(.4); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .sub-wrap, .sub-wrap .sub a, .badge { transition: none; animation: none; }
+}

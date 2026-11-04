@@ -44,7 +44,7 @@ describe('ListaPagosComponent', () => {
   it('ngOnInit() should set error on failure', () => {
     pagoServiceMock.listarTodos.mockReturnValue(throwError(() => new Error()));
     component.ngOnInit();
-    expect(component.error).toBe('Error al cargar pagos');
+    expect(component.error).toBe('workers.payments.errors.load');
   });
   it('totalGlobal should sum all totals', () => { expect(component.totalGlobal).toBe(1200000); });
   it('totalPagos should count all pagos', () => { expect(component.totalPagos).toBe(3); });

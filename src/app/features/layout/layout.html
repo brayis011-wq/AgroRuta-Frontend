@@ -19,6 +19,53 @@
       </button>
     </div>
 
+    <!-- Selector de finca -->
+    <div class="finca-sel" [class.abierto]="menuFincas()">
+      <button type="button" class="finca-btn" (click)="menuFincas.set(!menuFincas())"
+              [attr.aria-expanded]="menuFincas()" aria-haspopup="listbox"
+              [title]="(fincaActiva.activa()?.nombre ?? ('layout.farm.all' | translate))">
+        <span class="fi" aria-hidden="true"><i class="ti ti-map-pin"></i></span>
+        <span class="finca-txt">
+          <strong>{{ fincaActiva.activa()?.nombre ?? ('layout.farm.all' | translate) }}</strong>
+          <small>
+            @if (fincaActiva.activa(); as f) {
+              {{ municipioDe(f) || f.ubicacion }}@if (fincaActiva.lotesActiva() != null) { · {{ (fincaActiva.lotesActiva() === 1 ? 'layout.farm.lotsOne' : 'layout.farm.lots') | translate: { count: fincaActiva.lotesActiva() } }} }
+            } @else {
+              {{ 'layout.farm.count' | translate: { count: fincaActiva.fincas().length } }}
+            }
+          </small>
+        </span>
+        <i class="ti ti-selector sel-ic" aria-hidden="true"></i>
+      </button>
+      @if (menuFincas()) {
+        <div class="finca-menu" role="listbox" [attr.aria-label]="'layout.farm.choose' | translate">
+          <button type="button" role="option" [class.on]="fincaActiva.idActiva() === null"
+                  [attr.aria-selected]="fincaActiva.idActiva() === null" (click)="elegirFinca(null)">
+            <i class="ti ti-layout-grid" aria-hidden="true"></i><span>{{ 'layout.farm.all' | translate }}</span>
+            @if (fincaActiva.idActiva() === null) { <i class="ti ti-check ok" aria-hidden="true"></i> }
+          </button>
+          @for (f of fincaActiva.fincas(); track f.id; let i = $index) {
+            <button type="button" role="option" [class.on]="fincaActiva.idActiva() === f.id"
+                    [attr.aria-selected]="fincaActiva.idActiva() === f.id" (click)="elegirFinca(f.id!)"
+                    [style.animation-delay.ms]="(i + 1) * 25">
+              <i class="ti ti-map-pin" aria-hidden="true"></i>
+              <span class="fm-txt"><b>{{ f.nombre }}</b><small>{{ municipioDe(f) }}</small></span>
+              @if (fincaActiva.idActiva() === f.id) { <i class="ti ti-check ok" aria-hidden="true"></i> }
+            </button>
+          }
+          <a routerLink="/cultivo/nueva-finca" class="fm-nueva"><i class="ti ti-plus" aria-hidden="true"></i>{{ 'layout.nav.newFarm' | translate }}</a>
+        </div>
+      }
+    </div>
+
+    <!-- Buscador -->
+    <button type="button" class="buscar" (click)="buscador.abrir()" [attr.aria-label]="'search.title' | translate">
+      <i class="ti ti-search" aria-hidden="true"></i>
+      <span class="txt">{{ 'search.button' | translate }}</span>
+      <kbd>Ctrl K</kbd>
+      <em class="tip">{{ 'search.title' | translate }}</em>
+    </button>
+
     <nav class="nav">
       <span class="sec">{{ 'layout.sections.management' | translate }}</span>
 
@@ -28,43 +75,11 @@
         <em class="tip">{{ 'layout.nav.home' | translate }}</em>
       </a>
 
-      <a class="item" routerLink="/cultivo" routerLinkActive="on">
-        <i class="ti ti-plant" aria-hidden="true"></i>
-        <span class="txt">{{ 'layout.nav.crops' | translate }}</span>
-        <em class="tip">{{ 'layout.nav.crops' | translate }}</em>
-      </a>
-
-      <button type="button" class="item grupo" [class.on]="colapsado() && enTrabajadores()"
-              [class.abierto]="enTrabajadores()"
-              [attr.aria-expanded]="trabajadoresAbierto()" (click)="alternarTrabajadores()">
-        <i class="ti ti-users-group" aria-hidden="true"></i>
-        <span class="txt">{{ 'layout.nav.workers' | translate }}</span>
-        @if (nominasPendientes() > 0 && !trabajadoresAbierto()) {
-          <span class="badge">{{ nominasPendientes() }}</span>
-        }
-        <i class="ti ti-chevron-down flecha" [class.girada]="trabajadoresAbierto()" aria-hidden="true"></i>
-        <em class="tip">{{ 'layout.nav.workers' | translate }}</em>
-      </button>
-
-      @if (trabajadoresAbierto()) {
-        <div class="sub">
-          @for (s of subTrabajadores; track s.ruta) {
-            <a [routerLink]="s.ruta" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: s.exacto }">
-              <span>{{ s.clave | translate }}</span>
-              @if (s.contador && nominasPendientes() > 0) {
-                <span class="badge" [title]="'layout.pendingPayrolls' | translate">{{ nominasPendientes() }}</span>
-              }
-            </a>
-          }
-        </div>
-      }
+      <ng-container *ngTemplateOutlet="grupo; context: { id: 'cultivos', icono: 'ti-plant', clave: 'layout.nav.crops', items: subCultivos() }" />
+      <ng-container *ngTemplateOutlet="grupo; context: { id: 'trabajadores', icono: 'ti-users-group', clave: 'layout.nav.workers', items: subTrabajadores }" />
 
       <span class="sec">{{ 'layout.sections.analysis' | translate }}</span>
-      <a class="item" routerLink="/reportes" routerLinkActive="on">
-        <i class="ti ti-chart-bar" aria-hidden="true"></i>
-        <span class="txt">{{ 'layout.nav.reports' | translate }}</span>
-        <em class="tip">{{ 'layout.nav.reports' | translate }}</em>
-      </a>
+      <ng-container *ngTemplateOutlet="grupo; context: { id: 'reportes', icono: 'ti-chart-bar', clave: 'layout.nav.reports', items: subReportes }" />
 
       <span class="sec">{{ 'layout.sections.system' | translate }}</span>
       <a class="item" routerLink="/configuracion" routerLinkActive="on">
@@ -75,6 +90,16 @@
     </nav>
 
     <div class="pie">
+      @if (clima(); as c) {
+        <div [class]="'clima ' + (consejo() ?? '')">
+          <img [src]="c.iconUrl" alt="" width="40" height="40" />
+          <div class="clima-txt">
+            <small><b>{{ c.temperature | number: '1.0-0' }}°C</b> {{ lugarClima() }}</small>
+            <em>{{ 'layout.weather.' + consejo() | translate }}</em>
+          </div>
+        </div>
+      }
+
       <div class="idioma" role="group" [attr.aria-label]="'common.language' | translate">
         <i class="ti ti-world" aria-hidden="true"></i>
         <span class="txt">{{ 'common.language' | translate }}</span>
@@ -104,7 +129,42 @@
     </div>
   </aside>
 
+  <!-- Grupo del menú con submenú desplegable -->
+  <ng-template #grupo let-id="id" let-icono="icono" let-clave="clave" let-items="items">
+    <button type="button" class="item grupo" [class.on]="colapsado() && enGrupo(id)"
+            [class.abierto]="enGrupo(id)" [attr.aria-expanded]="abierto(id)" (click)="alternar(id)">
+      <i class="ti {{ icono }}" aria-hidden="true"></i>
+      <span class="txt">{{ clave | translate }}</span>
+      @if (id === 'trabajadores' && nominasPendientes() > 0 && !abierto(id)) {
+        <span class="badge">{{ nominasPendientes() }}</span>
+      }
+      <i class="ti ti-chevron-down flecha" [class.girada]="abierto(id)" aria-hidden="true"></i>
+      <em class="tip">{{ clave | translate }}</em>
+    </button>
+    <div class="sub-wrap" [class.abierta]="abierto(id)" [attr.inert]="abierto(id) ? null : ''">
+      <div class="sub">
+        @for (s of items; track s.ruta + (s.query?.tab ?? '')) {
+          <a [routerLink]="s.ruta" [queryParams]="s.query" routerLinkActive="on"
+             [routerLinkActiveOptions]="s.query
+               ? { paths: 'exact', queryParams: 'subset', matrixParams: 'ignored', fragment: 'ignored' }
+               : { exact: !!s.exacto }"
+             [class.nueva]="s.icono">
+            <span class="sub-txt">
+              @if (s.icono) { <i class="ti {{ s.icono }}" aria-hidden="true"></i> }
+              {{ s.texto ?? (s.clave | translate) }}
+            </span>
+            @if (s.contador && nominasPendientes() > 0) {
+              <span class="badge" [title]="'layout.pendingPayrolls' | translate">{{ nominasPendientes() }}</span>
+            }
+          </a>
+        }
+      </div>
+    </div>
+  </ng-template>
+
   <div class="velo" (click)="cerrarCajon()" aria-hidden="true"></div>
+
+  <app-buscador #buscador />
 
   <main class="main">
     <router-outlet />

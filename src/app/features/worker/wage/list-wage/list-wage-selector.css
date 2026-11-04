@@ -1,0 +1,19 @@
+/* Selector de trabajador y accesos rápidos de la página de jornales */
+.selector-trabajador { display: flex; flex-direction: column; gap: .35rem; max-width: 420px; margin-bottom: 1.25rem; }
+.selector-trabajador label { font-size: .8rem; font-weight: 600; color: var(--ar-tinta-2); }
+.accesos-trabajador { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: .75rem; margin-top: 1rem; }
+.acceso {
+  display: flex; align-items: center; gap: .75rem; padding: .85rem 1rem; text-align: left; cursor: pointer;
+  background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 12px; box-shadow: var(--ar-sombra-1);
+  font: inherit; color: var(--ar-tinta); transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.acceso:hover { border-color: #bcd9be; box-shadow: var(--ar-sombra-2); transform: translateY(-1px); }
+.acceso:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.acceso-av {
+  width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center;
+  background: var(--ar-verde-100); color: var(--ar-verde-700); font-weight: 700; font-size: .85rem;
+}
+.acceso-txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.acceso-txt strong { font-size: .92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acceso-txt small { color: var(--ar-tinta-3); font-size: .8rem; }
+.acceso .ti { color: var(--ar-tinta-3); }
