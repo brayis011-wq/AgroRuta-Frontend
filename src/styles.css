@@ -49,3 +49,14 @@ body {
 button, input, select, textarea, optgroup { font-family: inherit; }
 input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1; }
 :focus-visible { outline-color: var(--ar-verde-600); }
+
+/* Transición entre páginas: solo se anima el contenido, el menú lateral queda fijo */
+.main { view-transition-name: contenido; }
+::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+::view-transition-old(contenido) { animation: salir-pagina .14s ease-in both; }
+::view-transition-new(contenido) { animation: entrar-pagina .26s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes salir-pagina { to { opacity: 0; transform: translateY(-4px); } }
+@keyframes entrar-pagina { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(contenido), ::view-transition-new(contenido) { animation: none; }
+}

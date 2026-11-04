@@ -16,6 +16,7 @@
     "status": "Status",
     "required": "Required"
   },
+  "search": {"title": "Search AgroRuta", "button": "Search…", "placeholder": "Search a farm, a worker or a page", "empty": "No results", "move": "move", "open": "open", "types": {"page": "Page", "farm": "Farm", "worker": "Worker"}},
   "layout": {
     "subtitle": "Management system",
     "sections": { "management": "Management", "analysis": "Analysis", "system": "System" },
@@ -43,7 +44,9 @@
     "collapse": "Collapse",
     "menu": "Main menu",
     "closeMenu": "Close menu",
-    "pendingPayrolls": "Payrolls awaiting approval"
+    "pendingPayrolls": "Payrolls awaiting approval",
+    "farm": {"all": "All farms", "choose": "Choose farm", "count": "{{count}} farms", "lots": "{{count}} plots", "lotsOne": "1 plot"},
+    "weather": {"good": "Good day to spray", "rain": "Rain: better not spray", "wind": "Too windy to spray", "hot": "Hot: spray early or late"}
   },
   "backups": {
     "title": "Backups",
