@@ -1,13 +1,15 @@
 // src/app/core/interceptors/jwt-interceptor.spec.ts
 import { vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { HttpInterceptorFn } from '@angular/common/http';
-import { of } from 'rxjs';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { of, throwError } from 'rxjs';
 import { jwtInterceptor } from './jwt-interceptor';
 import { AuthService } from '../services/auth';
 
 describe('jwtInterceptor', () => {
   let authServiceMock: any;
+  let routerMock: any;
 
   const interceptor: HttpInterceptorFn = (req, next) =>
     TestBed.runInInjectionContext(() => jwtInterceptor(req, next));
@@ -15,11 +17,16 @@ describe('jwtInterceptor', () => {
   beforeEach(() => {
     authServiceMock = {
       getToken: vi.fn(),
+      logout: vi.fn(),
+    };
+    routerMock = {
+      navigate: vi.fn(),
     };
 
     TestBed.configureTestingModule({
       providers: [
         { provide: AuthService, useValue: authServiceMock },
+        { provide: Router, useValue: routerMock },
       ],
     });
   });
@@ -91,6 +98,88 @@ describe('jwtInterceptor', () => {
         next: () => {
           expect(req.clone).not.toHaveBeenCalled();
           expect(next).toHaveBeenCalledWith(req);
+          resolve();
+        },
+      });
+    });
+  });
+
+  // ── manejo de errores HTTP ────────────────────────────────────────────
+
+  const requestFalso = (url: string) =>
+    ({
+      url,
+      headers: { set: vi.fn().mockReturnValue('headers') },
+      clone: vi.fn().mockReturnValue({ url }),
+    }) as any;
+
+  const respuestaConError = (status: number, url: string) =>
+    vi.fn().mockReturnValue(throwError(() => new HttpErrorResponse({ status, url })));
+
+  it('on 401 should logout and redirect to login with sesion=expirada', () => {
+    return new Promise<void>((resolve) => {
+      authServiceMock.getToken.mockReturnValue('tok');
+      const req = requestFalso('/api/fincas/1');
+      const next = respuestaConError(401, '/api/fincas/1');
+
+      interceptor(req, next).subscribe({
+        error: (err) => {
+          expect(err.status).toBe(401);
+          expect(authServiceMock.logout).toHaveBeenCalledTimes(1);
+          expect(routerMock.navigate).toHaveBeenCalledWith(['/auth/login'], {
+            queryParams: { sesion: 'expirada' },
+          });
+          resolve();
+        },
+      });
+    });
+  });
+
+  it('on 401 from /api/auth/login should NOT logout nor redirect', () => {
+    return new Promise<void>((resolve) => {
+      authServiceMock.getToken.mockReturnValue(null);
+      const req = requestFalso('http://localhost:8080/api/auth/login');
+      const next = respuestaConError(401, '/api/auth/login');
+
+      interceptor(req, next).subscribe({
+        error: (err) => {
+          expect(err.status).toBe(401);
+          expect(authServiceMock.logout).not.toHaveBeenCalled();
+          expect(routerMock.navigate).not.toHaveBeenCalled();
+          resolve();
+        },
+      });
+    });
+  });
+
+  it('on 403 should propagate the error without closing the session', () => {
+    return new Promise<void>((resolve) => {
+      authServiceMock.getToken.mockReturnValue('tok');
+      const req = requestFalso('/api/fincas/2');
+      const next = respuestaConError(403, '/api/fincas/2');
+
+      interceptor(req, next).subscribe({
+        error: (err) => {
+          expect(err.status).toBe(403);
+          expect(authServiceMock.logout).not.toHaveBeenCalled();
+          expect(routerMock.navigate).not.toHaveBeenCalled();
+          resolve();
+        },
+      });
+    });
+  });
+
+  it('on 500 should propagate the error without closing the session', () => {
+    return new Promise<void>((resolve) => {
+      authServiceMock.getToken.mockReturnValue('tok');
+      const req = requestFalso('/api/fincas');
+      const next = respuestaConError(500, '/api/fincas');
+
+      interceptor(req, next).subscribe({
+        error: (err) => {
+          expect(err.status).toBe(500);
+          expect(authServiceMock.logout).not.toHaveBeenCalled();
+          expect(routerMock.navigate).not.toHaveBeenCalled();
           resolve();
         },
       });
