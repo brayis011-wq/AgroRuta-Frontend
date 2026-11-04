@@ -31,7 +31,8 @@ describe('ListaJornalesComponent', () => {
       porTrabajador: vi.fn().mockReturnValue(of([mkJornal()]))
     };
     trabajadorSvc = {
-      buscarPorId: vi.fn().mockReturnValue(of(mkTrabajador()))
+      buscarPorId: vi.fn().mockReturnValue(of(mkTrabajador())),
+      listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()]))
     };
     nominaSvc = {
       generar: vi.fn()
@@ -86,7 +87,7 @@ describe('ListaJornalesComponent', () => {
     jornalSvc.porTrabajador.mockReturnValue(throwError(() => new Error()));
     component.trabajadorId = 1;
     component.cargarJornales();
-    expect(component.error).toContain('Error al cargar jornales');
+    expect(component.error).toBe('workers.wages.list.errors.load');
   });
 
   it('cargarJornales() should do nothing without trabajadorId', () => {
@@ -183,7 +184,7 @@ describe('ListaJornalesComponent', () => {
     component.abrirGenerarNomina();
     component.formNomina.setValue({ periodoInicio: '2024-01-31', periodoFin: '2024-01-01' });
     component.generarNomina();
-    expect(component.error).toContain('fecha fin');
+    expect(component.error).toBe('workers.wages.list.errors.endBeforeStart');
     expect(nominaSvc.generar).not.toHaveBeenCalled();
   });
 
@@ -203,7 +204,7 @@ describe('ListaJornalesComponent', () => {
     component.abrirGenerarNomina();
     component.formNomina.setValue({ periodoInicio: '2024-01-01', periodoFin: '2024-01-31' });
     component.generarNomina();
-    expect(component.error).toContain('Error al generar');
+    expect(component.error).toBe('workers.wages.list.errors.generate');
   });
 
   it('verNominaCompleta() should navigate to nominas', () => {
@@ -258,5 +259,41 @@ describe('ListaJornalesComponent', () => {
     component.formNomina.get('periodoInicio')!.setValue('');
     component.formNomina.get('periodoInicio')!.markAsTouched();
     expect(component.invalido('periodoInicio')).toBe(true);
+  });
+
+  it('loads the workers for the selector, sorted by name', () => {
+    trabajadorSvc.listarTodos.mockReturnValue(of([
+      { id: 2, nombreCompleto: 'Zoe Ruiz' }, { id: 1, nombreCompleto: 'Ana Gil' },
+    ]));
+    TestBed.resetTestingModule();
+    return TestBed.configureTestingModule({
+      imports: [ListaJornalesComponent],
+      providers: [
+        provideRouter([]),
+        { provide: JornalService, useValue: jornalSvc },
+        { provide: TrabajadorService, useValue: trabajadorSvc },
+        { provide: NominaService, useValue: nominaSvc },
+        { provide: ActivatedRoute, useValue: { queryParams: queryParamsSubject.asObservable() } },
+      ],
+    }).compileComponents().then(() => {
+      const f = TestBed.createComponent(ListaJornalesComponent);
+      f.detectChanges();
+      expect(f.componentInstance.trabajadores.map((t) => t.id)).toEqual([1, 2]);
+      expect(f.componentInstance.cargandoTrabajadores).toBe(false);
+    });
+  });
+
+  it('elegirTrabajador() keeps the user on the page and puts the worker in the URL', () => {
+    const router = TestBed.inject(Router);
+    const nav = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    component.elegirTrabajador(7);
+    expect(nav).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { trabajadorId: 7 } }));
+  });
+
+  it('clears the worker when the URL no longer has one', () => {
+    queryParamsSubject.next({ trabajadorId: '1' });
+    queryParamsSubject.next({});
+    expect(component.trabajadorId).toBeNull();
+    expect(component.jornales).toEqual([]);
   });
 });

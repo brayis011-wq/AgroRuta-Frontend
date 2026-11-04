@@ -33,7 +33,7 @@
 .colapsar { margin-left: auto; }
 .cerrar-cajon { display: none; margin-left: auto; }
 
-.nav { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; flex: 1; min-height: 0; margin: 0 -4px; padding: 0 4px; }
+.nav { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; overflow-x: hidden; flex: 1; min-height: 0; margin: 0 -4px; padding: 0 4px; }
 .sec {
   font-size: 10.5px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
   color: var(--ar-tinta-3); padding: 12px 12px 4px;
@@ -83,6 +83,9 @@
 }
 .item .badge { margin-left: auto; }
 .item .badge + .flecha { margin-left: 4px; }
+.sub-txt { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sub a.nueva:not(.on) { color: var(--ar-verde-700); font-weight: 500; }
+.sub a.nueva .ti { font-size: 14px; }
 .sub a.on .badge { background: rgba(255, 255, 255, .25); color: #fff; }
 
 .velo, .barra { display: none; }

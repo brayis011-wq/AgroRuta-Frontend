@@ -28,43 +28,11 @@
         <em class="tip">{{ 'layout.nav.home' | translate }}</em>
       </a>
 
-      <a class="item" routerLink="/cultivo" routerLinkActive="on">
-        <i class="ti ti-plant" aria-hidden="true"></i>
-        <span class="txt">{{ 'layout.nav.crops' | translate }}</span>
-        <em class="tip">{{ 'layout.nav.crops' | translate }}</em>
-      </a>
-
-      <button type="button" class="item grupo" [class.on]="colapsado() && enTrabajadores()"
-              [class.abierto]="enTrabajadores()"
-              [attr.aria-expanded]="trabajadoresAbierto()" (click)="alternarTrabajadores()">
-        <i class="ti ti-users-group" aria-hidden="true"></i>
-        <span class="txt">{{ 'layout.nav.workers' | translate }}</span>
-        @if (nominasPendientes() > 0 && !trabajadoresAbierto()) {
-          <span class="badge">{{ nominasPendientes() }}</span>
-        }
-        <i class="ti ti-chevron-down flecha" [class.girada]="trabajadoresAbierto()" aria-hidden="true"></i>
-        <em class="tip">{{ 'layout.nav.workers' | translate }}</em>
-      </button>
-
-      @if (trabajadoresAbierto()) {
-        <div class="sub">
-          @for (s of subTrabajadores; track s.ruta) {
-            <a [routerLink]="s.ruta" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: s.exacto }">
-              <span>{{ s.clave | translate }}</span>
-              @if (s.contador && nominasPendientes() > 0) {
-                <span class="badge" [title]="'layout.pendingPayrolls' | translate">{{ nominasPendientes() }}</span>
-              }
-            </a>
-          }
-        </div>
-      }
+      <ng-container *ngTemplateOutlet="grupo; context: { id: 'cultivos', icono: 'ti-plant', clave: 'layout.nav.crops', items: subCultivos() }" />
+      <ng-container *ngTemplateOutlet="grupo; context: { id: 'trabajadores', icono: 'ti-users-group', clave: 'layout.nav.workers', items: subTrabajadores }" />
 
       <span class="sec">{{ 'layout.sections.analysis' | translate }}</span>
-      <a class="item" routerLink="/reportes" routerLinkActive="on">
-        <i class="ti ti-chart-bar" aria-hidden="true"></i>
-        <span class="txt">{{ 'layout.nav.reports' | translate }}</span>
-        <em class="tip">{{ 'layout.nav.reports' | translate }}</em>
-      </a>
+      <ng-container *ngTemplateOutlet="grupo; context: { id: 'reportes', icono: 'ti-chart-bar', clave: 'layout.nav.reports', items: subReportes }" />
 
       <span class="sec">{{ 'layout.sections.system' | translate }}</span>
       <a class="item" routerLink="/configuracion" routerLinkActive="on">
@@ -103,6 +71,39 @@
       </div>
     </div>
   </aside>
+
+  <!-- Grupo del menú con submenú desplegable -->
+  <ng-template #grupo let-id="id" let-icono="icono" let-clave="clave" let-items="items">
+    <button type="button" class="item grupo" [class.on]="colapsado() && enGrupo(id)"
+            [class.abierto]="enGrupo(id)" [attr.aria-expanded]="abierto(id)" (click)="alternar(id)">
+      <i class="ti {{ icono }}" aria-hidden="true"></i>
+      <span class="txt">{{ clave | translate }}</span>
+      @if (id === 'trabajadores' && nominasPendientes() > 0 && !abierto(id)) {
+        <span class="badge">{{ nominasPendientes() }}</span>
+      }
+      <i class="ti ti-chevron-down flecha" [class.girada]="abierto(id)" aria-hidden="true"></i>
+      <em class="tip">{{ clave | translate }}</em>
+    </button>
+    @if (abierto(id)) {
+      <div class="sub">
+        @for (s of items; track s.ruta + (s.query?.tab ?? '')) {
+          <a [routerLink]="s.ruta" [queryParams]="s.query" routerLinkActive="on"
+             [routerLinkActiveOptions]="s.query
+               ? { paths: 'exact', queryParams: 'subset', matrixParams: 'ignored', fragment: 'ignored' }
+               : { exact: !!s.exacto }"
+             [class.nueva]="s.icono">
+            <span class="sub-txt">
+              @if (s.icono) { <i class="ti {{ s.icono }}" aria-hidden="true"></i> }
+              {{ s.texto ?? (s.clave | translate) }}
+            </span>
+            @if (s.contador && nominasPendientes() > 0) {
+              <span class="badge" [title]="'layout.pendingPayrolls' | translate">{{ nominasPendientes() }}</span>
+            }
+          </a>
+        }
+      </div>
+    }
+  </ng-template>
 
   <div class="velo" (click)="cerrarCajon()" aria-hidden="true"></div>
 
