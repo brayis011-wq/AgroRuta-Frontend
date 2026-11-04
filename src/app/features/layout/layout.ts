@@ -1,15 +1,18 @@
-import { Component, DestroyRef, HostListener, inject, signal } from '@angular/core';
+import { Component, DestroyRef, HostListener, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { NgTemplateOutlet, UpperCasePipe } from '@angular/common';
+import { DecimalPipe, NgTemplateOutlet, UpperCasePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth';
 import { AuthResponse } from '../../core/models/auth.model';
 import { LanguageService, Lang } from '../../core/services/language.service';
 import { NominaService } from '../../core/services/worker.service';
-import { CultivoService } from '../../core/services/cultivo.service';
-import { Finca } from '../../core/models/cultivo.model';
+import { FincaActivaService } from '../../core/services/finca-activa.service';
+import { WeatherService } from '../../core/services/weather.service';
+import { Weather } from '../../core/models/weather.model';
+import { BuscadorComponent } from '../../shared/buscador/buscador';
+import { consejoFumigacion, municipio } from '../../shared/clima';
 
 const CLAVE_COLAPSADO = 'sidebarColapsado';
 /** Fincas que se muestran como accesos directos en el submenú de Cultivos */
@@ -32,24 +35,32 @@ export interface ItemSubmenu {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterModule, TranslatePipe, UpperCasePipe, NgTemplateOutlet],
+  imports: [RouterModule, TranslatePipe, UpperCasePipe, DecimalPipe, NgTemplateOutlet, BuscadorComponent],
   templateUrl: './layout.html',
-  styleUrls: ['./layout.css', './layout-movil.css'],
+  styleUrls: ['./layout.css', './layout-movil.css', './layout-extras.css', './layout-anim.css'],
 })
 export class LayoutComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly nominaService = inject(NominaService);
-  private readonly cultivoService = inject(CultivoService);
+  private readonly weatherService = inject(WeatherService);
+  readonly fincaActiva = inject(FincaActivaService);
   readonly lang = inject(LanguageService);
 
   readonly usuario: AuthResponse | null = this.authService.getUsuario();
   readonly colapsado = signal(leerColapsado());
   /** Submenús desplegados */
   readonly abiertos = signal<Set<IdGrupo>>(new Set());
-  /** Fincas del agricultor (accesos del submenú de Cultivos) */
-  readonly fincas = signal<Finca[]>([]);
+  readonly municipioDe = municipio;
+
+  /** Menú del selector de finca desplegado */
+  readonly menuFincas = signal(false);
   private fincasCargadas = false;
+
+  /** Clima de la finca activa (o de la primera con ubicación) */
+  readonly clima = signal<Weather | null>(null);
+  readonly lugarClima = computed(() => municipio(this.fincaActiva.paraClima()) || this.clima()?.city || '');
+  readonly consejo = computed(() => { const c = this.clima(); return c ? consejoFumigacion(c) : null; });
   /** Menú completo abierto como cajón (solo celular) */
   readonly cajonAbierto = signal(false);
   /** Nóminas que esperan aprobación (contador del menú) */
@@ -72,12 +83,14 @@ export class LayoutComponent {
   subCultivos(): ItemSubmenu[] {
     return [
       { ruta: '/cultivo', clave: 'layout.nav.myFarms', exacto: true },
-      ...this.fincas().slice(0, MAX_FINCAS_MENU).map((f) => ({ ruta: `/cultivo/finca/${f.id}`, texto: f.nombre })),
+      ...this.fincaActiva.fincas().slice(0, MAX_FINCAS_MENU).map((f) => ({ ruta: `/cultivo/finca/${f.id}`, texto: f.nombre })),
       { ruta: '/cultivo/nueva-finca', clave: 'layout.nav.newFarm', icono: 'ti-plus' },
     ];
   }
 
   constructor() {
+    // El clima sigue a la finca elegida
+    effect(() => this.cargarClima(this.fincaActiva.paraClima()));
     this.alNavegar(this.router.url);
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd), takeUntilDestroyed(inject(DestroyRef)))
@@ -86,6 +99,7 @@ export class LayoutComponent {
 
   private alNavegar(url: string): void {
     this.cajonAbierto.set(false);
+    this.menuFincas.set(false);
     const grupo = grupoDeUrl(url);
     if (grupo) this.abiertos.update((s) => new Set(s).add(grupo));
     // Las fincas se refrescan al moverse por Cultivos (pudo crearse o borrarse una)
@@ -94,13 +108,26 @@ export class LayoutComponent {
   }
 
   private cargarFincas(): void {
-    const id = this.usuario?.id;
-    if (id == null) return;
     this.fincasCargadas = true;
-    this.cultivoService.listarFincasPorAgricultor(id).subscribe({
-      next: (f) => this.fincas.set([...f].sort((a, b) => a.nombre.localeCompare(b.nombre))),
-      error: () => this.fincas.set([]),
-    });
+    this.fincaActiva.cargar();
+  }
+
+  private cargarClima(f: { centroideLat?: number; centroideLng?: number; ubicacion?: string } | null): void {
+    if (!f) { this.clima.set(null); return; }
+    const obs = f.centroideLat != null && f.centroideLng != null
+      ? this.weatherService.getByCoordinates(f.centroideLat, f.centroideLng)
+      : municipio(f as { ubicacion: string })
+        ? this.weatherService.getByCity(municipio(f as { ubicacion: string }))
+        : null;
+    if (!obs) { this.clima.set(null); return; }
+    obs.subscribe({ next: (w) => this.clima.set(w), error: () => this.clima.set(null) });
+  }
+
+  /** Elige finca en el selector; con una finca concreta se abre su página */
+  elegirFinca(id: number | null): void {
+    this.fincaActiva.elegir(id);
+    this.menuFincas.set(false);
+    this.router.navigate(id == null ? ['/cultivo'] : ['/cultivo/finca', id]);
   }
 
   abierto(g: IdGrupo): boolean {
@@ -150,6 +177,7 @@ export class LayoutComponent {
   @HostListener('document:keydown.escape')
   cerrarCajon(): void {
     this.cajonAbierto.set(false);
+    this.menuFincas.set(false);
   }
 
   logout(): void {

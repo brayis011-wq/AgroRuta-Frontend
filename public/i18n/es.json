@@ -16,6 +16,7 @@
     "status": "Estado",
     "required": "Requerido"
   },
+  "search": {"title": "Buscar en AgroRuta", "button": "Buscar…", "placeholder": "Busca una finca, un trabajador o una página", "empty": "Sin resultados", "move": "moverse", "open": "abrir", "types": {"page": "Página", "farm": "Finca", "worker": "Trabajador"}},
   "layout": {
     "subtitle": "Sistema de gestión",
     "sections": { "management": "Gestión", "analysis": "Análisis", "system": "Sistema" },
@@ -43,7 +44,9 @@
     "collapse": "Colapsar",
     "menu": "Menú principal",
     "closeMenu": "Cerrar menú",
-    "pendingPayrolls": "Nóminas por aprobar"
+    "pendingPayrolls": "Nóminas por aprobar",
+    "farm": {"all": "Todas las fincas", "choose": "Elegir finca", "count": "{{count}} fincas", "lots": "{{count}} lotes", "lotsOne": "1 lote"},
+    "weather": {"good": "Buen día para fumigar", "rain": "Lluvia: mejor no fumigar", "wind": "Mucho viento para fumigar", "hot": "Calor: fumiga temprano o tarde"}
   },
   "backups": {
     "title": "Copias de seguridad",
