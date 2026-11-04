@@ -1,13 +1,13 @@
 /* Panel de administración: barra lateral oscura para distinguirlo del panel del agricultor */
 :host {
-  --adm-sidebar: #15241b;
-  --adm-sidebar-2: #1d3226;
-  --adm-line: #2a4434;
-  --adm-text: #d7e4dc;
-  --adm-muted: #8fa89a;
-  --adm-accent: #7cc68a;
-  --adm-badge: #e9b949;
-  --adm-bg: #eef2ef;
+  --adm-sidebar: #2e7d32;
+  --adm-sidebar-2: #1b5e20;
+  --adm-line: #1b5e20;
+  --adm-text: #c8e6c9;
+  --adm-muted: #a5d6a7;
+  --adm-accent: #a5d6a7;
+  --adm-badge: #f9c74f;
+  --adm-bg: #f0f4f8;
   --adm-ancho: 248px;
   --adm-ancho-min: 68px;
   display: block;
@@ -58,7 +58,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--adm-sidebar);
+    color: #1b5e20;
   background: var(--adm-badge);
   border-radius: 4px;
   padding: 2px 6px;
@@ -134,7 +134,7 @@
   height: 34px;
   border-radius: 50%;
   background: var(--adm-accent);
-  color: var(--adm-sidebar);
+  color: #1b5e20;
   font-weight: 700;
   display: grid;
   place-items: center;
