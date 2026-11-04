@@ -25,11 +25,21 @@
       "workers": "Trabajadores",
       "reports": "Reportes",
       "settings": "Configuración",
-      "backups": "Copias de seguridad"
+      "backups": "Copias de seguridad",
+      "team": "Equipo",
+      "wages": "Jornales",
+      "payrolls": "Nóminas",
+      "payments": "Pagos",
+      "positions": "Cargos",
+      "activities": "Actividades",
+      "more": "Más"
     },
     "logout": "Cerrar sesión",
     "expand": "Expandir",
-    "collapse": "Colapsar"
+    "collapse": "Colapsar",
+    "menu": "Menú principal",
+    "closeMenu": "Cerrar menú",
+    "pendingPayrolls": "Nóminas por aprobar"
   },
   "backups": {
     "title": "Copias de seguridad",

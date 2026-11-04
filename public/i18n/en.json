@@ -25,11 +25,21 @@
       "workers": "Workers",
       "reports": "Reports",
       "settings": "Settings",
-      "backups": "backups"
+      "backups": "backups",
+      "team": "Team",
+      "wages": "Work days",
+      "payrolls": "Payrolls",
+      "payments": "Payments",
+      "positions": "Positions",
+      "activities": "Activities",
+      "more": "More"
     },
     "logout": "Log out",
     "expand": "Expand",
-    "collapse": "Collapse"
+    "collapse": "Collapse",
+    "menu": "Main menu",
+    "closeMenu": "Close menu",
+    "pendingPayrolls": "Payrolls awaiting approval"
   },
   "backups": {
     "title": "Backups",
