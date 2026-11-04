@@ -1,6 +1,6 @@
 .page {
   padding: 2rem;
-  background-color: #f0f4f8;
+  background-color: var(--ar-fondo);
   min-height: 100%;
 }
 
@@ -62,7 +62,7 @@
 }
 
 .btn-secundario:hover {
-  background-color: #f0f4f8;
+  background-color: var(--ar-fondo);
 }
 
 .tabs {
@@ -91,7 +91,7 @@
 }
 
 .tab:hover {
-  background-color: #f0f4f8;
+  background-color: var(--ar-fondo);
   color: #2e7d32;
 }
 
@@ -221,7 +221,7 @@
 }
 
 .cargo-tag {
-  background-color: #f0f4f8;
+  background-color: var(--ar-fondo);
   color: #2e7d32;
   border: 1px solid #a5d6a7;
   padding: 1px 8px;
@@ -433,7 +433,7 @@
 }
 
 .detalle-cargo-card {
-  background: #f0f4f8;
+  background: var(--ar-fondo);
   border: 1px solid #c8e6c9;
   border-radius: 10px;
   padding: 1rem;
@@ -470,7 +470,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 1rem 0.5rem;
-  background: #f0f4f8;
+  background: var(--ar-fondo);
   border: 1px solid #c8e6c9;
   border-radius: 10px;
   cursor: pointer;

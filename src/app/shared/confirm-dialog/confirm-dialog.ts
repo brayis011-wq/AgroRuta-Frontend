@@ -38,7 +38,7 @@ import { ConfirmService } from './confirm.service';
       box-sizing: border-box; background: #fff; border-radius: 12px; width: min(420px, 100%);
       padding: 1.4rem 1.5rem; box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
       display: flex; flex-direction: column; gap: 0.75rem;
-      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      font-family: var(--ar-fuente);
     }
     h2 { margin: 0; font-size: 1.05rem; color: #17231c; }
     p { margin: 0; font-size: 0.92rem; line-height: 1.5; color: #2f3b34; }
