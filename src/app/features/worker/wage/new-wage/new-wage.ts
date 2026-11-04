@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import {
   JornalService,
   JornalRequest,
+  CultivoDisponible,
   TrabajadorService,
   ActividadService
 } from '../../../../core/services/worker.service';
@@ -23,6 +24,14 @@ export class NuevoJornalComponent implements OnInit {
   trabajadores: Trabajador[] = [];
   actividades: Actividad[] = [];
   actividadesSeleccionadas: Set<number> = new Set();
+
+  /** Cultivos activos del agricultor y las fincas donde están */
+  cultivos: CultivoDisponible[] = [];
+  fincas: { id: number; nombre: string }[] = [];
+  cargandoCultivos = true;
+  /** Fecha de hoy (YYYY-MM-DD, hora local): no se registran jornales a futuro */
+  readonly hoy = fechaLocal(new Date());
+  private readonly cdr = inject(ChangeDetectorRef);
   guardando = false;
   error = '';   // clave de traducción
 
@@ -42,9 +51,9 @@ export class NuevoJornalComponent implements OnInit {
     // ✅ Fix: fb.group estaba como link markdown corrupto
     this.form = this.fb.group({
       trabajadorId:  [null, Validators.required],
-      cultivoId:     [null, Validators.required],
-      nombreCultivo: ['',   Validators.required],
-      fecha:         ['',   Validators.required],
+      fincaId:       [null, Validators.required],
+      cultivoId:     [{ value: null, disabled: true }, Validators.required],
+      fecha:         [this.hoy, Validators.required],
       observaciones: ['']
     });
 
@@ -59,14 +68,56 @@ export class NuevoJornalComponent implements OnInit {
           this.trabajadorIdOrigen = Number(idParam);
           this.form.patchValue({ trabajadorId: this.trabajadorIdOrigen });
         }
+        this.cdr.markForCheck();
       },
-      error: () => { this.error = 'workers.wages.new.errors.loadWorkers'; }
+      error: () => { this.error = 'workers.wages.new.errors.loadWorkers'; this.cdr.markForCheck(); }
+    });
+
+    // Al cambiar de finca se reinicia el cultivo elegido
+    this.form.get('fincaId')!.valueChanges.subscribe((id) => this.alCambiarFinca(id));
+
+    this.jornalService.cultivosDisponibles().subscribe({
+      next: (c: CultivoDisponible[]) => {
+        this.cultivos = c;
+        const porId = new Map<number, string>();
+        c.forEach(x => porId.set(x.fincaId, x.fincaNombre));
+        this.fincas = [...porId].map(([id, nombre]) => ({ id, nombre }))
+          .sort((a, b) => a.nombre.localeCompare(b.nombre));
+        this.cargandoCultivos = false;
+        // Con una sola finca no hay nada que elegir
+        if (this.fincas.length === 1) this.elegirFinca(this.fincas[0].id);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.cargandoCultivos = false;
+        this.error = 'workers.wages.new.errors.loadCrops';
+        this.cdr.markForCheck();
+      }
     });
 
     this.actividadService.listar().subscribe({
-      next: (a: Actividad[]) => this.actividades = a,
-      error: () => { this.error = 'workers.wages.new.errors.loadActivities'; }
+      next: (a: Actividad[]) => { this.actividades = a; this.cdr.markForCheck(); },
+      error: () => { this.error = 'workers.wages.new.errors.loadActivities'; this.cdr.markForCheck(); }
     });
+  }
+
+  /** Cultivos de la finca elegida */
+  get cultivosDeFinca(): CultivoDisponible[] {
+    const fincaId = this.form?.get('fincaId')?.value;
+    return this.cultivos.filter(c => c.fincaId === fincaId);
+  }
+
+  elegirFinca(id: number): void {
+    this.form.patchValue({ fincaId: id });
+  }
+
+  private alCambiarFinca(id: number | null): void {
+    const cultivo = this.form.get('cultivoId')!;
+    cultivo.reset(null);
+    if (id == null) { cultivo.disable(); return; }
+    cultivo.enable();
+    const deLaFinca = this.cultivosDeFinca;
+    if (deLaFinca.length === 1) cultivo.setValue(deLaFinca[0].id);
   }
 
   toggleActividad(id: number | undefined): void {
@@ -92,11 +143,10 @@ export class NuevoJornalComponent implements OnInit {
     this.guardando = true;
     this.error = '';
 
-    const v = this.form.value;
+    const v = this.form.getRawValue();
     const req: JornalRequest = {
       trabajadorId:  Number(v.trabajadorId),
       cultivoId:     Number(v.cultivoId),
-      nombreCultivo: v.nombreCultivo,
       fecha:         v.fecha,
       actividadIds:  [...this.actividadesSeleccionadas],
       observaciones: v.observaciones || undefined
@@ -115,8 +165,9 @@ export class NuevoJornalComponent implements OnInit {
           this.router.navigate(['/worker']);
         }
       },
-      error: () => {
-        this.error = 'workers.wages.new.errors.register';
+      error: (err) => {
+        // El backend explica el motivo (cultivo finalizado, de otra finca, etc.)
+        this.error = err?.error?.message || 'workers.wages.new.errors.register';
         this.guardando = false;
       }
     });
@@ -126,4 +177,9 @@ export class NuevoJornalComponent implements OnInit {
     const c = this.form.get(n);
     return !!(c?.invalid && c.touched);
   }
+}
+
+function fechaLocal(d: Date): string {
+  const dos = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${dos(d.getMonth() + 1)}-${dos(d.getDate())}`;
 }

@@ -759,10 +759,13 @@
         "worker": "Worker *",
         "selectWorker": "Select a worker",
         "date": "Date *",
-        "cropId": "Crop ID *",
-        "cropIdPlaceholder": "Crop ID",
-        "cropName": "Crop Name *",
-        "cropNamePlaceholder": "E.g.: Cape gooseberry Lot 3",
+        "farm": "Farm *",
+        "selectFarm": "Select the farm",
+        "crop": "Crop *",
+        "selectCrop": "Select the crop",
+        "selectFarmFirst": "Choose the farm first",
+        "noCrops": "You have no active crops. Register a planting on a plot to assign work days.",
+        "goToCrops": "Go to Crops →",
         "notes": "Notes",
         "notesPlaceholder": "Additional notes (optional)",
         "activitiesTitle": "Activities Performed *",
@@ -773,6 +776,7 @@
         "errors": {
           "loadWorkers": "Error loading workers",
           "loadActivities": "Error loading activities",
+          "loadCrops": "Your crops could not be loaded.",
           "noActivity": "Select at least one activity",
           "register": "Error logging workday"
         }
