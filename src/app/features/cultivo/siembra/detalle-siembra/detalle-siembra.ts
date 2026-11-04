@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import { Subscription, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -40,9 +41,9 @@ interface TimelineItem {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent],
   templateUrl: './detalle-siembra.html',
-  styleUrls: ['../../cultivo-ui.css', '../../cultivo-bloques.css', '../../cultivo-dialogo.css', './detalle-siembra.css'],
+  styleUrls: ['../../cultivo-ui.css', '../../cultivo-bloques.css', '../../cultivo-dialogo.css', './detalle-siembra.css', './detalle-siembra-hoy.css'],
 })
-export class DetalleSiembraComponent implements OnInit {
+export class DetalleSiembraComponent implements OnInit, OnDestroy {
   /** \"Café · Castillo\" */
   readonly nombreCultivo = nombreDeCultivo;
   private translate = inject(TranslateService);
@@ -94,8 +95,26 @@ export class DetalleSiembraComponent implements OnInit {
     private cdr: ChangeDetectorRef,
   ) {}
 
+  private rutaSub?: Subscription;
+
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    // Se reutiliza al pasar de una siembra a otra: recargar con cada id
+    const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
+    this.rutaSub = params$.subscribe((p) => this.cargarSiembra(Number(p.get('id'))));
+  }
+
+  ngOnDestroy(): void {
+    this.rutaSub?.unsubscribe();
+  }
+
+  private cargarSiembra(id: number): void {
+    this.siembra = null;
+    this.actividades = []; this.fumigaciones = []; this.cosechas = [];
+    this.timelineCompleto = []; this.totalKg = 0;
+    this.clima = null; this.consejo = null;
+    this.nombreLote = null; this.nombreFinca = null;
+    this.fincaLat = null; this.fincaLng = null;
+    this.cargando = true; this.error = '';
     this.cultivoService.buscarSiembra(id).subscribe({
       next: (siembra) => {
         this.siembra = siembra;

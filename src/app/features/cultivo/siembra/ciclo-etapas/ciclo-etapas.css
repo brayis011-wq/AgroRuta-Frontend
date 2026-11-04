@@ -69,8 +69,8 @@
 .btn:disabled { opacity: .55; cursor: not-allowed; }
 .btn-primario { background: linear-gradient(180deg, #38923d, var(--ar-verde-600)); border-color: transparent; color: #fff; box-shadow: 0 3px 10px rgba(46, 125, 50, .3); }
 .btn-primario:hover:not(:disabled) { box-shadow: 0 6px 16px rgba(46, 125, 50, .35); border-color: transparent; }
-.btn-texto { border-color: transparent; background: transparent; color: var(--ar-tinta-2); }
-.btn-texto:hover:not(:disabled) { border-color: transparent; color: var(--ar-tinta); background: var(--ar-fondo); }
+.btn-texto { background: var(--ar-fondo); border-color: var(--ar-borde); color: var(--ar-tinta-2); }
+.btn-texto:hover:not(:disabled) { color: var(--ar-tinta); border-color: #c9d6cc; }
 .btn:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
 
 /* Panel de confirmación */

@@ -45,6 +45,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   private map!: L.Map;
   private poligonosLayer: L.FeatureGroup = new L.FeatureGroup();
   private langSub?: Subscription;
+  private rutaSub?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -64,9 +65,24 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.map && this.lotes.length > 0) this.dibujarLotes(false);
     });
 
-    this.fincaId = Number(this.route.snapshot.paramMap.get('id'));
-    this.cultivoService.buscarFinca(this.fincaId).subscribe({
+    // La página se reutiliza al cambiar de finca desde el panel: recargar con cada id
+    const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
+    this.rutaSub = params$.subscribe((p) => this.cargarFinca(Number(p.get('id'))));
+  }
+
+  private cargarFinca(id: number): void {
+    this.fincaId = id;
+    this.finca = null;
+    this.lotes = [];
+    this.siembras = {};
+    this.error = '';
+    this.editando = false;
+    this.cargando = true;
+    this.poligonosLayer.clearLayers();
+    this.cdr.detectChanges();
+    this.cultivoService.buscarFinca(id).subscribe({
       next: (finca) => {
+        if (id !== this.fincaId) return;
         this.finca = finca;
         this.cargarLotes(this.fincaId);
       },
@@ -84,6 +100,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.langSub?.unsubscribe();
+    this.rutaSub?.unsubscribe();
     if (this.map) this.map.remove();
   }
 

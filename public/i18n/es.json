@@ -1436,6 +1436,7 @@
   },
   "temporadas": {
     "ui": {
+      "registerNew": "Registrar nuevo",
       "daysInField": "Días en campo",
       "back": "Volver",
       "crops": "Cultivos",

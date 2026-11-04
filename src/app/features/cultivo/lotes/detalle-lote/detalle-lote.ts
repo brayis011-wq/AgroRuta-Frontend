@@ -4,7 +4,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { forkJoin, of, catchError } from 'rxjs';
+import { forkJoin, of, catchError, Subscription } from 'rxjs';
 import * as L from 'leaflet';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -60,12 +60,30 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly estado = computed<EstadoLote>(() => this.lote()?.estado ?? 'DISPONIBLE');
 
   private map?: L.Map;
+  private poligono?: L.Polygon;
+  private rutaSub?: Subscription;
   private ndviLayer?: L.TileLayer.WMS;
   private loteId = 0;
 
   ngOnInit(): void {
-    this.loteId = Number(this.route.snapshot.paramMap.get('id'));
-    this.cultivoService.buscarLote(this.loteId).subscribe({
+    // Angular reutiliza esta página al pasar de un lote a otro (p. ej. desde el panel
+    // izquierdo): hay que recargar cada vez que cambia el id de la ruta.
+    const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
+    this.rutaSub = params$.subscribe((p) => this.cargar(Number(p.get('id'))));
+  }
+
+  private cargar(id: number): void {
+    this.loteId = id;
+    this.lote.set(null);
+    this.siembra.set(null);
+    this.temporadas.set([]);
+    this.error.set('');
+    this.editando.set(false);
+    this.cargando.set(true);
+    if (this.poligono) { this.map?.removeLayer(this.poligono); this.poligono = undefined; }
+    if (this.ndviActivo() && this.ndviLayer) { this.map?.removeLayer(this.ndviLayer); this.ndviActivo.set(false); }
+
+    this.cultivoService.buscarLote(id).subscribe({
       next: (lote) => {
         this.lote.set(lote);
         this.cargarTemporadas();
@@ -82,12 +100,15 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.rutaSub?.unsubscribe();
     this.map?.remove();
   }
 
   /** Siembra en curso y temporadas anteriores (con lo cosechado en cada una) */
   cargarTemporadas(): void {
-    this.cultivoService.historialLote(this.loteId).pipe(catchError(() => of([] as Siembra[]))).subscribe((todas) => {
+    const id = this.loteId;
+    this.cultivoService.historialLote(id).pipe(catchError(() => of([] as Siembra[]))).subscribe((todas) => {
+      if (id !== this.loteId) return; // ya se cambió a otro lote
       this.siembra.set(todas.find(siembraActiva) ?? null);
       const pasadas = todas.filter((s) => !siembraActiva(s));
       this.temporadas.set(pasadas.map((s) => ({
@@ -225,10 +246,11 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!coordenadas || !this.map) return;
     try {
       const coords: [number, number][] = JSON.parse(coordenadas);
-      const poligono = L.polygon(coords.map((c) => [c[0], c[1]] as L.LatLngTuple), {
+      if (this.poligono) this.map.removeLayer(this.poligono);
+      this.poligono = L.polygon(coords.map((c) => [c[0], c[1]] as L.LatLngTuple), {
         color: '#2e7d32', fillOpacity: 0.25, weight: 2,
       }).addTo(this.map);
-      this.map.fitBounds(poligono.getBounds(), { padding: [40, 40] });
+      this.map.fitBounds(this.poligono.getBounds(), { padding: [40, 40] });
     } catch {
       console.warn('Coordenadas inválidas');
     }

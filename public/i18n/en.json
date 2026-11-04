@@ -1436,6 +1436,7 @@
   },
   "temporadas": {
     "ui": {
+      "registerNew": "Register new",
       "daysInField": "Days in the field",
       "back": "Back",
       "crops": "Crops",
