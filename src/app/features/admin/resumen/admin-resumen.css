@@ -1,0 +1,53 @@
+.attention { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.attention-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  background: #eef0ef;
+  color: var(--a-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid var(--a-line);
+}
+.attention-item.warn { background: var(--a-amber-soft); color: var(--a-amber); border-color: #f1dcaa; }
+.attention-item:hover { filter: brightness(0.97); }
+
+.users-card {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1.25rem 1.4rem;
+}
+.users-total { display: flex; flex-direction: column; gap: 0.15rem; }
+.kpi-big { font-size: 2.6rem; font-weight: 700; color: var(--a-ink); line-height: 1.05; font-variant-numeric: tabular-nums; }
+.role-bars { display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; }
+.role-row { display: grid; grid-template-columns: 110px 1fr 48px; gap: 0.75rem; align-items: center; font-size: 0.85rem; }
+.role-name { color: var(--a-text); }
+.bar { height: 8px; background: #edf1ee; border-radius: 999px; overflow: hidden; }
+.fill { display: block; height: 100%; border-radius: inherit; }
+.fill.farmer { background: var(--a-green); }
+.fill.worker { background: #6fa77a; }
+.fill.admin { background: #c9a24a; }
+.users-link { font-size: 0.85rem; align-self: end; white-space: nowrap; }
+
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.kpi { padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.2rem; position: relative; }
+.kpi-icon { position: absolute; top: 1rem; right: 1rem; font-size: 1.3rem; color: var(--a-green); opacity: 0.8; }
+.kpi-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--a-muted); }
+.kpi-value { font-size: 1.6rem; font-weight: 700; color: var(--a-ink); font-variant-numeric: tabular-nums; }
+.kpi-value small { font-size: 0.9rem; font-weight: 600; color: var(--a-muted); }
+.kpi-note { font-size: 0.8rem; color: var(--a-muted); }
+
+@media (max-width: 960px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .users-card { grid-template-columns: 1fr; gap: 1rem; }
+  .users-link { justify-self: start; }
+}
+@media (max-width: 560px) {
+  .kpis { grid-template-columns: 1fr; }
+  .role-row { grid-template-columns: 90px 1fr 40px; }
+}

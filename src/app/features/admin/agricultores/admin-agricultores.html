@@ -1,0 +1,68 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">{{ 'admin.badge' | translate }}</p>
+      <h1 class="page-title">{{ 'admin.farmers.title' | translate }}</h1>
+      <p class="page-sub">{{ 'admin.farmers.subtitle' | translate }}</p>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="card-head">
+      <h2 class="card-title">{{ 'admin.farmers.count' | translate: { count: visibles.length } }}</h2>
+      <div class="toolbar">
+        <label class="search">
+          <i class="ti ti-search" aria-hidden="true"></i>
+          <input id="admin-buscar-agricultor" class="input" type="search" [(ngModel)]="busqueda"
+                 [placeholder]="'admin.farmers.search' | translate"
+                 [attr.aria-label]="'admin.farmers.search' | translate" />
+        </label>
+        <select id="admin-orden-agricultores" class="select" [(ngModel)]="orden"
+                [attr.aria-label]="'admin.farmers.sortBy' | translate">
+          <option value="nombre">{{ 'admin.farmers.sort.name' | translate }}</option>
+          <option value="hectareas">{{ 'admin.farmers.sort.hectares' | translate }}</option>
+          <option value="trabajadores">{{ 'admin.farmers.sort.workers' | translate }}</option>
+          <option value="pagado">{{ 'admin.farmers.sort.paid' | translate }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="estado" *ngIf="cargando">{{ 'common.loading' | translate }}</div>
+    <div class="estado" *ngIf="error">
+      {{ 'admin.farmers.loadError' | translate }}
+      <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">{{ 'common.retry' | translate }}</button>
+    </div>
+    <div class="estado" *ngIf="!cargando && !error && visibles.length === 0">{{ 'admin.farmers.empty' | translate }}</div>
+
+    <div class="table-wrap" *ngIf="!cargando && !error && visibles.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'admin.farmers.table.farmer' | translate }}</th>
+            <th class="num">{{ 'admin.farmers.table.farms' | translate }}</th>
+            <th class="num">{{ 'admin.farmers.table.hectares' | translate }}</th>
+            <th class="num">{{ 'admin.farmers.table.workers' | translate }}</th>
+            <th class="num">{{ 'admin.farmers.table.payrolls' | translate }}</th>
+            <th class="num">{{ 'admin.farmers.table.paid' | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of visibles">
+            <td>
+              <span class="cell-main">{{ a.nombre }}</span>
+              <span class="pill off" *ngIf="!a.activo" style="margin-left:.4rem">{{ 'admin.common.inactive' | translate }}</span>
+              <span class="cell-sub">{{ a.email }}</span>
+            </td>
+            <td class="num">{{ num(a.fincas) }}</td>
+            <td class="num">{{ num(a.hectareas, 1) }}</td>
+            <td class="num">{{ num(a.trabajadoresActivos) }}</td>
+            <td class="num">{{ num(a.nominas) }}</td>
+            <td class="num">{{ pesos(a.totalPagado) }}</td>
+            <td class="num"><a class="link" [routerLink]="[a.id]">{{ 'admin.farmers.view' | translate }} →</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

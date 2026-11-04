@@ -58,6 +58,21 @@ describe('LoginComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
   });
 
+  it('onSubmit() should navigate an admin to /admin', () => {
+    authServiceMock.login.mockReturnValue(of({ rol: 'Administrador' } as any));
+    component.onSubmit();
+    expect(router.navigate).toHaveBeenCalledWith(['/admin']);
+  });
+
+  it('onSubmit() should explain when the account is disabled', () => {
+    authServiceMock.login.mockReturnValue(throwError(() => ({
+      status: 401,
+      error: { message: 'Tu cuenta está desactivada. Contacta al administrador.' },
+    })));
+    component.onSubmit();
+    expect(component.error).toBe('auth.login.accountDisabled');
+  });
+
   it('onSubmit() should set cargando=false after success', () => {
     authServiceMock.login.mockReturnValue(of({} as any));
     component.onSubmit();
@@ -74,27 +89,27 @@ describe('LoginComponent', () => {
   it('onSubmit() should set error message on 401', () => {
     authServiceMock.login.mockReturnValue(throwError(() => ({ status: 401 })));
     component.onSubmit();
-    expect(component.error).toBe('Correo o contraseña incorrectos.');
+    expect(component.error).toBe('auth.login.invalidCredentials');
     expect(component.cargando).toBe(false);
   });
 
   it('onSubmit() should set error message on 403', () => {
     authServiceMock.login.mockReturnValue(throwError(() => ({ status: 403 })));
     component.onSubmit();
-    expect(component.error).toBe('Correo o contraseña incorrectos.');
+    expect(component.error).toBe('auth.login.invalidCredentials');
     expect(component.cargando).toBe(false);
   });
 
   it('onSubmit() should set generic error on other status codes', () => {
     authServiceMock.login.mockReturnValue(throwError(() => ({ status: 500 })));
     component.onSubmit();
-    expect(component.error).toBe('Error al conectar con el servidor.');
+    expect(component.error).toBe('auth.login.serverError');
     expect(component.cargando).toBe(false);
   });
 
   it('onSubmit() should set generic error on network failure', () => {
     authServiceMock.login.mockReturnValue(throwError(() => ({ status: 0 })));
     component.onSubmit();
-    expect(component.error).toBe('Error al conectar con el servidor.');
+    expect(component.error).toBe('auth.login.serverError');
   });
 });

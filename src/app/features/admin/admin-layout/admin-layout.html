@@ -1,0 +1,52 @@
+<div class="admin-shell" [class.colapsado]="colapsado">
+
+  <aside class="admin-sidebar" [attr.aria-label]="'admin.nav.label' | translate">
+    <div class="brand">
+      <img class="brand-logo" src="logo.png" alt="" />
+      <div class="brand-text">
+        <span class="brand-name">AgroRuta</span>
+        <span class="brand-badge">{{ 'admin.badge' | translate }}</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section" *ngFor="let s of secciones">
+        <span class="nav-section-label">{{ s.titulo | translate }}</span>
+        <a *ngFor="let item of s.items"
+           class="nav-item"
+           [routerLink]="item.ruta"
+           routerLinkActive="active"
+           [title]="item.etiqueta | translate">
+          <i class="ti {{ item.icono }}" aria-hidden="true"></i>
+          <span class="nav-label">{{ item.etiqueta | translate }}</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user">
+        <span class="avatar" aria-hidden="true">{{ usuario?.nombre?.charAt(0) }}</span>
+        <span class="user-text">
+          <span class="user-name">{{ usuario?.nombre }}</span>
+          <span class="user-role">{{ 'enums.rol.Administrador' | translate }}</span>
+        </span>
+      </div>
+      <div class="footer-actions">
+        <app-language-switcher />
+        <button type="button" class="btn-logout" (click)="cerrarSesion()" [title]="'layout.logout' | translate">
+          <i class="ti ti-logout" aria-hidden="true"></i>
+          <span class="nav-label">{{ 'layout.logout' | translate }}</span>
+        </button>
+      </div>
+    </div>
+
+    <button type="button" class="toggle" (click)="alternarMenu()"
+            [attr.aria-label]="(colapsado ? 'layout.expand' : 'layout.collapse') | translate">
+      <i class="ti" [class.ti-chevron-right]="colapsado" [class.ti-chevron-left]="!colapsado" aria-hidden="true"></i>
+    </button>
+  </aside>
+
+  <main class="admin-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>
