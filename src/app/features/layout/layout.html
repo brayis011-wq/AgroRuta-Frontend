@@ -144,11 +144,14 @@
     <div class="sub-wrap" [class.abierta]="abierto(id)" [attr.inert]="abierto(id) ? null : ''">
       <div class="sub">
         @for (s of items; track s.ruta + (s.query?.tab ?? '')) {
+          @if (s.titulo) {
+            <span class="sub-titulo">{{ s.clave | translate }}</span>
+          } @else {
           <a [routerLink]="s.ruta" [queryParams]="s.query" routerLinkActive="on"
              [routerLinkActiveOptions]="s.query
                ? { paths: 'exact', queryParams: 'subset', matrixParams: 'ignored', fragment: 'ignored' }
                : { exact: !!s.exacto }"
-             [class.nueva]="s.icono">
+             [class.lote]="s.icono === 'ti-point-filled'">
             <span class="sub-txt">
               @if (s.icono) { <i class="ti {{ s.icono }}" aria-hidden="true"></i> }
               {{ s.texto ?? (s.clave | translate) }}
@@ -157,6 +160,7 @@
               <span class="badge" [title]="'layout.pendingPayrolls' | translate">{{ nominasPendientes() }}</span>
             }
           </a>
+          }
         }
       </div>
     </div>

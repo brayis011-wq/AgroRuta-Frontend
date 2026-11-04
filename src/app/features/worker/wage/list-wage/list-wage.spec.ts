@@ -290,10 +290,14 @@ describe('ListaJornalesComponent', () => {
     expect(nav).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { trabajadorId: 7 } }));
   });
 
-  it('clears the worker when the URL no longer has one', () => {
-    queryParamsSubject.next({ trabajadorId: '1' });
+  it('without a worker in the URL it opens the first one', () => {
+    const router = TestBed.inject(Router);
+    const nav = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     queryParamsSubject.next({});
-    expect(component.trabajadorId).toBeNull();
-    expect(component.jornales).toEqual([]);
+    expect(nav).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { trabajadorId: 1 }, replaceUrl: true }));
+  });
+
+  it('iniciales() uses first and last name', () => {
+    expect(component.iniciales({ nombre: 'kevin', apellido: 'perez' } as any)).toBe('KP');
   });
 });

@@ -54,6 +54,7 @@ export class ListaJornalesComponent implements OnInit {
       next: (t) => {
         this.trabajadores = [...t].sort((a, b) => (a.nombreCompleto ?? '').localeCompare(b.nombreCompleto ?? ''));
         this.cargandoTrabajadores = false;
+        this.abrirPrimeroSiNoHay();
         this.cdr.detectChanges();
       },
       error: () => { this.cargandoTrabajadores = false; this.cdr.detectChanges(); }
@@ -69,6 +70,7 @@ export class ListaJornalesComponent implements OnInit {
         this.trabajadorId = null;
         this.trabajador = null;
         this.jornales = [];
+        this.abrirPrimeroSiNoHay();
       }
       this.cdr.detectChanges();
     });
@@ -104,6 +106,21 @@ export class ListaJornalesComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  /** Sin trabajador en la URL se abre el primero, para no mostrar una página vacía */
+  private abrirPrimeroSiNoHay(): void {
+    if (this.trabajadorId == null && this.trabajadores.length > 0) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { trabajadorId: this.trabajadores[0].id },
+        replaceUrl: true,
+      });
+    }
+  }
+
+  iniciales(t: Trabajador): string {
+    return ((t.nombre?.[0] ?? '') + (t.apellido?.[0] ?? '')).toUpperCase() || '?';
   }
 
   /** Cambia de trabajador sin salir de la página (queda en la URL) */
