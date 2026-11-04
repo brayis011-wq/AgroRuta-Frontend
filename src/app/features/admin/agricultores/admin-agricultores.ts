@@ -6,7 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { AgricultorAdmin } from '../../../core/models/admin.model';
-import { formatoNumero, formatoPesos } from '../formato';
+import { formatoNumero, formatoPesos } from '../../../shared/formato';
 
 type Orden = 'nombre' | 'hectareas' | 'trabajadores' | 'pagado';
 
@@ -15,7 +15,7 @@ type Orden = 'nombre' | 'hectareas' | 'trabajadores' | 'pagado';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, TranslatePipe],
   templateUrl: './admin-agricultores.html',
-  styleUrls: ['../admin-page.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css'],
 })
 export class AdminAgricultoresComponent implements OnInit {
   private readonly adminService = inject(AdminService);

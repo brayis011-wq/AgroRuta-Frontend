@@ -20,6 +20,7 @@ export class RegistroComponent {
     email: '',
     password: '',
     rol: 'Agricultor',
+    cedula: '',
   };
 
   error: string = '';
@@ -37,14 +38,22 @@ export class RegistroComponent {
     this.exito = '';
     this.cargando = true;
 
-    this.authService.registro(this.form).subscribe({
+    const esTrabajador = this.form.rol === 'Trabajador';
+    if (esTrabajador && !this.form.cedula?.trim()) {
+      this.cargando = false;
+      this.error = 'auth.register.cedulaRequired';
+      return;
+    }
+    const datos = { ...this.form, cedula: esTrabajador ? this.form.cedula?.trim() : undefined };
+
+    this.authService.registro(datos).subscribe({
       next: () => {
         this.cargando = false;
-        this.exito = 'auth.register.success';
+        this.exito = esTrabajador ? 'auth.register.successWorker' : 'auth.register.success';
         this.cdr.detectChanges();
         setTimeout(() => {
           this.router.navigate(['/auth/login']);
-        }, 2000);
+        }, esTrabajador ? 4000 : 2000);
       },
       error: (err) => {
         this.cargando = false;

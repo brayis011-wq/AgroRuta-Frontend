@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth';
+import { inicioPorRol } from '../../../core/guards/rol-guards';
 import { LoginRequest } from '../../../core/models/auth.model';
 import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 
@@ -44,7 +45,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.form).subscribe({
       next: (respuesta) => {
         this.cargando = false;
-        this.router.navigate([respuesta.rol === 'Administrador' ? '/admin' : '/dashboard']);
+        this.router.navigate([inicioPorRol(respuesta.rol)]);
       },
       error: (err) => {
         this.cargando = false;

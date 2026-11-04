@@ -94,6 +94,10 @@
       "accountDisabled": "Your account is disabled. Contact the administrator."
     },
     "register": {
+      "cedula": "ID number",
+      "cedulaHint": "Use the same ID number your employer registered you with. They must approve your access before you can see your payments.",
+      "cedulaRequired": "Enter your ID number to sign up as a worker.",
+      "successWorker": "Account created! Your employer must approve your access. Taking you to sign in…",
       "title": "Create account",
       "fullName": "Full name",
       "fullNamePlaceholder": "Your name",
@@ -875,6 +879,29 @@
       }
     },
     "home": {
+      "access": {
+        "title": "App access",
+        "banner": "{{count}} workers are asking for app access. Open them to approve or reject.",
+        "bannerOne": "1 worker is asking for app access. Open it to approve or reject.",
+        "requestsBadge": "Requests access",
+        "hasAccessBadge": "Has access",
+        "pendingText": "{{account}} ({{email}}) signed up with this ID number and wants to see their workdays, payrolls and payments.",
+        "pendingHint": "Approve only if you recognize the person and the email.",
+        "approve": "Approve",
+        "reject": "Reject",
+        "approvedText": "The account {{email}} can see their workdays, payrolls and payments.",
+        "revoke": "Remove access",
+        "noneText": "No access. They can request it by signing up to AgroRuta as a Worker with ID number {{cedula}}.",
+        "confirmReject": "Reject {{name}}'s access request?",
+        "confirmRevoke": "Remove {{name}}'s access? They will no longer see their payments.",
+        "approved": "✅ Access approved",
+        "rejected": "Request rejected",
+        "revoked": "Access removed",
+        "errors": {
+          "approve": "Could not approve access",
+          "reject": "Could not update access"
+        }
+      },
       "title": "Workers",
       "subtitle": "Manage your work team",
       "activities": "Activities",
@@ -1205,6 +1232,78 @@
         "dose": "The dose must be greater than 0.",
         "reentry": "It can't be negative."
       }
+    }
+  },
+  "portal": {
+    "loadError": "Could not load your information.",
+    "loadDataError": "Could not load your data.",
+    "nav": {
+      "label": "Portal sections",
+      "home": "Home",
+      "wages": "Workdays",
+      "rosters": "Payrolls",
+      "payments": "Payments",
+      "account": "My account"
+    },
+    "home": {
+      "eyebrow": "Worker portal",
+      "hello": "Hi, {{name}}",
+      "employer": "You work with {{name}}",
+      "thisMonth": "Workdays this month",
+      "thisMonthNote": "{{amount}} in total",
+      "toCollect": "To be paid",
+      "toCollectNote": "{{count}} unpaid payrolls",
+      "toCollectNoteOne": "1 unpaid payroll",
+      "lastPayment": "Last payment",
+      "noPayments": "No payments yet",
+      "idNumber": "ID number",
+      "post": "Position",
+      "contract": "Contract",
+      "since": "Started"
+    },
+    "pending": {
+      "title": "Your request is under review",
+      "text": "Your employer must confirm this account is yours. Once they approve it, you'll see your workdays, payrolls and payments here.",
+      "check": "Check again"
+    },
+    "rejected": {
+      "title": "Your employer did not approve the request",
+      "text": "If you think this is a mistake, talk to your employer and send it again. Make sure the ID number is correct."
+    },
+    "request": {
+      "title": "Link your account",
+      "text": "Enter the ID number your employer registered you with to request access.",
+      "submit": "Request access",
+      "sending": "Sending…",
+      "invalid": "Enter a valid ID number (at least 5 characters).",
+      "error": "Could not send the request."
+    },
+    "wages": {
+      "title": "My workdays",
+      "subtitle": "The days you worked and what was recorded for each.",
+      "empty": "You don't have any workdays yet.",
+      "monthTotal": "{{count}} workdays · {{amount}}",
+      "paid": "Settled",
+      "unpaid": "Not settled yet"
+    },
+    "rosters": {
+      "title": "My payrolls",
+      "subtitle": "Each payroll groups the workdays of a period.",
+      "empty": "You don't have any payrolls yet.",
+      "days": "{{count}} workdays",
+      "help": {
+        "pending": "Being reviewed by your employer",
+        "approved": "Approved, payment pending",
+        "paid": "You've been paid"
+      }
+    },
+    "payments": {
+      "title": "My payments",
+      "subtitle": "What you've been paid and how.",
+      "empty": "You don't have any payments yet.",
+      "total": "Total received",
+      "period": "Period {{from}} – {{to}}",
+      "receipt": "Receipt {{code}}"
     }
   }
 }

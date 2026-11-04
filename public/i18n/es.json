@@ -94,6 +94,10 @@
       "accountDisabled": "Tu cuenta está desactivada. Contacta al administrador."
     },
     "register": {
+      "cedula": "Cédula",
+      "cedulaHint": "Escribe la misma cédula con la que te registró tu empleador. Él debe aprobar tu acceso antes de que veas tus pagos.",
+      "cedulaRequired": "Escribe tu cédula para registrarte como trabajador.",
+      "successWorker": "¡Cuenta creada! Tu empleador debe aprobar tu acceso. Te llevamos al inicio de sesión…",
       "title": "Crear cuenta",
       "fullName": "Nombre completo",
       "fullNamePlaceholder": "Tu nombre",
@@ -875,6 +879,29 @@
       }
     },
     "home": {
+      "access": {
+        "title": "Acceso a la app",
+        "banner": "{{count}} trabajadores piden acceso a la app. Ábrelos para aprobar o rechazar.",
+        "bannerOne": "1 trabajador pide acceso a la app. Ábrelo para aprobar o rechazar.",
+        "requestsBadge": "Pide acceso",
+        "hasAccessBadge": "Con acceso",
+        "pendingText": "{{account}} ({{email}}) se registró con esta cédula y pide ver sus jornales, nóminas y pagos.",
+        "pendingHint": "Aprueba solo si reconoces a la persona y el correo.",
+        "approve": "Aprobar",
+        "reject": "Rechazar",
+        "approvedText": "La cuenta {{email}} puede ver sus jornales, nóminas y pagos.",
+        "revoke": "Retirar acceso",
+        "noneText": "Sin acceso. Puede pedirlo registrándose en AgroRuta como Trabajador con la cédula {{cedula}}.",
+        "confirmReject": "¿Rechazar la solicitud de acceso de {{name}}?",
+        "confirmRevoke": "¿Retirar el acceso de {{name}}? Ya no podrá ver sus pagos.",
+        "approved": "✅ Acceso aprobado",
+        "rejected": "Solicitud rechazada",
+        "revoked": "Acceso retirado",
+        "errors": {
+          "approve": "No se pudo aprobar el acceso",
+          "reject": "No se pudo actualizar el acceso"
+        }
+      },
       "title": "Trabajadores",
       "subtitle": "Administra tu equipo de trabajo",
       "activities": "Actividades",
@@ -1205,6 +1232,78 @@
         "dose": "La dosis debe ser mayor a 0.",
         "reentry": "No puede ser negativo."
       }
+    }
+  },
+  "portal": {
+    "loadError": "No se pudo cargar tu información.",
+    "loadDataError": "No se pudieron cargar tus datos.",
+    "nav": {
+      "label": "Secciones del portal",
+      "home": "Inicio",
+      "wages": "Jornales",
+      "rosters": "Nóminas",
+      "payments": "Pagos",
+      "account": "Mi cuenta"
+    },
+    "home": {
+      "eyebrow": "Portal del trabajador",
+      "hello": "Hola, {{name}}",
+      "employer": "Trabajas con {{name}}",
+      "thisMonth": "Jornales este mes",
+      "thisMonthNote": "{{amount}} en total",
+      "toCollect": "Por cobrar",
+      "toCollectNote": "{{count}} nóminas sin pagar",
+      "toCollectNoteOne": "1 nómina sin pagar",
+      "lastPayment": "Último pago",
+      "noPayments": "Aún no tienes pagos",
+      "idNumber": "Cédula",
+      "post": "Cargo",
+      "contract": "Contrato",
+      "since": "Ingreso"
+    },
+    "pending": {
+      "title": "Tu solicitud está en revisión",
+      "text": "Tu empleador debe confirmar que esta cuenta es tuya. Cuando lo apruebe, aquí verás tus jornales, nóminas y pagos.",
+      "check": "Volver a revisar"
+    },
+    "rejected": {
+      "title": "Tu empleador no aprobó la solicitud",
+      "text": "Si crees que es un error, habla con tu empleador y vuelve a enviarla. Revisa que la cédula sea la correcta."
+    },
+    "request": {
+      "title": "Vincula tu cuenta",
+      "text": "Escribe la cédula con la que te registró tu empleador para pedirle acceso.",
+      "submit": "Pedir acceso",
+      "sending": "Enviando…",
+      "invalid": "Escribe una cédula válida (mínimo 5 caracteres).",
+      "error": "No se pudo enviar la solicitud."
+    },
+    "wages": {
+      "title": "Mis jornales",
+      "subtitle": "Los días que trabajaste y lo que se registró en cada uno.",
+      "empty": "Todavía no tienes jornales registrados.",
+      "monthTotal": "{{count}} jornales · {{amount}}",
+      "paid": "Liquidado",
+      "unpaid": "Por liquidar"
+    },
+    "rosters": {
+      "title": "Mis nóminas",
+      "subtitle": "Cada nómina agrupa los jornales de un período.",
+      "empty": "Todavía no tienes nóminas.",
+      "days": "{{count}} jornales",
+      "help": {
+        "pending": "En revisión por tu empleador",
+        "approved": "Aprobada, falta el pago",
+        "paid": "Ya te pagaron"
+      }
+    },
+    "payments": {
+      "title": "Mis pagos",
+      "subtitle": "Lo que te han pagado y cómo.",
+      "empty": "Todavía no tienes pagos registrados.",
+      "total": "Total recibido",
+      "period": "Período {{from}} – {{to}}",
+      "receipt": "Comprobante {{code}}"
     }
   }
 }

@@ -1,0 +1,42 @@
+<div class="portal" *ngIf="portal.estado$ | async as estado; else cargandoTpl">
+  <header class="portal-header">
+    <div class="header-inner">
+      <div class="brand">
+        <img class="brand-logo" src="logo.png" alt="" />
+        <div class="brand-text">
+          <span class="brand-name">AgroRuta</span>
+          <span class="brand-badge">{{ 'enums.rol.Trabajador' | translate }}</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="user-name">{{ usuario?.nombre }}</span>
+        <app-language-switcher />
+        <button type="button" class="btn-logout" (click)="cerrarSesion()" [attr.aria-label]="'layout.logout' | translate">
+          <i class="ti ti-logout" aria-hidden="true"></i>
+          <span class="logout-label">{{ 'layout.logout' | translate }}</span>
+        </button>
+      </div>
+    </div>
+    <nav class="tabs" [attr.aria-label]="'portal.nav.label' | translate">
+      <ng-container *ngFor="let p of pestanas">
+        <a *ngIf="!p.soloAprobado || estado.estado === 'APROBADO'"
+           class="tab" [routerLink]="p.ruta" routerLinkActive="active">
+          <i class="ti {{ p.icono }}" aria-hidden="true"></i>
+          <span>{{ p.etiqueta | translate }}</span>
+        </a>
+      </ng-container>
+    </nav>
+  </header>
+
+  <main class="portal-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<ng-template #cargandoTpl>
+  <div class="portal-cargando">
+    <p *ngIf="!errorEstado">{{ 'common.loading' | translate }}</p>
+    <p *ngIf="errorEstado">{{ 'portal.loadError' | translate }}</p>
+    <button *ngIf="errorEstado" type="button" class="btn-retry" (click)="ngOnInit()">{{ 'common.retry' | translate }}</button>
+  </div>
+</ng-template>

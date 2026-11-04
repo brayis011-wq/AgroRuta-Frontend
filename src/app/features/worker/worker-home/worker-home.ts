@@ -21,7 +21,7 @@ type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './worker-home.html',
-  styleUrl: './worker-home.css'
+  styleUrls: ['./worker-home.css', './worker-acceso.css']
 })
 export class WorkerHomeComponent implements OnInit {
 
@@ -137,6 +137,11 @@ export class WorkerHomeComponent implements OnInit {
       t.cedula?.toLowerCase().includes(q) ||
       t.cargo?.nombre?.toLowerCase().includes(q)
     );
+  }
+
+  /** Trabajadores que pidieron acceso a su portal y esperan aprobación. */
+  get solicitudesAcceso(): Trabajador[] {
+    return this.trabajadores.filter(t => t.accesoEstado === 'PENDIENTE');
   }
 
   get cantidadActivos():     number { return this.trabajadores.filter(t => t.estado === 'ACTIVO').length; }
@@ -361,6 +366,36 @@ export class WorkerHomeComponent implements OnInit {
       },
       error: () => { this.error = 'workers.home.errors.reactivate'; this.cdr.detectChanges(); }
     });
+  }
+
+  // ── Acceso al portal del trabajador ──────────────────────────────────────
+
+  aprobarAcceso(t: Trabajador): void {
+    if (!t.id) return;
+    this.guardando = true;
+    this.trabajadorService.aprobarAcceso(t.id).subscribe({
+      next: (actualizado) => this.actualizarAcceso(actualizado, 'workers.home.access.approved'),
+      error: () => { this.guardando = false; this.error = 'workers.home.access.errors.approve'; this.cdr.detectChanges(); }
+    });
+  }
+
+  rechazarAcceso(t: Trabajador): void {
+    if (!t.id) return;
+    const clave = t.accesoEstado === 'APROBADO' ? 'workers.home.access.confirmRevoke' : 'workers.home.access.confirmReject';
+    if (!confirm(this.translate.instant(clave, { name: t.nombreCompleto }))) return;
+    this.guardando = true;
+    this.trabajadorService.rechazarAcceso(t.id).subscribe({
+      next: (actualizado) => this.actualizarAcceso(actualizado,
+        t.accesoEstado === 'APROBADO' ? 'workers.home.access.revoked' : 'workers.home.access.rejected'),
+      error: () => { this.guardando = false; this.error = 'workers.home.access.errors.reject'; this.cdr.detectChanges(); }
+    });
+  }
+
+  private actualizarAcceso(actualizado: Trabajador, claveExito: string): void {
+    this.guardando = false;
+    this.trabajadores = this.trabajadores.map(x => x.id === actualizado.id ? { ...x, ...actualizado } : x);
+    this.trabajadorSeleccionado = this.trabajadores.find(x => x.id === actualizado.id) ?? null;
+    this.mostrarExito(claveExito);
   }
 
   invalido(form: FormGroup, campo: string): boolean {

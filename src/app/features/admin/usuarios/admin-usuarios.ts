@@ -6,7 +6,7 @@ import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth';
 import { LanguageService } from '../../../core/services/language.service';
 import { ROLES, RolUsuario, UsuarioAdmin } from '../../../core/models/admin.model';
-import { formatoFecha } from '../formato';
+import { formatoFecha } from '../../../shared/formato';
 
 type FiltroEstado = 'todos' | 'activos' | 'inactivos';
 
@@ -23,7 +23,7 @@ interface AccionPendiente {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './admin-usuarios.html',
-  styleUrls: ['../admin-page.css', './admin-usuarios.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', './admin-usuarios.css'],
 })
 export class AdminUsuariosComponent implements OnInit {
   private readonly adminService = inject(AdminService);
