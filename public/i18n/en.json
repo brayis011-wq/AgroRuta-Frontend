@@ -37,7 +37,9 @@
       "myFarms": "My farms",
       "newFarm": "New farm",
       "reportPayroll": "Payroll",
-      "reportCrops": "Crops"
+      "reportCrops": "Crops",
+      "farmSummary": "Farm overview",
+      "plots": "Plots"
     },
     "logout": "Log out",
     "expand": "Expand",
@@ -216,21 +218,55 @@
     }
   },
   "dashboard": {
-    "title": "Dashboard",
-    "subtitle": "General overview of your operation",
-    "welcome": "Welcome, {{name}}",
-    "loggedInAs": "You signed in as",
-    "season": "Active season",
-    "stats": {
-      "farms": "Registered farms",
-      "activeLots": "Active lots",
-      "totalHectares": "Total hectares"
+    "title": "Home",
+    "greeting": {
+      "morning": "Good morning, {{name}}",
+      "afternoon": "Good afternoon, {{name}}",
+      "evening": "Good evening, {{name}}"
     },
-    "cards": {
-      "crops": "Manage your active crops",
-      "workers": "Manage your work team",
-      "reports": "View your performance",
-      "settings": "Adjust your account and preferences"
+    "loadingSummary": "Checking how your operation is going…",
+    "pendingOne": "You have 1 pending item. See it below.",
+    "pendingMany": "You have {{count}} pending items. See them below.",
+    "allClear": "Everything is up to date. Nice work.",
+    "actions": {
+      "wage": "Register work day",
+      "payroll": "Payrolls",
+      "plant": "New planting",
+      "farm": "New farm"
+    },
+    "kpi": {
+      "wages": "Work days this month",
+      "paid": "Paid this month",
+      "workers": "Active workers",
+      "lots": "Plots in production",
+      "vsLastMonth": "{{pct}}% vs. last month",
+      "noPrevious": "No data for last month",
+      "withoutWageToday": "{{count}} without a work day today",
+      "freeLots": "{{count}} ready to plant",
+      "allHaveWage": "Everyone has a work day today",
+      "freeLotsOne": "1 ready to plant"
+    },
+    "pending": {
+      "title": "To do",
+      "toApprove": "{{count}} payrolls to approve",
+      "toPay": "{{count}} approved payrolls to pay",
+      "portal": "{{count}} portal access requests",
+      "noWage": "{{count}} workers without a work day today",
+      "freeLots": "{{count}} plots ready to plant",
+      "none": "All caught up",
+      "noneDesc": "No payrolls, payments or requests are waiting.",
+      "actions": {
+        "review": "Review",
+        "pay": "Pay",
+        "approve": "Approve",
+        "register": "Register",
+        "plant": "Plant"
+      },
+      "toApproveOne": "1 payroll to approve",
+      "toPayOne": "1 approved payroll to pay",
+      "portalOne": "1 portal access request",
+      "noWageOne": "1 worker without a work day today",
+      "freeLotsOne": "1 plot ready to plant"
     }
   },
   "weather": {

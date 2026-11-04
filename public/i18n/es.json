@@ -37,7 +37,9 @@
       "myFarms": "Mis fincas",
       "newFarm": "Nueva finca",
       "reportPayroll": "Nómina",
-      "reportCrops": "Cultivos"
+      "reportCrops": "Cultivos",
+      "farmSummary": "Resumen de la finca",
+      "plots": "Lotes"
     },
     "logout": "Cerrar sesión",
     "expand": "Expandir",
@@ -216,21 +218,55 @@
     }
   },
   "dashboard": {
-    "title": "Panel de control",
-    "subtitle": "Resumen general de tu operación",
-    "welcome": "Bienvenido, {{name}}",
-    "loggedInAs": "Has iniciado sesión como",
-    "season": "Temporada activa",
-    "stats": {
-      "farms": "Fincas registradas",
-      "activeLots": "Lotes activos",
-      "totalHectares": "Hectáreas totales"
+    "title": "Inicio",
+    "greeting": {
+      "morning": "Buenos días, {{name}}",
+      "afternoon": "Buenas tardes, {{name}}",
+      "evening": "Buenas noches, {{name}}"
     },
-    "cards": {
-      "crops": "Gestiona tus cultivos activos",
-      "workers": "Administra tu equipo de trabajo",
-      "reports": "Visualiza el rendimiento",
-      "settings": "Ajusta tu cuenta y preferencias"
+    "loadingSummary": "Revisando cómo va tu operación…",
+    "pendingOne": "Tienes 1 asunto pendiente. Míralo abajo.",
+    "pendingMany": "Tienes {{count}} asuntos pendientes. Míralos abajo.",
+    "allClear": "Todo está al día. Buen trabajo.",
+    "actions": {
+      "wage": "Registrar jornal",
+      "payroll": "Nóminas",
+      "plant": "Nueva siembra",
+      "farm": "Nueva finca"
+    },
+    "kpi": {
+      "wages": "Jornales este mes",
+      "paid": "Pagado este mes",
+      "workers": "Trabajadores activos",
+      "lots": "Lotes en cultivo",
+      "vsLastMonth": "{{pct}} % vs. mes anterior",
+      "noPrevious": "Sin datos del mes anterior",
+      "withoutWageToday": "{{count}} sin jornal hoy",
+      "freeLots": "{{count}} disponibles para sembrar",
+      "allHaveWage": "Todos tienen jornal hoy",
+      "freeLotsOne": "1 disponible para sembrar"
+    },
+    "pending": {
+      "title": "Pendientes",
+      "toApprove": "{{count}} nóminas por aprobar",
+      "toPay": "{{count}} nóminas aprobadas sin pagar",
+      "portal": "{{count}} solicitudes de acceso al portal",
+      "noWage": "{{count}} trabajadores sin jornal hoy",
+      "freeLots": "{{count}} lotes listos para sembrar",
+      "none": "Todo al día",
+      "noneDesc": "No hay nóminas, pagos ni solicitudes esperando.",
+      "actions": {
+        "review": "Revisar",
+        "pay": "Pagar",
+        "approve": "Aprobar",
+        "register": "Registrar",
+        "plant": "Sembrar"
+      },
+      "toApproveOne": "1 nómina por aprobar",
+      "toPayOne": "1 nómina aprobada sin pagar",
+      "portalOne": "1 solicitud de acceso al portal",
+      "noWageOne": "1 trabajador sin jornal hoy",
+      "freeLotsOne": "1 lote listo para sembrar"
     }
   },
   "weather": {

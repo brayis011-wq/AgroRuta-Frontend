@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { CultivoService } from './cultivo.service';
 import { AuthService } from './auth';
-import { Finca } from '../models/cultivo.model';
+import { Finca, Lote } from '../models/cultivo.model';
 
 const CLAVE = 'fincaActiva';
 
@@ -16,8 +16,12 @@ export class FincaActivaService {
 
   readonly fincas = signal<Finca[]>([]);
   readonly idActiva = signal<number | null>(leer());
+  /** Lotes de la finca activa (vacío con "todas") */
+  readonly lotes = signal<Lote[]>([]);
+  private readonly lotesCargados = signal(false);
   /** Cantidad de lotes de la finca activa (null mientras carga o con "todas") */
-  readonly lotesActiva = signal<number | null>(null);
+  readonly lotesActiva = computed<number | null>(() =>
+    this.idActiva() != null && this.lotesCargados() ? this.lotes().length : null);
 
   readonly activa = computed<Finca | null>(() => {
     const id = this.idActiva();
@@ -27,6 +31,11 @@ export class FincaActivaService {
   /** Finca de referencia para el clima: la activa, o la primera con ubicación */
   readonly paraClima = computed<Finca | null>(() =>
     this.activa() ?? this.fincas().find((f) => f.centroideLat != null) ?? this.fincas()[0] ?? null);
+
+  /** Vuelve a leer los lotes (p. ej. después de crear uno) */
+  refrescarLotes(): void {
+    this.cargarLotes();
+  }
 
   cargar(): void {
     const id = this.auth.getUsuario()?.id;
@@ -59,11 +68,16 @@ export class FincaActivaService {
 
   private cargarLotes(): void {
     const id = this.idActiva();
-    this.lotesActiva.set(null);
+    this.lotes.set([]);
+    this.lotesCargados.set(false);
     if (id == null) return;
     this.cultivo.listarLotesPorFinca(id).subscribe({
-      next: (l) => { if (this.idActiva() === id) this.lotesActiva.set(l.length); },
-      error: () => this.lotesActiva.set(null),
+      next: (l) => {
+        if (this.idActiva() !== id) return;
+        this.lotes.set([...l].sort((a, b) => (a.nombre ?? '').localeCompare(b.nombre ?? '', undefined, { numeric: true })));
+        this.lotesCargados.set(true);
+      },
+      error: () => this.lotesCargados.set(false),
     });
   }
 }

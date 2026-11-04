@@ -1,79 +1,115 @@
-<div class="dashboard-page">
+<div class="inicio">
 
-  <div class="topbar">
-    <div>
-      <h2 class="page-title">{{ 'dashboard.title' | translate }}</h2>
-      <p class="page-subtitle">{{ 'dashboard.subtitle' | translate }}</p>
+  <!-- Saludo y acciones rápidas -->
+  <section class="hero">
+    <div class="hero-txt">
+      <p class="fecha">{{ fechaHoy() }}</p>
+      <h1>{{ 'dashboard.greeting.' + saludo | translate: { name: nombreCorto() } }}</h1>
+      <p class="resumen-linea">
+        @if (cargando()) {
+          {{ 'dashboard.loadingSummary' | translate }}
+        } @else if (resumen()?.pendientes) {
+          {{ (resumen()!.pendientes === 1 ? 'dashboard.pendingOne' : 'dashboard.pendingMany') | translate: { count: resumen()!.pendientes } }}
+        } @else {
+          {{ 'dashboard.allClear' | translate }}
+        }
+      </p>
     </div>
-    <div class="date-chip">
-      <span aria-hidden="true">📅</span> {{ fechaHoy() }}
+    <div class="acciones">
+      <a class="accion principal" routerLink="/worker/jornales/nuevo"><i class="ti ti-calendar-plus" aria-hidden="true"></i>{{ 'dashboard.actions.wage' | translate }}</a>
+      <a class="accion" routerLink="/worker/nominas"><i class="ti ti-file-invoice" aria-hidden="true"></i>{{ 'dashboard.actions.payroll' | translate }}</a>
+      <a class="accion" routerLink="/cultivo"><i class="ti ti-seeding" aria-hidden="true"></i>{{ 'dashboard.actions.plant' | translate }}</a>
+      <a class="accion" routerLink="/cultivo/nueva-finca"><i class="ti ti-map-pin-plus" aria-hidden="true"></i>{{ 'dashboard.actions.farm' | translate }}</a>
     </div>
+    <i class="ti ti-plant-2 hoja" aria-hidden="true"></i>
+  </section>
+
+  <!-- Números del mes -->
+  <section class="kpis" [attr.aria-busy]="cargando()">
+    @if (resumen(); as r) {
+      <article class="kpi">
+        <span class="kpi-ic verde"><i class="ti ti-calendar-event" aria-hidden="true"></i></span>
+        <div>
+          <small>{{ 'dashboard.kpi.wages' | translate }}</small>
+          <strong>{{ numero(r.jornalesMes.actual) }}</strong>
+          <ng-container *ngTemplateOutlet="tend; context: { t: r.jornalesMes }" />
+        </div>
+      </article>
+      <article class="kpi">
+        <span class="kpi-ic azul"><i class="ti ti-cash" aria-hidden="true"></i></span>
+        <div>
+          <small>{{ 'dashboard.kpi.paid' | translate }}</small>
+          <strong>{{ pesos(r.pagadoMes.actual) }}</strong>
+          <ng-container *ngTemplateOutlet="tend; context: { t: r.pagadoMes }" />
+        </div>
+      </article>
+      <article class="kpi">
+        <span class="kpi-ic ambar"><i class="ti ti-users-group" aria-hidden="true"></i></span>
+        <div>
+          <small>{{ 'dashboard.kpi.workers' | translate }}</small>
+          <strong>{{ numero(r.trabajadoresActivos) }}</strong>
+          <em class="neutro">{{ (r.sinJornalHoy === 0 ? 'dashboard.kpi.allHaveWage' : 'dashboard.kpi.withoutWageToday') | translate: { count: r.sinJornalHoy } }}</em>
+        </div>
+      </article>
+      <article class="kpi">
+        <span class="kpi-ic verde"><i class="ti ti-plant" aria-hidden="true"></i></span>
+        <div>
+          <small>{{ 'dashboard.kpi.lots' | translate }}</small>
+          <strong>{{ numero(r.lotesEnCultivo) }}<span class="de"> / {{ numero(r.lotesTotal) }}</span></strong>
+          <em class="neutro">{{ (r.lotesDisponibles === 1 ? 'dashboard.kpi.freeLotsOne' : 'dashboard.kpi.freeLots') | translate: { count: r.lotesDisponibles } }}</em>
+        </div>
+      </article>
+    } @else {
+      @for (i of [1, 2, 3, 4]; track i) { <div class="kpi esqueleto"></div> }
+    }
+  </section>
+
+  <div class="columnas">
+    <!-- Pendientes -->
+    <section class="tarjeta pendientes">
+      <header><h2>{{ 'dashboard.pending.title' | translate }}</h2></header>
+      @if (cargando()) {
+        @for (i of [1, 2, 3]; track i) { <div class="fila esqueleto"></div> }
+      } @else {
+        @for (p of pendientes(); track p.clave; let i = $index) {
+          <a class="fila" [routerLink]="p.ruta" [style.animation-delay.ms]="i * 60">
+            <span class="fila-ic" [class]="'fila-ic ' + p.tono"><i class="ti {{ p.icono }}" aria-hidden="true"></i></span>
+            <span class="fila-txt">
+              <strong>{{ 'dashboard.pending.' + p.clave + (p.n === 1 ? 'One' : '') | translate: { count: p.n } }}</strong>
+              @if (p.monto) { <small>{{ pesos(p.monto) }}</small> }
+            </span>
+            <span class="fila-accion">{{ 'dashboard.pending.actions.' + p.accion | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
+          </a>
+        } @empty {
+          <div class="al-dia">
+            <span class="check"><i class="ti ti-circle-check" aria-hidden="true"></i></span>
+            <strong>{{ 'dashboard.pending.none' | translate }}</strong>
+            <small>{{ 'dashboard.pending.noneDesc' | translate }}</small>
+          </div>
+        }
+      }
+    </section>
+
+    <!-- Clima de la finca elegida -->
+    <section class="tarjeta clima">
+      @if (climaFinca(); as f) {
+        <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
+                            [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" />
+      } @else {
+        <app-weather-widget city="Bogotá" />
+      }
+    </section>
   </div>
-
-  <div class="welcome-banner">
-    <div class="welcome-text">
-      <h3>{{ 'dashboard.welcome' | translate: { name: usuario?.nombre } }} <span aria-hidden="true">👋</span></h3>
-      <p>{{ 'dashboard.loggedInAs' | translate }} <strong>{{ 'enums.rol.' + usuario?.rol | translate }}</strong></p>
-    </div>
-    <div class="welcome-right">
-      <div class="welcome-illustration" aria-hidden="true">🌾</div>
-      <span class="welcome-tag">{{ 'dashboard.season' | translate }}</span>
-    </div>
-  </div>
-
-  <div class="stats-row" *ngIf="!cargandoStats">
-    <div class="stat-card">
-      <div class="stat-icon green" aria-hidden="true">🏡</div>
-      <div class="stat-body">
-        <span class="stat-num">{{ totalFincas }}</span>
-        <span class="stat-lbl">{{ 'dashboard.stats.farms' | translate }}</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon blue" aria-hidden="true">🌿</div>
-      <div class="stat-body">
-        <span class="stat-num">{{ totalLotes }}</span>
-        <span class="stat-lbl">{{ 'dashboard.stats.activeLots' | translate }}</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon amber" aria-hidden="true">📐</div>
-      <div class="stat-body">
-        <span class="stat-num">{{ formatHa(totalHectareas) }} ha</span>
-        <span class="stat-lbl">{{ 'dashboard.stats.totalHectares' | translate }}</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="cards">
-    <button type="button" class="card c1" (click)="irA('/cultivo')">
-      <div class="card-icon" aria-hidden="true">🌱</div>
-      <h3>{{ 'layout.nav.crops' | translate }}</h3>
-      <p>{{ 'dashboard.cards.crops' | translate }}</p>
-      <span class="card-arrow" aria-hidden="true">{{ 'common.view' | translate }} →</span>
-    </button>
-    <button type="button" class="card c2" (click)="irA('/worker')">
-      <div class="card-icon" aria-hidden="true">👷</div>
-      <h3>{{ 'layout.nav.workers' | translate }}</h3>
-      <p>{{ 'dashboard.cards.workers' | translate }}</p>
-      <span class="card-arrow" aria-hidden="true">{{ 'common.view' | translate }} →</span>
-    </button>
-    <button type="button" class="card c3" (click)="irA('/reportes')">
-      <div class="card-icon" aria-hidden="true">📊</div>
-      <h3>{{ 'layout.nav.reports' | translate }}</h3>
-      <p>{{ 'dashboard.cards.reports' | translate }}</p>
-      <span class="card-arrow" aria-hidden="true">{{ 'common.view' | translate }} →</span>
-    </button>
-    <button type="button" class="card c4" (click)="irA('/configuracion')">
-      <div class="card-icon" aria-hidden="true">⚙️</div>
-      <h3>{{ 'layout.nav.settings' | translate }}</h3>
-      <p>{{ 'dashboard.cards.settings' | translate }}</p>
-      <span class="card-arrow" aria-hidden="true">{{ 'common.view' | translate }} →</span>
-    </button>
-  </div>
-
-  <div class="weather-bar">
-    <app-weather-widget city="bogota" />
-  </div>
-
 </div>
+
+<ng-template #tend let-t="t">
+  @if (t.porcentaje === null) {
+    <em class="neutro">{{ 'dashboard.kpi.noPrevious' | translate }}</em>
+  } @else {
+    <em [class.sube]="t.porcentaje > 0" [class.baja]="t.porcentaje < 0" [class.neutro]="t.porcentaje === 0">
+      <i class="ti" [class.ti-trending-up]="t.porcentaje > 0" [class.ti-trending-down]="t.porcentaje < 0"
+         [class.ti-minus]="t.porcentaje === 0" aria-hidden="true"></i>
+      {{ 'dashboard.kpi.vsLastMonth' | translate: { pct: (t.porcentaje > 0 ? '+' : '') + t.porcentaje } }}
+    </em>
+  }
+</ng-template>

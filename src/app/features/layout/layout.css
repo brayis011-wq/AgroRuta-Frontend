@@ -84,8 +84,9 @@
 .item .badge { margin-left: auto; }
 .item .badge + .flecha { margin-left: 4px; }
 .sub-txt { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sub a.nueva:not(.on) { color: var(--ar-verde-700); font-weight: 500; }
-.sub a.nueva .ti { font-size: 14px; }
+.sub-titulo { font-size: 10.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--ar-tinta-3); padding: 8px 10px 2px; }
+.sub a.lote .ti { font-size: 9px; color: var(--ar-verde-600); }
+.sub a.lote.on .ti { color: #fff; }
 .sub a.on .badge { background: rgba(255, 255, 255, .25); color: #fff; }
 
 .velo, .barra { display: none; }
