@@ -11,12 +11,15 @@ import { Jornal, Trabajador, Nomina } from '../../../../core/models/worker.model
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './list-wage.html',
-  styleUrls: ['./list-wage.css']
+  styleUrls: ['./list-wage.css', './list-wage-selector.css']
 })
 export class ListaJornalesComponent implements OnInit {
 
   jornales:   Jornal[]      = [];
   trabajador: Trabajador | null = null;
+  /** Trabajadores del agricultor, para elegir de quién ver los jornales */
+  trabajadores: Trabajador[] = [];
+  cargandoTrabajadores = true;
   nominaGenerada: Nomina | null = null;
 
   trabajadorId: number | null = null;
@@ -47,12 +50,25 @@ export class ListaJornalesComponent implements OnInit {
       periodoFin:    ['', Validators.required]
     });
 
+    this.trabajadorService.listarTodos().subscribe({
+      next: (t) => {
+        this.trabajadores = [...t].sort((a, b) => (a.nombreCompleto ?? '').localeCompare(b.nombreCompleto ?? ''));
+        this.cargandoTrabajadores = false;
+        this.cdr.detectChanges();
+      },
+      error: () => { this.cargandoTrabajadores = false; this.cdr.detectChanges(); }
+    });
+
     this.route.queryParams.subscribe(params => {
       const idParam = params['trabajadorId'];
       if (idParam) {
         this.trabajadorId = Number(idParam);
         this.cargarTrabajador();
         this.cargarJornales();
+      } else {
+        this.trabajadorId = null;
+        this.trabajador = null;
+        this.jornales = [];
       }
       this.cdr.detectChanges();
     });
@@ -87,6 +103,14 @@ export class ListaJornalesComponent implements OnInit {
         this.cargando = false;
         this.cdr.detectChanges();
       }
+    });
+  }
+
+  /** Cambia de trabajador sin salir de la página (queda en la URL) */
+  elegirTrabajador(id: number | null): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { trabajadorId: id ?? null },
     });
   }
 

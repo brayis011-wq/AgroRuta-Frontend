@@ -1,0 +1,28 @@
+@if (abierto()) {
+  <div class="velo" (click)="cerrar()"></div>
+  <div class="caja" role="dialog" aria-modal="true" [attr.aria-label]="'search.title' | translate">
+    <div class="entrada">
+      <i class="ti ti-search" aria-hidden="true"></i>
+      <input #campo type="text" [value]="texto()" (input)="escribir($any($event.target).value)" (keydown)="teclas($event)"
+             [placeholder]="'search.placeholder' | translate" role="combobox" aria-autocomplete="list"
+             aria-controls="buscador-lista" [attr.aria-activedescendant]="'res-' + indice()" />
+      <kbd>Esc</kbd>
+    </div>
+    <ul id="buscador-lista" class="lista" role="listbox">
+      @for (r of resultados(); track r.tipo + r.ruta + r.titulo; let i = $index) {
+        <li [id]="'res-' + i" role="option" [attr.aria-selected]="i === indice()" [class.activo]="i === indice()"
+            (mouseenter)="indice.set(i)" (click)="ir(r)" [style.animation-delay.ms]="i * 18">
+          <span [class]="'ic ' + r.tipo"><i class="ti {{ r.icono }}" aria-hidden="true"></i></span>
+          <span class="txt"><strong>{{ r.titulo }}</strong>@if (r.detalle) {<small>{{ r.detalle }}</small>}</span>
+          <span class="tipo">{{ 'search.types.' + r.tipo | translate }}</span>
+        </li>
+      } @empty {
+        <li class="vacio">{{ 'search.empty' | translate }}</li>
+      }
+    </ul>
+    <div class="pie">
+      <span><kbd>↑</kbd><kbd>↓</kbd> {{ 'search.move' | translate }}</span>
+      <span><kbd>Enter</kbd> {{ 'search.open' | translate }}</span>
+    </div>
+  </div>
+}
