@@ -9,7 +9,11 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const token = authService.getToken();
 
-  const request = token
+  // Login y registro no llevan token: uno vencido de una sesión anterior
+  // haría que el backend rechazara el login.
+  const esRutaDeAuth = !!req.url?.includes('/api/auth/');
+
+  const request = token && !esRutaDeAuth
     ? req.clone({ headers: req.headers.set('Authorization', `Bearer ${token}`) })
     : req;
 
@@ -20,7 +24,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
       if (
         error instanceof HttpErrorResponse &&
         error.status === 401 &&
-        !req.url?.includes('/api/auth/')
+        !esRutaDeAuth
       ) {
         authService.logout();
         router.navigate(['/auth/login'], { queryParams: { sesion: 'expirada' } });
