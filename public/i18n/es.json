@@ -90,7 +90,8 @@
       "register": "Regístrate",
       "invalidCredentials": "Correo o contraseña incorrectos.",
       "serverError": "Error al conectar con el servidor.",
-      "sessionExpired": "Tu sesión expiró. Inicia sesión de nuevo."
+      "sessionExpired": "Tu sesión expiró. Inicia sesión de nuevo.",
+      "accountDisabled": "Tu cuenta está desactivada. Contacta al administrador."
     },
     "register": {
       "title": "Crear cuenta",
@@ -1037,6 +1038,173 @@
       "confirmRequired": "Debes confirmar la contraseña",
       "submit": "Cambiar contraseña",
       "submitting": "Cambiando…"
+    }
+  },
+  "admin": {
+    "badge": "Administración",
+    "nav": {
+      "label": "Menú de administración",
+      "sections": {
+        "panel": "Panel",
+        "management": "Gestión",
+        "system": "Sistema"
+      },
+      "summary": "Resumen",
+      "users": "Usuarios",
+      "farmers": "Agricultores",
+      "inputs": "Insumos",
+      "backups": "Copias de seguridad",
+      "account": "Mi cuenta"
+    },
+    "common": {
+      "refresh": "Actualizar",
+      "close": "Cerrar",
+      "confirm": "Confirmar",
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "summary": {
+      "title": "Resumen del sistema",
+      "subtitle": "Usuarios, producción y nómina de todos los agricultores.",
+      "loadError": "No se pudo cargar el resumen.",
+      "pendingPayrolls": "{{count}} nóminas sin pagar",
+      "inactiveUsers": "{{count}} cuentas desactivadas",
+      "pendingPayrollsOne": "1 nómina sin pagar",
+      "inactiveUsersOne": "1 cuenta desactivada",
+      "users": "Usuarios activos",
+      "activeOf": "de {{total}} registrados",
+      "manageUsers": "Gestionar usuarios",
+      "farms": "Fincas",
+      "lots": "{{count}} lotes",
+      "activeCrops": "Siembras en curso",
+      "notFinished": "Sin finalizar",
+      "harvest": "Cosecha registrada",
+      "harvestNote": "Total histórico",
+      "workers": "Trabajadores activos",
+      "workersNote": "En todas las fincas",
+      "payrollsToPay": "Nóminas por pagar",
+      "payrollsNote": "Pendientes o aprobadas",
+      "totalPaid": "Total pagado",
+      "totalPaidNote": "Suma de todos los pagos de nómina"
+    },
+    "users": {
+      "title": "Usuarios",
+      "subtitle": "Activa o desactiva cuentas y cambia el rol de cada usuario.",
+      "count": "{{shown}} de {{total}} usuarios",
+      "search": "Buscar por nombre o correo",
+      "filterRole": "Filtrar por rol",
+      "allRoles": "Todos los roles",
+      "filterStatus": "Filtrar por estado",
+      "allStatus": "Todos",
+      "onlyActive": "Activos",
+      "onlyInactive": "Desactivados",
+      "empty": "No hay usuarios que coincidan con la búsqueda.",
+      "you": "Tú",
+      "changeRoleOf": "Cambiar el rol de {{name}}",
+      "selfHint": "No puedes cambiar tu propia cuenta",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "table": {
+        "user": "Usuario",
+        "role": "Rol",
+        "status": "Estado",
+        "since": "Registrado",
+        "actions": "Acciones"
+      },
+      "confirm": {
+        "roleTitle": "Cambiar rol",
+        "roleText": "{{name}} pasará de {{from}} a {{to}}. El cambio aplica de inmediato.",
+        "farmerWarning": "Sus fincas, trabajadores y nóminas se conservan, pero dejará de verlos desde su cuenta.",
+        "deactivateTitle": "Desactivar cuenta",
+        "deactivateText": "{{name}} no podrá iniciar sesión y su sesión actual se cerrará. Sus datos se conservan.",
+        "activateTitle": "Activar cuenta",
+        "activateText": "{{name}} podrá volver a iniciar sesión."
+      },
+      "done": {
+        "role": "{{name}} ahora es {{role}}.",
+        "activated": "La cuenta de {{name}} está activa.",
+        "deactivated": "La cuenta de {{name}} quedó desactivada."
+      },
+      "errors": {
+        "load": "No se pudieron cargar los usuarios.",
+        "save": "No se pudo guardar el cambio."
+      }
+    },
+    "farmers": {
+      "title": "Agricultores",
+      "subtitle": "Consulta las fincas, trabajadores y nóminas de cada agricultor.",
+      "count": "{{count}} agricultores",
+      "search": "Buscar agricultor",
+      "sortBy": "Ordenar por",
+      "sort": {
+        "name": "Nombre",
+        "hectares": "Más hectáreas",
+        "workers": "Más trabajadores",
+        "paid": "Más pagado"
+      },
+      "loadError": "No se pudieron cargar los agricultores.",
+      "detailError": "No se pudo cargar el agricultor.",
+      "empty": "No hay agricultores registrados.",
+      "view": "Ver",
+      "back": "Agricultores",
+      "since": "registrado el {{date}}",
+      "table": {
+        "farmer": "Agricultor",
+        "farms": "Fincas",
+        "hectares": "Hectáreas",
+        "workers": "Trabajadores",
+        "payrolls": "Nóminas",
+        "paid": "Pagado"
+      },
+      "tabs": {
+        "farms": "Fincas",
+        "workers": "Trabajadores",
+        "payrolls": "Nóminas"
+      },
+      "cols": {
+        "farm": "Finca",
+        "location": "Ubicación",
+        "worker": "Trabajador",
+        "idNumber": "Cédula",
+        "post": "Cargo",
+        "period": "Período",
+        "days": "Jornales",
+        "total": "Total"
+      },
+      "noFarms": "Este agricultor no tiene fincas.",
+      "noWorkers": "Este agricultor no tiene trabajadores.",
+      "noPayrolls": "Este agricultor no ha generado nóminas."
+    },
+    "inputs": {
+      "title": "Insumos agrícolas",
+      "subtitle": "Catálogo de productos que los agricultores eligen al registrar una fumigación.",
+      "new": "Nuevo insumo",
+      "newTitle": "Nuevo insumo",
+      "editTitle": "Editar insumo",
+      "count": "{{count}} insumos",
+      "search": "Buscar insumo",
+      "empty": "No hay insumos en el catálogo.",
+      "loadError": "No se pudo cargar el catálogo.",
+      "delete": "Eliminar",
+      "confirmTitle": "Eliminar insumo",
+      "confirmText": "{{name}} dejará de aparecer en el catálogo. Las fumigaciones ya registradas no cambian.",
+      "created": "Se agregó {{name}} al catálogo.",
+      "updated": "Se guardaron los cambios de {{name}}.",
+      "deleted": "Se eliminó {{name}} del catálogo.",
+      "saveError": "No se pudo guardar el insumo.",
+      "deleteError": "No se pudo eliminar el insumo.",
+      "fields": {
+        "name": "Nombre",
+        "type": "Tipo",
+        "unit": "Unidad",
+        "dose": "Dosis sugerida",
+        "reentry": "Reentrada (horas)"
+      },
+      "errors": {
+        "name": "Escribe el nombre (máximo 150 caracteres).",
+        "dose": "La dosis debe ser mayor a 0.",
+        "reentry": "No puede ser negativo."
+      }
     }
   }
 }
