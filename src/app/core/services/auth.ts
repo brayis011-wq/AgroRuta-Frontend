@@ -17,6 +17,8 @@ export class AuthService {
   }
 
   login(data: LoginRequest): Observable<AuthResponse> {
+    // Descarta cualquier sesión anterior antes de iniciar una nueva
+    this.logout();
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, data).pipe(
       tap((response) => {
         localStorage.setItem('token', response.token);
