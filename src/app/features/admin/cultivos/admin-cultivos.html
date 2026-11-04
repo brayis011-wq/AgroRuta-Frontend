@@ -1,0 +1,74 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">{{ 'admin.badge' | translate }}</p>
+      <h1 class="page-title">{{ 'admin.crops.title' | translate }}</h1>
+      <p class="page-sub">{{ 'admin.crops.subtitle' | translate }}</p>
+    </div>
+    <form class="nuevo" (ngSubmit)="crearCultivo()">
+      <input id="nuevo-cultivo" class="input" name="nuevoCultivo" [(ngModel)]="nuevoCultivo" maxlength="80"
+             [placeholder]="'admin.crops.newPlaceholder' | translate" [attr.aria-label]="'admin.crops.newPlaceholder' | translate" />
+      <button type="submit" class="btn btn-primary" [disabled]="guardando || !nuevoCultivo.trim()">
+        <i class="ti ti-plus" aria-hidden="true"></i>{{ 'admin.crops.new' | translate }}
+      </button>
+    </form>
+  </header>
+
+  @if (mensaje) {
+    <div class="banner" [class.error]="mensaje.tipo === 'error'" role="status">
+      <span>{{ mensaje.texto }}</span>
+      <button type="button" (click)="mensaje = null" [attr.aria-label]="'admin.common.close' | translate">×</button>
+    </div>
+  }
+
+  @if (cargando && cultivos.length === 0) {
+    <div class="card estado">{{ 'common.loading' | translate }}</div>
+  } @else if (error) {
+    <div class="card estado">
+      {{ 'admin.crops.loadError' | translate }}
+      <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">{{ 'common.retry' | translate }}</button>
+    </div>
+  } @else {
+    <div class="grid">
+      @for (t of cultivos; track t.id) {
+        <article class="card cultivo" [class.apagado]="!t.activo">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">{{ t.nombre }}</h2>
+              <p class="cell-sub">{{ 'admin.crops.varietiesCount' | translate: { active: activas(t), total: t.variedades.length } }}</p>
+            </div>
+            <div class="acciones">
+              <span class="pill" [class.ok]="t.activo">{{ (t.activo ? 'admin.common.active' : 'admin.crops.inactive') | translate }}</span>
+              <button type="button" class="btn btn-sm btn-ghost" [disabled]="guardando" (click)="alternarCultivo(t)">
+                {{ (t.activo ? 'admin.crops.deactivate' : 'admin.crops.activate') | translate }}
+              </button>
+            </div>
+          </div>
+
+          <ul class="variedades">
+            @for (v of t.variedades; track v.id) {
+              <li>
+                <button type="button" class="chip" [class.off]="!v.activo" [disabled]="guardando"
+                        (click)="alternarVariedad(v)"
+                        [title]="(v.activo ? 'admin.crops.clickToDeactivate' : 'admin.crops.clickToActivate') | translate">
+                  <i class="ti" [class.ti-circle-check]="v.activo" [class.ti-circle-dashed]="!v.activo" aria-hidden="true"></i>
+                  {{ v.nombre }}
+                </button>
+              </li>
+            } @empty {
+              <li class="cell-sub">{{ 'admin.crops.noVarieties' | translate }}</li>
+            }
+          </ul>
+
+          <form class="nueva-variedad" (ngSubmit)="crearVariedad(t)">
+            <input class="input" [name]="'variedad-' + t.id" [(ngModel)]="nuevaVariedad[t.id]" maxlength="80"
+                   [placeholder]="'admin.crops.newVariety' | translate" [attr.aria-label]="'admin.crops.newVarietyFor' | translate: { crop: t.nombre }" />
+            <button type="submit" class="btn btn-sm btn-ghost" [disabled]="guardando || !(nuevaVariedad[t.id] || '').trim()">
+              <i class="ti ti-plus" aria-hidden="true"></i>{{ 'admin.crops.add' | translate }}
+            </button>
+          </form>
+        </article>
+      }
+    </div>
+  }
+</section>

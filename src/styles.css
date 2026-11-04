@@ -1,13 +1,51 @@
 /* src/styles.css */
 :root {
-  --verde:        #2e7d32;
+  /* ── Tokens de diseño de AgroRuta ─────────────────────── */
+  --ar-fuente:      'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ar-verde-900:   #123d17;
+  --ar-verde-800:   #1b5e20;
+  --ar-verde-700:   #236b28;
+  --ar-verde-600:   #2e7d32;
+  --ar-verde-100:   #e6f2e7;
+  --ar-verde-50:    #f3f8f3;
+  --ar-tinta:       #17231c;
+  --ar-tinta-2:     #4b5a51;
+  --ar-tinta-3:     #7d8a82;
+  --ar-borde:       #e3e9e4;
+  --ar-fondo:       #f4f6f2;
+  --ar-superficie:  #ffffff;
+  --ar-ambar:       #b26a00;
+  --ar-ambar-bg:    #fff4dc;
+  --ar-rojo:        #c62828;
+  --ar-rojo-bg:     #fdecec;
+  --ar-azul:        #1f5fa8;
+  --ar-azul-bg:     #e8f0fb;
+  --ar-radio:       14px;
+  --ar-sombra-1:    0 1px 2px rgba(18, 40, 24, .06), 0 1px 3px rgba(18, 40, 24, .08);
+  --ar-sombra-2:    0 4px 14px rgba(18, 40, 24, .08), 0 1px 3px rgba(18, 40, 24, .06);
+
+  /* Nombres anteriores, apuntando a los tokens (las pantallas viejas los usan) */
+  --verde:        var(--ar-verde-600);
   --verde-claro:  #a5d6a7;
-  --verde-oscuro: #1b5e20;
+  --verde-oscuro: var(--ar-verde-800);
   --verde-suave:  #c8e6c9;
-  --verde-bg:     #f0f4f8;
+  --verde-bg:     var(--ar-fondo);
   --gris:         #888;
   --gris-borde:   #ddd;
-  --rojo:         #c62828;
+  --rojo:         var(--ar-rojo);
   --rojo-bg:      #ffebee;
-  --sombra:       0 2px 10px rgba(0, 0, 0, 0.08);
+  --sombra:       var(--ar-sombra-2);
 }
+
+html, body { margin: 0; }
+body {
+  font-family: var(--ar-fuente);
+  background: var(--ar-fondo);
+  color: var(--ar-tinta);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Los controles de formulario no heredan la fuente por defecto (salían en Arial) */
+button, input, select, textarea, optgroup { font-family: inherit; }
+input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1; }
+:focus-visible { outline-color: var(--ar-verde-600); }
