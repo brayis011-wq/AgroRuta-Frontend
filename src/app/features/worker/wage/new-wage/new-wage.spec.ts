@@ -10,6 +10,14 @@ import { JornalService, TrabajadorService, ActividadService } from '../../../../
 const mkTrabajador = (estado = 'ACTIVO'): any => ({ id: 1, nombre: 'Juan', estado, nombreCompleto: 'Juan Perez' });
 const mkActividad  = (): any => ({ id: 1, nombre: 'Riego' });
 const mkJornal     = (): any => ({ id: 1, trabajadorId: 1, cultivoId: 2 });
+const mkCultivo = (id: number, fincaId: number, loteNombre = 'Lote ' + id): any => ({
+  id, fincaId, fincaNombre: 'Finca ' + fincaId, loteId: id, loteNombre, variedad: 'COLOMBIA', estado: 'PRODUCCION'
+});
+/** Rellena el formulario con datos válidos (finca 1, cultivo 2) */
+const llenar = (c: any) => {
+  c.form.patchValue({ trabajadorId: 1, fincaId: 1, fecha: '2024-01-10', observaciones: '' });
+  c.form.patchValue({ cultivoId: 2 });
+};
 
 describe('NuevoJornalComponent', () => {
   let component: NuevoJornalComponent;
@@ -46,7 +54,8 @@ describe('NuevoJornalComponent', () => {
 
   beforeEach(() => {
     jornalSvc = {
-      registrar: vi.fn()
+      registrar: vi.fn(),
+      cultivosDisponibles: vi.fn().mockReturnValue(of([mkCultivo(2, 1), mkCultivo(3, 1), mkCultivo(4, 9)]))
     };
     trabajadorSvc = {
       listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()]))
@@ -76,13 +85,13 @@ describe('NuevoJornalComponent', () => {
   it('ngOnInit() should set error when trabajadorService fails', async () => {
     trabajadorSvc.listarTodos.mockReturnValue(throwError(() => new Error()));
     await createComponent();
-    expect(component.error).toContain('Error al cargar trabajadores');
+    expect(component.error).toBe('workers.wages.new.errors.loadWorkers');
   });
 
   it('ngOnInit() should set error when actividadService fails', async () => {
     actividadSvc.listar.mockReturnValue(throwError(() => new Error()));
     await createComponent();
-    expect(component.error).toContain('Error al cargar actividades');
+    expect(component.error).toBe('workers.wages.new.errors.loadActivities');
   });
 
   it('ngOnInit() should load actividades', async () => {
@@ -128,12 +137,9 @@ describe('NuevoJornalComponent', () => {
 
   it('guardar() should set error when no actividades selected', async () => {
     await createComponent();
-    component.form.setValue({
-      trabajadorId: 1, cultivoId: 2, nombreCultivo: 'Maiz',
-      fecha: '2024-01-10', observaciones: ''
-    });
+    llenar(component);
     component.guardar();
-    expect(component.error).toContain('Selecciona al menos una actividad');
+    expect(component.error).toBe('workers.wages.new.errors.noActivity');
     expect(jornalSvc.registrar).not.toHaveBeenCalled();
   });
 
@@ -142,10 +148,7 @@ describe('NuevoJornalComponent', () => {
     await createComponent({ trabajadorId: '1' });
     const router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate');
-    component.form.setValue({
-      trabajadorId: 1, cultivoId: 2, nombreCultivo: 'Maiz',
-      fecha: '2024-01-10', observaciones: ''
-    });
+    llenar(component);
     component.toggleActividad(1);
     component.guardar();
     expect(router.navigate).toHaveBeenCalledWith(
@@ -159,10 +162,7 @@ describe('NuevoJornalComponent', () => {
     await createComponent();
     const router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate');
-    component.form.setValue({
-      trabajadorId: 1, cultivoId: 2, nombreCultivo: 'Maiz',
-      fecha: '2024-01-10', observaciones: ''
-    });
+    llenar(component);
     component.toggleActividad(1);
     component.guardar();
     expect(router.navigate).toHaveBeenCalledWith(['/worker']);
@@ -171,14 +171,75 @@ describe('NuevoJornalComponent', () => {
   it('guardar() should set error on service failure', async () => {
     jornalSvc.registrar.mockReturnValue(throwError(() => new Error()));
     await createComponent();
-    component.form.setValue({
-      trabajadorId: 1, cultivoId: 2, nombreCultivo: 'Maiz',
-      fecha: '2024-01-10', observaciones: ''
-    });
+    llenar(component);
     component.toggleActividad(1);
     component.guardar();
-    expect(component.error).toContain('Error al registrar jornal');
+    expect(component.error).toBe('workers.wages.new.errors.register');
     expect(component.guardando).toBe(false);
+  });
+
+  it('lists each farm once and keeps the crop disabled until one is chosen', async () => {
+    await createComponent();
+    expect(component.fincas.map(f => f.id)).toEqual([1, 9]);
+    expect(component.form.get('cultivoId')!.disabled).toBe(true);
+  });
+
+  it('choosing a farm shows only its crops', async () => {
+    await createComponent();
+    component.elegirFinca(1);
+    expect(component.cultivosDeFinca.map(c => c.id)).toEqual([2, 3]);
+    expect(component.form.get('cultivoId')!.enabled).toBe(true);
+  });
+
+  it('auto-selects the farm and crop when there is only one', async () => {
+    jornalSvc.cultivosDisponibles.mockReturnValue(of([mkCultivo(7, 5)]));
+    await createComponent();
+    expect(component.form.get('fincaId')!.value).toBe(5);
+    expect(component.form.get('cultivoId')!.value).toBe(7);
+  });
+
+  it('changing the farm drops the crop from the previous farm', async () => {
+    await createComponent();
+    llenar(component);
+    component.elegirFinca(9);
+    // La finca 9 solo tiene el cultivo 4, así que queda elegido ese
+    expect(component.form.get('cultivoId')!.value).toBe(4);
+    component.form.patchValue({ cultivoId: null });
+    component.elegirFinca(1);
+    expect(component.form.get('cultivoId')!.value).toBeNull();
+  });
+
+  it('shows no farms when the user has no active crops', async () => {
+    jornalSvc.cultivosDisponibles.mockReturnValue(of([]));
+    await createComponent();
+    expect(component.fincas.length).toBe(0);
+    expect(component.cargandoCultivos).toBe(false);
+  });
+
+  it('sends only the crop id, not a free-text name', async () => {
+    jornalSvc.registrar.mockReturnValue(of(mkJornal()));
+    await createComponent();
+    vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    llenar(component);
+    component.toggleActividad(1);
+    component.guardar();
+    const req = jornalSvc.registrar.mock.calls[0][0];
+    expect(req.cultivoId).toBe(2);
+    expect(req.nombreCultivo).toBeUndefined();
+  });
+
+  it('shows the backend reason when the crop is rejected', async () => {
+    jornalSvc.registrar.mockReturnValue(throwError(() => ({ error: { message: 'El cultivo ya está finalizado.' } })));
+    await createComponent();
+    llenar(component);
+    component.toggleActividad(1);
+    component.guardar();
+    expect(component.error).toBe('El cultivo ya está finalizado.');
+  });
+
+  it('defaults the date to today', async () => {
+    await createComponent();
+    expect(component.form.get('fecha')!.value).toBe(component.hoy);
   });
 
   it('invalido() should return true when field is invalid and touched', async () => {
