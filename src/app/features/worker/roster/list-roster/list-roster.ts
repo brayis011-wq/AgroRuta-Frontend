@@ -11,6 +11,7 @@ import {
   NominaRequest
 } from '../../../../core/services/worker.service';
 import { Nomina, Trabajador } from '../../../../core/models/worker.model';
+import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 
 @Component({
   selector: 'app-lista-nominas',
@@ -38,7 +39,8 @@ export class ListaNominasComponent implements OnInit {
     private trabajadorService: TrabajadorService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit(): void {
@@ -124,13 +126,17 @@ export class ListaNominasComponent implements OnInit {
     });
   }
 
+  private confirmar(clave: string, peligro = false): Promise<boolean> {
+    return this.confirmService.preguntar({ mensaje: this.translate.instant(clave), peligro });
+  }
+
   /**
    * Aprueba la nómina (PENDIENTE → APROBADA).
    * El pago se registra después desde el detalle de la nómina.
    */
-  aprobar(id: number | undefined): void {
+  async aprobar(id: number | undefined): Promise<void> {
     if (id == null) return;
-    if (!confirm(this.translate.instant('workers.rosters.list.confirm.approve'))) return;
+    if (!(await this.confirmar('workers.rosters.list.confirm.approve'))) return;
 
     this.aprobando = id;
     this.error = '';
@@ -153,18 +159,18 @@ export class ListaNominasComponent implements OnInit {
     });
   }
 
-  anular(id: number | undefined): void {
+  async anular(id: number | undefined): Promise<void> {
     if (id == null) return;
-    if (!confirm(this.translate.instant('workers.rosters.list.confirm.cancel'))) return;
+    if (!(await this.confirmar('workers.rosters.list.confirm.cancel', true))) return;
     this.nominaService.anular(id).subscribe({
       next: () => { this.cargar(); },
       error: () => { this.error = 'workers.rosters.list.errors.cancel'; this.cdr.detectChanges(); }
     });
   }
 
-  reactivar(id: number | undefined): void {
+  async reactivar(id: number | undefined): Promise<void> {
     if (id == null) return;
-    if (!confirm(this.translate.instant('workers.rosters.list.confirm.reactivate'))) return;
+    if (!(await this.confirmar('workers.rosters.list.confirm.reactivate'))) return;
     this.nominaService.reactivar(id).subscribe({
       next: () => {
         this.exito = 'workers.rosters.list.success.reactivated';
@@ -177,9 +183,9 @@ export class ListaNominasComponent implements OnInit {
     });
   }
 
-  eliminar(id: number | undefined): void {
+  async eliminar(id: number | undefined): Promise<void> {
     if (id == null) return;
-    if (!confirm(this.translate.instant('workers.rosters.list.confirm.delete'))) return;
+    if (!(await this.confirmar('workers.rosters.list.confirm.delete', true))) return;
     this.nominaService.eliminar(id).subscribe({
       next: () => {
         this.todasLasNominas = this.todasLasNominas.filter(n => n.id !== id);

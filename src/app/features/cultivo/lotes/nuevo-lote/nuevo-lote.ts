@@ -9,6 +9,7 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { aplicarTextosDibujo } from '../../../../shared/leaflet-draw-i18n';
 import * as L from 'leaflet';
 import 'leaflet-draw';
+import { GeocodingService } from '../../../../core/services/geocoding.service';
 
 @Component({
   selector: 'app-nuevo-lote',
@@ -22,6 +23,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
   private lang = inject(LanguageService);
   private cdr = inject(ChangeDetectorRef);
+  private geocoding = inject(GeocodingService);
 
   form = { nombre: '' };
 
@@ -130,16 +132,14 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   buscarUbicacion(): void {
-    if (!this.busquedaMapa) return;
-    fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(this.busquedaMapa)}&format=json&limit=1`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.length > 0) {
-          this.map.setView([Number.parseFloat(data[0].lat), Number.parseFloat(data[0].lon)], 16);
-        } else {
-          this.setError('cultivo.fincas.new.errors.notFound');
-        }
-      });
+    if (!this.busquedaMapa.trim()) return;
+    this.geocoding.buscar(this.busquedaMapa).subscribe((punto) => {
+      if (punto) {
+        this.map.setView([punto.lat, punto.lng], 16);
+      } else {
+        this.setError('cultivo.fincas.new.errors.notFound');
+      }
+    });
   }
 
   private initMap(): void {
@@ -179,7 +179,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
             (pos) => {
               this.map.setView([pos.coords.latitude, pos.coords.longitude], 17);
             },
-            () => alert(this.translate.instant('cultivo.fincas.new.geoError'))
+            () => this.setError('cultivo.fincas.new.geoError')
           );
         });
         return btn;
