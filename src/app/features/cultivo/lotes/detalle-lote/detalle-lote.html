@@ -1,19 +1,17 @@
-<div class="pagina">
-  <button type="button" class="volver" (click)="volver()">
-    <i class="ti ti-arrow-left"></i> {{ 'temporadas.lote.back' | translate }}
-  </button>
+<div class="cv">
+  <button type="button" class="volver" (click)="volver()"><i class="ti ti-arrow-left"></i> {{ 'temporadas.lote.back' | translate }}</button>
 
   @if (error()) {
-    <p class="aviso aviso-error" role="alert">{{ error() | translate }}</p>
+    <p class="aviso error" role="alert"><i class="ti ti-alert-circle"></i> {{ error() | translate }}</p>
   }
 
   @if (lote(); as l) {
-    <header class="cabecera">
+    <header class="cv-head">
       @if (!editando()) {
-        <div class="cab-texto">
+        <div>
           <p class="eyebrow">{{ 'temporadas.lote.eyebrow' | translate }}</p>
           <h1>{{ l.nombre }}</h1>
-          <p class="cab-sub">
+          <p class="cv-sub">
             <span><i class="ti ti-ruler-2"></i> {{ fmtNum(l.area, 2) }} {{ 'cultivo.units.hectares' | translate }}</span>
             <span class="chip" [class]="'chip-' + estado()">
               <i class="ti" [class.ti-plant]="estado() === 'EN_CULTIVO'" [class.ti-circle-check]="estado() === 'DISPONIBLE'" [class.ti-moon]="estado() === 'EN_DESCANSO'"></i>
@@ -21,7 +19,7 @@
             </span>
           </p>
         </div>
-        <div class="cab-acciones">
+        <div class="cv-acciones">
           <button type="button" class="btn" (click)="editar()"><i class="ti ti-pencil"></i> {{ 'common.edit' | translate }}</button>
           @if (!siembra()) {
             @if (estado() === 'EN_DESCANSO') {
@@ -32,7 +30,7 @@
           }
         </div>
       } @else {
-        <form class="editar" (ngSubmit)="guardarLote()">
+        <form class="tarjeta editar" (ngSubmit)="guardarLote()">
           <label>
             <span>{{ 'temporadas.lote.name' | translate }}</span>
             <input name="nombre" [(ngModel)]="formNombre" required maxlength="100">
@@ -43,7 +41,7 @@
           </label>
           <div class="editar-botones">
             <button type="button" class="btn btn-texto" (click)="editando.set(false)">{{ 'common.cancel' | translate }}</button>
-            <button type="submit" class="btn btn-primario" [disabled]="guardando() || !formNombre.trim() || !formArea">
+            <button type="submit" class="btn btn-prim" [disabled]="guardando() || !formNombre.trim() || !formArea">
               {{ (guardando() ? 'common.saving' : 'common.save') | translate }}
             </button>
           </div>
@@ -53,20 +51,20 @@
   }
 
   <!-- El mapa siempre está en el DOM para que Leaflet tenga dónde dibujar -->
-  <div class="mapa-wrapper" [class.oculto]="cargando()">
-    <div id="mapa-lote" class="mapa-lote"></div>
-    <div class="mapa-controles">
+  <section class="mapa-card" [style.display]="cargando() ? 'none' : 'block'">
+    <div id="mapa-lote" class="mapa"></div>
+    <div class="mapa-boton">
       <button type="button" class="btn-ndvi" [class.activo]="ndviActivo()" (click)="toggleNdvi()">
         <i class="ti ti-leaf"></i> {{ (ndviActivo() ? 'lotes.detail.hideNdvi' : 'lotes.detail.showNdvi') | translate }}
       </button>
     </div>
     @if (lote() && !lote()!.coordenadas) {
-      <p class="sin-poligono-aviso"><i class="ti ti-map-pin-off"></i> {{ 'lotes.detail.noPolygon' | translate }}</p>
+      <div class="mapa-pie"><span class="sin-mapa"><i class="ti ti-map-pin-off"></i> {{ 'lotes.detail.noPolygon' | translate }}</span></div>
     }
-  </div>
+  </section>
 
   @if (cargando()) {
-    <p class="cargando">{{ 'lotes.detail.loading' | translate }}</p>
+    <div class="esq"></div>
   } @else if (lote()) {
     @if (siembra(); as s) {
       <section class="actual">
@@ -97,14 +95,14 @@
           <h2>{{ (temporadas().length ? 'temporadas.lote.emptyAgain' : 'temporadas.lote.empty') | translate }}</h2>
           <p>{{ (estado() === 'EN_DESCANSO' ? 'temporadas.lote.emptyRest' : 'temporadas.lote.emptyDesc') | translate }}</p>
         </div>
-        <button type="button" class="btn btn-primario" (click)="nuevaSiembra()">
+        <button type="button" class="btn btn-prim" (click)="nuevaSiembra()">
           <i class="ti ti-plus"></i> {{ (temporadas().length ? 'temporadas.lote.newSeason' : 'temporadas.lote.firstSeason') | translate }}
         </button>
       </section>
     }
 
     <section class="historial">
-      <h2>{{ 'temporadas.lote.history' | translate }}</h2>
+      <h2 class="seccion-titulo">{{ 'temporadas.lote.history' | translate }}</h2>
       @if (temporadas().length) {
         <ul>
           @for (t of temporadas(); track t.siembra.id) {

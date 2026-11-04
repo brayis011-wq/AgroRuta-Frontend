@@ -1,0 +1,21 @@
+/* Mapa en tarjeta y diálogo de borrar escribiendo la palabra de confirmación */
+.mapa-card { position: relative; background: #fff; border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); overflow: hidden; }
+.mapa-card .mapa { width: 100%; height: 320px; z-index: 0; display: block; }
+.mapa-pie { display: flex; justify-content: space-between; align-items: center; gap: .5rem 1rem; flex-wrap: wrap; padding: .6rem .9rem; border-top: 1px solid var(--ar-borde); font-size: .8rem; color: var(--ar-tinta-2); }
+.mapa-pie span { display: inline-flex; align-items: center; gap: .35rem; }
+.leyenda { display: flex; gap: .9rem; flex-wrap: wrap; }
+.punto { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.punto.EN_CULTIVO { background: #2e7d32; } .punto.DISPONIBLE { background: #1f5fa8; } .punto.EN_DESCANSO { background: #b26a00; }
+.mapa-boton { position: absolute; top: .75rem; right: .75rem; z-index: 1000; }
+
+.overlay { position: fixed; inset: 0; z-index: 3000; display: grid; place-items: center; padding: 1rem; margin: 0; width: 100%; height: 100%; max-width: none; max-height: none; border: 0; background: rgba(15, 30, 20, .45); backdrop-filter: blur(2px); animation: aparecer .15s ease-out; }
+.confirm-panel { width: min(440px, 100%); background: #fff; border-radius: 18px; padding: 1.4rem; box-shadow: 0 20px 50px rgba(0, 0, 0, .25); display: flex; flex-direction: column; gap: .7rem; color: var(--ar-tinta); animation: subir .2s ease-out; }
+.confirm-panel h3 { margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: .5rem; }
+.confirm-panel h3 .ti { color: var(--ar-rojo); background: var(--ar-rojo-bg); width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-size: 20px; }
+.confirm-panel p { margin: 0; font-size: .9rem; color: var(--ar-tinta-2); }
+.input-confirmacion { font: inherit; padding: .6rem .75rem; border: 1px solid var(--ar-borde); border-radius: 10px; }
+.input-confirmacion:focus { outline: 2px solid var(--ar-rojo); border-color: transparent; }
+.confirm-actions { display: flex; justify-content: flex-end; gap: .5rem; margin-top: .3rem; }
+@keyframes aparecer { from { opacity: 0; } }
+
+@media (max-width: 720px) { .mapa-card .mapa { height: 240px; } }

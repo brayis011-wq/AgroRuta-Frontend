@@ -44,7 +44,7 @@ interface FumigacionForm {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './registrar-fumigacion.html',
-  styleUrl: './registrar-fumigacion.css',
+  styleUrls: ['../../cultivo-form.css', './registrar-fumigacion.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegistrarFumigacion implements OnInit, OnDestroy {

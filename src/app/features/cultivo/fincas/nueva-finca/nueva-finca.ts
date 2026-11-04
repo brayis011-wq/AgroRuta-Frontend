@@ -15,7 +15,7 @@ import { GeocodingService } from '../../../../core/services/geocoding.service';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './nueva-finca.html',
-  styleUrl: './nueva-finca.css',
+  styleUrls: ['../../cultivo-form.css', '../../cultivo-form-mapa.css', './nueva-finca.css'],
 })
 export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
 

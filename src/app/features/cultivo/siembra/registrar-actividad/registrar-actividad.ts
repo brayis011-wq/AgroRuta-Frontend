@@ -10,7 +10,7 @@ import { CultivoService } from '../../../../core/services/cultivo.service';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './registrar-actividad.html',
-  styleUrl: './registrar-actividad.css'
+  styleUrls: ['../../cultivo-form.css', './registrar-actividad.css']
 })
 export class RegistrarActividad implements OnInit {
 
@@ -33,12 +33,12 @@ export class RegistrarActividad implements OnInit {
   ];
 
   tipoIconos: Record<string, string> = {
-    PODA:     '✂️',
-    TUTOREO:  '🪜',
-    DESHIERBE:'🌿',
-    RIEGO:    '💧',
-    REVISION: '🔍',
-    OTRO:     '📝'
+    PODA:     'ti-scissors',
+    TUTOREO:  'ti-line-dashed',
+    DESHIERBE:'ti-plant-off',
+    RIEGO:    'ti-droplet',
+    REVISION: 'ti-zoom-check',
+    OTRO:     'ti-dots'
   };
 
   constructor(

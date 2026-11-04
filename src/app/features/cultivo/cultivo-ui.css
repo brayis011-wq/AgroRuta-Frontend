@@ -1,0 +1,36 @@
+/* Estilos comunes de las páginas de Cultivos (mismo lenguaje que Inicio y Reportes) */
+:host { display: block; }
+.cv { padding: 1.75rem 2rem 2.5rem; max-width: 1180px; min-width: 0; display: flex; flex-direction: column; gap: 1.15rem; color: var(--ar-tinta); animation: subir .35s ease-out both; }
+
+.volver { align-self: flex-start; display: inline-flex; align-items: center; gap: .35rem; font: inherit; font-size: .85rem; font-weight: 600; color: var(--ar-tinta-2); background: none; border: 0; padding: .2rem 0; cursor: pointer; text-decoration: none; }
+.volver:hover { color: var(--ar-verde-700); }
+
+.cv-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; }
+.eyebrow { margin: 0 0 .2rem; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ar-verde-600); }
+.cv-head h1 { margin: 0; font-size: clamp(1.35rem, 2.2vw, 1.7rem); letter-spacing: -.02em; color: var(--ar-tinta); }
+.cv-sub { margin: .35rem 0 0; display: flex; align-items: center; gap: .4rem .9rem; flex-wrap: wrap; color: var(--ar-tinta-2); font-size: .9rem; }
+.cv-sub > span { display: inline-flex; align-items: center; gap: .3rem; }
+.cv-acciones { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+/* Botones */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; padding: .6rem 1rem; border-radius: 11px; cursor: pointer; font: inherit; font-size: .88rem; font-weight: 600; text-decoration: none; border: 1px solid var(--ar-borde); background: #fff; color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); transition: transform .15s, box-shadow .15s, border-color .15s, background .15s; }
+.btn .ti { font-size: 18px; }
+.btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--ar-sombra-2); border-color: #bcd9be; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn-prim { background: linear-gradient(180deg, #38923d, var(--ar-verde-600)); color: #fff; border-color: transparent; box-shadow: 0 3px 10px rgba(46, 125, 50, .3); }
+.btn-prim:hover:not(:disabled) { box-shadow: 0 6px 16px rgba(46, 125, 50, .35); border-color: transparent; }
+.btn-texto { background: transparent; border-color: transparent; box-shadow: none; color: var(--ar-tinta-2); }
+.btn-texto:hover:not(:disabled) { background: var(--ar-fondo); box-shadow: none; border-color: transparent; }
+.btn-peligro { background: var(--ar-rojo); color: #fff; border-color: transparent; }
+.btn-ic { width: 34px; height: 34px; padding: 0; border-radius: 9px; border: 0; background: transparent; color: var(--ar-tinta-3); display: grid; place-items: center; cursor: pointer; font-size: 17px; }
+.btn-ic:hover { background: var(--ar-fondo); color: var(--ar-tinta); }
+.btn-ic.peligro:hover { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
+.btn:focus-visible, .btn-ic:focus-visible, .volver:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+
+@keyframes subir { from { opacity: 0; transform: translateY(6px); } }
+
+@media (max-width: 720px) {
+  .cv { padding: 1rem 1rem 6rem; }
+  .cv-acciones { width: 100%; } .cv-acciones .btn { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .cv { animation: none; } .btn { transition: none; } }

@@ -10,7 +10,7 @@ import { CultivoService } from '../../../../core/services/cultivo.service';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './registrar-cosecha.html',
-  styleUrl: './registrar-cosecha.css'
+  styleUrls: ['../../cultivo-form.css', './registrar-cosecha.css']
 })
 export class RegistrarCosecha implements OnInit {
 

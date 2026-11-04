@@ -2,12 +2,12 @@
   <div class="container">
 
     <button class="btn-back" (click)="volver()">
-      <span class="btn-back__arrow" aria-hidden="true">←</span>
+      <i class="ti ti-arrow-left" aria-hidden="true"></i>
       <span>{{ 'siembra.activity.back' | translate }}</span>
     </button>
 
     <div class="form-header">
-      <div class="form-header__icon" aria-hidden="true">🌱</div>
+      <div class="form-header__icon" aria-hidden="true"><i class="ti ti-clipboard-list"></i></div>
       <div>
         <h2>{{ (registroId ? 'temporadas.registro.editActivity' : 'siembra.activity.title') | translate }}</h2>
         <p>{{ 'siembra.activity.subtitle' | translate }}</p>
@@ -15,11 +15,11 @@
     </div>
 
     <div class="alert alert--error" *ngIf="error" role="alert">
-      <span class="alert__icon" aria-hidden="true">⚠️</span>
+      <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
       {{ error | translate }}
     </div>
     <div class="alert alert--success" *ngIf="exito" role="alert">
-      <span class="alert__icon" aria-hidden="true">✅</span>
+      <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>
       {{ exito | translate }}
     </div>
 
@@ -41,7 +41,7 @@
               [attr.aria-pressed]="form.tipo === tipo"
               (click)="form.tipo = tipo"
             >
-              <span class="tipo-chip__icon" aria-hidden="true">{{ tipoIconos[tipo] }}</span>
+              <i class="ti tipo-chip__icon" [class]="'ti tipo-chip__icon ' + tipoIconos[tipo]" aria-hidden="true"></i>
               <span class="tipo-chip__label">{{ 'enums.tipoActividad.' + tipo | translate }}</span>
             </button>
           </div>
@@ -67,7 +67,7 @@
         <!-- Fecha -->
         <div class="field">
           <label class="field__label" for="fecha">
-            <span aria-hidden="true">📅</span> {{ 'siembra.activity.date' | translate }}
+            <i class="ti ti-calendar" aria-hidden="true"></i> {{ 'siembra.activity.date' | translate }}
           </label>
           <div class="field__input-wrap">
             <input
@@ -84,7 +84,7 @@
         <button type="submit" class="btn-submit" [disabled]="cargando || !form.tipo">
           <span class="btn-submit__text" *ngIf="!cargando">
             <span>{{ (registroId ? 'common.save' : 'siembra.activity.submit') | translate }}</span>
-            <span class="btn-submit__arrow" aria-hidden="true">→</span>
+            <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
           </span>
           <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">
             <span class="spinner" aria-hidden="true"></span>

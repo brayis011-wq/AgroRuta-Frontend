@@ -1,105 +1,140 @@
-<div class="container">
-  <button class="btn-back" (click)="volver()">{{ 'cultivo.fincas.detail.back' | translate }}</button>
+<div class="cv">
+  <button type="button" class="volver" (click)="volver()"><i class="ti ti-arrow-left"></i> {{ 'temporadas.ui.backToFarms' | translate }}</button>
 
-  <div class="loading" *ngIf="cargando">{{ 'cultivo.fincas.detail.loading' | translate }}</div>
-  <div class="error" *ngIf="error">{{ error | translate }}</div>
+  @if (error) {
+    <p class="aviso error" role="alert"><i class="ti ti-alert-circle"></i> {{ error | translate }}</p>
+  }
 
-  <!-- Mapa SIEMPRE en el DOM -->
-  <div class="mapa-wrapper" [style.display]="cargando ? 'none' : 'block'">
-    <div id="mapa-finca" class="mapa-finca"></div>
-    <div class="leyenda">
-      <div class="leyenda-item"><span class="dot disponible"></span> {{ 'enums.loteEstado.DISPONIBLE' | translate }}</div>
-      <div class="leyenda-item"><span class="dot cultivo"></span> {{ 'enums.loteEstado.EN_CULTIVO' | translate }}</div>
-      <div class="leyenda-item"><span class="dot descanso"></span> {{ 'enums.loteEstado.EN_DESCANSO' | translate }}</div>
-    </div>
-  </div>
-
-  <div *ngIf="!cargando && finca">
-    <div class="finca-header" *ngIf="!editando">
-      <div>
-        <h2>🏡 {{ finca.nombre }}</h2>
-        <p>📍 {{ finca.ubicacion }} · 📐 {{ finca.hectareas }} {{ 'cultivo.units.hectares' | translate }}</p>
-      </div>
-      <div class="finca-header-acciones">
-        <button type="button" class="btn-editar-finca" (click)="editarFinca()">
-          <i class="ti ti-pencil"></i> {{ 'common.edit' | translate }}
-        </button>
-        <button class="btn-primary" (click)="nuevoLote()">{{ 'cultivo.fincas.detail.newLot' | translate }}</button>
-      </div>
-    </div>
-
-    <form class="editar-finca" *ngIf="editando" (ngSubmit)="guardarFinca()">
-      <label>
-        <span>{{ 'temporadas.finca.name' | translate }}</span>
-        <input name="nombre" [(ngModel)]="formFinca.nombre" required maxlength="150">
-      </label>
-      <label>
-        <span>{{ 'temporadas.finca.location' | translate }}</span>
-        <input name="ubicacion" [(ngModel)]="formFinca.ubicacion" required maxlength="255">
-      </label>
-      <label>
-        <span>{{ 'temporadas.finca.hectares' | translate }}</span>
-        <input name="hectareas" type="number" min="0.01" step="0.01" [(ngModel)]="formFinca.hectareas" required>
-      </label>
-      <div class="editar-finca-botones">
-        <button type="button" class="btn-secondary" (click)="editando = false">{{ 'common.cancel' | translate }}</button>
-        <button type="submit" class="btn-primary"
-                [disabled]="guardando || !formFinca.nombre.trim() || !formFinca.ubicacion.trim() || !formFinca.hectareas">
-          {{ (guardando ? 'common.saving' : 'common.save') | translate }}
-        </button>
-      </div>
-    </form>
-
-    <div class="section-header" style="margin-top: 1.5rem;">
-      <h3>{{ 'cultivo.fincas.detail.lotsTitle' | translate: { count: lotes.length } }}</h3>
-    </div>
-
-    <div class="empty" *ngIf="lotes.length === 0">
-      <p>{{ 'cultivo.fincas.detail.empty' | translate }}</p>
-    </div>
-
-    <div class="grid" *ngIf="lotes.length > 0">
-      <button class="lote-card"
-              *ngFor="let lote of lotes"
-              (click)="entrarLote(lote.id!)"
-              type="button">
-        <div class="lote-info">
-          <h4>{{ lote.nombre }}</h4>
-          <p>📐 {{ lote.area }} ha
-            <span *ngIf="!lote.coordenadas" class="sin-mapa">{{ 'cultivo.fincas.detail.noPolygon' | translate }}</span>
+  @if (finca) {
+    @if (!editando) {
+      <header class="cv-head">
+        <div>
+          <p class="eyebrow">{{ 'temporadas.ui.farm' | translate }}</p>
+          <h1>{{ finca.nombre }}</h1>
+          <p class="cv-sub">
+            <span><i class="ti ti-map-pin"></i> {{ finca.ubicacion }}</span>
+            <span><i class="ti ti-ruler-2"></i> {{ fmt(finca.hectareas, 1) }} {{ 'cultivo.units.hectares' | translate }}</span>
           </p>
         </div>
-        <div class="lote-estado">
-          <span class="badge" [ngClass]="getEstadoColor(lote.estado)">
-            {{ getEstadoEmoji(lote.estado) }} {{ 'enums.loteEstado.' + lote.estado | translate }}
-          </span>
+        <div class="cv-acciones">
+          <button type="button" class="btn" (click)="editarFinca()"><i class="ti ti-pencil"></i> {{ 'common.edit' | translate }}</button>
+          <button type="button" class="btn btn-prim" (click)="nuevoLote()"><i class="ti ti-square-plus"></i> {{ 'temporadas.ui.newLot' | translate }}</button>
         </div>
-        <button class="btn-eliminar-lote" type="button" (click)="iniciarEliminacionLote($event, lote)">🗑️</button>
-        <div class="lote-arrow">→</div>
-      </button>
+      </header>
+    } @else {
+      <form class="tarjeta editar" (ngSubmit)="guardarFinca()">
+        <label><span>{{ 'temporadas.finca.name' | translate }}</span><input name="nombre" [(ngModel)]="formFinca.nombre" required maxlength="150"></label>
+        <label><span>{{ 'temporadas.finca.location' | translate }}</span><input name="ubicacion" [(ngModel)]="formFinca.ubicacion" required maxlength="255"></label>
+        <label><span>{{ 'temporadas.finca.hectares' | translate }}</span><input name="hectareas" type="number" min="0.01" step="0.01" [(ngModel)]="formFinca.hectareas" required></label>
+        <div class="editar-botones">
+          <button type="button" class="btn btn-texto" (click)="editando = false">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-prim" [disabled]="guardando || !formFinca.nombre.trim() || !formFinca.ubicacion.trim() || !formFinca.hectareas">
+            {{ (guardando ? 'common.saving' : 'common.save') | translate }}
+          </button>
+        </div>
+      </form>
+    }
+  }
+
+  @if (cargando) {
+    <section class="kpis"><div class="esq"></div><div class="esq"></div><div class="esq"></div><div class="esq"></div></section>
+  } @else if (finca) {
+    <section class="kpis">
+      <article class="kpi">
+        <span class="ic gris"><i class="ti ti-layout-grid"></i></span>
+        <div><small>{{ 'temporadas.ui.lots' | translate }}</small><strong>{{ lotes.length }}</strong>
+          <em>{{ fmt(areaLotes(), 1) }} ha {{ 'temporadas.ui.mapped' | translate }}</em></div>
+      </article>
+      <article class="kpi">
+        <span class="ic verde"><i class="ti ti-plant"></i></span>
+        <div><small>{{ 'enums.loteEstado.EN_CULTIVO' | translate }}</small><strong>{{ contar('EN_CULTIVO') }}</strong></div>
+      </article>
+      <article class="kpi">
+        <span class="ic azul"><i class="ti ti-circle-check"></i></span>
+        <div><small>{{ 'enums.loteEstado.DISPONIBLE' | translate }}</small><strong>{{ contar('DISPONIBLE') }}</strong></div>
+      </article>
+      <article class="kpi">
+        <span class="ic ambar"><i class="ti ti-moon"></i></span>
+        <div><small>{{ 'enums.loteEstado.EN_DESCANSO' | translate }}</small><strong>{{ contar('EN_DESCANSO') }}</strong></div>
+      </article>
+    </section>
+  }
+
+  <!-- El mapa siempre está en el DOM para que Leaflet tenga dónde dibujar -->
+  <section class="mapa-card" [style.display]="cargando ? 'none' : 'block'">
+    <div id="mapa-finca" class="mapa"></div>
+    <div class="mapa-pie">
+      <div class="leyenda">
+        <span><i class="punto EN_CULTIVO"></i> {{ 'enums.loteEstado.EN_CULTIVO' | translate }}</span>
+        <span><i class="punto DISPONIBLE"></i> {{ 'enums.loteEstado.DISPONIBLE' | translate }}</span>
+        <span><i class="punto EN_DESCANSO"></i> {{ 'enums.loteEstado.EN_DESCANSO' | translate }}</span>
+      </div>
+      <span><i class="ti ti-pointer"></i> {{ 'temporadas.ui.mapLotHint' | translate }}</span>
     </div>
-  </div>
+  </section>
+
+  @if (!cargando && finca) {
+    <h2 class="seccion-titulo">{{ 'temporadas.ui.lotsOfFarm' | translate }}</h2>
+    @if (!lotes.length) {
+      <section class="tarjeta vacio">
+        <i class="ti ti-layout-grid-add"></i>
+        <h3>{{ 'temporadas.ui.noLotsTitle' | translate }}</h3>
+        <p>{{ 'cultivo.fincas.detail.empty' | translate }}</p>
+        <button type="button" class="btn btn-prim" (click)="nuevoLote()"><i class="ti ti-plus"></i> {{ 'temporadas.ui.newLot' | translate }}</button>
+      </section>
+    } @else {
+      <section class="lotes">
+        @for (lote of lotes; track lote.id) {
+          <article class="lote" [class]="'lote estado-' + lote.estado">
+            <button type="button" class="lote-cuerpo" (click)="entrarLote(lote.id!)">
+              <header>
+                <strong>{{ lote.nombre }}</strong>
+                <span class="chip" [class]="'chip chip-' + lote.estado">{{ 'enums.loteEstado.' + lote.estado | translate }}</span>
+              </header>
+              @if (lote.estado === 'EN_CULTIVO') {
+                @if (siembras[lote.id!]; as s) {
+                  <p class="cultivo"><i class="ti ti-seedling"></i> {{ nombreCultivo(s) }}</p>
+                  <div class="barra" [attr.aria-label]="'enums.etapaCultivo.' + s.estadoCultivo | translate">
+                    <span [style.width.%]="progreso(s.estadoCultivo)"></span>
+                  </div>
+                  <p class="etapa">{{ 'enums.etapaCultivo.' + s.estadoCultivo | translate }}</p>
+                } @else if (siembras[lote.id!] === undefined) {
+                  <div class="esq linea"></div>
+                }
+              } @else {
+                <p class="cultivo libre">{{ (lote.estado === 'EN_DESCANSO' ? 'temporadas.ui.resting' : 'temporadas.ui.readyToPlant') | translate }}</p>
+              }
+            </button>
+            <footer>
+              <span><i class="ti ti-ruler-2"></i> {{ fmt(lote.area, 2) }} ha</span>
+              @if (!lote.coordenadas) {
+                <span class="sin-mapa"><i class="ti ti-map-pin-off"></i> {{ 'cultivo.fincas.detail.noPolygon' | translate }}</span>
+              }
+              <button type="button" class="btn-ic peligro" (click)="iniciarEliminacionLote($event, lote)"
+                      [title]="'cultivo.fincas.detail.deleteLot.title' | translate" [attr.aria-label]="'cultivo.fincas.detail.deleteLot.title' | translate">
+                <i class="ti ti-trash"></i>
+              </button>
+            </footer>
+          </article>
+        }
+      </section>
+    }
+  }
 </div>
 
-<dialog class="overlay" *ngIf="loteAEliminar"
-        (click)="cancelarEliminacion()"
-        (keydown.escape)="cancelarEliminacion()"
-        open>
-  <div class="confirm-panel"
-       (click)="$event.stopPropagation()"
-       (keydown)="$event.stopPropagation()">
-    <h3>⚠️ {{ 'cultivo.fincas.detail.deleteLot.title' | translate }}</h3>
-    <p>{{ 'cultivo.fincas.detail.deleteLot.aboutTo' | translate }} <strong>{{ loteAEliminar.nombre }}</strong>.</p>
-    <p>{{ 'cultivo.fincas.delete.warnPrefix' | translate }} <strong>{{ 'cultivo.fincas.delete.confirmWord' | translate }}</strong> {{ 'cultivo.fincas.delete.warnSuffix' | translate }}</p>
-    <input type="text" [(ngModel)]="textoConfirmacion"
-           [placeholder]="'cultivo.fincas.delete.placeholder' | translate" class="input-confirmacion" />
-    <div class="confirm-actions">
-      <button class="btn-secondary" (click)="cancelarEliminacion()">{{ 'cultivo.fincas.delete.cancel' | translate }}</button>
-      <button class="btn-danger"
-              [disabled]="textoConfirmacion !== palabraConfirmacion || eliminando"
-              (click)="confirmarEliminacionLote()">
-        {{ (eliminando ? 'cultivo.fincas.delete.deleting' : 'cultivo.fincas.detail.deleteLot.submit') | translate }}
-      </button>
+@if (loteAEliminar) {
+  <dialog class="overlay" (click)="cancelarEliminacion()" (keydown.escape)="cancelarEliminacion()" open>
+    <div class="confirm-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+      <h3><i class="ti ti-alert-triangle"></i> {{ 'cultivo.fincas.detail.deleteLot.title' | translate }}</h3>
+      <p>{{ 'cultivo.fincas.detail.deleteLot.aboutTo' | translate }} <strong>{{ loteAEliminar.nombre }}</strong>.</p>
+      <p>{{ 'cultivo.fincas.delete.warnPrefix' | translate }} <strong>{{ 'cultivo.fincas.delete.confirmWord' | translate }}</strong> {{ 'cultivo.fincas.delete.warnSuffix' | translate }}</p>
+      <input type="text" [(ngModel)]="textoConfirmacion" [placeholder]="'cultivo.fincas.delete.placeholder' | translate" class="input-confirmacion" />
+      <div class="confirm-actions">
+        <button type="button" class="btn btn-texto" (click)="cancelarEliminacion()">{{ 'cultivo.fincas.delete.cancel' | translate }}</button>
+        <button type="button" class="btn btn-peligro" [disabled]="textoConfirmacion !== palabraConfirmacion || eliminando" (click)="confirmarEliminacionLote()">
+          {{ (eliminando ? 'cultivo.fincas.delete.deleting' : 'cultivo.fincas.detail.deleteLot.submit') | translate }}
+        </button>
+      </div>
     </div>
-  </div>
-</dialog>
+  </dialog>
+}

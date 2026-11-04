@@ -1,61 +1,51 @@
-<div class="container">
-  <div class="header">
-    <div>
-      <h2>🌿 {{ 'lotes.new.title' | translate }}</h2>
-      <p class="subtitle">{{ 'lotes.new.subtitle' | translate }}</p>
-    </div>
-    <button class="btn-secondary" (click)="cancelar()">{{ 'lotes.new.back' | translate }}</button>
-  </div>
+<div class="page-bg">
+  <div class="container ancho">
+    <button type="button" class="btn-back" (click)="cancelar()"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'temporadas.lote.back' | translate }}</button>
 
-  <div class="form-card">
-
-    <div class="form-group">
-      <label for="nombre">{{ 'lotes.new.name' | translate }}</label>
-      <input id="nombre" type="text" [(ngModel)]="form.nombre"
-             name="nombre" [placeholder]="'lotes.new.namePlaceholder' | translate" required />
+    <div class="form-header">
+      <div class="form-header__icon" aria-hidden="true"><i class="ti ti-square-plus"></i></div>
+      <div>
+        <h2>{{ 'lotes.new.title' | translate }}</h2>
+        <p>{{ 'lotes.new.subtitle' | translate }}</p>
+      </div>
     </div>
 
-    <!-- Instrucciones -->
-    <div class="map-instructions">
-      <span>🖊️</span>
-      <p>{{ 'lotes.new.mapHelp' | translate }}</p>
-    </div>
-    <div class="buscador-mapa">
-      <input type="text"
-             [(ngModel)]="busquedaMapa"
-             name="busquedaMapa"
-             [placeholder]="'cultivo.fincas.new.searchPlaceholder' | translate"
-             (keyup.enter)="buscarUbicacion()" />
-      <button type="button" (click)="buscarUbicacion()">🔍</button>
-    </div>
-    <!-- Mapa -->
-    <div id="mapa-nuevo-lote" class="mapa-container"></div>
+    <div class="form-card">
+      <form (ngSubmit)="registrar()">
+        <div class="field">
+          <label class="field__label" for="nombre"><i class="ti ti-tag" aria-hidden="true"></i> {{ 'lotes.new.name' | translate }}</label>
+          <input id="nombre" type="text" [(ngModel)]="form.nombre" name="nombre" [placeholder]="'lotes.new.namePlaceholder' | translate" required />
+        </div>
 
-    <!-- Área calculada -->
-    <div class="area-resultado" *ngIf="areaCalculada !== null">
-      <span class="area-label">📐 {{ 'lotes.new.areaLabel' | translate }}</span>
-      <span class="area-valor">{{ fmtArea(areaCalculada) }} ha</span>
-      <span class="area-ok" *ngIf="hectareasFinca && areaCalculada <= hectareasFinca">{{ 'lotes.new.withinLimit' | translate }}</span>
-      <span class="area-error" *ngIf="hectareasFinca && areaCalculada > hectareasFinca">
-        {{ 'lotes.new.exceedsLimit' | translate: { max: fmtArea(hectareasFinca) } }}
-      </span>
+        <div class="field">
+          <span class="field__label"><i class="ti ti-polygon" aria-hidden="true"></i> {{ 'temporadas.ui.drawLot' | translate }}</span>
+          <p class="map-instructions">{{ 'lotes.new.mapHelp' | translate }}</p>
+          <div class="buscador-mapa">
+            <input type="text" [(ngModel)]="busquedaMapa" name="busquedaMapa" [placeholder]="'cultivo.fincas.new.searchPlaceholder' | translate" (keydown.enter)="$event.preventDefault(); buscarUbicacion()" />
+            <button type="button" (click)="buscarUbicacion()" [attr.aria-label]="'search.placeholder' | translate"><i class="ti ti-search"></i></button>
+          </div>
+          <div id="mapa-nuevo-lote" class="mapa-container"></div>
+          @if (areaCalculada !== null) {
+            <p class="estado-mapa" [class.ok]="!hectareasFinca || areaCalculada <= hectareasFinca" [class.mal]="hectareasFinca && areaCalculada > hectareasFinca">
+              <i class="ti ti-ruler-2"></i> {{ 'lotes.new.areaLabel' | translate }} <strong>{{ fmtArea(areaCalculada) }} ha</strong>
+              @if (hectareasFinca && areaCalculada <= hectareasFinca) { · {{ 'lotes.new.withinLimit' | translate }} }
+              @if (hectareasFinca && areaCalculada > hectareasFinca) { · {{ 'lotes.new.exceedsLimit' | translate: { max: fmtArea(hectareasFinca) } }} }
+            </p>
+          } @else {
+            <p class="estado-mapa"><i class="ti ti-pointer"></i> {{ 'lotes.new.pending' | translate }}</p>
+          }
+        </div>
+
+        @if (error) { <div class="alert alert--error"><i class="ti ti-alert-triangle alert__icon"></i> {{ error | translate: errorParams }}</div> }
+        @if (exito) { <div class="alert alert--success"><i class="ti ti-circle-check alert__icon"></i> {{ 'lotes.new.success' | translate }}</div> }
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cancelar()">{{ 'lotes.new.cancel' | translate }}</button>
+          <button type="submit" class="btn-submit" [disabled]="guardando || !areaCalculada">
+            {{ (guardando ? 'lotes.new.saving' : 'lotes.new.submit') | translate }}
+          </button>
+        </div>
+      </form>
     </div>
-
-    <div class="area-pendiente" *ngIf="areaCalculada === null">
-      📍 {{ 'lotes.new.pending' | translate }}
-    </div>
-
-    <div class="error" *ngIf="error">{{ error | translate: errorParams }}</div>
-    <div class="success" *ngIf="exito">{{ 'lotes.new.success' | translate }}</div>
-
-    <div class="form-actions">
-      <button type="button" class="btn-secondary" (click)="cancelar()">{{ 'lotes.new.cancel' | translate }}</button>
-      <button type="button" class="btn-primary"
-              (click)="registrar()"
-              [disabled]="guardando || !areaCalculada">
-        {{ (guardando ? 'lotes.new.saving' : 'lotes.new.submit') | translate }}
-      </button>
-    </div>
-
   </div>
 </div>

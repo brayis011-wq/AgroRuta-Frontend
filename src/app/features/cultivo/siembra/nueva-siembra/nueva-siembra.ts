@@ -13,7 +13,7 @@ import { forkJoin, of, switchMap, map } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './nueva-siembra.html',
-  styleUrl: './nueva-siembra.css',
+  styleUrls: ['../../cultivo-form.css', '../../cultivo-form-mapa.css', './nueva-siembra.css'],
 })
 export class NuevaSiembraComponent implements OnInit {
   form = {

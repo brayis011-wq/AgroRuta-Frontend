@@ -34,10 +34,10 @@
 .vacio h2 { margin: 0; font-size: 1.1rem; }
 .vacio p { margin: .25rem 0 0; color: var(--ar-tinta-2); font-size: .9rem; }
 
-.historial h2 { margin: .4rem 0 .6rem; font-size: 1rem; font-weight: 700; }
+.historial { display: flex; flex-direction: column; gap: .6rem; }
 .historial ul {
   list-style: none; margin: 0; padding: 0;
-  background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: var(--ar-radio); overflow: hidden;
+  background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; overflow: hidden; box-shadow: var(--ar-sombra-1);
 }
 .historial li + li { border-top: 1px solid var(--ar-borde); }
 .historial a {

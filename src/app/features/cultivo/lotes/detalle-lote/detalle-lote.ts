@@ -30,7 +30,7 @@ export interface Temporada {
   standalone: true,
   imports: [FormsModule, RouterLink, TranslatePipe, CicloEtapasComponent],
   templateUrl: './detalle-lote.html',
-  styleUrls: ['./detalle-lote.css', './detalle-lote-temporadas.css'],
+  styleUrls: ['../../cultivo-ui.css', '../../cultivo-dialogo.css', './detalle-lote.css', './detalle-lote-temporadas.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {

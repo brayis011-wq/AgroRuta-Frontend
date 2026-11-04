@@ -3,9 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin, of, catchError } from 'rxjs';
+import { LanguageService } from '../../../../core/services/language.service';
+import { formatoNumero } from '../../../../shared/formato';
+import { progresoCiclo } from '../../siembra/ciclo-etapas/ciclo-etapas.logic';
 import { CultivoService } from '../../../../core/services/cultivo.service';
-import { Finca, Lote } from '../../../../core/models/cultivo.model';
+import { EstadoLote, Finca, Lote, Siembra, nombreCultivo } from '../../../../core/models/cultivo.model';
 import { FincaActivaService } from '../../../../core/services/finca-activa.service';
 import * as L from 'leaflet';
 
@@ -14,11 +17,16 @@ import * as L from 'leaflet';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './detalle-finca.html',
-  styleUrls: ['./detalle-finca.css', './detalle-finca-editar.css'],
+  styleUrls: ['../../cultivo-ui.css', '../../cultivo-bloques.css', '../../cultivo-dialogo.css', './detalle-finca.css'],
 })
 export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
   private fincaActiva = inject(FincaActivaService);
+  private lang = inject(LanguageService);
+  readonly nombreCultivo = nombreCultivo;
+  readonly progreso = progresoCiclo;
+  /** Siembra en curso de cada lote (null = sin siembra; ausente = cargando) */
+  siembras: Record<number, Siembra | null> = {};
 
   finca: Finca | null = null;
   lotes: Lote[] = [];
@@ -120,7 +128,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // Tooltip con nombre y estado
         poligono.bindTooltip(
-          `<strong>${lote.nombre}</strong><br>${this.getEstadoLabel(lote.estado)}<br>📐 ${lote.area} ha`,
+          `<strong>${lote.nombre}</strong><br>${this.getEstadoLabel(lote.estado)}<br>${lote.area} ha`,
           { permanent: false, direction: 'center' }
         );
 
@@ -160,6 +168,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
         this.lotes = lotes;
         this.cargando = false;
         this.cdr.detectChanges();
+        this.cargarSiembras();
         setTimeout(() => {
           if (this.map) {
             this.map.invalidateSize();
@@ -175,12 +184,35 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  private cargarSiembras(): void {
+    const sembrados = this.lotes.filter(l => l.estado === 'EN_CULTIVO');
+    this.lotes.filter(l => l.estado !== 'EN_CULTIVO').forEach(l => this.siembras[l.id!] = null);
+    if (!sembrados.length) return;
+    forkJoin(sembrados.map(l => this.cultivoService.buscarSiembraPorLote(l.id!).pipe(catchError(() => of(null)))))
+      .subscribe(lista => {
+        sembrados.forEach((l, i) => this.siembras[l.id!] = lista[i]);
+        this.cdr.detectChanges();
+      });
+  }
+
+  contar(estado: EstadoLote): number {
+    return this.lotes.filter(l => l.estado === estado).length;
+  }
+
+  areaLotes(): number {
+    return this.lotes.reduce((s, l) => s + (l.area ?? 0), 0);
+  }
+
+  fmt(v: number | null | undefined, dec = 0): string {
+    return formatoNumero(v, this.lang.current(), dec);
+  }
+
   private getColorEstado(estado: string): string {
     switch (estado) {
-      case 'DISPONIBLE': return '#16a34a';
-      case 'EN_CULTIVO': return '#f59e0b';
-      case 'EN_DESCANSO': return '#6b7280';
-      default: return '#16a34a';
+      case 'DISPONIBLE': return '#1f5fa8';
+      case 'EN_CULTIVO': return '#2e7d32';
+      case 'EN_DESCANSO': return '#b26a00';
+      default: return '#2e7d32';
     }
   }
 
@@ -204,8 +236,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Etiqueta traducida con emoji (se usa en el tooltip del mapa) */
   getEstadoLabel(estado: string): string {
-    const texto = this.translate.instant('enums.loteEstado.' + estado);
-    return `${this.getEstadoEmoji(estado)} ${texto}`;
+    return this.translate.instant('enums.loteEstado.' + estado);
   }
 
   entrarLote(id: number): void {

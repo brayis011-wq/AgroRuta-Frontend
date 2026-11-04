@@ -3,12 +3,12 @@
   <div class="container">
 
     <button class="btn-back" (click)="volver()">
-      <span class="btn-back__arrow" aria-hidden="true">←</span>
+      <i class="ti ti-arrow-left" aria-hidden="true"></i>
       <span>{{ 'siembra.spray.back' | translate }}</span>
     </button>
 
     <div class="form-header">
-      <div class="form-header__icon" aria-hidden="true">💨</div>
+      <div class="form-header__icon" aria-hidden="true"><i class="ti ti-spray"></i></div>
       <div>
         <h2>{{ (registroId ? 'temporadas.registro.editSpray' : 'siembra.spray.title') | translate }}</h2>
         <p>{{ 'siembra.spray.subtitle' | translate }}</p>
@@ -17,10 +17,10 @@
 
     <!-- Alertas -->
     <div class="alert alert--error" *ngIf="error" role="alert">
-      <span class="alert__icon" aria-hidden="true">⚠️</span>{{ error | translate }}
+      <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>{{ error | translate }}
     </div>
     <div class="alert alert--success" *ngIf="exito" role="alert">
-      <span class="alert__icon" aria-hidden="true">✅</span>{{ exito | translate }}
+      <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>{{ exito | translate }}
     </div>
 
     <div class="form-card">
@@ -31,7 +31,7 @@
         <!-- Fecha -->
         <div class="field">
           <label class="field__label" for="fecha">
-            <span aria-hidden="true">📅</span> {{ 'siembra.spray.date' | translate }}
+            <i class="ti ti-calendar" aria-hidden="true"></i> {{ 'siembra.spray.date' | translate }}
           </label>
           <div class="field__input-wrap">
             <input id="fecha" type="date"
@@ -42,7 +42,7 @@
         <!-- Producto: buscador conectado al API -->
         <fieldset class="field">
           <legend class="field__label">
-            <span aria-hidden="true">🧪</span> {{ 'siembra.spray.product' | translate }}
+            <i class="ti ti-flask" aria-hidden="true"></i> {{ 'siembra.spray.product' | translate }}
           </legend>
 
           <!-- Buscador (visible si no hay insumo seleccionado) -->
@@ -59,7 +59,7 @@
                   (blur)="usarProductoManual()"
                   autocomplete="off"
                 />
-                <span class="search-icon" aria-hidden="true" *ngIf="!cargandoCatalogo()">🔍</span>
+                <i class="ti ti-search search-icon" aria-hidden="true" *ngIf="!cargandoCatalogo()"></i>
                 <span class="spinner search-icon" aria-hidden="true" *ngIf="cargandoCatalogo()"></span>
               </div>
 
@@ -141,7 +141,7 @@
                         <span class="catalogo-dosis">
                           {{ 'siembra.spray.doseShort' | translate: { dose: insumo.dosisSugerida, unit: ('enums.unidadMedida.' + insumo.unidadSugerida | translate) } }}
                           <span *ngIf="insumo.reentradaHoras > 0">
-                            · <span aria-hidden="true">⚠️</span> {{ 'siembra.spray.reentryShort' | translate: { hours: insumo.reentradaHoras } }}
+                            · <i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ 'siembra.spray.reentryShort' | translate: { hours: insumo.reentradaHoras } }}
                           </span>
                         </span>
                       </div>
@@ -175,7 +175,7 @@
 
             <!-- Alerta período de reentrada -->
             <div class="reentrada-aviso" *ngIf="insumo.reentradaHoras > 0" role="note">
-              <span aria-hidden="true">⚠️</span> {{ 'siembra.spray.reentryLabel' | translate }}
+              <i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ 'siembra.spray.reentryLabel' | translate }}
               <strong>{{ 'siembra.spray.reentryHours' | translate: { hours: insumo.reentradaHoras } }}</strong>
               — {{ 'siembra.spray.reentryNote' | translate }}
             </div>
@@ -187,7 +187,7 @@
         <div class="field-row">
           <div class="field">
             <label class="field__label" for="dosis">
-              <span aria-hidden="true">💊</span> {{ 'siembra.spray.dose' | translate }}
+              <i class="ti ti-droplet" aria-hidden="true"></i> {{ 'siembra.spray.dose' | translate }}
             </label>
             <div class="field__input-wrap">
               <input id="dosis" type="number"
@@ -201,7 +201,7 @@
 
           <div class="field">
             <label class="field__label" for="unidad">
-              <span aria-hidden="true">📐</span> {{ 'siembra.spray.unit' | translate }}
+              <i class="ti ti-ruler-2" aria-hidden="true"></i> {{ 'siembra.spray.unit' | translate }}
             </label>
             <div class="field__input-wrap">
               <select id="unidad"
@@ -216,7 +216,7 @@
         <!-- Área -->
         <div class="field">
           <label class="field__label" for="area">
-            <span aria-hidden="true">🌾</span> {{ 'siembra.spray.area' | translate }}
+            <i class="ti ti-dimensions" aria-hidden="true"></i> {{ 'siembra.spray.area' | translate }}
           </label>
           <div class="field__input-wrap">
             <input id="area" type="number"
@@ -228,7 +228,7 @@
         <!-- Observaciones -->
         <div class="field">
           <label class="field__label" for="observaciones">
-            <span aria-hidden="true">📝</span> {{ 'siembra.spray.notes' | translate }}
+            <i class="ti ti-notes" aria-hidden="true"></i> {{ 'siembra.spray.notes' | translate }}
             <span class="label-optional">({{ 'common.optional' | translate }})</span>
           </label>
           <div class="field__input-wrap">
@@ -243,7 +243,7 @@
         <button type="submit" class="btn-submit" [disabled]="cargando">
           <span class="btn-submit__text" *ngIf="!cargando">
             <span>{{ (registroId ? 'common.save' : 'siembra.spray.submit') | translate }}</span>
-            <span class="btn-submit__arrow" aria-hidden="true">→</span>
+            <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
           </span>
           <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">
             <span class="spinner" aria-hidden="true"></span>
