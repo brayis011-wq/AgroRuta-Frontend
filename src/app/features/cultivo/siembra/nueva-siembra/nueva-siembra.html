@@ -12,7 +12,7 @@
 
       <div class="form-group">
         <label for="fechaSiembra">{{ 'siembra.new.date' | translate }}</label>
-        <input id="fechaSiembra" type="date" [(ngModel)]="form.fechaSiembra"
+        <input id="fechaSiembra" type="date" [max]="hoy" [(ngModel)]="form.fechaSiembra"
                name="fechaSiembra" required />
       </div>
 
@@ -23,12 +23,28 @@
       </div>
 
       <div class="form-group">
+        <label for="tipoCultivo">{{ 'siembra.new.crop' | translate }}</label>
+        <select id="tipoCultivo" [ngModel]="form.tipoCultivoId" (ngModelChange)="elegirCultivo($event)"
+                name="tipoCultivo" required>
+          <option [ngValue]="null" disabled>
+            {{ (cargandoCatalogo ? 'common.loading' : 'siembra.new.cropPlaceholder') | translate }}
+          </option>
+          @for (c of cultivos; track c.id) {
+            <option [ngValue]="c.id">{{ c.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
         <label for="variedad">{{ 'siembra.new.variety' | translate }}</label>
-        <select id="variedad" [(ngModel)]="form.variedad" name="variedad" required>
-          <option value="">{{ 'siembra.new.varietyPlaceholder' | translate }}</option>
-          <option value="COLOMBIA">{{ 'enums.variedad.COLOMBIA' | translate }}</option>
-          <option value="GIGANTE">{{ 'enums.variedad.GIGANTE' | translate }}</option>
-          <option value="KENYA">{{ 'enums.variedad.KENYA' | translate }}</option>
+        <select id="variedad" [(ngModel)]="form.variedadId" name="variedad" required
+                [disabled]="form.tipoCultivoId == null">
+          <option [ngValue]="null" disabled>
+            {{ (form.tipoCultivoId == null ? 'siembra.new.cropFirst' : 'siembra.new.varietyPlaceholder') | translate }}
+          </option>
+          @for (v of variedades; track v.id) {
+            <option [ngValue]="v.id">{{ v.nombre }}</option>
+          }
         </select>
       </div>
 

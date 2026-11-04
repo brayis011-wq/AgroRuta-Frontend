@@ -11,7 +11,7 @@ const mkTrabajador = (estado = 'ACTIVO'): any => ({ id: 1, nombre: 'Juan', estad
 const mkActividad  = (): any => ({ id: 1, nombre: 'Riego' });
 const mkJornal     = (): any => ({ id: 1, trabajadorId: 1, cultivoId: 2 });
 const mkCultivo = (id: number, fincaId: number, loteNombre = 'Lote ' + id): any => ({
-  id, fincaId, fincaNombre: 'Finca ' + fincaId, loteId: id, loteNombre, variedad: 'COLOMBIA', estado: 'PRODUCCION'
+  id, fincaId, fincaNombre: 'Finca ' + fincaId, loteId: id, loteNombre, tipoCultivo: 'Uchuva', variedad: 'Colombia', estado: 'PRODUCCION'
 });
 /** Rellena el formulario con datos válidos (finca 1, cultivo 2) */
 const llenar = (c: any) => {

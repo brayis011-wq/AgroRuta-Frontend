@@ -298,7 +298,7 @@
     "fincas": {
       "list": {
         "title": "Mis fincas",
-        "subtitle": "Gestiona tus fincas de uchuva",
+        "subtitle": "Gestiona tus fincas y cultivos",
         "newFarm": "+ Nueva finca",
         "loading": "Cargando fincas...",
         "mapHint": "Haz clic en un marcador para ver el entorno y entrar a la finca",
@@ -334,7 +334,7 @@
       },
       "new": {
         "title": "Nueva finca",
-        "subtitle": "Registra una nueva finca de uchuva",
+        "subtitle": "Registra una nueva finca",
         "back": "← Volver",
         "name": "Nombre de la finca *",
         "namePlaceholder": "Ej: Finca El Paraíso",
@@ -415,7 +415,7 @@
       "statusNone": "Sin siembra",
       "noPlanting": {
         "title": "Sin siembra activa",
-        "desc": "Este lote está disponible para iniciar una nueva siembra de uchuva.",
+        "desc": "Este lote está disponible para iniciar una nueva siembra.",
         "start": "+ Iniciar siembra"
       },
       "planting": {
@@ -474,7 +474,10 @@
       "date": "Fecha de siembra *",
       "plants": "Cantidad de plantas *",
       "plantsPlaceholder": "Ej: 500",
-      "variety": "Variedad de uchuva *",
+      "crop": "Cultivo *",
+      "cropPlaceholder": "Selecciona el cultivo",
+      "cropFirst": "Primero elige el cultivo",
+      "variety": "Variedad *",
       "varietyPlaceholder": "Selecciona una variedad",
       "cancel": "Cancelar",
       "submit": "Registrar siembra",
@@ -482,13 +485,15 @@
       "success": "¡Siembra registrada exitosamente!",
       "errors": {
         "required": "Por favor completa todos los campos.",
-        "register": "Error al registrar la siembra. Intenta de nuevo."
+        "register": "Error al registrar la siembra. Intenta de nuevo.",
+        "loadCatalog": "No se pudo cargar el catálogo de cultivos."
       }
     },
     "detail": {
       "back": "← Volver al lote",
       "loading": "Cargando...",
-      "title": "Siembra de uchuva",
+      "title": "Siembra de {{cultivo}}",
+      "cropFallback": "cultivo",
       "varietyLabel": "Variedad",
       "plantsCount": "{{count}} plantas",
       "days": "días",
@@ -1094,6 +1099,7 @@
       "users": "Usuarios",
       "farmers": "Agricultores",
       "inputs": "Insumos",
+      "crops": "Cultivos",
       "backups": "Copias de seguridad",
       "account": "Mi cuenta"
     },
@@ -1215,6 +1221,28 @@
       "noFarms": "Este agricultor no tiene fincas.",
       "noWorkers": "Este agricultor no tiene trabajadores.",
       "noPayrolls": "Este agricultor no ha generado nóminas."
+    },
+    "crops": {
+      "title": "Cultivos y variedades",
+      "subtitle": "Lo que los agricultores pueden elegir al registrar una siembra. Desactivar no borra nada: las siembras existentes conservan su cultivo.",
+      "new": "Agregar cultivo",
+      "newPlaceholder": "Nuevo cultivo, p. ej. Arándano",
+      "newVariety": "Nueva variedad",
+      "newVarietyFor": "Nueva variedad de {{crop}}",
+      "add": "Agregar",
+      "varietiesCount": "{{active}} de {{total}} variedades activas",
+      "noVarieties": "Sin variedades todavía.",
+      "inactive": "Inactivo",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "clickToActivate": "Clic para activar",
+      "clickToDeactivate": "Clic para desactivar",
+      "created": "Cultivo {{name}} agregado.",
+      "varietyCreated": "Variedad {{name}} agregada a {{crop}}.",
+      "activated": "{{name}} activado.",
+      "deactivated": "{{name}} desactivado.",
+      "saveError": "No se pudo guardar el cambio.",
+      "loadError": "No se pudo cargar el catálogo de cultivos."
     },
     "inputs": {
       "title": "Insumos agrícolas",
