@@ -8,9 +8,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   NominaService,
   TrabajadorService,
-  PagoService,
-  NominaRequest,
-  PagoRequest
+  NominaRequest
 } from '../../../../core/services/worker.service';
 import { Nomina, Trabajador } from '../../../../core/models/worker.model';
 
@@ -38,7 +36,6 @@ export class ListaNominasComponent implements OnInit {
     private fb: FormBuilder,
     private nominaService: NominaService,
     private trabajadorService: TrabajadorService,
-    private pagoService: PagoService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService
@@ -96,12 +93,12 @@ export class ListaNominasComponent implements OnInit {
   /**
    * Permite generar nómina si:
    * - No hay filtro de trabajador (vista global), O
-   * - El trabajador filtrado no tiene ninguna nómina en PENDIENTE o PAGADA
+   * - El trabajador filtrado no tiene ninguna nómina en PENDIENTE, APROBADA o PAGADA
    */
   get puedeGenerarNomina(): boolean {
     if (!this.trabajadorFiltrado) return true;
     return !this.nominas.some(n =>
-      n.estado === 'PENDIENTE' || n.estado === 'PAGADA'
+      n.estado === 'PENDIENTE' || n.estado === 'APROBADA' || n.estado === 'PAGADA'
     );
   }
 
@@ -127,6 +124,10 @@ export class ListaNominasComponent implements OnInit {
     });
   }
 
+  /**
+   * Aprueba la nómina (PENDIENTE → APROBADA).
+   * El pago se registra después desde el detalle de la nómina.
+   */
   aprobar(id: number | undefined): void {
     if (id == null) return;
     if (!confirm(this.translate.instant('workers.rosters.list.confirm.approve'))) return;
@@ -136,28 +137,13 @@ export class ListaNominasComponent implements OnInit {
     this.exito = '';
 
     this.nominaService.aprobar(id).subscribe({
-      next: (nominaAprobada: Nomina) => {
-        const pagoReq: PagoRequest = {
-          nominaId:   nominaAprobada.id!,
-          monto:      nominaAprobada.valorTotal,
-          metodoPago: 'EFECTIVO'
-        };
-        this.pagoService.registrar(pagoReq).subscribe({
-          next: () => {
-            this.aprobando = null;
-            this.exito = 'workers.rosters.list.success.approved';
-            this.exitoParams = { amount: nominaAprobada.valorTotal.toLocaleString() };
-            this.cargar();
-            this.cdr.detectChanges();
-            setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 4000);
-          },
-          error: () => {
-            this.aprobando = null;
-            this.error = 'workers.rosters.list.errors.paymentAfterApprove';
-            this.cargar();
-            this.cdr.detectChanges();
-          }
-        });
+      next: () => {
+        this.aprobando = null;
+        this.exito = 'workers.rosters.list.success.approved';
+        this.exitoParams = {};
+        this.cargar();
+        this.cdr.detectChanges();
+        setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 4000);
       },
       error: () => {
         this.error = 'workers.rosters.list.errors.approve';

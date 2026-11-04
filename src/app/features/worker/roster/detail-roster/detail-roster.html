@@ -22,17 +22,26 @@
         <span *ngIf="guardando">{{ 'workers.rosters.detail.processing' | translate }}</span>
       </button>
 
-      <!-- APROBADA o PAGADA: ver pago -->
+      <!-- APROBADA: registrar pago -->
       <button
-        *ngIf="nomina.estado === 'APROBADA' || nomina.estado === 'PAGADA'"
+        *ngIf="nomina.estado === 'APROBADA' && !mostrarFormPago"
+        class="btn-primary btn-confirmar"
+        [disabled]="guardando"
+        (click)="abrirFormPago()">
+        {{ 'workers.rosters.detail.registerPayment' | translate }}
+      </button>
+
+      <!-- PAGADA: ver pago -->
+      <button
+        *ngIf="nomina.estado === 'PAGADA'"
         class="btn-primary btn-ver-pago"
         (click)="verPago()">
         {{ 'workers.rosters.detail.viewPayment' | translate }}
       </button>
 
-      <!-- Anular: si no está ya ANULADA -->
+      <!-- Anular: solo PENDIENTE o APROBADA (una nómina pagada no se anula) -->
       <button
-        *ngIf="nomina.estado !== 'ANULADA'"
+        *ngIf="nomina.estado === 'PENDIENTE' || nomina.estado === 'APROBADA'"
         class="btn-secundario"
         [disabled]="guardando"
         (click)="anular()">
@@ -44,6 +53,45 @@
   <!-- Mensajes -->
   <div *ngIf="error" class="alerta-error">{{ error | translate }}</div>
   <div *ngIf="exito" class="alerta-exito">{{ exito | translate: exitoParams }}</div>
+
+  <!-- Registrar pago (solo APROBADA) -->
+  <form *ngIf="nomina.estado === 'APROBADA' && mostrarFormPago"
+        class="form-card" [formGroup]="pagoForm" (ngSubmit)="registrarPago()" novalidate>
+    <h2 class="form-titulo">{{ 'workers.rosters.detail.paymentForm.title' | translate }}</h2>
+    <p class="pago-form-monto">
+      {{ 'workers.rosters.detail.paymentForm.amount' | translate }}
+      <strong>${{ nomina.valorTotal | number }}</strong>
+    </p>
+
+    <div class="grid-2">
+      <div class="campo">
+        <label for="metodoPago">{{ 'workers.rosters.detail.paymentForm.method' | translate }}</label>
+        <select id="metodoPago" formControlName="metodoPago">
+          <option *ngFor="let m of metodosPago" [value]="m">{{ 'enums.metodoPago.' + m | translate }}</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="comprobante">{{ 'workers.rosters.detail.paymentForm.receipt' | translate }}</label>
+        <input id="comprobante" type="text" formControlName="comprobante" maxlength="100"
+               [placeholder]="'workers.rosters.detail.paymentForm.receiptPlaceholder' | translate" />
+      </div>
+    </div>
+
+    <div class="campo" style="margin-top:1rem">
+      <label for="observacionesPago">{{ 'workers.rosters.detail.paymentForm.notes' | translate }}</label>
+      <input id="observacionesPago" type="text" formControlName="observaciones" maxlength="500" />
+    </div>
+
+    <div class="form-footer">
+      <button type="button" class="btn-secundario" [disabled]="guardando" (click)="mostrarFormPago = false">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button type="submit" class="btn-primary btn-confirmar" [disabled]="guardando">
+        <span *ngIf="!guardando">{{ 'workers.rosters.detail.paymentForm.submit' | translate }}</span>
+        <span *ngIf="guardando">{{ 'workers.rosters.detail.processing' | translate }}</span>
+      </button>
+    </div>
+  </form>
 
   <!-- Resumen -->
   <div class="resumen-grid">
@@ -65,7 +113,7 @@
     </div>
   </div>
 
-  <!-- Pago registrado (visible tras aprobar) -->
+  <!-- Pago registrado (visible cuando está PAGADA) -->
   <div *ngIf="pagos.length > 0" class="pago-registrado-banner">
     <div class="pago-banner-izq">
       <span class="pago-banner-icono">💵</span>
