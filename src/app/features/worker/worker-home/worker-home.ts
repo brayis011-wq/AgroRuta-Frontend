@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,6 +13,7 @@ import {
   NominaRequest
 } from '../../../core/services/worker.service';
 import { Trabajador, Nomina, Pago, Cargo } from '../../../core/models/worker.model';
+import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 
 type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 
@@ -24,6 +25,7 @@ type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
   styleUrls: ['./worker-home.css', './worker-acceso.css']
 })
 export class WorkerHomeComponent implements OnInit {
+  private readonly confirmService = inject(ConfirmService);
 
   trabajadores: Trabajador[] = [];
   cargos:  Cargo[]  = [];
@@ -328,8 +330,8 @@ export class WorkerHomeComponent implements OnInit {
     });
   }
 
-  desactivar(t: Trabajador): void {
-    if (!t.id || !confirm(this.translate.instant('workers.home.confirm.deactivate', { name: t.nombreCompleto }))) return;
+  async desactivar(t: Trabajador): Promise<void> {
+    if (!t.id || !(await this.preguntar('workers.home.confirm.deactivate', t, true))) return;
     this.trabajadorService.desactivar(t.id).subscribe({
       next: () => {
         this.trabajadores = this.trabajadores.filter(x => x.id !== t.id);
@@ -340,8 +342,8 @@ export class WorkerHomeComponent implements OnInit {
     });
   }
 
-  suspender(t: Trabajador): void {
-    if (!t.id || !confirm(this.translate.instant('workers.home.confirm.suspend', { name: t.nombreCompleto }))) return;
+  async suspender(t: Trabajador): Promise<void> {
+    if (!t.id || !(await this.preguntar('workers.home.confirm.suspend', t, true))) return;
     this.trabajadorService.suspender(t.id).subscribe({
       next: () => {
         this.trabajadores = this.trabajadores.map(x =>
@@ -354,8 +356,8 @@ export class WorkerHomeComponent implements OnInit {
     });
   }
 
-  reactivar(t: Trabajador): void {
-    if (!t.id || !confirm(this.translate.instant('workers.home.confirm.reactivate', { name: t.nombreCompleto }))) return;
+  async reactivar(t: Trabajador): Promise<void> {
+    if (!t.id || !(await this.preguntar('workers.home.confirm.reactivate', t))) return;
     this.trabajadorService.reactivar(t.id).subscribe({
       next: () => {
         this.trabajadores = this.trabajadores.map(x =>
@@ -379,10 +381,10 @@ export class WorkerHomeComponent implements OnInit {
     });
   }
 
-  rechazarAcceso(t: Trabajador): void {
+  async rechazarAcceso(t: Trabajador): Promise<void> {
     if (!t.id) return;
     const clave = t.accesoEstado === 'APROBADO' ? 'workers.home.access.confirmRevoke' : 'workers.home.access.confirmReject';
-    if (!confirm(this.translate.instant(clave, { name: t.nombreCompleto }))) return;
+    if (!(await this.preguntar(clave, t, true))) return;
     this.guardando = true;
     this.trabajadorService.rechazarAcceso(t.id).subscribe({
       next: (actualizado) => this.actualizarAcceso(actualizado,
@@ -396,6 +398,11 @@ export class WorkerHomeComponent implements OnInit {
     this.trabajadores = this.trabajadores.map(x => x.id === actualizado.id ? { ...x, ...actualizado } : x);
     this.trabajadorSeleccionado = this.trabajadores.find(x => x.id === actualizado.id) ?? null;
     this.mostrarExito(claveExito);
+  }
+
+  private preguntar(clave: string, t: Trabajador, peligro = false): Promise<boolean> {
+    const mensaje = this.translate.instant(clave, { name: t.nombreCompleto });
+    return this.confirmService.preguntar({ mensaje, peligro });
   }
 
   invalido(form: FormGroup, campo: string): boolean {

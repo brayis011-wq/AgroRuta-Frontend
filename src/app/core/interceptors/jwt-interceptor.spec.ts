@@ -38,6 +38,7 @@ describe('jwtInterceptor', () => {
       authServiceMock.getToken.mockReturnValue('fake-jwt-token');
 
       const req = {
+        url: 'http://localhost:8080/api/test',
         headers: {
           set: vi.fn().mockReturnValue('headers-with-auth'),
         },
@@ -56,6 +57,28 @@ describe('jwtInterceptor', () => {
             headers: 'headers-with-auth',
           });
           expect(next).toHaveBeenCalledWith({ url: '/api/test', withAuth: true });
+          resolve();
+        },
+      });
+    });
+  });
+
+  it('should NOT send the token to external services', () => {
+    return new Promise<void>((resolve) => {
+      authServiceMock.getToken.mockReturnValue('fake-jwt-token');
+
+      const req = {
+        url: 'https://nominatim.openstreetmap.org/search?q=Tunja',
+        headers: { set: vi.fn() },
+        clone: vi.fn(),
+      } as any;
+
+      const next = vi.fn().mockReturnValue(of({ type: 4 }));
+
+      interceptor(req, next).subscribe({
+        next: () => {
+          expect(req.clone).not.toHaveBeenCalled();
+          expect(next).toHaveBeenCalledWith(req);
           resolve();
         },
       });

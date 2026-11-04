@@ -1,4 +1,5 @@
 ﻿import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { of, throwError } from 'rxjs';
@@ -12,11 +13,15 @@ const mockActividades = [
 ];
 
 describe('ListaActividadesComponent', () => {
+  // El diálogo de confirmación responde lo que diga cada prueba
+  let respuesta = true;
+  const confirmSvc = { preguntar: vi.fn(() => Promise.resolve(respuesta)) };
   let component: ListaActividadesComponent;
   let fixture: ComponentFixture<ListaActividadesComponent>;
   let actividadServiceMock: any;
 
   beforeEach(async () => {
+    respuesta = true;
     actividadServiceMock = {
       listar: vi.fn().mockReturnValue(of(mockActividades)),
       crear: vi.fn().mockReturnValue(of({})),
@@ -26,6 +31,7 @@ describe('ListaActividadesComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ListaActividadesComponent, ReactiveFormsModule, CommonModule],
       providers: [
+        { provide: ConfirmService, useValue: confirmSvc },
         { provide: ActividadService, useValue: actividadServiceMock },
         ChangeDetectorRef,
       ],
@@ -83,18 +89,18 @@ describe('ListaActividadesComponent', () => {
     component.guardar();
     expect(component.error).toBe('Error al guardar');
   });
-  it('desactivar() should do nothing when id is null', () => {
-    component.desactivar({ nombre: 'Test', descripcion: 'Test' } as any);
+  it('desactivar() should do nothing when id is null', async () => {
+    await component.desactivar({ nombre: 'Test', descripcion: 'Test' } as any);
     expect(actividadServiceMock.desactivar).not.toHaveBeenCalled();
   });
-  it('desactivar() should call service when confirmed', () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    component.desactivar(mockActividades[0] as any);
+  it('desactivar() should call service when confirmed', async () => {
+    respuesta = true;
+    await component.desactivar(mockActividades[0] as any);
     expect(actividadServiceMock.desactivar).toHaveBeenCalledWith(1);
   });
-  it('desactivar() should not call service when not confirmed', () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
-    component.desactivar(mockActividades[0] as any);
+  it('desactivar() should not call service when not confirmed', async () => {
+    respuesta = false;
+    await component.desactivar(mockActividades[0] as any);
     expect(actividadServiceMock.desactivar).not.toHaveBeenCalled();
   });
 });

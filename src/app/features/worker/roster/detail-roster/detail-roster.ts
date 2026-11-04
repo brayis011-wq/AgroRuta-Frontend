@@ -1,6 +1,6 @@
 // src/app/features/worker/roster/detail-roster/detail-roster.ts
 
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -11,6 +11,7 @@ import {
   PagoRequest
 } from '../../../../core/services/worker.service';
 import { Nomina, Pago } from '../../../../core/models/worker.model';
+import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 
 @Component({
   selector: 'app-detalle-nomina',
@@ -20,6 +21,7 @@ import { Nomina, Pago } from '../../../../core/models/worker.model';
   styleUrls: ['./detail-roster.css']
 })
 export class DetalleNominaComponent implements OnInit {
+  private readonly confirmService = inject(ConfirmService);
   nomina: Nomina | null = null;
   pagos: Pago[] = [];
   cargando = true;
@@ -88,9 +90,10 @@ export class DetalleNominaComponent implements OnInit {
   /**
    * Aprueba la nómina (PENDIENTE → APROBADA). El pago se registra después, en otro paso.
    */
-  aprobar(): void {
+  async aprobar(): Promise<void> {
     if (!this.nomina?.id) return;
-    if (!confirm(this.translate.instant('workers.rosters.detail.confirm.approve'))) return;
+    const mensaje = this.translate.instant('workers.rosters.detail.confirm.approve');
+    if (!(await this.confirmService.preguntar({ mensaje }))) return;
 
     this.guardando = true;
     this.error = '';
@@ -167,8 +170,10 @@ export class DetalleNominaComponent implements OnInit {
     setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 4000);
   }
 
-  anular(): void {
-    if (!this.nomina?.id || !confirm(this.translate.instant('workers.rosters.detail.confirm.cancel'))) return;
+  async anular(): Promise<void> {
+    if (!this.nomina?.id) return;
+    const mensaje = this.translate.instant('workers.rosters.detail.confirm.cancel');
+    if (!(await this.confirmService.preguntar({ mensaje, peligro: true }))) return;
     this.guardando = true;
     this.nominaService.anular(this.nomina.id).subscribe({
       next: () => {

@@ -8,6 +8,7 @@ import { CultivoService } from '../../../../core/services/cultivo.service';
 import { AuthService } from '../../../../core/services/auth';
 import { LanguageService } from '../../../../core/services/language.service';
 import * as L from 'leaflet';
+import { GeocodingService } from '../../../../core/services/geocoding.service';
 
 @Component({
   selector: 'app-nueva-finca',
@@ -21,6 +22,7 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
   private lang = inject(LanguageService);
   private cdr = inject(ChangeDetectorRef);
+  private geocoding = inject(GeocodingService);
 
   form = {
     nombre: '',
@@ -108,7 +110,10 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
               this.map.setView(latlng, 16);
               this.colocarMarcador(latlng);
             },
-            () => alert(this.translate.instant('cultivo.fincas.new.geoError'))
+            () => {
+              this.error = 'cultivo.fincas.new.geoError';
+              this.cdr.detectChanges();
+            }
           );
         });
         return btn;
@@ -138,36 +143,26 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
     this.centroideLng = latlng.lng;
     this.cdr.detectChanges();
 
-    // Reverse geocoding para llenar ubicacion automáticamente
-    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json`)
-      .then(r => r.json())
-      .then(data => {
-        if (data?.address) {
-          const a = data.address;
-          const partes = [
-            a.village || a.town || a.suburb || '',
-            a.county || a.state_district || '',
-            a.state || ''
-          ].filter(Boolean);
-          this.form.ubicacion = partes.join(', ');
-          this.cdr.detectChanges();
-        }
-      });
+    // Llena la ubicación con la vereda, municipio y departamento del punto
+    this.geocoding.direccion({ lat: latlng.lat, lng: latlng.lng }).subscribe((texto) => {
+      if (texto) {
+        this.form.ubicacion = texto;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   buscarUbicacion(): void {
-    if (!this.busquedaMapa) return;
-    fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(this.busquedaMapa)}&format=json&limit=1`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.length > 0) {
-          const latlng = L.latLng(Number.parseFloat(data[0].lat), Number.parseFloat(data[0].lon));
-          this.map.setView(latlng, 15);
-        } else {
-          this.error = 'cultivo.fincas.new.errors.notFound';
-          this.cdr.detectChanges();
-        }
-      });
+    if (!this.busquedaMapa.trim()) return;
+    this.error = '';
+    this.geocoding.buscar(this.busquedaMapa).subscribe((punto) => {
+      if (punto) {
+        this.map.setView(L.latLng(punto.lat, punto.lng), 15);
+      } else {
+        this.error = 'cultivo.fincas.new.errors.notFound';
+      }
+      this.cdr.detectChanges();
+    });
   }
 
   registrar(): void {
