@@ -11,13 +11,27 @@
         <h2>🌱 {{ 'siembra.detail.title' | translate: { cultivo: siembra.tipoCultivo || ('siembra.detail.cropFallback' | translate) } }}</h2>
         <p>{{ 'siembra.detail.varietyLabel' | translate }}: <strong>{{ siembra.variedad }}</strong> · {{ 'siembra.detail.plantsCount' | translate: { count: siembra.cantidadPlantas } }}</p>
       </div>
-      <div class="dias-badge">
-        <span>{{ getDiasTranscurridos() }}</span>
-        <small>{{ 'siembra.detail.days' | translate }}</small>
+      <div class="cab-derecha">
+        <button type="button" class="btn-editar" (click)="editarSiembra()">
+          <i class="ti ti-pencil"></i> {{ 'common.edit' | translate }}
+        </button>
+        <div class="dias-badge">
+          <span>{{ getDiasTranscurridos() }}</span>
+          <small>{{ 'siembra.detail.days' | translate }}</small>
+        </div>
       </div>
     </div>
 
-    <div class="alerta">{{ getAlerta() }}</div>
+    @if (!activa) {
+      <div class="temporada-cerrada">
+        <i class="ti ti-flag-check"></i>
+        <span>{{ 'temporadas.siembra.closed' | translate: { date: fmtFechaLarga(siembra.fechaFin) } }}</span>
+      </div>
+    } @else {
+      <div class="alerta">{{ getAlerta() }}</div>
+    }
+
+    <app-ciclo-etapas class="ciclo" [siembra]="siembra" (cambio)="alCambiarSiembra($event)" />
 
     <div style="display: flex; gap: 1rem; align-items: stretch; margin-bottom: 1.5rem;">
       <div style="flex: 1 1 50%; overflow: hidden; display: flex; align-items: stretch; min-height: 160px;">
@@ -54,7 +68,7 @@
       </div>
     </div>
 
-    <div class="acciones">
+    <div class="acciones" *ngIf="activa">
       <button class="btn-accion" (click)="registrarActividad()">
         <span>📋</span>
         <strong>{{ 'siembra.detail.actions.activity.title' | translate }}</strong>
@@ -103,7 +117,19 @@
                 <span class="timeline-icono">{{ getIcono(item.tipo) }}</span>
                 <span class="item-tipo" [ngClass]="item.tipo">{{ item.tituloKey ? (item.tituloKey | translate) : item.titulo }}</span>
               </div>
-              <span class="item-fecha">{{ fmtFecha(item.fecha) }}</span>
+              <div class="item-derecha">
+                <span class="item-fecha">{{ fmtFecha(item.fecha) }}</span>
+                <span class="item-botones">
+                  <button type="button" class="item-btn" (click)="editarRegistro(item)"
+                          [attr.aria-label]="'common.edit' | translate" [title]="'common.edit' | translate">
+                    <i class="ti ti-pencil"></i>
+                  </button>
+                  <button type="button" class="item-btn peligro" (click)="eliminarRegistro(item)"
+                          [attr.aria-label]="'temporadas.registro.delete' | translate" [title]="'temporadas.registro.delete' | translate">
+                    <i class="ti ti-trash"></i>
+                  </button>
+                </span>
+              </div>
             </div>
             <p class="timeline-desc">
               <ng-container *ngIf="item.tipo === 'actividad'">{{ item.detalle }}</ng-container>

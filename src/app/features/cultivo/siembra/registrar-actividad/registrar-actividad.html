@@ -9,7 +9,7 @@
     <div class="form-header">
       <div class="form-header__icon" aria-hidden="true">🌱</div>
       <div>
-        <h2>{{ 'siembra.activity.title' | translate }}</h2>
+        <h2>{{ (registroId ? 'temporadas.registro.editActivity' : 'siembra.activity.title') | translate }}</h2>
         <p>{{ 'siembra.activity.subtitle' | translate }}</p>
       </div>
     </div>
@@ -83,7 +83,7 @@
 
         <button type="submit" class="btn-submit" [disabled]="cargando || !form.tipo">
           <span class="btn-submit__text" *ngIf="!cargando">
-            <span>{{ 'siembra.activity.submit' | translate }}</span>
+            <span>{{ (registroId ? 'common.save' : 'siembra.activity.submit') | translate }}</span>
             <span class="btn-submit__arrow" aria-hidden="true">→</span>
           </span>
           <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">

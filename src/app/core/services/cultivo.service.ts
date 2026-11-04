@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import {
   Finca,
   Lote,
-  Siembra, SiembraRequest,
+  Siembra, SiembraRequest, EtapaSiembra, EstadoLote,
   ActividadCultivo,
   Fumigacion,
   Cosecha,
@@ -32,6 +32,10 @@ export class CultivoService {
     return this.http.get<Finca>(`${this.apiUrl}/api/fincas/${id}`);
   }
 
+  actualizarFinca(id: number, finca: Partial<Finca>): Observable<Finca> {
+    return this.http.put<Finca>(`${this.apiUrl}/api/fincas/${id}`, finca);
+  }
+
   eliminarFinca(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/api/fincas/${id}`);
   }
@@ -49,6 +53,16 @@ export class CultivoService {
     return this.http.get<Lote>(`${this.apiUrl}/api/lotes/${id}`);
   }
 
+  /** Solo nombre y área */
+  actualizarLote(id: number, lote: { nombre: string; area: number; fincaId: number }): Observable<Lote> {
+    return this.http.put<Lote>(`${this.apiUrl}/api/lotes/${id}`, lote);
+  }
+
+  /** DISPONIBLE o EN_DESCANSO (sin siembra en curso) */
+  cambiarEstadoLote(id: number, estado: Exclude<EstadoLote, 'EN_CULTIVO'>): Observable<Lote> {
+    return this.http.patch<Lote>(`${this.apiUrl}/api/lotes/${id}/estado`, { estado });
+  }
+
   eliminarLote(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/api/lotes/${id}`);
   }
@@ -58,16 +72,41 @@ export class CultivoService {
     return this.http.post<Siembra>(`${this.apiUrl}/api/siembras`, siembra);
   }
 
+  /** Siembra en curso del lote (404 si no hay) */
   buscarSiembraPorLote(loteId: number): Observable<Siembra> {
     return this.http.get<Siembra>(`${this.apiUrl}/api/siembras/lote/${loteId}`);
+  }
+
+  /** Todas las temporadas del lote, la más reciente primero */
+  historialLote(loteId: number): Observable<Siembra[]> {
+    return this.http.get<Siembra[]>(`${this.apiUrl}/api/siembras/lote/${loteId}/historial`);
+  }
+
+  actualizarSiembra(id: number, siembra: SiembraRequest): Observable<Siembra> {
+    return this.http.put<Siembra>(`${this.apiUrl}/api/siembras/${id}`, siembra);
+  }
+
+  etapasSiembra(id: number): Observable<EtapaSiembra[]> {
+    return this.http.get<EtapaSiembra[]>(`${this.apiUrl}/api/siembras/${id}/etapas`);
+  }
+
+  retrocederEtapa(id: number): Observable<Siembra> {
+    return this.http.put<Siembra>(`${this.apiUrl}/api/siembras/${id}/retroceder-etapa`, {});
+  }
+
+  /** Cierra la temporada; el lote queda disponible o en descanso */
+  finalizarSiembra(id: number, fecha: string | null, dejarEnDescanso: boolean): Observable<Siembra> {
+    return this.http.put<Siembra>(`${this.apiUrl}/api/siembras/${id}/finalizar`, { fecha, dejarEnDescanso });
   }
 
   buscarSiembra(id: number): Observable<Siembra> {
     return this.http.get<Siembra>(`${this.apiUrl}/api/siembras/${id}`);
   }
 
-  avanzarEtapa(siembraId: number): Observable<Siembra> {
-    return this.http.put<Siembra>(`${this.apiUrl}/api/siembras/${siembraId}/avanzar-etapa`, {});
+  /** fecha "yyyy-MM-dd" opcional (por defecto hoy) */
+  avanzarEtapa(siembraId: number, fecha?: string | null): Observable<Siembra> {
+    const q = fecha ? `?fecha=${encodeURIComponent(fecha)}` : '';
+    return this.http.put<Siembra>(`${this.apiUrl}/api/siembras/${siembraId}/avanzar-etapa${q}`, {});
   }
 
   eliminarSiembra(id: number): Observable<void> {
@@ -83,6 +122,18 @@ export class CultivoService {
     return this.http.get<ActividadCultivo[]>(`${this.apiUrl}/api/actividades/siembra/${siembraId}`);
   }
 
+  buscarActividad(id: number): Observable<ActividadCultivo> {
+    return this.http.get<ActividadCultivo>(`${this.apiUrl}/api/actividades/${id}`);
+  }
+
+  actualizarActividad(id: number, actividad: Partial<ActividadCultivo>): Observable<ActividadCultivo> {
+    return this.http.put<ActividadCultivo>(`${this.apiUrl}/api/actividades/${id}`, actividad);
+  }
+
+  eliminarActividad(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/api/actividades/${id}`);
+  }
+
   // Fumigaciones
   registrarFumigacion(fumigacion: Partial<Fumigacion>): Observable<Fumigacion> {
     return this.http.post<Fumigacion>(`${this.apiUrl}/api/fumigaciones`, fumigacion);
@@ -92,6 +143,18 @@ export class CultivoService {
     return this.http.get<Fumigacion[]>(`${this.apiUrl}/api/fumigaciones/siembra/${siembraId}`);
   }
 
+  buscarFumigacion(id: number): Observable<Fumigacion> {
+    return this.http.get<Fumigacion>(`${this.apiUrl}/api/fumigaciones/${id}`);
+  }
+
+  actualizarFumigacion(id: number, fumigacion: Partial<Fumigacion>): Observable<Fumigacion> {
+    return this.http.put<Fumigacion>(`${this.apiUrl}/api/fumigaciones/${id}`, fumigacion);
+  }
+
+  eliminarFumigacion(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/api/fumigaciones/${id}`);
+  }
+
   // Cosechas
   registrarCosecha(cosecha: Partial<Cosecha>): Observable<Cosecha> {
     return this.http.post<Cosecha>(`${this.apiUrl}/api/cosechas`, cosecha);
@@ -99,6 +162,18 @@ export class CultivoService {
 
   listarCosechas(siembraId: number): Observable<Cosecha[]> {
     return this.http.get<Cosecha[]>(`${this.apiUrl}/api/cosechas/siembra/${siembraId}`);
+  }
+
+  buscarCosecha(id: number): Observable<Cosecha> {
+    return this.http.get<Cosecha>(`${this.apiUrl}/api/cosechas/${id}`);
+  }
+
+  actualizarCosecha(id: number, cosecha: Partial<Cosecha>): Observable<Cosecha> {
+    return this.http.put<Cosecha>(`${this.apiUrl}/api/cosechas/${id}`, cosecha);
+  }
+
+  eliminarCosecha(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/api/cosechas/${id}`);
   }
 
   totalKgCosechado(siembraId: number): Observable<number> {

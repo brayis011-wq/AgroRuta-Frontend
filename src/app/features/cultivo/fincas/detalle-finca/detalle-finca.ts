@@ -6,6 +6,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { Finca, Lote } from '../../../../core/models/cultivo.model';
+import { FincaActivaService } from '../../../../core/services/finca-activa.service';
 import * as L from 'leaflet';
 
 @Component({
@@ -13,10 +14,11 @@ import * as L from 'leaflet';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './detalle-finca.html',
-  styleUrl: './detalle-finca.css',
+  styleUrls: ['./detalle-finca.css', './detalle-finca-editar.css'],
 })
 export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
+  private fincaActiva = inject(FincaActivaService);
 
   finca: Finca | null = null;
   lotes: Lote[] = [];
@@ -26,6 +28,11 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   eliminando = false;
   loteAEliminar: Lote | null = null;
   textoConfirmacion = '';
+
+  // edición de la finca
+  editando = false;
+  guardando = false;
+  formFinca = { nombre: '', ubicacion: '', hectareas: null as number | null };
 
   private map!: L.Map;
   private poligonosLayer: L.FeatureGroup = new L.FeatureGroup();
@@ -232,9 +239,41 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dibujarLotes();
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.error = 'cultivo.fincas.detail.errors.deleteLot';
+      error: (e) => {
+        // p. ej. "El lote tiene una siembra en curso..."
+        this.error = e?.error?.message || 'cultivo.fincas.detail.errors.deleteLot';
+        this.loteAEliminar = null;
         this.eliminando = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  editarFinca(): void {
+    if (!this.finca) return;
+    this.formFinca = { nombre: this.finca.nombre, ubicacion: this.finca.ubicacion, hectareas: this.finca.hectareas };
+    this.editando = true;
+  }
+
+  guardarFinca(): void {
+    const f = this.formFinca;
+    if (!this.finca || !f.nombre.trim() || !f.ubicacion.trim() || !f.hectareas || f.hectareas <= 0) return;
+    this.guardando = true;
+    this.cultivoService.actualizarFinca(this.fincaId, {
+      nombre: f.nombre.trim(), ubicacion: f.ubicacion.trim(), hectareas: f.hectareas,
+      agricultorId: this.finca.agricultorId,
+    }).subscribe({
+      next: (finca) => {
+        this.finca = finca;
+        this.guardando = false;
+        this.editando = false;
+        this.error = '';
+        this.fincaActiva.cargar();
+        this.cdr.detectChanges();
+      },
+      error: (e) => {
+        this.guardando = false;
+        this.error = e?.error?.message || 'temporadas.finca.errors.save';
         this.cdr.detectChanges();
       },
     });

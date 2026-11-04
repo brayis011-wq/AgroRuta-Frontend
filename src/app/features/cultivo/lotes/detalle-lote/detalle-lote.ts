@@ -1,63 +1,78 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { forkJoin, of, catchError } from 'rxjs';
+import * as L from 'leaflet';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { LanguageService } from '../../../../core/services/language.service';
-import { Lote, Siembra, nombreCultivo as nombreDeCultivo } from '../../../../core/models/cultivo.model';
-import * as L from 'leaflet';
+import { FincaActivaService } from '../../../../core/services/finca-activa.service';
+import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
+import { formatoFecha, formatoNumero } from '../../../../shared/formato';
+import {
+  EstadoLote, Lote, Siembra, nombreCultivo as nombreDeCultivo, siembraActiva,
+} from '../../../../core/models/cultivo.model';
 import { environment } from '../../../../../environments/environment';
 import { rangoNdvi } from '../../../../shared/ndvi';
+import { CicloEtapasComponent } from '../../siembra/ciclo-etapas/ciclo-etapas';
+import { diasEntre, hoyIso } from '../../siembra/ciclo-etapas/ciclo-etapas.logic';
+
+export interface Temporada {
+  siembra: Siembra;
+  dias: number;
+  kg: number | null;
+}
 
 @Component({
   selector: 'app-detalle-lote',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [FormsModule, RouterLink, TranslatePipe, CicloEtapasComponent],
   templateUrl: './detalle-lote.html',
-  styleUrl: './detalle-lote.css',
+  styleUrls: ['./detalle-lote.css', './detalle-lote-temporadas.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
-  /** \"Café · Castillo\" */
   readonly nombreCultivo = nombreDeCultivo;
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private cultivoService = inject(CultivoService);
   private lang = inject(LanguageService);
+  private translate = inject(TranslateService);
+  private confirm = inject(ConfirmService);
+  private fincaActiva = inject(FincaActivaService);
 
-  lote: Lote | null = null;
-  siembra: Siembra | null = null;
-  cargando = true;
-  error = '';               // clave de traducción
-  avanzando = false;
-  ndviActivo = false;
+  readonly lote = signal<Lote | null>(null);
+  readonly siembra = signal<Siembra | null>(null);
+  readonly temporadas = signal<Temporada[]>([]);
+  readonly cargando = signal(true);
+  readonly error = signal('');
+  readonly ndviActivo = signal(false);
 
-  private map!: L.Map;
-  private ndviLayer!: L.TileLayer.WMS;
+  // edición del lote
+  readonly editando = signal(false);
+  readonly guardando = signal(false);
+  formNombre = '';
+  formArea: number | null = null;
 
-  // La etiqueta de cada etapa sale de enums.etapaCultivo.<key>
-  etapasList = [
-    { key: 'GERMINACION' },
-    { key: 'CRECIMIENTO' },
-    { key: 'PRODUCCION' },
-    { key: 'COSECHA' },
-    { key: 'FINALIZADO' },
-  ];
+  readonly diasEnCampo = computed(() => diasEntre(this.siembra()?.fechaSiembra, hoyIso()));
+  readonly estado = computed<EstadoLote>(() => this.lote()?.estado ?? 'DISPONIBLE');
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private cultivoService: CultivoService,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  private map?: L.Map;
+  private ndviLayer?: L.TileLayer.WMS;
+  private loteId = 0;
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.cultivoService.buscarLote(id).subscribe({
+    this.loteId = Number(this.route.snapshot.paramMap.get('id'));
+    this.cultivoService.buscarLote(this.loteId).subscribe({
       next: (lote) => {
-        this.lote = lote;
-        this.cargarSiembra(id);
+        this.lote.set(lote);
+        this.cargarTemporadas();
       },
       error: () => {
-        this.error = 'lotes.detail.errors.load';
-        this.cargando = false;
-        this.cdr.detectChanges();
+        this.error.set('lotes.detail.errors.load');
+        this.cargando.set(false);
       },
     });
   }
@@ -67,27 +82,126 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.map) this.map.remove();
+    this.map?.remove();
+  }
+
+  /** Siembra en curso y temporadas anteriores (con lo cosechado en cada una) */
+  cargarTemporadas(): void {
+    this.cultivoService.historialLote(this.loteId).pipe(catchError(() => of([] as Siembra[]))).subscribe((todas) => {
+      this.siembra.set(todas.find(siembraActiva) ?? null);
+      const pasadas = todas.filter((s) => !siembraActiva(s));
+      this.temporadas.set(pasadas.map((s) => ({
+        siembra: s, dias: diasEntre(s.fechaSiembra, s.fechaFin ?? hoyIso()), kg: null,
+      })));
+      this.cargando.set(false);
+      this.refrescarMapa();
+
+      if (!pasadas.length) return;
+      forkJoin(pasadas.map((s) => this.cultivoService.totalKgCosechado(s.id!).pipe(catchError(() => of(null)))))
+        .subscribe((kgs) => this.temporadas.update((ts) => ts.map((t, i) => ({ ...t, kg: kgs[i] ?? 0 }))));
+    });
+  }
+
+  /** Cambió la etapa o se cerró la temporada */
+  alCambiarSiembra(s: Siembra): void {
+    if (siembraActiva(s)) {
+      this.siembra.set(s);
+      return;
+    }
+    // se cerró: el lote cambió de estado y la siembra pasa al historial
+    this.cultivoService.buscarLote(this.loteId).subscribe((l) => this.lote.set(l));
+    this.cargarTemporadas();
+    this.fincaActiva.refrescarLotes();
+  }
+
+  // ── Estado y edición del lote ─────────────────────────────────────
+
+  async cambiarEstado(estado: 'DISPONIBLE' | 'EN_DESCANSO'): Promise<void> {
+    if (estado === 'EN_DESCANSO') {
+      const ok = await this.confirm.preguntar({
+        titulo: this.translate.instant('temporadas.lote.restTitle'),
+        mensaje: this.translate.instant('temporadas.lote.restMsg'),
+        confirmar: this.translate.instant('temporadas.lote.rest'),
+      });
+      if (!ok) return;
+    }
+    this.cultivoService.cambiarEstadoLote(this.loteId, estado).subscribe({
+      next: (l) => { this.lote.set(l); this.error.set(''); },
+      error: (e) => this.error.set(e?.error?.message || 'temporadas.lote.errors.state'),
+    });
+  }
+
+  editar(): void {
+    const l = this.lote();
+    if (!l) return;
+    this.formNombre = l.nombre;
+    this.formArea = l.area;
+    this.editando.set(true);
+  }
+
+  guardarLote(): void {
+    const l = this.lote();
+    if (!l || !this.formNombre.trim() || !this.formArea || this.formArea <= 0) return;
+    this.guardando.set(true);
+    this.cultivoService.actualizarLote(this.loteId, {
+      nombre: this.formNombre.trim(), area: this.formArea, fincaId: l.fincaId,
+    }).subscribe({
+      next: (actualizado) => {
+        this.lote.set(actualizado);
+        this.guardando.set(false);
+        this.editando.set(false);
+        this.error.set('');
+        this.fincaActiva.refrescarLotes();
+      },
+      error: (e) => {
+        this.guardando.set(false);
+        this.error.set(e?.error?.message || 'temporadas.lote.errors.save');
+      },
+    });
+  }
+
+  // ── Formato ───────────────────────────────────────────────────────
+
+  fmtFecha(v: string | null | undefined): string {
+    return formatoFecha(v, this.lang.current());
+  }
+
+  fmtNum(v: number | null | undefined, dec = 0): string {
+    return formatoNumero(v, this.lang.current(), dec);
+  }
+
+  // ── Navegación ────────────────────────────────────────────────────
+
+  nuevaSiembra(): void {
+    const l = this.lote();
+    if (!l) return;
+    this.router.navigate(['/cultivo/finca', l.fincaId, 'lote', l.id, 'nueva-siembra']);
+  }
+
+  volver(): void {
+    this.router.navigate(['/cultivo/finca', this.lote()?.fincaId]);
+  }
+
+  // ── Mapa ──────────────────────────────────────────────────────────
+
+  toggleNdvi(): void {
+    if (!this.map || !this.ndviLayer) return;
+    if (this.ndviActivo()) this.map.removeLayer(this.ndviLayer);
+    else this.ndviLayer.addTo(this.map);
+    this.ndviActivo.update((v) => !v);
   }
 
   private initMap(): void {
-    this.map = L.map('mapa-lote').setView([4.5709, -74.2973], 15);
-    const google = L.tileLayer(
-      'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-      { attribution: 'Google Satellite', maxZoom: 21, maxNativeZoom: 20 }
-    );
-    const esri = L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 }
-    );
+    const el = document.getElementById('mapa-lote');
+    if (!el) return;
+    this.map = L.map(el).setView([4.5709, -74.2973], 15);
+    const google = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+      { attribution: 'Google Satellite', maxZoom: 21, maxNativeZoom: 20 });
+    const esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 });
     google.addTo(this.map);
-    L.control.layers(
-      { 'Google Satellite': google, 'Esri Satellite': esri },
-      {},
-      { position: 'bottomleft' }
-    ).addTo(this.map);
-    const baseWMS = `https://sh.dataspace.copernicus.eu/ogc/wms/${environment.sentinelInstanceId}`;
-    this.ndviLayer = L.tileLayer.wms(baseWMS, {
+    L.control.layers({ 'Google Satellite': google, 'Esri Satellite': esri }, {}, { position: 'bottomleft' }).addTo(this.map);
+    this.ndviLayer = L.tileLayer.wms(`https://sh.dataspace.copernicus.eu/ogc/wms/${environment.sentinelInstanceId}`, {
       tileSize: 512,
       attribution: '© Copernicus/Sentinel Hub',
       layers: 'NDVI',
@@ -98,112 +212,25 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     } as any);
   }
 
+  private refrescarMapa(): void {
+    setTimeout(() => {
+      if (!this.map) return;
+      this.map.invalidateSize();
+      this.dibujarPoligono();
+    }, 100);
+  }
+
   private dibujarPoligono(): void {
-    if (!this.lote?.coordenadas || !this.map) return;
+    const coordenadas = this.lote()?.coordenadas;
+    if (!coordenadas || !this.map) return;
     try {
-      const coords: [number, number][] = JSON.parse(this.lote.coordenadas);
-      const latlngs: L.LatLngTuple[] = coords.map(c => [c[0], c[1]]);
-      const poligono = L.polygon(latlngs, {
-        color: '#16a34a',
-        fillOpacity: 0.25,
-        weight: 2,
+      const coords: [number, number][] = JSON.parse(coordenadas);
+      const poligono = L.polygon(coords.map((c) => [c[0], c[1]] as L.LatLngTuple), {
+        color: '#2e7d32', fillOpacity: 0.25, weight: 2,
       }).addTo(this.map);
       this.map.fitBounds(poligono.getBounds(), { padding: [40, 40] });
-    } catch (e) {
+    } catch {
       console.warn('Coordenadas inválidas');
     }
-  }
-
-  cargarSiembra(loteId: number): void {
-    this.cultivoService.buscarSiembraPorLote(loteId).subscribe({
-      next: (siembra) => {
-        this.siembra = siembra;
-        this.cargando = false;
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          if (this.map) {
-            this.map.invalidateSize();
-            this.dibujarPoligono();
-          }
-        }, 100);
-      },
-      error: () => {
-        this.siembra = null;
-        this.cargando = false;
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          if (this.map) {
-            this.map.invalidateSize();
-            this.dibujarPoligono();
-          }
-        }, 100);
-      },
-    });
-  }
-
-  toggleNdvi(): void {
-    if (this.ndviActivo) {
-      this.map.removeLayer(this.ndviLayer);
-    } else {
-      this.ndviLayer.addTo(this.map);
-    }
-    this.ndviActivo = !this.ndviActivo;
-  }
-
-  getEtapaIndex(): number {
-    return this.etapasList.findIndex(e => e.key === (this.siembra?.estadoCultivo || ''));
-  }
-
-  getDiasTranscurridos(): number {
-    if (!this.siembra?.fechaSiembra) return 0;
-    const inicio = new Date(this.siembra.fechaSiembra);
-    const hoy = new Date();
-    return Math.floor((hoy.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24));
-  }
-
-  /** Fecha de siembra según el idioma activo (las "yyyy-MM-dd" se leen como fecha local) */
-  fmtFecha(v: string | undefined | null): string {
-    if (!v) return '';
-    const fecha = /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T00:00:00') : new Date(v);
-    return new Intl.DateTimeFormat(this.lang.current(), {
-      day: 'numeric', month: 'short', year: 'numeric',
-    }).format(fecha);
-  }
-
-  avanzarEtapa(): void {
-    if (!this.siembra?.id || this.avanzando) return;
-    this.avanzando = true;
-    this.cultivoService.avanzarEtapa(this.siembra.id).subscribe({
-      next: (siembraActualizada) => {
-        this.siembra = siembraActualizada;
-        this.avanzando = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.error = 'lotes.detail.errors.advance';
-        this.avanzando = false;
-        this.cdr.detectChanges();
-      },
-    });
-  }
-
-  esFinalizado(): boolean {
-    return this.siembra?.estadoCultivo === 'FINALIZADO';
-  }
-
-  entrarSiembra(): void {
-    this.router.navigate(['/cultivo/siembra', this.siembra!.id]);
-  }
-
-  nuevaSiembra(): void {
-    this.router.navigate([
-      '/cultivo/finca', this.lote!.fincaId,
-      'lote', this.lote!.id,
-      'nueva-siembra'
-    ]);
-  }
-
-  volver(): void {
-    this.router.navigate(['/cultivo/finca', this.lote?.fincaId]);
   }
 }

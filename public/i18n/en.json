@@ -1433,5 +1433,89 @@
   "confirmDialog": {
     "title": "Are you sure?",
     "confirm": "Confirm"
+  },
+  "temporadas": {
+    "saving": "Saving...",
+    "ciclo": {
+      "title": "Crop cycle",
+      "inStage": "In {{etapa}} for {{days}} days",
+      "finishedOn": "Season ended on {{date}} · lasted {{days}} days",
+      "noDate": "no date",
+      "advanceTo": "Move to {{etapa}}",
+      "finish": "End season",
+      "undo": "Undo last change",
+      "reopen": "Reopen season",
+      "whenStarted": "What day did {{etapa}} start?",
+      "confirm": "Confirm",
+      "finishDate": "What day did the season end?",
+      "lotAfter": "What happens to the lot?",
+      "availableHint": "Ready to plant again",
+      "restHint": "The soil rests before the next planting",
+      "finishConfirm": "End season",
+      "error": "The stage could not be changed. Try again.",
+      "undoTitle": "Undo the last change?",
+      "undoMsg": "The planting goes back to the previous stage and the date it moved to {{etapa}} is removed.",
+      "reopenTitle": "Reopen the season?",
+      "reopenMsg": "The planting goes back to Harvest and the lot is in cultivation again."
+    },
+    "lote": {
+      "back": "Back to the farm",
+      "eyebrow": "Lot",
+      "estado": {
+        "DISPONIBLE": "Available",
+        "EN_CULTIVO": "In cultivation",
+        "EN_DESCANSO": "Resting"
+      },
+      "makeAvailable": "Mark available",
+      "rest": "Let it rest",
+      "restTitle": "Let the lot rest?",
+      "restMsg": "It reminds you that the soil is resting. You can still plant in it whenever you want.",
+      "name": "Lot name",
+      "area": "Area (ha)",
+      "current": "Current season",
+      "plantedOn": "Planted on {{date}}",
+      "plants": "{{count}} plants",
+      "daysInField": "days in the field",
+      "open": "Open planting",
+      "empty": "This lot has no plantings yet",
+      "emptyAgain": "There is no planting in progress",
+      "emptyDesc": "Register a planting to track its stages, sprayings and harvests.",
+      "emptyRest": "The lot is resting. You can still plant whenever you decide.",
+      "firstSeason": "Register planting",
+      "newSeason": "New season",
+      "history": "Previous seasons",
+      "historyEmpty": "When you end a season it will show up here with what you harvested.",
+      "days": "{{count}} days",
+      "errors": {
+        "state": "The lot status could not be changed.",
+        "save": "The lot could not be saved."
+      }
+    },
+    "siembra": {
+      "closed": "This season ended on {{date}}. You can view and fix its records, but not add new ones.",
+      "editTitle": "Edit planting",
+      "editSubtitle": "Fix the date, number of plants or variety."
+    },
+    "registro": {
+      "delete": "Delete",
+      "deleteTitle": "Delete this record?",
+      "deleteMsg": "“{{nombre}}” from {{fecha}} will be deleted. This cannot be undone.",
+      "saved": "Changes saved",
+      "editHarvest": "Edit harvest",
+      "editActivity": "Edit activity",
+      "editSpray": "Edit spraying",
+      "errors": {
+        "delete": "The record could not be deleted.",
+        "load": "The record could not be loaded."
+      }
+    },
+    "finca": {
+      "name": "Farm name",
+      "location": "Location",
+      "hectares": "Hectares",
+      "errors": {
+        "save": "The farm could not be saved."
+      }
+    }
   }
 }

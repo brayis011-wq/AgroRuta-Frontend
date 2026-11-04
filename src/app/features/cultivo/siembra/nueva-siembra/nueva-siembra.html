@@ -1,8 +1,8 @@
 <div class="container">
   <div class="header">
     <div>
-      <h2>🌱 {{ 'siembra.new.title' | translate }}</h2>
-      <p class="subtitle">{{ 'siembra.new.subtitle' | translate }}</p>
+      <h2>{{ (siembraId ? 'temporadas.siembra.editTitle' : 'siembra.new.title') | translate }}</h2>
+      <p class="subtitle">{{ (siembraId ? 'temporadas.siembra.editSubtitle' : 'siembra.new.subtitle') | translate }}</p>
     </div>
     <button class="btn-secondary" (click)="cancelar()">{{ 'siembra.new.back' | translate }}</button>
   </div>
@@ -49,12 +49,12 @@
       </div>
 
       <div class="error" *ngIf="error">{{ error | translate }}</div>
-      <div class="success" *ngIf="exito">{{ 'siembra.new.success' | translate }}</div>
+      <div class="success" *ngIf="exito">{{ (siembraId ? 'temporadas.registro.saved' : 'siembra.new.success') | translate }}</div>
 
       <div class="form-actions">
         <button type="button" class="btn-secondary" (click)="cancelar()">{{ 'siembra.new.cancel' | translate }}</button>
         <button type="submit" class="btn-primary" [disabled]="guardando">
-          {{ (guardando ? 'siembra.new.saving' : 'siembra.new.submit') | translate }}
+          {{ (guardando ? 'siembra.new.saving' : siembraId ? 'common.save' : 'siembra.new.submit') | translate }}
         </button>
       </div>
 

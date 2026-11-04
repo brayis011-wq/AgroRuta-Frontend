@@ -118,8 +118,8 @@ describe('NuevaSiembraComponent', () => {
     expect(component.error).toBe('siembra.new.errors.loadCatalog');
   });
 
-  it('cancelar() should navigate to finca', () => {
+  it('cancelar() vuelve al lote', () => {
     component.cancelar();
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/cultivo/finca', 3]);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/cultivo/lote', 7]);
   });
 });

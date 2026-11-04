@@ -13,8 +13,14 @@ import {
   nombreCultivo as nombreDeCultivo,
 } from '../../../../core/models/cultivo.model';
 import { WeatherWidgetComponent } from '../../../weather/weather-widget/weather-widget.component';
+import { CicloEtapasComponent } from '../ciclo-etapas/ciclo-etapas';
+import { diasEntre, hoyIso } from '../ciclo-etapas/ciclo-etapas.logic';
+import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
+import { siembraActiva } from '../../../../core/models/cultivo.model';
+import { formatoFecha } from '../../../../shared/formato';
 
 interface TimelineItem {
+  id: number;
   fecha: string;
   tipo: 'actividad' | 'fumigacion' | 'cosecha';
   tituloKey?: string;      // clave de traducción (actividad)
@@ -30,15 +36,21 @@ interface TimelineItem {
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, WeatherWidgetComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, WeatherWidgetComponent, CicloEtapasComponent],
   templateUrl: './detalle-siembra.html',
-  styleUrl: './detalle-siembra.css',
+  styleUrls: ['./detalle-siembra.css', './detalle-siembra-registros.css'],
 })
 export class DetalleSiembraComponent implements OnInit {
   /** \"Café · Castillo\" */
   readonly nombreCultivo = nombreDeCultivo;
   private translate = inject(TranslateService);
   private lang = inject(LanguageService);
+  private confirm = inject(ConfirmService);
+
+  /** La temporada sigue abierta (se pueden registrar cosas) */
+  get activa(): boolean {
+    return siembraActiva(this.siembra);
+  }
 
   siembra: Siembra | null = null;
   actividades: ActividadCultivo[] = [];
@@ -131,6 +143,7 @@ export class DetalleSiembraComponent implements OnInit {
     const items: TimelineItem[] = [];
 
     this.actividades.forEach(a => items.push({
+      id: a.id!,
       fecha: a.fecha,
       tipo: 'actividad',
       tituloKey: 'enums.tipoActividad.' + a.tipo,
@@ -138,6 +151,7 @@ export class DetalleSiembraComponent implements OnInit {
     }));
 
     this.fumigaciones.forEach(f => items.push({
+      id: f.id!,
       fecha: f.fecha,
       tipo: 'fumigacion',
       titulo: f.producto,
@@ -148,6 +162,7 @@ export class DetalleSiembraComponent implements OnInit {
     }));
 
     this.cosechas.forEach(c => items.push({
+      id: c.id!,
       fecha: c.fecha,
       tipo: 'cosecha',
       titulo: `${this.fmtNum(c.cantidadKg)} kg`,
@@ -188,6 +203,48 @@ export class DetalleSiembraComponent implements OnInit {
     this.filtroActivo = filtro;
   }
 
+  /** La etapa cambió o la temporada se cerró/reabrió */
+  alCambiarSiembra(s: Siembra): void {
+    this.siembra = s;
+    this.cdr.detectChanges();
+  }
+
+  fmtFechaLarga(v: string | null | undefined): string {
+    return formatoFecha(v, this.lang.current());
+  }
+
+  editarSiembra(): void {
+    this.router.navigate(['/cultivo/siembra', this.siembra!.id, 'editar']);
+  }
+
+  editarRegistro(item: TimelineItem): void {
+    const ruta = { actividad: 'actividad', fumigacion: 'fumigacion', cosecha: 'cosecha' }[item.tipo];
+    this.router.navigate(['/cultivo/siembra', this.siembra!.id, ruta, item.id]);
+  }
+
+  async eliminarRegistro(item: TimelineItem): Promise<void> {
+    const nombre = item.tituloKey ? this.translate.instant(item.tituloKey) : item.titulo;
+    const ok = await this.confirm.preguntar({
+      titulo: this.translate.instant('temporadas.registro.deleteTitle'),
+      mensaje: this.translate.instant('temporadas.registro.deleteMsg', { nombre, fecha: this.fmtFecha(item.fecha) }),
+      confirmar: this.translate.instant('temporadas.registro.delete'),
+      peligro: true,
+    });
+    if (!ok || !this.siembra?.id) return;
+    const peticion = item.tipo === 'actividad'
+      ? this.cultivoService.eliminarActividad(item.id)
+      : item.tipo === 'fumigacion'
+        ? this.cultivoService.eliminarFumigacion(item.id)
+        : this.cultivoService.eliminarCosecha(item.id);
+    peticion.subscribe({
+      next: () => this.cargarDatos(this.siembra!.id!),
+      error: (e) => {
+        this.error = e?.error?.message || 'temporadas.registro.errors.delete';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
   iniciarEliminacion(): void {
     this.mostrarConfirmacion = true;
     this.textoConfirmacion = '';
@@ -214,10 +271,10 @@ export class DetalleSiembraComponent implements OnInit {
     });
   }
 
+  /** Días en campo; si la temporada terminó, lo que duró */
   getDiasTranscurridos(): number {
     if (!this.siembra?.fechaSiembra) return 0;
-    const inicio = new Date(this.siembra.fechaSiembra);
-    return Math.floor((new Date().getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24));
+    return diasEntre(this.siembra.fechaSiembra, this.siembra.fechaFin ?? hoyIso());
   }
 
   getUltimaActividad(): string {

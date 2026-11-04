@@ -15,6 +15,8 @@ import { CultivoService } from '../../../../core/services/cultivo.service';
 export class RegistrarCosecha implements OnInit {
 
   siembraId!: number;
+  /** Id de la cosecha cuando se está editando */
+  registroId: number | null = null;
   cargando = false;
   error = '';   // clave de traducción (o mensaje crudo del backend)
   exito = '';   // clave de traducción
@@ -39,7 +41,19 @@ export class RegistrarCosecha implements OnInit {
   ngOnInit(): void {
     this.siembraId = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
-    this.form.fecha = new Date().toISOString().split('T')[0];
+    this.form.fecha = new Date().toLocaleDateString('en-CA');
+
+    const registro = this.route.snapshot.paramMap.get('registroId');
+    if (registro) {
+      this.registroId = Number(registro);
+      this.cultivoService.buscarCosecha(this.registroId).subscribe({
+        next: (c) => {
+          this.form = { ...this.form, fecha: c.fecha, cantidadKg: c.cantidadKg, calidad: c.calidad, observaciones: c.observaciones ?? '' };
+          this.cdr.detectChanges();
+        },
+        error: () => { this.error = 'temporadas.registro.errors.load'; this.cdr.detectChanges(); },
+      });
+    }
   }
 
   onSubmit(): void {
@@ -47,10 +61,13 @@ export class RegistrarCosecha implements OnInit {
     this.exito = '';
     this.cargando = true;
 
-    this.cultivoService.registrarCosecha(this.form).subscribe({
+    const peticion = this.registroId
+      ? this.cultivoService.actualizarCosecha(this.registroId, this.form)
+      : this.cultivoService.registrarCosecha(this.form);
+    peticion.subscribe({
       next: () => {
         this.cargando = false;
-        this.exito = 'siembra.harvest.success';
+        this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.harvest.success';
         this.cdr.detectChanges();
         setTimeout(() => {
           this.router.navigate(['/cultivo/siembra', this.siembraId]);

@@ -13,7 +13,7 @@ export interface Lote {
   id?: number;
   nombre: string;
   area: number;
-  estado: 'DISPONIBLE' | 'EN_CULTIVO' | 'EN_DESCANSO';
+  estado: EstadoLote;
   fincaId: number;
   coordenadas?: string;
   centroideLat?: number;
@@ -29,8 +29,29 @@ export interface Siembra {
   /** Nombre de la variedad, p. ej. "Castillo" */
   variedad: string;
   variedadId?: number | null;
-  estadoCultivo: 'GERMINACION' | 'CRECIMIENTO' | 'PRODUCCION' | 'COSECHA' | 'FINALIZADO';
+  estadoCultivo: EtapaCultivo;
   loteId: number;
+  /** Día en que terminó la temporada (null mientras esté en curso) */
+  fechaFin?: string | null;
+}
+
+export type EtapaCultivo = 'GERMINACION' | 'CRECIMIENTO' | 'PRODUCCION' | 'COSECHA' | 'FINALIZADO';
+
+/** Orden de las etapas de una siembra */
+export const ETAPAS_CULTIVO: EtapaCultivo[] = ['GERMINACION', 'CRECIMIENTO', 'PRODUCCION', 'COSECHA', 'FINALIZADO'];
+
+/** Cuándo entró una siembra en cada etapa */
+export interface EtapaSiembra {
+  id: number;
+  siembraId: number;
+  etapa: EtapaCultivo;
+  fecha: string;
+}
+
+export type EstadoLote = 'DISPONIBLE' | 'EN_CULTIVO' | 'EN_DESCANSO';
+
+export function siembraActiva(s: Pick<Siembra, 'estadoCultivo'> | null | undefined): boolean {
+  return !!s && s.estadoCultivo !== 'FINALIZADO';
 }
 
 export interface SiembraRequest {
@@ -73,6 +94,7 @@ export interface Fumigacion {
   id?: number;
   fecha: string;
   producto: string;
+  agriculturalInputId?: number | null;
   dosis: number;
   unidadMedida: 'LITROS' | 'ML' | 'GRAMOS' | 'KG';
   areaAplicada: number;

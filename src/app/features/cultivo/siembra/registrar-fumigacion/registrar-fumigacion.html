@@ -10,7 +10,7 @@
     <div class="form-header">
       <div class="form-header__icon" aria-hidden="true">💨</div>
       <div>
-        <h2>{{ 'siembra.spray.title' | translate }}</h2>
+        <h2>{{ (registroId ? 'temporadas.registro.editSpray' : 'siembra.spray.title') | translate }}</h2>
         <p>{{ 'siembra.spray.subtitle' | translate }}</p>
       </div>
     </div>
@@ -242,7 +242,7 @@
 
         <button type="submit" class="btn-submit" [disabled]="cargando">
           <span class="btn-submit__text" *ngIf="!cargando">
-            <span>{{ 'siembra.spray.submit' | translate }}</span>
+            <span>{{ (registroId ? 'common.save' : 'siembra.spray.submit') | translate }}</span>
             <span class="btn-submit__arrow" aria-hidden="true">→</span>
           </span>
           <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">

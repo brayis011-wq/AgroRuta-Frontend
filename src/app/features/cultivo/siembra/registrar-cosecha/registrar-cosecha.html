@@ -9,7 +9,7 @@
     <div class="form-header">
       <div class="form-header__icon">⚖️</div>
       <div>
-        <h2>{{ 'siembra.harvest.title' | translate }}</h2>
+        <h2>{{ (registroId ? 'temporadas.registro.editHarvest' : 'siembra.harvest.title') | translate }}</h2>
         <p>{{ 'siembra.harvest.subtitle' | translate }}</p>
       </div>
     </div>
@@ -99,7 +99,7 @@
 
         <button type="submit" class="btn-submit" [disabled]="cargando">
           <span class="btn-submit__text" *ngIf="!cargando">
-            <span>{{ 'siembra.harvest.submit' | translate }}</span>
+            <span>{{ (registroId ? 'common.save' : 'siembra.harvest.submit') | translate }}</span>
             <span class="btn-submit__arrow">→</span>
           </span>
           <span class="btn-submit__loader" *ngIf="cargando">

@@ -15,6 +15,8 @@ import { CultivoService } from '../../../../core/services/cultivo.service';
 export class RegistrarActividad implements OnInit {
 
   siembraId!: number;
+  /** Id de la actividad cuando se está editando */
+  registroId: number | null = null;
   cargando = false;
   error = '';   // clave de traducción (o mensaje crudo del backend)
   exito = '';   // clave de traducción
@@ -49,7 +51,19 @@ export class RegistrarActividad implements OnInit {
   ngOnInit(): void {
     this.siembraId = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
-    this.form.fecha = new Date().toISOString().split('T')[0];
+    this.form.fecha = new Date().toLocaleDateString('en-CA');
+
+    const registro = this.route.snapshot.paramMap.get('registroId');
+    if (registro) {
+      this.registroId = Number(registro);
+      this.cultivoService.buscarActividad(this.registroId).subscribe({
+        next: (a) => {
+          this.form = { ...this.form, tipo: a.tipo, descripcion: a.descripcion, fecha: a.fecha };
+          this.cdr.detectChanges();
+        },
+        error: () => { this.error = 'temporadas.registro.errors.load'; this.cdr.detectChanges(); },
+      });
+    }
   }
 
   onSubmit(): void {
@@ -57,10 +71,13 @@ export class RegistrarActividad implements OnInit {
     this.exito = '';
     this.cargando = true;
 
-    this.cultivoService.registrarActividad(this.form).subscribe({
+    const peticion = this.registroId
+      ? this.cultivoService.actualizarActividad(this.registroId, this.form)
+      : this.cultivoService.registrarActividad(this.form);
+    peticion.subscribe({
       next: () => {
         this.cargando = false;
-        this.exito = 'siembra.activity.success';
+        this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.activity.success';
         this.cdr.detectChanges();
         setTimeout(() => {
           this.router.navigate(['/cultivo/siembra', this.siembraId]);

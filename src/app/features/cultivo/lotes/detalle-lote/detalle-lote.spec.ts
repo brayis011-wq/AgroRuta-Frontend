@@ -36,6 +36,8 @@ vi.mock('leaflet', () => {
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { FincaActivaService } from '../../../../core/services/finca-activa.service';
+import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { DetalleLoteComponent } from './detalle-lote';
@@ -45,31 +47,35 @@ describe('DetalleLoteComponent', () => {
   let component: DetalleLoteComponent;
   let fixture: ComponentFixture<DetalleLoteComponent>;
   let cultivoServiceMock: any;
+  let confirmMock: { preguntar: ReturnType<typeof vi.fn> };
   let router: Router;
 
   const mockLote: any = {
-    id: 1, nombre: 'Lote A', fincaId: 10,
+    id: 1, nombre: 'Lote A', fincaId: 10, estado: 'EN_CULTIVO',
     coordenadas: '[[4.5,-74.1],[4.6,-74.2],[4.5,-74.2]]',
     area: 5,
   };
-  const mockSiembra: any = {
-    id: 1, loteId: 1,
-    estadoCultivo: 'CRECIMIENTO',
-    fechaSiembra: '2024-01-01',
-  };
+  const activa: any = { id: 3, loteId: 1, estadoCultivo: 'CRECIMIENTO', fechaSiembra: '2026-01-01', variedad: 'Castillo', tipoCultivo: 'Café', cantidadPlantas: 300 };
+  const pasada: any = { id: 2, loteId: 1, estadoCultivo: 'FINALIZADO', fechaSiembra: '2025-01-01', fechaFin: '2025-08-20', variedad: 'Colombia', tipoCultivo: 'Uchuva', cantidadPlantas: 200 };
 
   beforeEach(async () => {
     cultivoServiceMock = {
-      buscarLote:           vi.fn().mockReturnValue(of(mockLote)),
-      buscarSiembraPorLote: vi.fn().mockReturnValue(of(mockSiembra)),
-      avanzarEtapa:         vi.fn().mockReturnValue(of({ ...mockSiembra, estadoCultivo: 'PRODUCCION' })),
+      buscarLote:        vi.fn().mockReturnValue(of(mockLote)),
+      historialLote:     vi.fn().mockReturnValue(of([activa, pasada])),
+      totalKgCosechado:  vi.fn().mockReturnValue(of(845.5)),
+      etapasSiembra:     vi.fn().mockReturnValue(of([])),
+      cambiarEstadoLote: vi.fn().mockReturnValue(of({ ...mockLote, estado: 'EN_DESCANSO' })),
+      actualizarLote:    vi.fn().mockReturnValue(of({ ...mockLote, nombre: 'Lote Norte', area: 6 })),
     };
+    confirmMock = { preguntar: vi.fn().mockResolvedValue(true) };
 
     await TestBed.configureTestingModule({
       imports: [DetalleLoteComponent],
       providers: [
         provideRouter([]),
         { provide: CultivoService, useValue: cultivoServiceMock },
+        { provide: ConfirmService, useValue: confirmMock },
+        { provide: FincaActivaService, useValue: { refrescarLotes: vi.fn() } },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue('1') } } },
@@ -84,121 +90,75 @@ describe('DetalleLoteComponent', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('ngOnInit() should load lote and siembra', async () => {
+  it('separa la siembra en curso de las temporadas anteriores', async () => {
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.lote).toEqual(mockLote);
-    expect(component.siembra).toEqual(mockSiembra);
-    expect(component.cargando).toBe(false);
+    expect(component.lote()).toEqual(mockLote);
+    expect(component.siembra()?.id).toBe(3);
+    expect(component.temporadas().map(t => t.siembra.id)).toEqual([2]);
+    expect(component.temporadas()[0].dias).toBe(231);
+    expect(component.temporadas()[0].kg).toBe(845.5);
+    expect(component.cargando()).toBe(false);
   });
 
-  it('ngOnInit() should set error when lote fails', async () => {
+  it('sin siembra en curso muestra el botón de nueva temporada', async () => {
+    cultivoServiceMock.historialLote.mockReturnValue(of([pasada]));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.siembra()).toBeNull();
+    expect(fixture.nativeElement.textContent).toContain('temporadas.lote.newSeason');
+  });
+
+  it('muestra error si el lote no carga', async () => {
     cultivoServiceMock.buscarLote.mockReturnValue(throwError(() => new Error()));
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.error).toBe('Error al cargar el lote.');
-    expect(component.cargando).toBe(false);
+    expect(component.error()).toBe('lotes.detail.errors.load');
+    expect(component.cargando()).toBe(false);
   });
 
-  it('cargarSiembra() should set siembra=null on error', async () => {
-    cultivoServiceMock.buscarSiembraPorLote.mockReturnValue(throwError(() => new Error()));
+  it('pone el lote en descanso después de confirmar', async () => {
+    fixture.detectChanges();
+    await component.cambiarEstado('EN_DESCANSO');
+    expect(confirmMock.preguntar).toHaveBeenCalled();
+    expect(cultivoServiceMock.cambiarEstadoLote).toHaveBeenCalledWith(1, 'EN_DESCANSO');
+    expect(component.lote()?.estado).toBe('EN_DESCANSO');
+  });
+
+  it('no cambia el estado si el usuario cancela', async () => {
+    confirmMock.preguntar.mockResolvedValue(false);
+    fixture.detectChanges();
+    await component.cambiarEstado('EN_DESCANSO');
+    expect(cultivoServiceMock.cambiarEstadoLote).not.toHaveBeenCalled();
+  });
+
+  it('guarda el nombre y el área editados', async () => {
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.siembra).toBeNull();
-    expect(component.cargando).toBe(false);
+    component.editar();
+    component.formNombre = ' Lote Norte ';
+    component.formArea = 6;
+    component.guardarLote();
+    expect(cultivoServiceMock.actualizarLote).toHaveBeenCalledWith(1, { nombre: 'Lote Norte', area: 6, fincaId: 10 });
+    expect(component.lote()?.nombre).toBe('Lote Norte');
+    expect(component.editando()).toBe(false);
   });
 
-  it('getEtapaIndex() should return correct index', async () => {
+  it('al cerrar la temporada recarga el lote y el historial', async () => {
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.getEtapaIndex()).toBe(1);
+    cultivoServiceMock.historialLote.mockClear();
+    component.alCambiarSiembra({ ...activa, estadoCultivo: 'FINALIZADO', fechaFin: '2026-06-01' });
+    expect(cultivoServiceMock.buscarLote).toHaveBeenCalledTimes(2);
+    expect(cultivoServiceMock.historialLote).toHaveBeenCalledTimes(1);
   });
 
-  it('getEtapaIndex() should return -1 for unknown etapa', () => {
-    component.siembra = { estadoCultivo: 'DESCONOCIDO' } as any;
-    expect(component.getEtapaIndex()).toBe(-1);
-  });
-
-  it('getDiasTranscurridos() should return days since siembra', async () => {
-    fixture.detectChanges();
-    await fixture.whenStable();
-    expect(component.getDiasTranscurridos()).toBeGreaterThan(0);
-  });
-
-  it('getDiasTranscurridos() should return 0 when no fechaSiembra', () => {
-    component.siembra = null;
-    expect(component.getDiasTranscurridos()).toBe(0);
-  });
-
-  it('esFinalizado() should return true when estadoCultivo is FINALIZADO', () => {
-    component.siembra = { estadoCultivo: 'FINALIZADO' } as any;
-    expect(component.esFinalizado()).toBe(true);
-  });
-
-  it('esFinalizado() should return false when not FINALIZADO', async () => {
-    fixture.detectChanges();
-    await fixture.whenStable();
-    expect(component.esFinalizado()).toBe(false);
-  });
-
-  it('avanzarEtapa() should update siembra', async () => {
-    fixture.detectChanges();
-    await fixture.whenStable();
-    component.avanzarEtapa();
-    expect(component.siembra?.estadoCultivo).toBe('PRODUCCION');
-    expect(component.avanzando).toBe(false);
-  });
-
-  it('avanzarEtapa() should set error on failure', async () => {
-    cultivoServiceMock.avanzarEtapa.mockReturnValue(throwError(() => new Error()));
-    fixture.detectChanges();
-    await fixture.whenStable();
-    component.avanzarEtapa();
-    expect(component.error).toBe('Error al avanzar la etapa.');
-    expect(component.avanzando).toBe(false);
-  });
-
-  it('avanzarEtapa() should do nothing when already avanzando', async () => {
-    fixture.detectChanges();
-    await fixture.whenStable();
-    component.avanzando = true;
-    component.avanzarEtapa();
-    expect(cultivoServiceMock.avanzarEtapa).not.toHaveBeenCalled();
-  });
-
-  it('avanzarEtapa() should do nothing when no siembra', () => {
-    component.siembra = null;
-    component.avanzarEtapa();
-    expect(cultivoServiceMock.avanzarEtapa).not.toHaveBeenCalled();
-  });
-
-  it('entrarSiembra() should navigate to siembra', async () => {
-    vi.spyOn(router, 'navigate');
-    fixture.detectChanges();
-    await fixture.whenStable();
-    component.entrarSiembra();
-    expect(router.navigate).toHaveBeenCalledWith(['/cultivo/siembra', 1]);
-  });
-
-  it('nuevaSiembra() should navigate to nueva-siembra', async () => {
-    vi.spyOn(router, 'navigate');
+  it('nuevaSiembra() va al formulario del lote', async () => {
+    const nav = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture.detectChanges();
     await fixture.whenStable();
     component.nuevaSiembra();
-    expect(router.navigate).toHaveBeenCalledWith([
-      '/cultivo/finca', 10, 'lote', 1, 'nueva-siembra'
-    ]);
-  });
-
-  it('volver() should navigate to finca', async () => {
-    vi.spyOn(router, 'navigate');
-    fixture.detectChanges();
-    await fixture.whenStable();
-    component.volver();
-    expect(router.navigate).toHaveBeenCalledWith(['/cultivo/finca', 10]);
+    expect(nav).toHaveBeenCalledWith(['/cultivo/finca', 10, 'lote', 1, 'nueva-siembra']);
   });
 });
