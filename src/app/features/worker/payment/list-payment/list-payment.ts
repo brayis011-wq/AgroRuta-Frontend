@@ -18,7 +18,7 @@ export interface GrupoPago {
   standalone: true,
   imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './list-payment.html',
-  styleUrls: ['./list-payment.css']
+  styleUrls: ['./list-payment.css', './list-payment-page.css']
 })
 export class ListaPagosComponent implements OnInit {
   pagos: Pago[] = [];

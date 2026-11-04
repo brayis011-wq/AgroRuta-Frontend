@@ -32,7 +32,11 @@
       "payments": "Pagos",
       "positions": "Cargos",
       "activities": "Actividades",
-      "more": "Más"
+      "more": "Más",
+      "myFarms": "Mis fincas",
+      "newFarm": "Nueva finca",
+      "reportPayroll": "Nómina",
+      "reportCrops": "Cultivos"
     },
     "logout": "Cerrar sesión",
     "expand": "Expandir",
@@ -804,7 +808,10 @@
         "register": "＋ Registrar Jornal",
         "perWage": "${{amount}}/jornal",
         "selectWorkerTitle": "Selecciona un trabajador",
-        "selectWorkerDesc": "Los jornales se consultan por trabajador. Ve al listado y selecciona uno.",
+        "selectWorkerDesc": "Elige de quién quieres ver los jornales.",
+        "workerLabel": "Trabajador",
+        "selectWorkerPlaceholder": "Selecciona un trabajador",
+        "noWorkers": "Aún no tienes trabajadores registrados.",
         "goToWorkers": "Ir a Trabajadores →",
         "stats": {
           "total": "Total jornales",

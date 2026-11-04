@@ -44,19 +44,45 @@
     </div>
   </div>
 
-  <!-- Sin trabajadorId -->
-  <ng-container *ngIf="!trabajadorId">
-    <div class="info-card aviso-info">
-      <span class="aviso-icon" aria-hidden="true">ℹ️</span>
-      <div>
-        <strong>{{ 'workers.wages.list.selectWorkerTitle' | translate }}</strong>
-        <p>{{ 'workers.wages.list.selectWorkerDesc' | translate }}</p>
-        <button class="btn-primary" style="margin-top:0.75rem" (click)="volver()">
-          {{ 'workers.wages.list.goToWorkers' | translate }}
-        </button>
+  <!-- Selector de trabajador (siempre visible) -->
+  <div class="selector-trabajador">
+    <label for="selTrabajador">{{ 'workers.wages.list.workerLabel' | translate }}</label>
+    <select id="selTrabajador" class="buscador" [ngModel]="trabajadorId" (ngModelChange)="elegirTrabajador($event)">
+      <option [ngValue]="null">{{ (cargandoTrabajadores ? 'common.loading' : 'workers.wages.list.selectWorkerPlaceholder') | translate }}</option>
+      @for (t of trabajadores; track t.id) {
+        <option [ngValue]="t.id">{{ t.nombreCompleto }}{{ t.cargo ? ' — ' + t.cargo.nombre : '' }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Sin trabajador elegido: accesos rápidos -->
+  @if (!trabajadorId) {
+    @if (!cargandoTrabajadores && trabajadores.length === 0) {
+      <div class="info-card aviso-info">
+        <span class="aviso-icon" aria-hidden="true">ℹ️</span>
+        <div>
+          <strong>{{ 'workers.wages.list.noWorkers' | translate }}</strong>
+          <button class="btn-primary" style="margin-top:0.75rem" (click)="volver()">
+            {{ 'workers.wages.list.goToWorkers' | translate }}
+          </button>
+        </div>
       </div>
-    </div>
-  </ng-container>
+    } @else {
+      <p class="page-subtitle">{{ 'workers.wages.list.selectWorkerDesc' | translate }}</p>
+      <div class="accesos-trabajador">
+        @for (t of trabajadores; track t.id) {
+          <button type="button" class="acceso" (click)="elegirTrabajador(t.id!)">
+            <span class="acceso-av" aria-hidden="true">{{ t.nombre?.[0] }}{{ t.apellido?.[0] }}</span>
+            <span class="acceso-txt">
+              <strong>{{ t.nombreCompleto }}</strong>
+              <small>{{ t.cargo?.nombre || ('enums.estadoTrabajador.' + t.estado | translate) }}</small>
+            </span>
+            <i class="ti ti-chevron-right" aria-hidden="true"></i>
+          </button>
+        }
+      </div>
+    }
+  }
 
   <!-- Con trabajadorId -->
   <ng-container *ngIf="trabajadorId">

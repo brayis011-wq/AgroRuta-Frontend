@@ -32,7 +32,11 @@
       "payments": "Payments",
       "positions": "Positions",
       "activities": "Activities",
-      "more": "More"
+      "more": "More",
+      "myFarms": "My farms",
+      "newFarm": "New farm",
+      "reportPayroll": "Payroll",
+      "reportCrops": "Crops"
     },
     "logout": "Log out",
     "expand": "Expand",
@@ -804,7 +808,10 @@
         "register": "＋ Log Workday",
         "perWage": "${{amount}}/workday",
         "selectWorkerTitle": "Select a worker",
-        "selectWorkerDesc": "Workdays are viewed per worker. Go to the list and select one.",
+        "selectWorkerDesc": "Choose whose work days you want to see.",
+        "workerLabel": "Worker",
+        "selectWorkerPlaceholder": "Select a worker",
+        "noWorkers": "You have no registered workers yet.",
         "goToWorkers": "Go to Workers →",
         "stats": {
           "total": "Total workdays",
