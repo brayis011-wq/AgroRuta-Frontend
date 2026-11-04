@@ -1305,5 +1305,9 @@
       "period": "Período {{from}} – {{to}}",
       "receipt": "Comprobante {{code}}"
     }
+  },
+  "confirmDialog": {
+    "title": "¿Confirmar?",
+    "confirm": "Confirmar"
   }
 }

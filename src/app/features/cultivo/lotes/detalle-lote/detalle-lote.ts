@@ -6,6 +6,8 @@ import { CultivoService } from '../../../../core/services/cultivo.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { Lote, Siembra } from '../../../../core/models/cultivo.model';
 import * as L from 'leaflet';
+import { environment } from '../../../../../environments/environment';
+import { rangoNdvi } from '../../../../shared/ndvi';
 
 @Component({
   selector: 'app-detalle-lote',
@@ -82,13 +84,12 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       {},
       { position: 'bottomleft' }
     ).addTo(this.map);
-    const instanceId = '5838490d-ec4b-482d-84b8-f3ebc19fb69c';
-    const baseWMS = `https://sh.dataspace.copernicus.eu/ogc/wms/${instanceId}`;
+    const baseWMS = `https://sh.dataspace.copernicus.eu/ogc/wms/${environment.sentinelInstanceId}`;
     this.ndviLayer = L.tileLayer.wms(baseWMS, {
       tileSize: 512,
       attribution: '© Copernicus/Sentinel Hub',
       layers: 'NDVI',
-      time: '2026-04-01/2026-05-20',
+      time: rangoNdvi(environment.ndviDias),
       maxcc: 30,
       format: 'image/png',
       transparent: true,

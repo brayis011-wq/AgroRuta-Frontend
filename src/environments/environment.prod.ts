@@ -1,4 +1,8 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://agroruta-backend.onrender.com'
+  apiUrl: 'https://agroruta-backend.onrender.com',
+  /** Instancia de Sentinel Hub (Copernicus Data Space) que sirve la capa NDVI. */
+  sentinelInstanceId: '5838490d-ec4b-482d-84b8-f3ebc19fb69c',
+  /** Días hacia atrás de imágenes satelitales que se usan para el NDVI. */
+  ndviDias: 90,
 };

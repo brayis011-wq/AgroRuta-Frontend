@@ -1,9 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CargoService } from '../../../core/services/worker.service';
 import { Cargo } from '../../../core/models/worker.model';
+import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 
 @Component({
   selector: 'app-lista-cargos',
@@ -13,6 +14,7 @@ import { Cargo } from '../../../core/models/worker.model';
   styleUrls: ['./list-post.css']
 })
 export class ListaCargosComponent implements OnInit {
+  private readonly confirmService = inject(ConfirmService);
   cargos: Cargo[] = [];
   form!: FormGroup;
   modoEdicion: Cargo | null = null;
@@ -84,10 +86,10 @@ export class ListaCargosComponent implements OnInit {
     });
   }
 
-  desactivar(c: Cargo): void {
+  async desactivar(c: Cargo): Promise<void> {
     if (c.id == null) return;
-    const msg = this.translate.instant('workers.posts.confirmDeactivate', { name: c.nombre });
-    if (!confirm(msg)) return;
+    const mensaje = this.translate.instant('workers.posts.confirmDeactivate', { name: c.nombre });
+    if (!(await this.confirmService.preguntar({ mensaje, peligro: true }))) return;
     this.cargoService.desactivar(c.id).subscribe({ next: () => this.cargar() });
   }
 

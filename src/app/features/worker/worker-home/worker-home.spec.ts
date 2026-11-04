@@ -1,3 +1,4 @@
+import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -18,6 +19,9 @@ const mkPago    = (): any => ({ id: 1, monto: 100000 });
 const mkCargo   = (): any => ({ id: 1, nombre: 'Jornalero', valorJornal: 50000 });
 
 describe('WorkerHomeComponent', () => {
+  // El diálogo de confirmación responde lo que diga cada prueba
+  let respuesta = true;
+  const confirmSvc = { preguntar: vi.fn(() => Promise.resolve(respuesta)) };
   let component: WorkerHomeComponent;
   let fixture: ComponentFixture<WorkerHomeComponent>;
   let trabajadorSvc: any;
@@ -26,6 +30,7 @@ describe('WorkerHomeComponent', () => {
   let pagoSvc:       any;
 
   beforeEach(async () => {
+    respuesta = true;
     trabajadorSvc = {
       listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()])),
       registrar:   vi.fn(),
@@ -49,6 +54,7 @@ describe('WorkerHomeComponent', () => {
     await TestBed.configureTestingModule({
       imports: [WorkerHomeComponent, ReactiveFormsModule],
       providers: [
+        { provide: ConfirmService, useValue: confirmSvc },
         provideRouter([]),
         { provide: TrabajadorService, useValue: trabajadorSvc },
         { provide: CargoService,      useValue: cargoSvc },
@@ -230,64 +236,64 @@ describe('WorkerHomeComponent', () => {
   it('desactivar() should call service and remove from list', async () => {
     vi.useFakeTimers();
     trabajadorSvc.desactivar.mockReturnValue(of(undefined));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    component.desactivar(mkTrabajador());
+    respuesta = true;
+    await component.desactivar(mkTrabajador());
     expect(component.trabajadores.length).toBe(0);
     vi.advanceTimersByTime(3500);
     vi.useRealTimers();
   });
 
-  it('desactivar() should not call service when confirm is false', () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
-    component.desactivar(mkTrabajador());
+  it('desactivar() should not call service when confirm is false', async () => {
+    respuesta = false;
+    await component.desactivar(mkTrabajador());
     expect(trabajadorSvc.desactivar).not.toHaveBeenCalled();
   });
 
-  it('desactivar() should set error on failure', () => {
+  it('desactivar() should set error on failure', async () => {
     trabajadorSvc.desactivar.mockReturnValue(throwError(() => new Error()));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    component.desactivar(mkTrabajador());
+    respuesta = true;
+    await component.desactivar(mkTrabajador());
     expect(component.error).toContain('Error');
   });
 
   it('suspender() should update estado to SUSPENDIDO', async () => {
     vi.useFakeTimers();
     trabajadorSvc.suspender.mockReturnValue(of(undefined));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    component.suspender(mkTrabajador());
+    respuesta = true;
+    await component.suspender(mkTrabajador());
     expect(component.trabajadores[0].estado).toBe('SUSPENDIDO');
     vi.advanceTimersByTime(3500);
     vi.useRealTimers();
   });
 
-  it('suspender() should not call service when confirm is false', () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
-    component.suspender(mkTrabajador());
+  it('suspender() should not call service when confirm is false', async () => {
+    respuesta = false;
+    await component.suspender(mkTrabajador());
     expect(trabajadorSvc.suspender).not.toHaveBeenCalled();
   });
 
-  it('suspender() should set error on failure', () => {
+  it('suspender() should set error on failure', async () => {
     trabajadorSvc.suspender.mockReturnValue(throwError(() => new Error()));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    component.suspender(mkTrabajador());
+    respuesta = true;
+    await component.suspender(mkTrabajador());
     expect(component.error).toContain('Error');
   });
 
   it('reactivar() should update estado to ACTIVO', async () => {
     vi.useFakeTimers();
     trabajadorSvc.reactivar.mockReturnValue(of(undefined));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    respuesta = true;
     component.trabajadores = [mkTrabajador({ estado: 'SUSPENDIDO' })];
-    component.reactivar(mkTrabajador({ estado: 'SUSPENDIDO' }));
+    await component.reactivar(mkTrabajador({ estado: 'SUSPENDIDO' }));
     expect(component.trabajadores[0].estado).toBe('ACTIVO');
     vi.advanceTimersByTime(3500);
     vi.useRealTimers();
   });
 
-  it('reactivar() should set error on failure', () => {
+  it('reactivar() should set error on failure', async () => {
     trabajadorSvc.reactivar.mockReturnValue(throwError(() => new Error()));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    component.reactivar(mkTrabajador());
+    respuesta = true;
+    await component.reactivar(mkTrabajador());
     expect(component.error).toContain('Error');
   });
 

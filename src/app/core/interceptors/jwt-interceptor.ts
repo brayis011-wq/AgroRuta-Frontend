@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth';
+import { environment } from '../../../environments/environment';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -13,7 +14,10 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   // haría que el backend rechazara el login.
   const esRutaDeAuth = !!req.url?.includes('/api/auth/');
 
-  const request = token && !esRutaDeAuth
+  // El token solo viaja a nuestro backend, nunca a servicios externos (mapas, clima, etc.)
+  const esNuestroBackend = !!req.url?.startsWith(environment.apiUrl);
+
+  const request = token && esNuestroBackend && !esRutaDeAuth
     ? req.clone({ headers: req.headers.set('Authorization', `Bearer ${token}`) })
     : req;
 
