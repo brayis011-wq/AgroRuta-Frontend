@@ -1,11 +1,12 @@
 // src/app/features/worker/activities/list-activities.ts
 
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ActividadService } from '../../../core/services/worker.service';
 import { Actividad } from '../../../core/models/worker.model';
+import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 
 @Component({
   selector: 'app-lista-actividades',
@@ -15,6 +16,7 @@ import { Actividad } from '../../../core/models/worker.model';
   styleUrls: ['./list-activities.css']
 })
 export class ListaActividadesComponent implements OnInit {
+  private readonly confirmService = inject(ConfirmService);
   actividades: Actividad[] = [];
   form!: FormGroup;
   modoEdicion: Actividad | null = null;
@@ -86,10 +88,10 @@ export class ListaActividadesComponent implements OnInit {
     });
   }
 
-  desactivar(a: Actividad): void {
+  async desactivar(a: Actividad): Promise<void> {
     if (a.id == null) return;
-    const msg = this.translate.instant('workers.activities.confirmDeactivate', { name: a.nombre });
-    if (!confirm(msg)) return;
+    const mensaje = this.translate.instant('workers.activities.confirmDeactivate', { name: a.nombre });
+    if (!(await this.confirmService.preguntar({ mensaje, peligro: true }))) return;
     this.actividadService.desactivar(a.id).subscribe({
       next: () => this.cargar()
     });

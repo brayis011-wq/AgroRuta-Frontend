@@ -6,6 +6,7 @@ import { of, throwError } from 'rxjs';
 import { DetalleNominaComponent } from './detail-roster';
 import { NominaService, PagoService } from '../../../../core/services/worker.service';
 import { vi } from 'vitest';
+import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 
 const mkNomina = (estado = 'PENDIENTE', id = 1): any => ({
   id, trabajadorId: 1, valorTotal: 100000, estado
@@ -18,12 +19,17 @@ describe('DetalleNominaComponent', () => {
   let nominaSvc: any;
   let pagoSvc:   any;
 
+  // El diálogo de confirmación responde lo que diga cada prueba
+  let respuesta = true;
+  const confirmSvc = { preguntar: vi.fn(() => Promise.resolve(respuesta)) };
+
   async function createComponent(paramId = '1') {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
       imports: [DetalleNominaComponent, ReactiveFormsModule],
       providers: [
         provideRouter([]),
+        { provide: ConfirmService, useValue: confirmSvc },
         { provide: NominaService, useValue: nominaSvc },
         { provide: PagoService,   useValue: pagoSvc },
         {
@@ -39,6 +45,7 @@ describe('DetalleNominaComponent', () => {
   }
 
   beforeEach(() => {
+    respuesta = true;
     nominaSvc = {
       obtener: vi.fn(),
       aprobar: vi.fn(),
@@ -88,25 +95,25 @@ describe('DetalleNominaComponent', () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
     await createComponent();
     component.nomina = null;
-    component.aprobar();
+    await component.aprobar();
     expect(nominaSvc.aprobar).not.toHaveBeenCalled();
   });
 
   it('aprobar() should do nothing when confirm is false', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    respuesta = false;
     await createComponent();
-    component.aprobar();
+    await component.aprobar();
     expect(nominaSvc.aprobar).not.toHaveBeenCalled();
   });
 
   it('aprobar() should only approve and open the payment form', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
     nominaSvc.aprobar.mockReturnValue(of(mkNomina('APROBADA')));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    respuesta = true;
     vi.useFakeTimers();
     await createComponent();
-    component.aprobar();
+    await component.aprobar();
     expect(pagoSvc.registrar).not.toHaveBeenCalled();
     expect(component.nomina!.estado).toBe('APROBADA');
     expect(component.mostrarFormPago).toBe(true);
@@ -119,9 +126,9 @@ describe('DetalleNominaComponent', () => {
   it('aprobar() should set error when aprobar fails', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
     nominaSvc.aprobar.mockReturnValue(throwError(() => new Error()));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    respuesta = true;
     await createComponent();
-    component.aprobar();
+    await component.aprobar();
     expect(component.error).toBe('workers.rosters.detail.errors.approve');
     expect(component.guardando).toBe(false);
   });
@@ -176,33 +183,33 @@ describe('DetalleNominaComponent', () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
     await createComponent();
     component.nomina = null;
-    component.anular();
+    await component.anular();
     expect(nominaSvc.anular).not.toHaveBeenCalled();
   });
 
   it('anular() should do nothing when confirm is false', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    respuesta = false;
     await createComponent();
-    component.anular();
+    await component.anular();
     expect(nominaSvc.anular).not.toHaveBeenCalled();
   });
 
   it('anular() should reload nomina on success', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
     nominaSvc.anular.mockReturnValue(of(undefined));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    respuesta = true;
     await createComponent();
-    component.anular();
+    await component.anular();
     expect(nominaSvc.obtener).toHaveBeenCalledTimes(2);
   });
 
   it('anular() should set error on failure', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
     nominaSvc.anular.mockReturnValue(throwError(() => new Error()));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    respuesta = true;
     await createComponent();
-    component.anular();
+    await component.anular();
     expect(component.error).toBe('workers.rosters.detail.errors.cancel');
     expect(component.guardando).toBe(false);
   });
