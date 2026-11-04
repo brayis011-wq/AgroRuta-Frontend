@@ -3,7 +3,7 @@
   --verde-claro: #a5d6a7;
   --verde-oscuro: #1b5e20;
   --verde-suave: #c8e6c9;
-  --verde-bg: #f0f4f8;
+  --verde-bg: var(--ar-fondo);
   --gris: #888;
   --gris-borde: #ddd;
   --rojo: #c62828;

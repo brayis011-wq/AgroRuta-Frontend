@@ -5,11 +5,11 @@
   --p-green-light: #a5d6a7;
   --p-green-soft: #c8e6c9;
   --p-badge: #f9c74f;
-  --p-bg: #f0f4f8;
+  --p-bg: var(--ar-fondo);
   display: block;
   min-height: 100vh;
   background: var(--p-bg);
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: var(--ar-fuente);
 }
 
 .portal-header {

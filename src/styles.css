@@ -44,3 +44,8 @@ body {
   color: var(--ar-tinta);
   -webkit-font-smoothing: antialiased;
 }
+
+/* Los controles de formulario no heredan la fuente por defecto (salían en Arial) */
+button, input, select, textarea, optgroup { font-family: inherit; }
+input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1; }
+:focus-visible { outline-color: var(--ar-verde-600); }

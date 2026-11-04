@@ -7,7 +7,7 @@
   --adm-muted: #a5d6a7;
   --adm-accent: #a5d6a7;
   --adm-badge: #f9c74f;
-  --adm-bg: #f0f4f8;
+  --adm-bg: var(--ar-fondo);
   --adm-ancho: 248px;
   --adm-ancho-min: 68px;
   display: block;
@@ -17,7 +17,7 @@
   display: flex;
   min-height: 100vh;
   background: var(--adm-bg);
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: var(--ar-fuente);
 }
 
 /* ── Barra lateral ─────────────────────────────────────────────────────── */
