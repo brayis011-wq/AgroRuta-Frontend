@@ -31,6 +31,45 @@
       <p class="aviso gris"><i class="ti ti-flag-check"></i> {{ 'temporadas.siembra.closed' | translate: { date: fmtFechaLarga(siembra.fechaFin) } }}</p>
     }
 
+    <!-- Condiciones de hoy: el clima decide si se fumiga, se cosecha o se riega -->
+    <section class="hoy" [class]="'hoy ' + (consejo ?? 'sin-datos')">
+      <div class="hoy-clima">
+        @if (clima; as c) {
+          <img [src]="c.iconUrl" alt="" width="64" height="64">
+          <div>
+            <p class="eyebrow">{{ 'temporadas.ui.weatherToday' | translate }}@if (c.city) { · {{ c.city }} }</p>
+            <strong class="hoy-temp">{{ c.temperature | number: '1.0-0' }}°C</strong>
+            <span class="hoy-desc">{{ c.description | titlecase }}</span>
+          </div>
+        } @else {
+          <span class="ic gris"><i class="ti ti-cloud-off"></i></span>
+          <div>
+            <p class="eyebrow">{{ 'temporadas.ui.weatherToday' | translate }}</p>
+            <span class="hoy-desc">{{ 'temporadas.ui.noWeather' | translate }}</span>
+          </div>
+        }
+      </div>
+      @if (clima; as c) {
+        <dl class="hoy-datos">
+          <div><dt><i class="ti ti-droplet"></i> {{ 'weather.humidity' | translate }}</dt><dd>{{ c.humidity }}%</dd></div>
+          <div><dt><i class="ti ti-wind"></i> {{ 'weather.wind' | translate }}</dt><dd>{{ c.windSpeed | number: '1.0-1' }} m/s</dd></div>
+          <div><dt><i class="ti ti-temperature"></i> {{ 'weather.feelsLike' | translate }}</dt><dd>{{ c.feelsLike | number: '1.0-0' }}°C</dd></div>
+        </dl>
+      }
+      <div class="hoy-decision">
+        @if (consejo) {
+          <p class="consejo" [class]="'consejo ' + consejo">
+            <i class="ti" [class.ti-circle-check]="consejo === 'good'" [class.ti-cloud-rain]="consejo === 'rain'" [class.ti-wind]="consejo === 'wind'" [class.ti-sun-high]="consejo === 'hot'"></i>
+            {{ 'layout.weather.' + consejo | translate }}
+          </p>
+        }
+        @if (activa) {
+          @let est = estadoFumigacion();
+          <p class="fumi" [class]="'fumi ' + est.nivel"><i class="ti ti-spray"></i> {{ est.clave | translate: { days: est.dias } }}</p>
+        }
+      </div>
+    </section>
+
     <section class="kpis">
       <article class="kpi">
         <span class="ic verde"><i class="ti ti-calendar-stats"></i></span>
@@ -73,8 +112,7 @@
 
     <app-ciclo-etapas [siembra]="siembra" (cambio)="alCambiarSiembra($event)" />
 
-    <div class="columnas">
-      <section class="tarjeta historial">
+    <section class="tarjeta historial">
         <header>
           <h2><i class="ti ti-history"></i> {{ 'siembra.detail.history.title' | translate }}</h2>
           <div class="filtros" role="group">
@@ -120,52 +158,15 @@
             }
           </ul>
         }
-      </section>
+    </section>
 
-      <aside class="lateral">
-        @if (activa) {
-          @let est = estadoFumigacion();
-          <section class="tarjeta fumi" [class]="'tarjeta fumi ' + est.nivel">
-            <span class="ic" [class]="'ic ' + est.nivel"><i class="ti ti-spray"></i></span>
-            <div>
-              <small>{{ 'temporadas.ui.sprayStatus' | translate }}</small>
-              <strong>{{ est.clave | translate: { days: est.dias } }}</strong>
-            </div>
-          </section>
-        }
-
-        <section class="tarjeta clima">
-          <header><h2><i class="ti ti-cloud"></i> {{ 'temporadas.ui.weatherToday' | translate }}</h2></header>
-          @if (clima; as c) {
-            <div class="clima-top">
-              <img [src]="c.iconUrl" alt="" width="56" height="56">
-              <div>
-                <strong>{{ c.temperature | number: '1.0-0' }}°C</strong>
-                <small>{{ c.description | titlecase }}</small>
-              </div>
-            </div>
-            <dl class="clima-datos">
-              <div><dt><i class="ti ti-droplet"></i> {{ 'weather.humidity' | translate }}</dt><dd>{{ c.humidity }}%</dd></div>
-              <div><dt><i class="ti ti-wind"></i> {{ 'weather.wind' | translate }}</dt><dd>{{ c.windSpeed | number: '1.0-1' }} m/s</dd></div>
-              <div><dt><i class="ti ti-temperature"></i> {{ 'weather.feelsLike' | translate }}</dt><dd>{{ c.feelsLike | number: '1.0-0' }}°C</dd></div>
-            </dl>
-            @if (consejo) {
-              <p class="consejo" [class]="'consejo ' + consejo"><i class="ti" [class.ti-circle-check]="consejo === 'good'" [class.ti-alert-triangle]="consejo !== 'good'"></i> {{ 'layout.weather.' + consejo | translate }}</p>
-            }
-          } @else {
-            <p class="nada">{{ 'temporadas.ui.noWeather' | translate }}</p>
-          }
-        </section>
-
-        <section class="tarjeta peligro-zona">
-          <div>
-            <strong>{{ 'siembra.detail.danger.title' | translate }}</strong>
-            <small>{{ 'siembra.detail.danger.desc' | translate }}</small>
-          </div>
-          <button type="button" class="btn btn-borrar" (click)="iniciarEliminacion()"><i class="ti ti-trash"></i> {{ 'siembra.detail.danger.button' | translate }}</button>
-        </section>
-      </aside>
-    </div>
+    <section class="tarjeta peligro-zona">
+      <div>
+        <strong>{{ 'siembra.detail.danger.title' | translate }}</strong>
+        <small>{{ 'siembra.detail.danger.desc' | translate }}</small>
+      </div>
+      <button type="button" class="btn btn-borrar" (click)="iniciarEliminacion()"><i class="ti ti-trash"></i> {{ 'siembra.detail.danger.button' | translate }}</button>
+    </section>
   }
 </div>
 

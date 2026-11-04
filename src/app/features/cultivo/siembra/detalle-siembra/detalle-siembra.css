@@ -13,9 +13,6 @@
 .accion strong { font-size: .92rem; }
 .accion small { font-size: .78rem; color: var(--ar-tinta-3); }
 
-.columnas { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(260px, 1fr); gap: 1rem; align-items: start; }
-.lateral { display: flex; flex-direction: column; gap: 1rem; }
-
 .filtros { display: inline-flex; gap: 2px; padding: 3px; border-radius: 10px; background: var(--ar-fondo); flex-wrap: wrap; }
 .filtro { font: inherit; font-size: .78rem; font-weight: 600; border: 0; background: transparent; color: var(--ar-tinta-2); padding: .35rem .7rem; border-radius: 8px; cursor: pointer; }
 .filtro.on { background: #fff; color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); }
@@ -33,32 +30,44 @@
 @media (hover: none) { .reg-btns { opacity: 1; } }
 .nada { margin: .5rem 0; font-size: .86rem; color: var(--ar-tinta-3); text-align: center; }
 
-.fumi { display: flex; align-items: center; gap: .8rem; }
-.fumi small { display: block; font-size: .76rem; color: var(--ar-tinta-3); }
-.fumi strong { font-size: .92rem; }
-.fumi.rojo { border-color: #f3c7c7; } .fumi.ambar { border-color: #f1dcae; }
-.ic.rojo { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
-
-.clima-top { display: flex; align-items: center; gap: .6rem; }
-.clima-top img { background: var(--ar-azul-bg); border-radius: 14px; }
-.clima-top strong { display: block; font-size: 1.6rem; letter-spacing: -.02em; }
-.clima-top small { color: var(--ar-tinta-2); font-size: .85rem; }
-.clima-datos { margin: .8rem 0 0; display: grid; gap: .35rem; }
-.clima-datos div { display: flex; justify-content: space-between; font-size: .84rem; }
-.clima-datos dt { color: var(--ar-tinta-2); display: inline-flex; align-items: center; gap: .3rem; }
-.clima-datos dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
-.consejo { margin: .8rem 0 0; padding: .55rem .7rem; border-radius: 10px; font-size: .84rem; font-weight: 600; display: flex; align-items: center; gap: .4rem; background: var(--ar-ambar-bg); color: var(--ar-ambar); }
-.consejo.good { background: var(--ar-verde-50); color: var(--ar-verde-800); }
+/* Condiciones de hoy */
+.hoy {
+  display: grid; grid-template-columns: minmax(220px, 1.2fr) minmax(0, 1.4fr) minmax(220px, 1.2fr); align-items: center; gap: 1rem 1.5rem;
+  padding: 1rem 1.25rem; border-radius: 18px; border: 1px solid #cfe0f2; box-shadow: var(--ar-sombra-2);
+  background: radial-gradient(120% 160% at 0% 0%, #e3eefb 0%, transparent 60%), linear-gradient(135deg, #fff, #f3f8fd);
+  animation: subir .35s ease-out both;
+}
+.hoy.good { border-color: #cfe5d0; background: radial-gradient(120% 160% at 0% 0%, #e2f1e3 0%, transparent 60%), linear-gradient(135deg, #fff, #f2f8f2); }
+.hoy.wind, .hoy.hot { border-color: #f1dcae; background: radial-gradient(120% 160% at 0% 0%, #fff1d6 0%, transparent 60%), linear-gradient(135deg, #fff, #fffaf0); }
+.hoy-clima { display: flex; align-items: center; gap: .8rem; min-width: 0; }
+.hoy-clima img { flex: none; background: rgba(255, 255, 255, .7); border-radius: 16px; }
+.hoy-clima .eyebrow { margin: 0; }
+.hoy-temp { display: block; font-size: 2rem; line-height: 1.1; letter-spacing: -.03em; }
+.hoy-desc { font-size: .88rem; color: var(--ar-tinta-2); }
+.hoy-datos { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+.hoy-datos div { background: rgba(255, 255, 255, .75); border: 1px solid rgba(0, 0, 0, .05); border-radius: 12px; padding: .55rem .7rem; }
+.hoy-datos dt { font-size: .74rem; color: var(--ar-tinta-3); display: flex; align-items: center; gap: .25rem; }
+.hoy-datos dd { margin: .15rem 0 0; font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.hoy-decision { display: flex; flex-direction: column; gap: .45rem; }
+.consejo, .fumi { margin: 0; padding: .6rem .8rem; border-radius: 11px; font-size: .9rem; font-weight: 700; display: flex; align-items: center; gap: .45rem; }
+.consejo .ti, .fumi .ti { font-size: 19px; flex: none; }
+.consejo { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
+.consejo.good { background: var(--ar-verde-100); color: var(--ar-verde-800); }
 .consejo.rain { background: var(--ar-azul-bg); color: var(--ar-azul); }
+.fumi { font-weight: 600; font-size: .84rem; background: rgba(255, 255, 255, .8); border: 1px solid var(--ar-borde); }
+.fumi.rojo { color: var(--ar-rojo); border-color: #f3c7c7; } .fumi.ambar { color: var(--ar-ambar); border-color: #f1dcae; } .fumi.verde { color: var(--ar-verde-800); }
 
-.peligro-zona { display: flex; flex-direction: column; gap: .7rem; border-style: dashed; box-shadow: none; }
+.peligro-zona { display: flex; justify-content: space-between; align-items: center; gap: .7rem 1rem; flex-wrap: wrap; border-style: dashed; box-shadow: none; }
 .peligro-zona strong { display: block; font-size: .9rem; }
 .peligro-zona small { font-size: .8rem; color: var(--ar-tinta-3); }
-.btn-borrar { color: var(--ar-rojo); box-shadow: none; align-self: flex-start; }
+.btn-borrar { color: var(--ar-rojo); box-shadow: none; }
 .btn-borrar:hover:not(:disabled) { background: var(--ar-rojo-bg); border-color: #f3c7c7; }
 
-@media (max-width: 1000px) { .columnas { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) { .hoy { grid-template-columns: 1fr 1fr; } .hoy-datos { grid-column: 1 / -1; grid-row: 2; } }
 @media (max-width: 720px) {
+  .hoy { grid-template-columns: 1fr; padding: .9rem; }
+  .hoy-datos { grid-row: auto; }
+  .hoy-temp { font-size: 1.7rem; }
   .accion { flex-direction: column; text-align: center; gap: .4rem; padding: .7rem .4rem; }
   .accion small { display: none; }
   .accion strong { font-size: .78rem; }

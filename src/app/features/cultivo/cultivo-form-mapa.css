@@ -1,5 +1,5 @@
 /* Formularios con mapa (finca y lote) y botones Cancelar / Guardar */
-.container.ancho { max-width: 860px; }
+.container.ancho { max-width: 1240px; }
 .form-actions { display: flex; justify-content: flex-end; gap: .6rem; margin-top: .3rem; }
 .form-actions .btn-submit { width: auto; margin: 0; padding: .7rem 1.4rem; }
 .btn-secondary { font: inherit; font-weight: 600; font-size: .92rem; padding: .7rem 1.2rem; border-radius: 12px; cursor: pointer; border: 1px solid var(--ar-borde); background: #fff; color: var(--ar-tinta); }
@@ -10,7 +10,7 @@
 .buscador-mapa { display: flex; gap: .5rem; }
 .buscador-mapa button { flex: none; width: 44px; border-radius: 10px; border: 1px solid var(--ar-borde); background: #fff; cursor: pointer; font-size: 18px; color: var(--ar-tinta-2); display: grid; place-items: center; }
 .buscador-mapa button:hover { border-color: var(--ar-verde-600); color: var(--ar-verde-700); }
-.mapa-container { width: 100%; height: 380px; border-radius: 14px; border: 1px solid var(--ar-borde); overflow: hidden; z-index: 0; }
+.mapa-container { width: 100%; height: clamp(360px, 52vh, 560px); border-radius: 14px; border: 1px solid var(--ar-borde); overflow: hidden; z-index: 0; }
 .estado-mapa { margin: 0; display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; font-size: .84rem; color: var(--ar-tinta-2); padding: .55rem .75rem; border-radius: 10px; background: var(--ar-fondo); }
 .estado-mapa.ok { background: var(--ar-verde-50); color: var(--ar-verde-800); }
 .estado-mapa.mal { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
