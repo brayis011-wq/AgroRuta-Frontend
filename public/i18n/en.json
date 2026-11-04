@@ -289,51 +289,87 @@
   },
   "reports": {
     "tabs": {
-      "payroll": { "name": "Payroll", "sub": "Payments and workdays" },
-      "crops": { "name": "Crops", "sub": "Harvests and inputs" }
+      "payroll": {
+        "name": "Payroll",
+        "sub": "Payments and work days"
+      },
+      "crops": {
+        "name": "Crops",
+        "sub": "Plantings and harvests"
+      }
     },
-    "generated": "Generated:",
+    "generatedAt": "Generated {{date}}",
     "downloadPdf": "Download PDF",
-    "downloading": "Downloading...",
+    "downloading": "Preparing PDF…",
+    "downloadError": "The PDF could not be downloaded. Please try again.",
     "loading": "Loading data...",
-    "error": "Error loading the data.",
+    "error": "The data could not be loaded.",
+    "vsPrevious": "{{pct}}% vs. last month",
+    "noMatches": "No results for that filter.",
+    "total": "Total",
+    "sortBy": "Sort by",
     "payroll": {
       "title": "Payroll report",
+      "subtitle": "Payments to your workers and what is still to be paid",
       "kpi": {
-        "total": { "label": "Total accumulated", "sub": "across all workers" },
-        "workers": { "label": "Workers", "sub": "with active records" },
-        "workdays": { "label": "Total workdays", "sub": "recorded in the period" },
-        "average": { "label": "Average per worker", "sub": "average payment" }
+        "paid": "Total paid",
+        "paidSub": "in {{count}} payments",
+        "pending": "Pending payment",
+        "pendingSub": "{{count}} unpaid payrolls",
+        "pendingSubOne": "1 unpaid payroll",
+        "workers": "Workers paid",
+        "workersSub": "Average {{amount}}",
+        "workdays": "Work days settled",
+        "workdaysSub": "{{amount}} per work day on average"
       },
-      "chartTitle": "Payment per worker",
-      "detailTitle": "Detail by worker",
+      "byMonth": "Payments per month",
+      "noMonths": "No payments in recent months yet.",
+      "share": "Paid per worker",
+      "empty": "No payments recorded yet.",
+      "detailTitle": "Detail per worker",
+      "search": "Search worker",
+      "sort": {
+        "total": "Highest paid",
+        "nombre": "Name",
+        "jornales": "Work days"
+      },
       "table": {
         "worker": "Worker",
-        "period": "Period",
-        "workdays": "Workdays",
+        "period": "Period paid",
+        "workdays": "Work days",
         "payments": "Payments",
         "totalPaid": "Total paid"
       }
     },
     "crops": {
-      "title": "Crops report",
+      "title": "Crop report",
+      "subtitle": "Plantings, stages and harvests on your farms",
       "kpi": {
-        "total": { "label": "Total crops", "sub": "registered" },
-        "active": { "label": "Active crops", "sub": "growing" },
-        "kg": { "label": "Kg harvested", "sub": "total kg" },
-        "avgDays": { "label": "Average days", "sub": "since planting" }
-      },
-      "chartTitle": "Kg harvested by variety",
-      "detailTitle": "Crop details",
-      "table": {
-        "variety": "Variety",
-        "status": "Status",
-        "plantingDate": "Planting date",
-        "days": "Days",
+        "plantings": "Plantings",
+        "crops": "{{count}} crops",
+        "cropsOne": "1 crop",
+        "active": "Active",
+        "finished": "{{count}} finished",
+        "kg": "Kg harvested",
+        "kgSub": "across all harvests",
         "harvests": "Harvests",
-        "totalKg": "Total kg"
+        "perHarvest": "{{kg}} kg per harvest"
       },
-      "noHarvest": "No harvest"
+      "byStage": "Plantings by stage",
+      "stageHint": "Tap a stage to filter the table.",
+      "kgByCrop": "Kg harvested per crop",
+      "empty": "No plantings recorded yet.",
+      "detailTitle": "Planting detail",
+      "search": "Search crop, farm or plot",
+      "table": {
+        "crop": "Crop · variety",
+        "place": "Farm · plot",
+        "stage": "Stage",
+        "planted": "Planted",
+        "days": "Days",
+        "kg": "Kg",
+        "harvests": "Harvests"
+      }
     }
   },
   "cultivo": {

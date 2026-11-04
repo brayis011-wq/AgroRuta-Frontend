@@ -1,109 +1,60 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ReportService, CropReport } from '../../../core/services/report.service';
-import { LanguageService } from '../../../core/services/language.service';
+import { CropReport, ReportService } from '../../../core/services/report.service';
+import { ReportBase } from '../report-base';
+import { ETAPAS, filtrarSiembras, resumenCultivos, ubicacionDe } from '../report-calc';
 
 @Component({
   selector: 'app-crop-report',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [TranslatePipe],
   templateUrl: './crop-report.component.html',
-  styleUrl: './crop-report.component.css'
+  styleUrls: ['../report-shared.css', '../report-tabla.css', './crop-report.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CropReportComponent implements OnInit {
+export class CropReportComponent extends ReportBase implements OnInit {
+  private readonly reportService = inject(ReportService);
 
-  private reportService = inject(ReportService);
-  private cdr = inject(ChangeDetectorRef);
-  private lang = inject(LanguageService);
+  readonly etapas = ETAPAS;
+  readonly ubicacion = ubicacionDe;
+  readonly report = signal<CropReport | null>(null);
+  readonly loading = signal(true);
+  readonly error = signal(false);
+  readonly downloading = signal(false);
+  readonly downloadError = signal(false);
+  readonly etapa = signal<string | null>(null);
+  readonly filtro = signal('');
 
-  report: CropReport | null = null;
-  loading = false;
-  downloading = false;
-  error = false;
+  readonly resumen = computed(() => { const r = this.report(); return r ? resumenCultivos(r) : null; });
+  readonly filas = computed(() => filtrarSiembras(this.report()?.cropDetails ?? [], this.etapa(), this.filtro()));
 
-  ngOnInit(): void {
-    this.loadPreview();
-  }
+  ngOnInit(): void { this.cargar(); }
 
-  loadPreview(): void {
-    this.loading = true;
-    this.error = false;
+  cargar(): void {
+    this.loading.set(true);
+    this.error.set(false);
     this.reportService.getCropPreview().subscribe({
-      next: (data) => {
-        this.report = data;
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.error = true;
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
+      next: (r) => { this.report.set(r); this.loading.set(false); },
+      error: () => { this.error.set(true); this.loading.set(false); },
     });
   }
 
-  downloadPdf(): void {
-    this.downloading = true;
+  descargarPdf(): void {
+    this.downloading.set(true);
+    this.downloadError.set(false);
     this.reportService.downloadCropPdf().subscribe({
-      next: (blob: Blob) => {
-        this.triggerDownload(blob, 'crop-report.pdf');
-        this.downloading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.downloading = false;
-        this.cdr.detectChanges();
-      }
+      next: (b) => { this.descargar(b, 'reporte-cultivos.pdf'); this.downloading.set(false); },
+      error: () => { this.downloading.set(false); this.downloadError.set(true); },
     });
   }
 
-  private triggerDownload(blob: Blob, filename: string): void {
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    window.URL.revokeObjectURL(url);
+  /** Clic en una etapa: filtra la tabla; otro clic quita el filtro */
+  alternarEtapa(e: string): void {
+    this.etapa.update((actual) => (actual === e ? null : e));
   }
 
-  // ===== Formato según idioma activo (Intl nativo) =====
-
-  private toDate(v: string): Date {
-    return /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T00:00:00') : new Date(v);
-  }
-
-  fmtNum(v: number): string {
-    return new Intl.NumberFormat(this.lang.current(), { maximumFractionDigits: 0 }).format(v);
-  }
-
-  fmtDate(v: string): string {
-    return new Intl.DateTimeFormat(this.lang.current(), {
-      day: 'numeric', month: 'short', year: 'numeric',
-    }).format(this.toDate(v));
-  }
-
-  fmtDateTime(v: string): string {
-    return new Intl.DateTimeFormat(this.lang.current(), {
-      day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit',
-    }).format(this.toDate(v));
-  }
-
-  get cultivosActivos(): number {
-    return this.report?.cropDetails.filter(c => c.estado === 'ACTIVO').length ?? 0;
-  }
-
-  get totalKg(): number {
-    return this.report?.cropDetails.reduce((s, c) => s + c.totalKgCosechado, 0) ?? 0;
-  }
-
-  get maxKg(): number {
-    return Math.max(...(this.report?.cropDetails.map(c => c.totalKgCosechado) ?? [1]));
-  }
-
-  get promedioDias(): number {
-    if (!this.report?.cropDetails.length) return 0;
-    const suma = this.report.cropDetails.reduce((s, c) => s + c.diasDesdeSiembra, 0);
-    return Math.round(suma / this.report.cropDetails.length);
+  kg(v: number | null | undefined): string {
+    const x = v ?? 0;
+    return this.numero(x, x % 1 === 0 ? 0 : 1);
   }
 }

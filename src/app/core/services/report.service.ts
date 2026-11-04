@@ -13,10 +13,21 @@ export interface WorkerPayrollDetail {
   totalJornales: number;
 }
 
+export interface MonthlyPayment {
+  /** "2026-11" */
+  mes: string;
+  total: number;
+  pagos: number;
+}
+
 export interface PayrollReport {
   generatedAt: string;
   totalAccumulated: number;
   workerDetails: WorkerPayrollDetail[];
+  /** Últimos 6 meses, del más antiguo al más reciente */
+  pagosPorMes?: MonthlyPayment[];
+  totalPendiente?: number;
+  nominasPendientes?: number;
 }
 
 export interface CropDetail {
@@ -25,8 +36,11 @@ export interface CropDetail {
   estado: string;
   fechaSiembra: string;
   diasDesdeSiembra: number;
-  totalKgCosechado: number;
+  totalKgCosechado: number | null;
   totalCosechas: number;
+  cultivo?: string | null;
+  loteNombre?: string | null;
+  fincaNombre?: string | null;
 }
 
 export interface CropReport {

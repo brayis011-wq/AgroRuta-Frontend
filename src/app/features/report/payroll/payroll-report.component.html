@@ -1,81 +1,130 @@
-<div class="report-container">
-  <div class="report-header">
+<section class="rep">
+  <header class="rep-head">
     <div>
       <h2>{{ 'reports.payroll.title' | translate }}</h2>
-      <span class="generated-at" *ngIf="report">
-        {{ 'reports.generated' | translate }} {{ fmtDateTime(report.generatedAt) }}
-      </span>
+      <p>{{ 'reports.payroll.subtitle' | translate }}
+        @if (report(); as r) { · <span class="gen">{{ 'reports.generatedAt' | translate: { date: fechaHora(r.generatedAt) } }}</span> }
+      </p>
     </div>
-    <button class="btn-download" (click)="downloadPdf()" [disabled]="downloading || loading">
-      {{ downloading ? ('reports.downloading' | translate) : ('⬇ ' + ('reports.downloadPdf' | translate)) }}
+    <button type="button" class="btn-pdf" (click)="descargarPdf()" [disabled]="downloading() || loading() || error()">
+      <i class="ti" [class.ti-file-type-pdf]="!downloading()" [class.ti-loader-2]="downloading()" [class.gira]="downloading()" aria-hidden="true"></i>
+      {{ (downloading() ? 'reports.downloading' : 'reports.downloadPdf') | translate }}
     </button>
-  </div>
+  </header>
+  @if (downloadError()) { <div class="aviso error" role="alert">{{ 'reports.downloadError' | translate }}</div> }
 
-  <div *ngIf="loading" class="estado">{{ 'reports.loading' | translate }}</div>
-  <div *ngIf="error" class="estado error">{{ 'reports.error' | translate }}</div>
-
-  <ng-container *ngIf="report && !loading">
-
-    <!-- KPIs -->
-    <div class="kpi-grid">
-      <div class="kpi">
-        <span class="kpi-label">{{ 'reports.payroll.kpi.total.label' | translate }}</span>
-        <span class="kpi-val">${{ fmtNum(report.totalAccumulated) }}</span>
-        <span class="kpi-sub">{{ 'reports.payroll.kpi.total.sub' | translate }}</span>
-      </div>
-      <div class="kpi">
-        <span class="kpi-label">{{ 'reports.payroll.kpi.workers.label' | translate }}</span>
-        <span class="kpi-val">{{ report.workerDetails.length }}</span>
-        <span class="kpi-sub">{{ 'reports.payroll.kpi.workers.sub' | translate }}</span>
-      </div>
-      <div class="kpi">
-        <span class="kpi-label">{{ 'reports.payroll.kpi.workdays.label' | translate }}</span>
-        <span class="kpi-val">{{ totalJornales }}</span>
-        <span class="kpi-sub">{{ 'reports.payroll.kpi.workdays.sub' | translate }}</span>
-      </div>
-      <div class="kpi">
-        <span class="kpi-label">{{ 'reports.payroll.kpi.average.label' | translate }}</span>
-        <span class="kpi-val">${{ fmtNum(promedioPago) }}</span>
-        <span class="kpi-sub">{{ 'reports.payroll.kpi.average.sub' | translate }}</span>
-      </div>
+  @if (loading()) {
+    <div class="kpis">@for (i of [1, 2, 3, 4]; track i) { <div class="kpi esq"></div> }</div>
+    <div class="tarjeta esq alta"></div>
+  } @else if (error()) {
+    <div class="tarjeta vacio">
+      <i class="ti ti-cloud-off" aria-hidden="true"></i>
+      <strong>{{ 'reports.error' | translate }}</strong>
+      <button type="button" class="btn-sec" (click)="cargar()">{{ 'common.retry' | translate }}</button>
+    </div>
+  } @else if (resumen(); as s) {
+    <div class="kpis">
+      <article class="kpi"><span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
+        <div><small>{{ 'reports.payroll.kpi.paid' | translate }}</small><strong>{{ pesos(s.total) }}</strong>
+          <em>{{ 'reports.payroll.kpi.paidSub' | translate: { count: s.pagos } }}</em></div></article>
+      <article class="kpi"><span class="ic ambar"><i class="ti ti-clock-hour-4" aria-hidden="true"></i></span>
+        <div><small>{{ 'reports.payroll.kpi.pending' | translate }}</small><strong>{{ pesos(s.pendiente) }}</strong>
+          <em>{{ (s.nominasPendientes === 1 ? 'reports.payroll.kpi.pendingSubOne' : 'reports.payroll.kpi.pendingSub') | translate: { count: s.nominasPendientes } }}</em></div></article>
+      <article class="kpi"><span class="ic azul"><i class="ti ti-users-group" aria-hidden="true"></i></span>
+        <div><small>{{ 'reports.payroll.kpi.workers' | translate }}</small><strong>{{ numero(s.trabajadores) }}</strong>
+          <em>{{ 'reports.payroll.kpi.workersSub' | translate: { amount: pesos(s.promedio) } }}</em></div></article>
+      <article class="kpi"><span class="ic verde"><i class="ti ti-calendar-check" aria-hidden="true"></i></span>
+        <div><small>{{ 'reports.payroll.kpi.workdays' | translate }}</small><strong>{{ numero(s.jornales) }}</strong>
+          <em>{{ 'reports.payroll.kpi.workdaysSub' | translate: { amount: pesos(s.valorJornalPromedio) } }}</em></div></article>
     </div>
 
-    <!-- Barras por trabajador -->
-    <div class="section-card">
-      <div class="section-title">{{ 'reports.payroll.chartTitle' | translate }}</div>
-      <div class="bar-row" *ngFor="let w of report.workerDetails">
-        <span class="bar-name" [title]="w.workerName">{{ w.workerName }}</span>
-        <div class="bar-track">
-          <div class="bar-fill" [style.width.%]="(w.totalPaid / maxPago) * 100"></div>
+    <div class="dos">
+      <article class="tarjeta">
+        <header><h3>{{ 'reports.payroll.byMonth' | translate }}</h3>
+          @if (variacion() !== null) {
+            <span class="tend" [class.sube]="variacion()! > 0" [class.baja]="variacion()! < 0">
+              <i class="ti" [class.ti-trending-up]="variacion()! >= 0" [class.ti-trending-down]="variacion()! < 0" aria-hidden="true"></i>
+              {{ 'reports.vsPrevious' | translate: { pct: (variacion()! > 0 ? '+' : '') + variacion() } }}
+            </span>
+          }
+        </header>
+        @if (meses().length) {
+          <div class="columnas" role="img" [attr.aria-label]="'reports.payroll.byMonth' | translate">
+            @for (m of meses(); track m.mes; let i = $index) {
+              <div class="col" [class.actual]="m.actual" [title]="m.etiqueta + ': ' + pesos(m.total)">
+                <span class="col-val">{{ m.total ? pesos(m.total) : '' }}</span>
+                <span class="col-barra"><span [style.height.%]="m.altura" [style.animation-delay.ms]="i * 70"></span></span>
+                <span class="col-mes">{{ m.etiqueta }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="nota">{{ 'reports.payroll.noMonths' | translate }}</p>
+        }
+      </article>
+
+      <article class="tarjeta">
+        <header><h3>{{ 'reports.payroll.share' | translate }}</h3></header>
+        @for (p of reparto(); track p.nombre; let i = $index) {
+          <div class="hbar">
+            <span class="hbar-nom" [title]="p.nombre">{{ p.nombre }}</span>
+            <span class="hbar-pista"><span [style.width.%]="p.ancho" [style.animation-delay.ms]="i * 60"></span></span>
+            <span class="hbar-val">{{ pesos(p.valor) }}<small>{{ p.porcentaje }} %</small></span>
+          </div>
+        } @empty {
+          <p class="nota">{{ 'reports.payroll.empty' | translate }}</p>
+        }
+      </article>
+    </div>
+
+    <article class="tarjeta">
+      <header class="tabla-head">
+        <h3>{{ 'reports.payroll.detailTitle' | translate }}</h3>
+        <div class="herramientas">
+          <label class="buscar-t">
+            <i class="ti ti-search" aria-hidden="true"></i>
+            <input type="search" [value]="filtro()" (input)="filtro.set($any($event.target).value)"
+                   [placeholder]="'reports.payroll.search' | translate" [attr.aria-label]="'reports.payroll.search' | translate" />
+          </label>
+          <div class="seg" role="group" [attr.aria-label]="'reports.sortBy' | translate">
+            @for (o of ['total', 'nombre', 'jornales']; track o) {
+              <button type="button" [class.on]="orden() === o" (click)="ordenarPor($any(o))">{{ 'reports.payroll.sort.' + o | translate }}</button>
+            }
+          </div>
         </div>
-        <span class="bar-amount">${{ fmtNum(w.totalPaid) }}</span>
+      </header>
+      <div class="tabla-wrap">
+        <table class="tabla">
+          <thead><tr>
+            <th>{{ 'reports.payroll.table.worker' | translate }}</th>
+            <th>{{ 'reports.payroll.table.period' | translate }}</th>
+            <th class="num">{{ 'reports.payroll.table.workdays' | translate }}</th>
+            <th class="num">{{ 'reports.payroll.table.payments' | translate }}</th>
+            <th class="num">{{ 'reports.payroll.table.totalPaid' | translate }}</th>
+          </tr></thead>
+          <tbody>
+            @for (w of filas(); track w.workerId) {
+              <tr>
+                <td><span class="persona"><span class="av">{{ w.workerName.charAt(0) }}</span>{{ w.workerName }}</span></td>
+                <td class="suave">{{ fecha(w.periodoInicio) }} – {{ fecha(w.periodoFin) }}</td>
+                <td class="num">{{ numero(w.totalJornales) }}</td>
+                <td class="num">{{ numero(w.totalPagos) }}</td>
+                <td class="num fuerte">{{ pesos(w.totalPaid) }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="nota">{{ (filtro() ? 'reports.noMatches' : 'reports.payroll.empty') | translate }}</td></tr>
+            }
+          </tbody>
+          @if (filas().length > 1 && !filtro()) {
+            <tfoot><tr>
+              <td colspan="2">{{ 'reports.total' | translate }}</td>
+              <td class="num">{{ numero(s.jornales) }}</td>
+              <td class="num">{{ numero(s.pagos) }}</td>
+              <td class="num fuerte">{{ pesos(s.total) }}</td>
+            </tr></tfoot>
+          }
+        </table>
       </div>
-    </div>
-
-    <!-- Tabla detalle -->
-    <div class="section-card">
-      <div class="section-title">{{ 'reports.payroll.detailTitle' | translate }}</div>
-      <table class="report-table">
-        <thead>
-        <tr>
-          <th>{{ 'reports.payroll.table.worker' | translate }}</th>
-          <th>{{ 'reports.payroll.table.period' | translate }}</th>
-          <th>{{ 'reports.payroll.table.workdays' | translate }}</th>
-          <th>{{ 'reports.payroll.table.payments' | translate }}</th>
-          <th>{{ 'reports.payroll.table.totalPaid' | translate }}</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let d of report.workerDetails">
-          <td class="worker-name">{{ d.workerName }}</td>
-          <td>{{ fmtDate(d.periodoInicio, false) }} — {{ fmtDate(d.periodoFin) }}</td>
-          <td>{{ d.totalJornales }}</td>
-          <td>{{ d.totalPagos }}</td>
-          <td class="total-paid">${{ fmtNum(d.totalPaid) }}</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-
-  </ng-container>
-</div>
+    </article>
+  }
+</section>

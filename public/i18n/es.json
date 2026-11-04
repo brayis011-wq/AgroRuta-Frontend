@@ -289,27 +289,53 @@
   },
   "reports": {
     "tabs": {
-      "payroll": { "name": "Nómina", "sub": "Pagos y jornales" },
-      "crops": { "name": "Cultivos", "sub": "Cosechas e insumos" }
+      "payroll": {
+        "name": "Nómina",
+        "sub": "Pagos y jornales"
+      },
+      "crops": {
+        "name": "Cultivos",
+        "sub": "Siembras y cosechas"
+      }
     },
-    "generated": "Generado:",
+    "generatedAt": "Generado el {{date}}",
     "downloadPdf": "Descargar PDF",
-    "downloading": "Descargando...",
+    "downloading": "Preparando PDF…",
+    "downloadError": "No se pudo descargar el PDF. Intenta de nuevo.",
     "loading": "Cargando datos...",
-    "error": "Error al cargar los datos.",
+    "error": "No se pudieron cargar los datos.",
+    "vsPrevious": "{{pct}} % vs. mes anterior",
+    "noMatches": "No hay resultados con ese filtro.",
+    "total": "Total",
+    "sortBy": "Ordenar por",
     "payroll": {
       "title": "Reporte de nómina",
+      "subtitle": "Pagos a tus trabajadores y lo que queda por pagar",
       "kpi": {
-        "total": { "label": "Total acumulado", "sub": "en todos los trabajadores" },
-        "workers": { "label": "Trabajadores", "sub": "con registros activos" },
-        "workdays": { "label": "Total jornales", "sub": "registrados en el período" },
-        "average": { "label": "Promedio por trabajador", "sub": "pago promedio" }
+        "paid": "Total pagado",
+        "paidSub": "en {{count}} pagos",
+        "pending": "Pendiente por pagar",
+        "pendingSub": "{{count}} nóminas sin pagar",
+        "pendingSubOne": "1 nómina sin pagar",
+        "workers": "Trabajadores pagados",
+        "workersSub": "Promedio {{amount}}",
+        "workdays": "Jornales liquidados",
+        "workdaysSub": "{{amount}} por jornal en promedio"
       },
-      "chartTitle": "Pago por trabajador",
+      "byMonth": "Pagos por mes",
+      "noMonths": "Aún no hay pagos en los últimos meses.",
+      "share": "Pagado por trabajador",
+      "empty": "Todavía no hay pagos registrados.",
       "detailTitle": "Detalle por trabajador",
+      "search": "Buscar trabajador",
+      "sort": {
+        "total": "Mayor pago",
+        "nombre": "Nombre",
+        "jornales": "Jornales"
+      },
       "table": {
         "worker": "Trabajador",
-        "period": "Período",
+        "period": "Período pagado",
         "workdays": "Jornales",
         "payments": "Pagos",
         "totalPaid": "Total pagado"
@@ -317,23 +343,33 @@
     },
     "crops": {
       "title": "Reporte de cultivos",
+      "subtitle": "Siembras, etapas y cosechas de tus fincas",
       "kpi": {
-        "total": { "label": "Total cultivos", "sub": "registrados" },
-        "active": { "label": "Cultivos activos", "sub": "en crecimiento" },
-        "kg": { "label": "Kg cosechados", "sub": "kg totales" },
-        "avgDays": { "label": "Promedio días", "sub": "desde siembra" }
-      },
-      "chartTitle": "Kg cosechados por variedad",
-      "detailTitle": "Detalle de cultivos",
-      "table": {
-        "variety": "Variedad",
-        "status": "Estado",
-        "plantingDate": "Fecha siembra",
-        "days": "Días",
+        "plantings": "Siembras",
+        "crops": "{{count}} cultivos",
+        "cropsOne": "1 cultivo",
+        "active": "Activas",
+        "finished": "{{count}} finalizadas",
+        "kg": "Kg cosechados",
+        "kgSub": "en todas las cosechas",
         "harvests": "Cosechas",
-        "totalKg": "Kg totales"
+        "perHarvest": "{{kg}} kg por cosecha"
       },
-      "noHarvest": "Sin cosecha"
+      "byStage": "Siembras por etapa",
+      "stageHint": "Toca una etapa para filtrar la tabla.",
+      "kgByCrop": "Kg cosechados por cultivo",
+      "empty": "Todavía no hay siembras registradas.",
+      "detailTitle": "Detalle de siembras",
+      "search": "Buscar cultivo, finca o lote",
+      "table": {
+        "crop": "Cultivo · variedad",
+        "place": "Finca · lote",
+        "stage": "Etapa",
+        "planted": "Sembrado",
+        "days": "Días",
+        "kg": "Kg",
+        "harvests": "Cosechas"
+      }
     }
   },
   "cultivo": {

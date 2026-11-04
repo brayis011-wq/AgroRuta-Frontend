@@ -1,111 +1,55 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ReportService, PayrollReport } from '../../../core/services/report.service';
-import { LanguageService } from '../../../core/services/language.service';
+import { PayrollReport, ReportService } from '../../../core/services/report.service';
+import { ReportBase } from '../report-base';
+import { OrdenNomina, barrasMensuales, ordenarTrabajadores, participacion, resumenNomina, variacionUltimoMes } from '../report-calc';
 
 @Component({
   selector: 'app-payroll-report',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [TranslatePipe],
   templateUrl: './payroll-report.component.html',
-  styleUrl: './payroll-report.component.css'
+  styleUrls: ['../report-shared.css', '../report-tabla.css', './payroll-report.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PayrollReportComponent implements OnInit {
+export class PayrollReportComponent extends ReportBase implements OnInit {
+  private readonly reportService = inject(ReportService);
 
-  private reportService = inject(ReportService);
-  private cdr = inject(ChangeDetectorRef);
-  private lang = inject(LanguageService);
+  readonly report = signal<PayrollReport | null>(null);
+  readonly loading = signal(true);
+  readonly error = signal(false);
+  readonly downloading = signal(false);
+  readonly downloadError = signal(false);
+  readonly orden = signal<OrdenNomina>('total');
+  readonly filtro = signal('');
 
-  report: PayrollReport | null = null;
-  loading = false;
-  downloading = false;
-  error = false;
+  readonly resumen = computed(() => { const r = this.report(); return r ? resumenNomina(r) : null; });
+  readonly meses = computed(() => barrasMensuales(this.report()?.pagosPorMes, this.lang.current()));
+  readonly variacion = computed(() => variacionUltimoMes(this.report()?.pagosPorMes));
+  readonly reparto = computed(() => participacion(
+    [...(this.report()?.workerDetails ?? [])].sort((a, b) => (b.totalPaid ?? 0) - (a.totalPaid ?? 0)).slice(0, 8),
+    (w) => w.workerName, (w) => w.totalPaid ?? 0));
+  readonly filas = computed(() => ordenarTrabajadores(this.report()?.workerDetails ?? [], this.orden(), this.filtro()));
 
-  ngOnInit(): void {
-    this.loadPreview();
-  }
+  ngOnInit(): void { this.cargar(); }
 
-  loadPreview(): void {
-    this.loading = true;
-    this.error = false;
+  cargar(): void {
+    this.loading.set(true);
+    this.error.set(false);
     this.reportService.getPayrollPreview().subscribe({
-      next: (data) => {
-        this.report = data;
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.error = true;
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
+      next: (r) => { this.report.set(r); this.loading.set(false); },
+      error: () => { this.error.set(true); this.loading.set(false); },
     });
   }
 
-  downloadPdf(): void {
-    this.downloading = true;
+  descargarPdf(): void {
+    this.downloading.set(true);
+    this.downloadError.set(false);
     this.reportService.downloadPayrollPdf().subscribe({
-      next: (blob: Blob) => {
-        this.triggerDownload(blob, 'payroll-report.pdf');
-        this.downloading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.downloading = false;
-        this.cdr.detectChanges();
-      }
+      next: (b) => { this.descargar(b, 'reporte-nomina.pdf'); this.downloading.set(false); },
+      error: () => { this.downloading.set(false); this.downloadError.set(true); },
     });
   }
 
-  calcularDias(inicio: string, fin: string): number {
-    const a = new Date(inicio);
-    const b = new Date(fin);
-    return Math.round((b.getTime() - a.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-  }
-
-  private triggerDownload(blob: Blob, filename: string): void {
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    window.URL.revokeObjectURL(url);
-  }
-
-  // ===== Formato según idioma activo (Intl nativo) =====
-
-  // Las fechas "yyyy-MM-dd" se leen como fecha local (evita que se corra un día por zona horaria)
-  private toDate(v: string): Date {
-    return /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T00:00:00') : new Date(v);
-  }
-
-  fmtNum(v: number): string {
-    return new Intl.NumberFormat(this.lang.current(), { maximumFractionDigits: 0 }).format(v);
-  }
-
-  fmtDate(v: string, withYear = true): string {
-    return new Intl.DateTimeFormat(this.lang.current(), {
-      day: 'numeric', month: 'short', ...(withYear ? { year: 'numeric' } : {}),
-    }).format(this.toDate(v));
-  }
-
-  fmtDateTime(v: string): string {
-    return new Intl.DateTimeFormat(this.lang.current(), {
-      day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit',
-    }).format(this.toDate(v));
-  }
-
-  get totalJornales(): number {
-    return this.report?.workerDetails.reduce((s, w) => s + w.totalJornales, 0) ?? 0;
-  }
-
-  get promedioPago(): number {
-    if (!this.report || !this.report.workerDetails.length) return 0;
-    return this.report.totalAccumulated / this.report.workerDetails.length;
-  }
-
-  get maxPago(): number {
-    return Math.max(...(this.report?.workerDetails.map(w => w.totalPaid) ?? [1]));
-  }
+  ordenarPor(o: OrdenNomina): void { this.orden.set(o); }
 }
