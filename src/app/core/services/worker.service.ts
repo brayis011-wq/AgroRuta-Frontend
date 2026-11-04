@@ -29,10 +29,22 @@ export interface TrabajadorUpdateRequest {
 export interface JornalRequest {
   trabajadorId:  number;
   cultivoId:     number;
-  nombreCultivo: string;
+  /** Lo ignora el backend: guarda el nombre real del cultivo (lote · finca). */
+  nombreCultivo?: string;
   fecha:         string;
   actividadIds:  number[];
   observaciones?: string;
+}
+
+/** Cultivo activo en una finca del agricultor, para el formulario de jornal. */
+export interface CultivoDisponible {
+  id:          number;
+  fincaId:     number;
+  fincaNombre: string;
+  loteId:      number;
+  loteNombre:  string;
+  variedad:    string | null;
+  estado:      string | null;
 }
 
 export interface PagoRequest {
@@ -113,6 +125,7 @@ export class JornalService {
   constructor(private http: HttpClient) {}
 
   registrar(req: JornalRequest): Observable<Jornal> { return this.http.post<Jornal>(this.api, req); }
+  cultivosDisponibles(): Observable<CultivoDisponible[]> { return this.http.get<CultivoDisponible[]>(`${this.api}/cultivos-disponibles`); }
   buscarPorId(id: number): Observable<Jornal> { return this.http.get<Jornal>(`${this.api}/${id}`); }
   porTrabajador(trabajadorId: number, inicio?: string, fin?: string): Observable<Jornal[]> {
     let params = new HttpParams();

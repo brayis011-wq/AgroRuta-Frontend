@@ -759,10 +759,13 @@
         "worker": "Trabajador *",
         "selectWorker": "Selecciona un trabajador",
         "date": "Fecha *",
-        "cropId": "ID del Cultivo *",
-        "cropIdPlaceholder": "ID del cultivo",
-        "cropName": "Nombre del Cultivo *",
-        "cropNamePlaceholder": "Ej: Uchuva Lote 3",
+        "farm": "Finca *",
+        "selectFarm": "Selecciona la finca",
+        "crop": "Cultivo *",
+        "selectCrop": "Selecciona el cultivo",
+        "selectFarmFirst": "Primero elige la finca",
+        "noCrops": "No tienes cultivos activos. Registra una siembra en un lote para poder asignar jornales.",
+        "goToCrops": "Ir a Cultivos →",
         "notes": "Observaciones",
         "notesPlaceholder": "Notas adicionales (opcional)",
         "activitiesTitle": "Actividades Realizadas *",
@@ -773,6 +776,7 @@
         "errors": {
           "loadWorkers": "Error al cargar trabajadores",
           "loadActivities": "Error al cargar actividades",
+          "loadCrops": "No se pudieron cargar tus cultivos.",
           "noActivity": "Selecciona al menos una actividad",
           "register": "Error al registrar jornal"
         }
