@@ -1,0 +1,100 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">{{ 'admin.badge' | translate }}</p>
+      <h1 class="page-title">{{ 'admin.summary.title' | translate }}</h1>
+      <p class="page-sub">{{ 'admin.summary.subtitle' | translate }}</p>
+    </div>
+    <button type="button" class="btn btn-ghost" (click)="cargar()" [disabled]="cargando">
+      <i class="ti ti-refresh" aria-hidden="true"></i>{{ 'admin.common.refresh' | translate }}
+    </button>
+  </header>
+
+  <div class="card estado" *ngIf="cargando && !resumen">{{ 'common.loading' | translate }}</div>
+
+  <div class="banner error" *ngIf="error">
+    <span>{{ 'admin.summary.loadError' | translate }}</span>
+    <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">{{ 'common.retry' | translate }}</button>
+  </div>
+
+  <ng-container *ngIf="resumen as r">
+    <!-- Pendientes que requieren atención -->
+    <div class="attention" *ngIf="r.nominasPorPagar > 0 || r.usuariosInactivos > 0">
+      <a class="attention-item warn" *ngIf="r.nominasPorPagar > 0" routerLink="../agricultores">
+        <i class="ti ti-receipt-2" aria-hidden="true"></i>
+        {{ (r.nominasPorPagar === 1 ? 'admin.summary.pendingPayrollsOne' : 'admin.summary.pendingPayrolls') | translate: { count: r.nominasPorPagar } }}
+      </a>
+      <a class="attention-item" *ngIf="r.usuariosInactivos > 0" routerLink="../usuarios">
+        <i class="ti ti-user-off" aria-hidden="true"></i>
+        {{ (r.usuariosInactivos === 1 ? 'admin.summary.inactiveUsersOne' : 'admin.summary.inactiveUsers') | translate: { count: r.usuariosInactivos } }}
+      </a>
+    </div>
+
+    <!-- Usuarios -->
+    <div class="card users-card">
+      <div class="users-total">
+        <span class="kpi-label">{{ 'admin.summary.users' | translate }}</span>
+        <span class="kpi-big">{{ num(r.usuariosActivos) }}</span>
+        <span class="kpi-note">{{ 'admin.summary.activeOf' | translate: { total: num(totalUsuarios) } }}</span>
+      </div>
+      <div class="role-bars">
+        <div class="role-row">
+          <span class="role-name">{{ 'enums.rol.Agricultor' | translate }}</span>
+          <span class="bar"><span class="fill farmer" [style.width.%]="r.usuariosActivos ? r.agricultores / r.usuariosActivos * 100 : 0"></span></span>
+          <span class="num">{{ num(r.agricultores) }}</span>
+        </div>
+        <div class="role-row">
+          <span class="role-name">{{ 'enums.rol.Trabajador' | translate }}</span>
+          <span class="bar"><span class="fill worker" [style.width.%]="r.usuariosActivos ? r.trabajadoresUsuarios / r.usuariosActivos * 100 : 0"></span></span>
+          <span class="num">{{ num(r.trabajadoresUsuarios) }}</span>
+        </div>
+        <div class="role-row">
+          <span class="role-name">{{ 'enums.rol.Administrador' | translate }}</span>
+          <span class="bar"><span class="fill admin" [style.width.%]="r.usuariosActivos ? r.administradores / r.usuariosActivos * 100 : 0"></span></span>
+          <span class="num">{{ num(r.administradores) }}</span>
+        </div>
+      </div>
+      <a class="link users-link" routerLink="../usuarios">{{ 'admin.summary.manageUsers' | translate }} →</a>
+    </div>
+
+    <!-- Producción y nómina -->
+    <div class="kpis">
+      <div class="card kpi">
+        <i class="ti ti-building-cottage kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-label">{{ 'admin.summary.farms' | translate }}</span>
+        <span class="kpi-value">{{ num(r.fincas) }}</span>
+        <span class="kpi-note">{{ num(r.hectareas, 1) }} ha · {{ 'admin.summary.lots' | translate: { count: num(r.lotes) } }}</span>
+      </div>
+      <div class="card kpi">
+        <i class="ti ti-plant kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-label">{{ 'admin.summary.activeCrops' | translate }}</span>
+        <span class="kpi-value">{{ num(r.siembrasActivas) }}</span>
+        <span class="kpi-note">{{ 'admin.summary.notFinished' | translate }}</span>
+      </div>
+      <div class="card kpi">
+        <i class="ti ti-basket kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-label">{{ 'admin.summary.harvest' | translate }}</span>
+        <span class="kpi-value">{{ num(r.cosechaKg) }} <small>kg</small></span>
+        <span class="kpi-note">{{ 'admin.summary.harvestNote' | translate }}</span>
+      </div>
+      <div class="card kpi">
+        <i class="ti ti-users-group kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-label">{{ 'admin.summary.workers' | translate }}</span>
+        <span class="kpi-value">{{ num(r.trabajadoresActivos) }}</span>
+        <span class="kpi-note">{{ 'admin.summary.workersNote' | translate }}</span>
+      </div>
+      <div class="card kpi">
+        <i class="ti ti-receipt-2 kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-label">{{ 'admin.summary.payrollsToPay' | translate }}</span>
+        <span class="kpi-value">{{ num(r.nominasPorPagar) }}</span>
+        <span class="kpi-note">{{ 'admin.summary.payrollsNote' | translate }}</span>
+      </div>
+      <div class="card kpi">
+        <i class="ti ti-cash kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-label">{{ 'admin.summary.totalPaid' | translate }}</span>
+        <span class="kpi-value">{{ pesos(r.totalPagado) }}</span>
+        <span class="kpi-note">{{ 'admin.summary.totalPaidNote' | translate }}</span>
+      </div>
+    </div>
+  </ng-container>
+</section>

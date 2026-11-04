@@ -1,0 +1,22 @@
+.select-rol { padding-block: 0.35rem; font-size: 0.85rem; }
+.select-rol:disabled { background: #f4f6f5; color: var(--a-muted); }
+.me {
+  margin-left: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a6510;
+  background: #fbf0d4;
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+tr.inactive .cell-main { color: var(--a-muted); }
+.muted { color: var(--a-muted); white-space: nowrap; }
+.hint {
+  background: var(--a-amber-soft);
+  color: var(--a-amber);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem !important;
+}
