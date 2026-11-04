@@ -49,6 +49,21 @@
         </select>
       </div>
 
+      <div class="field" *ngIf="form.rol === 'Trabajador'">
+        <label for="cedula">{{ 'auth.register.cedula' | translate }}</label>
+        <input
+          id="cedula"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          maxlength="20"
+          [(ngModel)]="form.cedula"
+          name="cedula"
+          placeholder="1052334120"
+        />
+        <small class="hint">{{ 'auth.register.cedulaHint' | translate }}</small>
+      </div>
+
       <button type="submit" [disabled]="cargando">
         {{ (cargando ? 'auth.register.submitting' : 'auth.register.submit') | translate }}
       </button>

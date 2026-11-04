@@ -1,0 +1,37 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">{{ 'portal.payments.title' | translate }}</h1>
+      <p class="page-sub">{{ 'portal.payments.subtitle' | translate }}</p>
+    </div>
+    <div class="total-chip" *ngIf="pagos.length > 0">
+      <span>{{ 'portal.payments.total' | translate }}</span>
+      <strong>{{ pesos(total) }}</strong>
+    </div>
+  </header>
+
+  <div class="card estado" *ngIf="cargando">{{ 'common.loading' | translate }}</div>
+  <div class="banner error" *ngIf="error">
+    <span>{{ 'portal.loadDataError' | translate }}</span>
+    <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">{{ 'common.retry' | translate }}</button>
+  </div>
+  <div class="card estado" *ngIf="!cargando && !error && pagos.length === 0">{{ 'portal.payments.empty' | translate }}</div>
+
+  <div class="card" *ngIf="pagos.length > 0">
+    <ul class="lista">
+      <li *ngFor="let p of pagos" class="item">
+        <div class="item-main">
+          <span class="item-title">{{ fecha(p.fechaPago) }}</span>
+          <span class="item-sub" *ngIf="p.periodoInicio">
+            {{ 'portal.payments.period' | translate: { from: fecha(p.periodoInicio), to: fecha(p.periodoFin) } }}
+          </span>
+          <span class="item-sub" *ngIf="p.comprobante">{{ 'portal.payments.receipt' | translate: { code: p.comprobante } }}</span>
+        </div>
+        <div class="item-side">
+          <span class="item-amount">{{ pesos(p.monto) }}</span>
+          <span class="pill info" *ngIf="p.metodoPago">{{ 'enums.metodoPago.' + p.metodoPago | translate }}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>

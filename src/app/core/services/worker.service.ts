@@ -88,6 +88,8 @@ export class TrabajadorService {
   desactivar(id: number): Observable<void> { return this.http.patch<void>(`${this.api}/${id}/desactivar`, {}); }
   suspender(id: number): Observable<void> { return this.http.patch<void>(`${this.api}/${id}/suspender`, {}); }
   reactivar(id: number): Observable<void> { return this.http.patch<void>(`${this.api}/${id}/reactivar`, {}); }
+  aprobarAcceso(id: number): Observable<Trabajador> { return this.http.patch<Trabajador>(`${this.api}/${id}/acceso/aprobar`, {}); }
+  rechazarAcceso(id: number): Observable<Trabajador> { return this.http.patch<Trabajador>(`${this.api}/${id}/acceso/rechazar`, {}); }
 }
 
 @Injectable({ providedIn: 'root' })

@@ -5,7 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { AgricultorDetalleAdmin } from '../../../core/models/admin.model';
-import { formatoFecha, formatoNumero, formatoPesos } from '../formato';
+import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/formato';
 
 type Pestana = 'fincas' | 'trabajadores' | 'nominas';
 
@@ -14,7 +14,7 @@ type Pestana = 'fincas' | 'trabajadores' | 'nominas';
   standalone: true,
   imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './admin-agricultor-detalle.html',
-  styleUrls: ['../admin-page.css', './admin-agricultor-detalle.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', './admin-agricultor-detalle.css'],
 })
 export class AdminAgricultorDetalleComponent implements OnInit {
   private readonly adminService = inject(AdminService);
