@@ -63,18 +63,24 @@ describe('DetalleNominaComponent', () => {
     expect(component.cargando).toBe(false);
   });
 
-  it('ngOnInit() should load pagos when nomina is APROBADA', async () => {
+  it('ngOnInit() should load pagos when nomina is PAGADA', async () => {
     pagoSvc.listarTodos.mockReturnValue(of([mkPago()]));
-    nominaSvc.obtener.mockReturnValue(of(mkNomina('APROBADA')));
+    nominaSvc.obtener.mockReturnValue(of(mkNomina('PAGADA')));
     await createComponent();
     expect(pagoSvc.listarTodos).toHaveBeenCalled();
     expect(component.pagos.length).toBe(1);
   });
 
+  it('ngOnInit() should not load pagos when nomina is APROBADA (not paid yet)', async () => {
+    nominaSvc.obtener.mockReturnValue(of(mkNomina('APROBADA')));
+    await createComponent();
+    expect(pagoSvc.listarTodos).not.toHaveBeenCalled();
+  });
+
   it('ngOnInit() should set error on load failure', async () => {
     nominaSvc.obtener.mockReturnValue(throwError(() => new Error()));
     await createComponent();
-    expect(component.error).toContain('Error al cargar');
+    expect(component.error).toBe('workers.rosters.detail.errors.load');
     expect(component.cargando).toBe(false);
   });
 
@@ -94,30 +100,20 @@ describe('DetalleNominaComponent', () => {
     expect(nominaSvc.aprobar).not.toHaveBeenCalled();
   });
 
-  it('aprobar() should approve and register pago on success', async () => {
+  it('aprobar() should only approve and open the payment form', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
     nominaSvc.aprobar.mockReturnValue(of(mkNomina('APROBADA')));
-    pagoSvc.registrar.mockReturnValue(of(mkPago()));
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     vi.useFakeTimers();
     await createComponent();
     component.aprobar();
-    expect(pagoSvc.registrar).toHaveBeenCalled();
-    expect(component.pagos.length).toBe(1);
-    expect(component.exito).toContain('Nómina aprobada');
+    expect(pagoSvc.registrar).not.toHaveBeenCalled();
+    expect(component.nomina!.estado).toBe('APROBADA');
+    expect(component.mostrarFormPago).toBe(true);
+    expect(component.exito).toBe('workers.rosters.detail.success.approved');
     vi.advanceTimersByTime(4000);
     expect(component.exito).toBe('');
     vi.useRealTimers();
-  });
-
-  it('aprobar() should set error when pago fails after approval', async () => {
-    nominaSvc.obtener.mockReturnValue(of(mkNomina()));
-    nominaSvc.aprobar.mockReturnValue(of(mkNomina('APROBADA')));
-    pagoSvc.registrar.mockReturnValue(throwError(() => new Error()));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    await createComponent();
-    component.aprobar();
-    expect(component.error).toContain('error al registrar el pago');
   });
 
   it('aprobar() should set error when aprobar fails', async () => {
@@ -126,8 +122,54 @@ describe('DetalleNominaComponent', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     await createComponent();
     component.aprobar();
-    expect(component.error).toContain('Error al aprobar');
+    expect(component.error).toBe('workers.rosters.detail.errors.approve');
     expect(component.guardando).toBe(false);
+  });
+
+  it('registrarPago() should send the full amount with the chosen method', async () => {
+    nominaSvc.obtener.mockReturnValue(of(mkNomina('APROBADA')));
+    pagoSvc.registrar.mockReturnValue(of(mkPago()));
+    await createComponent();
+    component.abrirFormPago();
+    component.pagoForm.patchValue({ metodoPago: 'TRANSFERENCIA', comprobante: ' TRX-9 ' });
+    component.registrarPago();
+    expect(pagoSvc.registrar).toHaveBeenCalledWith({
+      nominaId: 1,
+      monto: 100000,
+      metodoPago: 'TRANSFERENCIA',
+      comprobante: 'TRX-9',
+      observaciones: undefined
+    });
+    expect(component.pagos.length).toBe(1);
+    expect(component.mostrarFormPago).toBe(false);
+    expect(component.exito).toBe('workers.rosters.detail.success.paid');
+    expect(nominaSvc.obtener).toHaveBeenCalledTimes(2);
+  });
+
+  it('registrarPago() should not call the service when the method is empty', async () => {
+    nominaSvc.obtener.mockReturnValue(of(mkNomina('APROBADA')));
+    await createComponent();
+    component.pagoForm.patchValue({ metodoPago: '' });
+    component.registrarPago();
+    expect(pagoSvc.registrar).not.toHaveBeenCalled();
+  });
+
+  it('registrarPago() should show the backend message on failure', async () => {
+    nominaSvc.obtener.mockReturnValue(of(mkNomina('APROBADA')));
+    pagoSvc.registrar.mockReturnValue(
+      throwError(() => ({ error: { message: 'Esta nómina ya tiene un pago registrado.' } })));
+    await createComponent();
+    component.registrarPago();
+    expect(component.error).toBe('Esta nómina ya tiene un pago registrado.');
+    expect(component.guardando).toBe(false);
+  });
+
+  it('registrarPago() should fall back to a generic error key', async () => {
+    nominaSvc.obtener.mockReturnValue(of(mkNomina('APROBADA')));
+    pagoSvc.registrar.mockReturnValue(throwError(() => new Error()));
+    await createComponent();
+    component.registrarPago();
+    expect(component.error).toBe('workers.rosters.detail.errors.payment');
   });
 
   it('anular() should do nothing when nomina is null', async () => {
@@ -161,7 +203,7 @@ describe('DetalleNominaComponent', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     await createComponent();
     component.anular();
-    expect(component.error).toContain('Error al anular');
+    expect(component.error).toBe('workers.rosters.detail.errors.cancel');
     expect(component.guardando).toBe(false);
   });
 

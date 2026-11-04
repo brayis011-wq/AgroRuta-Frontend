@@ -663,7 +663,8 @@
         },
         "actions": {
           "viewDetail": "View details",
-          "approve": "Approve and record payment",
+          "approve": "Approve",
+          "registerPayment": "Record payment",
           "cancel": "Cancel",
           "viewPayment": "View payment",
           "reactivate": "Reactivate as pending",
@@ -672,13 +673,13 @@
         "empty": "No payrolls generated",
         "emptyFiltered": "This worker has no payrolls generated",
         "confirm": {
-          "approve": "Approve this payroll? The payment will be recorded automatically in cash.",
+          "approve": "Approve this payroll? You can record the payment from its detail page afterwards.",
           "cancel": "Cancel this payroll?",
           "reactivate": "Reactivate this payroll? It will go back to Pending status.",
           "delete": "Permanently delete this payroll? This action cannot be undone."
         },
         "success": {
-          "approved": "✅ Payroll approved and payment of ${{amount}} recorded",
+          "approved": "✅ Payroll approved. Open its detail to record the payment.",
           "reactivated": "✅ Payroll reactivated as Pending",
           "deleted": "🗑 Payroll deleted"
         },
@@ -686,7 +687,6 @@
           "load": "Error loading payrolls",
           "generate": "Error generating payroll",
           "approve": "Error approving the payroll",
-          "paymentAfterApprove": "⚠️ Payroll approved but an error occurred while recording the payment.",
           "cancel": "Error cancelling payroll",
           "reactivate": "Error reactivating payroll",
           "delete": "Error deleting payroll"
@@ -695,7 +695,8 @@
       "detail": {
         "back": "← Payroll",
         "title": "Payroll #{{id}}",
-        "approve": "✔ Confirm and Approve",
+        "approve": "✔ Approve",
+        "registerPayment": "💵 Record payment",
         "processing": "⏳ Processing...",
         "viewPayment": "💰 View Payment",
         "cancel": "✖ Cancel",
@@ -720,17 +721,27 @@
         "notFound": "Payroll not found.",
         "backShort": "← Back",
         "confirm": {
-          "approve": "Confirm and approve this payroll? The payment will be recorded automatically in cash.",
+          "approve": "Approve this payroll? You can record the payment afterwards.",
           "cancel": "Cancel this payroll? This action cannot be undone."
         },
         "success": {
-          "approvedCash": "✅ Payroll approved and payment of ${{amount}} recorded in cash"
+          "approved": "✅ Payroll approved. Now record the payment.",
+          "paid": "✅ Payment of ${{amount}} recorded ({{method}})"
         },
         "errors": {
           "load": "Error loading the payroll",
           "approve": "Error approving the payroll",
-          "paymentAfterApprove": "⚠️ Payroll approved but an error occurred while recording the payment. Go to Payments to record it manually.",
+          "payment": "Error recording the payment",
           "cancel": "Error cancelling the payroll"
+        },
+        "paymentForm": {
+          "title": "Record payment",
+          "amount": "Amount to pay:",
+          "method": "Payment method *",
+          "receipt": "Receipt",
+          "receiptPlaceholder": "Transfer or check number (optional)",
+          "notes": "Notes",
+          "submit": "Record payment"
         }
       }
     },
@@ -864,124 +875,124 @@
     },
     "home": {
       "title": "Workers",
-    "subtitle": "Manage your work team",
-    "activities": "Activities",
-    "posts": "Positions",
-    "newWorker": "＋ New Worker",
-    "tabs": {
-      "workers": "Workers",
-      "rosters": "Payroll",
-      "payments": "Payments"
-    },
-    "stats": {
-      "active": "Active",
-      "suspended": "Suspended",
-      "draftRosters": "Draft payrolls",
-      "totalPaid": "Total paid",
-      "totalRosters": "Total payrolls",
-      "draft": "Draft",
-      "paymentsMade": "Payments made"
-    },
-    "list": {
-      "searchLabel": "Search workers",
-      "searchPlaceholder": "Search by name, ID number or position...",
-      "filterActive": "Active",
-      "filterSuspended": "Suspended",
-      "filterAll": "All",
-      "loading": "Loading workers...",
-      "emptySuspended": "There are no suspended workers.",
-      "emptyNone": "No workers registered yet.",
-      "emptySearch": "No results found for \"{{query}}\"",
-      "registerFirst": "＋ Register first worker",
-      "wageLabel": "Daily wage:",
-      "perDay": "/day",
-      "registerWage": "Log workday",
-      "viewWages": "View workdays",
-      "viewRosters": "View payrolls"
-    },
-    "rostersTab": {
-      "empty": "No payrolls generated yet.",
-      "rosterOf": "Payroll #{{id}} — {{name}}",
-      "total": "Total:"
-    },
-    "paymentsTab": {
-      "empty": "No payments recorded yet.",
-      "paymentNo": "Payment #{{id}}",
-      "amount": "Amount:"
-    },
-    "panel": {
-      "close": "Close panel",
-      "suspendedNotice": "This worker is suspended. They cannot log new workdays.",
-      "currentPost": "Current position",
-      "perWage": "${{amount}}/workday",
-      "quickActions": "Quick actions",
-      "registerWage": "Log Workday",
-      "viewWages": "View Workdays",
-      "viewRosters": "View Payrolls",
-      "edit": "Edit details",
-      "changePost": "Change position",
-      "stateManagement": "Status management",
-      "reactivate": "Reactivate worker",
-      "suspend": "Suspend worker",
-      "deactivate": "Deactivate worker"
-    },
-    "new": {
-      "title": "＋ New Worker",
-      "subtitle": "Fill in the worker's details",
-      "personalInfo": "Personal information",
-      "firstName": "First name *",
-      "firstNamePlaceholder": "E.g.: Carlos",
-      "lastName": "Last name *",
-      "lastNamePlaceholder": "E.g.: Pérez",
-      "idNumber": "ID number *",
-      "idNumberPlaceholder": "Document number",
-      "phone": "Phone",
-      "address": "Address",
-      "optional": "Optional",
-      "contractAndPost": "Contract and position",
-      "hireDate": "Hire date *",
-      "contractType": "Contract type *",
-      "post": "Position *",
-      "selectPost": "Select a position...",
-      "selectPostError": "Select a position",
-      "registering": "Registering...",
-      "submit": "Register worker"
-    },
-    "edit": {
-      "title": "Edit worker",
-      "back": "← Back",
-      "saving": "Saving...",
-      "submit": "Save changes"
-    },
-    "changePost": {
-      "title": "Change position",
-      "newPost": "New position *",
-      "submit": "Change position"
-    },
-    "confirm": {
-      "deactivate": "Deactivate {{name}}? They cannot be reactivated from here.",
-      "suspend": "Suspend {{name}}?",
-      "reactivate": "Reactivate {{name}}?"
-    },
-    "success": {
-      "rosterGenerated": "✅ Payroll generated successfully",
-      "registered": "✅ {{name}} registered successfully",
-      "updated": "✅ Worker updated",
-      "postUpdated": "✅ Position updated",
-      "deactivated": "⚠️ Worker deactivated",
-      "suspended": "⚠️ Worker suspended",
-      "reactivated": "✅ Worker reactivated"
-    },
-    "errors": {
-      "load": "Error loading workers",
-      "generateRoster": "Error generating payroll",
-      "register": "Error registering worker",
-      "update": "Error updating",
-      "changePost": "Error changing position",
-      "deactivate": "Error deactivating",
-      "suspend": "Error suspending",
-      "reactivate": "Error reactivating"
-    }
+      "subtitle": "Manage your work team",
+      "activities": "Activities",
+      "posts": "Positions",
+      "newWorker": "＋ New Worker",
+      "tabs": {
+        "workers": "Workers",
+        "rosters": "Payroll",
+        "payments": "Payments"
+      },
+      "stats": {
+        "active": "Active",
+        "suspended": "Suspended",
+        "draftRosters": "Draft payrolls",
+        "totalPaid": "Total paid",
+        "totalRosters": "Total payrolls",
+        "draft": "Draft",
+        "paymentsMade": "Payments made"
+      },
+      "list": {
+        "searchLabel": "Search workers",
+        "searchPlaceholder": "Search by name, ID number or position...",
+        "filterActive": "Active",
+        "filterSuspended": "Suspended",
+        "filterAll": "All",
+        "loading": "Loading workers...",
+        "emptySuspended": "There are no suspended workers.",
+        "emptyNone": "No workers registered yet.",
+        "emptySearch": "No results found for \"{{query}}\"",
+        "registerFirst": "＋ Register first worker",
+        "wageLabel": "Daily wage:",
+        "perDay": "/day",
+        "registerWage": "Log workday",
+        "viewWages": "View workdays",
+        "viewRosters": "View payrolls"
+      },
+      "rostersTab": {
+        "empty": "No payrolls generated yet.",
+        "rosterOf": "Payroll #{{id}} — {{name}}",
+        "total": "Total:"
+      },
+      "paymentsTab": {
+        "empty": "No payments recorded yet.",
+        "paymentNo": "Payment #{{id}}",
+        "amount": "Amount:"
+      },
+      "panel": {
+        "close": "Close panel",
+        "suspendedNotice": "This worker is suspended. They cannot log new workdays.",
+        "currentPost": "Current position",
+        "perWage": "${{amount}}/workday",
+        "quickActions": "Quick actions",
+        "registerWage": "Log Workday",
+        "viewWages": "View Workdays",
+        "viewRosters": "View Payrolls",
+        "edit": "Edit details",
+        "changePost": "Change position",
+        "stateManagement": "Status management",
+        "reactivate": "Reactivate worker",
+        "suspend": "Suspend worker",
+        "deactivate": "Deactivate worker"
+      },
+      "new": {
+        "title": "＋ New Worker",
+        "subtitle": "Fill in the worker's details",
+        "personalInfo": "Personal information",
+        "firstName": "First name *",
+        "firstNamePlaceholder": "E.g.: Carlos",
+        "lastName": "Last name *",
+        "lastNamePlaceholder": "E.g.: Pérez",
+        "idNumber": "ID number *",
+        "idNumberPlaceholder": "Document number",
+        "phone": "Phone",
+        "address": "Address",
+        "optional": "Optional",
+        "contractAndPost": "Contract and position",
+        "hireDate": "Hire date *",
+        "contractType": "Contract type *",
+        "post": "Position *",
+        "selectPost": "Select a position...",
+        "selectPostError": "Select a position",
+        "registering": "Registering...",
+        "submit": "Register worker"
+      },
+      "edit": {
+        "title": "Edit worker",
+        "back": "← Back",
+        "saving": "Saving...",
+        "submit": "Save changes"
+      },
+      "changePost": {
+        "title": "Change position",
+        "newPost": "New position *",
+        "submit": "Change position"
+      },
+      "confirm": {
+        "deactivate": "Deactivate {{name}}? They cannot be reactivated from here.",
+        "suspend": "Suspend {{name}}?",
+        "reactivate": "Reactivate {{name}}?"
+      },
+      "success": {
+        "rosterGenerated": "✅ Payroll generated successfully",
+        "registered": "✅ {{name}} registered successfully",
+        "updated": "✅ Worker updated",
+        "postUpdated": "✅ Position updated",
+        "deactivated": "⚠️ Worker deactivated",
+        "suspended": "⚠️ Worker suspended",
+        "reactivated": "✅ Worker reactivated"
+      },
+      "errors": {
+        "load": "Error loading workers",
+        "generateRoster": "Error generating payroll",
+        "register": "Error registering worker",
+        "update": "Error updating",
+        "changePost": "Error changing position",
+        "deactivate": "Error deactivating",
+        "suspend": "Error suspending",
+        "reactivate": "Error reactivating"
+      }
     }
   },
   "config": {

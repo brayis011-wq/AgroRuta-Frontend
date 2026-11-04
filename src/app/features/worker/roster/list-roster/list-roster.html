@@ -116,15 +116,21 @@
                     [title]="'workers.rosters.list.actions.cancel' | translate"
                     (click)="anular(n.id)">✖</button>
 
-            <!-- APROBADA o PAGADA: ver pago -->
-            <a *ngIf="n.estado === 'APROBADA' || n.estado === 'PAGADA'"
+            <!-- APROBADA: registrar pago (en el detalle) -->
+            <a *ngIf="n.estado === 'APROBADA'"
+               [routerLink]="['/worker/nominas', n.id]"
+               class="btn-accion btn-pago"
+               [title]="'workers.rosters.list.actions.registerPayment' | translate">💵</a>
+
+            <!-- PAGADA: ver pago -->
+            <a *ngIf="n.estado === 'PAGADA'"
                [routerLink]="['/worker/pagos']"
                [queryParams]="{ nominaId: n.id }"
                class="btn-accion btn-pago"
                [title]="'workers.rosters.list.actions.viewPayment' | translate">💰</a>
 
-            <!-- APROBADA o PAGADA: anular -->
-            <button *ngIf="n.estado === 'APROBADA' || n.estado === 'PAGADA'"
+            <!-- APROBADA: anular (una nómina pagada no se anula) -->
+            <button *ngIf="n.estado === 'APROBADA'"
                     class="btn-accion btn-desactivar"
                     [title]="'workers.rosters.list.actions.cancel' | translate"
                     (click)="anular(n.id)">✖</button>
