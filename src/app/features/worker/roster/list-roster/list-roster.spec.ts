@@ -12,7 +12,6 @@ const mkNomina = (estado = 'PENDIENTE', id = 1): any => ({
   trabajador: { id: 1, nombreCompleto: 'Juan Perez' }
 });
 const mkTrabajador = (): any => ({ id: 1, nombreCompleto: 'Juan Perez', estado: 'ACTIVO' });
-const mkPago       = (): any => ({ id: 1, nominaId: 1, monto: 100000 });
 
 describe('ListaNominasComponent', () => {
   let component: ListaNominasComponent;
@@ -79,7 +78,7 @@ describe('ListaNominasComponent', () => {
   it('cargar() should set error on failure', async () => {
     nominaSvc.listarTodas.mockReturnValue(throwError(() => new Error()));
     await createComponent();
-    expect(component.error).toContain('Error');
+    expect(component.error).toContain('workers.rosters.list.errors.');
   });
 
   it('puedeGenerarNomina should be true when no trabajadorFiltrado', async () => {
@@ -127,7 +126,7 @@ describe('ListaNominasComponent', () => {
     await createComponent();
     component.form.setValue({ trabajadorId: 1, periodoInicio: '2024-01-01', periodoFin: '2024-01-31' });
     component.generar();
-    expect(component.error).toContain('Error');
+    expect(component.error).toContain('workers.rosters.list.errors.');
   });
 
   it('aprobar() should not call service when id is null', async () => {
@@ -143,26 +142,20 @@ describe('ListaNominasComponent', () => {
     expect(nominaSvc.aprobar).not.toHaveBeenCalled();
   });
 
-  it('aprobar() should approve and register pago on success', async () => {
+  it('aprobar() should only approve (no pago) and reload on success', async () => {
     nominaSvc.aprobar.mockReturnValue(of(mkNomina('APROBADA')));
-    pagoSvc.registrar.mockReturnValue(of(mkPago()));
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     vi.useFakeTimers();
     await createComponent();
     component.aprobar(1);
-    expect(pagoSvc.registrar).toHaveBeenCalled();
+    expect(nominaSvc.aprobar).toHaveBeenCalledWith(1);
+    expect(pagoSvc.registrar).not.toHaveBeenCalled();
+    expect(nominaSvc.listarTodas).toHaveBeenCalledTimes(2);
+    expect(component.exito).toBe('workers.rosters.list.success.approved');
+    expect(component.aprobando).toBeNull();
     vi.advanceTimersByTime(4000);
     expect(component.exito).toBe('');
     vi.useRealTimers();
-  });
-
-  it('aprobar() should set error when pago fails after approval', async () => {
-    nominaSvc.aprobar.mockReturnValue(of(mkNomina('APROBADA')));
-    pagoSvc.registrar.mockReturnValue(throwError(() => new Error()));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    await createComponent();
-    component.aprobar(1);
-    expect(component.error).toContain('error al registrar el pago');
   });
 
   it('aprobar() should set error when aprobar fails', async () => {
@@ -170,7 +163,14 @@ describe('ListaNominasComponent', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     await createComponent();
     component.aprobar(1);
-    expect(component.error).toContain('Error al aprobar');
+    expect(component.error).toBe('workers.rosters.list.errors.approve');
+    expect(component.aprobando).toBeNull();
+  });
+
+  it('puedeGenerarNomina should be false when trabajador has APROBADA nomina', async () => {
+    nominaSvc.listarTodas.mockReturnValue(of([mkNomina('APROBADA')]));
+    await createComponent({ trabajadorId: '1' });
+    expect(component.puedeGenerarNomina).toBe(false);
   });
 
   it('anular() should not call service when confirm is false', async () => {
@@ -193,7 +193,7 @@ describe('ListaNominasComponent', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     await createComponent();
     component.anular(1);
-    expect(component.error).toContain('Error al anular');
+    expect(component.error).toBe('workers.rosters.list.errors.cancel');
   });
 
   it('reactivar() should not call service when confirm is false', async () => {
@@ -209,7 +209,7 @@ describe('ListaNominasComponent', () => {
     vi.useFakeTimers();
     await createComponent();
     component.reactivar(1);
-    expect(component.exito).toContain('reactivada');
+    expect(component.exito).toBe('workers.rosters.list.success.reactivated');
     vi.advanceTimersByTime(3500);
     vi.useRealTimers();
   });
@@ -219,7 +219,7 @@ describe('ListaNominasComponent', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     await createComponent();
     component.reactivar(1);
-    expect(component.error).toContain('Error al reactivar');
+    expect(component.error).toBe('workers.rosters.list.errors.reactivate');
   });
 
   it('eliminar() should not call service when confirm is false', async () => {
@@ -245,7 +245,7 @@ describe('ListaNominasComponent', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     await createComponent();
     component.eliminar(1);
-    expect(component.error).toContain('Error al eliminar');
+    expect(component.error).toBe('workers.rosters.list.errors.delete');
   });
 
   it('estadoClass() should return correct badge class', async () => {
