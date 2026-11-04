@@ -15,8 +15,8 @@ import { BuscadorComponent } from '../../shared/buscador/buscador';
 import { consejoFumigacion, municipio } from '../../shared/clima';
 
 const CLAVE_COLAPSADO = 'sidebarColapsado';
-/** Fincas que se muestran como accesos directos en el submenú de Cultivos */
-const MAX_FINCAS_MENU = 8;
+/** Lotes de la finca activa que se muestran en el submenú de Cultivos */
+const MAX_LOTES_MENU = 8;
 
 type IdGrupo = 'cultivos' | 'trabajadores' | 'reportes';
 
@@ -29,6 +29,8 @@ export interface ItemSubmenu {
   query?: Record<string, string>;
   contador?: boolean;
   icono?: string;
+  /** Subtítulo dentro del submenú (no es un enlace) */
+  titulo?: boolean;
 }
 
 /** Panel del agricultor: menú lateral claro, submenú de trabajadores y barra inferior en celular. */
@@ -80,12 +82,22 @@ export class LayoutComponent {
     { ruta: '/reportes', clave: 'layout.nav.reportCrops', query: { tab: 'crops' } },
   ];
 
+  /**
+   * Mis fincas + los lotes de la finca elegida en el selector.
+   * Las fincas y "Nueva finca" viven solo en el selector, para no repetirlas.
+   */
   subCultivos(): ItemSubmenu[] {
-    return [
-      { ruta: '/cultivo', clave: 'layout.nav.myFarms', exacto: true },
-      ...this.fincaActiva.fincas().slice(0, MAX_FINCAS_MENU).map((f) => ({ ruta: `/cultivo/finca/${f.id}`, texto: f.nombre })),
-      { ruta: '/cultivo/nueva-finca', clave: 'layout.nav.newFarm', icono: 'ti-plus' },
-    ];
+    const finca = this.fincaActiva.activa();
+    const items: ItemSubmenu[] = [{ ruta: '/cultivo', clave: 'layout.nav.myFarms', exacto: true }];
+    if (finca) {
+      items.push({ ruta: `/cultivo/finca/${finca.id}`, clave: 'layout.nav.farmSummary', exacto: true });
+      const lotes = this.fincaActiva.lotes();
+      if (lotes.length) {
+        items.push({ ruta: '#lotes', titulo: true, clave: 'layout.nav.plots' });
+        items.push(...lotes.slice(0, MAX_LOTES_MENU).map((l) => ({ ruta: `/cultivo/lote/${l.id}`, texto: l.nombre, icono: 'ti-point-filled' })));
+      }
+    }
+    return items;
   }
 
   constructor() {
@@ -103,7 +115,9 @@ export class LayoutComponent {
     const grupo = grupoDeUrl(url);
     if (grupo) this.abiertos.update((s) => new Set(s).add(grupo));
     // Las fincas se refrescan al moverse por Cultivos (pudo crearse o borrarse una)
-    if (!this.fincasCargadas || grupo === 'cultivos') this.cargarFincas();
+    if (!this.fincasCargadas) this.cargarFincas();
+    // En Cultivos se refrescan los lotes (pudo crearse o borrarse uno)
+    else if (grupo === 'cultivos') this.fincaActiva.refrescarLotes();
     this.cargarPendientes();
   }
 
