@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import {
   Finca,
   Lote,
-  Siembra,
+  Siembra, SiembraRequest,
   ActividadCultivo,
   Fumigacion,
   Cosecha,
@@ -54,7 +54,7 @@ export class CultivoService {
   }
 
   // Siembras
-  registrarSiembra(siembra: Partial<Siembra>): Observable<Siembra> {
+  registrarSiembra(siembra: SiembraRequest): Observable<Siembra> {
     return this.http.post<Siembra>(`${this.apiUrl}/api/siembras`, siembra);
   }
 

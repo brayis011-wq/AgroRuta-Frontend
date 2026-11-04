@@ -10,6 +10,7 @@ import {
   ActividadCultivo,
   Fumigacion,
   Cosecha,
+  nombreCultivo as nombreDeCultivo,
 } from '../../../../core/models/cultivo.model';
 import { WeatherWidgetComponent } from '../../../weather/weather-widget/weather-widget.component';
 
@@ -34,6 +35,8 @@ interface TimelineItem {
   styleUrl: './detalle-siembra.css',
 })
 export class DetalleSiembraComponent implements OnInit {
+  /** \"Café · Castillo\" */
+  readonly nombreCultivo = nombreDeCultivo;
   private translate = inject(TranslateService);
   private lang = inject(LanguageService);
 

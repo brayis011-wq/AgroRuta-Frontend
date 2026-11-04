@@ -59,7 +59,7 @@
                 </option>
                 @for (c of cultivosDeFinca; track c.id) {
                   <option [ngValue]="c.id">
-                    {{ c.loteNombre }}{{ c.variedad ? ' — ' + ('enums.variedad.' + c.variedad | translate) : '' }}{{ c.estado ? ' · ' + ('enums.etapaCultivo.' + c.estado | translate) : '' }}
+                    {{ c.loteNombre }}{{ c.variedad ? ' — ' + (c.tipoCultivo ? c.tipoCultivo + ' ' : '') + c.variedad : '' }}{{ c.estado ? ' · ' + ('enums.etapaCultivo.' + c.estado | translate) : '' }}
                   </option>
                 }
               </select>
