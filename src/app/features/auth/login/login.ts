@@ -42,14 +42,16 @@ export class LoginComponent implements OnInit {
     this.cargando = true;
 
     this.authService.login(this.form).subscribe({
-      next: () => {
+      next: (respuesta) => {
         this.cargando = false;
-        this.router.navigate(['/dashboard']);
+        this.router.navigate([respuesta.rol === 'Administrador' ? '/admin' : '/dashboard']);
       },
       error: (err) => {
         this.cargando = false;
-        this.error =
-          err.status === 401 || err.status === 403
+        const cuentaDesactivada = err.status === 401 && /desactivada/i.test(err.error?.message ?? '');
+        this.error = cuentaDesactivada
+          ? 'auth.login.accountDisabled'
+          : err.status === 401 || err.status === 403
             ? 'auth.login.invalidCredentials'
             : 'auth.login.serverError';
         this.cdr.detectChanges();

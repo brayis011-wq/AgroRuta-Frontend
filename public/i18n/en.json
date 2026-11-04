@@ -90,7 +90,8 @@
       "register": "Sign up",
       "invalidCredentials": "Incorrect email or password.",
       "serverError": "Could not connect to the server.",
-      "sessionExpired": "Your session expired. Please sign in again."
+      "sessionExpired": "Your session expired. Please sign in again.",
+      "accountDisabled": "Your account is disabled. Contact the administrator."
     },
     "register": {
       "title": "Create account",
@@ -1037,6 +1038,173 @@
       "confirmRequired": "You must confirm the password",
       "submit": "Change password",
       "submitting": "Changing…"
+    }
+  },
+  "admin": {
+    "badge": "Administration",
+    "nav": {
+      "label": "Administration menu",
+      "sections": {
+        "panel": "Panel",
+        "management": "Management",
+        "system": "System"
+      },
+      "summary": "Overview",
+      "users": "Users",
+      "farmers": "Farmers",
+      "inputs": "Inputs",
+      "backups": "Backups",
+      "account": "My account"
+    },
+    "common": {
+      "refresh": "Refresh",
+      "close": "Close",
+      "confirm": "Confirm",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "summary": {
+      "title": "System overview",
+      "subtitle": "Users, production and payroll across all farmers.",
+      "loadError": "Could not load the overview.",
+      "pendingPayrolls": "{{count}} unpaid payrolls",
+      "inactiveUsers": "{{count}} disabled accounts",
+      "pendingPayrollsOne": "1 unpaid payroll",
+      "inactiveUsersOne": "1 disabled account",
+      "users": "Active users",
+      "activeOf": "of {{total}} registered",
+      "manageUsers": "Manage users",
+      "farms": "Farms",
+      "lots": "{{count}} lots",
+      "activeCrops": "Crops in progress",
+      "notFinished": "Not finished",
+      "harvest": "Recorded harvest",
+      "harvestNote": "All-time total",
+      "workers": "Active workers",
+      "workersNote": "Across all farms",
+      "payrollsToPay": "Payrolls to pay",
+      "payrollsNote": "Pending or approved",
+      "totalPaid": "Total paid",
+      "totalPaidNote": "Sum of all payroll payments"
+    },
+    "users": {
+      "title": "Users",
+      "subtitle": "Enable or disable accounts and change each user's role.",
+      "count": "{{shown}} of {{total}} users",
+      "search": "Search by name or email",
+      "filterRole": "Filter by role",
+      "allRoles": "All roles",
+      "filterStatus": "Filter by status",
+      "allStatus": "All",
+      "onlyActive": "Active",
+      "onlyInactive": "Disabled",
+      "empty": "No users match your search.",
+      "you": "You",
+      "changeRoleOf": "Change the role of {{name}}",
+      "selfHint": "You can't change your own account",
+      "activate": "Enable",
+      "deactivate": "Disable",
+      "table": {
+        "user": "User",
+        "role": "Role",
+        "status": "Status",
+        "since": "Joined",
+        "actions": "Actions"
+      },
+      "confirm": {
+        "roleTitle": "Change role",
+        "roleText": "{{name}} will go from {{from}} to {{to}}. The change applies right away.",
+        "farmerWarning": "Their farms, workers and payrolls are kept, but they will no longer see them from their account.",
+        "deactivateTitle": "Disable account",
+        "deactivateText": "{{name}} won't be able to sign in and their current session will end. Their data is kept.",
+        "activateTitle": "Enable account",
+        "activateText": "{{name}} will be able to sign in again."
+      },
+      "done": {
+        "role": "{{name}} is now {{role}}.",
+        "activated": "{{name}}'s account is enabled.",
+        "deactivated": "{{name}}'s account is disabled."
+      },
+      "errors": {
+        "load": "Could not load users.",
+        "save": "Could not save the change."
+      }
+    },
+    "farmers": {
+      "title": "Farmers",
+      "subtitle": "See each farmer's farms, workers and payrolls.",
+      "count": "{{count}} farmers",
+      "search": "Search farmer",
+      "sortBy": "Sort by",
+      "sort": {
+        "name": "Name",
+        "hectares": "Most hectares",
+        "workers": "Most workers",
+        "paid": "Most paid"
+      },
+      "loadError": "Could not load farmers.",
+      "detailError": "Could not load this farmer.",
+      "empty": "No farmers registered yet.",
+      "view": "View",
+      "back": "Farmers",
+      "since": "joined {{date}}",
+      "table": {
+        "farmer": "Farmer",
+        "farms": "Farms",
+        "hectares": "Hectares",
+        "workers": "Workers",
+        "payrolls": "Payrolls",
+        "paid": "Paid"
+      },
+      "tabs": {
+        "farms": "Farms",
+        "workers": "Workers",
+        "payrolls": "Payrolls"
+      },
+      "cols": {
+        "farm": "Farm",
+        "location": "Location",
+        "worker": "Worker",
+        "idNumber": "ID number",
+        "post": "Position",
+        "period": "Period",
+        "days": "Workdays",
+        "total": "Total"
+      },
+      "noFarms": "This farmer has no farms.",
+      "noWorkers": "This farmer has no workers.",
+      "noPayrolls": "This farmer hasn't generated payrolls."
+    },
+    "inputs": {
+      "title": "Agricultural inputs",
+      "subtitle": "Catalog of products farmers choose from when recording a spraying.",
+      "new": "New input",
+      "newTitle": "New input",
+      "editTitle": "Edit input",
+      "count": "{{count}} inputs",
+      "search": "Search input",
+      "empty": "The catalog is empty.",
+      "loadError": "Could not load the catalog.",
+      "delete": "Delete",
+      "confirmTitle": "Delete input",
+      "confirmText": "{{name}} will no longer appear in the catalog. Sprayings already recorded don't change.",
+      "created": "{{name}} was added to the catalog.",
+      "updated": "Changes to {{name}} were saved.",
+      "deleted": "{{name}} was removed from the catalog.",
+      "saveError": "Could not save the input.",
+      "deleteError": "Could not delete the input.",
+      "fields": {
+        "name": "Name",
+        "type": "Type",
+        "unit": "Unit",
+        "dose": "Suggested dose",
+        "reentry": "Re-entry (hours)"
+      },
+      "errors": {
+        "name": "Enter a name (150 characters max).",
+        "dose": "The dose must be greater than 0.",
+        "reentry": "It can't be negative."
+      }
     }
   }
 }

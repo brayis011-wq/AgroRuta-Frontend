@@ -1,0 +1,126 @@
+<section class="page">
+  <a class="link back" routerLink="../">← {{ 'admin.farmers.back' | translate }}</a>
+
+  <div class="card estado" *ngIf="cargando">{{ 'common.loading' | translate }}</div>
+  <div class="banner error" *ngIf="error">
+    <span>{{ 'admin.farmers.detailError' | translate }}</span>
+    <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">{{ 'common.retry' | translate }}</button>
+  </div>
+
+  <ng-container *ngIf="detalle as d">
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">{{ 'enums.rol.Agricultor' | translate }}</p>
+        <h1 class="page-title">
+          {{ d.agricultor.nombre }}
+          <span class="pill" [class.ok]="d.agricultor.activo" [class.off]="!d.agricultor.activo">
+            {{ (d.agricultor.activo ? 'admin.common.active' : 'admin.common.inactive') | translate }}
+          </span>
+        </h1>
+        <p class="page-sub">{{ d.agricultor.email }} · {{ 'admin.farmers.since' | translate: { date: fecha(d.agricultor.fechaCreacion) } }}</p>
+      </div>
+    </header>
+
+    <dl class="facts card">
+      <div><dt>{{ 'admin.farmers.table.farms' | translate }}</dt><dd>{{ num(d.agricultor.fincas) }}</dd></div>
+      <div><dt>{{ 'admin.farmers.table.hectares' | translate }}</dt><dd>{{ num(d.agricultor.hectareas, 1) }}</dd></div>
+      <div><dt>{{ 'admin.farmers.table.workers' | translate }}</dt><dd>{{ num(d.agricultor.trabajadoresActivos) }}</dd></div>
+      <div><dt>{{ 'admin.farmers.table.payrolls' | translate }}</dt><dd>{{ num(d.agricultor.nominas) }}</dd></div>
+      <div><dt>{{ 'admin.farmers.table.paid' | translate }}</dt><dd>{{ pesos(d.agricultor.totalPagado) }}</dd></div>
+    </dl>
+
+    <div class="card">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" class="tab" [class.active]="pestana === 'fincas'"
+                [attr.aria-selected]="pestana === 'fincas'" (click)="pestana = 'fincas'">
+          {{ 'admin.farmers.tabs.farms' | translate }} <span class="count">{{ d.fincas.length }}</span>
+        </button>
+        <button type="button" role="tab" class="tab" [class.active]="pestana === 'trabajadores'"
+                [attr.aria-selected]="pestana === 'trabajadores'" (click)="pestana = 'trabajadores'">
+          {{ 'admin.farmers.tabs.workers' | translate }} <span class="count">{{ d.trabajadores.length }}</span>
+        </button>
+        <button type="button" role="tab" class="tab" [class.active]="pestana === 'nominas'"
+                [attr.aria-selected]="pestana === 'nominas'" (click)="pestana = 'nominas'">
+          {{ 'admin.farmers.tabs.payrolls' | translate }} <span class="count">{{ d.nominas.length }}</span>
+        </button>
+      </div>
+
+      <!-- Fincas -->
+      <ng-container *ngIf="pestana === 'fincas'">
+        <div class="estado" *ngIf="d.fincas.length === 0">{{ 'admin.farmers.noFarms' | translate }}</div>
+        <div class="table-wrap" *ngIf="d.fincas.length > 0">
+          <table>
+            <thead><tr>
+              <th>{{ 'admin.farmers.cols.farm' | translate }}</th>
+              <th>{{ 'admin.farmers.cols.location' | translate }}</th>
+              <th class="num">{{ 'admin.farmers.table.hectares' | translate }}</th>
+            </tr></thead>
+            <tbody>
+              <tr *ngFor="let f of d.fincas">
+                <td class="cell-main">{{ f.nombre }}</td>
+                <td>{{ f.ubicacion }}</td>
+                <td class="num">{{ num(f.hectareas, 1) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+
+      <!-- Trabajadores -->
+      <ng-container *ngIf="pestana === 'trabajadores'">
+        <div class="estado" *ngIf="d.trabajadores.length === 0">{{ 'admin.farmers.noWorkers' | translate }}</div>
+        <div class="table-wrap" *ngIf="d.trabajadores.length > 0">
+          <table>
+            <thead><tr>
+              <th>{{ 'admin.farmers.cols.worker' | translate }}</th>
+              <th>{{ 'admin.farmers.cols.idNumber' | translate }}</th>
+              <th>{{ 'admin.farmers.cols.post' | translate }}</th>
+              <th>{{ 'admin.users.table.status' | translate }}</th>
+            </tr></thead>
+            <tbody>
+              <tr *ngFor="let t of d.trabajadores">
+                <td class="cell-main">{{ t.nombreCompleto }}</td>
+                <td class="tabular">{{ t.cedula }}</td>
+                <td>{{ t.cargo || '—' }}</td>
+                <td>
+                  <span class="pill" [ngClass]="claseEstadoTrabajador(t.estado)">
+                    {{ t.estado ? ('enums.estadoTrabajador.' + t.estado | translate) : '—' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+
+      <!-- Nóminas -->
+      <ng-container *ngIf="pestana === 'nominas'">
+        <div class="estado" *ngIf="d.nominas.length === 0">{{ 'admin.farmers.noPayrolls' | translate }}</div>
+        <div class="table-wrap" *ngIf="d.nominas.length > 0">
+          <table>
+            <thead><tr>
+              <th>{{ 'admin.farmers.cols.worker' | translate }}</th>
+              <th>{{ 'admin.farmers.cols.period' | translate }}</th>
+              <th class="num">{{ 'admin.farmers.cols.days' | translate }}</th>
+              <th class="num">{{ 'admin.farmers.cols.total' | translate }}</th>
+              <th>{{ 'admin.users.table.status' | translate }}</th>
+            </tr></thead>
+            <tbody>
+              <tr *ngFor="let n of d.nominas">
+                <td class="cell-main">{{ n.trabajador || '—' }}</td>
+                <td class="tabular">{{ fecha(n.periodoInicio) }} – {{ fecha(n.periodoFin) }}</td>
+                <td class="num">{{ num(n.totalJornales) }}</td>
+                <td class="num">{{ pesos(n.valorTotal) }}</td>
+                <td>
+                  <span class="pill" [ngClass]="claseEstadoNomina(n.estado)">
+                    {{ n.estado ? ('enums.estadoNomina.' + n.estado | translate) : '—' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+</section>

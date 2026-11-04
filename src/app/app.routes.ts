@@ -2,6 +2,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 import { adminGuard } from './core/guards/admin-guard';
+import { redirectAdminGuard } from './core/guards/redirect-admin-guard';
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 
@@ -10,10 +11,17 @@ export const routes: Routes = [
     loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
 
+  // Panel de administración: layout y menú propios
+  {
+    path: 'admin',
+    canActivate: [authGuard, adminGuard],
+    loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
+  },
+
   {
     path: '',
     loadComponent: () => import('./features/layout/layout').then((m) => m.LayoutComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, redirectAdminGuard],
     children: [
       {
         path: 'dashboard',
