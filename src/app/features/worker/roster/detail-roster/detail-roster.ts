@@ -28,6 +28,11 @@ export class DetalleNominaComponent implements OnInit {
   exito = '';                                   // clave de traducción
   exitoParams: Record<string, unknown> = {};    // parámetros de la clave de éxito
 
+  /** Métodos que acepta el backend (enum MetodoPago). */
+  readonly metodosPago = ['EFECTIVO', 'TRANSFERENCIA', 'CHEQUE'];
+  mostrarFormPago = false;
+  pagoForm: FormGroup;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -36,7 +41,13 @@ export class DetalleNominaComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService
-  ) {}
+  ) {
+    this.pagoForm = this.fb.group({
+      metodoPago:    ['EFECTIVO', Validators.required],
+      comprobante:   ['', Validators.maxLength(100)],
+      observaciones: ['', Validators.maxLength(500)]
+    });
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -49,8 +60,8 @@ export class DetalleNominaComponent implements OnInit {
       next: (n: Nomina) => {
         this.nomina = n;
         this.cargando = false;
-        // Si ya está aprobada, cargar sus pagos
-        if (n.estado === 'APROBADA' && n.id) {
+        // El pago existe solo cuando la nómina está PAGADA
+        if (n.estado === 'PAGADA' && n.id) {
           this.cargarPagos(n.id);
         }
         this.cdr.detectChanges();
@@ -75,7 +86,7 @@ export class DetalleNominaComponent implements OnInit {
   }
 
   /**
-   * Aprueba la nómina y registra el pago automáticamente en EFECTIVO.
+   * Aprueba la nómina (PENDIENTE → APROBADA). El pago se registra después, en otro paso.
    */
   aprobar(): void {
     if (!this.nomina?.id) return;
@@ -88,28 +99,9 @@ export class DetalleNominaComponent implements OnInit {
     this.nominaService.aprobar(this.nomina.id).subscribe({
       next: (nominaAprobada: Nomina) => {
         this.nomina = nominaAprobada;
-
-        const pagoReq: PagoRequest = {
-          nominaId:   nominaAprobada.id!,
-          monto:      nominaAprobada.valorTotal,
-          metodoPago: 'EFECTIVO'
-        };
-
-        this.pagoService.registrar(pagoReq).subscribe({
-          next: (p: Pago) => {
-            this.pagos = [p];
-            this.guardando = false;
-            this.exito = 'workers.rosters.detail.success.approvedCash';
-            this.exitoParams = { amount: nominaAprobada.valorTotal.toLocaleString() };
-            this.cdr.detectChanges();
-            setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 4000);
-          },
-          error: () => {
-            this.guardando = false;
-            this.error = 'workers.rosters.detail.errors.paymentAfterApprove';
-            this.cdr.detectChanges();
-          }
-        });
+        this.guardando = false;
+        this.mostrarFormPago = true;
+        this.mostrarExito('workers.rosters.detail.success.approved');
       },
       error: () => {
         this.error = 'workers.rosters.detail.errors.approve';
@@ -117,6 +109,62 @@ export class DetalleNominaComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  abrirFormPago(): void {
+    this.pagoForm.reset({ metodoPago: 'EFECTIVO', comprobante: '', observaciones: '' });
+    this.mostrarFormPago = true;
+    this.error = '';
+  }
+
+  /**
+   * Registra el pago por el valor total de la nómina (APROBADA → PAGADA).
+   */
+  registrarPago(): void {
+    if (!this.nomina?.id || this.pagoForm.invalid) {
+      this.pagoForm.markAllAsTouched();
+      return;
+    }
+
+    const val = this.pagoForm.value;
+    const req: PagoRequest = {
+      nominaId:      this.nomina.id,
+      monto:         this.nomina.valorTotal,
+      metodoPago:    val.metodoPago,
+      comprobante:   val.comprobante?.trim() || undefined,
+      observaciones: val.observaciones?.trim() || undefined
+    };
+
+    this.guardando = true;
+    this.error = '';
+    this.exito = '';
+
+    this.pagoService.registrar(req).subscribe({
+      next: (p: Pago) => {
+        this.pagos = [p];
+        this.guardando = false;
+        this.mostrarFormPago = false;
+        this.nomina = { ...this.nomina!, estado: 'PAGADA' };
+        this.mostrarExito('workers.rosters.detail.success.paid', {
+          amount: this.nomina.valorTotal.toLocaleString(),
+          method: this.translate.instant('enums.metodoPago.' + req.metodoPago)
+        });
+        // Recarga para ver los jornales marcados como liquidados
+        this.cargarNomina(this.nomina.id!);
+      },
+      error: (err) => {
+        this.guardando = false;
+        this.error = err?.error?.message || 'workers.rosters.detail.errors.payment';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private mostrarExito(clave: string, params: Record<string, unknown> = {}): void {
+    this.exito = clave;
+    this.exitoParams = params;
+    this.cdr.detectChanges();
+    setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 4000);
   }
 
   anular(): void {

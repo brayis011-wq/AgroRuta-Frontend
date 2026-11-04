@@ -663,7 +663,8 @@
         },
         "actions": {
           "viewDetail": "Ver detalle",
-          "approve": "Aprobar y registrar pago",
+          "approve": "Aprobar",
+          "registerPayment": "Registrar pago",
           "cancel": "Anular",
           "viewPayment": "Ver pago",
           "reactivate": "Reactivar como pendiente",
@@ -672,13 +673,13 @@
         "empty": "No hay nóminas generadas",
         "emptyFiltered": "Este trabajador no tiene nóminas generadas",
         "confirm": {
-          "approve": "¿Aprobar esta nómina? Se registrará el pago automáticamente en efectivo.",
+          "approve": "¿Aprobar esta nómina? Después podrás registrar el pago desde su detalle.",
           "cancel": "¿Anular esta nómina?",
           "reactivate": "¿Reactivar esta nómina? Volverá a estado Pendiente.",
           "delete": "¿Eliminar esta nómina definitivamente? Esta acción no se puede deshacer."
         },
         "success": {
-          "approved": "✅ Nómina aprobada y pago de ${{amount}} registrado",
+          "approved": "✅ Nómina aprobada. Abre el detalle para registrar el pago.",
           "reactivated": "✅ Nómina reactivada como Pendiente",
           "deleted": "🗑 Nómina eliminada"
         },
@@ -686,7 +687,6 @@
           "load": "Error al cargar nóminas",
           "generate": "Error al generar nómina",
           "approve": "Error al aprobar la nómina",
-          "paymentAfterApprove": "⚠️ Nómina aprobada pero ocurrió un error al registrar el pago.",
           "cancel": "Error al anular nómina",
           "reactivate": "Error al reactivar nómina",
           "delete": "Error al eliminar nómina"
@@ -695,7 +695,8 @@
       "detail": {
         "back": "← Nóminas",
         "title": "Nómina #{{id}}",
-        "approve": "✔ Confirmar y Aprobar",
+        "approve": "✔ Aprobar",
+        "registerPayment": "💵 Registrar pago",
         "processing": "⏳ Procesando...",
         "viewPayment": "💰 Ver Pago",
         "cancel": "✖ Anular",
@@ -720,17 +721,27 @@
         "notFound": "No se encontró la nómina.",
         "backShort": "← Volver",
         "confirm": {
-          "approve": "¿Confirmar y aprobar esta nómina? Se registrará el pago automáticamente en efectivo.",
+          "approve": "¿Aprobar esta nómina? Después podrás registrar el pago.",
           "cancel": "¿Anular esta nómina? Esta acción no se puede deshacer."
         },
         "success": {
-          "approvedCash": "✅ Nómina aprobada y pago de ${{amount}} registrado en efectivo"
+          "approved": "✅ Nómina aprobada. Ahora registra el pago.",
+          "paid": "✅ Pago de ${{amount}} registrado ({{method}})"
         },
         "errors": {
           "load": "Error al cargar la nómina",
           "approve": "Error al aprobar la nómina",
-          "paymentAfterApprove": "⚠️ Nómina aprobada pero ocurrió un error al registrar el pago. Ve a Pagos para registrarlo manualmente.",
+          "payment": "Error al registrar el pago",
           "cancel": "Error al anular la nómina"
+        },
+        "paymentForm": {
+          "title": "Registrar pago",
+          "amount": "Monto a pagar:",
+          "method": "Método de pago *",
+          "receipt": "Comprobante",
+          "receiptPlaceholder": "N.º de transferencia o cheque (opcional)",
+          "notes": "Observaciones",
+          "submit": "Registrar pago"
         }
       }
     },

@@ -429,3 +429,18 @@
   font-size: 0.9rem;
   font-weight: 500;
 }
+
+.pago-form-monto {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.pago-form-monto strong {
+  color: var(--verde);
+  font-size: 1.05rem;
+}
+
+@media (max-width: 600px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
