@@ -39,3 +39,10 @@ h3 { margin: 0 0 .3rem; font-size: .78rem; font-weight: 600; color: var(--ar-tin
 .esq { min-height: 160px; border-radius: 12px; background: linear-gradient(90deg, #eef2ee 25%, #f7f9f7 50%, #eef2ee 75%); background-size: 200% 100%; animation: brillo 1.2s infinite linear; }
 @keyframes brillo { to { background-position: -200% 0; } }
 @media (max-width: 560px) { .cifras { grid-template-columns: 1fr 1fr; } .resultado { grid-column: 1 / -1; } }
+/* En espacios anchos (p. ej. Reportes) el reparto y los meses van lado a lado */
+:host { container-type: inline-size; }
+@container (min-width: 860px) {
+  .tarjeta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 2rem; row-gap: .9rem; align-items: start; }
+  .tarjeta > header, .cifras, .aviso, .nada { grid-column: 1 / -1; }
+  .meses { grid-column: 2; grid-row: span 2; }
+}

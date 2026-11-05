@@ -47,6 +47,11 @@
   color: #2e7d32;
 }
 
+.tab-btn.costs .tab-icon {
+  background-color: #e8f0fb;
+  color: #1f5fa8;
+}
+
 .tab-label {
   display: flex;
   flex-direction: column;

@@ -5,11 +5,15 @@ import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PayrollReportComponent } from '../payroll/payroll-report.component';
 import { CropReportComponent } from '../crop/crop-report.component';
+import { CostsReportComponent } from '../costs/costs-report.component';
+
+type Tab = 'payroll' | 'crops' | 'costs';
+const TABS: Tab[] = ['payroll', 'crops', 'costs'];
 
 @Component({
   selector: 'app-report-home',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, PayrollReportComponent, CropReportComponent],
+  imports: [CommonModule, TranslatePipe, PayrollReportComponent, CropReportComponent, CostsReportComponent],
   templateUrl: './report-home.component.html',
   styleUrl: './report-home.component.css'
 })
@@ -17,21 +21,24 @@ export class ReportHomeComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
-  activeTab: 'payroll' | 'crops' = 'payroll';
+  activeTab: Tab = 'payroll';
+  /** Temporada a abrir en la pestaña de costos (?siembra=7) */
+  siembra: number | null = null;
 
   constructor() {
     // La pestaña va en la URL (?tab=crops) para que el menú lateral pueda abrir cada una
     this.route.queryParamMap.pipe(takeUntilDestroyed(inject(DestroyRef))).subscribe((q) => {
-      const tab = q.get('tab');
-      if (tab !== 'payroll' && tab !== 'crops') {
+      const tab = q.get('tab') as Tab | null;
+      if (!tab || !TABS.includes(tab)) {
         this.setTab('payroll');
         return;
       }
       this.activeTab = tab;
+      this.siembra = Number(q.get('siembra')) || null;
     });
   }
 
-  setTab(tab: 'payroll' | 'crops'): void {
+  setTab(tab: Tab): void {
     this.activeTab = tab;
     this.router.navigate([], { relativeTo: this.route, queryParams: { tab }, replaceUrl: true });
   }

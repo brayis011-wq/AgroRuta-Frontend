@@ -288,7 +288,37 @@
     }
   },
   "reports": {
+    "costs": {
+      "title": "Costs per season",
+      "subtitle": "What each planting cost and earned: wages, inputs, other expenses and sales.",
+      "kpi": {
+        "cost": "Total cost",
+        "seasons": "{{count}} seasons",
+        "income": "Income",
+        "kg": "{{kg}} kg harvested",
+        "profit": "Profit",
+        "perKg": "Cost per kilo"
+      },
+      "table": "Seasons",
+      "sort": {
+        "reciente": "Recent",
+        "costo": "Most costly",
+        "ganancia": "Most profitable"
+      },
+      "col": {
+        "season": "Season",
+        "cost": "Cost",
+        "income": "Income",
+        "profit": "Profit",
+        "perKg": "Cost/kg"
+      },
+      "hint": "Tap a season to see its cost detail.",
+      "detail": "Cost detail",
+      "openPlanting": "Open planting",
+      "seeCosts": "Costs"
+    },
     "tabs": {
+      "costs": {"name": "Costs", "sub": "Cost and profit per season"},
       "payroll": {
         "name": "Payroll",
         "sub": "Payments and work days"

@@ -80,6 +80,7 @@ export class LayoutComponent {
   readonly subReportes: ItemSubmenu[] = [
     { ruta: '/reportes', clave: 'layout.nav.reportPayroll', query: { tab: 'payroll' } },
     { ruta: '/reportes', clave: 'layout.nav.reportCrops', query: { tab: 'crops' } },
+    { ruta: '/reportes', clave: 'reports.tabs.costs.name', query: { tab: 'costs' } },
   ];
 
   /**

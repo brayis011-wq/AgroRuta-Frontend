@@ -288,7 +288,37 @@
     }
   },
   "reports": {
+    "costs": {
+      "title": "Costos por temporada",
+      "subtitle": "Lo que costó y lo que dejó cada siembra: jornales, insumos, otros gastos y ventas.",
+      "kpi": {
+        "cost": "Costo total",
+        "seasons": "{{count}} temporadas",
+        "income": "Ingresos",
+        "kg": "{{kg}} kg cosechados",
+        "profit": "Ganancia",
+        "perKg": "Costo por kilo"
+      },
+      "table": "Temporadas",
+      "sort": {
+        "reciente": "Recientes",
+        "costo": "Más costosas",
+        "ganancia": "Más rentables"
+      },
+      "col": {
+        "season": "Temporada",
+        "cost": "Costo",
+        "income": "Ingresos",
+        "profit": "Ganancia",
+        "perKg": "Costo/kg"
+      },
+      "hint": "Toca una temporada para ver el detalle de sus costos.",
+      "detail": "Detalle de costos",
+      "openPlanting": "Ver siembra",
+      "seeCosts": "Costos"
+    },
     "tabs": {
+      "costs": {"name": "Costos", "sub": "Costo y ganancia por temporada"},
       "payroll": {
         "name": "Nómina",
         "sub": "Pagos y jornales"

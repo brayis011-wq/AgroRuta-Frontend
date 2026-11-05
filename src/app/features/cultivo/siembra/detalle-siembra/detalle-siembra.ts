@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angula
 import { Subscription, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -16,7 +16,6 @@ import {
 import { CicloEtapasComponent } from '../ciclo-etapas/ciclo-etapas';
 import { RendimientoSiembraComponent } from '../rendimiento/rendimiento';
 import { AgendaSiembraComponent } from '../agenda/agenda';
-import { CostosSiembraComponent } from '../costos/costos';
 import { diasEntre, hoyIso } from '../ciclo-etapas/ciclo-etapas.logic';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { ResumenSiembra, siembraActiva } from '../../../../core/models/cultivo.model';
@@ -44,7 +43,7 @@ interface TimelineItem {
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, CostosSiembraComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, RouterLink],
   templateUrl: './detalle-siembra.html',
   styleUrls: ['../../cultivo-ui.css', '../../cultivo-bloques.css', '../../cultivo-dialogo.css', './detalle-siembra.css', './detalle-siembra-hoy.css'],
 })

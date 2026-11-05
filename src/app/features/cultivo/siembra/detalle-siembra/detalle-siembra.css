@@ -22,9 +22,6 @@
 .accion:active { transform: translateY(0); }
 .accion:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
 
-.dos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 1rem; align-items: stretch; }
-@media (max-width: 1000px) { .dos { grid-template-columns: 1fr; } }
-
 .filtros { display: inline-flex; gap: 2px; padding: 3px; border-radius: 10px; background: var(--ar-fondo); flex-wrap: wrap; }
 .filtro { font: inherit; font-size: .78rem; font-weight: 600; border: 0; background: transparent; color: var(--ar-tinta-2); padding: .35rem .7rem; border-radius: 8px; cursor: pointer; }
 .filtro.on { background: #fff; color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); }
