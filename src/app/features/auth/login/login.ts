@@ -6,18 +6,18 @@ import { AuthService } from '../../../core/services/auth';
 import { inicioPorRol } from '../../../core/guards/rol-guards';
 import { LoginRequest } from '../../../core/models/auth.model';
 import { TemaService } from '../../../core/services/tema.service';
+import { AuthEscena } from '../escena/escena';
 import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, LanguageSwitcher],
+  imports: [FormsModule, RouterLink, TranslatePipe, LanguageSwitcher, AuthEscena],
   templateUrl: './login.html',
   styleUrls: ['../auth.css', '../auth-movil.css'],
 })
 export class LoginComponent implements OnInit {
   readonly tema = inject(TemaService);
-  readonly anio = new Date().getFullYear();
   verPass = false;
 
   form: LoginRequest = {

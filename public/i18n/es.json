@@ -99,7 +99,8 @@
     }
   },
   "auth": {
-    "side": {"title": "Tu finca, organizada en un solo lugar", "desc": "Lleva tus lotes, siembras, trabajadores y pagos sin cuadernos ni hojas sueltas.", "f1": "Fincas y cultivos", "f1d": "Lotes en el mapa, etapas, fumigaciones y cosechas", "f2": "Trabajadores y nómina", "f2d": "Jornales, pagos y cargos al día", "f3": "Reportes claros", "f3d": "Costos, rendimiento y nómina por temporada"},
+    "scene": {"manana": "Buenos días", "tarde": "Buenas tardes", "noche": "Buenas noches", "crop": "Café · Lote El Mirador", "stage": "Floración · día 142", "wages": "8 jornales hoy", "wagesSub": "Nómina al día", "weather": "Buen día para fumigar"},
+    "side": {"title": "Tu finca, organizada en un solo lugar", "desc": "Lotes, siembras, trabajadores y pagos en el mismo camino, sin cuadernos ni hojas sueltas."},
     "login": {
       "subtitle": "Ingresa con tu correo y contraseña para continuar.",
       "eyebrow": "Bienvenido de nuevo",

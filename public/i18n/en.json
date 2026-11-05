@@ -99,7 +99,8 @@
     }
   },
   "auth": {
-    "side": {"title": "Your farm, organized in one place", "desc": "Keep track of lots, plantings, workers and payments without notebooks or loose sheets.", "f1": "Farms and crops", "f1d": "Lots on the map, stages, spraying and harvests", "f2": "Workers and payroll", "f2d": "Wages, payments and charges up to date", "f3": "Clear reports", "f3d": "Costs, yield and payroll by season"},
+    "scene": {"manana": "Good morning", "tarde": "Good afternoon", "noche": "Good evening", "crop": "Coffee · El Mirador lot", "stage": "Flowering · day 142", "wages": "8 wages today", "wagesSub": "Payroll up to date", "weather": "Good day to spray"},
+    "side": {"title": "Your farm, organized in one place", "desc": "Lots, plantings, workers and payments along the same road, no notebooks or loose sheets."},
     "login": {
       "subtitle": "Sign in with your email and password to continue.",
       "eyebrow": "Welcome back",

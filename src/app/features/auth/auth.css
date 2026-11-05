@@ -2,30 +2,6 @@
 :host { display: block; }
 .auth { min-height: 100vh; display: grid; grid-template-columns: minmax(340px, 44%) 1fr; background: var(--ar-fondo); font-family: var(--ar-fuente); color: var(--ar-tinta); }
 
-/* ── Panel de marca ─────────────────────────────────────────── */
-.lado {
-  position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 2rem;
-  padding: 2.2rem 2.6rem; color: #fff;
-  background: radial-gradient(120% 80% at 0% 0%, #4caf50 0%, transparent 55%), linear-gradient(160deg, #2e7d32 0%, #1b5e20 55%, #123d17 100%);
-}
-.lado::after { content: ''; position: absolute; inset: auto -12% -18% auto; width: 420px; height: 420px; border-radius: 50%; background: rgba(255, 255, 255, .06); pointer-events: none; }
-.hoja { position: absolute; right: -2.5rem; bottom: -2rem; font-size: 280px; opacity: .08; transform: rotate(-14deg); pointer-events: none; }
-.brand { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
-.logo { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; font-size: 24px; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .25); box-shadow: 0 4px 14px rgba(0, 0, 0, .15); }
-.brand strong { display: block; font-size: 1.25rem; letter-spacing: -.01em; }
-.brand small { font-size: .78rem; opacity: .8; }
-.lado-txt { margin-top: auto; position: relative; z-index: 1; }
-.lado-txt h2 { margin: 0 0 .6rem; font-size: clamp(1.6rem, 2.4vw, 2.2rem); line-height: 1.15; letter-spacing: -.02em; max-width: 16ch; }
-.lado-txt p { margin: 0; font-size: .95rem; line-height: 1.55; opacity: .85; max-width: 40ch; }
-.ventajas { list-style: none; margin: 0 0 auto; padding: 0; display: grid; gap: .7rem; position: relative; z-index: 1; }
-.ventajas li { display: flex; align-items: center; gap: .8rem; padding: .7rem .85rem; border-radius: 12px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); font-size: .9rem; backdrop-filter: blur(4px); animation: subir .4s ease-out both; }
-.ventajas li:nth-child(2) { animation-delay: .07s; }
-.ventajas li:nth-child(3) { animation-delay: .14s; }
-.ventajas .ti { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; font-size: 19px; background: rgba(255, 255, 255, .15); }
-.ventajas strong { display: block; font-size: .9rem; }
-.ventajas small { display: block; font-size: .78rem; opacity: .78; }
-.copy { font-size: .75rem; opacity: .6; position: relative; z-index: 1; }
-
 /* ── Formulario ─────────────────────────────────────────────── */
 .panel { display: flex; flex-direction: column; min-width: 0; padding: 1.2rem 1.6rem 2rem; }
 .barra { display: flex; justify-content: flex-end; align-items: center; gap: .5rem; color: var(--ar-tinta-2); }
@@ -69,5 +45,5 @@ form { display: grid; gap: 1rem; }
 
 @keyframes subir { from { opacity: 0; transform: translateY(8px); } }
 @keyframes girar { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .caja, .ventajas li, .aviso { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .caja, .aviso { animation: none; } }
 

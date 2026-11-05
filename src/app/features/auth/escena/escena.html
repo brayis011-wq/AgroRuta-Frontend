@@ -1,0 +1,94 @@
+<svg class="paisaje" viewBox="0 0 600 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ar-cielo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" class="cielo-1" />
+      <stop offset=".75" class="cielo-2" />
+    </linearGradient>
+    <mask id="ar-luna"><circle r="38" fill="#fff" /><circle r="33" cx="14" cy="-9" fill="#000" /></mask>
+    <radialGradient id="ar-brillo">
+      <stop offset="0" class="brillo" stop-opacity=".55" />
+      <stop offset="1" class="brillo" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="600" height="800" fill="url(#ar-cielo)" />
+
+  @if (momento === 'noche') {
+    <g class="estrellas">
+      @for (e of estrellas; track $index) { <circle [attr.cx]="e[0]" [attr.cy]="e[1]" [attr.r]="e[2]" [style.animation-delay.s]="($index % 7) * .6" /> }
+    </g>
+  }
+
+  <g class="astro">
+    <circle class="halo" r="130" fill="url(#ar-brillo)" />
+    <circle class="disco" r="38" [attr.mask]="momento === 'noche' ? 'url(#ar-luna)' : null" />
+  </g>
+
+  <g class="nubes">
+    <g class="nube n1"><ellipse cx="0" cy="0" rx="58" ry="16" /><ellipse cx="-18" cy="-12" rx="26" ry="18" /><ellipse cx="16" cy="-14" rx="30" ry="20" /></g>
+    <g class="nube n2"><ellipse cx="0" cy="0" rx="44" ry="12" /><ellipse cx="-10" cy="-10" rx="22" ry="14" /><ellipse cx="14" cy="-8" rx="20" ry="12" /></g>
+  </g>
+
+  <path class="monte m1" d="M0 470 C60 420 110 392 172 424 S282 346 344 392 S470 368 522 410 S584 402 600 392 V800 H0Z" />
+  <path class="monte m2" d="M0 540 C90 486 170 506 250 526 S410 466 480 486 S570 516 600 506 V800 H0Z" />
+  <g class="arboles">
+    @for (a of arboles; track $index) { <circle [attr.cx]="a[0]" [attr.cy]="a[1]" [attr.r]="a[2]" /> }
+  </g>
+  <path class="monte m3" d="M0 650 C120 588 260 598 360 628 S540 638 600 606 V800 H0Z" />
+  <g class="surcos">
+    @for (s of surcos; track $index) { <path [attr.d]="s" [style.animation-delay.ms]="$index * 90" /> }
+  </g>
+
+  <!-- La ruta que sube hasta la finca -->
+  <g class="ruta">
+    <path class="via" stroke-width="30" d="M300 820 C268 762 362 722 340 680" />
+    <path class="via" stroke-width="17" d="M340 680 C320 640 250 622 270 585" />
+    <path class="via" stroke-width="9" d="M270 585 C284 562 328 548 318 524" />
+    <path class="linea" d="M300 820 C268 762 362 722 340 680 C320 640 250 622 270 585 C284 562 328 548 318 524" />
+  </g>
+  <g class="casa" transform="translate(318 520)">
+    <rect x="-10" y="-12" width="20" height="13" rx="1.5" />
+    <path class="techo" d="M-13 -11 L0 -22 L13 -11Z" />
+    <rect class="puerta" x="-2.5" y="-7" width="5" height="8" />
+  </g>
+  <g class="pin" transform="translate(318 486)">
+    <circle class="onda" r="9" />
+    <path d="M0 10 C-7 2 -9 -2 -9 -6 A9 9 0 1 1 9 -6 C9 -2 7 2 0 10Z" />
+    <circle class="ojo-pin" r="3.4" cy="-6" />
+  </g>
+</svg>
+
+<div class="contenido">
+  <div class="brand">
+    <div class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
+    <div><strong>AgroRuta</strong><small>{{ 'layout.subtitle' | translate }}</small></div>
+  </div>
+
+  <div class="titular">
+    <p class="saludo"><i class="ti" [class.ti-sunrise]="momento === 'manana'" [class.ti-sun]="momento === 'tarde'" [class.ti-moon-stars]="momento === 'noche'" aria-hidden="true"></i> {{ 'auth.scene.' + momento | translate }}</p>
+    <h2>{{ 'auth.side.title' | translate }}</h2>
+    <p>{{ 'auth.side.desc' | translate }}</p>
+  </div>
+
+  <div class="tarjetas" aria-hidden="true">
+    <div class="tj tj-cultivo">
+      <span class="tj-ic verde"><i class="ti ti-seedling"></i></span>
+      <span class="tj-txt">
+        <strong>{{ 'auth.scene.crop' | translate }}</strong>
+        <span class="pasos"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span></span>
+        <small>{{ 'auth.scene.stage' | translate }}</small>
+      </span>
+    </div>
+    <div class="tj tj-jornal">
+      <span class="tj-ic ambar"><i class="ti ti-users-group"></i></span>
+      <span class="tj-txt"><strong>{{ 'auth.scene.wages' | translate }}</strong><small>{{ 'auth.scene.wagesSub' | translate }}</small></span>
+      <i class="ti ti-circle-check-filled ok"></i>
+    </div>
+    <div class="tj tj-clima">
+      <span class="tj-ic azul"><i class="ti ti-sun-wind"></i></span>
+      <span class="tj-txt"><strong>24°</strong><small>{{ 'auth.scene.weather' | translate }}</small></span>
+    </div>
+  </div>
+
+  <small class="copy">© {{ anio }} AgroRuta</small>
+</div>
