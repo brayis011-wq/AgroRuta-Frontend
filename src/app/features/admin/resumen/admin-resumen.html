@@ -60,40 +60,99 @@
     <!-- Producción y nómina -->
     <div class="kpis">
       <div class="card kpi">
-        <i class="ti ti-building-cottage kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-icon verde" aria-hidden="true"><i class="ti ti-building-cottage"></i></span>
         <span class="kpi-label">{{ 'admin.summary.farms' | translate }}</span>
         <span class="kpi-value">{{ num(r.fincas) }}</span>
         <span class="kpi-note">{{ num(r.hectareas, 1) }} ha · {{ 'admin.summary.lots' | translate: { count: num(r.lotes) } }}</span>
       </div>
       <div class="card kpi">
-        <i class="ti ti-plant kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-icon verde" aria-hidden="true"><i class="ti ti-plant"></i></span>
         <span class="kpi-label">{{ 'admin.summary.activeCrops' | translate }}</span>
         <span class="kpi-value">{{ num(r.siembrasActivas) }}</span>
         <span class="kpi-note">{{ 'admin.summary.notFinished' | translate }}</span>
       </div>
       <div class="card kpi">
-        <i class="ti ti-basket kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-icon ambar" aria-hidden="true"><i class="ti ti-basket"></i></span>
         <span class="kpi-label">{{ 'admin.summary.harvest' | translate }}</span>
         <span class="kpi-value">{{ num(r.cosechaKg) }} <small>kg</small></span>
         <span class="kpi-note">{{ 'admin.summary.harvestNote' | translate }}</span>
       </div>
       <div class="card kpi">
-        <i class="ti ti-users-group kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-icon azul" aria-hidden="true"><i class="ti ti-users-group"></i></span>
         <span class="kpi-label">{{ 'admin.summary.workers' | translate }}</span>
         <span class="kpi-value">{{ num(r.trabajadoresActivos) }}</span>
         <span class="kpi-note">{{ 'admin.summary.workersNote' | translate }}</span>
       </div>
       <div class="card kpi">
-        <i class="ti ti-receipt-2 kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-icon ambar" aria-hidden="true"><i class="ti ti-receipt-2"></i></span>
         <span class="kpi-label">{{ 'admin.summary.payrollsToPay' | translate }}</span>
         <span class="kpi-value">{{ num(r.nominasPorPagar) }}</span>
         <span class="kpi-note">{{ 'admin.summary.payrollsNote' | translate }}</span>
       </div>
       <div class="card kpi">
-        <i class="ti ti-cash kpi-icon" aria-hidden="true"></i>
+        <span class="kpi-icon azul" aria-hidden="true"><i class="ti ti-cash"></i></span>
         <span class="kpi-label">{{ 'admin.summary.totalPaid' | translate }}</span>
         <span class="kpi-value">{{ pesos(r.totalPagado) }}</span>
         <span class="kpi-note">{{ 'admin.summary.totalPaidNote' | translate }}</span>
+      </div>
+    </div>
+
+    <!-- Actividad -->
+    <div class="cuerpo">
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title"><i class="ti ti-plant-2" aria-hidden="true"></i>{{ 'admin.summary.topFarmers' | translate }}</h2>
+          <a class="link" routerLink="../agricultores">{{ 'admin.summary.seeAll' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        @if (topAgricultores === null) {
+          <div class="estado">{{ 'common.loading' | translate }}</div>
+        } @else if (topAgricultores.length === 0) {
+          <div class="estado"><i class="ti ti-plant-off vacio-ic" aria-hidden="true"></i>{{ 'admin.summary.noFarmers' | translate }}</div>
+        } @else {
+          <ul class="lista">
+            @for (a of topAgricultores; track a.id; let i = $index) {
+              <li [style.animation-delay.ms]="i * 50">
+                <a class="fila" [routerLink]="['../agricultores', a.id]">
+                  <span class="av">{{ iniciales(a.nombre) }}</span>
+                  <span class="fila-txt">
+                    <strong>{{ a.nombre }}@if (!a.activo) { <span class="pill off">{{ 'admin.common.inactive' | translate }}</span> }</strong>
+                    <small>{{ lineaAgricultor(a) }}</small>
+                  </span>
+                  <span class="fila-valor">{{ pesos(a.totalPagado) }}<small>{{ 'admin.summary.paid' | translate }}</small></span>
+                  <i class="ti ti-chevron-right fin" aria-hidden="true"></i>
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="lateral">
+        <div class="card">
+          <div class="card-head">
+            <h2 class="card-title"><i class="ti ti-user-plus" aria-hidden="true"></i>{{ 'admin.summary.recentUsers' | translate }}</h2>
+            <a class="link" routerLink="../usuarios">{{ 'admin.summary.seeAll' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+          </div>
+          @if (recientes === null) {
+            <div class="estado">{{ 'common.loading' | translate }}</div>
+          } @else {
+            <ul class="lista">
+              @for (u of recientes; track u.id; let i = $index) {
+                <li class="fila" [style.animation-delay.ms]="i * 50">
+                  <span class="av" [class.gris]="!u.activo">{{ iniciales(u.nombre) }}</span>
+                  <span class="fila-txt"><strong>{{ u.nombre }}</strong><small>{{ fecha(u.fechaCreacion) }}</small></span>
+                  <span class="pill" [class.ok]="u.rol === 'Agricultor'" [class.info]="u.rol === 'Trabajador'" [class.warn]="u.rol === 'Administrador'">{{ 'enums.rol.' + u.rol | translate }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <div class="card atajos">
+          <a routerLink="../insumos"><span class="kpi-icon azul"><i class="ti ti-flask"></i></span>{{ 'admin.nav.inputs' | translate }}</a>
+          <a routerLink="../cultivos"><span class="kpi-icon verde"><i class="ti ti-seeding"></i></span>{{ 'admin.nav.crops' | translate }}</a>
+          <a routerLink="../backups"><span class="kpi-icon ambar"><i class="ti ti-database"></i></span>{{ 'admin.nav.backups' | translate }}</a>
+        </div>
       </div>
     </div>
   </ng-container>

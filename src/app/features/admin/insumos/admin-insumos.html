@@ -67,12 +67,19 @@
 
   <div class="card">
     <div class="card-head">
-      <h2 class="card-title">{{ 'admin.inputs.count' | translate: { count: visibles.length } }}</h2>
+      <h2 class="card-title">{{ 'admin.inputs.countActive' | translate: { active: cuentaActivos, total: insumos.length } }}</h2>
+      <div class="toolbar">
       <label class="search">
         <i class="ti ti-search" aria-hidden="true"></i>
         <input id="admin-buscar-insumo" class="input" type="search" [value]="busqueda" (input)="busqueda = $any($event.target).value"
                [placeholder]="'admin.inputs.search' | translate" [attr.aria-label]="'admin.inputs.search' | translate" />
       </label>
+      <select class="select" [value]="filtroEstado" (change)="filtroEstado = $any($event.target).value" [attr.aria-label]="'admin.inputs.filterState' | translate">
+        <option value="todos">{{ 'admin.inputs.filter.all' | translate }}</option>
+        <option value="activos">{{ 'admin.inputs.filter.active' | translate }}</option>
+        <option value="inactivos">{{ 'admin.inputs.filter.inactive' | translate }}</option>
+      </select>
+      </div>
     </div>
 
     <div class="estado" *ngIf="cargando">{{ 'common.loading' | translate }}</div>
@@ -83,7 +90,7 @@
     <div class="estado" *ngIf="!cargando && !error && visibles.length === 0">{{ 'admin.inputs.empty' | translate }}</div>
 
     <div class="table-wrap" *ngIf="!cargando && !error && visibles.length > 0">
-      <table>
+      <table class="resp">
         <thead>
           <tr>
             <th>{{ 'admin.inputs.fields.name' | translate }}</th>
@@ -91,20 +98,26 @@
             <th class="num">{{ 'admin.inputs.fields.dose' | translate }}</th>
             <th class="num">{{ 'admin.inputs.fields.reentry' | translate }}</th>
             <th class="num">{{ 'temporadas.carencia.short' | translate }}</th>
+            <th>{{ 'admin.users.table.status' | translate }}</th>
             <th class="num">{{ 'admin.users.table.actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let i of visibles">
-            <td class="cell-main">{{ i.nombre }}</td>
-            <td><span class="pill info">{{ 'enums.tipoInsumo.' + i.tipo | translate }}</span></td>
-            <td class="num">{{ num(i.dosisSugerida, 2) }} {{ 'enums.unidadMedida.' + i.unidadSugerida | translate }}</td>
-            <td class="num">{{ num(i.reentradaHoras) }} h</td>
-            <td class="num">{{ i.diasCarencia != null ? num(i.diasCarencia) + ' d' : '—' }}</td>
-            <td class="num">
+          <tr *ngFor="let i of visibles" [class.apagada]="!i.activo">
+            <td class="cell-main prin">{{ i.nombre }}</td>
+            <td [attr.data-label]="'admin.inputs.fields.type' | translate"><span class="pill info">{{ 'enums.tipoInsumo.' + i.tipo | translate }}</span></td>
+            <td class="num" [attr.data-label]="'admin.inputs.fields.dose' | translate">{{ num(i.dosisSugerida, 2) }} {{ 'enums.unidadMedida.' + i.unidadSugerida | translate }}</td>
+            <td class="num" [attr.data-label]="'admin.inputs.fields.reentry' | translate">{{ num(i.reentradaHoras) }} h</td>
+            <td class="num" [attr.data-label]="'temporadas.carencia.short' | translate">{{ i.diasCarencia != null ? num(i.diasCarencia) + ' d' : '—' }}</td>
+            <td [attr.data-label]="'admin.users.table.status' | translate"><span class="pill" [class.ok]="i.activo" [class.off]="!i.activo">{{ (i.activo ? 'admin.common.active' : 'admin.common.inactive') | translate }}</span></td>
+            <td class="num acc">
               <div class="actions">
-                <button type="button" class="btn btn-sm btn-ghost" (click)="editar(i)">{{ 'common.edit' | translate }}</button>
-                <button type="button" class="btn btn-sm btn-ghost danger" (click)="pedirEliminar(i)">{{ 'admin.inputs.delete' | translate }}</button>
+                <button type="button" class="btn btn-sm btn-ghost" (click)="editar(i)" [disabled]="!i.activo">{{ 'common.edit' | translate }}</button>
+                @if (i.activo) {
+                  <button type="button" class="btn btn-sm btn-ghost danger" (click)="alternarEstado(i)" [disabled]="guardando">{{ 'admin.inputs.deactivate' | translate }}</button>
+                } @else {
+                  <button type="button" class="btn btn-sm btn-primary" (click)="alternarEstado(i)" [disabled]="guardando">{{ 'admin.inputs.activate' | translate }}</button>
+                }
               </div>
             </td>
           </tr>
@@ -114,14 +127,14 @@
   </div>
 </section>
 
-<div class="overlay" *ngIf="porEliminar as p" (click)="guardando ? null : (porEliminar = null)">
-  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="eliminar-titulo" (click)="$event.stopPropagation()">
-    <h3 id="eliminar-titulo">{{ 'admin.inputs.confirmTitle' | translate }}</h3>
+<div class="overlay" *ngIf="porDesactivar as p" (click)="guardando ? null : (porDesactivar = null)">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="desactivar-titulo" (click)="$event.stopPropagation()">
+    <h3 id="desactivar-titulo">{{ 'admin.inputs.confirmTitle' | translate }}</h3>
     <p>{{ 'admin.inputs.confirmText' | translate: { name: p.nombre } }}</p>
     <div class="dialog-actions">
-      <button type="button" class="btn btn-ghost" (click)="porEliminar = null" [disabled]="guardando">{{ 'common.cancel' | translate }}</button>
-      <button type="button" class="btn btn-danger" (click)="confirmarEliminar()" [disabled]="guardando">
-        {{ (guardando ? 'common.saving' : 'admin.inputs.delete') | translate }}
+      <button type="button" class="btn btn-ghost" (click)="porDesactivar = null" [disabled]="guardando">{{ 'common.cancel' | translate }}</button>
+      <button type="button" class="btn btn-danger" (click)="confirmarDesactivar()" [disabled]="guardando">
+        {{ (guardando ? 'common.saving' : 'admin.inputs.deactivate') | translate }}
       </button>
     </div>
   </div>

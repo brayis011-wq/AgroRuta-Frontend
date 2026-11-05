@@ -1,61 +1,88 @@
-<div class="admin-shell" [class.colapsado]="colapsado">
+<div class="shell" [class.mini]="colapsado()" [class.cajon]="cajonAbierto()">
 
-  <aside class="admin-sidebar" [attr.aria-label]="'admin.nav.label' | translate">
+  <aside class="side" [attr.aria-label]="'admin.nav.label' | translate">
+
     <div class="brand">
-      <img class="brand-logo" src="logo.png" alt="" />
+      <div class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
       <div class="brand-text">
-        <span class="brand-name">AgroRuta</span>
-        <span class="brand-badge">{{ 'admin.badge' | translate }}</span>
+        <strong>AgroRuta</strong>
+        <small class="admin-tag"><i class="ti ti-shield-check" aria-hidden="true"></i>{{ 'admin.badge' | translate }}</small>
       </div>
+      <button type="button" class="ib colapsar" (click)="alternarColapsado()"
+              [attr.aria-label]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate"
+              [title]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate">
+        <i class="ti" [class.ti-layout-sidebar-left-collapse]="!colapsado()"
+           [class.ti-layout-sidebar-left-expand]="colapsado()"></i>
+      </button>
+      <button type="button" class="ib cerrar-cajon" (click)="cajonAbierto.set(false)" [attr.aria-label]="'layout.closeMenu' | translate">
+        <i class="ti ti-x"></i>
+      </button>
     </div>
 
     <nav class="nav">
-      <div class="nav-section" *ngFor="let s of secciones">
-        <span class="nav-section-label">{{ s.titulo | translate }}</span>
-        <a *ngFor="let item of s.items"
-           class="nav-item"
-           [routerLink]="item.ruta"
-           routerLinkActive="active"
-           [title]="item.etiqueta | translate">
-          <i class="ti {{ item.icono }}" aria-hidden="true"></i>
-          <span class="nav-label">{{ item.etiqueta | translate }}</span>
-        </a>
-      </div>
+      @for (s of secciones; track s.titulo) {
+        <span class="sec">{{ s.titulo | translate }}</span>
+        @for (item of s.items; track item.ruta) {
+          <a class="item" [routerLink]="item.ruta" routerLinkActive="on">
+            <i class="ti {{ item.icono }}" aria-hidden="true"></i>
+            <span class="txt">{{ item.etiqueta | translate }}</span>
+            <em class="tip">{{ item.etiqueta | translate }}</em>
+          </a>
+        }
+      }
     </nav>
 
-    <div class="sidebar-footer">
-      <div class="user">
-        @if (perfil.foto(); as foto) {
-          <img class="avatar" [src]="foto" alt="" />
-        } @else {
-          <span class="avatar" aria-hidden="true">{{ usuario?.nombre?.charAt(0) }}</span>
-        }
-        <span class="user-text">
-          <span class="user-name">{{ usuario?.nombre }}</span>
-          <span class="user-role">{{ 'enums.rol.Administrador' | translate }}</span>
-        </span>
-      </div>
-      <div class="footer-actions">
-        <app-language-switcher />
-        <button type="button" class="btn-tema" (click)="tema.alternar()"
+    <div class="pie">
+      <div class="idioma" role="group" [attr.aria-label]="'common.language' | translate">
+        <i class="ti ti-world" aria-hidden="true"></i>
+        <span class="txt">{{ 'common.language' | translate }}</span>
+        <button type="button" class="tema-btn" (click)="tema.alternar()"
                 [title]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate"
                 [attr.aria-label]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate">
           <i class="ti" [class.ti-moon]="!tema.oscuro()" [class.ti-sun]="tema.oscuro()" aria-hidden="true"></i>
         </button>
-        <button type="button" class="btn-logout" (click)="cerrarSesion()" [title]="'layout.logout' | translate">
-          <i class="ti ti-logout" aria-hidden="true"></i>
-          <span class="nav-label">{{ 'layout.logout' | translate }}</span>
+        <div class="seg">
+          <button type="button" [class.on]="lang.current() === 'es'" [attr.aria-pressed]="lang.current() === 'es'" (click)="lang.set('es')">ES</button>
+          <button type="button" [class.on]="lang.current() === 'en'" [attr.aria-pressed]="lang.current() === 'en'" (click)="lang.set('en')">EN</button>
+        </div>
+        <button type="button" class="idioma-mini" (click)="lang.set(lang.current() === 'es' ? 'en' : 'es')"
+                [attr.aria-label]="'common.language' | translate">
+          <i class="ti ti-world"></i><b>{{ lang.current() | uppercase }}</b>
+        </button>
+      </div>
+
+      <div class="usuario">
+        @if (perfil.foto(); as foto) {
+          <img class="av" [src]="foto" alt="" />
+        } @else {
+          <div class="av" aria-hidden="true">{{ iniciales() }}</div>
+        }
+        <div class="usuario-txt">
+          <strong>{{ usuario?.nombre }}</strong>
+          <small>{{ 'enums.rol.Administrador' | translate }}</small>
+        </div>
+        <button type="button" class="ib salir" (click)="cerrarSesion()"
+                [title]="'layout.logout' | translate" [attr.aria-label]="'layout.logout' | translate">
+          <i class="ti ti-logout"></i>
         </button>
       </div>
     </div>
-
-    <button type="button" class="toggle" (click)="alternarMenu()"
-            [attr.aria-label]="(colapsado ? 'layout.expand' : 'layout.collapse') | translate">
-      <i class="ti" [class.ti-chevron-right]="colapsado" [class.ti-chevron-left]="!colapsado" aria-hidden="true"></i>
-    </button>
   </aside>
 
-  <main class="admin-main">
-    <router-outlet></router-outlet>
+  <div class="velo" (click)="cajonAbierto.set(false)" aria-hidden="true"></div>
+
+  <main class="main">
+    <router-outlet />
   </main>
+
+  <!-- Barra inferior (celular) -->
+  <nav class="barra" [attr.aria-label]="'admin.nav.label' | translate">
+    <a routerLink="resumen" routerLinkActive="on"><i class="ti ti-layout-dashboard"></i><span>{{ 'admin.nav.summary' | translate }}</span></a>
+    <a routerLink="usuarios" routerLinkActive="on"><i class="ti ti-users"></i><span>{{ 'admin.nav.users' | translate }}</span></a>
+    <a routerLink="agricultores" routerLinkActive="on"><i class="ti ti-plant-2"></i><span>{{ 'admin.nav.farmers' | translate }}</span></a>
+    <a routerLink="insumos" routerLinkActive="on"><i class="ti ti-flask"></i><span>{{ 'admin.nav.inputs' | translate }}</span></a>
+    <button type="button" (click)="cajonAbierto.set(true)" [attr.aria-expanded]="cajonAbierto()">
+      <i class="ti ti-menu-2"></i><span>{{ 'layout.nav.more' | translate }}</span>
+    </button>
+  </nav>
 </div>

@@ -1,101 +1,99 @@
-<div class="backup-home">
-  <div class="backup-header">
+<section class="page">
+  <header class="page-head">
     <div>
-      <h2>{{ 'backups.title' | translate }}</h2>
-      <span class="subtitle">{{ 'backups.subtitle' | translate }}</span>
+      <p class="eyebrow">{{ 'admin.nav.sections.system' | translate }}</p>
+      <h1 class="page-title">{{ 'backups.title' | translate }}</h1>
+      <p class="page-sub">{{ 'backups.subtitle' | translate }}</p>
     </div>
-    <button class="btn-primary" (click)="crear()" [disabled]="creating || loading">
-      <i class="ti ti-database-plus"></i>
+    <button type="button" class="btn btn-primary" (click)="crear()" [disabled]="creating || loading">
+      <i class="ti" [class.ti-database-plus]="!creating" [class.ti-loader-2]="creating" [class.gira]="creating" aria-hidden="true"></i>
       {{ (creating ? 'backups.creating' : 'backups.create') | translate }}
     </button>
-  </div>
+  </header>
 
-  <div class="banner" *ngIf="message" [class.error]="message.type === 'error'">
+  <div class="banner" *ngIf="message" [class.error]="message.type === 'error'" role="status">
     <span>{{ message.text }}</span>
-    <button class="banner-close" (click)="message = null">×</button>
+    <button type="button" (click)="message = null" [attr.aria-label]="'admin.common.close' | translate">×</button>
   </div>
 
-  <div class="estado" *ngIf="loading">{{ 'backups.loading' | translate }}</div>
-  <div class="estado error" *ngIf="loadError">
-    {{ 'backups.errors.load' | translate }}
-    <button class="link-btn" (click)="load()">{{ 'common.retry' | translate }}</button>
-  </div>
-
-  <div class="section-card" *ngIf="!loading && !loadError">
-    <div class="section-title">
-      {{ 'backups.listTitle' | translate }} ({{ backups.length }})
+  <div class="card">
+    <div class="card-head">
+      <h2 class="card-title"><i class="ti ti-database" aria-hidden="true"></i>{{ 'backups.listTitle' | translate }} ({{ backups.length }})</h2>
     </div>
 
-    <div class="estado" *ngIf="backups.length === 0">{{ 'backups.empty' | translate }}</div>
+    <div class="estado" *ngIf="loading">{{ 'backups.loading' | translate }}</div>
+    <div class="estado" *ngIf="loadError">
+      <span class="txt-error">{{ 'backups.errors.load' | translate }}</span>
+      <button type="button" class="btn btn-sm btn-ghost" (click)="load()">{{ 'common.retry' | translate }}</button>
+    </div>
+    <div class="estado" *ngIf="!loading && !loadError && backups.length === 0">
+      <i class="ti ti-database-off vacio-ic" aria-hidden="true"></i>
+      {{ 'backups.empty' | translate }}
+    </div>
 
-    <div class="table-wrap" *ngIf="backups.length > 0">
-      <table class="backup-table">
+    <div class="table-wrap" *ngIf="!loading && !loadError && backups.length > 0">
+      <table class="resp">
         <thead>
-        <tr>
-          <th>{{ 'backups.table.name' | translate }}</th>
-          <th>{{ 'backups.table.type' | translate }}</th>
-          <th>{{ 'backups.table.date' | translate }}</th>
-          <th>{{ 'backups.table.size' | translate }}</th>
-          <th class="col-actions">{{ 'backups.table.actions' | translate }}</th>
-        </tr>
+          <tr>
+            <th>{{ 'backups.table.name' | translate }}</th>
+            <th>{{ 'backups.table.type' | translate }}</th>
+            <th>{{ 'backups.table.date' | translate }}</th>
+            <th class="num">{{ 'backups.table.size' | translate }}</th>
+            <th class="num">{{ 'backups.table.actions' | translate }}</th>
+          </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let b of backups">
-          <td class="file-name">{{ b.name }}</td>
-          <td>
-              <span class="badge" [ngClass]="'badge-' + b.type.toLowerCase()">
+          <tr *ngFor="let b of backups">
+            <td class="prin file-name">{{ b.name }}</td>
+            <td [attr.data-label]="'backups.table.type' | translate">
+              <span class="pill" [class.ok]="b.type === 'MANUAL'" [class.info]="b.type === 'AUTOMATIC'" [class.warn]="b.type === 'PRE_RESTORE'">
                 {{ 'backups.types.' + b.type | translate }}
               </span>
-          </td>
-          <td>{{ fmtDateTime(b.createdAt) }}</td>
-          <td>{{ fmtSize(b.sizeBytes) }}</td>
-          <td class="col-actions">
-            <button class="icon-btn" (click)="descargar(b)"
-                    [disabled]="busyName === b.name"
-                    [title]="'backups.actions.download' | translate">
-              <i class="ti ti-download"></i>
-            </button>
-            <button class="icon-btn warn" (click)="abrirModal('restore', b)"
-                    [disabled]="busyName !== null || creating"
-                    [title]="'backups.actions.restore' | translate">
-              <i class="ti ti-history"></i>
-            </button>
-            <button class="icon-btn danger" (click)="abrirModal('delete', b)"
-                    [disabled]="busyName !== null || creating"
-                    [title]="'backups.actions.delete' | translate">
-              <i class="ti ti-trash"></i>
-            </button>
-          </td>
-        </tr>
+            </td>
+            <td [attr.data-label]="'backups.table.date' | translate">{{ fmtDateTime(b.createdAt) }}</td>
+            <td class="num" [attr.data-label]="'backups.table.size' | translate">{{ fmtSize(b.sizeBytes) }}</td>
+            <td class="num acc">
+              <div class="acciones">
+                <button type="button" class="icon-btn" (click)="descargar(b)" [disabled]="busyName === b.name"
+                        [title]="'backups.actions.download' | translate" [attr.aria-label]="'backups.actions.download' | translate">
+                  <i class="ti ti-download" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="icon-btn warn" (click)="abrirModal('restore', b)" [disabled]="busyName !== null || creating"
+                        [title]="'backups.actions.restore' | translate" [attr.aria-label]="'backups.actions.restore' | translate">
+                  <i class="ti ti-history" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="icon-btn danger" (click)="abrirModal('delete', b)" [disabled]="busyName !== null || creating"
+                        [title]="'backups.actions.delete' | translate" [attr.aria-label]="'backups.actions.delete' | translate">
+                  <i class="ti ti-trash" aria-hidden="true"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
   </div>
-</div>
+</section>
 
-<!-- Modal de confirmación -->
-<div class="modal-backdrop" *ngIf="modal" (click)="cerrarModal()">
-  <div class="modal" (click)="$event.stopPropagation()">
-    <h3>
-      {{ (modal.mode === 'restore' ? 'backups.restoreModal.title' : 'backups.deleteModal.title') | translate }}
-    </h3>
+<!-- Confirmación -->
+<div class="overlay" *ngIf="modal" (click)="cerrarModal()">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="backup-titulo" (click)="$event.stopPropagation()">
+    <h3 id="backup-titulo">{{ (modal.mode === 'restore' ? 'backups.restoreModal.title' : 'backups.deleteModal.title') | translate }}</h3>
     <p class="modal-file">{{ modal.backup.name }}</p>
 
     <ng-container *ngIf="modal.mode === 'restore'">
       <p class="modal-warn">{{ 'backups.restoreModal.warning' | translate }}</p>
-      <label for="confirmText">
+      <label class="confirmar" for="confirmText">
         {{ 'backups.restoreModal.typeToConfirm' | translate: { word: confirmWord } }}
+        <input id="confirmText" class="input" type="text" [(ngModel)]="confirmText" autocomplete="off" />
       </label>
-      <input id="confirmText" type="text" [(ngModel)]="confirmText" autocomplete="off" />
     </ng-container>
 
-    <p class="modal-warn" *ngIf="modal.mode === 'delete'">
-      {{ 'backups.deleteModal.warning' | translate }}
-    </p>
+    <p class="modal-warn" *ngIf="modal.mode === 'delete'">{{ 'backups.deleteModal.warning' | translate }}</p>
 
-    <div class="modal-actions">
-      <button class="btn-secondary" (click)="cerrarModal()">{{ 'common.cancel' | translate }}</button>
-      <button class="btn-danger" (click)="confirmarModal()" [disabled]="!canConfirm">
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-ghost" (click)="cerrarModal()">{{ 'common.cancel' | translate }}</button>
+      <button type="button" class="btn btn-danger" (click)="confirmarModal()" [disabled]="!canConfirm">
         {{ (modal.mode === 'restore' ? 'backups.actions.restore' : 'backups.actions.delete') | translate }}
       </button>
     </div>

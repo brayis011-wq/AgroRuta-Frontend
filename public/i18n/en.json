@@ -86,9 +86,9 @@
       "warning": "This backup will be permanently deleted."
     },
     "success": {
+      "deleted": "Backup deleted.",
       "created": "Backup created successfully.",
-      "restored": "Database restored. A backup of the previous state was saved automatically.",
-      "deleted": "Backup deleted."
+      "restored": "Database restored. A backup of the previous state was saved automatically."
     },
     "errors": {
       "load": "Could not load the backups.",
@@ -826,9 +826,9 @@
           "delete": "Permanently delete this payroll? This action cannot be undone."
         },
         "success": {
+          "deleted": "Payroll deleted",
           "approved": "Payroll approved. Open its detail to record the payment.",
-          "reactivated": "Payroll reactivated as Pending",
-          "deleted": "Payroll deleted"
+          "reactivated": "Payroll reactivated as Pending"
         },
         "errors": {
           "load": "Error loading payrolls",
@@ -1258,6 +1258,12 @@
       "inactive": "Inactive"
     },
     "summary": {
+      "line": {"farms": "{{count}} farms", "farmsOne": "{{count}} farm", "workers": "{{count}} workers", "workersOne": "{{count}} worker"},
+      "recentUsers": "Recent accounts",
+      "paid": "paid",
+      "noFarmers": "No farmers registered yet.",
+      "seeAll": "See all",
+      "topFarmers": "Most active farmers",
       "title": "System overview",
       "subtitle": "Users, production and payroll across all farmers.",
       "loadError": "Could not load the overview.",
@@ -1392,8 +1398,16 @@
       "loadError": "The crop catalog could not be loaded."
     },
     "inputs": {
+      "filter": {"all": "All", "active": "Active", "inactive": "Inactive"},
+      "filterState": "Filter by state",
+      "statusError": "Could not change the input status.",
+      "deactivated": "{{name}} was deactivated. It will no longer appear when recording sprayings.",
+      "activated": "{{name}} is available in the catalog again.",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "countActive": "{{active}} of {{total}} inputs active",
       "title": "Agricultural inputs",
-      "subtitle": "Catalog of products farmers choose from when recording a spraying.",
+      "subtitle": "Catalog of products farmers choose from when recording a spraying. Deactivating deletes nothing: sprayings already recorded keep their input.",
       "new": "New input",
       "newTitle": "New input",
       "editTitle": "Edit input",
@@ -1401,14 +1415,11 @@
       "search": "Search input",
       "empty": "The catalog is empty.",
       "loadError": "Could not load the catalog.",
-      "delete": "Delete",
-      "confirmTitle": "Delete input",
-      "confirmText": "{{name}} will no longer appear in the catalog. Sprayings already recorded don't change.",
+      "confirmTitle": "Deactivate input",
+      "confirmText": "{{name}} will no longer appear when recording a spraying. Sprayings already recorded don't change and you can activate it again anytime.",
       "created": "{{name}} was added to the catalog.",
       "updated": "Changes to {{name}} were saved.",
-      "deleted": "{{name}} was removed from the catalog.",
       "saveError": "Could not save the input.",
-      "deleteError": "Could not delete the input.",
       "fields": {
         "name": "Name",
         "type": "Type",

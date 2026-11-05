@@ -23,7 +23,7 @@ interface AccionPendiente {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './admin-usuarios.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', './admin-usuarios.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-usuarios.css'],
 })
 export class AdminUsuariosComponent implements OnInit {
   private readonly adminService = inject(AdminService);

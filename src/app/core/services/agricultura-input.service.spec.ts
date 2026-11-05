@@ -94,4 +94,19 @@ describe('AgriculturalInputService', () => {
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
   });
+
+  it('getAllAdmin() should GET /todos', () => {
+    service.getAllAdmin().subscribe();
+    const req = httpMock.expectOne(`${baseUrl}/todos`);
+    expect(req.request.method).toBe('GET');
+    req.flush([]);
+  });
+
+  it('changeStatus() should PATCH /{id}/estado with the new state', () => {
+    service.changeStatus(1, false).subscribe();
+    const req = httpMock.expectOne((r) => r.url === `${baseUrl}/1/estado`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.params.get('activo')).toBe('false');
+    req.flush(mockInput);
+  });
 });

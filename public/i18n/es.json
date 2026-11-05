@@ -86,9 +86,9 @@
       "warning": "Esta copia se eliminará de forma permanente."
     },
     "success": {
+      "deleted": "Copia eliminada.",
       "created": "Copia creada correctamente.",
-      "restored": "Base de datos restaurada. Se guardó una copia previa automáticamente.",
-      "deleted": "Copia eliminada."
+      "restored": "Base de datos restaurada. Se guardó una copia previa automáticamente."
     },
     "errors": {
       "load": "No se pudieron cargar las copias.",
@@ -826,9 +826,9 @@
           "delete": "¿Eliminar esta nómina definitivamente? Esta acción no se puede deshacer."
         },
         "success": {
+          "deleted": "Nómina eliminada",
           "approved": "Nómina aprobada. Abre el detalle para registrar el pago.",
-          "reactivated": "Nómina reactivada como Pendiente",
-          "deleted": "Nómina eliminada"
+          "reactivated": "Nómina reactivada como Pendiente"
         },
         "errors": {
           "load": "Error al cargar nóminas",
@@ -1258,6 +1258,12 @@
       "inactive": "Inactivo"
     },
     "summary": {
+      "line": {"farms": "{{count}} fincas", "farmsOne": "{{count}} finca", "workers": "{{count}} trabajadores", "workersOne": "{{count}} trabajador"},
+      "recentUsers": "Cuentas recientes",
+      "paid": "pagado",
+      "noFarmers": "Todavía no hay agricultores registrados.",
+      "seeAll": "Ver todos",
+      "topFarmers": "Agricultores con más actividad",
       "title": "Resumen del sistema",
       "subtitle": "Usuarios, producción y nómina de todos los agricultores.",
       "loadError": "No se pudo cargar el resumen.",
@@ -1392,8 +1398,16 @@
       "loadError": "No se pudo cargar el catálogo de cultivos."
     },
     "inputs": {
+      "filter": {"all": "Todos", "active": "Activos", "inactive": "Inactivos"},
+      "filterState": "Filtrar por estado",
+      "statusError": "No se pudo cambiar el estado del insumo.",
+      "deactivated": "{{name}} se desactivó. Ya no aparecerá al registrar fumigaciones.",
+      "activated": "{{name}} vuelve a estar disponible en el catálogo.",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "countActive": "{{active}} de {{total}} insumos activos",
       "title": "Insumos agrícolas",
-      "subtitle": "Catálogo de productos que los agricultores eligen al registrar una fumigación.",
+      "subtitle": "Catálogo de productos que los agricultores eligen al registrar una fumigación. Desactivar no borra nada: las fumigaciones ya registradas conservan su insumo.",
       "new": "Nuevo insumo",
       "newTitle": "Nuevo insumo",
       "editTitle": "Editar insumo",
@@ -1401,14 +1415,11 @@
       "search": "Buscar insumo",
       "empty": "No hay insumos en el catálogo.",
       "loadError": "No se pudo cargar el catálogo.",
-      "delete": "Eliminar",
-      "confirmTitle": "Eliminar insumo",
-      "confirmText": "{{name}} dejará de aparecer en el catálogo. Las fumigaciones ya registradas no cambian.",
+      "confirmTitle": "Desactivar insumo",
+      "confirmText": "{{name}} dejará de aparecer al registrar una fumigación. Las fumigaciones ya registradas no cambian y puedes volver a activarlo cuando quieras.",
       "created": "Se agregó {{name}} al catálogo.",
       "updated": "Se guardaron los cambios de {{name}}.",
-      "deleted": "Se eliminó {{name}} del catálogo.",
       "saveError": "No se pudo guardar el insumo.",
-      "deleteError": "No se pudo eliminar el insumo.",
       "fields": {
         "name": "Nombre",
         "type": "Tipo",

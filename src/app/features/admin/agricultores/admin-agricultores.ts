@@ -15,7 +15,7 @@ type Orden = 'nombre' | 'hectareas' | 'trabajadores' | 'pagado';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, TranslatePipe],
   templateUrl: './admin-agricultores.html',
-  styleUrls: ['../../../shared/styles/panel-page.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css'],
 })
 export class AdminAgricultoresComponent implements OnInit {
   private readonly adminService = inject(AdminService);

@@ -19,7 +19,7 @@ interface GrupoMes {
   standalone: true,
   imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './portal-jornales.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../portal-listas.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', '../portal-listas.css'],
 })
 export class PortalJornalesComponent implements OnInit {
   private readonly portal = inject(PortalService);

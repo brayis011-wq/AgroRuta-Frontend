@@ -14,7 +14,7 @@ type Pestana = 'fincas' | 'trabajadores' | 'nominas';
   standalone: true,
   imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './admin-agricultor-detalle.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', './admin-agricultor-detalle.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-agricultor-detalle.css'],
 })
 export class AdminAgricultorDetalleComponent implements OnInit {
   private readonly adminService = inject(AdminService);

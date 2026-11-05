@@ -35,7 +35,7 @@
     <div class="estado" *ngIf="!cargando && !error && visibles.length === 0">{{ 'admin.farmers.empty' | translate }}</div>
 
     <div class="table-wrap" *ngIf="!cargando && !error && visibles.length > 0">
-      <table>
+      <table class="resp">
         <thead>
           <tr>
             <th>{{ 'admin.farmers.table.farmer' | translate }}</th>
@@ -49,17 +49,17 @@
         </thead>
         <tbody>
           <tr *ngFor="let a of visibles">
-            <td>
+            <td class="prin">
               <span class="cell-main">{{ a.nombre }}</span>
               <span class="pill off" *ngIf="!a.activo" style="margin-left:.4rem">{{ 'admin.common.inactive' | translate }}</span>
               <span class="cell-sub">{{ a.email }}</span>
             </td>
-            <td class="num">{{ num(a.fincas) }}</td>
-            <td class="num">{{ num(a.hectareas, 1) }}</td>
-            <td class="num">{{ num(a.trabajadoresActivos) }}</td>
-            <td class="num">{{ num(a.nominas) }}</td>
-            <td class="num">{{ pesos(a.totalPagado) }}</td>
-            <td class="num"><a class="link" [routerLink]="[a.id]">{{ 'admin.farmers.view' | translate }} →</a></td>
+            <td class="num" [attr.data-label]="'admin.farmers.table.farms' | translate">{{ num(a.fincas) }}</td>
+            <td class="num" [attr.data-label]="'admin.farmers.table.hectares' | translate">{{ num(a.hectareas, 1) }}</td>
+            <td class="num" [attr.data-label]="'admin.farmers.table.workers' | translate">{{ num(a.trabajadoresActivos) }}</td>
+            <td class="num" [attr.data-label]="'admin.farmers.table.payrolls' | translate">{{ num(a.nominas) }}</td>
+            <td class="num" [attr.data-label]="'admin.farmers.table.paid' | translate">{{ pesos(a.totalPagado) }}</td>
+            <td class="num acc"><a class="link" [routerLink]="[a.id]">{{ 'admin.farmers.view' | translate }} →</a></td>
           </tr>
         </tbody>
       </table>

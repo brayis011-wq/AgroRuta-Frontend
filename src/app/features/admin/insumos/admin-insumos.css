@@ -20,3 +20,5 @@
 @media (max-width: 480px) {
   .form-grid { grid-template-columns: 1fr; }
 }
+tr.apagada td { color: var(--ar-tinta-3); }
+tr.apagada .cell-main { color: var(--ar-tinta-2); font-weight: 500; }

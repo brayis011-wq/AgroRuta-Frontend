@@ -1,0 +1,30 @@
+/* Continuación de panel-page.css: avisos, estados vacíos y diálogos */
+.banner { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .75rem 1rem; border-radius: 12px; font-size: .875rem; background: var(--a-green-soft); color: var(--a-green-dark); border: 1px solid var(--ar-borde-fuerte); animation: subir .2s ease-out both; }
+.banner.error { background: var(--a-red-soft); color: var(--a-red); border-color: var(--ar-rojo-borde); }
+.banner button { background: none; border: 0; font-size: 1.15rem; line-height: 1; color: inherit; cursor: pointer; padding: .1rem .3rem; border-radius: 6px; }
+.banner button:hover { background: rgba(0, 0, 0, .06); }
+
+.estado { padding: 2.25rem 1.15rem; text-align: center; color: var(--a-muted); font-size: .9rem; display: flex; flex-direction: column; align-items: center; gap: .6rem; }
+
+/* Diálogo de confirmación dentro de la página */
+.overlay { position: fixed; inset: 0; background: rgba(15, 25, 19, .45); backdrop-filter: blur(2px); display: grid; place-items: center; padding: 1rem; z-index: 3000; animation: aparecer .15s ease-out both; }
+.dialog { background: var(--ar-superficie); border: 1px solid var(--a-line); border-radius: 18px; width: min(440px, 100%); padding: 1.4rem 1.5rem; box-shadow: 0 24px 60px rgba(0, 0, 0, .22); display: flex; flex-direction: column; gap: .8rem; animation: subir .2s ease-out both; }
+.dialog h3 { margin: 0; font-size: 1.08rem; color: var(--a-ink); }
+.dialog p { margin: 0; color: var(--ar-tinta-2); font-size: .9rem; line-height: 1.5; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: .6rem; margin-top: .4rem; }
+
+@keyframes subir { from { opacity: 0; transform: translateY(8px); } }
+@keyframes aparecer { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .banner, .overlay, .dialog { animation: none; } }
+@media (max-width: 720px) { .dialog-actions .btn { flex: 1; } }
+/* Celular: las tablas con class="resp" pasan a tarjetas (cada celda con su etiqueta) */
+@media (max-width: 720px) {
+  table.resp thead { display: none; }
+  table.resp, table.resp tbody { display: block; }
+  table.resp tr { display: flex; flex-direction: column; gap: .4rem; padding: .85rem 1rem; border-bottom: 1px solid var(--ar-linea); }
+  table.resp tbody tr:last-child { border-bottom: 0; }
+  table.resp td { display: flex; justify-content: space-between; align-items: center; gap: .75rem; padding: 0; border: 0; text-align: right; background: none !important; }
+  table.resp td[data-label]::before { content: attr(data-label); font-size: .75rem; font-weight: 600; color: var(--a-muted); text-align: left; }
+  table.resp td.prin { display: block; text-align: left; margin-bottom: .15rem; }
+  table.resp td.acc { justify-content: flex-end; padding-top: .3rem; }
+}

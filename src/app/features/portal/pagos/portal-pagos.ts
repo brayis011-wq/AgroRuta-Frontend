@@ -11,7 +11,7 @@ import { formatoFecha, formatoPesos } from '../../../shared/formato';
   standalone: true,
   imports: [CommonModule, TranslatePipe],
   templateUrl: './portal-pagos.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../portal-listas.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', '../portal-listas.css'],
 })
 export class PortalPagosComponent implements OnInit {
   private readonly portal = inject(PortalService);

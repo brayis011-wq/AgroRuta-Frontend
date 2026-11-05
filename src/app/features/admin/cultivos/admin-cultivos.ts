@@ -13,7 +13,7 @@ import { TipoCultivo, VariedadCultivo } from '../../../core/models/cultivo.model
   standalone: true,
   imports: [FormsModule, TranslatePipe],
   templateUrl: './admin-cultivos.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', './admin-cultivos.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-cultivos.css'],
 })
 export class AdminCultivosComponent implements OnInit {
   private readonly catalogo = inject(CatalogoCultivoService);

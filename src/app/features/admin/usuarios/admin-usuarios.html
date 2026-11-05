@@ -48,7 +48,7 @@
     </div>
 
     <div class="table-wrap" *ngIf="!cargando && !errorCarga && filtrados.length > 0">
-      <table>
+      <table class="resp">
         <thead>
           <tr>
             <th>{{ 'admin.users.table.user' | translate }}</th>
@@ -60,12 +60,12 @@
         </thead>
         <tbody>
           <tr *ngFor="let u of filtrados" [class.inactive]="!u.activo">
-            <td>
+            <td class="prin">
               <span class="cell-main">{{ u.nombre }}</span>
               <span class="me" *ngIf="esYo(u)">{{ 'admin.users.you' | translate }}</span>
               <span class="cell-sub">{{ u.email }}</span>
             </td>
-            <td>
+            <td [attr.data-label]="'admin.users.table.role' | translate">
               <select #rolSelect class="select select-rol" [id]="'rol-' + u.id"
                       [value]="u.rol" [disabled]="esYo(u)"
                       [attr.aria-label]="'admin.users.changeRoleOf' | translate: { name: u.nombre }"
@@ -73,13 +73,13 @@
                 <option *ngFor="let r of roles" [value]="r" [selected]="r === u.rol">{{ 'enums.rol.' + r | translate }}</option>
               </select>
             </td>
-            <td>
+            <td [attr.data-label]="'admin.users.table.status' | translate">
               <span class="pill" [class.ok]="u.activo" [class.off]="!u.activo">
                 {{ (u.activo ? 'admin.common.active' : 'admin.common.inactive') | translate }}
               </span>
             </td>
-            <td class="muted">{{ fecha(u.fechaCreacion) }}</td>
-            <td class="num">
+            <td class="muted" [attr.data-label]="'admin.users.table.since' | translate">{{ fecha(u.fechaCreacion) }}</td>
+            <td class="num acc">
               <button type="button" class="btn btn-sm"
                       [class.btn-ghost]="u.activo" [class.btn-primary]="!u.activo"
                       [disabled]="esYo(u)"

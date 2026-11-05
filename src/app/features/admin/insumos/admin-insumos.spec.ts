@@ -15,10 +15,10 @@ describe('AdminInsumosComponent', () => {
 
   beforeEach(async () => {
     svc = {
-      getAll: vi.fn().mockReturnValue(of([mancozeb])),
+      getAllAdmin: vi.fn().mockReturnValue(of([mancozeb])),
+      changeStatus: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
-      delete: vi.fn(),
     };
     await TestBed.configureTestingModule({
       imports: [AdminInsumosComponent],
@@ -56,11 +56,31 @@ describe('AdminInsumosComponent', () => {
     expect(component.insumos[0].dosisSugerida).toBe(3);
   });
 
-  it('deletes after confirming', () => {
-    svc.delete.mockReturnValue(of(undefined));
-    component.pedirEliminar(mancozeb);
-    component.confirmarEliminar();
-    expect(svc.delete).toHaveBeenCalledWith(1);
-    expect(component.insumos.length).toBe(0);
+  it('deactivates after confirming and keeps it in the list', () => {
+    svc.changeStatus.mockReturnValue(of({ ...mancozeb, activo: false }));
+    component.alternarEstado(mancozeb);
+    expect(component.porDesactivar).toBe(mancozeb);
+    component.confirmarDesactivar();
+    expect(svc.changeStatus).toHaveBeenCalledWith(1, false);
+    expect(component.insumos[0].activo).toBe(false);
+    expect(component.porDesactivar).toBeNull();
+  });
+
+  it('activates an inactive input without asking', () => {
+    const inactivo = { ...mancozeb, activo: false };
+    component.insumos = [inactivo];
+    svc.changeStatus.mockReturnValue(of({ ...mancozeb, activo: true }));
+    component.alternarEstado(inactivo);
+    expect(component.porDesactivar).toBeNull();
+    expect(svc.changeStatus).toHaveBeenCalledWith(1, true);
+    expect(component.insumos[0].activo).toBe(true);
+  });
+
+  it('filters by state', () => {
+    component.insumos = [mancozeb, { ...mancozeb, id: 2, nombre: 'Viejo', activo: false }];
+    component.filtroEstado = 'inactivos';
+    expect(component.visibles.map((i) => i.nombre)).toEqual(['Viejo']);
+    component.filtroEstado = 'activos';
+    expect(component.visibles.map((i) => i.nombre)).toEqual(['Mancozeb']);
   });
 });

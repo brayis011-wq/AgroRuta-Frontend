@@ -17,7 +17,7 @@ import { formatoNumero } from '../../../shared/formato';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './admin-insumos.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', './admin-insumos.css'],
+  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-insumos.css'],
 })
 export class AdminInsumosComponent implements OnInit {
   private readonly insumoService = inject(AgriculturalInputService);
@@ -38,7 +38,9 @@ export class AdminInsumosComponent implements OnInit {
   formularioAbierto = false;
   editando: AgriculturalInput | null = null;
   guardando = false;
-  porEliminar: AgriculturalInput | null = null;
+  /** Insumo que se va a desactivar (se pide confirmación) */
+  porDesactivar: AgriculturalInput | null = null;
+  filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
   mensaje: { tipo: 'ok' | 'error'; texto: string } | null = null;
 
   readonly form = this.fb.nonNullable.group({
@@ -58,7 +60,7 @@ export class AdminInsumosComponent implements OnInit {
   cargar(): void {
     this.cargando = true;
     this.error = false;
-    this.insumoService.getAll().subscribe({
+    this.insumoService.getAllAdmin().subscribe({
       next: (lista) => {
         this.insumos = lista;
         this.cargando = false;
@@ -75,6 +77,7 @@ export class AdminInsumosComponent implements OnInit {
   get visibles(): AgriculturalInput[] {
     const q = this.busqueda.trim().toLowerCase();
     return this.insumos
+      .filter((i) => this.filtroEstado === 'todos' || (this.filtroEstado === 'activos') === i.activo)
       .filter((i) => !q || i.nombre.toLowerCase().includes(q))
       .sort((a, b) => a.nombre.localeCompare(b.nombre));
   }
@@ -143,26 +146,41 @@ export class AdminInsumosComponent implements OnInit {
     });
   }
 
-  pedirEliminar(insumo: AgriculturalInput): void {
-    this.porEliminar = insumo;
+  get cuentaActivos(): number {
+    return this.insumos.filter((i) => i.activo).length;
   }
 
-  confirmarEliminar(): void {
-    const insumo = this.porEliminar;
-    if (!insumo) return;
+  /** Desactivar pide confirmación; activar es inmediato. */
+  alternarEstado(insumo: AgriculturalInput): void {
+    if (insumo.activo) {
+      this.porDesactivar = insumo;
+    } else {
+      this.cambiarEstado(insumo, true);
+    }
+  }
+
+  confirmarDesactivar(): void {
+    if (this.porDesactivar) this.cambiarEstado(this.porDesactivar, false);
+  }
+
+  private cambiarEstado(insumo: AgriculturalInput, activo: boolean): void {
     this.guardando = true;
-    this.insumoService.delete(insumo.id).subscribe({
-      next: () => {
-        this.insumos = this.insumos.filter((i) => i.id !== insumo.id);
+    this.mensaje = null;
+    this.insumoService.changeStatus(insumo.id, activo).subscribe({
+      next: (actualizado) => {
+        this.insumos = this.insumos.map((i) => (i.id === actualizado.id ? actualizado : i));
         this.guardando = false;
-        this.porEliminar = null;
-        this.mensaje = { tipo: 'ok', texto: this.translate.instant('admin.inputs.deleted', { name: insumo.nombre }) };
+        this.porDesactivar = null;
+        this.mensaje = {
+          tipo: 'ok',
+          texto: this.translate.instant(activo ? 'admin.inputs.activated' : 'admin.inputs.deactivated', { name: insumo.nombre }),
+        };
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.guardando = false;
-        this.porEliminar = null;
-        this.mensaje = { tipo: 'error', texto: err?.error?.message || this.translate.instant('admin.inputs.deleteError') };
+        this.porDesactivar = null;
+        this.mensaje = { tipo: 'error', texto: err?.error?.message || this.translate.instant('admin.inputs.statusError') };
         this.cdr.detectChanges();
       },
     });
