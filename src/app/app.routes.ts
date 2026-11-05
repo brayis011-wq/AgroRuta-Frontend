@@ -11,6 +11,12 @@ export const routes: Routes = [
     loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
 
+  // Pública: la pide Google para usar la API de Gmail
+  {
+    path: 'privacidad',
+    loadComponent: () => import('./features/legal/privacidad').then((m) => m.PrivacidadComponent),
+  },
+
   // Panel de administración: layout y menú propios
   {
     path: 'admin',

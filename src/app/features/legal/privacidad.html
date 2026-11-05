@@ -1,0 +1,48 @@
+<div class="legal">
+  <header>
+    <a class="brand" routerLink="/auth/login"><span class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></span>AgroRuta</a>
+  </header>
+
+  <main>
+    <h1>Política de privacidad</h1>
+    <p class="fecha">Última actualización: {{ actualizada }}</p>
+
+    <p>AgroRuta es una aplicación para administrar fincas, cultivos, trabajadores y nóminas. Esta política explica qué datos guardamos, para qué los usamos y qué puedes hacer con ellos.</p>
+
+    <h2>Qué datos guardamos</h2>
+    <ul>
+      <li><strong>Tu cuenta:</strong> nombre, correo, teléfono y foto de perfil (si la agregas). La contraseña se guarda cifrada; nadie puede leerla.</li>
+      <li><strong>Lo que registras:</strong> fincas, lotes y su ubicación, siembras, fumigaciones, labores, cosechas, trabajadores, jornales, nóminas y pagos.</li>
+      <li><strong>Trabajadores:</strong> los datos que el agricultor registra (nombre, cédula, teléfono). Si el trabajador crea su cuenta, ve solo sus propios jornales, nóminas y pagos.</li>
+    </ul>
+
+    <h2>Para qué los usamos</h2>
+    <ul>
+      <li>Para que la aplicación funcione: mostrar tus datos, calcular costos, generar reportes y nóminas.</li>
+      <li>Para consultar el clima de tus fincas con su ubicación.</li>
+      <li>Para enviarte correos: recuperar la contraseña, avisos de seguridad, solicitudes y pagos de trabajadores, y el resumen diario del cultivo. Los correos opcionales se pueden apagar en Configuración.</li>
+    </ul>
+    <p>No vendemos ni compartimos tus datos con terceros para publicidad.</p>
+
+    <h2>Correos con Gmail</h2>
+    <p>AgroRuta envía los correos desde su propia cuenta de Gmail usando la API de Gmail, con permiso solo para <strong>enviar</strong> mensajes. No lee, guarda ni accede a tu bandeja de correo. El uso de la información recibida de las APIs de Google cumple la <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Política de datos de usuario de los servicios de API de Google</a>, incluidos los requisitos de uso limitado.</p>
+
+    <h2>Servicios que usamos</h2>
+    <ul>
+      <li>Alojamiento de la aplicación y de la base de datos en servicios en la nube.</li>
+      <li>OpenWeather, para el pronóstico del clima (solo recibe coordenadas, no datos personales).</li>
+      <li>Gmail, para enviar los correos.</li>
+    </ul>
+
+    <h2>Seguridad y copias</h2>
+    <p>La conexión es cifrada (HTTPS), las contraseñas se guardan con un cifrado de una sola vía y se hacen copias de seguridad cifradas de la base de datos.</p>
+
+    <h2>Tus derechos</h2>
+    <p>Puedes consultar y corregir tus datos desde tu perfil, y pedir que se eliminen escribiendo al correo de contacto. Esto aplica según la Ley 1581 de 2012 de protección de datos personales de Colombia.</p>
+
+    <h2>Contacto</h2>
+    <p>Para cualquier pregunta sobre tus datos, escribe al correo de soporte de AgroRuta.</p>
+
+    <p class="volver"><a routerLink="/auth/login">Volver a AgroRuta</a></p>
+  </main>
+</div>

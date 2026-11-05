@@ -99,6 +99,7 @@
     }
   },
   "auth": {
+    "privacy": "Privacidad",
     "forgot": {"title": "Recupera tu contraseña", "subtitle": "Escribe el correo de tu cuenta y te enviamos un enlace para crear una contraseña nueva.", "submit": "Enviar enlace", "sending": "Enviando…", "sentTitle": "Revisa tu correo", "sent": "Si {{email}} tiene una cuenta en AgroRuta, te llegará un enlace en unos minutos. Sirve una sola vez y vence en 30 minutos.", "sentHint": "¿No lo ves? Busca en la carpeta de spam o promociones.", "again": "Usar otro correo", "invalidEmail": "Escribe un correo válido.", "back": "Volver a iniciar sesión"},
     "reset": {"title": "Crea tu contraseña nueva", "subtitle": "Al guardarla se cierran las sesiones abiertas en otros equipos.", "password": "Contraseña nueva", "confirm": "Repite la contraseña", "hint": "Entre 8 y 72 caracteres.", "length": "La contraseña debe tener entre 8 y 72 caracteres.", "mismatch": "Las dos contraseñas no coinciden.", "submit": "Guardar contraseña", "saving": "Guardando…", "done": "Listo, tu contraseña cambió. Ya puedes iniciar sesión.", "invalidTitle": "Este enlace ya no sirve", "invalid": "Puede que haya vencido (dura 30 minutos) o que ya se haya usado. Pide uno nuevo.", "requestNew": "Pedir un enlace nuevo"},
     "art": {"caption": "Cultivos sanos, cuentas claras.", "alt": "Plantas creciendo bajo el sol"},

@@ -31,6 +31,8 @@
 }
 .caja > * { width: 100%; max-width: 400px; margin: 0 auto; }
 .pie { padding: 1.25rem; text-align: center; font-size: .75rem; color: var(--ar-tinta-3); }
+.pie a { color: inherit; }
+.pie a:hover { color: var(--ar-verde-700); }
 .brand:focus-visible, .ib:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
 
 @media (max-width: 900px) {
