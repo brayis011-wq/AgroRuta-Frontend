@@ -89,3 +89,13 @@
   background-color: var(--ar-verde-100);
   color: var(--ar-verde-600);
 }
+
+@media (max-width: 720px) {
+  .report-home { padding: 1rem 1rem 6rem; }
+  .tabs-wrap { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin-bottom: 1.1rem; }
+  .tab-btn { flex-direction: column; gap: 6px; padding: 10px 4px; min-width: 0; }
+  .tab-icon { width: 36px; height: 36px; font-size: 19px; }
+  .tab-label { align-items: center; text-align: center; }
+  .tab-name { font-size: .85rem; }
+  .tab-sub { display: none; }
+}
