@@ -81,6 +81,14 @@
           </div>
         </div>
 
+        <div class="field">
+          <label class="field__label" for="costo"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'temporadas.costos.activityCost' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
+          <div class="field__input-wrap">
+            <input id="costo" type="number" min="0" step="any" inputmode="decimal" [(ngModel)]="form.costo" name="costo" placeholder="0" />
+          </div>
+          <small class="campo-hint">{{ 'temporadas.costos.activityCostHint' | translate }}</small>
+        </div>
+
         <button type="submit" class="btn-submit" [disabled]="cargando || !form.tipo">
           <span class="btn-submit__text" *ngIf="!cargando">
             <span>{{ (registroId ? 'common.save' : 'siembra.activity.submit') | translate }}</span>

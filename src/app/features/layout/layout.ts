@@ -91,6 +91,7 @@ export class LayoutComponent {
     const items: ItemSubmenu[] = [{ ruta: '/cultivo', clave: 'layout.nav.myFarms', exacto: true }];
     if (finca) {
       items.push({ ruta: `/cultivo/finca/${finca.id}`, clave: 'layout.nav.farmSummary', exacto: true });
+      items.push({ ruta: '/cultivo/calendario', clave: 'temporadas.cal.menu', exacto: true });
       const lotes = this.fincaActiva.lotes();
       if (lotes.length) {
         items.push({ ruta: '#lotes', titulo: true, clave: 'layout.nav.plots' });

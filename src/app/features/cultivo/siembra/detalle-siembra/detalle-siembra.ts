@@ -15,6 +15,8 @@ import {
 } from '../../../../core/models/cultivo.model';
 import { CicloEtapasComponent } from '../ciclo-etapas/ciclo-etapas';
 import { RendimientoSiembraComponent } from '../rendimiento/rendimiento';
+import { AgendaSiembraComponent } from '../agenda/agenda';
+import { CostosSiembraComponent } from '../costos/costos';
 import { diasEntre, hoyIso } from '../ciclo-etapas/ciclo-etapas.logic';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { ResumenSiembra, siembraActiva } from '../../../../core/models/cultivo.model';
@@ -42,7 +44,7 @@ interface TimelineItem {
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, CostosSiembraComponent],
   templateUrl: './detalle-siembra.html',
   styleUrls: ['../../cultivo-ui.css', '../../cultivo-bloques.css', '../../cultivo-dialogo.css', './detalle-siembra.css', './detalle-siembra-hoy.css'],
 })
@@ -60,6 +62,8 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   nombreFinca: string | null = null;
   /** Rendimiento, cosechas por semana, carencia y reentrada (null mientras carga) */
   resumen: ResumenSiembra | null = null;
+  /** Sube cuando algo cambia, para que la agenda y los costos se recarguen */
+  version = 0;
 
   /** La temporada sigue abierta (se pueden registrar cosas) */
   get activa(): boolean {
@@ -291,6 +295,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   /** La etapa cambió o la temporada se cerró/reabrió */
   alCambiarSiembra(s: Siembra): void {
     this.siembra = s;
+    this.version++;
     this.cdr.detectChanges();
   }
 
@@ -330,7 +335,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
         ? this.cultivoService.eliminarFumigacion(item.id)
         : this.cultivoService.eliminarCosecha(item.id);
     peticion.subscribe({
-      next: () => { this.cargarDatos(this.siembra!.id!); this.cargarResumen(this.siembra!.id!); },
+      next: () => { this.version++; this.cargarDatos(this.siembra!.id!); this.cargarResumen(this.siembra!.id!); },
       error: (e) => {
         this.error = e?.error?.message || 'temporadas.registro.errors.delete';
         this.cdr.detectChanges();

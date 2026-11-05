@@ -20,6 +20,7 @@ const PAGINAS: { clave: string; icono: string; ruta: string; query?: Record<stri
   { clave: 'layout.nav.home', icono: 'ti-layout-dashboard', ruta: '/dashboard' },
   { clave: 'layout.nav.myFarms', icono: 'ti-plant', ruta: '/cultivo' },
   { clave: 'layout.nav.newFarm', icono: 'ti-plus', ruta: '/cultivo/nueva-finca' },
+  { clave: 'temporadas.cal.menu', icono: 'ti-calendar-month', ruta: '/cultivo/calendario' },
   { clave: 'layout.nav.team', icono: 'ti-users-group', ruta: '/worker' },
   { clave: 'layout.nav.wages', icono: 'ti-calendar-event', ruta: '/worker/jornales' },
   { clave: 'workers.wages.list.register', icono: 'ti-calendar-plus', ruta: '/worker/jornales/nuevo' },

@@ -8,6 +8,11 @@ export const cultivoRoutes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'calendario',
+    loadComponent: () => import('./calendario/calendario').then(m => m.CalendarioComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'nueva-finca',
     loadComponent: () => import('./fincas/nueva-finca/nueva-finca').then(m => m.NuevaFincaComponent),
     canActivate: [authGuard]

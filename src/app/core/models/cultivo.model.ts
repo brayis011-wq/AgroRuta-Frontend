@@ -88,6 +88,8 @@ export interface ActividadCultivo {
   descripcion: string;
   fecha: string;
   siembraId: number;
+  /** Materiales o servicios (COP), aparte de los jornales */
+  costo?: number | null;
 }
 
 export interface Fumigacion {
@@ -99,6 +101,8 @@ export interface Fumigacion {
   diasCarencia?: number | null;
   /** Horas sin entrar al lote después de aplicar */
   reentradaHoras?: number | null;
+  /** Costo del producto aplicado (COP) */
+  costo?: number | null;
   dosis: number;
   unidadMedida: 'LITROS' | 'ML' | 'GRAMOS' | 'KG';
   areaAplicada: number;
@@ -113,6 +117,8 @@ export interface Cosecha {
   calidad: 'PRIMERA' | 'SEGUNDA' | 'TERCERA';
   observaciones?: string;
   siembraId: number;
+  /** Precio de venta por kilo (COP) */
+  precioKg?: number | null;
 }
 
 /** Una restricción vigente de una fumigación (carencia o reentrada) */
@@ -160,4 +166,43 @@ export interface ResumenSiembra {
   carencia: RestriccionVigente | null;
   reentrada: RestriccionVigente | null;
   otrasTemporadas: TemporadaComparada[];
+}
+
+/** GET /api/siembras/{id}/costos (pesos colombianos) */
+export interface CostosSiembra {
+  siembraId: number;
+  manoObra: number;
+  jornales: number;
+  insumos: number;
+  otros: number;
+  costoTotal: number;
+  ingresos: number;
+  kgTotal: number;
+  kgConPrecio: number;
+  precioPromedioKg: number | null;
+  ganancia: number | null;
+  costoPorKg: number | null;
+  trabajadores: { trabajadorId: number | null; nombre: string | null; jornales: number; valor: number }[];
+  meses: { mes: string; manoObra: number; insumos: number; otros: number; ingresos: number }[];
+  fumigacionesSinCosto: number;
+  cosechasSinPrecio: number;
+}
+
+export type TipoEvento =
+  | 'SIEMBRA' | 'ETAPA' | 'ACTIVIDAD' | 'FUMIGACION' | 'COSECHA' | 'FIN_CARENCIA' | 'FIN_REENTRADA'
+  | 'FUMIGACION_SUGERIDA' | 'PROXIMA_ETAPA' | 'COSECHA_ESTIMADA';
+export type EstadoEvento = 'HECHO' | 'PENDIENTE' | 'ESTIMADO' | 'ATRASADO';
+
+/** Un evento del calendario de cultivo */
+export interface EventoCalendario {
+  fecha: string;
+  tipo: TipoEvento;
+  estado: EstadoEvento;
+  titulo: string | null;
+  detalle: string | null;
+  siembraId: number;
+  loteId: number | null;
+  loteNombre: string | null;
+  cultivo: string;
+  refId: number | null;
 }

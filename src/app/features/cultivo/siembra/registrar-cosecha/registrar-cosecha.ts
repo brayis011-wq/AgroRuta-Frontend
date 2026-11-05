@@ -6,7 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { RestriccionVigente } from '../../../../core/models/cultivo.model';
 import { LanguageService } from '../../../../core/services/language.service';
-import { formatoFecha } from '../../../../shared/formato';
+import { formatoFecha, formatoPesos } from '../../../../shared/formato';
 
 @Component({
   selector: 'app-registrar-cosecha',
@@ -24,6 +24,10 @@ export class RegistrarCosecha implements OnInit {
   carencia: RestriccionVigente | null = null;
   private lang = inject(LanguageService);
 
+  pesos(v: number): string {
+    return formatoPesos(v, this.lang.current());
+  }
+
   fmtFecha(v: string | null | undefined): string {
     return formatoFecha(v, this.lang.current());
   }
@@ -36,7 +40,8 @@ export class RegistrarCosecha implements OnInit {
     cantidadKg: null,
     calidad: '',
     observaciones: '',
-    siembraId: 0
+    siembraId: 0,
+    precioKg: null as number | null,
   };
 
   calidades = ['PRIMERA', 'SEGUNDA', 'TERCERA'];
@@ -63,7 +68,7 @@ export class RegistrarCosecha implements OnInit {
       this.registroId = Number(registro);
       this.cultivoService.buscarCosecha(this.registroId).subscribe({
         next: (c) => {
-          this.form = { ...this.form, fecha: c.fecha, cantidadKg: c.cantidadKg, calidad: c.calidad, observaciones: c.observaciones ?? '' };
+          this.form = { ...this.form, fecha: c.fecha, cantidadKg: c.cantidadKg, calidad: c.calidad, observaciones: c.observaciones ?? '', precioKg: c.precioKg ?? null };
           this.cdr.detectChanges();
         },
         error: () => { this.error = 'temporadas.registro.errors.load'; this.cdr.detectChanges(); },

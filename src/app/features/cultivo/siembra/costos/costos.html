@@ -1,0 +1,79 @@
+<section class="tarjeta costos">
+  <header>
+    <h2><i class="ti ti-report-money"></i> {{ 'temporadas.costos.title' | translate }}</h2>
+  </header>
+
+  @if (error()) {
+    <p class="nada">{{ 'temporadas.costos.error' | translate }}</p>
+  } @else if (!costos()) {
+    <div class="esq"></div>
+  } @else {
+    @let c = costos()!;
+    <div class="cifras">
+      <div class="cifra">
+        <small>{{ 'temporadas.costos.total' | translate }}</small>
+        <strong>{{ pesos(c.costoTotal) }}</strong>
+        @if (c.costoPorKg != null) { <em>{{ 'temporadas.costos.perKg' | translate: { valor: pesos(c.costoPorKg) } }}</em> }
+      </div>
+      <div class="cifra">
+        <small>{{ 'temporadas.costos.income' | translate }}</small>
+        <strong>{{ c.kgConPrecio ? pesos(c.ingresos) : '—' }}</strong>
+        @if (c.precioPromedioKg != null) { <em>{{ 'temporadas.costos.avgPrice' | translate: { valor: pesos(c.precioPromedioKg) } }}</em> }
+      </div>
+      <div class="cifra resultado" [class.gana]="(c.ganancia ?? 0) >= 0 && c.ganancia != null" [class.pierde]="(c.ganancia ?? 0) < 0">
+        <small>{{ 'temporadas.costos.profit' | translate }}</small>
+        <strong>{{ c.ganancia != null ? pesos(c.ganancia) : '—' }}</strong>
+        @if (c.ganancia == null) { <em>{{ 'temporadas.costos.noPrices' | translate }}</em> }
+      </div>
+    </div>
+
+    @if (c.costoTotal > 0 && partes(); as p) {
+      <div class="reparto">
+        <div class="barra" role="img" [attr.aria-label]="'temporadas.costos.breakdown' | translate">
+          @if (p.manoObra) { <span class="mo" [style.flex-grow]="p.manoObra"></span> }
+          @if (p.insumos) { <span class="in" [style.flex-grow]="p.insumos"></span> }
+          @if (p.otros) { <span class="ot" [style.flex-grow]="p.otros"></span> }
+        </div>
+        <ul class="leyenda">
+          <li><i class="sw mo"></i>{{ 'temporadas.costos.labor' | translate }} <b>{{ pesos(c.manoObra) }}</b> <span>{{ 'temporadas.costos.wages' | translate: { count: c.jornales } }}</span></li>
+          <li><i class="sw in"></i>{{ 'temporadas.costos.inputs' | translate }} <b>{{ pesos(c.insumos) }}</b></li>
+          <li><i class="sw ot"></i>{{ 'temporadas.costos.other' | translate }} <b>{{ pesos(c.otros) }}</b></li>
+        </ul>
+      </div>
+    } @else {
+      <p class="nada">{{ 'temporadas.costos.empty' | translate }}</p>
+    }
+
+    @if (meses().length > 1) {
+      <div class="meses">
+        <h3>{{ 'temporadas.costos.byMonth' | translate }}</h3>
+        @for (m of meses(); track m.mes) {
+          <div class="mes" [title]="nombreMes(m.mes) + ': ' + pesos(m.costo) + ' / ' + pesos(m.ingresos)">
+            <span class="mes-nom">{{ nombreMes(m.mes) }}</span>
+            <span class="pistas">
+              <span class="pista"><span class="costo" [style.width.%]="m.anchoCosto"></span></span>
+              <span class="pista"><span class="ingreso" [style.width.%]="m.anchoIngreso"></span></span>
+            </span>
+          </div>
+        }
+        <p class="mini-leyenda"><i class="sw costo"></i>{{ 'temporadas.costos.cost' | translate }} <i class="sw ingreso"></i>{{ 'temporadas.costos.income' | translate }}</p>
+      </div>
+    }
+
+    @if (c.trabajadores.length) {
+      <details class="quien">
+        <summary>{{ 'temporadas.costos.whoWorked' | translate: { count: c.trabajadores.length } }}</summary>
+        <ul>
+          @for (t of c.trabajadores; track $index) {
+            <li><span>{{ t.nombre || '—' }}</span><span>{{ 'temporadas.costos.wages' | translate: { count: t.jornales } }}</span><b>{{ pesos(t.valor) }}</b></li>
+          }
+        </ul>
+      </details>
+    }
+
+    @if (c.fumigacionesSinCosto || c.cosechasSinPrecio) {
+      <p class="aviso"><i class="ti ti-info-circle"></i>
+        {{ 'temporadas.costos.missing' | translate: { sprays: c.fumigacionesSinCosto, harvests: c.cosechasSinPrecio } }}</p>
+    }
+  }
+</section>

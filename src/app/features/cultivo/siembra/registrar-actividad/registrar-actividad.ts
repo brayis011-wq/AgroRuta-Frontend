@@ -25,7 +25,8 @@ export class RegistrarActividad implements OnInit {
     tipo: '',
     descripcion: '',
     fecha: '',
-    siembraId: 0
+    siembraId: 0,
+    costo: null as number | null,
   };
 
   tiposActividad = [
@@ -52,13 +53,16 @@ export class RegistrarActividad implements OnInit {
     this.siembraId = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
     this.form.fecha = new Date().toLocaleDateString('en-CA');
+    // Desde el calendario se puede programar para otro día: ?fecha=2026-11-12
+    const fechaQuery = this.route.snapshot.queryParamMap?.get('fecha');
+    if (fechaQuery && /^\d{4}-\d{2}-\d{2}$/.test(fechaQuery)) this.form.fecha = fechaQuery;
 
     const registro = this.route.snapshot.paramMap.get('registroId');
     if (registro) {
       this.registroId = Number(registro);
       this.cultivoService.buscarActividad(this.registroId).subscribe({
         next: (a) => {
-          this.form = { ...this.form, tipo: a.tipo, descripcion: a.descripcion, fecha: a.fecha };
+          this.form = { ...this.form, tipo: a.tipo, descripcion: a.descripcion, fecha: a.fecha, costo: a.costo ?? null };
           this.cdr.detectChanges();
         },
         error: () => { this.error = 'temporadas.registro.errors.load'; this.cdr.detectChanges(); },

@@ -80,6 +80,14 @@
           </div>
         </div>
 
+        <div class="field">
+          <label class="field__label" for="precioKg"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'temporadas.costos.priceKg' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
+          <div class="field__input-wrap">
+            <input id="precioKg" type="number" min="0" step="any" inputmode="decimal" [(ngModel)]="form.precioKg" name="precioKg" placeholder="0" />
+          </div>
+          <small class="campo-hint">@if (form.precioKg && form.cantidadKg) { {{ 'temporadas.costos.incomeHint' | translate: { total: pesos(form.precioKg * form.cantidadKg) } }} } @else { {{ 'temporadas.costos.priceHint' | translate }} }</small>
+        </div>
+
         <!-- Observaciones -->
         <div class="field">
           <label class="field__label" for="observaciones">

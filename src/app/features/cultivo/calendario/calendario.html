@@ -1,0 +1,136 @@
+<div class="cv">
+  <header class="cv-head">
+    <div>
+      <p class="eyebrow">{{ 'temporadas.ui.crops' | translate }}@if (fincaActiva.activa(); as f) { · {{ f.nombre }} }</p>
+      <h1>{{ 'temporadas.cal.title' | translate }}</h1>
+      <p class="cv-sub">{{ 'temporadas.cal.subtitle' | translate }}</p>
+    </div>
+    <div class="cv-acciones programar-wrap">
+      <button type="button" class="btn btn-prim" (click)="programar()" [attr.aria-expanded]="eligiendo()">
+        <i class="ti ti-calendar-plus"></i> {{ 'temporadas.cal.schedule' | translate }}
+      </button>
+      @if (eligiendo()) {
+        <div class="elegir" role="menu">
+          <p>{{ 'temporadas.cal.whichLot' | translate: { date: fechaLarga(seleccionado() >= hoy ? seleccionado() : hoy) } }}</p>
+          @if (siembrasActivas() === null) {
+            <span class="cargando">{{ 'common.loading' | translate }}</span>
+          } @else if (!siembrasActivas()!.length) {
+            <span class="cargando">{{ 'temporadas.cal.noActive' | translate }}</span>
+          } @else {
+            @for (x of siembrasActivas(); track x.siembra.id) {
+              <button type="button" role="menuitem" (click)="programarEn(x.siembra)">
+                <i class="ti ti-plant"></i>
+                <span><b>{{ x.lote }}</b><small>{{ nombreCultivo(x.siembra) }}</small></span>
+              </button>
+            }
+          }
+        </div>
+      }
+    </div>
+  </header>
+
+  @if (!fincaActiva.idActiva()) {
+    <section class="tarjeta vacio">
+      <i class="ti ti-calendar-off"></i>
+      <h3>{{ 'temporadas.cal.noFarm' | translate }}</h3>
+      <a class="btn btn-prim" routerLink="/cultivo/nueva-finca"><i class="ti ti-plus"></i> {{ 'temporadas.ui.newFarm' | translate }}</a>
+    </section>
+  } @else {
+    @if (error()) {
+      <p class="aviso error"><i class="ti ti-alert-circle"></i> {{ 'temporadas.cal.error' | translate }}</p>
+    }
+
+    <div class="barra-cal">
+      <div class="nav-mes">
+        <button type="button" class="btn-ic" (click)="mover(-1)" [attr.aria-label]="'temporadas.cal.prev' | translate"><i class="ti ti-chevron-left"></i></button>
+        <h2>{{ titulo() }}</h2>
+        <button type="button" class="btn-ic" (click)="mover(1)" [attr.aria-label]="'temporadas.cal.next' | translate"><i class="ti ti-chevron-right"></i></button>
+        <button type="button" class="btn btn-hoy" (click)="irAHoy()">{{ 'temporadas.cal.today' | translate }}</button>
+      </div>
+      <div class="filtros-cal">
+        <select [ngModel]="lote() ?? ''" (ngModelChange)="elegirLote($event)" [attr.aria-label]="'temporadas.ui.lots' | translate">
+          <option value="">{{ 'temporadas.cal.allLots' | translate }}</option>
+          @for (l of fincaActiva.lotes(); track l.id) { <option [value]="l.id">{{ l.nombre }}</option> }
+        </select>
+        <label class="check"><input type="checkbox" [ngModel]="verHechos()" (ngModelChange)="verHechos.set($event)"> {{ 'temporadas.cal.showDone' | translate }}</label>
+      </div>
+    </div>
+
+    <div class="cal-layout">
+      <section class="tarjeta mes" [attr.aria-busy]="eventosMes() === null">
+        <div class="cab-semana">
+          @for (d of semana(); track $index) { <span>{{ d }}</span> }
+        </div>
+        <div class="cuadricula">
+          @for (d of dias(); track d.fecha) {
+            <button type="button" class="dia" [class.fuera]="!d.delMes" [class.hoy]="d.fecha === hoy"
+                    [class.sel]="d.fecha === seleccionado()" [class.pasado]="d.fecha < hoy" (click)="seleccionado.set(d.fecha)"
+                    [attr.aria-label]="fechaLarga(d.fecha) + (d.eventos.length ? ': ' + d.eventos.length : '')">
+              <span class="num">{{ numDia(d.fecha) }}</span>
+              <span class="chips">
+                @for (e of d.eventos.slice(0, 3); track $index) {
+                  <span class="chip-ev" [class]="'chip-ev ' + tono[e.tipo] + ' ' + e.estado">
+                    <i class="ti" [class]="'ti ' + icono[e.tipo]"></i><span class="chip-txt" [title]="texto(e).titulo">{{ corto(e) }}</span>
+                  </span>
+                }
+                @if (d.eventos.length > 3) { <span class="mas">+{{ d.eventos.length - 3 }}</span> }
+              </span>
+              <span class="puntos">
+                @for (e of d.eventos.slice(0, 4); track $index) { <i [class]="'p ' + tono[e.tipo]"></i> }
+              </span>
+            </button>
+          }
+        </div>
+        <ul class="leyenda-cal">
+          <li><i class="m hecho"></i> {{ 'temporadas.cal.legendDone' | translate }}</li>
+          <li><i class="m pendiente"></i> {{ 'temporadas.cal.legendPending' | translate }}</li>
+          <li><i class="m estimado"></i> {{ 'temporadas.cal.legendEstimated' | translate }}</li>
+        </ul>
+      </section>
+
+      <aside class="panel">
+        <section class="tarjeta">
+          <h2 class="panel-tit">{{ fechaLarga(seleccionado()) }}</h2>
+          @if (delDia() === null) {
+            <p class="nada">{{ 'temporadas.cal.otherMonth' | translate }}</p>
+          } @else if (!delDia()!.length) {
+            <p class="nada">{{ 'temporadas.cal.dayEmpty' | translate }}</p>
+          } @else {
+            <ul class="lista">
+              @for (e of delDia(); track $index) {
+                @let t = texto(e);
+                <li><button type="button" class="ev" [class]="'ev ' + e.estado" (click)="abrir(e)">
+                  <span class="ic" [class]="'ic ' + tono[e.tipo]"><i class="ti" [class]="'ti ' + icono[e.tipo]"></i></span>
+                  <span class="txt"><strong>{{ t.titulo }}</strong><small>{{ e.loteNombre }} · {{ e.cultivo }}@if (t.sub) { · {{ t.sub }} }</small></span>
+                  <i class="ti ti-chevron-right flecha"></i>
+                </button></li>
+              }
+            </ul>
+          }
+        </section>
+
+        <section class="tarjeta">
+          <h2 class="panel-tit">{{ 'temporadas.cal.next14' | translate }}
+            @if (atrasados()) { <span class="badge-rojo">{{ 'temporadas.cal.overdueCount' | translate: { count: atrasados() } }}</span> }
+          </h2>
+          @if (proximos() === null) {
+            <div class="esq"></div>
+          } @else if (!agenda().length) {
+            <p class="nada">{{ 'temporadas.cal.nothingSoon' | translate }}</p>
+          } @else {
+            <ul class="lista">
+              @for (e of agenda(); track $index) {
+                @let t = texto(e);
+                <li><button type="button" class="ev" [class]="'ev ' + e.estado" (click)="abrir(e)">
+                  <span class="ic" [class]="'ic ' + tono[e.tipo]"><i class="ti" [class]="'ti ' + icono[e.tipo]"></i></span>
+                  <span class="txt"><strong>{{ t.titulo }}</strong><small>{{ e.loteNombre }} · {{ e.cultivo }}</small></span>
+                  <span class="cuando">{{ cuando(e) }}@if (e.estado === 'ESTIMADO') { <em>{{ 'temporadas.cal.approx' | translate }}</em> }</span>
+                </button></li>
+              }
+            </ul>
+          }
+        </section>
+      </aside>
+    </div>
+  }
+</div>

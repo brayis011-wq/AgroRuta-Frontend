@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import {
   Finca,
   Lote,
-  Siembra, SiembraRequest, EtapaSiembra, EstadoLote, ResumenSiembra,
+  Siembra, SiembraRequest, EtapaSiembra, EstadoLote, ResumenSiembra, CostosSiembra, EventoCalendario,
   ActividadCultivo,
   Fumigacion,
   Cosecha,
@@ -89,6 +89,27 @@ export class CultivoService {
   /** Rendimiento, cosechas por semana, carencia y reentrada vigentes */
   resumenSiembra(id: number): Observable<ResumenSiembra> {
     return this.http.get<ResumenSiembra>(`${this.apiUrl}/api/siembras/${id}/resumen`);
+  }
+
+  /** Mano de obra, insumos, otros costos, ingresos y ganancia de la temporada */
+  costosSiembra(id: number): Observable<CostosSiembra> {
+    return this.http.get<CostosSiembra>(`${this.apiUrl}/api/siembras/${id}/costos`);
+  }
+
+  /** Fechas "yyyy-MM-dd"; sin fechas: 30 días atrás y 60 adelante */
+  calendarioSiembra(id: number, desde?: string, hasta?: string): Observable<EventoCalendario[]> {
+    return this.http.get<EventoCalendario[]>(`${this.apiUrl}/api/siembras/${id}/calendario`, { params: this.rango(desde, hasta) });
+  }
+
+  calendarioFinca(fincaId: number, desde?: string, hasta?: string): Observable<EventoCalendario[]> {
+    return this.http.get<EventoCalendario[]>(`${this.apiUrl}/api/fincas/${fincaId}/calendario`, { params: this.rango(desde, hasta) });
+  }
+
+  private rango(desde?: string, hasta?: string): Record<string, string> {
+    const p: Record<string, string> = {};
+    if (desde) p['desde'] = desde;
+    if (hasta) p['hasta'] = hasta;
+    return p;
   }
 
   etapasSiembra(id: number): Observable<EtapaSiembra[]> {

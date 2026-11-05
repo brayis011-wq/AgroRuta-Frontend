@@ -41,6 +41,8 @@ interface FumigacionForm {
   diasCarencia: number | null;
   /** Horas sin entrar al lote después de aplicar */
   reentradaHoras: number | null;
+  /** Costo del producto aplicado (COP) */
+  costo: number | null;
 }
 
 @Component({
@@ -95,6 +97,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     siembraId: 0,
     diasCarencia: null,
     reentradaHoras: null,
+    costo: null,
   };
 
   readonly unidades: MeasurementUnit[] = ['LITROS', 'ML', 'GRAMOS', 'KG'];
@@ -157,6 +160,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           observaciones: f.observaciones ?? '',
           diasCarencia: f.diasCarencia ?? null,
           reentradaHoras: f.reentradaHoras ?? null,
+          costo: f.costo ?? null,
         };
         this.busquedaProducto = f.producto;
         this.cdr.markForCheck();
@@ -298,6 +302,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       siembraId:           this.form.siembraId,
       diasCarencia:        this.form.diasCarencia,
       reentradaHoras:      this.form.reentradaHoras,
+      costo:               this.form.costo,
     };
 
     const peticion = this.registroId
