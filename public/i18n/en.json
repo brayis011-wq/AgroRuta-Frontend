@@ -99,6 +99,7 @@
     }
   },
   "auth": {
+    "art": {"caption": "Healthy crops, clear numbers.", "alt": "Plants growing in the sun"},
     "login": {
       "subtitle": "Sign in with your email and password to continue.",
       "title": "Sign in",

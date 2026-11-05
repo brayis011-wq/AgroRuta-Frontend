@@ -11,44 +11,52 @@
     </div>
   </header>
 
-  <main class="caja">
-    <h1>{{ 'auth.login.title' | translate }}</h1>
-    <p class="sub">{{ 'auth.login.subtitle' | translate }}</p>
+  <div class="cuerpo">
+    <section class="arte">
+      <app-auth-cultivo />
+    </section>
 
-    @if (error) {
-      <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i><span>{{ error | translate }}</span></p>
-    }
+    <main class="lado-form">
+      <div class="caja">
+        <h1>{{ 'auth.login.title' | translate }}</h1>
+        <p class="sub">{{ 'auth.login.subtitle' | translate }}</p>
 
-    <form (ngSubmit)="onSubmit()">
-      <div class="campo">
-        <label for="email">{{ 'auth.login.email' | translate }}</label>
-        <input id="email" type="email" [(ngModel)]="form.email" name="email" autocomplete="email"
-               [placeholder]="'auth.login.emailPlaceholder' | translate" required />
-      </div>
+        @if (error) {
+          <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i><span>{{ error | translate }}</span></p>
+        }
 
-      <div class="campo">
-        <label for="password">{{ 'auth.login.password' | translate }}</label>
-        <div class="con-ojo">
-          <input id="password" [type]="verPass ? 'text' : 'password'" [(ngModel)]="form.password" name="password"
-                 autocomplete="current-password" placeholder="••••••••" required />
-          <button type="button" class="ojo" (click)="verPass = !verPass" [attr.aria-pressed]="verPass"
-                  [attr.aria-label]="(verPass ? 'config.password.hide' : 'config.password.show') | translate">
-            <i class="ti" [class.ti-eye]="!verPass" [class.ti-eye-off]="verPass" aria-hidden="true"></i>
+        <form (ngSubmit)="onSubmit()">
+          <div class="campo">
+            <label for="email">{{ 'auth.login.email' | translate }}</label>
+            <input id="email" type="email" [(ngModel)]="form.email" name="email" autocomplete="email"
+                   [placeholder]="'auth.login.emailPlaceholder' | translate" required />
+          </div>
+
+          <div class="campo">
+            <label for="password">{{ 'auth.login.password' | translate }}</label>
+            <div class="con-ojo">
+              <input id="password" [type]="verPass ? 'text' : 'password'" [(ngModel)]="form.password" name="password"
+                     autocomplete="current-password" placeholder="••••••••" required />
+              <button type="button" class="ojo" (click)="verPass = !verPass" [attr.aria-pressed]="verPass"
+                      [attr.aria-label]="(verPass ? 'config.password.hide' : 'config.password.show') | translate">
+                <i class="ti" [class.ti-eye]="!verPass" [class.ti-eye-off]="verPass" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-prim" [disabled]="cargando">
+            @if (cargando) { <i class="ti ti-loader-2 gira" aria-hidden="true"></i> }
+            {{ (cargando ? 'auth.login.loggingIn' : 'auth.login.submit') | translate }}
           </button>
-        </div>
+        </form>
+
+        <p class="link">
+          {{ 'auth.login.noAccount' | translate }}
+          <a routerLink="/auth/registro">{{ 'auth.login.register' | translate }}</a>
+        </p>
       </div>
-
-      <button type="submit" class="btn-prim" [disabled]="cargando">
-        @if (cargando) { <i class="ti ti-loader-2 gira" aria-hidden="true"></i> }
-        {{ (cargando ? 'auth.login.loggingIn' : 'auth.login.submit') | translate }}
-      </button>
-    </form>
-
-    <p class="link">
-      {{ 'auth.login.noAccount' | translate }}
-      <a routerLink="/auth/registro">{{ 'auth.login.register' | translate }}</a>
-    </p>
-  </main>
+    </main>
+  </div>
 
   <footer class="pie">© {{ anio }} AgroRuta</footer>
 </div>

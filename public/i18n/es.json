@@ -99,6 +99,7 @@
     }
   },
   "auth": {
+    "art": {"caption": "Cultivos sanos, cuentas claras.", "alt": "Plantas creciendo bajo el sol"},
     "login": {
       "subtitle": "Ingresa con tu correo y contraseña para continuar.",
       "title": "Iniciar sesión",

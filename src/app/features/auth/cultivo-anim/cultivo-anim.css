@@ -1,0 +1,36 @@
+:host {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.25rem;
+  --sol: #ffc93c; --halo: #ffe9a6; --tallo: #3d8b45; --hoja: #5cb563; --hoja-n: #3d8b45; --tierra: #a47551; --surco: #8a5f40; --halo-op: .55;
+}
+:host-context([data-tema="oscuro"]) { --halo: #ffc93c; --halo-op: .1; --hoja: #4fa457; --tierra: #6e4f37; --surco: #5a3f2b; }
+svg { width: min(480px, 100%); height: auto; overflow: visible; }
+
+.sol .disco { fill: var(--sol); }
+.sol .halo { fill: var(--halo); opacity: var(--halo-op); transform-box: fill-box; transform-origin: center; animation: latir 5s ease-in-out infinite; }
+.rayos { animation: girar 40s linear infinite; }
+.rayos line { stroke: var(--sol); stroke-width: 5; stroke-linecap: round; }
+
+.mota { fill: var(--sol); opacity: 0; animation: subir 5s ease-in-out infinite; }
+
+.tallo { fill: none; stroke: var(--tallo); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 140; stroke-dashoffset: 140; animation: crecer .9s ease-out forwards; }
+.hoja { transform-box: fill-box; transform-origin: 0% 85%; transform: scale(0); animation: abrir .6s cubic-bezier(.3, 1.4, .5, 1) forwards; }
+.lamina { fill: var(--hoja); }
+.nervio { fill: none; stroke: var(--hoja-n); stroke-width: 1.6; stroke-linecap: round; opacity: .55; }
+.meneo { transform-box: fill-box; transform-origin: 50% 100%; animation: mecer 4.5s ease-in-out infinite; }
+
+.tierra { fill: var(--tierra); }
+.surco { fill: none; stroke: var(--surco); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 12; opacity: .7; }
+
+.lema { margin: 0; font-size: .95rem; font-weight: 600; color: var(--ar-tinta-2); text-align: center; }
+
+@keyframes crecer { to { stroke-dashoffset: 0; } }
+@keyframes abrir { to { transform: scale(1); } }
+@keyframes mecer { 0%, 100% { transform: rotate(-1.6deg); } 50% { transform: rotate(1.6deg); } }
+@keyframes girar { to { transform: rotate(360deg); } }
+@keyframes latir { 50% { transform: scale(1.1); } }
+@keyframes subir { 0% { opacity: 0; transform: translateY(10px); } 30% { opacity: .8; } 100% { opacity: 0; transform: translateY(-40px); } }
+@media (prefers-reduced-motion: reduce) {
+  .rayos, .halo, .meneo, .mota { animation: none; }
+  .tallo { animation: none; stroke-dashoffset: 0; }
+  .hoja { animation: none; transform: none; }
+}

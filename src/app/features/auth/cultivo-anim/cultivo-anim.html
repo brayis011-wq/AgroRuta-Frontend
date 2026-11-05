@@ -1,0 +1,35 @@
+<svg viewBox="0 0 400 400" role="img" [attr.aria-label]="'auth.art.alt' | translate">
+  <!-- Sol -->
+  <g class="sol" transform="translate(318 74)">
+    <circle class="halo" r="62" />
+    <g class="rayos">
+      @for (r of rayos; track r) { <line [attr.transform]="'rotate(' + r + ')'" x1="0" y1="-48" x2="0" y2="-60" /> }
+    </g>
+    <circle class="disco" r="34" />
+  </g>
+
+  <!-- Luz que sube -->
+  @for (m of motas; track $index) { <circle class="mota" [attr.cx]="m[0]" [attr.cy]="m[1]" r="2.6" [style.animation-delay.s]="m[2]" /> }
+
+  <!-- Plantas -->
+  @for (p of plantas; track $index) {
+    <g [attr.transform]="'translate(' + p.x + ' ' + p.y + ') scale(' + p.escala + ')'">
+      <g class="meneo" [style.animation-delay.ms]="p.retraso * 3">
+        <path class="tallo" d="M0 0 C0 -40 -4 -80 0 -132" [style.animation-delay.ms]="p.retraso" />
+        @for (h of hojas; track $index) {
+          <g [attr.transform]="transformHoja(h)">
+            <g class="hoja" [style.animation-delay.ms]="p.retraso + 450 + $index * 120">
+              <path class="lamina" d="M0 0 C16 -22 46 -26 66 -14 C48 4 20 8 0 0Z" />
+              <path class="nervio" d="M2 -1 C22 -10 40 -13 60 -13" />
+            </g>
+          </g>
+        }
+      </g>
+    </g>
+  }
+
+  <!-- Tierra -->
+  <path class="tierra" d="M36 326 Q200 296 364 326 Q372 350 352 356 Q200 372 48 356 Q28 350 36 326Z" />
+  <path class="surco" d="M70 338 Q200 318 330 338" />
+</svg>
+<p class="lema">{{ 'auth.art.caption' | translate }}</p>

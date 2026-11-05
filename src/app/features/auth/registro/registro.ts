@@ -5,12 +5,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth';
 import { RegisterRequest } from '../../../core/models/auth.model';
 import { TemaService } from '../../../core/services/tema.service';
+import { AuthCultivo } from '../cultivo-anim/cultivo-anim';
 import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, LanguageSwitcher],
+  imports: [FormsModule, RouterLink, TranslatePipe, LanguageSwitcher, AuthCultivo],
   templateUrl: './registro.html',
   styleUrl: '../auth.css',
 })

@@ -6,12 +6,13 @@ import { AuthService } from '../../../core/services/auth';
 import { inicioPorRol } from '../../../core/guards/rol-guards';
 import { LoginRequest } from '../../../core/models/auth.model';
 import { TemaService } from '../../../core/services/tema.service';
+import { AuthCultivo } from '../cultivo-anim/cultivo-anim';
 import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, LanguageSwitcher],
+  imports: [FormsModule, RouterLink, TranslatePipe, LanguageSwitcher, AuthCultivo],
   templateUrl: './login.html',
   styleUrl: '../auth.css',
 })
