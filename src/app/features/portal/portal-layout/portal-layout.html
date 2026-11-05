@@ -1,42 +1,109 @@
-<div class="portal" *ngIf="portal.estado$ | async as estado; else cargandoTpl">
-  <header class="portal-header">
-    <div class="header-inner">
-      <div class="brand">
-        <img class="brand-logo" src="logo.png" alt="" />
-        <div class="brand-text">
-          <span class="brand-name">AgroRuta</span>
-          <span class="brand-badge">{{ 'enums.rol.Trabajador' | translate }}</span>
-        </div>
+@if (portal.estado$ | async; as estado) {
+<div class="shell" [class.mini]="colapsado()" [class.cajon]="cajonAbierto()">
+
+  <aside class="side" [attr.aria-label]="'portal.nav.label' | translate">
+
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
+      <div class="brand-text">
+        <strong>AgroRuta</strong>
+        <small class="rol-tag"><i class="ti ti-id-badge-2" aria-hidden="true"></i>{{ 'portal.home.eyebrow' | translate }}</small>
       </div>
-      <div class="header-actions">
-        <span class="user-name">{{ usuario?.nombre }}</span>
-        <app-language-switcher />
-        <button type="button" class="btn-logout" (click)="cerrarSesion()" [attr.aria-label]="'layout.logout' | translate">
-          <i class="ti ti-logout" aria-hidden="true"></i>
-          <span class="logout-label">{{ 'layout.logout' | translate }}</span>
+      <button type="button" class="ib colapsar" (click)="alternarColapsado()"
+              [attr.aria-label]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate"
+              [title]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate">
+        <i class="ti" [class.ti-layout-sidebar-left-collapse]="!colapsado()"
+           [class.ti-layout-sidebar-left-expand]="colapsado()"></i>
+      </button>
+      <button type="button" class="ib cerrar-cajon" (click)="cajonAbierto.set(false)" [attr.aria-label]="'layout.closeMenu' | translate">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+
+    <nav class="nav">
+      <span class="sec">{{ 'portal.nav.sections.mine' | translate }}</span>
+      @for (p of pestanas; track p.ruta) {
+        @if (!p.soloAprobado || estado.estado === 'APROBADO') {
+          <a class="item" [routerLink]="p.ruta" routerLinkActive="on">
+            <i class="ti {{ p.icono }}" aria-hidden="true"></i>
+            <span class="txt">{{ p.etiqueta | translate }}</span>
+            @if (p.ruta === 'nominas' && porCobrar() > 0) { <span class="badge">{{ porCobrar() }}</span> }
+            <em class="tip">{{ p.etiqueta | translate }}</em>
+          </a>
+        }
+      }
+      <span class="sec">{{ 'layout.sections.system' | translate }}</span>
+      <a class="item" routerLink="cuenta" routerLinkActive="on">
+        <i class="ti ti-user-cog" aria-hidden="true"></i>
+        <span class="txt">{{ 'portal.nav.account' | translate }}</span>
+        <em class="tip">{{ 'portal.nav.account' | translate }}</em>
+      </a>
+    </nav>
+
+    <div class="pie">
+      <div class="idioma" role="group" [attr.aria-label]="'common.language' | translate">
+        <i class="ti ti-world" aria-hidden="true"></i>
+        <span class="txt">{{ 'common.language' | translate }}</span>
+        <button type="button" class="tema-btn" (click)="tema.alternar()"
+                [title]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate"
+                [attr.aria-label]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate">
+          <i class="ti" [class.ti-moon]="!tema.oscuro()" [class.ti-sun]="tema.oscuro()" aria-hidden="true"></i>
+        </button>
+        <div class="seg">
+          <button type="button" [class.on]="lang.current() === 'es'" [attr.aria-pressed]="lang.current() === 'es'" (click)="lang.set('es')">ES</button>
+          <button type="button" [class.on]="lang.current() === 'en'" [attr.aria-pressed]="lang.current() === 'en'" (click)="lang.set('en')">EN</button>
+        </div>
+        <button type="button" class="idioma-mini" (click)="lang.set(lang.current() === 'es' ? 'en' : 'es')"
+                [attr.aria-label]="'common.language' | translate">
+          <i class="ti ti-world"></i><b>{{ lang.current() | uppercase }}</b>
+        </button>
+      </div>
+
+      <div class="usuario">
+        @if (perfil.foto(); as foto) {
+          <img class="av" [src]="foto" alt="" />
+        } @else {
+          <div class="av" aria-hidden="true">{{ iniciales() }}</div>
+        }
+        <div class="usuario-txt">
+          <strong>{{ usuario?.nombre }}</strong>
+          <small>{{ 'enums.rol.Trabajador' | translate }}</small>
+        </div>
+        <button type="button" class="ib salir" (click)="cerrarSesion()"
+                [title]="'layout.logout' | translate" [attr.aria-label]="'layout.logout' | translate">
+          <i class="ti ti-logout"></i>
         </button>
       </div>
     </div>
-    <nav class="tabs" [attr.aria-label]="'portal.nav.label' | translate">
-      <ng-container *ngFor="let p of pestanas">
-        <a *ngIf="!p.soloAprobado || estado.estado === 'APROBADO'"
-           class="tab" [routerLink]="p.ruta" routerLinkActive="active">
-          <i class="ti {{ p.icono }}" aria-hidden="true"></i>
-          <span>{{ p.etiqueta | translate }}</span>
-        </a>
-      </ng-container>
-    </nav>
-  </header>
+  </aside>
 
-  <main class="portal-main">
-    <router-outlet></router-outlet>
+  <div class="velo" (click)="cajonAbierto.set(false)" aria-hidden="true"></div>
+
+  <main class="main">
+    <router-outlet />
   </main>
-</div>
 
-<ng-template #cargandoTpl>
+  <!-- Barra inferior (celular) -->
+  <nav class="barra" [attr.aria-label]="'portal.nav.label' | translate">
+    @for (p of pestanas; track p.ruta) {
+      @if (!p.soloAprobado || estado.estado === 'APROBADO') {
+        <a [routerLink]="p.ruta" routerLinkActive="on">
+          <i class="ti {{ p.icono }}"></i><span>{{ p.etiqueta | translate }}</span>
+          @if (p.ruta === 'nominas' && porCobrar() > 0) { <b class="punto">{{ porCobrar() }}</b> }
+        </a>
+      }
+    }
+    <a routerLink="cuenta" routerLinkActive="on"><i class="ti ti-user-cog"></i><span>{{ 'portal.nav.account' | translate }}</span></a>
+  </nav>
+</div>
+} @else {
   <div class="portal-cargando">
-    <p *ngIf="!errorEstado">{{ 'common.loading' | translate }}</p>
-    <p *ngIf="errorEstado">{{ 'portal.loadError' | translate }}</p>
-    <button *ngIf="errorEstado" type="button" class="btn-retry" (click)="ngOnInit()">{{ 'common.retry' | translate }}</button>
+    <div class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
+    @if (!errorEstado) {
+      <p>{{ 'common.loading' | translate }}</p>
+    } @else {
+      <p>{{ 'portal.loadError' | translate }}</p>
+      <button type="button" class="btn-retry" (click)="ngOnInit()">{{ 'common.retry' | translate }}</button>
+    }
   </div>
-</ng-template>
+}

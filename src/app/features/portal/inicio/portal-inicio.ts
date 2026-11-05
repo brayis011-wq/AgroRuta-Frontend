@@ -109,6 +109,30 @@ export class PortalInicioComponent implements OnInit {
     return this.porCobrar.reduce((suma, n) => suma + (n.valorTotal ?? 0), 0);
   }
 
+  /** Los 5 jornales más recientes */
+  get recientes(): MiJornal[] {
+    return [...this.jornales].sort((a, b) => (b.fecha ?? '').localeCompare(a.fecha ?? '')).slice(0, 5);
+  }
+
+  /** "16 de oct – 31 de oct de 2026": el año solo una vez si es el mismo */
+  periodo(inicio: string, fin: string): string {
+    if (!inicio || !fin) return this.fecha(inicio || fin);
+    if (inicio.slice(0, 4) !== fin.slice(0, 4)) return `${this.fecha(inicio)} – ${this.fecha(fin)}`;
+    const d = new Date(Number(inicio.slice(0, 4)), Number(inicio.slice(5, 7)) - 1, Number(inicio.slice(8, 10)));
+    const corto = d.toLocaleDateString(this.lang.current(), { day: 'numeric', month: 'short' }).replace('.', '');
+    return `${corto} – ${this.fecha(fin)}`;
+  }
+
+  diaDe(f: string): string {
+    return f ? String(Number(f.slice(8, 10))) : '';
+  }
+
+  mesDe(f: string): string {
+    if (!f) return '';
+    const d = new Date(Number(f.slice(0, 4)), Number(f.slice(5, 7)) - 1, 1);
+    return d.toLocaleDateString(this.lang.current(), { month: 'short' }).replace('.', '');
+  }
+
   get ultimoPago(): MiPago | null {
     return this.pagos[0] ?? null;
   }

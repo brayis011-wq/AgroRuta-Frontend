@@ -17,22 +17,77 @@
 
     <div class="stats" *ngIf="!cargandoDatos && !errorDatos">
       <a class="card stat" routerLink="../jornales">
+        <span class="stat-ic verde" aria-hidden="true"><i class="ti ti-calendar-event"></i></span>
         <span class="stat-label">{{ 'portal.home.thisMonth' | translate }}</span>
         <span class="stat-value">{{ num(jornalesDelMes.length) }}</span>
         <span class="stat-note">{{ 'portal.home.thisMonthNote' | translate: { amount: pesos(valorDelMes) } }}</span>
       </a>
       <a class="card stat" [class.stat-warn]="porCobrar.length > 0" routerLink="../nominas">
+        <span class="stat-ic ambar" aria-hidden="true"><i class="ti ti-receipt-2"></i></span>
         <span class="stat-label">{{ 'portal.home.toCollect' | translate }}</span>
         <span class="stat-value">{{ pesos(valorPorCobrar) }}</span>
         <span class="stat-note">{{ (porCobrar.length === 1 ? 'portal.home.toCollectNoteOne' : 'portal.home.toCollectNote') | translate: { count: porCobrar.length } }}</span>
       </a>
       <a class="card stat" routerLink="../pagos">
+        <span class="stat-ic azul" aria-hidden="true"><i class="ti ti-cash"></i></span>
         <span class="stat-label">{{ 'portal.home.lastPayment' | translate }}</span>
         <span class="stat-value">{{ ultimoPago ? pesos(ultimoPago.monto) : '—' }}</span>
         <span class="stat-note">{{ ultimoPago ? fecha(ultimoPago.fechaPago) : ('portal.home.noPayments' | translate) }}</span>
       </a>
     </div>
     <div class="card estado" *ngIf="cargandoDatos">{{ 'common.loading' | translate }}</div>
+
+    <div class="cuerpo" *ngIf="!cargandoDatos && !errorDatos">
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title"><i class="ti ti-calendar-event" aria-hidden="true"></i>{{ 'portal.home.recentWages' | translate }}</h2>
+          <a class="link" routerLink="../jornales">{{ 'admin.summary.seeAll' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        @if (recientes.length === 0) {
+          <div class="estado"><i class="ti ti-calendar-off vacio-ic" aria-hidden="true"></i>{{ 'portal.home.noWages' | translate }}</div>
+        } @else {
+          <ul class="lista">
+            @for (j of recientes; track j.id; let i = $index) {
+              <li class="fila" [style.animation-delay.ms]="i * 50">
+                <span class="dia"><b>{{ diaDe(j.fecha) }}</b><small>{{ mesDe(j.fecha) }}</small></span>
+                <span class="fila-txt">
+                  <strong>{{ j.cultivo || ('portal.home.wage' | translate) }}</strong>
+                  <small>{{ j.actividades.length ? j.actividades.join(' · ') : '—' }}</small>
+                </span>
+                <span class="fila-valor">{{ pesos(j.valor) }}
+                  <span class="pill" [class.ok]="j.liquidado" [class.warn]="!j.liquidado">{{ (j.liquidado ? 'portal.home.settled' : 'portal.home.unsettled') | translate }}</span>
+                </span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title"><i class="ti ti-receipt-2" aria-hidden="true"></i>{{ 'portal.home.toCollect' | translate }}</h2>
+          <a class="link" routerLink="../nominas">{{ 'admin.summary.seeAll' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        @if (porCobrar.length === 0) {
+          <div class="estado"><i class="ti ti-circle-check vacio-ic ok" aria-hidden="true"></i>{{ 'portal.home.allPaid' | translate }}</div>
+        } @else {
+          <ul class="lista">
+            @for (n of porCobrar; track n.id) {
+              <li class="fila">
+                <span class="fila-ic" aria-hidden="true"><i class="ti ti-receipt-2"></i></span>
+                <span class="fila-txt">
+                  <strong>{{ periodo(n.periodoInicio, n.periodoFin) }}</strong>
+                  <small>{{ 'portal.home.wagesCount' | translate: { count: num(n.totalJornales) } }}</small>
+                </span>
+                <span class="fila-valor">{{ pesos(n.valorTotal) }}
+                  <span class="pill" [class.info]="n.estado === 'APROBADA'" [class.warn]="n.estado === 'PENDIENTE'">{{ 'enums.estadoNomina.' + n.estado | translate }}</span>
+                </span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
 
     <dl class="card mis-datos">
       <div><dt>{{ 'portal.home.idNumber' | translate }}</dt><dd>{{ datos(e).cedula }}</dd></div>

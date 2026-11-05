@@ -1438,6 +1438,7 @@
     "loadError": "Could not load your information.",
     "loadDataError": "Could not load your data.",
     "nav": {
+      "sections": {"mine": "My work"},
       "label": "Portal sections",
       "home": "Home",
       "wages": "Workdays",
@@ -1446,6 +1447,13 @@
       "account": "My account"
     },
     "home": {
+      "wagesCount": "{{count}} wages",
+      "allPaid": "You are up to date: no payrolls to collect.",
+      "unsettled": "Not settled",
+      "settled": "Settled",
+      "wage": "Wage",
+      "noWages": "No wages recorded yet.",
+      "recentWages": "Latest wages",
       "eyebrow": "Worker portal",
       "hello": "Hi, {{name}}",
       "employer": "You work with {{name}}",

@@ -1,5 +1,5 @@
 /* Listas del portal: una fila por registro, cómoda en el celular */
-.page { max-width: 960px; }
+.page { max-width: 1180px; }
 .lista { list-style: none; margin: 0; padding: 0; }
 .item {
   display: flex;

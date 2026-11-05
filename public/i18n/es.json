@@ -1438,6 +1438,7 @@
     "loadError": "No se pudo cargar tu información.",
     "loadDataError": "No se pudieron cargar tus datos.",
     "nav": {
+      "sections": {"mine": "Mi trabajo"},
       "label": "Secciones del portal",
       "home": "Inicio",
       "wages": "Jornales",
@@ -1446,6 +1447,13 @@
       "account": "Mi cuenta"
     },
     "home": {
+      "wagesCount": "{{count}} jornales",
+      "allPaid": "Estás al día: no tienes nóminas por cobrar.",
+      "unsettled": "Por liquidar",
+      "settled": "Liquidado",
+      "wage": "Jornal",
+      "noWages": "Todavía no tienes jornales registrados.",
+      "recentWages": "Últimos jornales",
       "eyebrow": "Portal del trabajador",
       "hello": "Hola, {{name}}",
       "employer": "Trabajas con {{name}}",
