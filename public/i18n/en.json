@@ -765,8 +765,10 @@
       }
     },
     "activities": {
+      "commonHint": "Shared AgroRuta task: every farmer can use it and only the administrator can change it.",
+      "common": "Shared",
       "title": "Activities",
-      "subtitle": "Management of activities performed in the field",
+      "subtitle": "The tasks you record in wages. Shared ones come with AgroRuta; yours are only visible to you.",
       "new": "New Activity",
       "formNew": "New activity",
       "formEdit": "Edit activity",

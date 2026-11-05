@@ -34,14 +34,18 @@
           <tbody>
             @for (a of actividades; track a.id) {
               <tr [class.apagada]="!a.activa">
-                <td class="prin fuerte-n">{{ a.nombre }}</td>
+                <td class="prin fuerte-n">{{ a.nombre }}@if (a.comun) { <span class="etq comun" [title]="'workers.activities.commonHint' | translate"><i class="ti ti-world" aria-hidden="true"></i> {{ 'workers.activities.common' | translate }}</span> }</td>
                 <td class="suave">{{ a.descripcion || '—' }}</td>
                 <td><span class="est" [class.si]="a.activa" [class.INACTIVO]="!a.activa">{{ (a.activa ? 'workers.activities.active' : 'workers.activities.inactive') | translate }}</span></td>
                 <td class="acc">
                   <span class="acc-in">
+                    @if (a.comun) {
+                      <span class="btn-ic bloqueada" [title]="'workers.activities.commonHint' | translate"><i class="ti ti-lock" aria-hidden="true"></i><span class="sr-only">{{ 'workers.activities.commonHint' | translate }}</span></span>
+                    } @else {
                     <button type="button" class="btn-ic verde-h" (click)="abrirEditar(a)" [title]="'common.edit' | translate" [attr.aria-label]="'common.edit' | translate"><i class="ti ti-pencil" aria-hidden="true"></i></button>
                     @if (a.activa) {
                       <button type="button" class="btn-ic peligro" (click)="desactivar(a)" [title]="'common.deactivate' | translate" [attr.aria-label]="'common.deactivate' | translate"><i class="ti ti-ban" aria-hidden="true"></i></button>
+                    }
                     }
                   </span>
                 </td>

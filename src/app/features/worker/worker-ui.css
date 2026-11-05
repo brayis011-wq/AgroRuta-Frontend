@@ -58,3 +58,5 @@ a.btn-ic { text-decoration: none; }
 .seg { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .seg button { white-space: nowrap; }
 @media (max-width: 720px) { .herramientas { width: 100%; } .buscar-t { flex: 1 1 100%; } .buscar-t input { width: 100%; } }
+.etq.comun { margin-left: .45rem; gap: .25rem; background: var(--ar-azul-bg); color: var(--ar-azul); border-color: transparent; font-size: .7rem; vertical-align: middle; }
+.btn-ic.bloqueada { cursor: help; opacity: .55; }

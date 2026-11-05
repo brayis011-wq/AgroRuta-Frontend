@@ -5,6 +5,8 @@ export interface Actividad {
   nombre: string;
   descripcion?: string;
   activa: boolean;
+  /** Labor común del sistema: la ven todos y solo la cambia el administrador */
+  comun?: boolean;
 }
 
 export interface Pago {

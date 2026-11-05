@@ -765,8 +765,10 @@
       }
     },
     "activities": {
+      "commonHint": "Labor común de AgroRuta: la pueden usar todos los agricultores y solo el administrador la modifica.",
+      "common": "Común",
       "title": "Actividades",
-      "subtitle": "Gestión de actividades realizadas en campo",
+      "subtitle": "Las labores que registras en los jornales. Las comunes vienen con AgroRuta; las tuyas solo las ves tú.",
       "new": "Nueva Actividad",
       "formNew": "Nueva actividad",
       "formEdit": "Editar actividad",
