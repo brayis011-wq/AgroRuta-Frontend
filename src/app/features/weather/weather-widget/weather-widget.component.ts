@@ -33,6 +33,10 @@ export class WeatherWidgetComponent implements OnInit {
     return this.locationName() ?? this.weather()?.city ?? '';
   });
 
+  /** "Finca Silvania, CO" sin espacios sobrantes ni coma suelta cuando falta el país */
+  lugar = computed(() =>
+    [this.displayCity().trim(), (this.weather()?.country ?? '').trim()].filter(Boolean).join(', '));
+
   /**
    * Clave de traducción de la condición del clima, según el código del ícono
    * (ej. ".../10d@2x.png" -> "weather.conditions.c10").

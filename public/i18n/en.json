@@ -222,7 +222,8 @@
     }
   },
   "dashboard": {
-    "agenda": {"title": "Coming up", "late": "Overdue", "today": "Today", "tomorrow": "Tomorrow", "inDays": "In {{days}} days"},
+    "agenda": {
+  "emptyHint": "Schedule pruning, watering or spraying from the calendar and it will show up here.","title": "Coming up", "late": "Overdue", "today": "Today", "tomorrow": "Tomorrow", "inDays": "In {{days}} days"},
     "crops": {"title": "Crops in progress", "all": "See crops", "crop": "Crop", "days": "days", "none": "You don't have anything planted right now."},
     "title": "Home",
     "greeting": {
@@ -241,6 +242,10 @@
       "farm": "New farm"
     },
     "kpi": {
+      "noneYet": "Nothing recorded this month yet",
+      "allPlanted": "All your lots are planted",
+      "noLots": "You don't have lots yet",
+      "noWorkers": "Add your team in Workers",
       "wages": "Work days this month",
       "paid": "Paid this month",
       "workers": "Active workers",

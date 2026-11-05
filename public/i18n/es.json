@@ -222,7 +222,8 @@
     }
   },
   "dashboard": {
-    "agenda": {"title": "Lo que viene", "late": "Atrasado", "today": "Hoy", "tomorrow": "Mañana", "inDays": "En {{days}} días"},
+    "agenda": {
+  "emptyHint": "Programa podas, riegos o fumigaciones desde el calendario y aparecerán aquí.","title": "Lo que viene", "late": "Atrasado", "today": "Hoy", "tomorrow": "Mañana", "inDays": "En {{days}} días"},
     "crops": {"title": "Cultivos en curso", "all": "Ver cultivos", "crop": "Cultivo", "days": "días", "none": "No tienes cultivos sembrados ahora mismo."},
     "title": "Inicio",
     "greeting": {
@@ -241,6 +242,10 @@
       "farm": "Nueva finca"
     },
     "kpi": {
+      "noneYet": "Aún no hay registros este mes",
+      "allPlanted": "Todos tus lotes están sembrados",
+      "noLots": "Aún no tienes lotes",
+      "noWorkers": "Agrega tu equipo en Trabajadores",
       "wages": "Jornales este mes",
       "paid": "Pagado este mes",
       "workers": "Trabajadores activos",

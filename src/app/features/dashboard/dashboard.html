@@ -48,7 +48,7 @@
         <div>
           <small>{{ 'dashboard.kpi.workers' | translate }}</small>
           <strong>{{ numero(r.trabajadoresActivos) }}</strong>
-          <em class="neutro">{{ (r.sinJornalHoy === 0 ? 'dashboard.kpi.allHaveWage' : 'dashboard.kpi.withoutWageToday') | translate: { count: r.sinJornalHoy } }}</em>
+          <em class="neutro">{{ (r.trabajadoresActivos === 0 ? 'dashboard.kpi.noWorkers' : r.sinJornalHoy === 0 ? 'dashboard.kpi.allHaveWage' : 'dashboard.kpi.withoutWageToday') | translate: { count: r.sinJornalHoy } }}</em>
         </div>
       </article>
       <article class="kpi">
@@ -56,7 +56,7 @@
         <div>
           <small>{{ 'dashboard.kpi.lots' | translate }}</small>
           <strong>{{ numero(r.lotesEnCultivo) }}<span class="de"> / {{ numero(r.lotesTotal) }}</span></strong>
-          <em class="neutro">{{ (r.lotesDisponibles === 1 ? 'dashboard.kpi.freeLotsOne' : 'dashboard.kpi.freeLots') | translate: { count: r.lotesDisponibles } }}</em>
+          <em class="neutro">{{ (r.lotesTotal === 0 ? 'dashboard.kpi.noLots' : r.lotesDisponibles === 0 ? 'dashboard.kpi.allPlanted' : r.lotesDisponibles === 1 ? 'dashboard.kpi.freeLotsOne' : 'dashboard.kpi.freeLots') | translate: { count: r.lotesDisponibles } }}</em>
         </div>
       </article>
     } @else {
@@ -112,6 +112,12 @@
         </header>
         @if (agenda() === null) {
           @for (i of [1, 2]; track i) { <div class="fila esqueleto"></div> }
+        } @else if (agenda()!.length === 0) {
+          <div class="al-dia">
+            <span class="check gris"><i class="ti ti-calendar-check" aria-hidden="true"></i></span>
+            <strong>{{ 'temporadas.cal.nothingSoon' | translate }}</strong>
+            <small>{{ 'dashboard.agenda.emptyHint' | translate }}</small>
+          </div>
         } @else {
           <ul class="agenda">
             @for (e of agenda(); track $index) {
@@ -123,8 +129,6 @@
                 </span>
                 <span class="cuando">{{ cuando(e) }}</span>
               </li>
-            } @empty {
-              <li class="nada"><i class="ti ti-calendar-check" aria-hidden="true"></i> {{ 'temporadas.cal.nothingSoon' | translate }}</li>
             }
           </ul>
         }
@@ -173,7 +177,7 @@
 
 <ng-template #tend let-t="t">
   @if (t.porcentaje === null) {
-    <em class="neutro">{{ 'dashboard.kpi.noPrevious' | translate }}</em>
+    <em class="neutro">{{ (t.actual === 0 ? 'dashboard.kpi.noneYet' : 'dashboard.kpi.noPrevious') | translate }}</em>
   } @else {
     <em [class.sube]="t.porcentaje > 0" [class.baja]="t.porcentaje < 0" [class.neutro]="t.porcentaje === 0">
       <i class="ti" [class.ti-trending-up]="t.porcentaje > 0" [class.ti-trending-down]="t.porcentaje < 0"

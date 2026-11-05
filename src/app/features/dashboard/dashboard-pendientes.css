@@ -31,7 +31,7 @@
 .al-dia { display: flex; flex-direction: column; align-items: center; text-align: center; gap: .3rem; padding: 1.5rem 1rem 1.75rem; }
 .check { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: var(--ar-verde-100); color: var(--ar-verde-600); font-size: 30px; animation: pop .45s cubic-bezier(.2, .9, .3, 1.4); }
 .al-dia strong { color: var(--ar-tinta); }
-.al-dia small { color: var(--ar-tinta-3); }
+.al-dia small { color: var(--ar-tinta-3); max-width: 42ch; }
 
 
 .agenda { list-style: none; margin: 0; padding: .2rem .6rem .7rem; display: flex; flex-direction: column; }
@@ -41,8 +41,6 @@
 .agenda .fila-txt small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cuando { font-size: .76rem; font-weight: 600; color: var(--ar-tinta-2); background: var(--ar-fondo); border-radius: 99px; padding: .15rem .55rem; white-space: nowrap; }
 .atrasado .cuando { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
-.agenda .nada { color: var(--ar-tinta-3); font-size: .86rem; gap: .5rem; padding: .9rem .6rem; }
-.agenda .nada .ti { font-size: 20px; color: var(--ar-verde-600); }
 
 @keyframes entrar { from { opacity: 0; transform: translateY(6px); } }
 @keyframes pop { from { transform: scale(.4); opacity: 0; } }
