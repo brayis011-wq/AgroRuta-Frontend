@@ -23,7 +23,7 @@ describe('DashboardComponent', () => {
         { provide: PagoService, useValue: svc['pagos'] },
         { provide: TrabajadorService, useValue: svc['trabajadores'] },
         { provide: JornalService, useValue: svc['jornales'] },
-        { provide: FincaActivaService, useValue: { paraClima: signal(null) } },
+        { provide: FincaActivaService, useValue: { paraClima: signal(null), idActiva: signal(null) } },
       ],
     });
     const c = TestBed.createComponent(DashboardComponent).componentInstance;
@@ -33,7 +33,15 @@ describe('DashboardComponent', () => {
 
   beforeEach(() => {
     svc = {
-      cultivo: { listarFincasPorAgricultor: vi.fn(() => of([{ id: 1 }])), listarLotesPorFinca: vi.fn(() => of([{ estado: 'DISPONIBLE' }])) },
+      cultivo: {
+        listarFincasPorAgricultor: vi.fn(() => of([{ id: 1, nombre: 'La Esperanza' }])),
+        listarLotesPorFinca: vi.fn(() => of([{ id: 2, nombre: 'Lote 2', estado: 'DISPONIBLE' }, { id: 3, nombre: 'Lote 3', estado: 'EN_CULTIVO' }])),
+        buscarSiembraPorLote: vi.fn(() => of({ id: 9, fechaSiembra: '2026-01-01', estadoCultivo: 'CRECIMIENTO', variedad: 'Criolla', loteId: 3 })),
+        calendarioFinca: vi.fn(() => of([
+          { fecha: '2026-01-10', tipo: 'COSECHA', estado: 'HECHO', siembraId: 9 },
+          { fecha: '2026-01-12', tipo: 'FUMIGACION_SUGERIDA', estado: 'ATRASADO', siembraId: 9 },
+        ])),
+      },
       nominas: { listarTodas: vi.fn(() => of([{ estado: 'PENDIENTE', valorTotal: 10 }])) },
       pagos: { listarTodos: vi.fn(() => of([])) },
       trabajadores: { listarTodos: vi.fn(() => of([{ id: 5, estado: 'ACTIVO' }, { id: 6, estado: 'INACTIVO' }])) },
@@ -62,5 +70,24 @@ describe('DashboardComponent', () => {
 
   it('uses the first name in the greeting', () => {
     expect(crear().nombreCorto()).toBe('Ana');
+  });
+  it('lists the crops in progress with their farm and stage', () => {
+    const c = crear();
+    expect(svc['cultivo'].buscarSiembraPorLote).toHaveBeenCalledTimes(1);
+    const [cul] = c.cultivos()!;
+    expect(cul.lote.fincaNombre).toBe('La Esperanza');
+    expect(cul.paso).toBe(2);
+  });
+
+  it('shows only what is still to come in the calendar', () => {
+    const c = crear();
+    expect(c.agenda()!.map((e) => e.tipo)).toEqual(['FUMIGACION_SUGERIDA']);
+  });
+
+  it('keeps working when the calendar fails', () => {
+    svc['cultivo'].calendarioFinca = vi.fn(() => throwError(() => new Error('x')));
+    const c = crear();
+    expect(c.agenda()).toEqual([]);
+    expect(c.cultivos()!.length).toBe(1);
   });
 });

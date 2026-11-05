@@ -1,6 +1,6 @@
 /* Inicio: saludo, acciones rápidas y números del mes */
 :host { display: block; }
-.inicio { padding: 1.75rem 2rem 2.5rem; min-width: 0; overflow-x: clip; display: flex; flex-direction: column; gap: 1.25rem; max-width: 1280px; }
+.inicio { padding: 1.75rem 2rem 2.5rem; min-width: 0; overflow-x: clip; display: flex; flex-direction: column; gap: 1.25rem; max-width: 1680px; }
 
 .hero {
   position: relative; overflow: hidden; border-radius: 20px; padding: 1.6rem 1.75rem;
@@ -29,7 +29,7 @@
 
 .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 .kpi {
-  display: flex; gap: .85rem; align-items: flex-start; padding: 1.1rem; border-radius: 14px; min-height: 104px;
+  display: flex; gap: .85rem; align-items: flex-start; padding: 1.1rem; border-radius: 14px;
   background: #fff; border: 1px solid var(--ar-borde); box-shadow: var(--ar-sombra-1); animation: subir .4s ease-out both;
 }
 .kpi:nth-child(2) { animation-delay: 50ms; } .kpi:nth-child(3) { animation-delay: 100ms; } .kpi:nth-child(4) { animation-delay: 150ms; }

@@ -222,6 +222,9 @@
     }
   },
   "dashboard": {
+    "agenda": {"title": "Coming up", "late": "Overdue", "today": "Today", "tomorrow": "Tomorrow", "inDays": "In {{days}} days"},
+    "chart": {"title": "Work days, last 30 days", "total": "{{count}} work days · {{amount}}", "aria": "Chart of work days per day: {{count}} in the last 30 days", "tip": "{{count}} work days · {{amount}}"},
+    "crops": {"title": "Crops in progress", "all": "See crops", "crop": "Crop", "days": "days", "none": "You don't have anything planted right now."},
     "title": "Home",
     "greeting": {
       "morning": "Good morning, {{name}}",

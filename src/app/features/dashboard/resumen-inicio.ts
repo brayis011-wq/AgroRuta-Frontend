@@ -92,3 +92,44 @@ export function calcularResumen(d: DatosInicio, hoy = new Date()): ResumenInicio
     pendientes: pend.length + aprob.length + solicitudes,
   };
 }
+
+/** Un día de la gráfica de jornales */
+export interface DiaJornales {
+  fecha: Date;
+  n: number;
+  valor: number;
+  hoy: boolean;
+}
+
+/** Jornales de los últimos `dias` días (incluido hoy), día por día, para la gráfica del Inicio */
+export function serieJornales(jornales: Jornal[], hoy = new Date(), dias = 14): DiaJornales[] {
+  const serie: DiaJornales[] = [];
+  for (let i = dias - 1; i >= 0; i--) {
+    const f = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() - i);
+    serie.push({ fecha: f, n: 0, valor: 0, hoy: i === 0 });
+  }
+  for (const j of jornales) {
+    const f = fechaLocal(j.fecha);
+    if (!f) continue;
+    const dia = serie.find((d) => mismoDia(f, d.fecha));
+    if (dia) { dia.n++; dia.valor += j.valorJornal ?? j.pago ?? 0; }
+  }
+  return serie;
+}
+
+/** Etapas que cuentan para el avance de una siembra (sin "finalizado") */
+export const ETAPAS_AVANCE = ['GERMINACION', 'CRECIMIENTO', 'PRODUCCION', 'COSECHA'] as const;
+
+/** Cuántas etapas lleva la siembra (1 a 4) */
+export function pasoEtapa(etapa: string | null | undefined): number {
+  const i = ETAPAS_AVANCE.indexOf(etapa as (typeof ETAPAS_AVANCE)[number]);
+  return i < 0 ? 0 : i + 1;
+}
+
+/** Días desde la siembra hasta hoy */
+export function diasDesde(fecha: string | null | undefined, hoy = new Date()): number {
+  const f = fechaLocal(fecha);
+  if (!f) return 0;
+  const h = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+  return Math.max(0, Math.round((h.getTime() - f.getTime()) / 86_400_000));
+}

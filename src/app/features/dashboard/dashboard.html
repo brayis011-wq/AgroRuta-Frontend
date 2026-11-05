@@ -64,42 +64,135 @@
     }
   </section>
 
-  <div class="columnas">
-    <!-- Pendientes -->
-    <section class="tarjeta pendientes">
-      <header><h2>{{ 'dashboard.pending.title' | translate }}</h2></header>
-      @if (cargando()) {
-        @for (i of [1, 2, 3]; track i) { <div class="fila esqueleto"></div> }
-      } @else {
-        @for (p of pendientes(); track p.clave; let i = $index) {
-          <a class="fila" [routerLink]="p.ruta" [style.animation-delay.ms]="i * 60">
-            <span class="fila-ic" [class]="'fila-ic ' + p.tono"><i class="ti {{ p.icono }}" aria-hidden="true"></i></span>
-            <span class="fila-txt">
-              <strong>{{ 'dashboard.pending.' + p.clave + (p.n === 1 ? 'One' : '') | translate: { count: p.n } }}</strong>
-              @if (p.monto) { <small>{{ pesos(p.monto) }}</small> }
-            </span>
-            <span class="fila-accion">{{ 'dashboard.pending.actions.' + p.accion | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
-          </a>
-        } @empty {
-          <div class="al-dia">
-            <span class="check"><i class="ti ti-circle-check" aria-hidden="true"></i></span>
-            <strong>{{ 'dashboard.pending.none' | translate }}</strong>
-            <small>{{ 'dashboard.pending.noneDesc' | translate }}</small>
+  <div class="cuerpo">
+    <div class="col-principal">
+      <!-- Cultivos en curso -->
+      <section class="tarjeta sec-cultivos">
+        <header>
+          <h2><i class="ti ti-plant-2" aria-hidden="true"></i> {{ 'dashboard.crops.title' | translate }}</h2>
+          <a class="ver" routerLink="/cultivo">{{ 'dashboard.crops.all' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </header>
+        @if (cultivos() === null) {
+          @for (i of [1, 2, 3]; track i) { <div class="fila esqueleto"></div> }
+        } @else {
+          <div class="cultivos">
+            @for (c of cultivos(); track c.siembra.id; let i = $index) {
+              <a class="cultivo" [routerLink]="['/cultivo/siembra', c.siembra.id]" [style.animation-delay.ms]="i * 50">
+                <span class="cul-ic"><i class="ti ti-seedling" aria-hidden="true"></i></span>
+                <span class="cul-txt">
+                  <strong>{{ c.siembra.tipoCultivo || ('dashboard.crops.crop' | translate) }}@if (c.siembra.variedad) { · {{ c.siembra.variedad }} }</strong>
+                  <small>{{ c.lote.nombre }} · {{ c.lote.fincaNombre }}</small>
+                </span>
+                <span class="cul-etapa">
+                  <span class="pasos" [attr.aria-label]="'enums.etapaCultivo.' + c.siembra.estadoCultivo | translate">
+                    @for (e of etapas; track e; let k = $index) { <span [class.on]="k < c.paso"></span> }
+                  </span>
+                  <small>{{ 'enums.etapaCultivo.' + c.siembra.estadoCultivo | translate }}</small>
+                </span>
+                <span class="cul-dias"><strong>{{ numero(c.dias) }}</strong><small>{{ 'dashboard.crops.days' | translate }}</small></span>
+                <i class="ti ti-chevron-right cul-fin" aria-hidden="true"></i>
+              </a>
+            } @empty {
+              <div class="al-dia">
+                <span class="check gris"><i class="ti ti-plant-off" aria-hidden="true"></i></span>
+                <strong>{{ 'dashboard.crops.none' | translate }}</strong>
+                <a class="accion principal chica" routerLink="/cultivo"><i class="ti ti-seeding" aria-hidden="true"></i>{{ 'dashboard.actions.plant' | translate }}</a>
+              </div>
+            }
           </div>
         }
-      }
-    </section>
+      </section>
 
-    <!-- Clima de la finca elegida -->
-    <section class="tarjeta clima">
-      @if (climaFinca(); as f) {
-        <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
-                            [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" />
+
+      <!-- Lo que viene en el calendario -->
+      <section class="tarjeta sec-agenda">
+        <header>
+          <h2><i class="ti ti-calendar-event" aria-hidden="true"></i> {{ 'dashboard.agenda.title' | translate }}</h2>
+          <a class="ver" routerLink="/cultivo/calendario">{{ 'temporadas.cal.open' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </header>
+        @if (agenda() === null) {
+          @for (i of [1, 2]; track i) { <div class="fila esqueleto"></div> }
+        } @else {
+          <ul class="agenda">
+            @for (e of agenda(); track $index) {
+              <li [class.atrasado]="e.estado === 'ATRASADO'">
+                <span class="fila-ic" [class]="'fila-ic ' + tonoEvento[e.tipo]"><i class="ti {{ iconoEvento[e.tipo] }}" aria-hidden="true"></i></span>
+                <span class="fila-txt">
+                  <strong>{{ textoEvento(e).titulo }}</strong>
+                  <small>{{ e.loteNombre ?? e.cultivo }}@if (textoEvento(e).sub) { · {{ textoEvento(e).sub }} }</small>
+                </span>
+                <span class="cuando">{{ cuando(e) }}</span>
+              </li>
+            } @empty {
+              <li class="nada"><i class="ti ti-calendar-check" aria-hidden="true"></i> {{ 'temporadas.cal.nothingSoon' | translate }}</li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+
+    <div class="col-lateral">
+      <!-- Clima de la finca elegida -->
+      <section class="clima">
+        @if (climaFinca(); as f) {
+          <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
+                              [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" />
+        } @else {
+          <app-weather-widget city="Bogotá" />
+        }
+      </section>
+
+      <!-- Pendientes -->
+      <section class="tarjeta pendientes">
+        <header><h2><i class="ti ti-bell" aria-hidden="true"></i> {{ 'dashboard.pending.title' | translate }}</h2></header>
+        @if (cargando()) {
+          @for (i of [1, 2, 3]; track i) { <div class="fila esqueleto"></div> }
+        } @else {
+          @for (p of pendientes(); track p.clave; let i = $index) {
+            <a class="fila" [routerLink]="p.ruta" [style.animation-delay.ms]="i * 60">
+              <span class="fila-ic" [class]="'fila-ic ' + p.tono"><i class="ti {{ p.icono }}" aria-hidden="true"></i></span>
+              <span class="fila-txt">
+                <strong>{{ 'dashboard.pending.' + p.clave + (p.n === 1 ? 'One' : '') | translate: { count: p.n } }}</strong>
+                @if (p.monto) { <small>{{ pesos(p.monto) }}</small> }
+              </span>
+              <span class="fila-accion">{{ 'dashboard.pending.actions.' + p.accion | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
+            </a>
+          } @empty {
+            <div class="al-dia">
+              <span class="check"><i class="ti ti-circle-check" aria-hidden="true"></i></span>
+              <strong>{{ 'dashboard.pending.none' | translate }}</strong>
+              <small>{{ 'dashboard.pending.noneDesc' | translate }}</small>
+            </div>
+          }
+        }
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Jornales del último mes, día por día -->
+    <section class="tarjeta grafica-tarj">
+      <header>
+        <h2><i class="ti ti-chart-bar" aria-hidden="true"></i> {{ 'dashboard.chart.title' | translate }}</h2>
+        @if (serie()) {
+          <span class="meta">{{ 'dashboard.chart.total' | translate: { count: totalSerie().n, amount: pesos(totalSerie().valor) } }}</span>
+        }
+      </header>
+      @if (serie(); as s) {
+        <div class="grafica" role="img" [attr.aria-label]="'dashboard.chart.aria' | translate: { count: totalSerie().n }">
+          @for (d of s; track d.fecha.getTime()) {
+            <div class="barra-col" [class.hoy]="d.hoy" tabindex="0">
+              <span class="barra-val">{{ d.n || '' }}</span>
+              <span class="barra" [style.height.%]="(d.n / maxSerie()) * 100" [class.vacia]="d.n === 0"></span>
+              <span class="barra-dia" [class.lunes]="d.fecha.getDay() === 1">{{ d.fecha.getDate() }}</span>
+              <span class="tip" role="tooltip"><b>{{ fechaCorta(d.fecha) }}</b>{{ 'dashboard.chart.tip' | translate: { count: d.n, amount: pesos(d.valor) } }}</span>
+            </div>
+          }
+        </div>
       } @else {
-        <app-weather-widget city="Bogotá" />
+        <div class="esqueleto grafica-esq"></div>
       }
     </section>
-  </div>
 </div>
 
 <ng-template #tend let-t="t">

@@ -1,0 +1,60 @@
+/* Inicio: distribución en dos columnas, cultivos en curso y gráfica de jornales */
+.cuerpo { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(320px, 1fr); gap: 1rem; align-items: start; }
+.col-principal, .col-lateral { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.clima { min-width: 0; }
+
+.cultivos { display: flex; flex-direction: column; padding: .2rem .6rem .6rem; }
+.cultivo { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto auto; align-items: center; gap: .9rem; padding: .7rem; border-radius: 12px; text-decoration: none; color: inherit; transition: background .15s; animation: entrar .35s ease-out both; }
+.cultivo + .cultivo { border-top: 1px solid #eef2ee; }
+.cultivo:hover { background: var(--ar-verde-50); }
+.cultivo:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 1px; }
+.cul-ic { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; font-size: 20px; background: var(--ar-verde-100); color: var(--ar-verde-700); }
+.cul-txt { display: flex; flex-direction: column; min-width: 0; }
+.cul-txt strong { font-size: .92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cul-txt small { font-size: .8rem; color: var(--ar-tinta-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cul-etapa { display: flex; flex-direction: column; gap: .3rem; width: 130px; }
+.cul-etapa small { font-size: .76rem; font-weight: 600; color: var(--ar-verde-800); }
+.pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+.pasos span { height: 6px; border-radius: 99px; background: #e3ebe3; }
+.pasos span.on { background: linear-gradient(90deg, #43a047, var(--ar-verde-700)); }
+.cul-dias { display: flex; flex-direction: column; align-items: flex-end; min-width: 56px; }
+.cul-dias strong { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.cul-dias small { font-size: .72rem; color: var(--ar-tinta-3); }
+.cul-fin { color: var(--ar-tinta-3); font-size: 18px; }
+.check.gris { background: #f0f2f0; color: var(--ar-tinta-3); }
+.accion.chica { margin-top: .5rem; padding: .5rem .9rem; font-size: .85rem; }
+
+/* Gráfica de barras: una columna por día */
+.grafica { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 5px; align-items: end; height: 200px; padding: 1.4rem 1.2rem 1rem; }
+.barra-col { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; outline: none; }
+.barra { width: 100%; max-width: 30px; min-height: 3px; border-radius: 6px 6px 2px 2px; background: #9fd09f; transform-origin: bottom; animation: crecer .5s cubic-bezier(.2, .8, .2, 1) both; transition: background .15s; }
+.barra.vacia { background: #e8eee8; }
+.hoy .barra:not(.vacia) { background: var(--ar-verde-600); }
+.barra-val { font-size: .72rem; font-weight: 600; color: var(--ar-tinta-2); min-height: 1em; font-variant-numeric: tabular-nums; }
+.barra-dia { font-size: .7rem; color: var(--ar-tinta-3); font-variant-numeric: tabular-nums; }
+.barra-dia.lunes { color: var(--ar-tinta-2); font-weight: 600; }
+.hoy .barra-dia { color: var(--ar-verde-700); font-weight: 700; }
+.barra-col:hover .barra:not(.vacia), .barra-col:focus-visible .barra:not(.vacia) { background: var(--ar-verde-700); }
+.tip { position: absolute; bottom: calc(100% - .4rem); left: 50%; transform: translateX(-50%); z-index: 2; display: none; flex-direction: column; gap: 2px; padding: .45rem .6rem; border-radius: 9px; background: #1f2a20; color: #fff; font-size: .74rem; white-space: nowrap; box-shadow: var(--ar-sombra-2); pointer-events: none; }
+.tip b { font-weight: 600; text-transform: capitalize; }
+.barra-col:hover .tip, .barra-col:focus-visible .tip { display: flex; }
+.grafica-esq { height: 190px; margin: .5rem 1.2rem 1.2rem; border-radius: 12px; }
+
+@keyframes crecer { from { transform: scaleY(0); } }
+@media (max-width: 1100px) {
+  .cuerpo { display: flex; flex-direction: column; }
+  .col-principal, .col-lateral { display: contents; }
+  .cuerpo > section, .col-principal > section, .col-lateral > section { min-width: 0; width: 100%; box-sizing: border-box; }
+  .pendientes { order: 1; } .sec-cultivos { order: 2; } .clima { order: 3; } .sec-agenda { order: 4; }
+}
+@media (max-width: 760px) {
+  .cultivo { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "ic txt dias" "ic etapa etapa"; gap: .45rem .7rem; }
+  .cul-ic { grid-area: ic; align-self: start; } .cul-txt { grid-area: txt; } .cul-dias { grid-area: dias; }
+  .cul-etapa { grid-area: etapa; width: auto; flex-direction: row; align-items: center; gap: .6rem; }
+  .cul-etapa .pasos { flex: 1; }
+  .cul-fin { display: none; }
+  .grafica { gap: 2px; padding: 1.2rem .7rem .8rem; height: 160px; }
+  .barra-val { display: none; }
+  .barra-col:not(.hoy) .barra-dia:not(.lunes) { visibility: hidden; }
+}
+@media (prefers-reduced-motion: reduce) { .cultivo, .barra { animation: none; } }

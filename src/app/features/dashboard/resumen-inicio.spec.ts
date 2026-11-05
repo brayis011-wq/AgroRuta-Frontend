@@ -1,4 +1,4 @@
-import { calcularResumen, fechaLocal, inicioMesAnterior, saludoSegunHora } from './resumen-inicio';
+import { calcularResumen, diasDesde, fechaLocal, inicioMesAnterior, pasoEtapa, saludoSegunHora, serieJornales } from './resumen-inicio';
 
 const HOY = new Date(2026, 10, 4, 15, 0); // 4 nov 2026, 3 p. m.
 const base = { nominas: [], pagos: [], trabajadores: [], jornales: [], lotes: [] } as any;
@@ -57,5 +57,24 @@ describe('resumen del Inicio', () => {
       trabajadores: [{ id: 1, estado: 'ACTIVO', accesoEstado: 'PENDIENTE' }],
     }, HOY);
     expect([r.lotesDisponibles, r.lotesEnCultivo, r.lotesTotal, r.solicitudesPortal]).toEqual([1, 2, 4, 1]);
+  });
+
+  it('serieJornales counts work days and pay per day, ending today', () => {
+    const hoy = new Date(2026, 10, 4, 18);
+    const s = serieJornales([
+      { fecha: '2026-11-04', valorJornal: 60000 }, { fecha: '2026-11-04', valorJornal: 70000 },
+      { fecha: '2026-11-01', valorJornal: 60000 }, { fecha: '2026-09-01', valorJornal: 60000 },
+    ] as never, hoy, 7);
+    expect(s.length).toBe(7);
+    expect(s[6]).toMatchObject({ n: 2, valor: 130000, hoy: true });
+    expect(s[3].n).toBe(1);
+    expect(s.reduce((a, d) => a + d.n, 0)).toBe(3);
+  });
+
+  it('pasoEtapa and diasDesde', () => {
+    expect(pasoEtapa('GERMINACION')).toBe(1);
+    expect(pasoEtapa('COSECHA')).toBe(4);
+    expect(pasoEtapa('FINALIZADO')).toBe(0);
+    expect(diasDesde('2026-11-01', new Date(2026, 10, 4, 22))).toBe(3);
   });
 });
