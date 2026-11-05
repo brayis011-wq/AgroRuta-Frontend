@@ -7,8 +7,8 @@
 .side {
   position: fixed; inset: 0 auto 0 0; z-index: 100; width: var(--ancho);
   display: flex; flex-direction: column; gap: 2px; padding: 18px 14px 14px;
-  background: linear-gradient(180deg, #ffffff 0%, #f7fbf6 100%);
-  border-right: 1px solid #dde6de;
+  background: linear-gradient(180deg, var(--ar-superficie) 0%, var(--ar-superficie-2) 100%);
+  border-right: 1px solid var(--ar-borde);
   box-shadow: 4px 0 18px rgba(18, 40, 24, .06);
   transition: width .25s ease, padding .25s ease, transform .25s ease;
 }
@@ -26,10 +26,10 @@
 
 .ib {
   width: 30px; height: 30px; flex: none; border-radius: 8px; border: 1px solid var(--ar-borde);
-  background: #fff; color: var(--ar-tinta-3); display: grid; place-items: center; font-size: 17px; cursor: pointer;
+  background: var(--ar-superficie); color: var(--ar-tinta-3); display: grid; place-items: center; font-size: 17px; cursor: pointer;
   transition: color .15s, border-color .15s;
 }
-.ib:hover { color: var(--ar-verde-700); border-color: #bcd9be; }
+.ib:hover { color: var(--ar-verde-700); border-color: var(--ar-borde-fuerte); }
 .colapsar { margin-left: auto; }
 .cerrar-cajon { display: none; margin-left: auto; }
 
@@ -46,7 +46,7 @@
   transition: background .15s, color .15s, box-shadow .15s;
 }
 .item > i:first-child { font-size: 19px; transition: transform .2s, color .15s; }
-.item:hover { background: #fff; color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); }
+.item:hover { background: var(--ar-superficie); color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); }
 .item:hover > i:first-child { transform: scale(1.12); color: var(--ar-verde-600); }
 .item.on {
   background: linear-gradient(90deg, var(--ar-verde-600), #3d9142); color: #fff; font-weight: 600;
@@ -62,7 +62,7 @@
 .tip { display: none; }
 
 .sub {
-  margin: 2px 0 6px 21px; padding-left: 12px; border-left: 2px solid #d5e7d6;
+  margin: 2px 0 6px 21px; padding-left: 12px; border-left: 2px solid var(--ar-borde-fuerte);
   display: flex; flex-direction: column; gap: 1px; animation: abrir .18s ease-out;
 }
 .sub a {
@@ -70,7 +70,7 @@
   font-size: 13.5px; color: var(--ar-tinta-2); padding: 6px 10px; border-radius: 8px; text-decoration: none;
   transition: background .15s, color .15s;
 }
-.sub a:hover { background: #fff; color: var(--ar-tinta); }
+.sub a:hover { background: var(--ar-superficie); color: var(--ar-tinta); }
 .sub a.on {
   background: linear-gradient(90deg, var(--ar-verde-600), #3d9142); color: #fff; font-weight: 600;
   box-shadow: 0 3px 8px rgba(46, 125, 50, .28);

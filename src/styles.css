@@ -20,6 +20,17 @@
   --ar-rojo-bg:     #fdecec;
   --ar-azul:        #1f5fa8;
   --ar-azul-bg:     #e8f0fb;
+  /* Tonos de apoyo (también cambian con el modo oscuro) */
+  --ar-superficie-2: #fafbf9;
+  --ar-linea:       #eef2ee;
+  --ar-seg:         #eef3ee;
+  --ar-gris-bg:     #f0f2f0;
+  --ar-pista:       #e3ebe3;
+  --ar-borde-fuerte: #bcd9be;
+  --ar-ambar-borde: #f1dcae;
+  --ar-rojo-borde:  #f1c4c0;
+  /* Recuadros semitransparentes sobre fondos de color */
+  --ar-vidrio:      rgba(255, 255, 255, .75);
   --ar-radio:       14px;
   --ar-sombra-1:    0 1px 2px rgba(18, 40, 24, .06), 0 1px 3px rgba(18, 40, 24, .08);
   --ar-sombra-2:    0 4px 14px rgba(18, 40, 24, .08), 0 1px 3px rgba(18, 40, 24, .06);
@@ -35,7 +46,49 @@
   --rojo:         var(--ar-rojo);
   --rojo-bg:      #ffebee;
   --sombra:       var(--ar-sombra-2);
+  color-scheme: light;
 }
+
+/* Modo oscuro: mismos nombres, otros valores. Lo activa TemaService con data-tema en <html> */
+:root[data-tema="oscuro"] {
+  color-scheme: dark;
+  --ar-verde-900:   #dff3e0;
+  --ar-verde-800:   #a8dcab;
+  --ar-verde-700:   #8ad08f;
+  --ar-verde-600:   #3f9a45;
+  --ar-verde-100:   #1e3524;
+  --ar-verde-50:    #18261c;
+  --ar-tinta:       #e4ebe6;
+  --ar-tinta-2:     #b2bfb7;
+  --ar-tinta-3:     #869489;
+  --ar-borde:       #2a3630;
+  --ar-fondo:       #0e1411;
+  --ar-superficie:  #161e19;
+  --ar-superficie-2: #1a231d;
+  --ar-linea:       #222c26;
+  --ar-seg:         #212b25;
+  --ar-gris-bg:     #232d27;
+  --ar-pista:       #2b3730;
+  --ar-borde-fuerte: #3d6343;
+  --ar-ambar:       #f2b55a;
+  --ar-ambar-bg:    #33270f;
+  --ar-ambar-borde: #5a4418;
+  --ar-rojo:        #ff8f85;
+  --ar-rojo-bg:     #3a1b1b;
+  --ar-rojo-borde:  #6a2c2a;
+  --ar-vidrio:      rgba(255, 255, 255, .05);
+  --ar-azul:        #8db8f5;
+  --ar-azul-bg:     #182a42;
+  --ar-sombra-1:    0 1px 2px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .3);
+  --ar-sombra-2:    0 4px 16px rgba(0, 0, 0, .45), 0 1px 3px rgba(0, 0, 0, .35);
+  --verde-claro:  #2f5a34;
+  --verde-suave:  #24402a;
+  --gris:         #8a988f;
+  --gris-borde:   #2a3630;
+  --rojo-bg:      #3a1b1b;
+}
+/* Imágenes de mapa y fotos sin cambiar; solo se oscurece la interfaz */
+:root[data-tema="oscuro"] .leaflet-container { background: #0e1411; }
 
 html, body { margin: 0; }
 body {
@@ -48,6 +101,10 @@ body {
 /* Los controles de formulario no heredan la fuente por defecto (salían en Arial) */
 button, input, select, textarea, optgroup { font-family: inherit; }
 input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1; }
+/* En modo oscuro, los campos que no tienen estilo propio toman la superficie del tema (sin ganar a los estilos de cada pantalla) */
+:where(:root[data-tema="oscuro"]) :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) {
+  background-color: var(--ar-superficie-2); color: var(--ar-tinta); border-color: var(--ar-borde);
+}
 :focus-visible { outline-color: var(--ar-verde-600); }
 
 /* Transición entre páginas: solo se anima el contenido, el menú lateral queda fijo */

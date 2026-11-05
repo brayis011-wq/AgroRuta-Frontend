@@ -3,7 +3,7 @@
 .av.gris { background: var(--ar-fondo); color: var(--ar-tinta-3); }
 .persona small { display: block; font-weight: 400; font-size: .76rem; color: var(--ar-tinta-3); }
 .kpi.clic { cursor: pointer; font: inherit; text-align: left; color: inherit; transition: border-color .15s, box-shadow .15s; }
-.kpi.clic:hover { border-color: #bcd9be; box-shadow: var(--ar-sombra-2); }
+.kpi.clic:hover { border-color: var(--ar-borde-fuerte); box-shadow: var(--ar-sombra-2); }
 .kpi strong.verde-t { color: var(--ar-verde-700); }
 
 /* Estados */
@@ -36,7 +36,7 @@
 @media (max-width: 720px) {
   .tabla.resp thead { display: none; }
   .tabla.resp, .tabla.resp tbody, .tabla.resp tfoot { display: block; }
-  .tabla.resp tr { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .6rem; padding: .8rem 1rem; border-bottom: 1px solid #eef2ee; }
+  .tabla.resp tr { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .6rem; padding: .8rem 1rem; border-bottom: 1px solid var(--ar-linea); }
   .tabla.resp td { display: block; padding: 0; border: 0; }
   .tabla.resp td.prin { flex: 1 1 100%; }
   .tabla.resp td.acc { margin-left: auto; width: auto; }

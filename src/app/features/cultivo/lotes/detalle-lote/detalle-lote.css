@@ -4,7 +4,7 @@
 .chip-DISPONIBLE { background: var(--ar-azul-bg); color: var(--ar-azul); }
 .chip-EN_DESCANSO { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
 
-.tarjeta { background: #fff; border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1rem 1.2rem; }
+.tarjeta { background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1rem 1.2rem; }
 .editar { flex: 1; display: grid; grid-template-columns: 2fr 1fr auto; gap: .75rem; align-items: end; }
 .editar label { display: flex; flex-direction: column; gap: .3rem; font-size: .8rem; font-weight: 600; color: var(--ar-tinta-2); }
 .editar input { font: inherit; font-size: .95rem; padding: .55rem .7rem; border: 1px solid var(--ar-borde); border-radius: 10px; color: var(--ar-tinta); }
@@ -13,7 +13,7 @@
 
 .aviso { margin: 0; display: flex; align-items: center; gap: .5rem; padding: .7rem .9rem; border-radius: 11px; font-size: .88rem; }
 .aviso.error { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
-.esq { min-height: 120px; border-radius: 16px; background: linear-gradient(90deg, #eef2ee 25%, #f7f9f7 50%, #eef2ee 75%); background-size: 200% 100%; animation: brillo 1.2s infinite linear; }
+.esq { min-height: 120px; border-radius: 16px; background: linear-gradient(90deg, var(--ar-linea) 25%, var(--ar-superficie-2) 50%, var(--ar-linea) 75%); background-size: 200% 100%; animation: brillo 1.2s infinite linear; }
 @keyframes brillo { to { background-position: -200% 0; } }
 .seccion-titulo { margin: .35rem 0 .1rem; font-size: 1.02rem; }
 
@@ -21,7 +21,7 @@
 .sin-mapa { color: var(--ar-ambar); }
 .btn-ndvi {
   font: inherit; font-size: .82rem; font-weight: 600; display: inline-flex; align-items: center; gap: .35rem;
-  background: #fff; color: var(--ar-tinta); border: 1px solid var(--ar-borde); border-radius: 10px;
+  background: var(--ar-superficie); color: var(--ar-tinta); border: 1px solid var(--ar-borde); border-radius: 10px;
   padding: .45rem .8rem; cursor: pointer; box-shadow: var(--ar-sombra-2);
 }
 .btn-ndvi.activo { background: var(--ar-verde-600); color: #fff; border-color: var(--ar-verde-600); }

@@ -5,6 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService, Lang } from '../../../../core/services/language.service';
 import { FincaActivaService } from '../../../../core/services/finca-activa.service';
 import { AuthService } from '../../../../core/services/auth';
+import { TemaService } from '../../../../core/services/tema.service';
 import { ProfileFormComponent } from '../../profile-form/profile-form.component';
 import { ChangePasswordFormComponent } from '../../change-password-form/change-password-form.component';
 import { ProfileService } from '../../../../core/services/profile.service';
@@ -30,6 +31,7 @@ export class ConfigurationPageComponent implements OnInit {
   private auth = inject(AuthService);
   readonly idioma = inject(LanguageService);
   readonly fincaActiva = inject(FincaActivaService);
+  readonly temaSvc = inject(TemaService);
 
   @ViewChild(ChangePasswordFormComponent) private formClave?: ChangePasswordFormComponent;
 

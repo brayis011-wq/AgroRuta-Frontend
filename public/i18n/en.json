@@ -1,4 +1,5 @@
 {
+  "theme": {"title": "Appearance", "hint": "Light, dark or automatic based on your phone or computer", "light": "Light", "dark": "Dark", "system": "Automatic", "toDark": "Switch to dark mode", "toLight": "Switch to light mode"},
   "common": {
     "language": "Language",
     "spanish": "Spanish",

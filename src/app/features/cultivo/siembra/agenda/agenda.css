@@ -1,5 +1,5 @@
 :host { display: block; }
-.tarjeta { height: 100%; box-sizing: border-box; background: #fff; border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1rem 1.2rem 1.1rem; display: flex; flex-direction: column; gap: .6rem; }
+.tarjeta { height: 100%; box-sizing: border-box; background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1rem 1.2rem 1.1rem; display: flex; flex-direction: column; gap: .6rem; }
 header { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
 h2 { margin: 0; font-size: 1rem; display: flex; align-items: center; gap: .5rem; }
 .ver { font-size: .8rem; font-weight: 600; color: var(--ar-verde-700); text-decoration: none; display: inline-flex; align-items: center; gap: .2rem; }
@@ -13,7 +13,7 @@ ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: col
 .ambar { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
 .gris { background: var(--ar-fondo); color: var(--ar-tinta-2); }
 .rojo { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
-.ESTIMADO .ic { background: #fff; border: 1.5px dashed currentColor; }
+.ESTIMADO .ic { background: var(--ar-superficie); border: 1.5px dashed currentColor; }
 .txt { display: flex; flex-direction: column; min-width: 0; }
 .txt strong { font-size: .88rem; }
 .txt small { font-size: .78rem; color: var(--ar-tinta-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -24,7 +24,7 @@ ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: col
 .programar { margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; gap: .35rem; font-size: .84rem; font-weight: 600; color: var(--ar-tinta); text-decoration: none; border: 1px solid var(--ar-borde); border-radius: 10px; padding: .45rem .8rem; }
 .programar:hover { border-color: var(--ar-verde-600); color: var(--ar-verde-700); }
 .programar:focus-visible, .ver:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
-.esq { min-height: 140px; border-radius: 12px; background: linear-gradient(90deg, #eef2ee 25%, #f7f9f7 50%, #eef2ee 75%); background-size: 200% 100%; animation: brillo 1.2s infinite linear; }
+.esq { min-height: 140px; border-radius: 12px; background: linear-gradient(90deg, var(--ar-linea) 25%, var(--ar-superficie-2) 50%, var(--ar-linea) 75%); background-size: 200% 100%; animation: brillo 1.2s infinite linear; }
 @keyframes brillo { to { background-position: -200% 0; } }
 @media (min-width: 1100px) {
   ul { display: grid; grid-template-columns: 1fr 1fr; column-gap: 2rem; }

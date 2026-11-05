@@ -1,5 +1,5 @@
 :host { display: block; --mo: #1f5fa8; --in: #6aa0dc; --ot: #b9d3f1; --ing: #2e7d32; }
-.tarjeta { height: 100%; box-sizing: border-box; background: #fff; border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1rem 1.2rem 1.1rem; display: flex; flex-direction: column; gap: .8rem; }
+.tarjeta { height: 100%; box-sizing: border-box; background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1rem 1.2rem 1.1rem; display: flex; flex-direction: column; gap: .8rem; }
 h2 { margin: 0; font-size: 1rem; display: flex; align-items: center; gap: .5rem; }
 h3 { margin: 0 0 .3rem; font-size: .78rem; font-weight: 600; color: var(--ar-tinta-2); }
 .cifras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .55rem; }
@@ -36,7 +36,7 @@ h3 { margin: 0 0 .3rem; font-size: .78rem; font-weight: 600; color: var(--ar-tin
 .quien b { font-variant-numeric: tabular-nums; }
 .aviso { margin: 0; font-size: .78rem; color: var(--ar-tinta-2); background: var(--ar-fondo); border-radius: 10px; padding: .5rem .65rem; display: flex; gap: .35rem; align-items: flex-start; }
 .nada { margin: 0; font-size: .85rem; color: var(--ar-tinta-3); }
-.esq { min-height: 160px; border-radius: 12px; background: linear-gradient(90deg, #eef2ee 25%, #f7f9f7 50%, #eef2ee 75%); background-size: 200% 100%; animation: brillo 1.2s infinite linear; }
+.esq { min-height: 160px; border-radius: 12px; background: linear-gradient(90deg, var(--ar-linea) 25%, var(--ar-superficie-2) 50%, var(--ar-linea) 75%); background-size: 200% 100%; animation: brillo 1.2s infinite linear; }
 @keyframes brillo { to { background-position: -200% 0; } }
 @media (max-width: 560px) { .cifras { grid-template-columns: 1fr 1fr; } .resultado { grid-column: 1 / -1; } }
 /* En espacios anchos (p. ej. Reportes) el reparto y los meses van lado a lado */

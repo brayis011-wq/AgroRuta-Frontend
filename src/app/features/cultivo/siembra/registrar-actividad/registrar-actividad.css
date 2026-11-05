@@ -2,10 +2,10 @@
 .tipo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .5rem; }
 .tipo-chip {
   display: flex; align-items: center; gap: .5rem; padding: .65rem .75rem; border-radius: 11px; cursor: pointer;
-  border: 1px solid var(--ar-borde); background: #fff; font: inherit; font-size: .88rem; font-weight: 600; color: var(--ar-tinta);
+  border: 1px solid var(--ar-borde); background: var(--ar-superficie); font: inherit; font-size: .88rem; font-weight: 600; color: var(--ar-tinta);
   transition: border-color .15s, background .15s, box-shadow .15s;
 }
-.tipo-chip:hover { border-color: #bcd9be; }
+.tipo-chip:hover { border-color: var(--ar-borde-fuerte); }
 .tipo-chip__icon { font-size: 18px; color: var(--ar-tinta-3); }
 .tipo-chip--active { border-color: var(--ar-verde-600); background: var(--ar-verde-50); box-shadow: 0 0 0 1px var(--ar-verde-600); }
 .tipo-chip--active .tipo-chip__icon { color: var(--ar-verde-700); }

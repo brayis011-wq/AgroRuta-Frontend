@@ -1,6 +1,6 @@
 /* Barra del mes y cuadrícula */
 .programar-wrap { position: relative; }
-.elegir { position: absolute; right: 0; top: calc(100% + 6px); z-index: 50; width: min(320px, 90vw); background: #fff; border: 1px solid var(--ar-borde); border-radius: 14px; box-shadow: 0 12px 30px rgba(18, 40, 24, .18); padding: .6rem; display: flex; flex-direction: column; gap: .2rem; animation: subir .15s ease-out; }
+.elegir { position: absolute; right: 0; top: calc(100% + 6px); z-index: 50; width: min(320px, 90vw); background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 14px; box-shadow: 0 12px 30px rgba(18, 40, 24, .18); padding: .6rem; display: flex; flex-direction: column; gap: .2rem; animation: subir .15s ease-out; }
 .elegir p { margin: .1rem .3rem .4rem; font-size: .8rem; color: var(--ar-tinta-2); }
 .elegir button { display: flex; align-items: center; gap: .6rem; padding: .55rem .6rem; border: 0; background: none; border-radius: 10px; cursor: pointer; font: inherit; text-align: left; color: var(--ar-tinta); }
 .elegir button:hover, .elegir button:focus-visible { background: var(--ar-verde-50); outline: none; }
@@ -13,10 +13,10 @@
 .nav-mes { display: flex; align-items: center; gap: .3rem; }
 .nav-mes h2 { margin: 0 .3rem; font-size: 1.15rem; min-width: 11ch; text-align: center; }
 .nav-mes h2::first-letter { text-transform: uppercase; }
-.btn-ic { border: 1px solid var(--ar-borde) !important; background: #fff !important; }
+.btn-ic { border: 1px solid var(--ar-borde) !important; background: var(--ar-superficie) !important; }
 .btn-hoy { padding: .45rem .8rem; margin-left: .3rem; }
 .filtros-cal { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
-.filtros-cal select { font: inherit; font-size: .88rem; padding: .5rem .7rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: #fff; color: var(--ar-tinta); }
+.filtros-cal select { font: inherit; font-size: .88rem; padding: .5rem .7rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: var(--ar-superficie); color: var(--ar-tinta); }
 .check { display: inline-flex; align-items: center; gap: .35rem; font-size: .86rem; color: var(--ar-tinta-2); cursor: pointer; }
 .check input { accent-color: var(--ar-verde-600); }
 
@@ -27,12 +27,12 @@
 .cuadricula { gap: 4px; }
 .dia {
   min-height: 96px; display: flex; flex-direction: column; gap: 3px; padding: .35rem; border-radius: 10px; min-width: 0;
-  border: 1px solid var(--ar-borde); background: #fff; font: inherit; color: inherit; text-align: left; cursor: pointer;
+  border: 1px solid var(--ar-borde); background: var(--ar-superficie); font: inherit; color: inherit; text-align: left; cursor: pointer;
   transition: border-color .15s, box-shadow .15s;
 }
-.dia:hover { border-color: #bcd9be; }
+.dia:hover { border-color: var(--ar-borde-fuerte); }
 .dia:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 1px; }
-.dia.fuera { background: #fafbfa; opacity: .55; }
+.dia.fuera { background: var(--ar-superficie-2); opacity: .55; }
 .dia.pasado .num { color: var(--ar-tinta-3); }
 .dia.sel { border-color: var(--ar-verde-600); box-shadow: 0 0 0 1px var(--ar-verde-600); }
 .num { font-size: .78rem; font-weight: 700; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; }
@@ -41,7 +41,7 @@
 .chip-ev { display: flex; align-items: center; gap: 3px; font-size: .68rem; font-weight: 600; border-radius: 6px; padding: 1px 4px; min-width: 0; }
 .chip-ev .ti { font-size: 12px; flex: none; }
 .chip-txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.chip-ev.ESTIMADO { background: #fff !important; border: 1px dashed currentColor; }
+.chip-ev.ESTIMADO { background: var(--ar-superficie) !important; border: 1px dashed currentColor; }
 .chip-ev.PENDIENTE { box-shadow: inset 2px 0 0 currentColor; }
 .chip-ev.ATRASADO { background: var(--ar-rojo-bg) !important; color: var(--ar-rojo) !important; }
 .mas { font-size: .66rem; color: var(--ar-tinta-3); padding-left: 4px; }

@@ -18,7 +18,7 @@
 .weather-widget__error button {
   margin-top: 0.5rem;
   padding: 0.3rem 0.8rem;
-  border: 1px solid white;
+  border: 1px solid var(--ar-superficie);
   border-radius: 8px;
   background: transparent;
   color: white;
@@ -34,7 +34,7 @@
 .weather-widget__detail { display: flex; flex-direction: column; gap: 0.2rem; }
 .weather-widget__detail .label { font-size: 0.75rem; opacity: 0.75; }
 .weather-widget__detail .value { font-size: 0.9rem; font-weight: 600; }
-.spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+.spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: var(--ar-superficie); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .weather-widget {
   background: linear-gradient(135deg, #1a5276, #2e86c1);

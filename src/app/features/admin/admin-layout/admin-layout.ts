@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth';
 import { ProfileService } from '../../../core/services/profile.service';
+import { TemaService } from '../../../core/services/tema.service';
 import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 
 interface NavItem {
@@ -28,6 +29,7 @@ export class AdminLayoutComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   readonly perfil = inject(ProfileService);
+  readonly tema = inject(TemaService);
 
   constructor() {
     this.perfil.cargarFoto();

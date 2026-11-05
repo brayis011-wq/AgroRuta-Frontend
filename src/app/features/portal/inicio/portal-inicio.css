@@ -15,7 +15,7 @@
 .stat-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--a-muted); }
 .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--a-ink); font-variant-numeric: tabular-nums; }
 .stat-note { font-size: 0.82rem; color: var(--a-muted); }
-.stat-warn { border-color: #f1dcaa; background: #fffaf0; }
+.stat-warn { border-color: var(--ar-ambar-borde); background: var(--ar-ambar-bg); }
 .stat-warn .stat-value { color: var(--a-amber); }
 
 .mis-datos {

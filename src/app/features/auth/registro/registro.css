@@ -7,7 +7,7 @@
 }
 
 .card {
-  background: white;
+  background: var(--ar-superficie);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -18,14 +18,14 @@
   transform: scale(1.5);
 }
 h2 {
-  color: #2e7d32;
+  color: var(--ar-verde-600);
   font-size: 1.8rem;
   margin-bottom: 0.25rem;
   text-align: center;
 }
 
 h3 {
-  color: #555;
+  color: var(--ar-tinta-2);
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
@@ -39,7 +39,7 @@ h3 {
 .field label {
   display: block;
   font-size: 0.875rem;
-  color: #444;
+  color: var(--ar-tinta-2);
   margin-bottom: 0.4rem;
   font-weight: 500;
 }
@@ -48,12 +48,12 @@ h3 {
 .field select {
   width: 100%;
   padding: 0.6rem 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--ar-borde);
   border-radius: 8px;
   font-size: 1rem;
   box-sizing: border-box;
   transition: border-color 0.2s;
-  background-color: white;
+  background-color: var(--ar-superficie);
 }
 
 .field input:focus,
@@ -85,8 +85,8 @@ button:disabled {
 }
 
 .error {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: var(--ar-rojo-bg);
+  color: var(--ar-rojo);
   padding: 0.6rem 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -97,11 +97,11 @@ button:disabled {
   text-align: center;
   margin-top: 1rem;
   font-size: 0.875rem;
-  color: #666;
+  color: var(--ar-tinta-2);
 }
 
 .link a {
-  color: #2e7d32;
+  color: var(--ar-verde-600);
   text-decoration: none;
   font-weight: 500;
 }
@@ -110,8 +110,8 @@ button:disabled {
   text-decoration: underline;
 }
 .success {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: var(--ar-verde-100);
+  color: var(--ar-verde-600);
   padding: 0.6rem 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -122,6 +122,6 @@ button:disabled {
   display: block;
   margin-top: 0.35rem;
   font-size: 0.78rem;
-  color: #666;
+  color: var(--ar-tinta-2);
   line-height: 1.4;
 }

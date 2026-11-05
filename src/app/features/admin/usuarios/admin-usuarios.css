@@ -1,5 +1,5 @@
 .select-rol { padding-block: 0.35rem; font-size: 0.85rem; }
-.select-rol:disabled { background: #f4f6f5; color: var(--a-muted); }
+.select-rol:disabled { background: var(--ar-gris-bg); color: var(--a-muted); }
 .me {
   margin-left: 0.4rem;
   font-size: 0.7rem;
@@ -7,7 +7,7 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #8a6510;
-  background: #fbf0d4;
+  background: var(--ar-ambar-bg);
   border-radius: 4px;
   padding: 1px 5px;
 }

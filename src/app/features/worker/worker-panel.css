@@ -1,6 +1,6 @@
 /* Panel lateral y formularios de Trabajadores */
 .overlay-l { position: fixed; inset: 0; z-index: 2900; border: 0; padding: 0; background: rgba(15, 30, 20, .4); backdrop-filter: blur(2px); cursor: default; animation: aparecer .15s ease-out; }
-.lado { position: fixed; inset: 0 0 0 auto; z-index: 3000; width: min(480px, 100%); height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: #fff; color: var(--ar-tinta); box-shadow: -12px 0 40px rgba(0, 0, 0, .18); display: flex; flex-direction: column; animation: entrar .22s cubic-bezier(.2, .8, .2, 1); }
+.lado { position: fixed; inset: 0 0 0 auto; z-index: 3000; width: min(480px, 100%); height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: var(--ar-superficie); color: var(--ar-tinta); box-shadow: -12px 0 40px rgba(0, 0, 0, .18); display: flex; flex-direction: column; animation: entrar .22s cubic-bezier(.2, .8, .2, 1); }
 .lado-head { display: flex; align-items: center; gap: .8rem; padding: 1.1rem 1.25rem; border-bottom: 1px solid var(--ar-borde); }
 .lado-head > div { flex: 1; min-width: 0; }
 .lado-head h2 { margin: 0; font-size: 1.1rem; letter-spacing: -.01em; }
@@ -20,7 +20,7 @@
 .datos dd { margin: .1rem 0 0; font-size: .9rem; font-weight: 600; }
 .fila-btn { display: flex; flex-wrap: wrap; gap: .5rem; }
 .btn-borrar { color: var(--ar-rojo); }
-.btn-borrar:hover:not(:disabled) { border-color: #f1c4c0; background: var(--ar-rojo-bg); }
+.btn-borrar:hover:not(:disabled) { border-color: var(--ar-rojo-borde); background: var(--ar-rojo-bg); }
 .acceso { padding: .8rem .9rem; border-radius: 12px; background: var(--ar-fondo); display: flex; flex-direction: column; gap: .5rem; }
 .acceso-PENDIENTE { background: var(--ar-ambar-bg); }
 .acceso-APROBADO { background: var(--ar-verde-50); }
@@ -32,7 +32,7 @@
 .campo { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
 .campo.ancho { grid-column: 1 / -1; }
 .campo > span { font-size: .82rem; font-weight: 600; color: var(--ar-tinta); }
-.campo input, .campo select, .campo textarea { font: inherit; font-size: .9rem; padding: .6rem .75rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: #fff; color: var(--ar-tinta); min-width: 0; width: 100%; box-sizing: border-box; }
+.campo input, .campo select, .campo textarea { font: inherit; font-size: .9rem; padding: .6rem .75rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: var(--ar-superficie); color: var(--ar-tinta); min-width: 0; width: 100%; box-sizing: border-box; }
 .campo input:focus, .campo select:focus, .campo textarea:focus { outline: 2px solid var(--ar-verde-600); outline-offset: 0; border-color: transparent; }
 .campo .invalido { border-color: var(--ar-rojo); }
 .err { font-style: normal; font-size: .76rem; color: var(--ar-rojo); }

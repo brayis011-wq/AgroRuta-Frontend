@@ -38,17 +38,17 @@
 }
 
 .tab-btn.payroll .tab-icon {
-  background-color: #fff8e1;
+  background-color: var(--ar-ambar-bg);
   color: #b45309;
 }
 
 .tab-btn.crops .tab-icon {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: var(--ar-verde-100);
+  color: var(--ar-verde-600);
 }
 
 .tab-btn.costs .tab-icon {
-  background-color: #e8f0fb;
+  background-color: var(--ar-azul-bg);
   color: #1f5fa8;
 }
 
@@ -62,7 +62,7 @@
 .tab-name {
   font-size: 16px;       /* antes: 14px */
   font-weight: 600;
-  color: #555;
+  color: var(--ar-tinta-2);
   line-height: 1.2;
 }
 
@@ -73,19 +73,19 @@
 }
 
 .tab-btn:hover {
-  background-color: #fff;
+  background-color: var(--ar-superficie);
 }
 
 .tab-btn.active {
-  background-color: #fff;
-  box-shadow: 0 0 0 1px #c8e6c9;
+  background-color: var(--ar-superficie);
+  box-shadow: 0 0 0 1px var(--ar-borde-fuerte);
 }
 
 .tab-btn.active .tab-name {
-  color: #2e7d32;
+  color: var(--ar-verde-600);
 }
 
 .tab-btn.active.payroll .tab-icon {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: var(--ar-verde-100);
+  color: var(--ar-verde-600);
 }

@@ -9,7 +9,7 @@
 .ev:hover { background: var(--ar-fondo); }
 .ev:focus-visible { outline: 2px solid var(--ar-verde-600); }
 .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 17px; }
-.ev.ESTIMADO .ic { background: #fff; border: 1.5px dashed currentColor; }
+.ev.ESTIMADO .ic { background: var(--ar-superficie); border: 1.5px dashed currentColor; }
 .ev.ATRASADO .ic { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
 .txt { display: flex; flex-direction: column; min-width: 0; }
 .txt strong { font-size: .86rem; }

@@ -71,6 +71,15 @@
             </div>
           </div>
 
+          <div class="pref">
+            <div><strong>{{ 'theme.title' | translate }}</strong><small>{{ 'theme.hint' | translate }}</small></div>
+            <div class="seg" role="group" [attr.aria-label]="'theme.title' | translate">
+              <button type="button" [class.on]="temaSvc.tema() === 'claro'" [attr.aria-pressed]="temaSvc.tema() === 'claro'" (click)="temaSvc.elegir('claro')"><i class="ti ti-sun" aria-hidden="true"></i> {{ 'theme.light' | translate }}</button>
+              <button type="button" [class.on]="temaSvc.tema() === 'oscuro'" [attr.aria-pressed]="temaSvc.tema() === 'oscuro'" (click)="temaSvc.elegir('oscuro')"><i class="ti ti-moon" aria-hidden="true"></i> {{ 'theme.dark' | translate }}</button>
+              <button type="button" [class.on]="temaSvc.tema() === 'sistema'" [attr.aria-pressed]="temaSvc.tema() === 'sistema'" (click)="temaSvc.elegir('sistema')"><i class="ti ti-device-desktop" aria-hidden="true"></i> {{ 'theme.system' | translate }}</button>
+            </div>
+          </div>
+
           @if (tieneFincas()) {
             <div class="pref">
               <div><strong>{{ 'config.prefs.farm' | translate }}</strong><small>{{ 'config.prefs.farmHint' | translate }}</small></div>

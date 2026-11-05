@@ -4,10 +4,10 @@
 .foto-btn { position: relative; flex: none; padding: 0; border: 0; background: none; border-radius: 50%; cursor: pointer; }
 .foto-btn:disabled { cursor: wait; }
 .foto-btn:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 3px; }
-.foto-img, .foto-ini { width: 84px; height: 84px; border-radius: 50%; display: block; border: 3px solid #fff; box-shadow: 0 0 0 1px var(--ar-borde), var(--ar-sombra-1); }
+.foto-img, .foto-ini { width: 84px; height: 84px; border-radius: 50%; display: block; border: 3px solid var(--ar-superficie); box-shadow: 0 0 0 1px var(--ar-borde), var(--ar-sombra-1); }
 .foto-img { object-fit: cover; }
-.foto-ini { display: grid; place-items: center; background: linear-gradient(135deg, var(--ar-verde-100), #dcefdc); color: var(--ar-verde-700); font-size: 1.6rem; font-weight: 700; }
-.foto-cam { position: absolute; right: -2px; bottom: -2px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--ar-verde-600); color: #fff; font-size: 16px; border: 2px solid #fff; box-shadow: var(--ar-sombra-1); transition: transform .15s; }
+.foto-ini { display: grid; place-items: center; background: linear-gradient(135deg, var(--ar-verde-100), var(--ar-verde-100)); color: var(--ar-verde-700); font-size: 1.6rem; font-weight: 700; }
+.foto-cam { position: absolute; right: -2px; bottom: -2px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--ar-verde-600); color: #fff; font-size: 16px; border: 2px solid var(--ar-superficie); box-shadow: var(--ar-sombra-1); transition: transform .15s; }
 .foto-btn:hover .foto-cam { transform: scale(1.08); }
 .foto-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .45rem; }
 .foto-txt strong { font-size: .88rem; }

@@ -1,19 +1,19 @@
 /* Estilos comunes de las páginas del panel de administración */
 :host {
-  --a-ink: #17231c;
-  --a-text: #2f3b34;
-  --a-muted: #6b7a71;
-  --a-line: #dde5df;
-  --a-surface: #ffffff;
-  --a-green: #2e7d32;
-  --a-green-dark: #1b5e20;
-  --a-green-soft: #e6f2e7;
-  --a-amber: #a86b00;
-  --a-amber-soft: #fff4dc;
-  --a-red: #c62828;
-  --a-red-soft: #fdecec;
-  --a-blue: #2f5f8f;
-  --a-blue-soft: #e8f0f8;
+  --a-ink: var(--ar-tinta);
+  --a-text: var(--ar-tinta);
+  --a-muted: var(--ar-tinta-3);
+  --a-line: var(--ar-borde);
+  --a-surface: var(--ar-superficie);
+  --a-green: var(--ar-verde-600);
+  --a-green-dark: var(--ar-verde-800);
+  --a-green-soft: var(--ar-verde-100);
+  --a-amber: var(--ar-ambar);
+  --a-amber-soft: var(--ar-ambar-bg);
+  --a-red: var(--ar-rojo);
+  --a-red-soft: var(--ar-rojo-bg);
+  --a-blue: var(--ar-azul);
+  --a-blue-soft: var(--ar-azul-bg);
   display: block;
 }
 
@@ -71,7 +71,7 @@
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--a-line);
   border-radius: 7px;
-  background: #fff;
+  background: var(--ar-superficie);
   color: var(--a-text);
   min-width: 0;
 }
@@ -90,13 +90,13 @@ th {
   text-transform: uppercase;
   color: var(--a-muted);
   padding: 0.65rem 1.1rem;
-  background: #f7faf8;
+  background: var(--ar-superficie-2);
   border-bottom: 1px solid var(--a-line);
   white-space: nowrap;
 }
 td { padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--a-line); vertical-align: middle; }
 tbody tr:last-child td { border-bottom: 0; }
-tbody tr:hover td { background: #fafcfb; }
+tbody tr:hover td { background: var(--ar-superficie-2); }
 .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .cell-main { font-weight: 600; color: var(--a-ink); }
 .cell-sub { display: block; font-size: 0.78rem; color: var(--a-muted); }
@@ -113,7 +113,7 @@ tbody tr:hover td { background: #fafcfb; }
 }
 .pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .pill.ok { background: var(--a-green-soft); color: var(--a-green-dark); }
-.pill.off { background: #eef0ef; color: #6b7a71; }
+.pill.off { background: var(--ar-linea); color: var(--ar-tinta-2); }
 .pill.warn { background: var(--a-amber-soft); color: var(--a-amber); }
 .pill.bad { background: var(--a-red-soft); color: var(--a-red); }
 .pill.info { background: var(--a-blue-soft); color: var(--a-blue); }
@@ -135,7 +135,7 @@ tbody tr:hover td { background: #fafcfb; }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .btn-primary { background: var(--a-green); color: #fff; }
 .btn-primary:hover:not(:disabled) { background: var(--a-green-dark); }
-.btn-ghost { background: #fff; color: var(--a-text); border-color: var(--a-line); }
+.btn-ghost { background: var(--ar-superficie); color: var(--a-text); border-color: var(--a-line); }
 .btn-ghost:hover:not(:disabled) { border-color: var(--a-green); color: var(--a-green-dark); }
 .btn-danger { background: var(--a-red); color: #fff; }
 .btn-danger:hover:not(:disabled) { background: #a31f1f; }
@@ -153,7 +153,7 @@ tbody tr:hover td { background: #fafcfb; }
   font-size: 0.875rem;
   background: var(--a-green-soft);
   color: var(--a-green-dark);
-  border: 1px solid #cfe5d1;
+  border: 1px solid var(--ar-borde-fuerte);
 }
 .banner.error { background: var(--a-red-soft); color: var(--a-red); border-color: #f5c6c6; }
 .banner button { background: none; border: 0; font-size: 1.1rem; color: inherit; cursor: pointer; }
@@ -171,7 +171,7 @@ tbody tr:hover td { background: #fafcfb; }
   z-index: 200;
 }
 .dialog {
-  background: #fff;
+  background: var(--ar-superficie);
   border-radius: 12px;
   width: min(440px, 100%);
   padding: 1.4rem 1.5rem;

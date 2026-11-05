@@ -1,4 +1,5 @@
 {
+  "theme": {"title": "Apariencia", "hint": "Modo claro, oscuro o automático según tu celular o computador", "light": "Claro", "dark": "Oscuro", "system": "Automático", "toDark": "Cambiar a modo oscuro", "toLight": "Cambiar a modo claro"},
   "common": {
     "language": "Idioma",
     "spanish": "Español",

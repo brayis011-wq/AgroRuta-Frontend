@@ -12,6 +12,7 @@
   --adm-ancho-min: 68px;
   display: block;
 }
+:host-context([data-tema="oscuro"]) { --adm-sidebar: #173a1c; --adm-sidebar-2: #102a14; --adm-line: #24502b; }
 
 .admin-shell {
   display: flex;
@@ -134,7 +135,7 @@
   height: 34px;
   border-radius: 50%;
   background: var(--adm-accent);
-  color: #1b5e20;
+  color: var(--ar-verde-800);
   font-weight: 700;
   display: grid;
   place-items: center;
@@ -212,3 +213,5 @@
   .admin-sidebar, .admin-main { transition: none; }
 }
 img.avatar { object-fit: cover; }
+.btn-tema{width:34px;height:34px;border-radius:9px;border:1px solid var(--adm-line);background:none;color:var(--adm-text);display:grid;place-items:center;font-size:17px;cursor:pointer}
+.btn-tema:hover{border-color:var(--adm-accent)}

@@ -6,12 +6,12 @@
 .search-icon { position: absolute; right: .8rem; top: 50%; transform: translateY(-50%); color: var(--ar-tinta-3); font-size: 18px; }
 .spinner.search-icon { border-color: var(--ar-borde); border-top-color: var(--ar-verde-600); width: 15px; height: 15px; margin-top: -7px; transform: none; }
 
-.catalogo-lista, .catalogo-completo { border: 1px solid var(--ar-borde); border-radius: 12px; background: #fff; box-shadow: var(--ar-sombra-2); max-height: 320px; overflow: auto; }
+.catalogo-lista, .catalogo-completo { border: 1px solid var(--ar-borde); border-radius: 12px; background: var(--ar-superficie); box-shadow: var(--ar-sombra-2); max-height: 320px; overflow: auto; }
 .catalogo-lista { position: absolute; top: 46px; left: 0; right: 0; z-index: 20; }
 .catalogo-completo { margin-top: .2rem; box-shadow: none; }
-.catalogo-completo__filtro { position: sticky; top: 0; background: #fff; padding: .5rem; border-bottom: 1px solid var(--ar-borde); z-index: 1; }
+.catalogo-completo__filtro { position: sticky; top: 0; background: var(--ar-superficie); padding: .5rem; border-bottom: 1px solid var(--ar-borde); z-index: 1; }
 .catalogo-filtro { padding: .5rem .7rem; font-size: .88rem; }
-.catalogo-item { display: flex; justify-content: space-between; align-items: center; gap: .6rem; width: 100%; padding: .6rem .8rem; border: 0; border-bottom: 1px solid var(--ar-borde); background: #fff; cursor: pointer; text-align: left; font: inherit; color: inherit; }
+.catalogo-item { display: flex; justify-content: space-between; align-items: center; gap: .6rem; width: 100%; padding: .6rem .8rem; border: 0; border-bottom: 1px solid var(--ar-borde); background: var(--ar-superficie); cursor: pointer; text-align: left; font: inherit; color: inherit; }
 .catalogo-item:last-child { border-bottom: 0; }
 .catalogo-item:hover { background: var(--ar-verde-50); }
 .catalogo-item-info { display: flex; flex-direction: column; min-width: 0; }
@@ -20,7 +20,7 @@
 .catalogo-empty, .catalogo-cargando { padding: .8rem; font-size: .85rem; color: var(--ar-tinta-3); display: flex; align-items: center; gap: .4rem; }
 .catalogo-cargando .spinner { border-color: var(--ar-borde); border-top-color: var(--ar-verde-600); }
 .catalogo-grupo__titulo { display: flex; justify-content: space-between; padding: .5rem .8rem; font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ar-tinta-2); background: var(--ar-fondo); }
-.catalogo-grupo__count { background: #fff; border-radius: 99px; padding: 0 .45rem; }
+.catalogo-grupo__count { background: var(--ar-superficie); border-radius: 99px; padding: 0 .45rem; }
 
 .btn-catalogo { align-self: flex-start; font: inherit; font-size: .84rem; font-weight: 600; color: var(--ar-verde-700); background: none; border: 0; padding: .2rem 0; cursor: pointer; }
 .btn-catalogo:hover { text-decoration: underline; }
@@ -28,15 +28,16 @@
 .insumo-seleccionado { display: flex; justify-content: space-between; align-items: center; gap: .6rem; padding: .7rem .85rem; border-radius: 11px; border: 1px solid var(--ar-verde-600); background: var(--ar-verde-50); }
 .insumo-seleccionado-info { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
 .insumo-nombre { font-weight: 700; }
-.btn-cambiar { font: inherit; font-size: .82rem; font-weight: 600; border: 1px solid var(--ar-borde); background: #fff; border-radius: 9px; padding: .35rem .7rem; cursor: pointer; }
+.btn-cambiar { font: inherit; font-size: .82rem; font-weight: 600; border: 1px solid var(--ar-borde); background: var(--ar-superficie); border-radius: 9px; padding: .35rem .7rem; cursor: pointer; }
 .reentrada-aviso { margin-top: .5rem; padding: .6rem .8rem; border-radius: 10px; font-size: .84rem; background: var(--ar-ambar-bg); color: var(--ar-ambar); display: flex; gap: .35rem; align-items: center; flex-wrap: wrap; }
 
 .badge { flex: none; font-size: .7rem; font-weight: 700; border-radius: 99px; padding: .15rem .55rem; background: var(--ar-fondo); color: var(--ar-tinta-2); }
 .badge-fungicida { background: #e8f0fb; color: #1f5fa8; }
-.badge-insecticida { background: #fdecec; color: #c62828; }
+.badge-insecticida { background: #fdecec; color: var(--ar-rojo); }
 .badge-acaricida { background: #fbe9f3; color: #a3326e; }
 .badge-nematicida { background: #f1ebfa; color: #6a3fb0; }
 .badge-herbicida { background: #fff4dc; color: #b26a00; }
 .badge-fertilizante, .badge-fertilizante-suelo { background: #e6f2e7; color: #236b28; }
 .badge-regulador { background: #e3f4f6; color: #127280; }
 .badge-coadyuvante { background: #eef0f2; color: #4b5560; }
+:host-context([data-tema="oscuro"]) [class^="badge-"] { background: color-mix(in srgb, currentColor 16%, transparent); filter: brightness(1.6); }

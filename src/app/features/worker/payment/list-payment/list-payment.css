@@ -5,7 +5,7 @@
 .tabla tr.sel { background: var(--ar-verde-50); box-shadow: inset 3px 0 0 var(--ar-verde-600); }
 .monto-g { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; color: var(--ar-verde-700); font-variant-numeric: tabular-nums; }
 .jornales { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.jornales li { display: grid; grid-template-columns: auto 1fr auto; gap: .2rem .8rem; align-items: center; padding: .6rem 0; border-bottom: 1px solid #eef2ee; font-size: .86rem; }
+.jornales li { display: grid; grid-template-columns: auto 1fr auto; gap: .2rem .8rem; align-items: center; padding: .6rem 0; border-bottom: 1px solid var(--ar-linea); font-size: .86rem; }
 .jornales li:last-child { border-bottom: 0; }
 .jornales .f { color: var(--ar-tinta-3); font-size: .8rem; white-space: nowrap; }
 .jornales .v { font-weight: 600; font-variant-numeric: tabular-nums; }

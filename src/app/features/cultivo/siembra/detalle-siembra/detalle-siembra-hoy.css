@@ -1,19 +1,19 @@
 /* Condiciones de hoy */
 .hoy {
   display: grid; grid-template-columns: minmax(220px, 1fr) minmax(0, 1.3fr) minmax(260px, 1.4fr); align-items: center; gap: 1rem 1.5rem;
-  padding: 1rem 1.25rem; border-radius: 18px; border: 1px solid #cfe0f2; box-shadow: var(--ar-sombra-2);
-  background: radial-gradient(120% 160% at 0% 0%, #e3eefb 0%, transparent 60%), linear-gradient(135deg, #fff, #f3f8fd);
+  padding: 1rem 1.25rem; border-radius: 18px; border: 1px solid color-mix(in srgb, var(--ar-azul) 25%, var(--ar-superficie)); box-shadow: var(--ar-sombra-2);
+  background: radial-gradient(120% 160% at 0% 0%, var(--ar-azul-bg) 0%, transparent 60%), linear-gradient(135deg, var(--ar-superficie), color-mix(in srgb, var(--ar-azul-bg) 50%, var(--ar-superficie)));
   animation: subir .35s ease-out both;
 }
-.hoy.good { border-color: #cfe5d0; background: radial-gradient(120% 160% at 0% 0%, #e2f1e3 0%, transparent 60%), linear-gradient(135deg, #fff, #f2f8f2); }
-.hoy.wind, .hoy.hot { border-color: #f1dcae; background: radial-gradient(120% 160% at 0% 0%, #fff1d6 0%, transparent 60%), linear-gradient(135deg, #fff, #fffaf0); }
+.hoy.good { border-color: var(--ar-borde-fuerte); background: radial-gradient(120% 160% at 0% 0%, var(--ar-verde-100) 0%, transparent 60%), linear-gradient(135deg, var(--ar-superficie), var(--ar-verde-50)); }
+.hoy.wind, .hoy.hot { border-color: var(--ar-ambar-borde); background: radial-gradient(120% 160% at 0% 0%, var(--ar-ambar-bg) 0%, transparent 60%), linear-gradient(135deg, var(--ar-superficie), var(--ar-ambar-bg)); }
 .hoy-clima { display: flex; align-items: center; gap: .8rem; min-width: 0; }
-.hoy-clima img { flex: none; background: rgba(255, 255, 255, .7); border-radius: 16px; }
+.hoy-clima img { flex: none; background: var(--ar-vidrio); border-radius: 16px; }
 .hoy-clima .eyebrow { margin: 0; }
 .hoy-temp { display: block; font-size: 2rem; line-height: 1.1; letter-spacing: -.03em; }
 .hoy-desc { font-size: .88rem; color: var(--ar-tinta-2); }
 .hoy-datos { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
-.hoy-datos div { background: rgba(255, 255, 255, .75); border: 1px solid rgba(0, 0, 0, .05); border-radius: 12px; padding: .55rem .7rem; }
+.hoy-datos div { background: var(--ar-vidrio); border: 1px solid var(--ar-linea); border-radius: 12px; padding: .55rem .7rem; }
 .hoy-datos dt { font-size: .74rem; color: var(--ar-tinta-3); display: flex; align-items: center; gap: .25rem; }
 .hoy-datos dd { margin: .15rem 0 0; font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .hoy-decision { display: flex; flex-direction: column; gap: .45rem; }
@@ -22,8 +22,8 @@
 .consejo { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
 .consejo.good { background: var(--ar-verde-100); color: var(--ar-verde-800); }
 .consejo.rain { background: var(--ar-azul-bg); color: var(--ar-azul); }
-.fumi { font-weight: 600; font-size: .84rem; background: rgba(255, 255, 255, .8); border: 1px solid var(--ar-borde); }
-.fumi.rojo { color: var(--ar-rojo); border-color: #f3c7c7; } .fumi.ambar { color: var(--ar-ambar); border-color: #f1dcae; } .fumi.verde { color: var(--ar-verde-800); }
+.fumi { font-weight: 600; font-size: .84rem; background: var(--ar-vidrio); border: 1px solid var(--ar-borde); }
+.fumi.rojo { color: var(--ar-rojo); border-color: var(--ar-rojo-borde); } .fumi.ambar { color: var(--ar-ambar); border-color: var(--ar-ambar-borde); } .fumi.verde { color: var(--ar-verde-800); }
 
 @media (max-width: 1100px) { .hoy { grid-template-columns: 1fr 1fr; } .hoy-datos { grid-column: 1 / -1; grid-row: 2; } }
 @media (max-width: 720px) { .hoy { grid-template-columns: 1fr; padding: .9rem; } .hoy-datos { grid-row: auto; } .hoy-temp { font-size: 1.7rem; } }
@@ -31,6 +31,6 @@
 .alerta-cultivo .ti { font-size: 20px; flex: none; }
 .alerta-cultivo span { display: flex; flex-direction: column; min-width: 0; }
 .alerta-cultivo small { font-size: .76rem; opacity: .85; }
-.alerta-cultivo.rojo { background: var(--ar-rojo-bg); color: var(--ar-rojo); border-color: #f3c7c7; }
-.alerta-cultivo.ambar { background: var(--ar-ambar-bg); color: var(--ar-ambar); border-color: #f1dcae; }
-.alerta-cultivo.verde { background: rgba(255, 255, 255, .8); color: var(--ar-verde-800); border-color: var(--ar-borde); }
+.alerta-cultivo.rojo { background: var(--ar-rojo-bg); color: var(--ar-rojo); border-color: var(--ar-rojo-borde); }
+.alerta-cultivo.ambar { background: var(--ar-ambar-bg); color: var(--ar-ambar); border-color: var(--ar-ambar-borde); }
+.alerta-cultivo.verde { background: var(--ar-vidrio); color: var(--ar-verde-800); border-color: var(--ar-borde); }

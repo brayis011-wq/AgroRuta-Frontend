@@ -1,5 +1,5 @@
 :host { display: block; --c1: #2e7d32; --c2: #6aa96e; --c3: #b7d8b9; }
-.tarjeta { background: #fff; border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1rem 1.2rem 1.1rem; }
+.tarjeta { background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1rem 1.2rem 1.1rem; }
 .tarjeta > header { display: flex; justify-content: space-between; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: .9rem; }
 h2 { margin: 0; font-size: 1rem; display: flex; align-items: center; gap: .5rem; }
 .leyenda { list-style: none; margin: 0; padding: 0; display: flex; gap: .9rem; font-size: .78rem; color: var(--ar-tinta-2); }
@@ -23,7 +23,7 @@ h2 { margin: 0; font-size: 1rem; display: flex; align-items: center; gap: .5rem;
 figcaption { font-size: .8rem; font-weight: 600; color: var(--ar-tinta-2); display: flex; justify-content: space-between; gap: .5rem; margin-bottom: .5rem; }
 figcaption span { font-weight: 400; color: var(--ar-tinta-3); }
 .columnas { flex: 1; min-height: 190px; display: flex; align-items: stretch; gap: 4px; border-bottom: 1px solid var(--ar-borde); padding-top: .4rem;
-  background: repeating-linear-gradient(to top, transparent 0 calc(25% - 1px), #eef2ef calc(25% - 1px) 25%); }
+  background: repeating-linear-gradient(to top, transparent 0 calc(25% - 1px), var(--ar-linea) calc(25% - 1px) 25%); }
 .col { position: relative; flex: 1; min-width: 6px; display: flex; flex-direction: column; justify-content: flex-end; outline: none; cursor: default; }
 .pila { flex: 1; display: flex; flex-direction: column-reverse; justify-content: flex-start; gap: 2px; }
 .pila span { display: block; width: 100%; max-width: 34px; margin: 0 auto; transform-origin: bottom; animation: crecer .5s cubic-bezier(.2, .8, .2, 1) both; }
@@ -58,7 +58,7 @@ figcaption span { font-weight: 400; color: var(--ar-tinta-3); }
 .nada { display: flex; flex-direction: column; align-items: center; gap: .4rem; padding: 1.6rem; color: var(--ar-tinta-3); text-align: center; }
 .nada .ti { font-size: 30px; }
 .nada p { margin: 0; font-size: .88rem; }
-.esq { min-height: 200px; border-radius: 12px; background: linear-gradient(90deg, #eef2ee 25%, #f7f9f7 50%, #eef2ee 75%); background-size: 200% 100%; animation: brillo 1.2s infinite linear; }
+.esq { min-height: 200px; border-radius: 12px; background: linear-gradient(90deg, var(--ar-linea) 25%, var(--ar-superficie-2) 50%, var(--ar-linea) 75%); background-size: 200% 100%; animation: brillo 1.2s infinite linear; }
 @keyframes brillo { to { background-position: -200% 0; } }
 @keyframes crecer { from { transform: scaleY(0); } }
 

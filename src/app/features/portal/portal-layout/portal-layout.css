@@ -41,7 +41,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--p-green-dark);
+  color: #1b5e20;
   background: var(--p-badge);
   border-radius: 4px;
   padding: 1px 6px;
@@ -62,7 +62,7 @@
   cursor: pointer;
 }
 .btn-logout:hover { background: var(--p-green-dark); }
-.btn-logout:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.btn-logout:focus-visible { outline: 2px solid var(--ar-superficie); outline-offset: 2px; }
 
 .tabs {
   max-width: 960px;
@@ -89,7 +89,7 @@
 .tab .ti { font-size: 1.1rem; }
 .tab:hover { color: #fff; }
 .tab.active { color: #fff; font-weight: 600; border-bottom-color: var(--p-badge); }
-.tab:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
+.tab:focus-visible { outline: 2px solid var(--ar-superficie); outline-offset: -2px; }
 
 .portal-main { max-width: 960px; margin: 0 auto; }
 
@@ -99,14 +99,14 @@
   place-content: center;
   gap: 0.75rem;
   text-align: center;
-  color: #555;
+  color: var(--ar-tinta-2);
 }
 .btn-retry {
   font: inherit;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  border: 1px solid #ccc;
-  background: #fff;
+  border: 1px solid var(--ar-borde);
+  background: var(--ar-superficie);
   cursor: pointer;
 }
 
@@ -115,3 +115,4 @@
   .tab { padding-inline: 0.55rem; gap: 0.3rem; }
   .tab span { font-size: 0.8rem; }
 }
+:host-context([data-tema="oscuro"]) { --p-green: #173a1c; --p-green-dark: #102a14; }

@@ -3,8 +3,8 @@
 .rejilla { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 1rem; align-items: start; }
 .formu { display: flex; flex-direction: column; gap: 1.2rem; }
 .acts { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .5rem; }
-.act { display: flex; align-items: flex-start; gap: .6rem; padding: .7rem .8rem; border-radius: 12px; border: 1px solid var(--ar-borde); background: #fff; font: inherit; text-align: left; cursor: pointer; color: var(--ar-tinta); transition: border-color .15s, background .15s; }
-.act:hover { border-color: #bcd9be; }
+.act { display: flex; align-items: flex-start; gap: .6rem; padding: .7rem .8rem; border-radius: 12px; border: 1px solid var(--ar-borde); background: var(--ar-superficie); font: inherit; text-align: left; cursor: pointer; color: var(--ar-tinta); transition: border-color .15s, background .15s; }
+.act:hover { border-color: var(--ar-borde-fuerte); }
 .act .ti { font-size: 20px; color: var(--ar-tinta-3); flex: none; }
 .act strong { display: block; font-size: .88rem; }
 .act small { display: block; font-size: .76rem; color: var(--ar-tinta-3); }

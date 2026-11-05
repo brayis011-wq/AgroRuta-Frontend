@@ -2,11 +2,11 @@
 .sin-ubic { color: var(--ar-ambar); }
 .fincas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: .9rem; }
 .finca {
-  background: #fff; border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1);
+  background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1);
   display: flex; flex-direction: column; overflow: hidden; animation: subir .4s ease-out both;
   transition: transform .15s, box-shadow .15s, border-color .15s;
 }
-.finca:hover, .finca.activa { transform: translateY(-2px); box-shadow: var(--ar-sombra-2); border-color: #bcd9be; }
+.finca:hover, .finca.activa { transform: translateY(-2px); box-shadow: var(--ar-sombra-2); border-color: var(--ar-borde-fuerte); }
 .finca-cuerpo {
   display: flex; align-items: center; gap: .8rem; padding: 1rem 1rem .8rem; border: 0; background: none;
   font: inherit; color: inherit; text-align: left; cursor: pointer; width: 100%;
@@ -19,7 +19,7 @@
 .finca:hover .flecha { transform: translateX(3px); color: var(--ar-verde-600); }
 .finca-pie {
   display: flex; align-items: center; gap: .4rem .8rem; flex-wrap: wrap;
-  padding: .55rem .6rem .55rem 1rem; border-top: 1px solid var(--ar-borde); background: #fafcfa;
+  padding: .55rem .6rem .55rem 1rem; border-top: 1px solid var(--ar-borde); background: var(--ar-superficie-2);
   font-size: .8rem; color: var(--ar-tinta-2);
 }
 .finca-pie > span { display: inline-flex; align-items: center; gap: .25rem; }
@@ -27,13 +27,13 @@
 
 :host ::ng-deep .marcador-finca {
   width: 36px; height: 36px; border-radius: 50% 50% 50% 6px; transform: rotate(-45deg);
-  display: grid; place-items: center; background: #2e7d32; color: #fff; border: 2px solid #fff;
+  display: grid; place-items: center; background: #2e7d32; color: #fff; border: 2px solid var(--ar-superficie);
   box-shadow: 0 3px 8px rgba(0, 0, 0, .35); transition: transform .15s, background .15s; cursor: pointer;
 }
 :host ::ng-deep .marcador-finca .ti { transform: rotate(45deg); font-size: 18px; }
 :host ::ng-deep .marcador-finca:hover, :host ::ng-deep .marcador-finca--activo { transform: rotate(-45deg) scale(1.2); background: #1b5e20; }
 :host ::ng-deep .popup-finca { font-family: inherit; }
-:host ::ng-deep .popup-finca-header { font-weight: 700; font-size: .95rem; padding: .2rem 0 .3rem; color: #17231c; }
+:host ::ng-deep .popup-finca-header { font-weight: 700; font-size: .95rem; padding: .2rem 0 .3rem; color: var(--ar-tinta); }
 :host ::ng-deep .popup-finca-body { font-size: .82rem; color: #4b5a51; line-height: 1.5; }
 :host ::ng-deep .popup-finca-btn {
   display: block; width: 100%; margin-top: .6rem; padding: .45rem; border: 0; border-radius: 8px; cursor: pointer;

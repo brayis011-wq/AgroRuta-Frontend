@@ -6,16 +6,16 @@
 .buscar-t .ti { position: absolute; left: .6rem; color: var(--ar-tinta-3); font-size: 16px; }
 .buscar-t input { padding: .45rem .7rem .45rem 2rem; border: 1px solid var(--ar-borde); border-radius: 9px; font: inherit; font-size: .86rem; width: 210px; max-width: 100%; }
 .buscar-t input:focus { outline: 2px solid var(--ar-verde-600); outline-offset: 0; border-color: transparent; }
-.seg { display: flex; background: #eef3ee; border-radius: 9px; padding: 3px; }
+.seg { display: flex; background: var(--ar-seg); border-radius: 9px; padding: 3px; }
 .seg button { border: 0; background: none; font: inherit; font-size: .8rem; font-weight: 600; color: var(--ar-tinta-3); padding: .35rem .7rem; border-radius: 7px; cursor: pointer; }
-.seg button.on { background: #fff; color: var(--ar-verde-700); box-shadow: var(--ar-sombra-1); }
+.seg button.on { background: var(--ar-superficie); color: var(--ar-verde-700); box-shadow: var(--ar-sombra-1); }
 .tabla-wrap { overflow-x: auto; margin: 0 -1.2rem -1.1rem; }
 .tabla { width: 100%; border-collapse: collapse; font-size: .88rem; }
-.tabla th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ar-tinta-3); font-weight: 600; padding: .7rem 1.2rem; background: #fafbf9; border-top: 1px solid var(--ar-borde); border-bottom: 1px solid var(--ar-borde); white-space: nowrap; }
-.tabla td { padding: .7rem 1.2rem; border-bottom: 1px solid #eef2ee; color: var(--ar-tinta); }
+.tabla th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ar-tinta-3); font-weight: 600; padding: .7rem 1.2rem; background: var(--ar-superficie-2); border-top: 1px solid var(--ar-borde); border-bottom: 1px solid var(--ar-borde); white-space: nowrap; }
+.tabla td { padding: .7rem 1.2rem; border-bottom: 1px solid var(--ar-linea); color: var(--ar-tinta); }
 .tabla tbody tr { transition: background .15s; }
 .tabla tbody tr:hover { background: var(--ar-verde-50); }
-.tabla tfoot td { font-weight: 700; background: #fafbf9; border-bottom: 0; }
+.tabla tfoot td { font-weight: 700; background: var(--ar-superficie-2); border-bottom: 0; }
 .num { text-align: right !important; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .suave { color: var(--ar-tinta-2) !important; white-space: nowrap; }
 .fuerte { font-weight: 700; color: var(--ar-verde-700) !important; }

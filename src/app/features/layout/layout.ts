@@ -8,6 +8,7 @@ import { AuthService } from '../../core/services/auth';
 import { AuthResponse } from '../../core/models/auth.model';
 import { LanguageService, Lang } from '../../core/services/language.service';
 import { ProfileService } from '../../core/services/profile.service';
+import { TemaService } from '../../core/services/tema.service';
 import { NominaService } from '../../core/services/worker.service';
 import { FincaActivaService } from '../../core/services/finca-activa.service';
 import { WeatherService } from '../../core/services/weather.service';
@@ -50,6 +51,7 @@ export class LayoutComponent {
   readonly fincaActiva = inject(FincaActivaService);
   readonly lang = inject(LanguageService);
   readonly perfil = inject(ProfileService);
+  readonly tema = inject(TemaService);
 
   readonly usuario: AuthResponse | null = this.authService.getUsuario();
   readonly colapsado = signal(leerColapsado());

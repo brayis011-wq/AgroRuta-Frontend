@@ -5,14 +5,14 @@
   gap: 0.45rem;
   padding: 0.5rem 0.8rem;
   border-radius: 8px;
-  background: #eef0ef;
+  background: var(--ar-linea);
   color: var(--a-text);
   font-size: 0.85rem;
   font-weight: 600;
   text-decoration: none;
   border: 1px solid var(--a-line);
 }
-.attention-item.warn { background: var(--a-amber-soft); color: var(--a-amber); border-color: #f1dcaa; }
+.attention-item.warn { background: var(--a-amber-soft); color: var(--a-amber); border-color: var(--ar-ambar-borde); }
 .attention-item:hover { filter: brightness(0.97); }
 
 .users-card {
@@ -27,7 +27,7 @@
 .role-bars { display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; }
 .role-row { display: grid; grid-template-columns: 110px 1fr 48px; gap: 0.75rem; align-items: center; font-size: 0.85rem; }
 .role-name { color: var(--a-text); }
-.bar { height: 8px; background: #edf1ee; border-radius: 999px; overflow: hidden; }
+.bar { height: 8px; background: var(--ar-pista); border-radius: 999px; overflow: hidden; }
 .fill { display: block; height: 100%; border-radius: inherit; }
 .fill.farmer { background: var(--a-green); }
 .fill.worker { background: #6fa77a; }

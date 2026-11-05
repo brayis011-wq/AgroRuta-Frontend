@@ -37,6 +37,11 @@
       </div>
       <div class="footer-actions">
         <app-language-switcher />
+        <button type="button" class="btn-tema" (click)="tema.alternar()"
+                [title]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate"
+                [attr.aria-label]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate">
+          <i class="ti" [class.ti-moon]="!tema.oscuro()" [class.ti-sun]="tema.oscuro()" aria-hidden="true"></i>
+        </button>
         <button type="button" class="btn-logout" (click)="cerrarSesion()" [title]="'layout.logout' | translate">
           <i class="ti ti-logout" aria-hidden="true"></i>
           <span class="nav-label">{{ 'layout.logout' | translate }}</span>

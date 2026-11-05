@@ -4,7 +4,7 @@
 .campo { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
 .campo.ancho { grid-column: 1 / -1; }
 .campo > span:first-child, .campo > label { font-size: .82rem; font-weight: 600; color: var(--ar-tinta); }
-.campo input, .campo select { font: inherit; font-size: .9rem; padding: .62rem .75rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: #fff; color: var(--ar-tinta); width: 100%; box-sizing: border-box; min-width: 0; }
+.campo input, .campo select { font: inherit; font-size: .9rem; padding: .62rem .75rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: var(--ar-superficie); color: var(--ar-tinta); width: 100%; box-sizing: border-box; min-width: 0; }
 .campo input:focus, .campo select:focus { outline: 2px solid var(--ar-verde-600); outline-offset: 0; border-color: transparent; }
 .campo input[readonly] { background: var(--ar-fondo); color: var(--ar-tinta-2); cursor: default; }
 .campo input[readonly]:focus { outline: none; border-color: var(--ar-borde); }
@@ -18,7 +18,7 @@
 .pie { display: flex; justify-content: flex-end; align-items: center; gap: .5rem; flex-wrap: wrap; padding-top: .9rem; margin-top: .3rem; border-top: 1px solid var(--ar-borde); }
 .pie .estado { margin-right: auto; font-size: .8rem; color: var(--ar-tinta-3); display: inline-flex; align-items: center; gap: .35rem; }
 .pie .estado.cambios { color: var(--ar-ambar); font-weight: 600; }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; padding: .6rem 1rem; border-radius: 11px; cursor: pointer; font: inherit; font-size: .88rem; font-weight: 600; border: 1px solid var(--ar-borde); background: #fff; color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); transition: transform .15s, box-shadow .15s; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; padding: .6rem 1rem; border-radius: 11px; cursor: pointer; font: inherit; font-size: .88rem; font-weight: 600; border: 1px solid var(--ar-borde); background: var(--ar-superficie); color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); transition: transform .15s, box-shadow .15s; }
 .btn .ti { font-size: 18px; }
 .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--ar-sombra-2); }
 .btn:disabled { opacity: .55; cursor: not-allowed; }

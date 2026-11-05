@@ -1,5 +1,5 @@
 /* Inicio: tarjetas, pendientes y agenda */
-.tarjeta { background: #fff; border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); overflow: hidden; }
+.tarjeta { background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); overflow: hidden; }
 .tarjeta header { padding: 1rem 1.2rem .4rem; display: flex; justify-content: space-between; align-items: center; gap: .75rem; flex-wrap: wrap; }
 .tarjeta h2 { margin: 0; font-size: 1rem; color: var(--ar-tinta); display: flex; align-items: center; gap: .45rem; }
 .tarjeta h2 .ti { font-size: 19px; color: var(--ar-verde-600); }
@@ -19,7 +19,7 @@
 .fila-ic.ambar { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
 .fila-ic.azul { background: var(--ar-azul-bg); color: var(--ar-azul); }
 .fila-ic.verde { background: var(--ar-verde-100); color: var(--ar-verde-700); }
-.fila-ic.gris { background: #f0f2f0; color: var(--ar-tinta-2); }
+.fila-ic.gris { background: var(--ar-gris-bg); color: var(--ar-tinta-2); }
 .fila-ic.rojo { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
 .fila-txt { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 .fila-txt strong { font-size: .92rem; font-weight: 600; color: var(--ar-tinta); }

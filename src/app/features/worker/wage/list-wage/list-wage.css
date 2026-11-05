@@ -1,7 +1,7 @@
 /* Jornales: selector de trabajador y filtros */
 .personas { display: flex; gap: .5rem; overflow-x: auto; padding: .15rem .1rem .45rem; scrollbar-width: thin; }
-.p-chip { display: inline-flex; align-items: center; gap: .55rem; flex: none; padding: .4rem .85rem .4rem .4rem; border-radius: 999px; border: 1px solid var(--ar-borde); background: #fff; font: inherit; cursor: pointer; text-align: left; color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); transition: border-color .15s, background .15s; }
-.p-chip:hover { border-color: #bcd9be; }
+.p-chip { display: inline-flex; align-items: center; gap: .55rem; flex: none; padding: .4rem .85rem .4rem .4rem; border-radius: 999px; border: 1px solid var(--ar-borde); background: var(--ar-superficie); font: inherit; cursor: pointer; text-align: left; color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); transition: border-color .15s, background .15s; }
+.p-chip:hover { border-color: var(--ar-borde-fuerte); }
 .p-chip.on { background: var(--ar-verde-50); border-color: var(--ar-verde-600); box-shadow: inset 0 0 0 1px var(--ar-verde-600); }
 .p-chip .av { width: 30px; height: 30px; }
 .p-chip.on .av { background: var(--ar-verde-600); color: #fff; }
@@ -10,7 +10,7 @@
 .p-chip:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
 .selector { display: flex; align-items: center; gap: .6rem; }
 .selector label { font-size: .84rem; font-weight: 600; }
-.selector select { font: inherit; padding: .55rem .75rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: #fff; min-width: 260px; }
+.selector select { font: inherit; padding: .55rem .75rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: var(--ar-superficie); min-width: 260px; }
 .fechas { display: flex; align-items: center; gap: .4rem; font-size: .8rem; color: var(--ar-tinta-3); }
 .fechas input { font: inherit; font-size: .84rem; padding: .4rem .55rem; border: 1px solid var(--ar-borde); border-radius: 9px; color: var(--ar-tinta); }
 .fechas input:focus { outline: 2px solid var(--ar-verde-600); border-color: transparent; }
