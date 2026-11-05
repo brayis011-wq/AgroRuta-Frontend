@@ -1,100 +1,59 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="profile-form" novalidate>
-
-  <!-- Avatar preview -->
-  <div class="avatar-section">
-    <div class="avatar-wrapper">
-      <img
-        *ngIf="hasValidImage"
-        [src]="fotoUrl"
-        [alt]="'config.profile.photoAlt' | translate"
-        class="avatar-img"
-        (error)="onImageError()"
-      />
-      <div *ngIf="!hasValidImage" class="avatar-placeholder">
-        {{ initials || '?' }}
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="foto">
+    @if (hasValidImage) {
+      <img class="foto-img" [src]="fotoUrl" [alt]="'config.profile.photoAlt' | translate" (error)="onImageError()" />
+    } @else {
+      <span class="foto-ini" aria-hidden="true">{{ initials || '?' }}</span>
+    }
+    <div class="campo">
+      <label for="fotoPerfil">{{ 'config.profile.photoUrl' | translate }}</label>
+      <div class="fila">
+        <input id="fotoPerfil" type="url" formControlName="fotoPerfil" placeholder="https://…/mi-foto.jpg" (input)="onFotoChange()" />
+        @if (fotoUrl) {
+          <button type="button" class="btn btn-texto" (click)="quitarFoto()" [title]="'config.profile.removePhoto' | translate"><i class="ti ti-trash" aria-hidden="true"></i><span class="sr-only">{{ 'config.profile.removePhoto' | translate }}</span></button>
+        }
       </div>
+      @if (imageError) {
+        <em class="err"><i class="ti ti-photo-off" aria-hidden="true"></i> {{ 'config.profile.photoBroken' | translate }}</em>
+      } @else {
+        <span class="ayuda">{{ 'config.profile.photoHint' | translate }}</span>
+      }
     </div>
-    <div class="avatar-info">
-      <p class="avatar-hint">{{ 'config.profile.photoHint' | translate }}</p>
+  </div>
+
+  <div class="campos">
+    <div class="campo">
+      <label for="nombre">{{ 'config.profile.fullName' | translate }}</label>
+      <input id="nombre" type="text" formControlName="nombre" autocomplete="name" [class.invalido]="isInvalid('nombre')" [placeholder]="'config.profile.fullNamePlaceholder' | translate" />
+      @if (isInvalid('nombre')) { <em class="err">{{ 'config.profile.nameError' | translate }}</em> }
+    </div>
+    <div class="campo">
+      <label for="telefono">{{ 'config.profile.phone' | translate }}</label>
+      <input id="telefono" type="tel" inputmode="numeric" formControlName="telefono" autocomplete="tel" [class.invalido]="isInvalid('telefono')" placeholder="3001234567" />
+      @if (isInvalid('telefono')) { <em class="err">{{ 'config.profile.phoneError' | translate }}</em> }
+    </div>
+    <div class="campo">
+      <label for="email">{{ 'config.profile.email' | translate }}</label>
+      <input id="email" type="email" formControlName="email" readonly />
+      <span class="ayuda"><i class="ti ti-lock" aria-hidden="true"></i> {{ 'config.profile.emailHint' | translate }}</span>
+    </div>
+    <div class="campo">
+      <label for="rol">{{ 'config.profile.role' | translate }}</label>
+      <input id="rol" type="text" [value]="perfil ? ('enums.rol.' + perfil.rol | translate) : ''" readonly />
+      <span class="ayuda"><i class="ti ti-lock" aria-hidden="true"></i> {{ 'config.profile.roleHint' | translate }}</span>
     </div>
   </div>
 
-  <!-- Foto URL -->
-  <div class="field-group">
-    <label class="field-label" for="fotoPerfil">{{ 'config.profile.photoUrl' | translate }}</label>
-    <input
-      id="fotoPerfil"
-      type="url"
-      class="field-input"
-      formControlName="fotoPerfil"
-      placeholder="https://example.com/my-photo.jpg"
-      (input)="onFotoChange()"
-    />
-  </div>
-
-  <!-- Nombre -->
-  <div class="field-group">
-    <label class="field-label" for="nombre">{{ 'config.profile.fullName' | translate }} <span class="required">*</span></label>
-    <input
-      id="nombre"
-      type="text"
-      class="field-input"
-      [class.field-error]="isInvalid('nombre')"
-      formControlName="nombre"
-      [placeholder]="'config.profile.fullNamePlaceholder' | translate"
-    />
-    <span class="error-msg" *ngIf="isInvalid('nombre')">
-      {{ 'config.profile.nameError' | translate }}
-    </span>
-  </div>
-
-  <!-- Email (readonly) -->
-  <div class="field-group">
-    <label class="field-label" for="email">{{ 'config.profile.email' | translate }}</label>
-    <input
-      id="email"
-      type="email"
-      class="field-input field-readonly"
-      formControlName="email"
-      readonly
-    />
-    <span class="field-hint">{{ 'config.profile.emailHint' | translate }}</span>
-  </div>
-
-  <!-- Teléfono -->
-  <div class="field-group">
-    <label class="field-label" for="telefono">{{ 'config.profile.phone' | translate }} <span class="required">*</span></label>
-    <input
-      id="telefono"
-      type="tel"
-      class="field-input"
-      [class.field-error]="isInvalid('telefono')"
-      formControlName="telefono"
-      placeholder="3001234567"
-    />
-    <span class="error-msg" *ngIf="isInvalid('telefono')">
-      {{ 'config.profile.phoneError' | translate }}
-    </span>
-  </div>
-
-  <!-- Rol (readonly, traducido) -->
-  <div class="field-group">
-    <label class="field-label" for="rol">{{ 'config.profile.role' | translate }}</label>
-    <input
-      id="rol"
-      type="text"
-      class="field-input field-readonly"
-      [value]="perfil ? ('enums.rol.' + perfil.rol | translate) : ''"
-      readonly
-    />
-    <span class="field-hint">{{ 'config.profile.roleHint' | translate }}</span>
-  </div>
-
-  <div class="form-actions">
-    <button type="submit" class="btn-primary" [disabled]="loading">
-      <span *ngIf="!loading">💾 {{ 'config.profile.save' | translate }}</span>
-      <span *ngIf="loading">{{ 'config.profile.saving' | translate }}</span>
+  <div class="pie">
+    @if (form.dirty) {
+      <span class="estado cambios"><i class="ti ti-point-filled" aria-hidden="true"></i> {{ 'config.unsaved' | translate }}</span>
+      <button type="button" class="btn btn-texto" [disabled]="loading" (click)="descartar()">{{ 'config.discard' | translate }}</button>
+    } @else {
+      <span class="estado"><i class="ti ti-check" aria-hidden="true"></i> {{ 'config.upToDate' | translate }}</span>
+    }
+    <button type="submit" class="btn btn-prim" [disabled]="loading || !form.dirty">
+      <i class="ti" [class.ti-device-floppy]="!loading" [class.ti-loader-2]="loading" [class.gira]="loading" aria-hidden="true"></i>
+      {{ (loading ? 'config.profile.saving' : 'config.profile.save') | translate }}
     </button>
   </div>
-
 </form>

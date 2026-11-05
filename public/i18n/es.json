@@ -133,6 +133,10 @@
   },
   "enums": {
     "rol": {
+      "ADMINISTRADOR": "Administrador",
+      "AGRICULTOR": "Agricultor",
+      "TRABAJADOR": "Trabajador",
+      "OPERARIO": "Trabajador",
       "Administrador": "Administrador",
       "Agricultor": "Agricultor",
       "Trabajador": "Trabajador"
@@ -1156,21 +1160,29 @@
     }
   },
   "config": {
+    "prefs": {"title": "Preferencias", "desc": "Cómo quieres usar AgroRuta en este dispositivo", "language": "Idioma", "languageHint": "Idioma de los menús, textos y reportes", "farm": "Finca al entrar", "farmHint": "La finca que se muestra al abrir el panel. También puedes cambiarla en el menú lateral.", "farmSaved": "Finca guardada como predeterminada", "session": "Sesión", "sessionHint": "Sal de tu cuenta en este dispositivo"},
+    "upToDate": "Todo guardado",
+    "discard": "Descartar",
+    "unsaved": "Cambios sin guardar",
+    "sections": "Secciones de configuración",
+    "eyebrow": "Sistema",
     "title": "Configuración",
-    "subtitle": "Administra tu perfil y seguridad de cuenta",
+    "subtitle": "Tu perfil, la seguridad de tu cuenta y tus preferencias",
     "profileCard": { "title": "Datos del perfil", "desc": "Actualiza tu información personal" },
     "passwordCard": { "title": "Cambiar contraseña", "desc": "Actualiza tus credenciales de acceso" },
     "toast": {
       "loadError": "No se pudo cargar el perfil. Inténtalo de nuevo.",
-      "profileSaved": "Perfil actualizado correctamente ✓",
+      "profileSaved": "Perfil actualizado correctamente",
       "profileError": "Error al actualizar el perfil. Inténtalo de nuevo.",
-      "passwordSaved": "Contraseña cambiada correctamente ✓",
+      "passwordSaved": "Contraseña cambiada correctamente",
       "passwordWrong": "La contraseña actual es incorrecta.",
       "passwordError": "Error al cambiar la contraseña. Inténtalo de nuevo."
     },
     "profile": {
+      "photoBroken": "No se pudo cargar esa imagen. Revisa el enlace.",
+      "removePhoto": "Quitar foto",
       "photoAlt": "Foto de perfil",
-      "photoHint": "Ingresa una URL de imagen para actualizar tu foto",
+      "photoHint": "Pega el enlace de una imagen (opcional)",
       "photoUrl": "URL de foto de perfil",
       "fullName": "Nombre completo",
       "fullNamePlaceholder": "Tu nombre completo",
@@ -1185,6 +1197,11 @@
       "saving": "Guardando…"
     },
     "password": {
+      "rules": {"length": "Mínimo 8 caracteres", "upper": "Una mayúscula", "number": "Un número", "symbol": "Un símbolo (!, #, @…)"},
+      "strength": {"label": "Seguridad", "s0": "—", "s1": "Débil", "s2": "Regular", "s3": "Buena", "s4": "Fuerte"},
+      "note": "Te pediremos la nueva contraseña la próxima vez que entres",
+      "hide": "Ocultar contraseña",
+      "show": "Mostrar contraseña",
       "current": "Contraseña actual",
       "currentPlaceholder": "Tu contraseña actual",
       "currentRequired": "La contraseña actual es obligatoria",

@@ -76,4 +76,13 @@ describe('ProfileFormComponent', () => {
     component.onSubmit();
     expect(spy).toHaveBeenCalled();
   });
+  it('descartar() returns to the saved data', () => {
+    component.perfil = { id: 1, nombre: 'Ana', email: 'a@b.co', telefono: '3001234567', fotoPerfil: '', rol: 'AGRICULTOR' };
+    component.ngOnChanges({ perfil: {} as never });
+    component.form.get('nombre')?.setValue('Otra');
+    component.form.markAsDirty();
+    component.descartar();
+    expect(component.form.get('nombre')?.value).toBe('Ana');
+    expect(component.form.dirty).toBe(false);
+  });
 });

@@ -59,4 +59,19 @@ describe('ChangePasswordFormComponent', () => {
     expect(spy).toHaveBeenCalledWith({ passwordActual: 'oldpass', nuevaPassword: 'newpass1' });
   });
   it('loading should default to false', () => { expect(component.loading).toBe(false); });
+  it('onSubmit() keeps what was typed until the server confirms', () => {
+    component.form.setValue({ passwordActual: 'oldpass', nuevaPassword: 'newpass1', confirmarPassword: 'newpass1' });
+    component.onSubmit();
+    expect(component.form.get('passwordActual')?.value).toBe('oldpass');
+    component.limpiar();
+    expect(component.form.get('passwordActual')?.value).toBeFalsy();
+  });
+  it('fuerza grows with length, uppercase, numbers and symbols', () => {
+    const f = (v: string) => { component.form.get('nuevaPassword')?.setValue(v); return component.fuerza; };
+    expect(f('')).toBe(0);
+    expect(f('abc')).toBe(1);
+    expect(f('abcdefgh')).toBe(1);
+    expect(f('Abcdefgh1')).toBe(3);
+    expect(f('Abcdefgh1!')).toBe(4);
+  });
 });

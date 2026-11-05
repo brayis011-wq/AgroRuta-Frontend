@@ -133,6 +133,10 @@
   },
   "enums": {
     "rol": {
+      "ADMINISTRADOR": "Administrator",
+      "AGRICULTOR": "Farmer",
+      "TRABAJADOR": "Worker",
+      "OPERARIO": "Worker",
       "Administrador": "Administrator",
       "Agricultor": "Farmer",
       "Trabajador": "Worker"
@@ -1156,21 +1160,29 @@
     }
   },
   "config": {
+    "prefs": {"title": "Preferences", "desc": "How you use AgroRuta on this device", "language": "Language", "languageHint": "Language for menus, texts and reports", "farm": "Farm on start", "farmHint": "The farm shown when you open the panel. You can also change it in the side menu.", "farmSaved": "Farm saved as default", "session": "Session", "sessionHint": "Sign out of your account on this device"},
+    "upToDate": "All saved",
+    "discard": "Discard",
+    "unsaved": "Unsaved changes",
+    "sections": "Settings sections",
+    "eyebrow": "System",
     "title": "Settings",
-    "subtitle": "Manage your profile and account security",
+    "subtitle": "Your profile, account security and preferences",
     "profileCard": { "title": "Profile details", "desc": "Update your personal information" },
     "passwordCard": { "title": "Change password", "desc": "Update your access credentials" },
     "toast": {
       "loadError": "Could not load the profile. Please try again.",
-      "profileSaved": "Profile updated successfully ✓",
+      "profileSaved": "Profile updated successfully",
       "profileError": "Error updating the profile. Please try again.",
-      "passwordSaved": "Password changed successfully ✓",
+      "passwordSaved": "Password changed successfully",
       "passwordWrong": "The current password is incorrect.",
       "passwordError": "Error changing the password. Please try again."
     },
     "profile": {
+      "photoBroken": "That image couldn't load. Check the link.",
+      "removePhoto": "Remove photo",
       "photoAlt": "Profile photo",
-      "photoHint": "Enter an image URL to update your photo",
+      "photoHint": "Paste an image link (optional)",
       "photoUrl": "Profile photo URL",
       "fullName": "Full name",
       "fullNamePlaceholder": "Your full name",
@@ -1185,6 +1197,11 @@
       "saving": "Saving…"
     },
     "password": {
+      "rules": {"length": "At least 8 characters", "upper": "One uppercase letter", "number": "One number", "symbol": "One symbol (!, #, @…)"},
+      "strength": {"label": "Strength", "s0": "—", "s1": "Weak", "s2": "Fair", "s3": "Good", "s4": "Strong"},
+      "note": "You'll use the new password next time you sign in",
+      "hide": "Hide password",
+      "show": "Show password",
       "current": "Current password",
       "currentPlaceholder": "Your current password",
       "currentRequired": "The current password is required",

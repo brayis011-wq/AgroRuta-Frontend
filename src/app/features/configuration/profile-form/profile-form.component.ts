@@ -16,7 +16,7 @@ import { Perfil, UpdateProfileRequest } from '../../../core/models/profile.model
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './profile-form.component.html',
-  styleUrls: ['./profile-form.component.scss'],
+  styleUrls: ['../config-campos.css', './profile-form.component.scss'],
 })
 export class ProfileFormComponent implements OnChanges {
   @Input() perfil: Perfil | null = null;
@@ -44,7 +44,24 @@ export class ProfileFormComponent implements OnChanges {
         fotoPerfil: this.perfil.fotoPerfil,
       });
       this.imageError = false;
+      this.form.markAsPristine();
+      this.form.markAsUntouched();
     }
+  }
+
+  /** Vuelve a los datos guardados */
+  descartar(): void {
+    if (!this.perfil) return;
+    this.form.patchValue({ nombre: this.perfil.nombre, telefono: this.perfil.telefono, fotoPerfil: this.perfil.fotoPerfil });
+    this.imageError = false;
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
+  }
+
+  quitarFoto(): void {
+    this.form.patchValue({ fotoPerfil: '' });
+    this.form.get('fotoPerfil')?.markAsDirty();
+    this.imageError = false;
   }
 
   get fotoUrl(): string {
