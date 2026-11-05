@@ -63,6 +63,24 @@
             {{ 'layout.weather.' + consejo | translate }}
           </p>
         }
+        @if (activa && resumen) {
+          @if (resumen.carencia; as c) {
+            <p class="alerta-cultivo rojo">
+              <i class="ti ti-basket-off"></i>
+              <span><b>{{ 'temporadas.carencia.noHarvestUntil' | translate: { date: fmtDia(c.libreDesde) } }}</b>
+                <small>{{ c.producto }} · {{ (c.diasRestantes === 1 ? 'temporadas.carencia.leftOne' : 'temporadas.carencia.left') | translate: { days: c.diasRestantes } }}</small></span>
+            </p>
+          } @else {
+            <p class="alerta-cultivo verde"><i class="ti ti-basket-check"></i> <span><b>{{ 'temporadas.carencia.canHarvest' | translate }}</b></span></p>
+          }
+          @if (resumen.reentrada; as r) {
+            <p class="alerta-cultivo ambar">
+              <i class="ti ti-door-off"></i>
+              <span><b>{{ 'temporadas.carencia.noEntryUntil' | translate: { date: fmtDia(r.libreDesde) } }}</b>
+                <small>{{ r.producto }} · {{ 'temporadas.carencia.reentryHours' | translate: { hours: r.valor } }}</small></span>
+            </p>
+          }
+        }
         @if (activa) {
           @let est = estadoFumigacion();
           <p class="fumi" [class]="'fumi ' + est.nivel"><i class="ti ti-spray"></i> {{ est.clave | translate: { days: est.dias } }}</p>
@@ -116,6 +134,8 @@
 
     <app-ciclo-etapas [siembra]="siembra" (cambio)="alCambiarSiembra($event)" />
 
+    <app-rendimiento-siembra [resumen]="resumen" [siembra]="siembra" />
+
     <section class="tarjeta historial">
         <header>
           <h2><i class="ti ti-history"></i> {{ 'siembra.detail.history.title' | translate }}</h2>
@@ -147,7 +167,7 @@
                   <small>
                     @switch (item.tipo) {
                       @case ('actividad') { {{ item.detalle }} }
-                      @case ('fumigacion') { {{ num(item.dosis, 2) }} {{ 'enums.unidadMedida.' + item.unidad | translate }} · {{ num(item.area, 2) }} ha }
+                      @case ('fumigacion') { {{ num(item.dosis, 2) }} {{ 'enums.unidadMedida.' + item.unidad | translate }} · {{ num(item.area, 2) }} ha@if (item.carencia) { · {{ 'temporadas.carencia.daysShort' | translate: { days: item.carencia } }} }@if (item.reentrada) { · {{ 'temporadas.carencia.reentryShort' | translate: { hours: item.reentrada } }} } }
                       @case ('cosecha') { {{ 'siembra.detail.history.quality' | translate }}: {{ 'enums.calidadCosecha.' + item.calidad | translate }} }
                     }
                   </small>

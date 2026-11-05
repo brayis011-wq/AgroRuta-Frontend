@@ -26,6 +26,7 @@ describe('DetalleSiembraComponent', () => {
 
   beforeEach(async () => {
     cultivoServiceMock = {
+      resumenSiembra: vi.fn().mockReturnValue(of(null)),
       buscarSiembra: vi.fn().mockReturnValue(of(mockSiembra)),
       buscarLote: vi.fn().mockReturnValue(of(mockLote)),
       listarActividades: vi.fn().mockReturnValue(of(mockActividades)),

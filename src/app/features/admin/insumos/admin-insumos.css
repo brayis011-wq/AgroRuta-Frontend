@@ -8,6 +8,7 @@
 .field-wide { grid-column: 1 / -1; }
 .input.bad { border-color: var(--a-red); }
 .err { color: var(--a-red); font-weight: 500; }
+.hint { color: var(--a-muted); font-size: .75rem; font-weight: 400; }
 .form-actions { display: flex; justify-content: flex-end; gap: 0.6rem; padding: 0 1.1rem 1.1rem; }
 .actions { display: flex; justify-content: flex-end; gap: 0.4rem; }
 .danger { color: var(--a-red); }

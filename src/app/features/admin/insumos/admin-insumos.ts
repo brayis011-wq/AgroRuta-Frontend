@@ -47,6 +47,8 @@ export class AdminInsumosComponent implements OnInit {
     unidadSugerida: ['LITROS' as MeasurementUnit, Validators.required],
     dosisSugerida: [1, [Validators.required, Validators.min(0.01)]],
     reentradaHoras: [24, [Validators.required, Validators.min(0)]],
+    // Opcional: depende del producto y del cultivo (etiqueta)
+    diasCarencia: [null as number | null, [Validators.min(0), Validators.max(365)]],
   });
 
   ngOnInit(): void {
@@ -92,6 +94,7 @@ export class AdminInsumosComponent implements OnInit {
       unidadSugerida: insumo.unidadSugerida,
       dosisSugerida: insumo.dosisSugerida,
       reentradaHoras: insumo.reentradaHoras,
+      diasCarencia: insumo.diasCarencia ?? null,
     });
     this.formularioAbierto = true;
     this.mensaje = null;

@@ -21,6 +21,8 @@ export interface AgriculturalInput {
   unidadSugerida: MeasurementUnit;
   dosisSugerida: number;
   reentradaHoras: number;
+  /** Días sin cosechar después de aplicar; null si no se conoce */
+  diasCarencia?: number | null;
   activo: boolean;
   creadoEn: string;
 }
@@ -31,4 +33,5 @@ export interface AgriculturalInputRequest {
   unidadSugerida: MeasurementUnit;
   dosisSugerida: number;
   reentradaHoras: number;
+  diasCarencia?: number | null;
 }

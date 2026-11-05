@@ -37,6 +37,10 @@ interface FumigacionForm {
   areaAplicada: number | undefined;
   observaciones: string;
   siembraId: number;
+  /** Días sin cosechar después de aplicar (etiqueta del producto) */
+  diasCarencia: number | null;
+  /** Horas sin entrar al lote después de aplicar */
+  reentradaHoras: number | null;
 }
 
 @Component({
@@ -89,6 +93,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     areaAplicada: undefined,
     observaciones: '',
     siembraId: 0,
+    diasCarencia: null,
+    reentradaHoras: null,
   };
 
   readonly unidades: MeasurementUnit[] = ['LITROS', 'ML', 'GRAMOS', 'KG'];
@@ -149,6 +155,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           unidadMedida: f.unidadMedida,
           areaAplicada: f.areaAplicada,
           observaciones: f.observaciones ?? '',
+          diasCarencia: f.diasCarencia ?? null,
+          reentradaHoras: f.reentradaHoras ?? null,
         };
         this.busquedaProducto = f.producto;
         this.cdr.markForCheck();
@@ -186,6 +194,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.form.agriculturalInputId = insumo.id;
     this.form.unidadMedida        = insumo.unidadSugerida;
     this.form.dosis               = insumo.dosisSugerida;
+    this.form.reentradaHoras      = insumo.reentradaHoras ?? null;
+    this.form.diasCarencia        = insumo.diasCarencia ?? null;
     this.mostrarCatalogo.set(false);
   }
 
@@ -196,6 +206,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.form.agriculturalInputId = undefined;
     this.form.unidadMedida        = '';
     this.form.dosis               = undefined;
+    this.form.reentradaHoras      = null;
+    this.form.diasCarencia        = null;
   }
 
   usarProductoManual(): void {
@@ -284,6 +296,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       areaAplicada:        this.form.areaAplicada!,
       observaciones:       this.form.observaciones,
       siembraId:           this.form.siembraId,
+      diasCarencia:        this.form.diasCarencia,
+      reentradaHoras:      this.form.reentradaHoras,
     };
 
     const peticion = this.registroId

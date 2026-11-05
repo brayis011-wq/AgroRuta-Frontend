@@ -14,9 +14,10 @@ import {
   nombreCultivo as nombreDeCultivo,
 } from '../../../../core/models/cultivo.model';
 import { CicloEtapasComponent } from '../ciclo-etapas/ciclo-etapas';
+import { RendimientoSiembraComponent } from '../rendimiento/rendimiento';
 import { diasEntre, hoyIso } from '../ciclo-etapas/ciclo-etapas.logic';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
-import { siembraActiva } from '../../../../core/models/cultivo.model';
+import { ResumenSiembra, siembraActiva } from '../../../../core/models/cultivo.model';
 import { formatoFecha, formatoNumero } from '../../../../shared/formato';
 import { WeatherService } from '../../../../core/services/weather.service';
 import { Weather } from '../../../../core/models/weather.model';
@@ -33,13 +34,15 @@ interface TimelineItem {
   unidad?: string;
   area?: number;
   calidad?: string;        // cosecha
+  carencia?: number | null;  // fumigación: días sin cosechar
+  reentrada?: number | null; // fumigación: horas sin entrar
   extra?: string;
 }
 
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent],
   templateUrl: './detalle-siembra.html',
   styleUrls: ['../../cultivo-ui.css', '../../cultivo-bloques.css', '../../cultivo-dialogo.css', './detalle-siembra.css', './detalle-siembra-hoy.css'],
 })
@@ -55,6 +58,8 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   clima: Weather | null = null;
   consejo: ConsejoClima | null = null;
   nombreFinca: string | null = null;
+  /** Rendimiento, cosechas por semana, carencia y reentrada (null mientras carga) */
+  resumen: ResumenSiembra | null = null;
 
   /** La temporada sigue abierta (se pueden registrar cosas) */
   get activa(): boolean {
@@ -111,7 +116,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.siembra = null;
     this.actividades = []; this.fumigaciones = []; this.cosechas = [];
     this.timelineCompleto = []; this.totalKg = 0;
-    this.clima = null; this.consejo = null;
+    this.clima = null; this.consejo = null; this.resumen = null;
     this.nombreLote = null; this.nombreFinca = null;
     this.fincaLat = null; this.fincaLng = null;
     this.cargando = true; this.error = '';
@@ -119,6 +124,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       next: (siembra) => {
         this.siembra = siembra;
         this.cargarDatos(id);
+        this.cargarResumen(id);
         // Cargar coordenadas reales del lote/finca
         this.cultivoService.buscarLote(siembra.loteId).subscribe({
           next: (lote) => {
@@ -190,6 +196,8 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
 
     this.fumigaciones.forEach(f => items.push({
       id: f.id!,
+      carencia: f.diasCarencia ?? null,
+      reentrada: f.reentradaHoras ?? null,
       fecha: f.fecha,
       tipo: 'fumigacion',
       titulo: f.producto,
@@ -241,6 +249,13 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.filtroActivo = filtro;
   }
 
+  private cargarResumen(id: number): void {
+    this.cultivoService.resumenSiembra(id).subscribe({
+      next: (r) => { if (this.siembra?.id === id) { this.resumen = r; this.cdr.detectChanges(); } },
+      error: () => { /* la página sigue sin el resumen */ },
+    });
+  }
+
   private cargarClima(lugar: string): void {
     const obs = this.fincaLat != null && this.fincaLng != null
       ? this.weather.getByCoordinates(this.fincaLat, this.fincaLng)
@@ -279,6 +294,14 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  /** "jueves 6 nov": para avisos de los próximos días */
+  fmtDia(v: string | null | undefined): string {
+    if (!v) return '';
+    const [y, m, d] = v.split('-').map(Number);
+    return new Intl.DateTimeFormat(this.lang.current() === 'en' ? 'en-US' : 'es-CO', { weekday: 'long', day: 'numeric', month: 'short' })
+      .format(new Date(y, m - 1, d));
+  }
+
   fmtFechaLarga(v: string | null | undefined): string {
     return formatoFecha(v, this.lang.current());
   }
@@ -307,7 +330,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
         ? this.cultivoService.eliminarFumigacion(item.id)
         : this.cultivoService.eliminarCosecha(item.id);
     peticion.subscribe({
-      next: () => this.cargarDatos(this.siembra!.id!),
+      next: () => { this.cargarDatos(this.siembra!.id!); this.cargarResumen(this.siembra!.id!); },
       error: (e) => {
         this.error = e?.error?.message || 'temporadas.registro.errors.delete';
         this.cdr.detectChanges();

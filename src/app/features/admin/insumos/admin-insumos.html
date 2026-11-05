@@ -50,6 +50,12 @@
                [class.bad]="invalido('reentradaHoras')" />
         <small class="err" *ngIf="invalido('reentradaHoras')">{{ 'admin.inputs.errors.reentry' | translate }}</small>
       </label>
+      <label class="field">
+        <span>{{ 'temporadas.carencia.field' | translate }}</span>
+        <input id="insumo-carencia" class="input" type="number" step="1" min="0" max="365" formControlName="diasCarencia"
+               [placeholder]="'temporadas.carencia.unknown' | translate" [class.bad]="invalido('diasCarencia')" />
+        <small class="hint">{{ 'temporadas.carencia.labelHint' | translate }}</small>
+      </label>
     </div>
     <div class="form-actions">
       <button type="button" class="btn btn-ghost" (click)="cerrarFormulario()" [disabled]="guardando">{{ 'common.cancel' | translate }}</button>
@@ -84,6 +90,7 @@
             <th>{{ 'admin.inputs.fields.type' | translate }}</th>
             <th class="num">{{ 'admin.inputs.fields.dose' | translate }}</th>
             <th class="num">{{ 'admin.inputs.fields.reentry' | translate }}</th>
+            <th class="num">{{ 'temporadas.carencia.short' | translate }}</th>
             <th class="num">{{ 'admin.users.table.actions' | translate }}</th>
           </tr>
         </thead>
@@ -93,6 +100,7 @@
             <td><span class="pill info">{{ 'enums.tipoInsumo.' + i.tipo | translate }}</span></td>
             <td class="num">{{ num(i.dosisSugerida, 2) }} {{ 'enums.unidadMedida.' + i.unidadSugerida | translate }}</td>
             <td class="num">{{ num(i.reentradaHoras) }} h</td>
+            <td class="num">{{ i.diasCarencia != null ? num(i.diasCarencia) + ' d' : '—' }}</td>
             <td class="num">
               <div class="actions">
                 <button type="button" class="btn btn-sm btn-ghost" (click)="editar(i)">{{ 'common.edit' | translate }}</button>

@@ -225,6 +225,22 @@
           </div>
         </div>
 
+        <!-- Restricciones del producto: deciden cuándo se puede cosechar y entrar al lote -->
+        <div class="field-row restricciones">
+          <div class="field">
+            <label class="field__label" for="carencia"><i class="ti ti-basket-off" aria-hidden="true"></i> {{ 'temporadas.carencia.field' | translate }}</label>
+            <input id="carencia" type="number" min="0" max="365" step="1" [(ngModel)]="form.diasCarencia" name="diasCarencia"
+                   [placeholder]="'temporadas.carencia.unknown' | translate" />
+            <small class="campo-hint">{{ 'temporadas.carencia.fieldHint' | translate }}</small>
+          </div>
+          <div class="field">
+            <label class="field__label" for="reentrada"><i class="ti ti-door-exit" aria-hidden="true"></i> {{ 'temporadas.carencia.reentryField' | translate }}</label>
+            <input id="reentrada" type="number" min="0" max="720" step="1" [(ngModel)]="form.reentradaHoras" name="reentradaHoras"
+                   [placeholder]="'temporadas.carencia.unknown' | translate" />
+            <small class="campo-hint">{{ 'temporadas.carencia.reentryHint' | translate }}</small>
+          </div>
+        </div>
+
         <!-- Observaciones -->
         <div class="field">
           <label class="field__label" for="observaciones">

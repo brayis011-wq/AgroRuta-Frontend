@@ -1435,6 +1435,41 @@
     "confirm": "Confirm"
   },
   "temporadas": {
+    "carencia": {
+      "field": "Pre-harvest interval (days)",
+      "short": "PHI",
+      "unknown": "No data",
+      "labelHint": "Days between application and harvest. Check the label: it may change by crop.",
+      "fieldHint": "Do not harvest until they pass. It is on the product label.",
+      "reentryField": "Re-entry hours",
+      "reentryHint": "Time without entering the lot after applying.",
+      "noHarvestUntil": "Do not harvest until {{date}}",
+      "left": "{{days}} days left",
+      "leftOne": "1 day left",
+      "canHarvest": "No interval in effect: you can harvest",
+      "noEntryUntil": "Do not enter the lot until {{date}}",
+      "reentryHours": "{{hours}} h re-entry",
+      "daysShort": "PHI {{days}} d",
+      "reentryShort": "re-entry {{hours}} h",
+      "harvestWarning": "This date is within the pre-harvest interval of {{producto}}: harvesting from {{date}} is recommended."
+    },
+    "rend": {
+      "title": "Harvests and yield",
+      "legend": "Grades",
+      "empty": "No harvests in this season yet. Once you register the first one you will see kilos per week and yield here.",
+      "total": "Total harvested",
+      "perPlant": "Per plant",
+      "perHa": "Per hectare",
+      "quality": "Grade",
+      "perWeek": "Kilos per week",
+      "max": "max {{kg}} kg",
+      "weekOf": "Week of {{date}}",
+      "compareTitlePlant": "Kg per plant vs previous seasons",
+      "compareTitleKg": "Kilos vs previous seasons",
+      "compareEmpty": "When this lot has another season of the same crop you can compare them here.",
+      "thisSeason": "This season (in progress)",
+      "compareNote": "The current season is still adding harvests."
+    },
     "ui": {
       "registerNew": "Register new",
       "daysInField": "Days in the field",
