@@ -25,7 +25,7 @@ describe('RegistrarActividad', () => {
         { provide: Router, useValue: routerMock },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: () => '7' } } },
+          useValue: { snapshot: { paramMap: { get: (k: string) => (k === 'id' ? '7' : null) } } },
         },
         ChangeDetectorRef,
       ],
@@ -49,7 +49,7 @@ describe('RegistrarActividad', () => {
   });
 
   it('ngOnInit() should set form.fecha to today', () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('en-CA');
     expect(component.form.fecha).toBe(today);
   });
 

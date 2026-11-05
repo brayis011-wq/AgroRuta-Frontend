@@ -2,24 +2,24 @@
   <div class="container">
 
     <button class="btn-back" (click)="volver()">
-      <span class="btn-back__arrow">←</span>
+      <i class="ti ti-arrow-left" aria-hidden="true"></i>
       <span>{{ 'siembra.harvest.back' | translate }}</span>
     </button>
 
     <div class="form-header">
-      <div class="form-header__icon">⚖️</div>
+      <div class="form-header__icon"><i class="ti ti-basket"></i></div>
       <div>
-        <h2>{{ 'siembra.harvest.title' | translate }}</h2>
+        <h2>{{ (registroId ? 'temporadas.registro.editHarvest' : 'siembra.harvest.title') | translate }}</h2>
         <p>{{ 'siembra.harvest.subtitle' | translate }}</p>
       </div>
     </div>
 
     <div class="alert alert--error" *ngIf="error">
-      <span class="alert__icon">⚠️</span>
+      <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
       {{ error | translate }}
     </div>
     <div class="alert alert--success" *ngIf="exito">
-      <span class="alert__icon">✅</span>
+      <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>
       {{ exito | translate }}
     </div>
 
@@ -31,7 +31,7 @@
         <!-- Fecha -->
         <div class="field">
           <label class="field__label" for="fecha">
-            <span>📅</span> {{ 'siembra.harvest.date' | translate }}
+            <i class="ti ti-calendar" aria-hidden="true"></i> {{ 'siembra.harvest.date' | translate }}
           </label>
           <div class="field__input-wrap">
             <input
@@ -47,7 +47,7 @@
         <!-- Cantidad -->
         <div class="field">
           <label class="field__label" for="cantidadKg">
-            <span>🌿</span> {{ 'siembra.harvest.kg' | translate }}
+            <i class="ti ti-scale" aria-hidden="true"></i> {{ 'siembra.harvest.kg' | translate }}
           </label>
           <div class="field__input-wrap">
             <input
@@ -65,7 +65,7 @@
         <!-- Calidad -->
         <div class="field">
           <label class="field__label" for="calidad">
-            <span>🏅</span> {{ 'siembra.harvest.quality' | translate }}
+            <i class="ti ti-award" aria-hidden="true"></i> {{ 'siembra.harvest.quality' | translate }}
           </label>
           <div class="field__input-wrap">
             <select
@@ -83,7 +83,7 @@
         <!-- Observaciones -->
         <div class="field">
           <label class="field__label" for="observaciones">
-            <span>📝</span> {{ 'siembra.harvest.notes' | translate }}
+            <i class="ti ti-notes" aria-hidden="true"></i> {{ 'siembra.harvest.notes' | translate }}
             <span class="label-optional">({{ 'common.optional' | translate }})</span>
           </label>
           <div class="field__input-wrap">
@@ -99,8 +99,8 @@
 
         <button type="submit" class="btn-submit" [disabled]="cargando">
           <span class="btn-submit__text" *ngIf="!cargando">
-            <span>{{ 'siembra.harvest.submit' | translate }}</span>
-            <span class="btn-submit__arrow">→</span>
+            <span>{{ (registroId ? 'common.save' : 'siembra.harvest.submit') | translate }}</span>
+            <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
           </span>
           <span class="btn-submit__loader" *ngIf="cargando">
             <span class="spinner"></span>

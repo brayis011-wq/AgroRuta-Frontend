@@ -469,8 +469,8 @@
       "namePlaceholder": "Ej: Lote A",
       "mapHelp": "Usa el ícono de polígono en el mapa para trazar los límites del lote. El área se calculará automáticamente.",
       "areaLabel": "Área calculada:",
-      "withinLimit": "✓ dentro del límite",
-      "exceedsLimit": "✗ supera el límite de {{max}} ha",
+      "withinLimit": "dentro del límite",
+      "exceedsLimit": "supera el límite de {{max}} ha",
       "pending": "Aún no has dibujado el polígono del lote",
       "cancel": "Cancelar",
       "submit": "Registrar lote",
@@ -659,8 +659,8 @@
       "searchPlaceholder": "Buscar en catálogo... ej: fungicida, mancozeb",
       "searchHint": "Busca en el catálogo o escribe el nombre manualmente",
       "noResultsManual": "Sin resultados. Se registrará como producto manual.",
-      "catalogOpen": "📋 Ver catálogo completo",
-      "catalogClose": "✖ Cerrar catálogo",
+      "catalogOpen": "Ver catálogo completo",
+      "catalogClose": "Cerrar catálogo",
       "filterPlaceholder": "Filtrar por nombre o tipo...",
       "noResultsFor": "Sin resultados para \"{{filter}}\"",
       "doseSuggested": "Dosis sugerida: {{dose}} {{unit}}",
@@ -1433,5 +1433,120 @@
   "confirmDialog": {
     "title": "¿Confirmar?",
     "confirm": "Confirmar"
+  },
+  "temporadas": {
+    "ui": {
+      "registerNew": "Registrar nuevo",
+      "daysInField": "Días en campo",
+      "back": "Volver",
+      "crops": "Cultivos",
+      "farm": "Finca",
+      "planting": "Siembra",
+      "newFarm": "Nueva finca",
+      "newLot": "Nuevo lote",
+      "lots": "Lotes",
+      "lotsPlanted": "Lotes sembrados",
+      "lotsCount": "{{count}} lotes",
+      "plantedCount": "{{count}} sembrados",
+      "noFarmsTitle": "Todavía no tienes fincas",
+      "yourFarms": "Tus fincas",
+      "backToFarms": "Mis fincas",
+      "backToLot": "Volver a {{lote}}",
+      "lotsOfFarm": "Lotes de la finca",
+      "noLotsTitle": "Esta finca no tiene lotes",
+      "mapLotHint": "Toca un lote en el mapa para abrirlo",
+      "mapped": "en lotes",
+      "readyToPlant": "Listo para sembrar",
+      "resting": "Descansando",
+      "seasonLength": "Duración de la temporada",
+      "sprayStatus": "Fumigación",
+      "weatherToday": "Clima de hoy",
+      "noWeather": "No hay datos del clima para esta finca.",
+      "whereIsFarm": "¿Dónde está la finca?",
+      "drawLot": "Dibuja el lote en el mapa"
+    },
+    "saving": "Guardando...",
+    "ciclo": {
+      "title": "Ciclo del cultivo",
+      "inStage": "En {{etapa}} hace {{days}} días",
+      "finishedOn": "Temporada terminada el {{date}} · duró {{days}} días",
+      "noDate": "sin fecha",
+      "advanceTo": "Pasar a {{etapa}}",
+      "finish": "Terminar temporada",
+      "undo": "Deshacer último cambio",
+      "reopen": "Reabrir temporada",
+      "whenStarted": "¿Qué día empezó {{etapa}}?",
+      "confirm": "Confirmar",
+      "finishDate": "¿Qué día terminó la temporada?",
+      "lotAfter": "¿Cómo queda el lote?",
+      "availableHint": "Listo para sembrar de nuevo",
+      "restHint": "El suelo descansa antes de la próxima siembra",
+      "finishConfirm": "Terminar temporada",
+      "error": "No se pudo cambiar la etapa. Intenta de nuevo.",
+      "undoTitle": "¿Deshacer el último cambio?",
+      "undoMsg": "La siembra vuelve a la etapa anterior y se borra la fecha en que pasó a {{etapa}}.",
+      "reopenTitle": "¿Reabrir la temporada?",
+      "reopenMsg": "La siembra vuelve a Cosecha y el lote queda otra vez en cultivo."
+    },
+    "lote": {
+      "backPlain": "Volver al lote",
+      "back": "Volver a la finca",
+      "eyebrow": "Lote",
+      "estado": {
+        "DISPONIBLE": "Disponible",
+        "EN_CULTIVO": "En cultivo",
+        "EN_DESCANSO": "En descanso"
+      },
+      "makeAvailable": "Marcar disponible",
+      "rest": "Poner en descanso",
+      "restTitle": "¿Poner el lote en descanso?",
+      "restMsg": "Sirve para recordar que el suelo está descansando. Puedes sembrar en él cuando quieras.",
+      "name": "Nombre del lote",
+      "area": "Área (ha)",
+      "current": "Temporada en curso",
+      "plantedOn": "Sembrado el {{date}}",
+      "plants": "{{count}} plantas",
+      "daysInField": "días en campo",
+      "open": "Ver siembra",
+      "empty": "Este lote todavía no tiene siembras",
+      "emptyAgain": "No hay una siembra en curso",
+      "emptyDesc": "Registra una siembra para llevar sus etapas, fumigaciones y cosechas.",
+      "emptyRest": "El lote está en descanso. Puedes sembrar igual cuando decidas.",
+      "firstSeason": "Registrar siembra",
+      "newSeason": "Nueva temporada",
+      "history": "Temporadas anteriores",
+      "historyEmpty": "Cuando termines una temporada aparecerá aquí con lo que cosechaste.",
+      "days": "{{count}} días",
+      "errors": {
+        "state": "No se pudo cambiar el estado del lote.",
+        "save": "No se pudo guardar el lote."
+      }
+    },
+    "siembra": {
+      "closed": "Esta temporada terminó el {{date}}. Puedes ver y corregir sus registros, pero no agregar nuevos.",
+      "editTitle": "Editar siembra",
+      "editSubtitle": "Corrige la fecha, la cantidad de plantas o la variedad."
+    },
+    "registro": {
+      "delete": "Eliminar",
+      "deleteTitle": "¿Eliminar este registro?",
+      "deleteMsg": "Se eliminará «{{nombre}}» del {{fecha}}. Esta acción no se puede deshacer.",
+      "saved": "Cambios guardados",
+      "editHarvest": "Editar cosecha",
+      "editActivity": "Editar actividad",
+      "editSpray": "Editar fumigación",
+      "errors": {
+        "delete": "No se pudo eliminar el registro.",
+        "load": "No se pudo cargar el registro."
+      }
+    },
+    "finca": {
+      "name": "Nombre de la finca",
+      "location": "Ubicación",
+      "hectares": "Hectáreas",
+      "errors": {
+        "save": "No se pudo guardar la finca."
+      }
+    }
   }
 }

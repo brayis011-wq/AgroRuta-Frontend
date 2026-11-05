@@ -1,63 +1,59 @@
-<div class="container">
-  <div class="header">
-    <div>
-      <h2>🌱 {{ 'siembra.new.title' | translate }}</h2>
-      <p class="subtitle">{{ 'siembra.new.subtitle' | translate }}</p>
+<div class="page-bg">
+  <div class="container">
+    <button type="button" class="btn-back" (click)="cancelar()"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'temporadas.ui.back' | translate }}</button>
+
+    <div class="form-header">
+      <div class="form-header__icon" aria-hidden="true"><i class="ti" [class.ti-seedling]="!siembraId" [class.ti-pencil]="siembraId"></i></div>
+      <div>
+        <h2>{{ (siembraId ? 'temporadas.siembra.editTitle' : 'siembra.new.title') | translate }}</h2>
+        <p>{{ (siembraId ? 'temporadas.siembra.editSubtitle' : 'siembra.new.subtitle') | translate }}</p>
+      </div>
     </div>
-    <button class="btn-secondary" (click)="cancelar()">{{ 'siembra.new.back' | translate }}</button>
-  </div>
 
-  <div class="form-card">
-    <form (ngSubmit)="registrar()">
+    <div class="form-card">
+      <form (ngSubmit)="registrar()">
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="tipoCultivo"><i class="ti ti-plant" aria-hidden="true"></i> {{ 'siembra.new.crop' | translate }}</label>
+            <select id="tipoCultivo" [ngModel]="form.tipoCultivoId" (ngModelChange)="elegirCultivo($event)" name="tipoCultivo" required>
+              <option [ngValue]="null" disabled>{{ (cargandoCatalogo ? 'common.loading' : 'siembra.new.cropPlaceholder') | translate }}</option>
+              @for (c of cultivos; track c.id) {
+                <option [ngValue]="c.id">{{ c.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label class="field__label" for="variedad"><i class="ti ti-leaf" aria-hidden="true"></i> {{ 'siembra.new.variety' | translate }}</label>
+            <select id="variedad" [(ngModel)]="form.variedadId" name="variedad" required [disabled]="form.tipoCultivoId == null">
+              <option [ngValue]="null" disabled>{{ (form.tipoCultivoId == null ? 'siembra.new.cropFirst' : 'siembra.new.varietyPlaceholder') | translate }}</option>
+              @for (v of variedades; track v.id) {
+                <option [ngValue]="v.id">{{ v.nombre }}</option>
+              }
+            </select>
+          </div>
+        </div>
 
-      <div class="form-group">
-        <label for="fechaSiembra">{{ 'siembra.new.date' | translate }}</label>
-        <input id="fechaSiembra" type="date" [max]="hoy" [(ngModel)]="form.fechaSiembra"
-               name="fechaSiembra" required />
-      </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="fechaSiembra"><i class="ti ti-calendar" aria-hidden="true"></i> {{ 'siembra.new.date' | translate }}</label>
+            <input id="fechaSiembra" type="date" [max]="hoy" [(ngModel)]="form.fechaSiembra" name="fechaSiembra" required />
+          </div>
+          <div class="field">
+            <label class="field__label" for="cantidadPlantas"><i class="ti ti-plant-2" aria-hidden="true"></i> {{ 'siembra.new.plants' | translate }}</label>
+            <input id="cantidadPlantas" type="number" [(ngModel)]="form.cantidadPlantas" name="cantidadPlantas" [placeholder]="'siembra.new.plantsPlaceholder' | translate" min="1" required />
+          </div>
+        </div>
 
-      <div class="form-group">
-        <label for="cantidadPlantas">{{ 'siembra.new.plants' | translate }}</label>
-        <input id="cantidadPlantas" type="number" [(ngModel)]="form.cantidadPlantas"
-               name="cantidadPlantas" [placeholder]="'siembra.new.plantsPlaceholder' | translate" min="1" required />
-      </div>
+        @if (error) { <div class="alert alert--error"><i class="ti ti-alert-triangle alert__icon"></i> {{ error | translate }}</div> }
+        @if (exito) { <div class="alert alert--success"><i class="ti ti-circle-check alert__icon"></i> {{ (siembraId ? 'temporadas.registro.saved' : 'siembra.new.success') | translate }}</div> }
 
-      <div class="form-group">
-        <label for="tipoCultivo">{{ 'siembra.new.crop' | translate }}</label>
-        <select id="tipoCultivo" [ngModel]="form.tipoCultivoId" (ngModelChange)="elegirCultivo($event)"
-                name="tipoCultivo" required>
-          <option [ngValue]="null" disabled>
-            {{ (cargandoCatalogo ? 'common.loading' : 'siembra.new.cropPlaceholder') | translate }}
-          </option>
-          @for (c of cultivos; track c.id) {
-            <option [ngValue]="c.id">{{ c.nombre }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="variedad">{{ 'siembra.new.variety' | translate }}</label>
-        <select id="variedad" [(ngModel)]="form.variedadId" name="variedad" required
-                [disabled]="form.tipoCultivoId == null">
-          <option [ngValue]="null" disabled>
-            {{ (form.tipoCultivoId == null ? 'siembra.new.cropFirst' : 'siembra.new.varietyPlaceholder') | translate }}
-          </option>
-          @for (v of variedades; track v.id) {
-            <option [ngValue]="v.id">{{ v.nombre }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="error" *ngIf="error">{{ error | translate }}</div>
-      <div class="success" *ngIf="exito">{{ 'siembra.new.success' | translate }}</div>
-
-      <div class="form-actions">
-        <button type="button" class="btn-secondary" (click)="cancelar()">{{ 'siembra.new.cancel' | translate }}</button>
-        <button type="submit" class="btn-primary" [disabled]="guardando">
-          {{ (guardando ? 'siembra.new.saving' : 'siembra.new.submit') | translate }}
-        </button>
-      </div>
-
-    </form>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cancelar()">{{ 'siembra.new.cancel' | translate }}</button>
+          <button type="submit" class="btn-submit" [disabled]="guardando">
+            {{ (guardando ? 'siembra.new.saving' : siembraId ? 'common.save' : 'siembra.new.submit') | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

@@ -1,0 +1,76 @@
+/* Siembra en curso, lote vacío e historial de temporadas */
+.actual { display: grid; gap: .9rem; }
+
+.resumen {
+  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 1.25rem;
+  background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: var(--ar-radio);
+  box-shadow: var(--ar-sombra-1); padding: 1rem 1.25rem;
+  text-decoration: none; color: inherit;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.resumen:hover { border-color: var(--ar-verde-600); box-shadow: var(--ar-sombra-2); transform: translateY(-1px); }
+.resumen:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.resumen-cultivo { display: flex; align-items: center; gap: .9rem; min-width: 0; }
+.resumen h2 { margin: 0; font-size: 1.15rem; font-weight: 700; }
+.resumen-sub { margin: .2rem 0 0; font-size: .85rem; color: var(--ar-tinta-2); }
+.resumen-dias { display: flex; flex-direction: column; align-items: center; line-height: 1.1; }
+.resumen-dias strong { font-size: 1.6rem; font-weight: 700; color: var(--ar-verde-700); font-variant-numeric: tabular-nums; }
+.resumen-dias span { font-size: .72rem; color: var(--ar-tinta-3); text-align: center; }
+.resumen-ir { font-size: .85rem; font-weight: 600; color: var(--ar-verde-700); display: inline-flex; align-items: center; gap: .25rem; white-space: nowrap; }
+
+.icono {
+  flex: none; width: 44px; height: 44px; border-radius: 12px;
+  display: grid; place-items: center; font-size: 1.35rem;
+  background: var(--ar-verde-100); color: var(--ar-verde-700);
+}
+.icono.grande { width: 56px; height: 56px; font-size: 1.7rem; border-radius: 16px; }
+
+.vacio {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  background: linear-gradient(135deg, var(--ar-verde-50), var(--ar-superficie));
+  border: 1px dashed var(--ar-verde-100); border-radius: var(--ar-radio); padding: 1.25rem;
+}
+.vacio > div { flex: 1; min-width: 200px; }
+.vacio h2 { margin: 0; font-size: 1.1rem; }
+.vacio p { margin: .25rem 0 0; color: var(--ar-tinta-2); font-size: .9rem; }
+
+.historial { display: flex; flex-direction: column; gap: .6rem; }
+.historial ul {
+  list-style: none; margin: 0; padding: 0;
+  background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; overflow: hidden; box-shadow: var(--ar-sombra-1);
+}
+.historial li + li { border-top: 1px solid var(--ar-borde); }
+.historial a {
+  display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: .85rem;
+  padding: .75rem 1rem; text-decoration: none; color: inherit; transition: background .15s;
+}
+.historial a:hover { background: var(--ar-verde-50); }
+.historial a:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: -2px; }
+.hist-icono {
+  width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+  background: var(--ar-fondo); color: var(--ar-tinta-2);
+}
+.hist-texto { display: flex; flex-direction: column; min-width: 0; }
+.hist-texto strong { font-size: .92rem; }
+.hist-texto small { font-size: .8rem; color: var(--ar-tinta-2); }
+.hist-kg { font-size: .85rem; color: var(--ar-tinta-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hist-kg strong { color: var(--ar-tinta); font-size: .95rem; }
+.hist-ir { color: var(--ar-tinta-3); }
+.hist-vacio {
+  margin: 0; padding: 1rem; font-size: .88rem; color: var(--ar-tinta-3);
+  background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: var(--ar-radio);
+}
+.esqueleto {
+  display: inline-block; width: 52px; height: .8em; border-radius: 4px;
+  background: linear-gradient(90deg, var(--ar-fondo), var(--ar-borde), var(--ar-fondo));
+  background-size: 200% 100%; animation: brillo 1.2s infinite linear;
+}
+@keyframes brillo { to { background-position: -200% 0; } }
+
+@media (max-width: 720px) {
+  .resumen { grid-template-columns: 1fr auto; }
+  .resumen-ir { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .resumen, .esqueleto { transition: none; animation: none; }
+}

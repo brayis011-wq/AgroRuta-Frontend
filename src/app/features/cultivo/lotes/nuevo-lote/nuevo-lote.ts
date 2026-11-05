@@ -16,7 +16,7 @@ import { GeocodingService } from '../../../../core/services/geocoding.service';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './nuevo-lote.html',
-  styleUrl: './nuevo-lote.css',
+  styleUrls: ['../../cultivo-form.css', '../../cultivo-form-mapa.css', './nuevo-lote.css'],
 })
 export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 

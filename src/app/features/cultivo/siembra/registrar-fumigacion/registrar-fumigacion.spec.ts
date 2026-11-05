@@ -38,7 +38,7 @@ describe('RegistrarFumigacion', () => {
         { provide: AgriculturalInputService, useValue: inputServiceMock   },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue('1') } } },
+          useValue: { snapshot: { paramMap: { get: vi.fn((k: string) => (k === 'id' ? '1' : null)) } } },
         },
       ],
     }).compileComponents();

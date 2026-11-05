@@ -44,7 +44,7 @@ interface FumigacionForm {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './registrar-fumigacion.html',
-  styleUrl: './registrar-fumigacion.css',
+  styleUrls: ['../../cultivo-form.css', './registrar-fumigacion.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegistrarFumigacion implements OnInit, OnDestroy {
@@ -57,6 +57,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   private readonly translate = inject(TranslateService);
 
   siembraId!: number;
+  /** Id de la fumigación cuando se está editando */
+  registroId: number | null = null;
   cargando = false;
   error    = '';   // clave de traducción (o mensaje crudo del backend)
   exito    = '';   // clave de traducción
@@ -98,7 +100,13 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.siembraId      = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
-    this.form.fecha     = new Date().toISOString().split('T')[0];
+    this.form.fecha     = new Date().toLocaleDateString('en-CA');
+
+    const registro = this.route.snapshot.paramMap.get('registroId');
+    if (registro) {
+      this.registroId = Number(registro);
+      this.cargarParaEditar(this.registroId);
+    }
 
     this.busqueda$
       .pipe(
@@ -126,6 +134,39 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
         this.mostrarCatalogo.set(resultados.length > 0);
         this.cdr.markForCheck();
       });
+  }
+
+  /** Llena el formulario con la fumigación guardada (y su insumo del catálogo, si tenía) */
+  private cargarParaEditar(id: number): void {
+    this.cultivoSvc.buscarFumigacion(id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (f) => {
+        this.form = {
+          ...this.form,
+          fecha: f.fecha,
+          producto: f.producto,
+          agriculturalInputId: f.agriculturalInputId ?? undefined,
+          dosis: f.dosis,
+          unidadMedida: f.unidadMedida,
+          areaAplicada: f.areaAplicada,
+          observaciones: f.observaciones ?? '',
+        };
+        this.busquedaProducto = f.producto;
+        this.cdr.markForCheck();
+        if (f.agriculturalInputId) {
+          this.inputSvc.getById(f.agriculturalInputId).pipe(takeUntil(this.destroy$)).subscribe({
+            next: (insumo) => {
+              this.insumoSeleccionado.set(insumo);
+              this.cdr.markForCheck();
+            },
+            error: () => { /* el insumo ya no está en el catálogo: queda como texto */ },
+          });
+        }
+      },
+      error: () => {
+        this.error = 'temporadas.registro.errors.load';
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   ngOnDestroy(): void {
@@ -245,12 +286,15 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       siembraId:           this.form.siembraId,
     };
 
-    this.cultivoSvc.registrarFumigacion(payload)
+    const peticion = this.registroId
+      ? this.cultivoSvc.actualizarFumigacion(this.registroId, payload)
+      : this.cultivoSvc.registrarFumigacion(payload);
+    peticion
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.cargando = false;
-          this.exito    = 'siembra.spray.success';
+          this.exito    = this.registroId ? 'temporadas.registro.saved' : 'siembra.spray.success';
           this.cdr.markForCheck();
           setTimeout(() => this.router.navigate(['/cultivo/siembra', this.siembraId]), 1500);
         },

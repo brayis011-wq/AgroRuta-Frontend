@@ -1,0 +1,66 @@
+/* Formularios de registro (actividad, fumigación, cosecha) con el estilo de Inicio y Reportes */
+:host { display: block; }
+.page-bg { padding: 1.75rem 2rem 2.5rem; color: var(--ar-tinta); }
+.container { max-width: 1240px; display: flex; flex-direction: column; gap: 1rem; animation: subir .35s ease-out both; }
+
+.btn-back { align-self: flex-start; display: inline-flex; align-items: center; gap: .35rem; font: inherit; font-size: .85rem; font-weight: 600; color: var(--ar-tinta-2); background: none; border: 0; padding: .2rem 0; cursor: pointer; }
+.btn-back:hover { color: var(--ar-verde-700); }
+
+.form-header { display: flex; align-items: center; gap: .9rem; }
+.form-header__icon { width: 48px; height: 48px; flex: none; border-radius: 14px; display: grid; place-items: center; font-size: 24px; background: var(--ar-verde-100); color: var(--ar-verde-700); }
+.form-header h2 { margin: 0; font-size: clamp(1.3rem, 2vw, 1.55rem); letter-spacing: -.02em; }
+.form-header p { margin: .2rem 0 0; color: var(--ar-tinta-3); font-size: .88rem; }
+
+.alert { display: flex; align-items: center; gap: .5rem; padding: .7rem .9rem; border-radius: 11px; font-size: .88rem; }
+.alert__icon { font-size: 18px; }
+.alert--error { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
+.alert--success { background: var(--ar-verde-50); color: var(--ar-verde-800); border: 1px solid var(--ar-verde-100); }
+
+.form-card { position: relative; background: #fff; border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1.5rem 1.6rem 1.6rem; }
+.form-card__accent { display: none; }
+form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.05rem 1.25rem; align-items: start; }
+/* En pantallas anchas los campos cortos van de a dos; lo largo ocupa toda la fila */
+form > fieldset, form > .field-row, form > .alert, form > .btn-submit, form > .form-actions,
+form > .field:has(textarea), form > .field:has(.mapa-container) { grid-column: 1 / -1; }
+
+.field { display: flex; flex-direction: column; gap: .4rem; border: 0; padding: 0; margin: 0; min-width: 0; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.field__label { display: flex; align-items: center; gap: .4rem; font-size: .84rem; font-weight: 600; color: var(--ar-tinta); padding: 0; }
+.field__label .ti { font-size: 17px; color: var(--ar-verde-600); }
+.label-optional { font-weight: 400; color: var(--ar-tinta-3); }
+.field__input-wrap { position: relative; }
+.field__underline { display: none; }
+input, select, textarea {
+  width: 100%; box-sizing: border-box; font: inherit; font-size: .95rem; color: var(--ar-tinta);
+  padding: .65rem .8rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+}
+input:hover, select:hover, textarea:hover { border-color: #c9d6cc; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--ar-verde-600); box-shadow: 0 0 0 3px var(--ar-verde-100); }
+textarea { resize: vertical; min-height: 80px; }
+.campo-hint { font-size: .78rem; color: var(--ar-tinta-3); }
+
+.btn-submit {
+  margin-top: .3rem; display: inline-flex; align-items: center; justify-content: center; gap: .5rem; width: 100%;
+  padding: .8rem 1rem; border: 0; border-radius: 12px; cursor: pointer; font: inherit; font-weight: 600; font-size: .95rem;
+  background: linear-gradient(180deg, #38923d, var(--ar-verde-600)); color: #fff; box-shadow: 0 3px 10px rgba(46, 125, 50, .3);
+  transition: transform .15s, box-shadow .15s;
+}
+form > .btn-submit { justify-self: end; width: auto; min-width: 240px; padding: .8rem 2rem; }
+.btn-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(46, 125, 50, .35); }
+.btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+.btn-submit:focus-visible, .btn-back:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.btn-submit__text, .btn-submit__loader { display: inline-flex; align-items: center; gap: .5rem; }
+.btn-submit__arrow { transition: transform .15s; }
+.btn-submit:hover .btn-submit__arrow { transform: translateX(3px); }
+.spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .45); border-top-color: #fff; animation: girar .8s linear infinite; display: inline-block; }
+
+@keyframes girar { to { transform: rotate(360deg); } }
+@keyframes subir { from { opacity: 0; transform: translateY(6px); } }
+@media (max-width: 720px) {
+  .page-bg { padding: 1rem 1rem 6rem; }
+  .form-card { padding: 1.1rem; }
+  .field-row, form { grid-template-columns: 1fr; }
+  form > .btn-submit { width: 100%; justify-self: stretch; }
+}
+@media (prefers-reduced-motion: reduce) { .container, .spinner { animation: none; } }

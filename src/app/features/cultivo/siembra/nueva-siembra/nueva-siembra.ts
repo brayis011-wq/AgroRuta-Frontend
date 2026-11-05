@@ -5,14 +5,15 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { CatalogoCultivoService } from '../../../../core/services/catalogo-cultivo.service';
-import { TipoCultivo } from '../../../../core/models/cultivo.model';
+import { Siembra, TipoCultivo } from '../../../../core/models/cultivo.model';
+import { forkJoin, of, switchMap, map } from 'rxjs';
 
 @Component({
   selector: 'app-nueva-siembra',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './nueva-siembra.html',
-  styleUrl: './nueva-siembra.css',
+  styleUrls: ['../../cultivo-form.css', '../../cultivo-form-mapa.css', './nueva-siembra.css'],
 })
 export class NuevaSiembraComponent implements OnInit {
   form = {
@@ -28,6 +29,8 @@ export class NuevaSiembraComponent implements OnInit {
 
   loteId!: number;
   fincaId!: number;
+  /** Id de la siembra cuando se está editando (ruta /cultivo/siembra/:id/editar) */
+  siembraId: number | null = null;
   guardando = false;
   error = '';        // clave de traducción
   exito = false;
@@ -41,15 +44,24 @@ export class NuevaSiembraComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // URL esperada: /cultivo/finca/:fincaId/lote/:loteId/nueva-siembra
-    this.fincaId = Number(this.route.snapshot.paramMap.get('fincaId'));
-    this.loteId = Number(this.route.snapshot.paramMap.get('loteId'));
+    // Nueva:  /cultivo/finca/:fincaId/lote/:loteId/nueva-siembra
+    // Editar: /cultivo/siembra/:id/editar
+    const params = this.route.snapshot.paramMap;
+    this.fincaId = Number(params.get('fincaId'));
+    this.loteId = Number(params.get('loteId'));
+    if (!params.get('loteId') && params.get('id')) this.siembraId = Number(params.get('id'));
 
-    this.catalogo.activos().subscribe({
-      next: (c) => {
-        this.cultivos = c.filter((t) => t.variedades.length > 0);
+    const siembra$ = this.siembraId
+      ? this.cultivoService.buscarSiembra(this.siembraId).pipe(
+          switchMap((s) => this.cultivoService.buscarLote(s.loteId).pipe(map((l) => ({ s, fincaId: l.fincaId })))))
+      : of(null);
+
+    forkJoin({ catalogo: this.catalogo.activos(), actual: siembra$ }).subscribe({
+      next: ({ catalogo, actual }) => {
+        this.cultivos = catalogo.filter((t) => t.variedades.length > 0);
         this.cargandoCatalogo = false;
-        if (this.cultivos.length === 1) this.elegirCultivo(this.cultivos[0].id);
+        if (actual) this.llenarConSiembra(actual.s, actual.fincaId);
+        else if (this.cultivos.length === 1) this.elegirCultivo(this.cultivos[0].id);
         this.cdr.detectChanges();
       },
       error: () => {
@@ -73,6 +85,26 @@ export class NuevaSiembraComponent implements OnInit {
 
   readonly hoy = new Date().toLocaleDateString('en-CA');
 
+  /** Modo edición: la variedad actual se muestra aunque ya esté desactivada en el catálogo */
+  private llenarConSiembra(s: Siembra, fincaId: number): void {
+    this.loteId = s.loteId;
+    this.fincaId = fincaId;
+    let cultivo = this.cultivos.find((c) => c.variedades.some((v) => v.id === s.variedadId));
+    if (!cultivo && s.variedadId) {
+      cultivo = {
+        id: -1, nombre: s.tipoCultivo || s.variedad, activo: false,
+        variedades: [{ id: s.variedadId, nombre: s.variedad, activo: false, tipoCultivoId: -1, tipoCultivoNombre: s.tipoCultivo ?? '' }],
+      };
+      this.cultivos = [cultivo, ...this.cultivos];
+    }
+    this.form = {
+      fechaSiembra: s.fechaSiembra,
+      cantidadPlantas: s.cantidadPlantas,
+      tipoCultivoId: cultivo?.id ?? null,
+      variedadId: s.variedadId ?? null,
+    };
+  }
+
   registrar(): void {
     if (!this.form.fechaSiembra || !this.form.cantidadPlantas || !this.form.variedadId) {
       this.error = 'siembra.new.errors.required';
@@ -82,17 +114,23 @@ export class NuevaSiembraComponent implements OnInit {
     this.guardando = true;
     this.error = '';
 
-    this.cultivoService.registrarSiembra({
+    const datos = {
       fechaSiembra: this.form.fechaSiembra,
       cantidadPlantas: this.form.cantidadPlantas,
       variedadId: this.form.variedadId,
       loteId: this.loteId,
-    }).subscribe({
-      next: () => {
+    };
+    const peticion = this.siembraId
+      ? this.cultivoService.actualizarSiembra(this.siembraId, datos)
+      : this.cultivoService.registrarSiembra(datos);
+    peticion.subscribe({
+      next: (s) => {
         this.exito = true;
         this.guardando = false;
         this.cdr.detectChanges();
-        setTimeout(() => this.router.navigate(['/cultivo/finca', this.fincaId]), 1500);
+        // al lote, donde se ve el ciclo de la nueva temporada; al editar, de vuelta a la siembra
+        const destino = this.siembraId ? ['/cultivo/siembra', this.siembraId] : ['/cultivo/lote', s?.loteId ?? this.loteId];
+        setTimeout(() => this.router.navigate(destino), 1200);
       },
       error: (err) => {
         // El backend explica el motivo (lote ocupado, variedad desactivada...)
@@ -104,6 +142,7 @@ export class NuevaSiembraComponent implements OnInit {
   }
 
   cancelar(): void {
-    this.router.navigate(['/cultivo/finca', this.fincaId]);
+    if (this.siembraId) this.router.navigate(['/cultivo/siembra', this.siembraId]);
+    else this.router.navigate(['/cultivo/lote', this.loteId]);
   }
 }

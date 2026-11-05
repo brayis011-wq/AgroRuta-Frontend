@@ -1,0 +1,97 @@
+<section class="ciclo" [class.cerrada]="!activa()">
+  <header class="ciclo-head">
+    <div>
+      <h3>{{ 'temporadas.ciclo.title' | translate }}</h3>
+      @if (activa()) {
+        <p>{{ 'temporadas.ciclo.inStage' | translate: { etapa: ('enums.etapaCultivo.' + siembra().estadoCultivo | translate), days: diasEtapa() } }}</p>
+      } @else {
+        <p>{{ 'temporadas.ciclo.finishedOn' | translate: { date: fmt(siembra().fechaFin ?? null), days: duracion() } }}</p>
+      }
+    </div>
+    <span class="ciclo-pct">{{ progreso() }}%</span>
+  </header>
+
+  <ol class="pasos" [style.--avance]="progreso()">
+    @for (p of pasos(); track p.etapa) {
+      <li class="paso" [class]="p.estado">
+        <span class="punto" aria-hidden="true">
+          @if (p.estado === 'hecho') { <i class="ti ti-check"></i> }
+        </span>
+        <span class="nombre">{{ 'enums.etapaCultivo.' + p.etapa | translate }}</span>
+        <span class="fecha">{{ p.fecha ? fmt(p.fecha) : (p.estado === 'pendiente' ? '' : ('temporadas.ciclo.noDate' | translate)) }}</span>
+      </li>
+    }
+  </ol>
+
+  @if (!soloLectura()) {
+    <div class="acciones">
+      @if (activa()) {
+        @if (siguiente(); as sig) {
+          <button type="button" class="btn btn-primario" (click)="abrir('avanzar')" [attr.aria-expanded]="panel() === 'avanzar'">
+            <i class="ti ti-arrow-right"></i>
+            {{ 'temporadas.ciclo.advanceTo' | translate: { etapa: ('enums.etapaCultivo.' + sig | translate) } }}
+          </button>
+        }
+        <button type="button" class="btn" [class.btn-primario]="!siguiente()" (click)="abrir('terminar')" [attr.aria-expanded]="panel() === 'terminar'">
+          <i class="ti ti-flag-check"></i> {{ 'temporadas.ciclo.finish' | translate }}
+        </button>
+        @if (puedeDeshacer()) {
+          <button type="button" class="btn btn-texto" (click)="deshacer()" [disabled]="guardando()">
+            <i class="ti ti-arrow-back-up"></i> {{ 'temporadas.ciclo.undo' | translate }}
+          </button>
+        }
+      } @else {
+        <button type="button" class="btn" (click)="deshacer()" [disabled]="guardando()">
+          <i class="ti ti-refresh"></i> {{ 'temporadas.ciclo.reopen' | translate }}
+        </button>
+      }
+    </div>
+
+    @if (panel() === 'avanzar' && siguiente(); as sig) {
+      <form class="panel" (ngSubmit)="avanzar()">
+        <label>
+          <span>{{ 'temporadas.ciclo.whenStarted' | translate: { etapa: ('enums.etapaCultivo.' + sig | translate) } }}</span>
+          <input type="date" name="fecha" [(ngModel)]="fecha" [min]="minimo()" [max]="hoy" required>
+        </label>
+        <div class="panel-botones">
+          <button type="button" class="btn btn-texto" (click)="panel.set(null)">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-primario" [disabled]="guardando() || !fecha">
+            {{ (guardando() ? 'temporadas.saving' : 'temporadas.ciclo.confirm') | translate }}
+          </button>
+        </div>
+      </form>
+    }
+
+    @if (panel() === 'terminar') {
+      <form class="panel" (ngSubmit)="terminar()">
+        <label>
+          <span>{{ 'temporadas.ciclo.finishDate' | translate }}</span>
+          <input type="date" name="fecha" [(ngModel)]="fecha" [min]="minimo()" [max]="hoy" required>
+        </label>
+        <fieldset class="opciones">
+          <legend>{{ 'temporadas.ciclo.lotAfter' | translate }}</legend>
+          <label class="opcion">
+            <input type="radio" name="descanso" [value]="false" [(ngModel)]="dejarEnDescanso">
+            <span><strong>{{ 'temporadas.lote.estado.DISPONIBLE' | translate }}</strong>
+              <small>{{ 'temporadas.ciclo.availableHint' | translate }}</small></span>
+          </label>
+          <label class="opcion">
+            <input type="radio" name="descanso" [value]="true" [(ngModel)]="dejarEnDescanso">
+            <span><strong>{{ 'temporadas.lote.estado.EN_DESCANSO' | translate }}</strong>
+              <small>{{ 'temporadas.ciclo.restHint' | translate }}</small></span>
+          </label>
+        </fieldset>
+        <div class="panel-botones">
+          <button type="button" class="btn btn-texto" (click)="panel.set(null)">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-primario" [disabled]="guardando() || !fecha">
+            {{ (guardando() ? 'temporadas.saving' : 'temporadas.ciclo.finishConfirm') | translate }}
+          </button>
+        </div>
+      </form>
+    }
+
+    @if (error()) {
+      <p class="error" role="alert">{{ error() | translate }}</p>
+    }
+  }
+</section>

@@ -5,11 +5,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin, of, catchError } from 'rxjs';
 import { CultivoService } from '../../../../core/services/cultivo.service';
 import { AuthService } from '../../../../core/services/auth';
 import { LanguageService } from '../../../../core/services/language.service';
-import { Finca } from '../../../../core/models/cultivo.model';
+import { Finca, Lote } from '../../../../core/models/cultivo.model';
 import * as L from 'leaflet';
 
 @Component({
@@ -17,7 +17,7 @@ import * as L from 'leaflet';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './lista-fincas.html',
-  styleUrl: './lista-fincas.css',
+  styleUrls: ['../../cultivo-ui.css', '../../cultivo-bloques.css', '../../cultivo-dialogo.css', './lista-fincas.css'],
 })
 export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
@@ -30,6 +30,8 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   fincaAEliminar: Finca | null = null;
   textoConfirmacion = '';
   fincaResaltada: number | null = null;
+  /** Lotes de cada finca (para mostrar cuántos hay y cuántos están sembrados) */
+  lotesPorFinca: Record<number, Lote[]> = {};
 
   private map!: L.Map;
   private marcadores: Map<number, L.Marker> = new Map();
@@ -60,6 +62,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
           this.fincas = fincas;
           this.cargando = false;
           this.cdr.detectChanges();
+          this.cargarLotes();
           setTimeout(() => {
             if (this.map) {
               this.map.invalidateSize();
@@ -120,7 +123,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
 
     fincasConUbicacion.forEach(finca => {
       const icono = L.divIcon({
-        html: `<div class="marcador-finca">🏡</div>`,
+        html: `<div class="marcador-finca"><i class="ti ti-home-2"></i></div>`,
         className: '',
         iconSize: [36, 36],
         iconAnchor: [18, 18],
@@ -135,10 +138,10 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
       // Popup con botón "Entrar" — permite ver el entorno antes de navegar
       const popupContent = `
         <div class="popup-finca">
-          <div class="popup-finca-header">🏡 ${finca.nombre}</div>
+          <div class="popup-finca-header">${finca.nombre}</div>
           <div class="popup-finca-body">
-            📍 ${finca.ubicacion}<br>
-            📐 ${finca.hectareas} ${tHa}
+            ${finca.ubicacion}<br>
+            ${finca.hectareas} ${tHa}
             <button class="popup-finca-btn" id="btn-entrar-${finca.id}">
               ${tEnter}
             </button>
@@ -163,7 +166,33 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private cargarLotes(): void {
+    if (!this.fincas.length) return;
+    forkJoin(this.fincas.map(f => this.cultivoService.listarLotesPorFinca(f.id!).pipe(catchError(() => of([] as Lote[])))))
+      .subscribe(listas => {
+        this.fincas.forEach((f, i) => this.lotesPorFinca[f.id!] = listas[i]);
+        this.cdr.detectChanges();
+      });
+  }
+
   // ── Helpers de template ──────────────────────────────────────
+
+  lotesDe(f: Finca): Lote[] | undefined {
+    return this.lotesPorFinca[f.id!];
+  }
+
+  enCultivo(f: Finca): number {
+    return (this.lotesPorFinca[f.id!] ?? []).filter(l => l.estado === 'EN_CULTIVO').length;
+  }
+
+  totalLotes(): number | null {
+    const listas = Object.values(this.lotesPorFinca);
+    return listas.length ? listas.reduce((s, l) => s + l.length, 0) : null;
+  }
+
+  totalEnCultivo(): number {
+    return this.fincas.reduce((s, f) => s + this.enCultivo(f), 0);
+  }
 
   fincasSinUbicacion(): number {
     return this.fincas.filter(f => !f.centroideLat).length;

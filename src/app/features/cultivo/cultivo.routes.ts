@@ -38,6 +38,26 @@ export const cultivoRoutes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'siembra/:id/editar',
+    loadComponent: () => import('./siembra/nueva-siembra/nueva-siembra').then(m => m.NuevaSiembraComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'siembra/:id/actividad/:registroId',
+    loadComponent: () => import('./siembra/registrar-actividad/registrar-actividad').then(m => m.RegistrarActividad),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'siembra/:id/fumigacion/:registroId',
+    loadComponent: () => import('./siembra/registrar-fumigacion/registrar-fumigacion').then(m => m.RegistrarFumigacion),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'siembra/:id/cosecha/:registroId',
+    loadComponent: () => import('./siembra/registrar-cosecha/registrar-cosecha').then(m => m.RegistrarCosecha),
+    canActivate: [authGuard]
+  },
+  {
     path: 'siembra/:id/actividad',
     loadComponent: () => import('./siembra/registrar-actividad/registrar-actividad').then(m => m.RegistrarActividad),
     canActivate: [authGuard]

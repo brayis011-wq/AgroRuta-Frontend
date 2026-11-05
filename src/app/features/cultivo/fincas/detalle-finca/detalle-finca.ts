@@ -3,9 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin, of, catchError } from 'rxjs';
+import { LanguageService } from '../../../../core/services/language.service';
+import { formatoNumero } from '../../../../shared/formato';
+import { progresoCiclo } from '../../siembra/ciclo-etapas/ciclo-etapas.logic';
 import { CultivoService } from '../../../../core/services/cultivo.service';
-import { Finca, Lote } from '../../../../core/models/cultivo.model';
+import { EstadoLote, Finca, Lote, Siembra, nombreCultivo } from '../../../../core/models/cultivo.model';
+import { FincaActivaService } from '../../../../core/services/finca-activa.service';
 import * as L from 'leaflet';
 
 @Component({
@@ -13,10 +17,16 @@ import * as L from 'leaflet';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './detalle-finca.html',
-  styleUrl: './detalle-finca.css',
+  styleUrls: ['../../cultivo-ui.css', '../../cultivo-bloques.css', '../../cultivo-dialogo.css', './detalle-finca.css'],
 })
 export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
+  private fincaActiva = inject(FincaActivaService);
+  private lang = inject(LanguageService);
+  readonly nombreCultivo = nombreCultivo;
+  readonly progreso = progresoCiclo;
+  /** Siembra en curso de cada lote (null = sin siembra; ausente = cargando) */
+  siembras: Record<number, Siembra | null> = {};
 
   finca: Finca | null = null;
   lotes: Lote[] = [];
@@ -27,9 +37,15 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   loteAEliminar: Lote | null = null;
   textoConfirmacion = '';
 
+  // edición de la finca
+  editando = false;
+  guardando = false;
+  formFinca = { nombre: '', ubicacion: '', hectareas: null as number | null };
+
   private map!: L.Map;
   private poligonosLayer: L.FeatureGroup = new L.FeatureGroup();
   private langSub?: Subscription;
+  private rutaSub?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -49,9 +65,24 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.map && this.lotes.length > 0) this.dibujarLotes(false);
     });
 
-    this.fincaId = Number(this.route.snapshot.paramMap.get('id'));
-    this.cultivoService.buscarFinca(this.fincaId).subscribe({
+    // La página se reutiliza al cambiar de finca desde el panel: recargar con cada id
+    const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
+    this.rutaSub = params$.subscribe((p) => this.cargarFinca(Number(p.get('id'))));
+  }
+
+  private cargarFinca(id: number): void {
+    this.fincaId = id;
+    this.finca = null;
+    this.lotes = [];
+    this.siembras = {};
+    this.error = '';
+    this.editando = false;
+    this.cargando = true;
+    this.poligonosLayer.clearLayers();
+    this.cdr.detectChanges();
+    this.cultivoService.buscarFinca(id).subscribe({
       next: (finca) => {
+        if (id !== this.fincaId) return;
         this.finca = finca;
         this.cargarLotes(this.fincaId);
       },
@@ -69,6 +100,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.langSub?.unsubscribe();
+    this.rutaSub?.unsubscribe();
     if (this.map) this.map.remove();
   }
 
@@ -113,7 +145,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // Tooltip con nombre y estado
         poligono.bindTooltip(
-          `<strong>${lote.nombre}</strong><br>${this.getEstadoLabel(lote.estado)}<br>📐 ${lote.area} ha`,
+          `<strong>${lote.nombre}</strong><br>${this.getEstadoLabel(lote.estado)}<br>${lote.area} ha`,
           { permanent: false, direction: 'center' }
         );
 
@@ -153,6 +185,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
         this.lotes = lotes;
         this.cargando = false;
         this.cdr.detectChanges();
+        this.cargarSiembras();
         setTimeout(() => {
           if (this.map) {
             this.map.invalidateSize();
@@ -168,12 +201,35 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  private cargarSiembras(): void {
+    const sembrados = this.lotes.filter(l => l.estado === 'EN_CULTIVO');
+    this.lotes.filter(l => l.estado !== 'EN_CULTIVO').forEach(l => this.siembras[l.id!] = null);
+    if (!sembrados.length) return;
+    forkJoin(sembrados.map(l => this.cultivoService.buscarSiembraPorLote(l.id!).pipe(catchError(() => of(null)))))
+      .subscribe(lista => {
+        sembrados.forEach((l, i) => this.siembras[l.id!] = lista[i]);
+        this.cdr.detectChanges();
+      });
+  }
+
+  contar(estado: EstadoLote): number {
+    return this.lotes.filter(l => l.estado === estado).length;
+  }
+
+  areaLotes(): number {
+    return this.lotes.reduce((s, l) => s + (l.area ?? 0), 0);
+  }
+
+  fmt(v: number | null | undefined, dec = 0): string {
+    return formatoNumero(v, this.lang.current(), dec);
+  }
+
   private getColorEstado(estado: string): string {
     switch (estado) {
-      case 'DISPONIBLE': return '#16a34a';
-      case 'EN_CULTIVO': return '#f59e0b';
-      case 'EN_DESCANSO': return '#6b7280';
-      default: return '#16a34a';
+      case 'DISPONIBLE': return '#1f5fa8';
+      case 'EN_CULTIVO': return '#2e7d32';
+      case 'EN_DESCANSO': return '#b26a00';
+      default: return '#2e7d32';
     }
   }
 
@@ -197,8 +253,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Etiqueta traducida con emoji (se usa en el tooltip del mapa) */
   getEstadoLabel(estado: string): string {
-    const texto = this.translate.instant('enums.loteEstado.' + estado);
-    return `${this.getEstadoEmoji(estado)} ${texto}`;
+    return this.translate.instant('enums.loteEstado.' + estado);
   }
 
   entrarLote(id: number): void {
@@ -232,9 +287,41 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dibujarLotes();
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.error = 'cultivo.fincas.detail.errors.deleteLot';
+      error: (e) => {
+        // p. ej. "El lote tiene una siembra en curso..."
+        this.error = e?.error?.message || 'cultivo.fincas.detail.errors.deleteLot';
+        this.loteAEliminar = null;
         this.eliminando = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  editarFinca(): void {
+    if (!this.finca) return;
+    this.formFinca = { nombre: this.finca.nombre, ubicacion: this.finca.ubicacion, hectareas: this.finca.hectareas };
+    this.editando = true;
+  }
+
+  guardarFinca(): void {
+    const f = this.formFinca;
+    if (!this.finca || !f.nombre.trim() || !f.ubicacion.trim() || !f.hectareas || f.hectareas <= 0) return;
+    this.guardando = true;
+    this.cultivoService.actualizarFinca(this.fincaId, {
+      nombre: f.nombre.trim(), ubicacion: f.ubicacion.trim(), hectareas: f.hectareas,
+      agricultorId: this.finca.agricultorId,
+    }).subscribe({
+      next: (finca) => {
+        this.finca = finca;
+        this.guardando = false;
+        this.editando = false;
+        this.error = '';
+        this.fincaActiva.cargar();
+        this.cdr.detectChanges();
+      },
+      error: (e) => {
+        this.guardando = false;
+        this.error = e?.error?.message || 'temporadas.finca.errors.save';
         this.cdr.detectChanges();
       },
     });
