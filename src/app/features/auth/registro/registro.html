@@ -1,77 +1,117 @@
-<div class="container">
-  <div class="card">
-    <app-language-switcher />
-    <h2>AgroRuta</h2>
-    <h3>{{ 'auth.register.title' | translate }}</h3>
+<div class="auth">
+  <aside class="lado">
+    <i class="ti ti-plant-2 hoja" aria-hidden="true"></i>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
+      <div><strong>AgroRuta</strong><small>{{ 'layout.subtitle' | translate }}</small></div>
+    </div>
+    <div class="lado-txt">
+      <h2>{{ 'auth.side.title' | translate }}</h2>
+      <p>{{ 'auth.side.desc' | translate }}</p>
+    </div>
+    <ul class="ventajas">
+      <li><i class="ti ti-map-2" aria-hidden="true"></i><span><strong>{{ 'auth.side.f1' | translate }}</strong><small>{{ 'auth.side.f1d' | translate }}</small></span></li>
+      <li><i class="ti ti-users-group" aria-hidden="true"></i><span><strong>{{ 'auth.side.f2' | translate }}</strong><small>{{ 'auth.side.f2d' | translate }}</small></span></li>
+      <li><i class="ti ti-chart-bar" aria-hidden="true"></i><span><strong>{{ 'auth.side.f3' | translate }}</strong><small>{{ 'auth.side.f3d' | translate }}</small></span></li>
+    </ul>
+    <small class="copy">© {{ anio }} AgroRuta</small>
+  </aside>
 
-    <div class="error" *ngIf="error">{{ error | translate }}</div>
-    <div class="success" *ngIf="exito">{{ exito | translate }}</div>
-
-    <form (ngSubmit)="onSubmit()" #registroForm="ngForm">
-      <div class="field">
-        <label for="nombre">{{ 'auth.register.fullName' | translate }}</label>
-        <input
-          id="nombre"
-          type="text"
-          [(ngModel)]="form.nombre"
-          name="nombre"
-          [placeholder]="'auth.register.fullNamePlaceholder' | translate"
-        />
-      </div>
-
-      <div class="field">
-        <label for="email">{{ 'auth.register.email' | translate }}</label>
-        <input
-          id="email"
-          type="email"
-          [(ngModel)]="form.email"
-          name="email"
-          placeholder="tu@email.com"
-        />
-      </div>
-
-      <div class="field">
-        <label for="password">{{ 'auth.register.password' | translate }}</label>
-        <input
-          id="password"
-          type="password"
-          [(ngModel)]="form.password"
-          name="password"
-          placeholder="••••••••"
-        />
-      </div>
-
-      <div class="field">
-        <label for="rol">{{ 'auth.register.role' | translate }}</label>
-        <select id="rol" [(ngModel)]="form.rol" name="rol">
-          <option value="Agricultor">{{ 'enums.rol.Agricultor' | translate }}</option>
-          <option value="Trabajador">{{ 'enums.rol.Trabajador' | translate }}</option>
-        </select>
-      </div>
-
-      <div class="field" *ngIf="form.rol === 'Trabajador'">
-        <label for="cedula">{{ 'auth.register.cedula' | translate }}</label>
-        <input
-          id="cedula"
-          type="text"
-          inputmode="numeric"
-          autocomplete="off"
-          maxlength="20"
-          [(ngModel)]="form.cedula"
-          name="cedula"
-          placeholder="1052334120"
-        />
-        <small class="hint">{{ 'auth.register.cedulaHint' | translate }}</small>
-      </div>
-
-      <button type="submit" [disabled]="cargando">
-        {{ (cargando ? 'auth.register.submitting' : 'auth.register.submit') | translate }}
+  <main class="panel">
+    <div class="barra">
+      <app-language-switcher />
+      <button type="button" class="ib" (click)="tema.alternar()"
+              [title]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate"
+              [attr.aria-label]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate">
+        <i class="ti" [class.ti-moon]="!tema.oscuro()" [class.ti-sun]="tema.oscuro()" aria-hidden="true"></i>
       </button>
-    </form>
+    </div>
 
-    <p class="link">
-      {{ 'auth.register.haveAccount' | translate }}
-      <a routerLink="/auth/login">{{ 'auth.register.signIn' | translate }}</a>
-    </p>
-  </div>
+    <div class="caja">
+      <p class="eyebrow">{{ 'auth.register.eyebrow' | translate }}</p>
+      <h1>{{ 'auth.register.title' | translate }}</h1>
+      <p class="sub">{{ 'auth.register.subtitle' | translate }}</p>
+
+      @if (error) {
+        <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i><span>{{ error | translate }}</span></p>
+      }
+      @if (exito) {
+        <p class="aviso ok" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i><span>{{ exito | translate }}</span></p>
+      }
+
+      <form (ngSubmit)="onSubmit()" #registroForm="ngForm">
+        <div class="campo" role="radiogroup" aria-labelledby="rol-etq">
+          <span class="etq" id="rol-etq">{{ 'auth.register.role' | translate }}</span>
+          <div class="roles">
+            <label class="rol" [class.on]="form.rol === 'Agricultor'">
+              <input type="radio" name="rol" value="Agricultor" [(ngModel)]="form.rol" />
+              <i class="ti ti-plant-2" aria-hidden="true"></i>
+              <strong>{{ 'enums.rol.Agricultor' | translate }}</strong>
+              <small>{{ 'auth.register.roleFarmer' | translate }}</small>
+              <i class="ti ti-circle-check-filled marca" aria-hidden="true"></i>
+            </label>
+            <label class="rol" [class.on]="form.rol === 'Trabajador'">
+              <input type="radio" name="rol" value="Trabajador" [(ngModel)]="form.rol" />
+              <i class="ti ti-user" aria-hidden="true"></i>
+              <strong>{{ 'enums.rol.Trabajador' | translate }}</strong>
+              <small>{{ 'auth.register.roleWorker' | translate }}</small>
+              <i class="ti ti-circle-check-filled marca" aria-hidden="true"></i>
+            </label>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="nombre">{{ 'auth.register.fullName' | translate }}</label>
+          <div class="entrada">
+            <i class="ti ti-user" aria-hidden="true"></i>
+            <input id="nombre" type="text" [(ngModel)]="form.nombre" name="nombre" autocomplete="name"
+                   [placeholder]="'auth.register.fullNamePlaceholder' | translate" />
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="email">{{ 'auth.register.email' | translate }}</label>
+          <div class="entrada">
+            <i class="ti ti-mail" aria-hidden="true"></i>
+            <input id="email" type="email" [(ngModel)]="form.email" name="email" autocomplete="email" placeholder="tu@email.com" />
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="password">{{ 'auth.register.password' | translate }}</label>
+          <div class="entrada con-ojo">
+            <i class="ti ti-lock" aria-hidden="true"></i>
+            <input id="password" [type]="verPass ? 'text' : 'password'" [(ngModel)]="form.password" name="password"
+                   autocomplete="new-password" placeholder="••••••••" />
+        <button type="button" class="ojo" (click)="verPass = !verPass" [attr.aria-pressed]="verPass"
+                [attr.aria-label]="(verPass ? 'config.password.hide' : 'config.password.show') | translate">
+          <i class="ti" [class.ti-eye]="!verPass" [class.ti-eye-off]="verPass" aria-hidden="true"></i>
+        </button>
+          </div>
+        </div>
+
+        @if (form.rol === 'Trabajador') {
+          <div class="campo">
+            <label for="cedula">{{ 'auth.register.cedula' | translate }}</label>
+            <div class="entrada">
+              <i class="ti ti-id" aria-hidden="true"></i>
+              <input id="cedula" type="text" inputmode="numeric" autocomplete="off" maxlength="20"
+                     [(ngModel)]="form.cedula" name="cedula" placeholder="1052334120" />
+            </div>
+            <small class="ayuda">{{ 'auth.register.cedulaHint' | translate }}</small>
+          </div>
+        }
+
+        <button type="submit" class="btn-prim" [disabled]="cargando">
+          <i class="ti" [class.ti-user-plus]="!cargando" [class.ti-loader-2]="cargando" [class.gira]="cargando" aria-hidden="true"></i>
+          {{ (cargando ? 'auth.register.submitting' : 'auth.register.submit') | translate }}
+        </button>
+      </form>
+
+      <p class="link">
+        {{ 'auth.register.haveAccount' | translate }}
+        <a routerLink="/auth/login">{{ 'auth.register.signIn' | translate }}</a>
+      </p>
+    </div>
+  </main>
 </div>

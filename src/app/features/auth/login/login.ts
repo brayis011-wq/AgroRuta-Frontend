@@ -1,21 +1,25 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth';
 import { inicioPorRol } from '../../../core/guards/rol-guards';
 import { LoginRequest } from '../../../core/models/auth.model';
+import { TemaService } from '../../../core/services/tema.service';
 import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, LanguageSwitcher],
+  imports: [FormsModule, RouterLink, TranslatePipe, LanguageSwitcher],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrls: ['../auth.css', '../auth-movil.css'],
 })
 export class LoginComponent implements OnInit {
+  readonly tema = inject(TemaService);
+  readonly anio = new Date().getFullYear();
+  verPass = false;
+
   form: LoginRequest = {
     email: '',
     password: '',

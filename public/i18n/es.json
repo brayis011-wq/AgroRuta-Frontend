@@ -99,7 +99,10 @@
     }
   },
   "auth": {
+    "side": {"title": "Tu finca, organizada en un solo lugar", "desc": "Lleva tus lotes, siembras, trabajadores y pagos sin cuadernos ni hojas sueltas.", "f1": "Fincas y cultivos", "f1d": "Lotes en el mapa, etapas, fumigaciones y cosechas", "f2": "Trabajadores y nómina", "f2d": "Jornales, pagos y cargos al día", "f3": "Reportes claros", "f3d": "Costos, rendimiento y nómina por temporada"},
     "login": {
+      "subtitle": "Ingresa con tu correo y contraseña para continuar.",
+      "eyebrow": "Bienvenido de nuevo",
       "title": "Iniciar sesión",
       "email": "Correo electrónico",
       "emailPlaceholder": "tu@email.com",
@@ -114,6 +117,10 @@
       "accountDisabled": "Tu cuenta está desactivada. Contacta al administrador."
     },
     "register": {
+      "roleWorker": "Veo mis jornales y pagos",
+      "roleFarmer": "Administro fincas, cultivos y personal",
+      "subtitle": "Crea tu cuenta en menos de un minuto.",
+      "eyebrow": "Nueva cuenta",
       "cedula": "Cédula",
       "cedulaHint": "Escribe la misma cédula con la que te registró tu empleador. Él debe aprobar tu acceso antes de que veas tus pagos.",
       "cedulaRequired": "Escribe tu cédula para registrarte como trabajador.",
