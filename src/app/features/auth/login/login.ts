@@ -52,6 +52,8 @@ export class LoginComponent implements OnInit {
         const cuentaDesactivada = err.status === 401 && /desactivada/i.test(err.error?.message ?? '');
         this.error = cuentaDesactivada
           ? 'auth.login.accountDisabled'
+          : err.status === 429
+            ? 'auth.login.tooManyAttempts'
           : err.status === 401 || err.status === 403
             ? 'auth.login.invalidCredentials'
             : 'auth.login.serverError';

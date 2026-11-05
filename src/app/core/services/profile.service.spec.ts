@@ -50,10 +50,20 @@ describe('ProfileService', () => {
   });
 
   it('changePassword() should PATCH password', () => {
-    service.changePassword(mockPasswordRequest).subscribe(r => expect(r).toBeNull());
+    service.changePassword(mockPasswordRequest).subscribe(r => expect(r).toBeUndefined());
     const req = httpMock.expectOne(`${base}/perfil/password`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual(mockPasswordRequest);
     req.flush(null);
+  });
+
+  it('changePassword() should keep the session with the new token', () => {
+    localStorage.setItem('token', 'viejo');
+    localStorage.setItem('usuario', JSON.stringify({ id: 1, token: 'viejo', nombre: 'Ana' }));
+    service.changePassword(mockPasswordRequest).subscribe();
+    httpMock.expectOne(`${base}/perfil/password`).flush({ token: 'nuevo' });
+    expect(localStorage.getItem('token')).toBe('nuevo');
+    expect(JSON.parse(localStorage.getItem('usuario')!).token).toBe('nuevo');
+    localStorage.clear();
   });
 });

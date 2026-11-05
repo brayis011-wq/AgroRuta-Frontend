@@ -101,6 +101,7 @@
   "auth": {
     "art": {"caption": "Healthy crops, clear numbers.", "alt": "Plants growing in the sun"},
     "login": {
+      "tooManyAttempts": "Too many failed attempts. Wait 15 minutes and try again.",
       "subtitle": "Sign in with your email and password to continue.",
       "title": "Sign in",
       "email": "Email",
@@ -1218,7 +1219,7 @@
     "password": {
       "rules": {"length": "At least 8 characters", "upper": "One uppercase letter", "number": "One number", "symbol": "One symbol (!, #, @…)"},
       "strength": {"label": "Strength", "s0": "—", "s1": "Weak", "s2": "Fair", "s3": "Good", "s4": "Strong"},
-      "note": "You'll use the new password next time you sign in",
+      "note": "Changing it signs you out on your other devices",
       "hide": "Hide password",
       "show": "Show password",
       "current": "Current password",

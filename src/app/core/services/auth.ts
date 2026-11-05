@@ -27,6 +27,17 @@ export class AuthService {
     );
   }
 
+  /** Cambió la contraseña: el servidor cerró las sesiones viejas y mandó un token nuevo. */
+  renovarToken(token: string): void {
+    localStorage.setItem('token', token);
+    try {
+      const usuario = JSON.parse(localStorage.getItem('usuario') ?? 'null');
+      if (usuario) localStorage.setItem('usuario', JSON.stringify({ ...usuario, token }));
+    } catch {
+      /* usuario guardado ilegible: con el token basta */
+    }
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');

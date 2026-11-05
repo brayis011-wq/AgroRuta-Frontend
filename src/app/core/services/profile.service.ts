@@ -1,6 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
+import { AuthService } from './auth';
 import { Perfil, UpdateProfileRequest, ChangePasswordRequest } from '../models/profile.model';
 import { environment } from '../../../environments/environment';
 
@@ -10,6 +11,7 @@ export class ProfileService {
   /** Foto de la cuenta que inició sesión, para el menú lateral (null = sin foto o sin cargar) */
   readonly foto = signal<string | null>(null);
   private fotoCargada = false;
+  private readonly auth = inject(AuthService);
 
   constructor(private http: HttpClient) {}
 
@@ -39,7 +41,13 @@ export class ProfileService {
     this.fotoCargada = true;
   }
 
+  /** Al cambiar la contraseña el servidor cierra las demás sesiones y devuelve un token nuevo para esta. */
   changePassword(data: ChangePasswordRequest): Observable<void> {
-    return this.http.patch<void>(`${this.base}/perfil/password`, data);
+    return this.http.patch<{ token?: string } | null>(`${this.base}/perfil/password`, data).pipe(
+      tap((r) => {
+        if (r?.token) this.auth.renovarToken(r.token);
+      }),
+      map(() => undefined),
+    );
   }
 }

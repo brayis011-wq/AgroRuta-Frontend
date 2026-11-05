@@ -101,6 +101,7 @@
   "auth": {
     "art": {"caption": "Cultivos sanos, cuentas claras.", "alt": "Plantas creciendo bajo el sol"},
     "login": {
+      "tooManyAttempts": "Demasiados intentos fallidos. Espera 15 minutos e inténtalo de nuevo.",
       "subtitle": "Ingresa con tu correo y contraseña para continuar.",
       "title": "Iniciar sesión",
       "email": "Correo electrónico",
@@ -1218,7 +1219,7 @@
     "password": {
       "rules": {"length": "Mínimo 8 caracteres", "upper": "Una mayúscula", "number": "Un número", "symbol": "Un símbolo (!, #, @…)"},
       "strength": {"label": "Seguridad", "s0": "—", "s1": "Débil", "s2": "Regular", "s3": "Buena", "s4": "Fuerte"},
-      "note": "Te pediremos la nueva contraseña la próxima vez que entres",
+      "note": "Al cambiarla se cierra tu sesión en los demás dispositivos",
       "hide": "Ocultar contraseña",
       "show": "Mostrar contraseña",
       "current": "Contraseña actual",
