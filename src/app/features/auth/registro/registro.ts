@@ -5,18 +5,18 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth';
 import { RegisterRequest } from '../../../core/models/auth.model';
 import { TemaService } from '../../../core/services/tema.service';
-import { AuthEscena } from '../escena/escena';
 import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, LanguageSwitcher, AuthEscena],
+  imports: [FormsModule, RouterLink, TranslatePipe, LanguageSwitcher],
   templateUrl: './registro.html',
-  styleUrls: ['../auth.css', '../auth-movil.css', '../auth-roles.css'],
+  styleUrl: '../auth.css',
 })
 export class RegistroComponent {
   readonly tema = inject(TemaService);
+  readonly anio = new Date().getFullYear();
   verPass = false;
 
   form: RegisterRequest = {

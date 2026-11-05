@@ -99,11 +99,8 @@
     }
   },
   "auth": {
-    "scene": {"manana": "Buenos días", "tarde": "Buenas tardes", "noche": "Buenas noches", "crop": "Café · Lote El Mirador", "stage": "Floración · día 142", "wages": "8 jornales hoy", "wagesSub": "Nómina al día", "weather": "Buen día para fumigar"},
-    "side": {"title": "Tu finca, organizada en un solo lugar", "desc": "Lotes, siembras, trabajadores y pagos en el mismo camino, sin cuadernos ni hojas sueltas."},
     "login": {
       "subtitle": "Ingresa con tu correo y contraseña para continuar.",
-      "eyebrow": "Bienvenido de nuevo",
       "title": "Iniciar sesión",
       "email": "Correo electrónico",
       "emailPlaceholder": "tu@email.com",
@@ -121,7 +118,6 @@
       "roleWorker": "Veo mis jornales y pagos",
       "roleFarmer": "Administro fincas, cultivos y personal",
       "subtitle": "Crea tu cuenta en menos de un minuto.",
-      "eyebrow": "Nueva cuenta",
       "cedula": "Cédula",
       "cedulaHint": "Escribe la misma cédula con la que te registró tu empleador. Él debe aprobar tu acceso antes de que veas tus pagos.",
       "cedulaRequired": "Escribe tu cédula para registrarte como trabajador.",

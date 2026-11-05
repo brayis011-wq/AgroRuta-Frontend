@@ -1,8 +1,0 @@
-/* Tableta y celular: el paisaje queda como una postal arriba del formulario (el título ya está en el formulario) */
-@media (max-width: 900px) {
-  .contenido { min-height: 0; padding: 1.1rem 1.25rem 8.5rem; }
-  .titular { margin-top: .9rem; }
-  .titular h2, .titular > p:not(.saludo), .tarjetas, .copy { display: none; }
-  .paisaje { top: auto; bottom: -90px; height: calc(100% + 90px); }
-  .saludo { margin: 0; }
-}

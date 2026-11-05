@@ -99,11 +99,8 @@
     }
   },
   "auth": {
-    "scene": {"manana": "Good morning", "tarde": "Good afternoon", "noche": "Good evening", "crop": "Coffee · El Mirador lot", "stage": "Flowering · day 142", "wages": "8 wages today", "wagesSub": "Payroll up to date", "weather": "Good day to spray"},
-    "side": {"title": "Your farm, organized in one place", "desc": "Lots, plantings, workers and payments along the same road, no notebooks or loose sheets."},
     "login": {
       "subtitle": "Sign in with your email and password to continue.",
-      "eyebrow": "Welcome back",
       "title": "Sign in",
       "email": "Email",
       "emailPlaceholder": "you@email.com",
@@ -121,7 +118,6 @@
       "roleWorker": "I check my wages and payments",
       "roleFarmer": "I manage farms, crops and staff",
       "subtitle": "Create your account in under a minute.",
-      "eyebrow": "New account",
       "cedula": "ID number",
       "cedulaHint": "Use the same ID number your employer registered you with. They must approve your access before you can see your payments.",
       "cedulaRequired": "Enter your ID number to sign up as a worker.",
