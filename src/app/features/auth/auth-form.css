@@ -20,9 +20,21 @@ form { display: grid; gap: 1.1rem; }
 .ayuda { font-size: .77rem; line-height: 1.45; color: var(--ar-tinta-3); }
 
 /* Rol: dos opciones en un control segmentado */
-.seg { display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 11px; background: var(--ar-seg); }
-.seg label { position: relative; padding: .55rem .5rem; border-radius: 8px; text-align: center; font-size: .88rem; font-weight: 600; color: var(--ar-tinta-2); cursor: pointer; transition: background .15s, color .15s, box-shadow .15s; }
-.seg label.on { background: var(--ar-superficie); color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); }
+.seg { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 11px; background: var(--ar-seg); }
+/* La pastilla blanca se desliza hacia la opción elegida */
+.seg::before { content: ''; position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 8px; background: var(--ar-superficie); box-shadow: var(--ar-sombra-1); transition: transform .32s cubic-bezier(.2, .8, .2, 1); }
+.seg.der::before { transform: translateX(100%); }
+.seg label { position: relative; z-index: 1; padding: .55rem .5rem; border-radius: 8px; text-align: center; font-size: .88rem; font-weight: 600; color: var(--ar-tinta-3); cursor: pointer; transition: color .25s; }
+.seg label.on { color: var(--ar-tinta); }
+.rol-ayuda { display: grid; }
+.rol-ayuda span { grid-area: 1 / 1; opacity: 0; transform: translateY(3px); transition: opacity .25s, transform .25s; }
+.rol-ayuda span.on { opacity: 1; transform: none; }
+/* Campo de cédula: se abre animando la altura (truco de grid 0fr → 1fr) */
+.despliegue { display: grid; grid-template-rows: 0fr; margin-top: -1.1rem; opacity: 0; transition: grid-template-rows .38s cubic-bezier(.2, .8, .2, 1), opacity .25s; }
+.despliegue.abierto { grid-template-rows: 1fr; opacity: 1; transition: grid-template-rows .38s cubic-bezier(.2, .8, .2, 1), opacity .3s .08s; }
+.despliegue-in { min-height: 0; overflow: hidden; margin: 0 -4px; padding: 0 4px; }
+.despliegue-in > .campo { padding-top: 1.1rem; }
+@media (prefers-reduced-motion: reduce) { .seg::before, .seg label, .rol-ayuda span, .despliegue { transition: none; } }
 .seg input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; pointer-events: none; }
 .seg label:has(input:focus-visible) { outline: 2px solid var(--ar-verde-600); outline-offset: 1px; }
 

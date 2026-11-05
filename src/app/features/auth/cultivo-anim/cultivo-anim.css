@@ -10,7 +10,7 @@
   --l1: #20352a; --l2: #1b2f24; --lejos: #3f7f48; --hoja: #4fa457; --tierra: #6e4f37; --surco: #5a3f2b; --pasto: #3f8a48;
   --petalo: #f4efe0;
 }
-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+svg { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: auto; }
 
 .sol .disco { fill: var(--sol); }
 .sol .halo { fill: var(--halo); opacity: var(--halo-op); transform-box: fill-box; transform-origin: center; animation: latir 5s ease-in-out infinite; }

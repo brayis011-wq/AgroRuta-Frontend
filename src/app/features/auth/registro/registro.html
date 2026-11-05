@@ -11,11 +11,14 @@
 <form (ngSubmit)="onSubmit()" #registroForm="ngForm">
   <div class="campo">
     <span class="etq" id="rol-etq">{{ 'auth.register.role' | translate }}</span>
-    <div class="seg" role="radiogroup" aria-labelledby="rol-etq">
+    <div class="seg" [class.der]="form.rol === 'Trabajador'" role="radiogroup" aria-labelledby="rol-etq">
       <label [class.on]="form.rol === 'Agricultor'"><input type="radio" name="rol" value="Agricultor" [(ngModel)]="form.rol" />{{ 'enums.rol.Agricultor' | translate }}</label>
       <label [class.on]="form.rol === 'Trabajador'"><input type="radio" name="rol" value="Trabajador" [(ngModel)]="form.rol" />{{ 'enums.rol.Trabajador' | translate }}</label>
     </div>
-    <small class="ayuda">{{ (form.rol === 'Trabajador' ? 'auth.register.roleWorker' : 'auth.register.roleFarmer') | translate }}</small>
+    <small class="ayuda rol-ayuda">
+      <span [class.on]="form.rol !== 'Trabajador'">{{ 'auth.register.roleFarmer' | translate }}</span>
+      <span [class.on]="form.rol === 'Trabajador'">{{ 'auth.register.roleWorker' | translate }}</span>
+    </small>
   </div>
 
   <div class="campo">
@@ -41,14 +44,18 @@
     </div>
   </div>
 
-  @if (form.rol === 'Trabajador') {
-    <div class="campo">
-      <label for="cedula">{{ 'auth.register.cedula' | translate }}</label>
-      <input id="cedula" type="text" inputmode="numeric" autocomplete="off" maxlength="20"
-             [(ngModel)]="form.cedula" name="cedula" placeholder="1052334120" />
-      <small class="ayuda">{{ 'auth.register.cedulaHint' | translate }}</small>
+  <!-- La cédula se despliega con suavidad al elegir Trabajador (sin que el resto salte) -->
+  <div class="despliegue" [class.abierto]="form.rol === 'Trabajador'"
+       [attr.inert]="form.rol === 'Trabajador' ? null : ''" [attr.aria-hidden]="form.rol === 'Trabajador' ? null : 'true'">
+    <div class="despliegue-in">
+      <div class="campo">
+        <label for="cedula">{{ 'auth.register.cedula' | translate }}</label>
+        <input id="cedula" type="text" inputmode="numeric" autocomplete="off" maxlength="20"
+               [(ngModel)]="form.cedula" name="cedula" placeholder="1052334120" />
+        <small class="ayuda">{{ 'auth.register.cedulaHint' | translate }}</small>
+      </div>
     </div>
-  }
+  </div>
 
   <button type="submit" class="btn-prim" [disabled]="cargando">
     @if (cargando) { <i class="ti ti-loader-2 gira" aria-hidden="true"></i> }
