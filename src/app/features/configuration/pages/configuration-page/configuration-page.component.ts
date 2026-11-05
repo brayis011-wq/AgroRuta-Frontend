@@ -114,6 +114,7 @@ export class ConfigurationPageComponent implements OnInit {
   }
 
   cerrarSesion(): void {
+    this.profileService.olvidarFoto();
     this.auth.logout();
     this.router.navigate(['/auth/login']);
   }

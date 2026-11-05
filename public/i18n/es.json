@@ -1179,10 +1179,14 @@
       "passwordError": "Error al cambiar la contraseña. Inténtalo de nuevo."
     },
     "profile": {
+      "photoError": {"tipo": "Ese archivo no es una imagen. Elige una foto JPG, PNG o WebP.", "pesada": "La foto es muy pesada (máximo 15 MB). Elige otra.", "lectura": "No pudimos abrir esa foto. Prueba con otra imagen."},
+      "change": "Cambiar foto",
+      "upload": "Subir foto",
+      "photoTitle": "Foto de perfil",
       "photoBroken": "No se pudo cargar esa imagen. Revisa el enlace.",
       "removePhoto": "Quitar foto",
       "photoAlt": "Foto de perfil",
-      "photoHint": "Pega el enlace de una imagen (opcional)",
+      "photoHint": "JPG, PNG o WebP. La recortamos en cuadrado automáticamente. También puedes arrastrarla aquí.",
       "photoUrl": "URL de foto de perfil",
       "fullName": "Nombre completo",
       "fullNamePlaceholder": "Tu nombre completo",

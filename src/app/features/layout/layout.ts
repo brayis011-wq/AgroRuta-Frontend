@@ -7,6 +7,7 @@ import { filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth';
 import { AuthResponse } from '../../core/models/auth.model';
 import { LanguageService, Lang } from '../../core/services/language.service';
+import { ProfileService } from '../../core/services/profile.service';
 import { NominaService } from '../../core/services/worker.service';
 import { FincaActivaService } from '../../core/services/finca-activa.service';
 import { WeatherService } from '../../core/services/weather.service';
@@ -48,6 +49,7 @@ export class LayoutComponent {
   private readonly weatherService = inject(WeatherService);
   readonly fincaActiva = inject(FincaActivaService);
   readonly lang = inject(LanguageService);
+  readonly perfil = inject(ProfileService);
 
   readonly usuario: AuthResponse | null = this.authService.getUsuario();
   readonly colapsado = signal(leerColapsado());
@@ -103,6 +105,7 @@ export class LayoutComponent {
   }
 
   constructor() {
+    this.perfil.cargarFoto();
     // El clima sigue a la finca elegida
     effect(() => this.cargarClima(this.fincaActiva.paraClima()));
     this.alNavegar(this.router.url);
@@ -197,6 +200,7 @@ export class LayoutComponent {
   }
 
   logout(): void {
+    this.perfil.olvidarFoto();
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth';
+import { ProfileService } from '../../../core/services/profile.service';
 import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 
 interface NavItem {
@@ -26,6 +27,11 @@ interface NavSeccion {
 export class AdminLayoutComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  readonly perfil = inject(ProfileService);
+
+  constructor() {
+    this.perfil.cargarFoto();
+  }
 
   readonly usuario = this.authService.getUsuario();
   colapsado = false;
@@ -58,6 +64,7 @@ export class AdminLayoutComponent {
   }
 
   cerrarSesion(): void {
+    this.perfil.olvidarFoto();
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }

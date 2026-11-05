@@ -25,7 +25,11 @@
 
     <div class="sidebar-footer">
       <div class="user">
-        <span class="avatar" aria-hidden="true">{{ usuario?.nombre?.charAt(0) }}</span>
+        @if (perfil.foto(); as foto) {
+          <img class="avatar" [src]="foto" alt="" />
+        } @else {
+          <span class="avatar" aria-hidden="true">{{ usuario?.nombre?.charAt(0) }}</span>
+        }
         <span class="user-text">
           <span class="user-name">{{ usuario?.nombre }}</span>
           <span class="user-role">{{ 'enums.rol.Administrador' | translate }}</span>

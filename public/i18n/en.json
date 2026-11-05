@@ -1179,10 +1179,14 @@
       "passwordError": "Error changing the password. Please try again."
     },
     "profile": {
+      "photoError": {"tipo": "That file isn't an image. Choose a JPG, PNG or WebP photo.", "pesada": "The photo is too large (15 MB max). Choose another one.", "lectura": "We couldn't open that photo. Try another image."},
+      "change": "Change photo",
+      "upload": "Upload photo",
+      "photoTitle": "Profile photo",
       "photoBroken": "That image couldn't load. Check the link.",
       "removePhoto": "Remove photo",
       "photoAlt": "Profile photo",
-      "photoHint": "Paste an image link (optional)",
+      "photoHint": "JPG, PNG or WebP. We crop it to a square automatically. You can also drag it here.",
       "photoUrl": "Profile photo URL",
       "fullName": "Full name",
       "fullNamePlaceholder": "Your full name",

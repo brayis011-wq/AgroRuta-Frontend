@@ -5,11 +5,15 @@ import {
   EventEmitter,
   OnChanges,
   SimpleChanges,
+  ChangeDetectorRef,
+  inject,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Perfil, UpdateProfileRequest } from '../../../core/models/profile.model';
+import { ErrorFoto, prepararFoto, revisarArchivo } from '../../../shared/foto';
 
 @Component({
   selector: 'app-profile-form',
@@ -23,8 +27,16 @@ export class ProfileFormComponent implements OnChanges {
   @Input() loading = false;
   @Output() save = new EventEmitter<UpdateProfileRequest>();
 
+  private readonly cdr = inject(ChangeDetectorRef);
+
   form: FormGroup;
   imageError = false;
+  /** Mientras se reduce la foto elegida */
+  readonly procesando = signal(false);
+  /** Motivo por el que no se pudo usar la foto elegida */
+  readonly errorFoto = signal<ErrorFoto | null>(null);
+  /** Hay un archivo encima del recuadro de la foto */
+  readonly arrastrando = signal(false);
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
@@ -62,6 +74,39 @@ export class ProfileFormComponent implements OnChanges {
     this.form.patchValue({ fotoPerfil: '' });
     this.form.get('fotoPerfil')?.markAsDirty();
     this.imageError = false;
+    this.errorFoto.set(null);
+  }
+
+  /** Foto elegida con el botón o soltada sobre el recuadro */
+  async usarArchivo(archivo: File | null | undefined): Promise<void> {
+    this.arrastrando.set(false);
+    if (!archivo) return;
+    const problema = revisarArchivo(archivo);
+    if (problema) { this.errorFoto.set(problema); return; }
+    this.errorFoto.set(null);
+    this.procesando.set(true);
+    try {
+      const foto = await prepararFoto(archivo);
+      this.form.patchValue({ fotoPerfil: foto });
+      this.form.get('fotoPerfil')?.markAsDirty();
+      this.imageError = false;
+    } catch (e) {
+      this.errorFoto.set(e === 'pesada' ? 'pesada' : 'lectura');
+    } finally {
+      this.procesando.set(false);
+      this.cdr.markForCheck();
+    }
+  }
+
+  alElegir(evento: Event): void {
+    const entrada = evento.target as HTMLInputElement;
+    this.usarArchivo(entrada.files?.[0]);
+    entrada.value = ''; // permite volver a elegir el mismo archivo
+  }
+
+  alSoltar(evento: DragEvent): void {
+    evento.preventDefault();
+    this.usarArchivo(evento.dataTransfer?.files?.[0]);
   }
 
   get fotoUrl(): string {

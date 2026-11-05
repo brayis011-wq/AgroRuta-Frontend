@@ -1,19 +1,28 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-  <div class="foto">
-    @if (hasValidImage) {
-      <img class="foto-img" [src]="fotoUrl" [alt]="'config.profile.photoAlt' | translate" (error)="onImageError()" />
-    } @else {
-      <span class="foto-ini" aria-hidden="true">{{ initials || '?' }}</span>
-    }
-    <div class="campo">
-      <label for="fotoPerfil">{{ 'config.profile.photoUrl' | translate }}</label>
+  <div class="foto" [class.arrastrando]="arrastrando()"
+       (dragover)="$event.preventDefault(); arrastrando.set(true)" (dragleave)="arrastrando.set(false)" (drop)="alSoltar($event)">
+    <button type="button" class="foto-btn" (click)="archivo.click()" [disabled]="procesando()" [attr.aria-label]="'config.profile.upload' | translate">
+      @if (hasValidImage) {
+        <img class="foto-img" [src]="fotoUrl" [alt]="'config.profile.photoAlt' | translate" (error)="onImageError()" />
+      } @else {
+        <span class="foto-ini" aria-hidden="true">{{ initials || '?' }}</span>
+      }
+      <span class="foto-cam" aria-hidden="true"><i class="ti" [class.ti-camera]="!procesando()" [class.ti-loader-2]="procesando()" [class.gira]="procesando()"></i></span>
+    </button>
+    <div class="foto-txt">
+      <strong>{{ 'config.profile.photoTitle' | translate }}</strong>
       <div class="fila">
-        <input id="fotoPerfil" type="url" formControlName="fotoPerfil" placeholder="https://…/mi-foto.jpg" (input)="onFotoChange()" />
+        <button type="button" class="btn" (click)="archivo.click()" [disabled]="procesando()">
+          <i class="ti ti-upload" aria-hidden="true"></i> {{ (fotoUrl ? 'config.profile.change' : 'config.profile.upload') | translate }}
+        </button>
         @if (fotoUrl) {
-          <button type="button" class="btn btn-texto" (click)="quitarFoto()" [title]="'config.profile.removePhoto' | translate"><i class="ti ti-trash" aria-hidden="true"></i><span class="sr-only">{{ 'config.profile.removePhoto' | translate }}</span></button>
+          <button type="button" class="btn btn-texto" (click)="quitarFoto()" [disabled]="procesando()"><i class="ti ti-trash" aria-hidden="true"></i> {{ 'config.profile.removePhoto' | translate }}</button>
         }
       </div>
-      @if (imageError) {
+      <input #archivo type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" hidden (change)="alElegir($event)" />
+      @if (errorFoto(); as e) {
+        <em class="err" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ 'config.profile.photoError.' + e | translate }}</em>
+      } @else if (imageError) {
         <em class="err"><i class="ti ti-photo-off" aria-hidden="true"></i> {{ 'config.profile.photoBroken' | translate }}</em>
       } @else {
         <span class="ayuda">{{ 'config.profile.photoHint' | translate }}</span>

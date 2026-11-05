@@ -211,3 +211,4 @@
 @media (prefers-reduced-motion: reduce) {
   .admin-sidebar, .admin-main { transition: none; }
 }
+img.avatar { object-fit: cover; }

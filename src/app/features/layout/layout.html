@@ -116,7 +116,11 @@
       </div>
 
       <div class="usuario">
-        <div class="av" aria-hidden="true">{{ iniciales() }}</div>
+        @if (perfil.foto(); as foto) {
+          <img class="av" [src]="foto" alt="" />
+        } @else {
+          <div class="av" aria-hidden="true">{{ iniciales() }}</div>
+        }
         <div class="usuario-txt">
           <strong>{{ usuario?.nombre }}</strong>
           <small>{{ 'enums.rol.' + usuario?.rol | translate }}</small>
