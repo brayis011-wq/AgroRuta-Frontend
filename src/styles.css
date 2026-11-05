@@ -117,3 +117,12 @@ input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(contenido), ::view-transition-new(contenido) { animation: none; }
 }
+/* Acceso: al pasar de login a registro la tarjeta cambia de tamaño con suavidad y el contenido se funde */
+::view-transition-group(auth-caja), ::view-transition-group(auth-arte) { animation-duration: .38s; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
+::view-transition-old(auth-caja), ::view-transition-new(auth-caja),
+::view-transition-old(auth-arte), ::view-transition-new(auth-arte) { height: 100%; width: 100%; object-fit: none; object-position: 50% 50%; }
+::view-transition-old(auth-caja) { animation: salir-pagina .16s ease-in both; }
+::view-transition-new(auth-caja) { animation: entrar-pagina .3s .08s cubic-bezier(.2, .8, .2, 1) both; }
+::view-transition-old(auth-arte) { animation: none; opacity: 0; }
+::view-transition-new(auth-arte) { animation: none; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(auth-caja), ::view-transition-group(auth-arte), ::view-transition-new(auth-caja), ::view-transition-old(auth-caja) { animation: none; } }

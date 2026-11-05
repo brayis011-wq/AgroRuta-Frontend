@@ -1,27 +1,56 @@
 :host {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.25rem;
-  --sol: #ffc93c; --halo: #ffe9a6; --tallo: #3d8b45; --hoja: #5cb563; --hoja-n: #3d8b45; --tierra: #a47551; --surco: #8a5f40; --halo-op: .55;
+  position: relative; display: block; width: 100%; height: 100%;
+  --sol: #ffc93c; --halo: #ffe9a6; --halo-op: .55; --nube: #fff; --pajaro: #6b7d70;
+  --l1: #d4ead0; --l2: #bfe0ba; --lejos: #7cc383;
+  --tallo: #3d8b45; --hoja: #5cb563; --hoja-n: #3d8b45; --tierra: #a47551; --surco: #8a5f40; --pasto: #4f9e57;
+  --petalo: #fff; --centro: #ffb300; --ala: #ff9f43; --ala2: #ffd36b;
 }
-:host-context([data-tema="oscuro"]) { --halo: #ffc93c; --halo-op: .1; --hoja: #4fa457; --tierra: #6e4f37; --surco: #5a3f2b; }
-svg { width: min(480px, 100%); height: auto; overflow: visible; }
+:host-context([data-tema="oscuro"]) {
+  --halo: #ffc93c; --halo-op: .06; --nube: #3a4a40; --pajaro: #9aa89f;
+  --l1: #20352a; --l2: #1b2f24; --lejos: #3f7f48; --hoja: #4fa457; --tierra: #6e4f37; --surco: #5a3f2b; --pasto: #3f8a48;
+  --petalo: #f4efe0;
+}
+svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 .sol .disco { fill: var(--sol); }
 .sol .halo { fill: var(--halo); opacity: var(--halo-op); transform-box: fill-box; transform-origin: center; animation: latir 5s ease-in-out infinite; }
 .rayos { animation: girar 40s linear infinite; }
 .rayos line { stroke: var(--sol); stroke-width: 5; stroke-linecap: round; }
 
-.mota { fill: var(--sol); opacity: 0; animation: subir 5s ease-in-out infinite; }
+.nube path { fill: var(--nube); }
+.nb1 { transform: translate(60px, 92px); opacity: .95; animation: nube1 14s ease-in-out infinite alternate; }
+.nb2 { transform: translate(196px, 58px); opacity: .8; animation: nube2 18s ease-in-out infinite alternate; }
+.pajaros { fill: none; stroke: var(--pajaro); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; animation: volar 26s linear infinite; }
+
+.loma { transform-box: fill-box; transform-origin: 50% 100%; animation: aparecer-loma .7s ease-out both; }
+.l1 { fill: var(--l1); }
+.l2 { fill: var(--l2); animation-delay: .1s; }
+.lejos .lamina { fill: var(--lejos); }
+.lejos .tallo { stroke: var(--lejos); }
+.lejos .nervio { display: none; }
 
 .tallo { fill: none; stroke: var(--tallo); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 140; stroke-dashoffset: 140; animation: crecer .9s ease-out forwards; }
 .hoja { transform-box: fill-box; transform-origin: 0% 85%; transform: scale(0); animation: abrir .6s cubic-bezier(.3, 1.4, .5, 1) forwards; }
 .lamina { fill: var(--hoja); }
 .nervio { fill: none; stroke: var(--hoja-n); stroke-width: 1.6; stroke-linecap: round; opacity: .55; }
 .meneo { transform-box: fill-box; transform-origin: 50% 100%; animation: mecer 4.5s ease-in-out infinite; }
+.flor { transform-box: fill-box; transform-origin: center; transform: scale(0); animation: abrir .5s cubic-bezier(.3, 1.6, .5, 1) forwards; }
+.flor ellipse { fill: var(--petalo); stroke: rgba(0, 0, 0, .06); }
+.flor .centro { fill: var(--centro); }
 
 .tierra { fill: var(--tierra); }
 .surco { fill: none; stroke: var(--surco); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 12; opacity: .7; }
+.pasto { fill: none; stroke: var(--pasto); stroke-width: 2.4; stroke-linecap: round; }
 
-.lema { margin: 0; font-size: .95rem; font-weight: 600; color: var(--ar-tinta-2); text-align: center; }
+.mota { fill: var(--sol); opacity: 0; animation: subir 5s ease-in-out infinite; }
+.ala { transform-box: fill-box; animation: aletear .22s ease-in-out infinite alternate; }
+.ala.izq { transform-origin: 100% 50%; }
+.ala.der { transform-origin: 0% 50%; }
+.ala ellipse:first-child { fill: var(--ala); }
+.ala ellipse:last-child { fill: var(--ala2); }
+.mariposa .cuerpo { fill: #5b4636; }
+
+.lema { position: absolute; top: 1.6rem; left: 1.75rem; margin: 0; max-width: 14ch; font-size: 1.35rem; line-height: 1.2; font-weight: 700; letter-spacing: -.02em; color: var(--ar-tinta); }
 
 @keyframes crecer { to { stroke-dashoffset: 0; } }
 @keyframes abrir { to { transform: scale(1); } }
@@ -29,8 +58,15 @@ svg { width: min(480px, 100%); height: auto; overflow: visible; }
 @keyframes girar { to { transform: rotate(360deg); } }
 @keyframes latir { 50% { transform: scale(1.1); } }
 @keyframes subir { 0% { opacity: 0; transform: translateY(10px); } 30% { opacity: .8; } 100% { opacity: 0; transform: translateY(-40px); } }
+@keyframes aletear { from { transform: scaleX(1); } to { transform: scaleX(.25); } }
+@keyframes nube1 { to { transform: translate(100px, 92px); } }
+@keyframes nube2 { to { transform: translate(150px, 58px); } }
+@keyframes volar { from { transform: translate(-40px, 150px); } to { transform: translate(440px, 120px); } }
+@keyframes aparecer-loma { from { transform: scaleY(.6); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  .rayos, .halo, .meneo, .mota { animation: none; }
+  .rayos, .halo, .meneo, .mota, .nube, .pajaros, .ala, .loma { animation: none; }
   .tallo { animation: none; stroke-dashoffset: 0; }
-  .hoja { animation: none; transform: none; }
+  .hoja, .flor { animation: none; transform: none; }
+  .mariposa { display: none; }
 }
+@media (max-width: 900px) { .lema { display: none; } }

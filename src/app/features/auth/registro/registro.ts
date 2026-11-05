@@ -1,23 +1,18 @@
-import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth';
 import { RegisterRequest } from '../../../core/models/auth.model';
-import { TemaService } from '../../../core/services/tema.service';
-import { AuthCultivo } from '../cultivo-anim/cultivo-anim';
-import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, LanguageSwitcher, AuthCultivo],
+  imports: [FormsModule, RouterLink, TranslatePipe],
   templateUrl: './registro.html',
-  styleUrl: '../auth.css',
+  styleUrl: '../auth-form.css',
 })
 export class RegistroComponent {
-  readonly tema = inject(TemaService);
-  readonly anio = new Date().getFullYear();
   verPass = false;
 
   form: RegisterRequest = {

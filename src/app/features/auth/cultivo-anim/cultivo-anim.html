@@ -1,35 +1,76 @@
-<svg viewBox="0 0 400 400" role="img" [attr.aria-label]="'auth.art.alt' | translate">
+<svg viewBox="0 0 400 420" preserveAspectRatio="xMidYMax slice" role="img" [attr.aria-label]="'auth.art.alt' | translate">
+  <!-- Nubes y pájaros -->
+  <g class="nube nb1"><path d="M0 0 h64 a14 14 0 0 0 -16 -18 a20 20 0 0 0 -36 4 a12 12 0 0 0 -12 14z" /></g>
+  <g class="nube nb2"><path d="M0 0 h46 a10 10 0 0 0 -11 -13 a15 15 0 0 0 -26 3 a9 9 0 0 0 -9 10z" /></g>
+  <g class="pajaros">
+    <path d="M0 0 q6 -6 12 0 q6 -6 12 0" />
+    <path d="M30 10 q5 -5 10 0 q5 -5 10 0" />
+  </g>
+
   <!-- Sol -->
-  <g class="sol" transform="translate(318 74)">
-    <circle class="halo" r="62" />
+  <g class="sol" transform="translate(318 84)">
+    <circle class="halo" r="64" />
     <g class="rayos">
       @for (r of rayos; track r) { <line [attr.transform]="'rotate(' + r + ')'" x1="0" y1="-48" x2="0" y2="-60" /> }
     </g>
     <circle class="disco" r="34" />
   </g>
 
-  <!-- Luz que sube -->
-  @for (m of motas; track $index) { <circle class="mota" [attr.cx]="m[0]" [attr.cy]="m[1]" r="2.6" [style.animation-delay.s]="m[2]" /> }
+  <!-- Lomas del fondo -->
+  <path class="loma l1" d="M0 300 C70 254 150 262 220 284 S340 246 400 264 V420 H0Z" />
+  <path class="loma l2" d="M0 322 C110 296 250 300 400 310 V420 H0Z" />
 
-  <!-- Plantas -->
-  @for (p of plantas; track $index) {
-    <g [attr.transform]="'translate(' + p.x + ' ' + p.y + ') scale(' + p.escala + ')'">
-      <g class="meneo" [style.animation-delay.ms]="p.retraso * 3">
-        <path class="tallo" d="M0 0 C0 -40 -4 -80 0 -132" [style.animation-delay.ms]="p.retraso" />
-        @for (h of hojas; track $index) {
-          <g [attr.transform]="transformHoja(h)">
-            <g class="hoja" [style.animation-delay.ms]="p.retraso + 450 + $index * 120">
-              <path class="lamina" d="M0 0 C16 -22 46 -26 66 -14 C48 4 20 8 0 0Z" />
-              <path class="nervio" d="M2 -1 C22 -10 40 -13 60 -13" />
-            </g>
-          </g>
-        }
-      </g>
+  @for (p of fondo; track $index) {
+    <g class="lejos" [attr.transform]="transformPlanta(p)">
+      <ng-container *ngTemplateOutlet="planta; context: { p }" />
     </g>
   }
 
-  <!-- Tierra -->
-  <path class="tierra" d="M36 326 Q200 296 364 326 Q372 350 352 356 Q200 372 48 356 Q28 350 36 326Z" />
-  <path class="surco" d="M70 338 Q200 318 330 338" />
+  <!-- Tierra del frente -->
+  <path class="tierra" d="M8 352 Q200 316 392 352 Q400 382 378 390 Q200 410 22 390 Q0 382 8 352Z" />
+  <path class="surco" d="M44 366 Q200 340 356 366" />
+  <path class="surco" d="M70 382 Q200 362 330 382" />
+  @for (g of pasto; track $index) {
+    <path class="pasto" [attr.transform]="'translate(' + g[0] + ' ' + g[1] + ')'" d="M0 0 L-4 -11 M0 0 L0 -14 M0 0 L4 -10" />
+  }
+
+  @for (p of frente; track $index) {
+    <g [attr.transform]="transformPlanta(p)">
+      <ng-container *ngTemplateOutlet="planta; context: { p }" />
+    </g>
+  }
+
+  <!-- Luz que sube -->
+  @for (m of motas; track $index) { <circle class="mota" [attr.cx]="m[0]" [attr.cy]="m[1]" r="2.6" [style.animation-delay.s]="m[2]" /> }
+
+  <!-- Mariposa -->
+  <g class="mariposa">
+    <animateMotion dur="16s" repeatCount="indefinite" path="M70 210 C120 150 190 230 250 170 S370 196 330 250 S170 262 70 210Z" />
+    <g class="ala izq"><ellipse cx="-5" cy="-3" rx="6" ry="8" /><ellipse cx="-4" cy="6" rx="4" ry="5" /></g>
+    <g class="ala der"><ellipse cx="5" cy="-3" rx="6" ry="8" /><ellipse cx="4" cy="6" rx="4" ry="5" /></g>
+    <rect class="cuerpo" x="-1.2" y="-6" width="2.4" height="15" rx="1.2" />
+  </g>
+
+  <ng-template #planta let-p="p">
+    <g class="meneo" [style.animation-delay.ms]="p.retraso * 3">
+      <path class="tallo" d="M0 0 C0 -40 -4 -80 0 -128" [style.animation-delay.ms]="p.retraso" />
+      @for (h of hojas; track $index) {
+        <g [attr.transform]="transformHoja(h)">
+          <g class="hoja" [style.animation-delay.ms]="p.retraso + 450 + $index * 110">
+            <path class="lamina" d="M0 0 C16 -22 46 -26 66 -14 C48 4 20 8 0 0Z" />
+            <path class="nervio" d="M2 -1 C22 -10 40 -13 60 -13" />
+          </g>
+        </g>
+      }
+      @if (p.flor) {
+        <g transform="translate(0 -134)">
+          <g class="flor" [style.animation-delay.ms]="p.retraso + 1250">
+            @for (a of petalos; track a) { <ellipse [attr.transform]="'rotate(' + a + ')'" cx="0" cy="-8" rx="5" ry="7.5" /> }
+            <circle class="centro" r="5" />
+          </g>
+        </g>
+      }
+    </g>
+  </ng-template>
 </svg>
 <p class="lema">{{ 'auth.art.caption' | translate }}</p>
