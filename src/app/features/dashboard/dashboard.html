@@ -169,30 +169,6 @@
 
     </div>
   </div>
-
-  <!-- Jornales del último mes, día por día -->
-    <section class="tarjeta grafica-tarj">
-      <header>
-        <h2><i class="ti ti-chart-bar" aria-hidden="true"></i> {{ 'dashboard.chart.title' | translate }}</h2>
-        @if (serie()) {
-          <span class="meta">{{ 'dashboard.chart.total' | translate: { count: totalSerie().n, amount: pesos(totalSerie().valor) } }}</span>
-        }
-      </header>
-      @if (serie(); as s) {
-        <div class="grafica" role="img" [attr.aria-label]="'dashboard.chart.aria' | translate: { count: totalSerie().n }">
-          @for (d of s; track d.fecha.getTime()) {
-            <div class="barra-col" [class.hoy]="d.hoy" tabindex="0">
-              <span class="barra-val">{{ d.n || '' }}</span>
-              <span class="barra" [style.height.%]="(d.n / maxSerie()) * 100" [class.vacia]="d.n === 0"></span>
-              <span class="barra-dia" [class.lunes]="d.fecha.getDay() === 1">{{ d.fecha.getDate() }}</span>
-              <span class="tip" role="tooltip"><b>{{ fechaCorta(d.fecha) }}</b>{{ 'dashboard.chart.tip' | translate: { count: d.n, amount: pesos(d.valor) } }}</span>
-            </div>
-          }
-        </div>
-      } @else {
-        <div class="esqueleto grafica-esq"></div>
-      }
-    </section>
 </div>
 
 <ng-template #tend let-t="t">

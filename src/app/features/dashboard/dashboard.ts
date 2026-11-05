@@ -15,7 +15,7 @@ import { ICONO_EVENTO, TONO_EVENTO, diasHasta, esPorVenir, ordenAgenda, textoEve
 import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget.component';
 import { formatoPesos, formatoNumero } from '../../shared/formato';
 import { municipio } from '../../shared/clima';
-import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora, serieJornales } from './resumen-inicio';
+import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './resumen-inicio';
 
 const iso = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -74,15 +74,6 @@ export class DashboardComponent implements OnInit {
   readonly cultivos = signal<CultivoEnCurso[] | null>(null);
   /** Lo que viene en el calendario de las próximas semanas (null mientras carga) */
   readonly agenda = signal<EventoCalendario[] | null>(null);
-  private readonly jornalesCargados = signal<Jornal[] | null>(null);
-
-  /** Jornales de los últimos 30 días para la gráfica */
-  readonly serie = computed(() => {
-    const j = this.jornalesCargados();
-    return j ? serieJornales(j, this.hoy, 30) : null;
-  });
-  readonly maxSerie = computed(() => Math.max(1, ...(this.serie() ?? []).map((d) => d.n)));
-  readonly totalSerie = computed(() => (this.serie() ?? []).reduce((s, d) => ({ n: s.n + d.n, valor: s.valor + d.valor }), { n: 0, valor: 0 }));
 
   /** Lo que requiere atención, en orden de urgencia; solo lo que tiene algo */
   readonly pendientes = computed<Pendiente[]>(() => {
@@ -167,7 +158,6 @@ export class DashboardComponent implements OnInit {
       lotes: lotes$,
     }).subscribe((d) => {
       this.resumen.set(calcularResumen(d, this.hoy));
-      this.jornalesCargados.set(d.jornales);
       this.cargando.set(false);
     });
   }
@@ -200,10 +190,6 @@ export class DashboardComponent implements OnInit {
     if (d <= 0) return this.translate.instant('dashboard.agenda.today');
     if (d === 1) return this.translate.instant('dashboard.agenda.tomorrow');
     return this.translate.instant('dashboard.agenda.inDays', { days: d });
-  }
-
-  fechaCorta(f: Date): string {
-    return new Intl.DateTimeFormat(this.lang.current(), { weekday: 'short', day: 'numeric', month: 'short' }).format(f);
   }
 
   irA(ruta: string): void {

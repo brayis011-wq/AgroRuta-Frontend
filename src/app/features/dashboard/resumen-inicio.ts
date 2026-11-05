@@ -93,30 +93,6 @@ export function calcularResumen(d: DatosInicio, hoy = new Date()): ResumenInicio
   };
 }
 
-/** Un día de la gráfica de jornales */
-export interface DiaJornales {
-  fecha: Date;
-  n: number;
-  valor: number;
-  hoy: boolean;
-}
-
-/** Jornales de los últimos `dias` días (incluido hoy), día por día, para la gráfica del Inicio */
-export function serieJornales(jornales: Jornal[], hoy = new Date(), dias = 14): DiaJornales[] {
-  const serie: DiaJornales[] = [];
-  for (let i = dias - 1; i >= 0; i--) {
-    const f = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() - i);
-    serie.push({ fecha: f, n: 0, valor: 0, hoy: i === 0 });
-  }
-  for (const j of jornales) {
-    const f = fechaLocal(j.fecha);
-    if (!f) continue;
-    const dia = serie.find((d) => mismoDia(f, d.fecha));
-    if (dia) { dia.n++; dia.valor += j.valorJornal ?? j.pago ?? 0; }
-  }
-  return serie;
-}
-
 /** Etapas que cuentan para el avance de una siembra (sin "finalizado") */
 export const ETAPAS_AVANCE = ['GERMINACION', 'CRECIMIENTO', 'PRODUCCION', 'COSECHA'] as const;
 
