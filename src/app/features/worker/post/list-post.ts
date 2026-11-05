@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { PesosPipe } from '../../../shared/formato.pipe';
 import { CargoService } from '../../../core/services/worker.service';
 import { Cargo } from '../../../core/models/worker.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
@@ -9,9 +10,9 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 @Component({
   selector: 'app-lista-cargos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, PesosPipe],
   templateUrl: './list-post.html',
-  styleUrls: ['./list-post.css']
+  styleUrls: ['../../cultivo/cultivo-ui.css', '../../cultivo/cultivo-bloques.css', '../../report/report-tabla.css', '../worker-ui.css', '../worker-panel.css']
 })
 export class ListaCargosComponent implements OnInit {
   private readonly confirmService = inject(ConfirmService);

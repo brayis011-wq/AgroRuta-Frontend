@@ -1,539 +1,323 @@
-<div class="page">
+<div class="cv">
 
-  <!-- ── Header ── -->
-  <div class="page-header">
+  <header class="cv-head">
     <div>
-      <h1 class="page-title">
-        <span aria-hidden="true">👷</span> {{ 'workers.home.title' | translate }}
-      </h1>
-      <p class="page-subtitle">{{ 'workers.home.subtitle' | translate }}</p>
+      <p class="eyebrow">{{ 'workers.home.title' | translate }}</p>
+      <h1>{{ 'workers.ui.team' | translate }}</h1>
+      <p class="cv-sub">{{ 'workers.home.subtitle' | translate }}</p>
     </div>
-    <div class="header-acciones">
-      <button class="btn-secundario" (click)="irA('actividades')">
-        <span aria-hidden="true">⚡</span> {{ 'workers.home.activities' | translate }}
-      </button>
-      <button class="btn-secundario" (click)="irA('cargos')">
-        <span aria-hidden="true">🏷️</span> {{ 'workers.home.posts' | translate }}
-      </button>
-      <button class="btn-primary" (click)="abrirNuevo()">{{ 'workers.home.newWorker' | translate }}</button>
+    <div class="cv-acciones">
+      <button type="button" class="btn" (click)="irA('cargos')"><i class="ti ti-tags" aria-hidden="true"></i> {{ 'workers.home.posts' | translate }}</button>
+      <button type="button" class="btn" (click)="irA('actividades')"><i class="ti ti-list-check" aria-hidden="true"></i> {{ 'workers.home.activities' | translate }}</button>
+      <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-user-plus" aria-hidden="true"></i> {{ 'workers.home.newWorker' | translate }}</button>
     </div>
-  </div>
+  </header>
 
-  <!-- ── Tabs ── -->
-  <div class="tabs" role="tablist">
-    <button class="tab" role="tab"
-            [class.tab-activo]="tabActivo === 'trabajadores'"
-            [attr.aria-selected]="tabActivo === 'trabajadores'"
-            (click)="tabActivo = 'trabajadores'">
-      <span aria-hidden="true">👥</span> {{ 'workers.home.tabs.workers' | translate }}
+  @if (error && !modoPanel) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+
+  <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">
+    <div class="kpi">
+      <span class="ic verde"><i class="ti ti-users" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.home.stats.active' | translate }}</small><strong>{{ cantidadActivos }}</strong><em>{{ 'workers.ui.ofTotal' | translate: { total: trabajadores.length } }}</em></div>
+    </div>
+    <div class="kpi">
+      <span class="ic ambar"><i class="ti ti-player-pause" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.home.stats.suspended' | translate }}</small><strong>{{ cantidadSuspendidos }}</strong></div>
+    </div>
+    <button type="button" class="kpi clic" (click)="irA('nominas')">
+      <span class="ic azul"><i class="ti ti-file-invoice" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.home.stats.draftRosters' | translate }}</small><strong>{{ nominasPendientes }}</strong><em>{{ 'workers.ui.seeRosters' | translate }}</em></div>
     </button>
-    <button class="tab" role="tab"
-            [class.tab-activo]="tabActivo === 'nominas'"
-            [attr.aria-selected]="tabActivo === 'nominas'"
-            (click)="tabActivo = 'nominas'">
-      <span aria-hidden="true">📋</span> {{ 'workers.home.tabs.rosters' | translate }}
+    <button type="button" class="kpi clic" (click)="irA('pagos')">
+      <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.home.stats.totalPaid' | translate }}</small><strong>{{ totalPagado | pesos }}</strong><em>{{ 'workers.ui.paymentsCount' | translate: { count: pagos.length } }}</em></div>
     </button>
-    <button class="tab" role="tab"
-            [class.tab-activo]="tabActivo === 'pagos'"
-            [attr.aria-selected]="tabActivo === 'pagos'"
-            (click)="tabActivo = 'pagos'">
-      <span aria-hidden="true">💳</span> {{ 'workers.home.tabs.payments' | translate }}
-    </button>
-  </div>
+  </section>
 
-  <div *ngIf="error" class="alerta-error" role="alert">{{ error | translate }}</div>
-  <div *ngIf="exito" class="alerta-exito" role="alert">{{ exito | translate: exitoParams }}</div>
+  @if (solicitudesAcceso.length > 0) {
+    <p class="aviso ambar" role="status">
+      <i class="ti ti-bell-ringing" aria-hidden="true"></i>
+      {{ (solicitudesAcceso.length === 1 ? 'workers.home.access.bannerOne' : 'workers.home.access.banner') | translate: { count: solicitudesAcceso.length } }}
+    </p>
+  }
 
-  <!-- ══ TAB: TRABAJADORES ══ -->
-  <ng-container *ngIf="tabActivo === 'trabajadores'">
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-valor">{{ cantidadActivos }}</div>
-        <div class="stat-label">{{ 'workers.home.stats.active' | translate }}</div>
-      </div>
-      <div class="stat-card" [class.stat-alerta]="cantidadSuspendidos > 0">
-        <div class="stat-valor">{{ cantidadSuspendidos }}</div>
-        <div class="stat-label">{{ 'workers.home.stats.suspended' | translate }}</div>
-      </div>
-      <div class="stat-card stat-destacado">
-        <div class="stat-valor">{{ nominasPendientes }}</div>
-        <div class="stat-label">{{ 'workers.home.stats.draftRosters' | translate }}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-valor">${{ totalPagado | number }}</div>
-        <div class="stat-label">{{ 'workers.home.stats.totalPaid' | translate }}</div>
-      </div>
-    </div>
-
-    <div class="buscador-wrap" style="display:flex; gap:0.75rem; align-items:center">
-      <label for="buscadorTrabajadores" class="sr-only">{{ 'workers.home.list.searchLabel' | translate }}</label>
-      <input id="buscadorTrabajadores" class="buscador" type="text"
-             [placeholder]="'workers.home.list.searchPlaceholder' | translate"
-             [(ngModel)]="busqueda" style="flex:1"/>
-      <div class="filtro-estado">
-        <button class="filtro-btn" [class.activo]="filtroEstado === 'ACTIVO'"
-                (click)="filtroEstado = 'ACTIVO'">{{ 'workers.home.list.filterActive' | translate }}</button>
-        <button class="filtro-btn" [class.activo]="filtroEstado === 'SUSPENDIDO'"
-                (click)="filtroEstado = 'SUSPENDIDO'">{{ 'workers.home.list.filterSuspended' | translate }}</button>
-        <button class="filtro-btn" [class.activo]="filtroEstado === 'TODOS'"
-                (click)="filtroEstado = 'TODOS'">{{ 'workers.home.list.filterAll' | translate }}</button>
-      </div>
-    </div>
-
-    <div *ngIf="solicitudesAcceso.length > 0" class="aviso-acceso" role="status">
-      <span aria-hidden="true">🔔</span>
-      <span>{{ (solicitudesAcceso.length === 1 ? 'workers.home.access.bannerOne' : 'workers.home.access.banner') | translate: { count: solicitudesAcceso.length } }}</span>
-    </div>
-
-    <div *ngIf="cargando" class="estado-vacio"><p>{{ 'workers.home.list.loading' | translate }}</p></div>
-
-    <div *ngIf="!cargando && trabajadoresFiltrados.length === 0" class="estado-vacio">
-      <div class="vacio-icono" aria-hidden="true">👷</div>
-      <p *ngIf="filtroEstado === 'SUSPENDIDO'">{{ 'workers.home.list.emptySuspended' | translate }}</p>
-      <p *ngIf="filtroEstado !== 'SUSPENDIDO' && !busqueda">{{ 'workers.home.list.emptyNone' | translate }}</p>
-      <p *ngIf="busqueda">{{ 'workers.home.list.emptySearch' | translate: { query: busqueda } }}</p>
-      <button *ngIf="filtroEstado !== 'SUSPENDIDO' && !busqueda"
-              class="btn-primary" style="margin-top:1rem" (click)="abrirNuevo()">
-        {{ 'workers.home.list.registerFirst' | translate }}
-      </button>
-    </div>
-
-    <div class="trabajadores-lista" *ngIf="!cargando && trabajadoresFiltrados.length > 0">
-      <button type="button"
-              class="trabajador-card"
-              *ngFor="let t of trabajadoresFiltrados"
-              [class.card-suspendido]="t.estado === 'SUSPENDIDO'"
-              (click)="abrirDetalle(t)">
-        <div class="trabajador-avatar"
-             [class.avatar-suspendido]="t.estado === 'SUSPENDIDO'"
-             aria-hidden="true">
-          {{ t.nombre[0] }}{{ t.apellido[0] }}
-        </div>
-        <div class="trabajador-info">
-          <div class="trabajador-nombre">{{ t.nombreCompleto }}</div>
-          <div class="trabajador-meta">
-            <span><span aria-hidden="true">📄</span> {{ t.cedula }}</span>
-            <span *ngIf="t.cargo" class="cargo-tag">{{ t.cargo.nombre }}</span>
-            <span class="badge"
-                  [class.badge-activo]="t.estado === 'ACTIVO'"
-                  [class.badge-suspendido]="t.estado === 'SUSPENDIDO'">
-              {{ t.estado ? ('enums.estadoTrabajador.' + t.estado | translate) : '' }}
-            </span>
-            <span *ngIf="t.accesoEstado === 'PENDIENTE'" class="badge badge-acceso-pendiente">{{ 'workers.home.access.requestsBadge' | translate }}</span>
-            <span *ngIf="t.accesoEstado === 'APROBADO'" class="badge badge-acceso-ok">{{ 'workers.home.access.hasAccessBadge' | translate }}</span>
-          </div>
-          <div *ngIf="t.cargo" class="trabajador-jornal">
-            {{ 'workers.home.list.wageLabel' | translate }} <strong>${{ t.cargo.valorJornal | number }}</strong>{{ 'workers.home.list.perDay' | translate }}
-          </div>
-        </div>
-        <div class="trabajador-acciones"
-             (click)="$event.stopPropagation()"
-             (keydown)="$event.stopPropagation()">
-          <button class="btn-accion btn-jornal" [title]="'workers.home.list.registerWage' | translate"
-                  [disabled]="t.estado === 'SUSPENDIDO'"
-                  (click)="registrarJornal(t)">
-            <span aria-hidden="true">🗓️</span>
-            <span class="sr-only">{{ 'workers.home.list.registerWage' | translate }}</span>
-          </button>
-          <button class="btn-accion" [title]="'workers.home.list.viewWages' | translate" (click)="verJornales(t)">
-            <span aria-hidden="true">📅</span>
-            <span class="sr-only">{{ 'workers.home.list.viewWages' | translate }}</span>
-          </button>
-          <button class="btn-accion btn-nomina" [title]="'workers.home.list.viewRosters' | translate" (click)="verNominas(t)">
-            <span aria-hidden="true">📋</span>
-            <span class="sr-only">{{ 'workers.home.list.viewRosters' | translate }}</span>
-          </button>
-        </div>
-        <div class="trabajador-arrow" aria-hidden="true">→</div>
-      </button>
-    </div>
-
-  </ng-container>
-
-  <!-- ══ TAB: NÓMINAS ══ -->
-  <ng-container *ngIf="tabActivo === 'nominas'">
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-valor">{{ nominas.length }}</div>
-        <div class="stat-label">{{ 'workers.home.stats.totalRosters' | translate }}</div>
-      </div>
-      <div class="stat-card stat-destacado">
-        <div class="stat-valor">{{ nominasPendientes }}</div>
-        <div class="stat-label">{{ 'workers.home.stats.draft' | translate }}</div>
-      </div>
-    </div>
-    <div *ngIf="nominas.length === 0" class="estado-vacio">
-      <div class="vacio-icono" aria-hidden="true">📋</div>
-      <p>{{ 'workers.home.rostersTab.empty' | translate }}</p>
-    </div>
-    <div class="trabajadores-lista" *ngIf="nominas.length > 0">
-      <button type="button" class="trabajador-card" *ngFor="let n of nominas"
-              (click)="verNominas(n.trabajador!)">
-        <div class="trabajador-info">
-          <div class="trabajador-nombre">
-            {{ 'workers.home.rostersTab.rosterOf' | translate: { id: n.id, name: n.trabajador?.nombreCompleto } }}
-          </div>
-          <div class="trabajador-meta">
-            <span>
-              <span aria-hidden="true">📅</span>
-              {{ n.periodoInicio | date:'dd/MM/yyyy' }} → {{ n.periodoFin | date:'dd/MM/yyyy' }}
-            </span>
-            <span class="badge"
-                  [class.badge-activo]="n.estado === 'APROBADA'"
-                  [class.badge-borrador]="n.estado === 'PENDIENTE'"
-                  [class.badge-suspendido]="n.estado === 'ANULADA'">
-              {{ 'enums.estadoNomina.' + n.estado | translate }}
-            </span>
-          </div>
-          <div class="trabajador-jornal">{{ 'workers.home.rostersTab.total' | translate }} <strong>${{ n.valorTotal | number }}</strong></div>
-        </div>
-        <div class="trabajador-arrow" aria-hidden="true">→</div>
-      </button>
-    </div>
-  </ng-container>
-
-  <!-- ══ TAB: PAGOS ══ -->
-  <ng-container *ngIf="tabActivo === 'pagos'">
-    <div class="stats-grid">
-      <div class="stat-card stat-destacado">
-        <div class="stat-valor">${{ totalPagado | number }}</div>
-        <div class="stat-label">{{ 'workers.home.stats.totalPaid' | translate }}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-valor">{{ pagos.length }}</div>
-        <div class="stat-label">{{ 'workers.home.stats.paymentsMade' | translate }}</div>
-      </div>
-    </div>
-    <div *ngIf="pagos.length === 0" class="estado-vacio">
-      <div class="vacio-icono" aria-hidden="true">💳</div>
-      <p>{{ 'workers.home.paymentsTab.empty' | translate }}</p>
-    </div>
-    <div class="trabajadores-lista" *ngIf="pagos.length > 0">
-      <div class="trabajador-card" *ngFor="let p of pagos">
-        <div class="trabajador-info">
-          <div class="trabajador-nombre">{{ p.trabajadorNombre ?? ('workers.home.paymentsTab.paymentNo' | translate: { id: p.id }) }}</div>
-          <div class="trabajador-meta">
-            <span><span aria-hidden="true">📅</span> {{ p.fechaPago | date:'dd/MM/yyyy' }}</span>
-            <span *ngIf="p.metodoPago" class="cargo-tag">{{ 'enums.metodoPago.' + p.metodoPago | translate }}</span>
-          </div>
-          <div class="trabajador-jornal">{{ 'workers.home.paymentsTab.amount' | translate }} <strong>${{ p.monto | number }}</strong></div>
+  <section class="tarjeta">
+    <header class="tabla-head">
+      <h2><i class="ti ti-users-group" aria-hidden="true"></i> {{ 'workers.ui.people' | translate }}</h2>
+      <div class="herramientas">
+        <label class="buscar-t">
+          <i class="ti ti-search" aria-hidden="true"></i>
+          <span class="sr-only">{{ 'workers.home.list.searchLabel' | translate }}</span>
+          <input type="search" [placeholder]="'workers.home.list.searchPlaceholder' | translate" [(ngModel)]="busqueda" />
+        </label>
+        <div class="seg" role="group" [attr.aria-label]="'workers.ui.filterState' | translate">
+          <button type="button" [class.on]="filtroEstado === 'ACTIVO'" [attr.aria-pressed]="filtroEstado === 'ACTIVO'" (click)="filtroEstado = 'ACTIVO'">{{ 'workers.home.list.filterActive' | translate }}</button>
+          <button type="button" [class.on]="filtroEstado === 'SUSPENDIDO'" [attr.aria-pressed]="filtroEstado === 'SUSPENDIDO'" (click)="filtroEstado = 'SUSPENDIDO'">{{ 'workers.home.list.filterSuspended' | translate }}</button>
+          <button type="button" [class.on]="filtroEstado === 'TODOS'" [attr.aria-pressed]="filtroEstado === 'TODOS'" (click)="filtroEstado = 'TODOS'">{{ 'workers.home.list.filterAll' | translate }}</button>
         </div>
       </div>
-    </div>
-  </ng-container>
+    </header>
 
+    @if (cargando) {
+      <div class="esq" aria-hidden="true"></div>
+      <p class="sr-only" role="status">{{ 'workers.home.list.loading' | translate }}</p>
+    } @else if (trabajadoresFiltrados.length === 0) {
+      <div class="vacio">
+        <i class="ti ti-user-search" aria-hidden="true"></i>
+        @if (busqueda) {
+          <p>{{ 'workers.home.list.emptySearch' | translate: { query: busqueda } }}</p>
+        } @else if (filtroEstado === 'SUSPENDIDO') {
+          <p>{{ 'workers.home.list.emptySuspended' | translate }}</p>
+        } @else {
+          <h3>{{ 'workers.home.list.emptyNone' | translate }}</h3>
+          <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-user-plus" aria-hidden="true"></i> {{ 'workers.home.list.registerFirst' | translate }}</button>
+        }
+      </div>
+    } @else {
+      <div class="tabla-wrap">
+        <table class="tabla resp">
+          <thead>
+            <tr>
+              <th>{{ 'workers.ui.col.worker' | translate }}</th>
+              <th>{{ 'workers.ui.col.post' | translate }}</th>
+              <th class="num">{{ 'workers.ui.col.wage' | translate }}</th>
+              <th>{{ 'workers.ui.col.state' | translate }}</th>
+              <th>{{ 'workers.home.access.title' | translate }}</th>
+              <th><span class="sr-only">{{ 'workers.ui.col.actions' | translate }}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of trabajadoresFiltrados; track t.id) {
+              <tr class="clic" [class.apagada]="t.estado !== 'ACTIVO'" tabindex="0"
+                  (click)="abrirDetalle(t)" (keydown.enter)="abrirDetalle(t)">
+                <td class="prin">
+                  <span class="persona">
+                    <span class="av" [class.gris]="t.estado !== 'ACTIVO'" aria-hidden="true">{{ t.nombre[0] }}{{ t.apellido[0] }}</span>
+                    <span>{{ t.nombreCompleto }}<small>{{ 'workers.ui.idShort' | translate }} {{ t.cedula }}</small></span>
+                  </span>
+                </td>
+                <td>@if (t.cargo) { <span class="etq">{{ t.cargo.nombre }}</span> }</td>
+                <td class="num">@if (t.cargo) { {{ t.cargo.valorJornal | pesos }}<span class="suave"> {{ 'workers.home.list.perDay' | translate }}</span> }</td>
+                <td>@if (t.estado) { <span class="est" [class]="t.estado">{{ 'enums.estadoTrabajador.' + t.estado | translate }}</span> }</td>
+                <td>
+                  @if (t.accesoEstado === 'PENDIENTE') { <span class="est PENDIENTE">{{ 'workers.home.access.requestsBadge' | translate }}</span> }
+                  @else if (t.accesoEstado === 'APROBADO') { <span class="est si">{{ 'workers.home.access.hasAccessBadge' | translate }}</span> }
+                  @else { <span class="suave ocultar-m">—</span> }
+                </td>
+                <td class="acc" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+                  <span class="acc-in">
+                    <button type="button" class="btn-ic verde-h" [disabled]="t.estado !== 'ACTIVO'" [title]="'workers.home.list.registerWage' | translate" [attr.aria-label]="'workers.home.list.registerWage' | translate" (click)="registrarJornal(t)"><i class="ti ti-calendar-plus" aria-hidden="true"></i></button>
+                    <button type="button" class="btn-ic" [title]="'workers.home.list.viewWages' | translate" [attr.aria-label]="'workers.home.list.viewWages' | translate" (click)="verJornales(t)"><i class="ti ti-calendar-week" aria-hidden="true"></i></button>
+                    <button type="button" class="btn-ic" [title]="'workers.home.list.viewRosters' | translate" [attr.aria-label]="'workers.home.list.viewRosters' | translate" (click)="verNominas(t)"><i class="ti ti-file-invoice" aria-hidden="true"></i></button>
+                    <i class="ti ti-chevron-right fin" aria-hidden="true"></i>
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  @if (exito && !modoPanel) { <p class="aviso verde msj" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}</p> }
 </div>
 
-<!-- ══ PANEL LATERAL ══ -->
+<!-- Panel lateral -->
+@if (modoPanel) {
+  <button type="button" class="overlay-l" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"></button>
+  <dialog class="lado" open (click)="$event.stopPropagation()" (keydown.escape)="cerrarPanel()">
 
-<ng-container *ngIf="modoPanel">
-  <button type="button" class="overlay" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"></button>
-  <dialog class="panel-detalle" open
-          (click)="$event.stopPropagation()"
-          (keydown.escape)="cerrarPanel()">
-
-    <!-- DETALLE -->
-    <ng-container *ngIf="modoPanel === 'detalle' && trabajadorSeleccionado">
-      <div class="panel-header"
-           [class.panel-header-suspendido]="trabajadorSeleccionado.estado === 'SUSPENDIDO'">
-        <div class="panel-avatar"
-             [class.avatar-suspendido]="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
-             aria-hidden="true">
-          {{ trabajadorSeleccionado.nombre[0] }}{{ trabajadorSeleccionado.apellido[0] }}
+    @if (modoPanel === 'detalle' && trabajadorSeleccionado; as t) {
+      <header class="lado-head">
+        <span class="av grande" [class.gris]="t.estado !== 'ACTIVO'" aria-hidden="true">{{ t.nombre[0] }}{{ t.apellido[0] }}</span>
+        <div>
+          <h2>{{ t.nombreCompleto }}</h2>
+          <p>{{ 'workers.ui.idShort' | translate }} {{ t.cedula }} @if (t.estado) { <span class="est" [class]="t.estado">{{ 'enums.estadoTrabajador.' + t.estado | translate }}</span> }</p>
         </div>
-        <div class="panel-header-info">
-          <div class="panel-nombre">{{ trabajadorSeleccionado.nombreCompleto }}</div>
-          <div class="panel-doc">
-            <span aria-hidden="true">📄</span> {{ trabajadorSeleccionado.cedula }}
-            <span class="badge"
-                  [class.badge-activo]="trabajadorSeleccionado.estado === 'ACTIVO'"
-                  [class.badge-suspendido]="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
-                  style="margin-left:6px">
-              {{ trabajadorSeleccionado.estado ? ('enums.estadoTrabajador.' + trabajadorSeleccionado.estado | translate) : '' }}
-            </span>
+        <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+      </header>
+
+      <div class="lado-cuerpo">
+        @if (exito) { <p class="aviso verde" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}</p> }
+        @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+        @if (t.estado === 'SUSPENDIDO') { <p class="aviso ambar" role="note"><i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ 'workers.home.panel.suspendedNotice' | translate }}</p> }
+
+        <div class="acciones-r">
+          <button type="button" class="btn btn-prim" [disabled]="t.estado !== 'ACTIVO'" (click)="registrarJornal(t)"><i class="ti ti-calendar-plus" aria-hidden="true"></i> {{ 'workers.home.panel.registerWage' | translate }}</button>
+          <button type="button" class="btn" (click)="verJornales(t)"><i class="ti ti-calendar-week" aria-hidden="true"></i> {{ 'workers.home.panel.viewWages' | translate }}</button>
+          <button type="button" class="btn" (click)="verNominas(t)"><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.home.panel.viewRosters' | translate }}</button>
+        </div>
+
+        <section class="bloque">
+          <h3>{{ 'workers.ui.data' | translate }}</h3>
+          <dl class="datos">
+            <div><dt>{{ 'workers.home.panel.currentPost' | translate }}</dt><dd>{{ t.cargo?.nombre ?? '—' }} @if (t.cargo) { <span class="suave">· {{ t.cargo.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}</span> }</dd></div>
+            <div><dt>{{ 'workers.ui.contract' | translate }}</dt><dd>{{ t.tipoContrato ? ('enums.tipoContrato.' + t.tipoContrato | translate) : '—' }}</dd></div>
+            <div><dt>{{ 'workers.ui.hireDate' | translate }}</dt><dd>{{ t.fechaIngreso ? (t.fechaIngreso | fecha) : '—' }}</dd></div>
+            <div><dt>{{ 'workers.ui.phone' | translate }}</dt><dd>{{ t.telefono || '—' }}</dd></div>
+            @if (t.direccion) { <div><dt>{{ 'workers.ui.address' | translate }}</dt><dd>{{ t.direccion }}</dd></div> }
+          </dl>
+          <div class="fila-btn">
+            <button type="button" class="btn" (click)="abrirEditar(t)"><i class="ti ti-pencil" aria-hidden="true"></i> {{ 'workers.home.panel.edit' | translate }}</button>
+            <button type="button" class="btn" (click)="abrirCambiarCargo(t)"><i class="ti ti-tag" aria-hidden="true"></i> {{ 'workers.home.panel.changePost' | translate }}</button>
           </div>
-        </div>
-        <button class="btn-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate">✕</button>
-      </div>
+        </section>
 
-      <div class="panel-body">
-        <div *ngIf="exito" class="alerta-exito" role="alert" style="margin-bottom:1rem">{{ exito | translate: exitoParams }}</div>
-        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error | translate }}</div>
-
-        <div *ngIf="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
-             class="alerta-suspendido" role="note">
-          <span aria-hidden="true">⚠️</span>
-          {{ 'workers.home.panel.suspendedNotice' | translate }}
-        </div>
-
-        <!-- Acceso a la app (portal del trabajador) -->
-        <div class="detalle-seccion">
-          <div class="detalle-titulo">{{ 'workers.home.access.title' | translate }}</div>
-          <div class="acceso-card" [ngClass]="'acceso-' + (trabajadorSeleccionado.accesoEstado || 'NINGUNO')">
-            <ng-container [ngSwitch]="trabajadorSeleccionado.accesoEstado">
-              <ng-container *ngSwitchCase="'PENDIENTE'">
-                <p>{{ 'workers.home.access.pendingText' | translate: { account: trabajadorSeleccionado.accesoNombre, email: trabajadorSeleccionado.accesoEmail } }}</p>
-                <p class="acceso-nota">{{ 'workers.home.access.pendingHint' | translate }}</p>
-                <div class="acceso-acciones">
-                  <button type="button" class="btn-primary" [disabled]="guardando" (click)="aprobarAcceso(trabajadorSeleccionado)">{{ 'workers.home.access.approve' | translate }}</button>
-                  <button type="button" class="btn-secundario" [disabled]="guardando" (click)="rechazarAcceso(trabajadorSeleccionado)">{{ 'workers.home.access.reject' | translate }}</button>
+        <section class="bloque">
+          <h3>{{ 'workers.home.access.title' | translate }}</h3>
+          <div class="acceso" [class]="'acceso-' + (t.accesoEstado || 'NINGUNO')">
+            @switch (t.accesoEstado) {
+              @case ('PENDIENTE') {
+                <p>{{ 'workers.home.access.pendingText' | translate: { account: t.accesoNombre, email: t.accesoEmail } }}</p>
+                <p class="suave">{{ 'workers.home.access.pendingHint' | translate }}</p>
+                <div class="fila-btn">
+                  <button type="button" class="btn btn-prim" [disabled]="guardando" (click)="aprobarAcceso(t)"><i class="ti ti-check" aria-hidden="true"></i> {{ 'workers.home.access.approve' | translate }}</button>
+                  <button type="button" class="btn" [disabled]="guardando" (click)="rechazarAcceso(t)">{{ 'workers.home.access.reject' | translate }}</button>
                 </div>
-              </ng-container>
-              <ng-container *ngSwitchCase="'APROBADO'">
-                <p>{{ 'workers.home.access.approvedText' | translate: { email: trabajadorSeleccionado.accesoEmail } }}</p>
-                <div class="acceso-acciones">
-                  <button type="button" class="btn-secundario" [disabled]="guardando" (click)="rechazarAcceso(trabajadorSeleccionado)">{{ 'workers.home.access.revoke' | translate }}</button>
-                </div>
-              </ng-container>
-              <ng-container *ngSwitchDefault>
-                <p>{{ 'workers.home.access.noneText' | translate: { cedula: trabajadorSeleccionado.cedula } }}</p>
-              </ng-container>
-            </ng-container>
+              }
+              @case ('APROBADO') {
+                <p>{{ 'workers.home.access.approvedText' | translate: { email: t.accesoEmail } }}</p>
+                <div class="fila-btn"><button type="button" class="btn" [disabled]="guardando" (click)="rechazarAcceso(t)"><i class="ti ti-lock" aria-hidden="true"></i> {{ 'workers.home.access.revoke' | translate }}</button></div>
+              }
+              @default { <p>{{ 'workers.home.access.noneText' | translate: { cedula: t.cedula } }}</p> }
+            }
           </div>
-        </div>
+        </section>
 
-        <div class="detalle-seccion" *ngIf="trabajadorSeleccionado.cargo">
-          <div class="detalle-titulo">{{ 'workers.home.panel.currentPost' | translate }}</div>
-          <div class="detalle-cargo-card">
-            <div class="cargo-nombre">{{ trabajadorSeleccionado.cargo.nombre }}</div>
-            <div class="cargo-desc">{{ trabajadorSeleccionado.cargo.descripcion }}</div>
-            <div class="cargo-jornal">{{ 'workers.home.panel.perWage' | translate: { amount: (trabajadorSeleccionado.cargo.valorJornal | number) } }}</div>
+        <section class="bloque">
+          <h3>{{ 'workers.home.panel.stateManagement' | translate }}</h3>
+          <div class="fila-btn">
+            @if (t.estado === 'SUSPENDIDO') {
+              <button type="button" class="btn" (click)="reactivar(t)"><i class="ti ti-player-play" aria-hidden="true"></i> {{ 'workers.home.panel.reactivate' | translate }}</button>
+            }
+            @if (t.estado === 'ACTIVO') {
+              <button type="button" class="btn" (click)="suspender(t)"><i class="ti ti-player-pause" aria-hidden="true"></i> {{ 'workers.home.panel.suspend' | translate }}</button>
+            }
+            <button type="button" class="btn btn-borrar" (click)="desactivar(t)"><i class="ti ti-user-off" aria-hidden="true"></i> {{ 'workers.home.panel.deactivate' | translate }}</button>
           </div>
-        </div>
-
-        <div class="detalle-seccion">
-          <div class="detalle-titulo">{{ 'workers.home.panel.quickActions' | translate }}</div>
-          <div class="acciones-grid">
-            <button class="accion-btn"
-                    [disabled]="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
-                    [class.accion-disabled]="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
-                    (click)="registrarJornal(trabajadorSeleccionado)">
-              <span class="accion-icono" aria-hidden="true">🗓️</span><span>{{ 'workers.home.panel.registerWage' | translate }}</span>
-            </button>
-            <button class="accion-btn" (click)="verJornales(trabajadorSeleccionado)">
-              <span class="accion-icono" aria-hidden="true">📅</span><span>{{ 'workers.home.panel.viewWages' | translate }}</span>
-            </button>
-            <button class="accion-btn" (click)="verNominas(trabajadorSeleccionado)">
-              <span class="accion-icono" aria-hidden="true">📋</span><span>{{ 'workers.home.panel.viewRosters' | translate }}</span>
-            </button>
-            <button class="accion-btn" (click)="abrirEditar(trabajadorSeleccionado)">
-              <span class="accion-icono" aria-hidden="true">✏️</span><span>{{ 'workers.home.panel.edit' | translate }}</span>
-            </button>
-            <button class="accion-btn" (click)="abrirCambiarCargo(trabajadorSeleccionado)">
-              <span class="accion-icono" aria-hidden="true">🏷️</span><span>{{ 'workers.home.panel.changePost' | translate }}</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="detalle-seccion">
-          <div class="detalle-titulo">{{ 'workers.home.panel.stateManagement' | translate }}</div>
-          <div class="zona-peligro">
-            <button *ngIf="trabajadorSeleccionado.estado === 'SUSPENDIDO'"
-                    class="btn-zona btn-reactivar"
-                    (click)="reactivar(trabajadorSeleccionado)">
-              <span aria-hidden="true">▶</span> {{ 'workers.home.panel.reactivate' | translate }}
-            </button>
-            <button *ngIf="trabajadorSeleccionado.estado === 'ACTIVO'"
-                    class="btn-zona btn-suspender"
-                    (click)="suspender(trabajadorSeleccionado)">
-              <span aria-hidden="true">⏸</span> {{ 'workers.home.panel.suspend' | translate }}
-            </button>
-            <button class="btn-zona btn-desactivar"
-                    (click)="desactivar(trabajadorSeleccionado)">
-              <span aria-hidden="true">🗑️</span> {{ 'workers.home.panel.deactivate' | translate }}
-            </button>
-          </div>
-        </div>
+        </section>
       </div>
-    </ng-container>
+    }
 
-    <!-- NUEVO -->
-    <ng-container *ngIf="modoPanel === 'nuevo'">
-      <div class="panel-header panel-header-verde">
-        <div class="panel-header-info">
-          <div class="panel-nombre">{{ 'workers.home.new.title' | translate }}</div>
-          <div class="panel-doc">{{ 'workers.home.new.subtitle' | translate }}</div>
-        </div>
-        <button class="btn-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate">✕</button>
-      </div>
-      <div class="panel-body">
-        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error | translate }}</div>
-        <form [formGroup]="formNuevo" (ngSubmit)="guardarNuevo()">
-          <div class="form-seccion">
-            <div class="form-seccion-titulo">{{ 'workers.home.new.personalInfo' | translate }}</div>
-            <div class="campo">
-              <label for="nuevo-nombre">{{ 'workers.home.new.firstName' | translate }}</label>
-              <input id="nuevo-nombre" formControlName="nombre" type="text"
-                     [placeholder]="'workers.home.new.firstNamePlaceholder' | translate"
-                     [class.invalido]="invalido(formNuevo, 'nombre')"/>
-              <span *ngIf="invalido(formNuevo, 'nombre')" class="error-msg">{{ 'common.required' | translate }}</span>
-            </div>
-            <div class="campo">
-              <label for="nuevo-apellido">{{ 'workers.home.new.lastName' | translate }}</label>
-              <input id="nuevo-apellido" formControlName="apellido" type="text"
-                     [placeholder]="'workers.home.new.lastNamePlaceholder' | translate"
-                     [class.invalido]="invalido(formNuevo, 'apellido')"/>
-              <span *ngIf="invalido(formNuevo, 'apellido')" class="error-msg">{{ 'common.required' | translate }}</span>
-            </div>
-            <div class="campo">
-              <label for="nuevo-cedula">{{ 'workers.home.new.idNumber' | translate }}</label>
-              <input id="nuevo-cedula" formControlName="cedula" type="text"
-                     [placeholder]="'workers.home.new.idNumberPlaceholder' | translate"
-                     [class.invalido]="invalido(formNuevo, 'cedula')"/>
-              <span *ngIf="invalido(formNuevo, 'cedula')" class="error-msg">{{ 'common.required' | translate }}</span>
-            </div>
-            <div class="campo">
-              <label for="nuevo-telefono">{{ 'workers.home.new.phone' | translate }}</label>
-              <input id="nuevo-telefono" formControlName="telefono" type="text"
-                     [placeholder]="'workers.home.new.optional' | translate"/>
-            </div>
-            <div class="campo">
-              <label for="nuevo-direccion">{{ 'workers.home.new.address' | translate }}</label>
-              <input id="nuevo-direccion" formControlName="direccion" type="text"
-                     [placeholder]="'workers.home.new.optional' | translate"/>
-            </div>
+    @if (modoPanel === 'nuevo') {
+      <header class="lado-head">
+        <span class="ic verde" aria-hidden="true"><i class="ti ti-user-plus"></i></span>
+        <div><h2>{{ 'workers.home.new.title' | translate }}</h2><p>{{ 'workers.home.new.subtitle' | translate }}</p></div>
+        <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+      </header>
+      <form class="lado-cuerpo" [formGroup]="formNuevo" (ngSubmit)="guardarNuevo()">
+        @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+        <fieldset class="grupo">
+          <legend>{{ 'workers.home.new.personalInfo' | translate }}</legend>
+          <div class="campos">
+            <label class="campo"><span>{{ 'workers.home.new.firstName' | translate }}</span>
+              <input formControlName="nombre" type="text" [placeholder]="'workers.home.new.firstNamePlaceholder' | translate" [class.invalido]="invalido(formNuevo, 'nombre')" />
+              @if (invalido(formNuevo, 'nombre')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            </label>
+            <label class="campo"><span>{{ 'workers.home.new.lastName' | translate }}</span>
+              <input formControlName="apellido" type="text" [placeholder]="'workers.home.new.lastNamePlaceholder' | translate" [class.invalido]="invalido(formNuevo, 'apellido')" />
+              @if (invalido(formNuevo, 'apellido')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            </label>
+            <label class="campo"><span>{{ 'workers.home.new.idNumber' | translate }}</span>
+              <input formControlName="cedula" type="text" inputmode="numeric" [placeholder]="'workers.home.new.idNumberPlaceholder' | translate" [class.invalido]="invalido(formNuevo, 'cedula')" />
+              @if (invalido(formNuevo, 'cedula')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            </label>
+            <label class="campo"><span>{{ 'workers.home.new.phone' | translate }}</span>
+              <input formControlName="telefono" type="tel" [placeholder]="'workers.home.new.optional' | translate" />
+            </label>
+            <label class="campo ancho"><span>{{ 'workers.home.new.address' | translate }}</span>
+              <input formControlName="direccion" type="text" [placeholder]="'workers.home.new.optional' | translate" />
+            </label>
           </div>
-          <div class="form-seccion">
-            <div class="form-seccion-titulo">{{ 'workers.home.new.contractAndPost' | translate }}</div>
-            <div class="campo">
-              <label for="nuevo-fechaIngreso">{{ 'workers.home.new.hireDate' | translate }}</label>
-              <input id="nuevo-fechaIngreso" formControlName="fechaIngreso" type="date"
-                     [class.invalido]="invalido(formNuevo, 'fechaIngreso')"/>
-              <span *ngIf="invalido(formNuevo, 'fechaIngreso')" class="error-msg">{{ 'common.required' | translate }}</span>
-            </div>
-            <div class="campo">
-              <label for="nuevo-tipoContrato">{{ 'workers.home.new.contractType' | translate }}</label>
-              <select id="nuevo-tipoContrato" formControlName="tipoContrato"
-                      [class.invalido]="invalido(formNuevo, 'tipoContrato')">
-                <option *ngFor="let t of tiposContrato" [value]="t">{{ 'enums.tipoContrato.' + t | translate }}</option>
+        </fieldset>
+        <fieldset class="grupo">
+          <legend>{{ 'workers.home.new.contractAndPost' | translate }}</legend>
+          <div class="campos">
+            <label class="campo"><span>{{ 'workers.home.new.hireDate' | translate }}</span>
+              <input formControlName="fechaIngreso" type="date" [class.invalido]="invalido(formNuevo, 'fechaIngreso')" />
+              @if (invalido(formNuevo, 'fechaIngreso')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            </label>
+            <label class="campo"><span>{{ 'workers.home.new.contractType' | translate }}</span>
+              <select formControlName="tipoContrato">
+                @for (tc of tiposContrato; track tc) { <option [value]="tc">{{ 'enums.tipoContrato.' + tc | translate }}</option> }
               </select>
-            </div>
-            <div class="campo">
-              <label for="nuevo-cargoId">{{ 'workers.home.new.post' | translate }}</label>
-              <select id="nuevo-cargoId" formControlName="cargoId"
-                      [class.invalido]="invalido(formNuevo, 'cargoId')">
+            </label>
+            <label class="campo ancho"><span>{{ 'workers.home.new.post' | translate }}</span>
+              <select formControlName="cargoId" [class.invalido]="invalido(formNuevo, 'cargoId')">
                 <option [ngValue]="null" disabled>{{ 'workers.home.new.selectPost' | translate }}</option>
-                <option *ngFor="let c of cargos" [ngValue]="c.id">
-                  {{ c.nombre }} — {{ 'workers.home.panel.perWage' | translate: { amount: (c.valorJornal | number) } }}
-                </option>
+                @for (c of cargos; track c.id) { <option [ngValue]="c.id">{{ c.nombre }} — {{ c.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}</option> }
               </select>
-              <span *ngIf="invalido(formNuevo, 'cargoId')" class="error-msg">{{ 'workers.home.new.selectPostError' | translate }}</span>
-            </div>
+              @if (invalido(formNuevo, 'cargoId')) { <em class="err">{{ 'workers.home.new.selectPostError' | translate }}</em> }
+            </label>
           </div>
-          <div class="panel-footer">
-            <button type="button" class="btn-secundario" (click)="cerrarPanel()">{{ 'common.cancel' | translate }}</button>
-            <button type="submit" class="btn-primary" [disabled]="guardando">
-              {{ (guardando ? 'workers.home.new.registering' : 'workers.home.new.submit') | translate }}
-            </button>
-          </div>
-        </form>
-      </div>
-    </ng-container>
+        </fieldset>
+        <footer class="lado-pie">
+          <button type="button" class="btn btn-texto" (click)="cerrarPanel()">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando ? 'workers.home.new.registering' : 'workers.home.new.submit') | translate }}</button>
+        </footer>
+      </form>
+    }
 
-    <!-- EDITAR -->
-    <ng-container *ngIf="modoPanel === 'editar' && trabajadorSeleccionado">
-      <div class="panel-header panel-header-azul">
-        <div class="panel-avatar" aria-hidden="true">
-          {{ trabajadorSeleccionado.nombre[0] }}{{ trabajadorSeleccionado.apellido[0] }}
-        </div>
-        <div class="panel-header-info">
-          <div class="panel-nombre">
-            <span aria-hidden="true">✏️</span> {{ 'workers.home.edit.title' | translate }}
-          </div>
-          <div class="panel-doc">{{ trabajadorSeleccionado.nombreCompleto }}</div>
-        </div>
-        <button class="btn-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate">✕</button>
-      </div>
-      <div class="panel-body">
-        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error | translate }}</div>
-        <form [formGroup]="formEditar" (ngSubmit)="guardarEdicion()">
-          <div class="campo">
-            <label for="editar-nombre">{{ 'workers.home.new.firstName' | translate }}</label>
-            <input id="editar-nombre" formControlName="nombre" type="text"
-                   [class.invalido]="invalido(formEditar, 'nombre')"/>
-            <span *ngIf="invalido(formEditar, 'nombre')" class="error-msg">{{ 'common.required' | translate }}</span>
-          </div>
-          <div class="campo">
-            <label for="editar-apellido">{{ 'workers.home.new.lastName' | translate }}</label>
-            <input id="editar-apellido" formControlName="apellido" type="text"
-                   [class.invalido]="invalido(formEditar, 'apellido')"/>
-            <span *ngIf="invalido(formEditar, 'apellido')" class="error-msg">{{ 'common.required' | translate }}</span>
-          </div>
-          <div class="campo">
-            <label for="editar-telefono">{{ 'workers.home.new.phone' | translate }}</label>
-            <input id="editar-telefono" formControlName="telefono" type="text"
-                   [placeholder]="'workers.home.new.optional' | translate"/>
-          </div>
-          <div class="campo">
-            <label for="editar-direccion">{{ 'workers.home.new.address' | translate }}</label>
-            <input id="editar-direccion" formControlName="direccion" type="text"
-                   [placeholder]="'workers.home.new.optional' | translate"/>
-          </div>
-          <div class="campo">
-            <label for="editar-tipoContrato">{{ 'workers.home.new.contractType' | translate }}</label>
-            <select id="editar-tipoContrato" formControlName="tipoContrato">
-              <option *ngFor="let t of tiposContrato" [value]="t">{{ 'enums.tipoContrato.' + t | translate }}</option>
+    @if (modoPanel === 'editar' && trabajadorSeleccionado; as t) {
+      <header class="lado-head">
+        <span class="av grande" aria-hidden="true">{{ t.nombre[0] }}{{ t.apellido[0] }}</span>
+        <div><h2>{{ 'workers.home.edit.title' | translate }}</h2><p>{{ t.nombreCompleto }}</p></div>
+        <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+      </header>
+      <form class="lado-cuerpo" [formGroup]="formEditar" (ngSubmit)="guardarEdicion()">
+        @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+        <div class="campos">
+          <label class="campo"><span>{{ 'workers.home.new.firstName' | translate }}</span>
+            <input formControlName="nombre" type="text" [class.invalido]="invalido(formEditar, 'nombre')" />
+            @if (invalido(formEditar, 'nombre')) { <em class="err">{{ 'common.required' | translate }}</em> }
+          </label>
+          <label class="campo"><span>{{ 'workers.home.new.lastName' | translate }}</span>
+            <input formControlName="apellido" type="text" [class.invalido]="invalido(formEditar, 'apellido')" />
+            @if (invalido(formEditar, 'apellido')) { <em class="err">{{ 'common.required' | translate }}</em> }
+          </label>
+          <label class="campo"><span>{{ 'workers.home.new.phone' | translate }}</span>
+            <input formControlName="telefono" type="tel" [placeholder]="'workers.home.new.optional' | translate" />
+          </label>
+          <label class="campo"><span>{{ 'workers.home.new.contractType' | translate }}</span>
+            <select formControlName="tipoContrato">
+              @for (tc of tiposContrato; track tc) { <option [value]="tc">{{ 'enums.tipoContrato.' + tc | translate }}</option> }
             </select>
-          </div>
-          <div class="panel-footer">
-            <button type="button" class="btn-secundario"
-                    (click)="abrirDetalle(trabajadorSeleccionado)">{{ 'workers.home.edit.back' | translate }}</button>
-            <button type="submit" class="btn-primary" [disabled]="guardando">
-              {{ (guardando ? 'workers.home.edit.saving' : 'workers.home.edit.submit') | translate }}
-            </button>
-          </div>
-        </form>
-      </div>
-    </ng-container>
+          </label>
+          <label class="campo ancho"><span>{{ 'workers.home.new.address' | translate }}</span>
+            <input formControlName="direccion" type="text" [placeholder]="'workers.home.new.optional' | translate" />
+          </label>
+        </div>
+        <footer class="lado-pie">
+          <button type="button" class="btn btn-texto" (click)="abrirDetalle(t)"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'workers.home.edit.back' | translate }}</button>
+          <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando ? 'workers.home.edit.saving' : 'workers.home.edit.submit') | translate }}</button>
+        </footer>
+      </form>
+    }
 
-    <!-- CAMBIAR CARGO -->
-    <ng-container *ngIf="modoPanel === 'cambiarCargo' && trabajadorSeleccionado">
-      <div class="panel-header panel-header-azul">
-        <div class="panel-avatar" aria-hidden="true">
-          {{ trabajadorSeleccionado.nombre[0] }}{{ trabajadorSeleccionado.apellido[0] }}
-        </div>
-        <div class="panel-header-info">
-          <div class="panel-nombre">
-            <span aria-hidden="true">🏷️</span> {{ 'workers.home.changePost.title' | translate }}
-          </div>
-          <div class="panel-doc">{{ trabajadorSeleccionado.nombreCompleto }}</div>
-        </div>
-        <button class="btn-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate">✕</button>
-      </div>
-      <div class="panel-body">
-        <div *ngIf="error" class="alerta-error" role="alert" style="margin-bottom:1rem">{{ error | translate }}</div>
-        <div *ngIf="trabajadorSeleccionado.cargo" class="cargo-actual-info">
-          <div class="detalle-titulo">{{ 'workers.home.panel.currentPost' | translate }}</div>
-          <div class="detalle-cargo-card">
-            <div class="cargo-nombre">{{ trabajadorSeleccionado.cargo.nombre }}</div>
-            <div class="cargo-jornal">
-              {{ 'workers.home.panel.perWage' | translate: { amount: (trabajadorSeleccionado.cargo.valorJornal | number) } }}
-            </div>
-          </div>
-        </div>
-        <form [formGroup]="formCargo" (ngSubmit)="guardarCargo()" style="margin-top:1.25rem">
-          <div class="campo">
-            <label for="cargo-cargoId">{{ 'workers.home.changePost.newPost' | translate }}</label>
-            <select id="cargo-cargoId" formControlName="cargoId"
-                    [class.invalido]="invalido(formCargo, 'cargoId')">
-              <option [ngValue]="null" disabled>{{ 'workers.home.new.selectPost' | translate }}</option>
-              <option *ngFor="let c of cargos" [ngValue]="c.id">
-                {{ c.nombre }} — {{ 'workers.home.panel.perWage' | translate: { amount: (c.valorJornal | number) } }}
-              </option>
-            </select>
-            <span *ngIf="invalido(formCargo, 'cargoId')" class="error-msg">{{ 'workers.home.new.selectPostError' | translate }}</span>
-          </div>
-          <div class="panel-footer">
-            <button type="button" class="btn-secundario"
-                    (click)="abrirDetalle(trabajadorSeleccionado)">{{ 'workers.home.edit.back' | translate }}</button>
-            <button type="submit" class="btn-primary" [disabled]="guardando">
-              {{ (guardando ? 'workers.home.edit.saving' : 'workers.home.changePost.submit') | translate }}
-            </button>
-          </div>
-        </form>
-      </div>
-    </ng-container>
-
+    @if (modoPanel === 'cambiarCargo' && trabajadorSeleccionado; as t) {
+      <header class="lado-head">
+        <span class="av grande" aria-hidden="true">{{ t.nombre[0] }}{{ t.apellido[0] }}</span>
+        <div><h2>{{ 'workers.home.changePost.title' | translate }}</h2><p>{{ t.nombreCompleto }}</p></div>
+        <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+      </header>
+      <form class="lado-cuerpo" [formGroup]="formCargo" (ngSubmit)="guardarCargo()">
+        @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+        @if (t.cargo) {
+          <p class="aviso gris"><i class="ti ti-tag" aria-hidden="true"></i> {{ 'workers.home.panel.currentPost' | translate }}: <strong>{{ t.cargo.nombre }}</strong> · {{ t.cargo.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}</p>
+        }
+        <label class="campo"><span>{{ 'workers.home.changePost.newPost' | translate }}</span>
+          <select formControlName="cargoId" [class.invalido]="invalido(formCargo, 'cargoId')">
+            <option [ngValue]="null" disabled>{{ 'workers.home.new.selectPost' | translate }}</option>
+            @for (c of cargos; track c.id) { <option [ngValue]="c.id">{{ c.nombre }} — {{ c.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}</option> }
+          </select>
+          @if (invalido(formCargo, 'cargoId')) { <em class="err">{{ 'workers.home.new.selectPostError' | translate }}</em> }
+        </label>
+        <footer class="lado-pie">
+          <button type="button" class="btn btn-texto" (click)="abrirDetalle(t)"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'workers.home.edit.back' | translate }}</button>
+          <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando ? 'workers.home.edit.saving' : 'workers.home.changePost.submit') | translate }}</button>
+        </footer>
+      </form>
+    }
   </dialog>
-</ng-container>
+}

@@ -4,6 +4,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/formato.pipe';
 import { PagoService, NominaService } from '../../../../core/services/worker.service';
 import { Pago, Nomina } from '../../../../core/models/worker.model';
 
@@ -16,9 +17,9 @@ export interface GrupoPago {
 @Component({
   selector: 'app-lista-pagos',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe],
   templateUrl: './list-payment.html',
-  styleUrls: ['./list-payment.css', './list-payment-page.css']
+  styleUrls: ['../../../cultivo/cultivo-ui.css', '../../../cultivo/cultivo-bloques.css', '../../../report/report-tabla.css', '../../worker-ui.css', '../../worker-panel.css', './list-payment.css']
 })
 export class ListaPagosComponent implements OnInit {
   pagos: Pago[] = [];
@@ -37,6 +38,14 @@ export class ListaPagosComponent implements OnInit {
   get totalGlobal(): number {
     return this.grupos.reduce((acc, g) => acc + g.total, 0);
   }
+
+  /** Pagos visibles (filtrados por nómina si viene en la URL), del más reciente al más antiguo */
+  get visibles(): Pago[] {
+    const lista = this.nominaIdFiltro ? this.pagos.filter(p => p.nominaId === this.nominaIdFiltro) : this.pagos;
+    return [...lista].sort((a, b) => String(b.fechaPago ?? b.fecha ?? '').localeCompare(String(a.fechaPago ?? a.fecha ?? '')));
+  }
+
+  get ultimoPago(): Pago | null { return this.visibles[0] ?? null; }
 
   get totalPagos(): number {
     return this.grupos.reduce((acc, g) => acc + g.pagos.length, 0);
@@ -134,6 +143,14 @@ export class ListaPagosComponent implements OnInit {
       DAVIPLATA:     '📱',
     };
     return metodo ? (iconos[metodo] ?? '💳') : '💳';
+  }
+
+  /** Ícono (Tabler) del método de pago */
+  metodoIcono(metodo?: string): string {
+    const iconos: Record<string, string> = {
+      EFECTIVO: 'ti-cash', TRANSFERENCIA: 'ti-building-bank', CHEQUE: 'ti-file-dollar', NEQUI: 'ti-device-mobile', DAVIPLATA: 'ti-device-mobile',
+    };
+    return metodo ? (iconos[metodo] ?? 'ti-credit-card') : 'ti-credit-card';
   }
 
   iniciales(nombre: string): string {

@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/formato.pipe';
 import { JornalService, TrabajadorService, NominaService, NominaRequest } from '../../../../core/services/worker.service';
 import { Jornal, Trabajador, Nomina } from '../../../../core/models/worker.model';
 
 @Component({
   selector: 'app-lista-jornales',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe],
   templateUrl: './list-wage.html',
-  styleUrls: ['./list-wage.css', './list-wage-selector.css']
+  styleUrls: ['../../../cultivo/cultivo-ui.css', '../../../cultivo/cultivo-bloques.css', '../../../report/report-tabla.css', '../../worker-ui.css', '../../worker-panel.css', './list-wage.css']
 })
 export class ListaJornalesComponent implements OnInit {
 
@@ -117,6 +118,11 @@ export class ListaJornalesComponent implements OnInit {
         replaceUrl: true,
       });
     }
+  }
+
+  /** Trabajador elegido: se toma de la lista ya cargada y, si no está, del detalle pedido aparte */
+  get seleccionado(): Trabajador | null {
+    return this.trabajadores.find(t => t.id === this.trabajadorId) ?? this.trabajador;
   }
 
   iniciales(t: Trabajador): string {

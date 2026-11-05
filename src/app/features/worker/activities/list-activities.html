@@ -1,72 +1,83 @@
-<div class="page">
-  <div class="page-header">
+<div class="cv">
+  <header class="cv-head">
     <div>
-      <h1 class="page-title">{{ 'workers.activities.title' | translate }}</h1>
-      <p class="page-subtitle">{{ 'workers.activities.subtitle' | translate }}</p>
+      <p class="eyebrow">{{ 'workers.home.title' | translate }}</p>
+      <h1>{{ 'workers.activities.title' | translate }}</h1>
+      <p class="cv-sub">{{ 'workers.activities.subtitle' | translate }}</p>
     </div>
-    <button class="btn-primary" (click)="abrirNuevo()">{{ 'workers.activities.new' | translate }}</button>
-  </div>
+    <div class="cv-acciones">
+      <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'workers.activities.new' | translate }}</button>
+    </div>
+  </header>
 
-  <div *ngIf="error" class="alerta-error" role="alert">{{ error | translate }}</div>
+  @if (error && !mostrarForm) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
 
-  <div *ngIf="mostrarForm" class="form-card">
-    <h3 class="form-titulo">{{ (modoEdicion ? 'workers.activities.formEdit' : 'workers.activities.formNew') | translate }}</h3>
-    <form [formGroup]="form" (ngSubmit)="guardar()">
-      <div class="grid-2">
-        <div class="campo">
-          <label for="nombre">{{ 'workers.activities.name' | translate }}</label>
-          <input id="nombre" formControlName="nombre" type="text" [placeholder]="'workers.activities.namePlaceholder' | translate" [class.invalido]="invalido('nombre')"/>
-          <span *ngIf="invalido('nombre')" class="error-msg">{{ 'common.required' | translate }}</span>
-        </div>
-        <div class="campo">
-          <label for="descripcion">{{ 'workers.activities.description' | translate }}</label>
-          <input id="descripcion" formControlName="descripcion" type="text" [placeholder]="'workers.activities.descriptionPlaceholder' | translate" [class.invalido]="invalido('descripcion')"/>
-          <span *ngIf="invalido('descripcion')" class="error-msg">{{ 'common.required' | translate }}</span>
-        </div>
+  <section class="tarjeta">
+    <header><h2><i class="ti ti-list-check" aria-hidden="true"></i> {{ 'workers.activities.title' | translate }}</h2></header>
+    @if (actividades.length === 0) {
+      <div class="vacio">
+        <i class="ti ti-list-check" aria-hidden="true"></i>
+        <p>{{ 'workers.activities.empty' | translate }}</p>
+        <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'workers.activities.new' | translate }}</button>
       </div>
-      <div class="form-footer">
-        <button type="button" class="btn-secundario" (click)="mostrarForm = false">{{ 'common.cancel' | translate }}</button>
-        <button type="submit" class="btn-primary" [disabled]="guardando">{{ (guardando ? 'common.saving' : 'common.save') | translate }}</button>
+    } @else {
+      <div class="tabla-wrap">
+        <table class="tabla resp">
+          <thead>
+            <tr>
+              <th>{{ 'workers.activities.table.activity' | translate }}</th>
+              <th>{{ 'workers.activities.table.description' | translate }}</th>
+              <th>{{ 'common.status' | translate }}</th>
+              <th><span class="sr-only">{{ 'common.actions' | translate }}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of actividades; track a.id) {
+              <tr [class.apagada]="!a.activa">
+                <td class="prin fuerte-n">{{ a.nombre }}</td>
+                <td class="suave">{{ a.descripcion || '—' }}</td>
+                <td><span class="est" [class.si]="a.activa" [class.INACTIVO]="!a.activa">{{ (a.activa ? 'workers.activities.active' : 'workers.activities.inactive') | translate }}</span></td>
+                <td class="acc">
+                  <span class="acc-in">
+                    <button type="button" class="btn-ic verde-h" (click)="abrirEditar(a)" [title]="'common.edit' | translate" [attr.aria-label]="'common.edit' | translate"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+                    @if (a.activa) {
+                      <button type="button" class="btn-ic peligro" (click)="desactivar(a)" [title]="'common.deactivate' | translate" [attr.aria-label]="'common.deactivate' | translate"><i class="ti ti-ban" aria-hidden="true"></i></button>
+                    }
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
-    </form>
-  </div>
-
-  <div class="tabla-wrap">
-    <table class="tabla">
-      <thead>
-      <tr>
-        <th>{{ 'workers.activities.table.activity' | translate }}</th>
-        <th>{{ 'workers.activities.table.description' | translate }}</th>
-        <th>{{ 'common.status' | translate }}</th>
-        <th>{{ 'common.actions' | translate }}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let a of actividades" class="fila">
-        <td class="negrita">{{ a.nombre }}</td>
-        <td class="texto-suave">{{ a.descripcion }}</td>
-        <td>
-            <span class="badge" [ngClass]="a.activa ? 'badge-activo' : 'badge-inactivo'">
-              {{ (a.activa ? 'workers.activities.active' : 'workers.activities.inactive') | translate }}
-            </span>
-        </td>
-        <td>
-          <div class="acciones">
-            <button class="btn-accion btn-ver" (click)="abrirEditar(a)" [title]="'common.edit' | translate">
-              <span aria-hidden="true">✎</span>
-              <span class="sr-only">{{ 'common.edit' | translate }}</span>
-            </button>
-            <button class="btn-accion btn-desactivar" (click)="desactivar(a)" [title]="'common.deactivate' | translate">
-              <span aria-hidden="true">✖</span>
-              <span class="sr-only">{{ 'common.deactivate' | translate }}</span>
-            </button>
-          </div>
-        </td>
-      </tr>
-      <tr *ngIf="actividades.length === 0">
-        <td colspan="4" class="sin-resultados">{{ 'workers.activities.empty' | translate }}</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+    }
+  </section>
 </div>
+
+@if (mostrarForm) {
+  <button type="button" class="overlay-l" (click)="mostrarForm = false" [attr.aria-label]="'common.cancel' | translate"></button>
+  <dialog class="lado" open (keydown.escape)="mostrarForm = false">
+    <header class="lado-head">
+      <span class="ic verde" aria-hidden="true"><i class="ti ti-list-check"></i></span>
+      <div><h2>{{ (modoEdicion ? 'workers.activities.formEdit' : 'workers.activities.formNew') | translate }}</h2>@if (modoEdicion) { <p>{{ modoEdicion.nombre }}</p> }</div>
+      <button type="button" class="btn-ic" (click)="mostrarForm = false" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </header>
+    <form class="lado-cuerpo" [formGroup]="form" (ngSubmit)="guardar()">
+      @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+      <div class="campos">
+        <label class="campo ancho"><span>{{ 'workers.activities.name' | translate }}</span>
+          <input formControlName="nombre" type="text" [placeholder]="'workers.activities.namePlaceholder' | translate" [class.invalido]="invalido('nombre')" />
+          @if (invalido('nombre')) { <em class="err">{{ 'common.required' | translate }}</em> }
+        </label>
+        <label class="campo ancho"><span>{{ 'workers.activities.description' | translate }}</span>
+          <input formControlName="descripcion" type="text" [placeholder]="'workers.activities.descriptionPlaceholder' | translate" [class.invalido]="invalido('descripcion')" />
+          @if (invalido('descripcion')) { <em class="err">{{ 'common.required' | translate }}</em> }
+        </label>
+      </div>
+      <footer class="lado-pie">
+        <button type="button" class="btn btn-texto" (click)="mostrarForm = false">{{ 'common.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando ? 'common.saving' : 'common.save') | translate }}</button>
+      </footer>
+    </form>
+  </dialog>
+}

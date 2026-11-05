@@ -1,0 +1,59 @@
+/* Piezas comunes de Trabajadores (se suma a cultivo-ui, cultivo-bloques y report-tabla) */
+.av { flex: none; }
+.av.gris { background: var(--ar-fondo); color: var(--ar-tinta-3); }
+.persona small { display: block; font-weight: 400; font-size: .76rem; color: var(--ar-tinta-3); }
+.kpi.clic { cursor: pointer; font: inherit; text-align: left; color: inherit; transition: border-color .15s, box-shadow .15s; }
+.kpi.clic:hover { border-color: #bcd9be; box-shadow: var(--ar-sombra-2); }
+.kpi strong.verde-t { color: var(--ar-verde-700); }
+
+/* Estados */
+.est { display: inline-flex; align-items: center; gap: .3rem; font-size: .74rem; font-weight: 600; border-radius: 999px; padding: .18rem .6rem; white-space: nowrap; background: var(--ar-fondo); color: var(--ar-tinta-2); }
+.est::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.est.ACTIVO, .est.APROBADO, .est.PAGADA, .est.si { background: var(--ar-verde-100); color: var(--ar-verde-800); }
+.est.SUSPENDIDO, .est.PENDIENTE { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
+.est.APROBADA { background: var(--ar-azul-bg); color: var(--ar-azul); }
+.est.ANULADA, .est.INACTIVO, .est.RECHAZADO { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
+.etq { display: inline-flex; align-items: center; font-size: .76rem; font-weight: 600; border-radius: 7px; padding: .15rem .5rem; background: var(--ar-fondo); color: var(--ar-tinta-2); border: 1px solid var(--ar-borde); white-space: nowrap; }
+.etqs { display: flex; flex-wrap: wrap; gap: .3rem; }
+
+/* Filas y acciones */
+.tabla tr.clic { cursor: pointer; }
+.tabla tr.apagada td { color: var(--ar-tinta-3); }
+.tabla td.acc { width: 1%; white-space: nowrap; text-align: right; }
+.acc-in { display: inline-flex; gap: .15rem; align-items: center; }
+.btn-ic.verde-h:hover { background: var(--ar-verde-100); color: var(--ar-verde-700); }
+.btn-ic:disabled { opacity: .35; cursor: not-allowed; }
+.fin { color: var(--ar-tinta-3); font-size: 18px; }
+.total-fila td { font-weight: 700; }
+
+.campo-buscar { flex: 1; min-width: 200px; }
+.campo-buscar input { width: 100%; }
+
+/* Mensajes flotantes */
+.msj { position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 3500; max-width: min(420px, calc(100% - 2rem)); box-shadow: var(--ar-sombra-2); animation: subir .25s ease-out both; }
+
+/* Celular: la tabla pasa a tarjetas */
+@media (max-width: 720px) {
+  .tabla.resp thead { display: none; }
+  .tabla.resp, .tabla.resp tbody, .tabla.resp tfoot { display: block; }
+  .tabla.resp tr { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .6rem; padding: .8rem 1rem; border-bottom: 1px solid #eef2ee; }
+  .tabla.resp td { display: block; padding: 0; border: 0; }
+  .tabla.resp td.prin { flex: 1 1 100%; }
+  .tabla.resp td.acc { margin-left: auto; width: auto; }
+  .tabla.resp .ocultar-m { display: none; }
+  .tabla.resp td.num { text-align: left !important; }
+  .tabla.resp tfoot tr { justify-content: space-between; }
+  .msj { left: 1rem; right: 1rem; bottom: 5.5rem; }
+}
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.buscar-t input { width: 260px; }
+.btn.chico { padding: .35rem .7rem; font-size: .8rem; border-radius: 9px; }
+.btn.chico .ti { font-size: 16px; }
+.persona.enlace { color: inherit; text-decoration: none; }
+.persona.enlace:hover { color: var(--ar-verde-700); }
+.ti-loader-2 { animation: girar 1s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
+.nowrap, .persona { white-space: nowrap; }
+a.btn-ic { text-decoration: none; }
+.seg { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.seg button { white-space: nowrap; }

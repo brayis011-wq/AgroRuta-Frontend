@@ -12,13 +12,14 @@ import {
 } from '../../../../core/services/worker.service';
 import { Nomina, Pago } from '../../../../core/models/worker.model';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
+import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/formato.pipe';
 
 @Component({
   selector: 'app-detalle-nomina',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe],
   templateUrl: './detail-roster.html',
-  styleUrls: ['./detail-roster.css']
+  styleUrls: ['../../../cultivo/cultivo-ui.css', '../../../cultivo/cultivo-bloques.css', '../../../report/report-tabla.css', '../../worker-ui.css', '../../worker-panel.css', './detail-roster.css']
 })
 export class DetalleNominaComponent implements OnInit {
   private readonly confirmService = inject(ConfirmService);
@@ -192,6 +193,16 @@ export class DetalleNominaComponent implements OnInit {
     this.router.navigate(['/worker/pagos'], {
       queryParams: { nominaId: this.nomina?.id }
     });
+  }
+
+  /** Paso del flujo en que va la nómina: 1 generada, 2 aprobada, 3 pagada (0 si se anuló) */
+  get paso(): number {
+    switch (this.nomina?.estado) {
+      case 'PENDIENTE': return 1;
+      case 'APROBADA': return 2;
+      case 'PAGADA': return 3;
+      default: return 0;
+    }
   }
 
   estadoClass(estado: string): string {

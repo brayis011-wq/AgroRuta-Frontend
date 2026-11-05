@@ -13,7 +13,7 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './list-activities.html',
-  styleUrls: ['./list-activities.css']
+  styleUrls: ['../../cultivo/cultivo-ui.css', '../../cultivo/cultivo-bloques.css', '../../report/report-tabla.css', '../worker-ui.css', '../worker-panel.css']
 })
 export class ListaActividadesComponent implements OnInit {
   private readonly confirmService = inject(ConfirmService);

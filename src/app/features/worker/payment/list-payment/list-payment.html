@@ -1,190 +1,134 @@
-<div class="page">
-
-  <!-- Header -->
-  <div class="page-header">
+<div class="cv">
+  <header class="cv-head">
     <div>
-      <h1 class="page-title">{{ 'workers.payments.title' | translate }}</h1>
-      <p class="page-subtitle" *ngIf="!nominaIdFiltro">{{ 'workers.payments.subtitleAll' | translate }}</p>
-      <p class="page-subtitle" *ngIf="nominaIdFiltro">
-        {{ 'workers.payments.subtitleOf' | translate }} <strong>#{{ nominaIdFiltro }}</strong>
-        <button class="btn-link" (click)="verTodos()">{{ 'workers.payments.seeAll' | translate }}</button>
-      </p>
+      <p class="eyebrow">{{ 'workers.home.title' | translate }}</p>
+      <h1>{{ 'workers.payments.title' | translate }}</h1>
+      @if (nominaIdFiltro) {
+        <p class="cv-sub"><span><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.payments.subtitleOf' | translate }} <strong>#{{ nominaIdFiltro }}</strong></span></p>
+      } @else {
+        <p class="cv-sub">{{ 'workers.payments.subtitleAll' | translate }}</p>
+      }
     </div>
+    @if (nominaIdFiltro) {
+      <div class="cv-acciones"><button type="button" class="btn" (click)="verTodos()"><i class="ti ti-list" aria-hidden="true"></i> {{ 'workers.payments.seeAll' | translate }}</button></div>
+    }
+  </header>
 
-    <!-- Resumen global -->
-    <div class="resumen-header" *ngIf="!cargando">
-      <div class="resumen-item">
-        <span class="resumen-label">{{ 'workers.payments.summary.totalPaid' | translate }}</span>
-        <span class="resumen-valor">${{ totalGlobal | number }}</span>
-      </div>
-      <div class="resumen-item">
-        <span class="resumen-label">{{ 'workers.payments.summary.workers' | translate }}</span>
-        <span class="resumen-valor">{{ grupos.length }}</span>
-      </div>
-      <div class="resumen-item">
-        <span class="resumen-label">{{ 'workers.payments.summary.payments' | translate }}</span>
-        <span class="resumen-valor">{{ totalPagos }}</span>
-      </div>
+  @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+
+  <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">
+    <div class="kpi">
+      <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.payments.summary.totalPaid' | translate }}</small><strong>{{ totalGlobal | pesos }}</strong></div>
     </div>
-  </div>
-
-  <div *ngIf="error" class="alerta-error">{{ error | translate }}</div>
-
-  <!-- Cargando -->
-  <div *ngIf="cargando" class="estado-vacio">
-    <span class="spinner"></span>
-    <p>{{ 'workers.payments.loading' | translate }}</p>
-  </div>
-
-  <!-- Sin pagos -->
-  <div *ngIf="!cargando && grupos.length === 0" class="estado-vacio">
-    <span class="icono-vacio">💳</span>
-    <p>{{ 'workers.payments.empty' | translate }}</p>
-  </div>
-
-  <!-- Layout principal: tarjetas + panel detalle -->
-  <div class="layout-principal" *ngIf="!cargando && grupos.length > 0">
-
-    <!-- Tarjetas por trabajador -->
-    <div class="tarjetas-grid" [class.con-panel]="pagoSeleccionado">
-      <div class="tarjeta-trabajador" *ngFor="let grupo of grupos">
-
-        <!-- Cabecera tarjeta -->
-        <div class="tarjeta-header">
-          <div class="trabajador-info">
-            <div class="avatar-grande">{{ iniciales(grupo.trabajadorNombre) }}</div>
-            <div>
-              <div class="trabajador-nombre">{{ grupo.trabajadorNombre || ('workers.payments.noName' | translate) }}</div>
-              <div class="trabajador-meta">{{ 'workers.payments.paymentsCount' | translate: { count: grupo.pagos.length } }}</div>
-            </div>
-          </div>
-          <div class="tarjeta-total">
-            <span class="total-label">{{ 'workers.payments.total' | translate }}</span>
-            <span class="total-valor">${{ grupo.total | number }}</span>
-          </div>
-        </div>
-
-        <!-- Lista de pagos — cada fila es clickeable -->
-        <div class="pagos-lista">
-          <button class="pago-fila"
-                  type="button"
-                  *ngFor="let p of grupo.pagos"
-                  [class.activo]="pagoSeleccionado?.id === p.id"
-                  (click)="abrirDetalle(p)"
-                  [title]="'workers.payments.viewDetail' | translate">
-            <div class="pago-izq">
-              <span class="metodo-icono">{{ metodoPagoIcon(p.metodoPago) }}</span>
-              <div>
-                <div class="pago-metodo">{{ p.metodoPago ? ('enums.metodoPago.' + p.metodoPago | translate) : '' }}</div>
-                <div class="pago-fecha">{{ p.fechaPago | date:'dd/MM/yyyy' }}</div>
-              </div>
-            </div>
-            <div class="pago-der">
-              <span class="pago-monto">${{ p.monto | number }}</span>
-              <span class="link-nomina">#{{ p.nominaId }}</span>
-              <span class="chevron">›</span>
-            </div>
-          </button>
-        </div>
-
-      </div>
+    <div class="kpi">
+      <span class="ic azul"><i class="ti ti-receipt" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.payments.summary.payments' | translate }}</small><strong>{{ totalPagos }}</strong></div>
     </div>
-
-    <!-- Panel lateral de detalle -->
-    <div class="panel-detalle" *ngIf="pagoSeleccionado">
-
-      <!-- Header panel -->
-      <div class="panel-header">
-        <div>
-          <div class="panel-titulo">{{ 'workers.payments.panel.title' | translate }}</div>
-          <div class="panel-subtitulo">{{ 'workers.payments.panel.payrollNo' | translate: { id: pagoSeleccionado.nominaId } }}</div>
-        </div>
-        <button class="btn-cerrar" (click)="cerrarDetalle()" [attr.aria-label]="'workers.payments.panel.close' | translate">✕</button>
-      </div>
-
-      <!-- Datos del pago -->
-      <div class="panel-seccion">
-        <div class="panel-seccion-titulo">{{ 'workers.payments.panel.info' | translate }}</div>
-        <div class="dato-fila">
-          <span class="dato-label">{{ 'workers.payments.panel.worker' | translate }}</span>
-          <span class="dato-valor">{{ pagoSeleccionado.trabajadorNombre || ('workers.payments.noName' | translate) }}</span>
-        </div>
-        <div class="dato-fila">
-          <span class="dato-label">{{ 'workers.payments.panel.paymentDate' | translate }}</span>
-          <span class="dato-valor">{{ pagoSeleccionado.fechaPago | date:'dd/MM/yyyy' }}</span>
-        </div>
-        <div class="dato-fila">
-          <span class="dato-label">{{ 'workers.payments.panel.method' | translate }}</span>
-          <span class="dato-valor">
-            {{ metodoPagoIcon(pagoSeleccionado.metodoPago) }}
-            {{ pagoSeleccionado.metodoPago ? ('enums.metodoPago.' + pagoSeleccionado.metodoPago | translate) : '' }}
-          </span>
-        </div>
-        <div class="dato-fila" *ngIf="pagoSeleccionado.comprobante">
-          <span class="dato-label">{{ 'workers.payments.panel.receipt' | translate }}</span>
-          <span class="dato-valor mono">{{ pagoSeleccionado.comprobante }}</span>
-        </div>
-        <div class="dato-fila" *ngIf="pagoSeleccionado.observaciones">
-          <span class="dato-label">{{ 'workers.payments.panel.notes' | translate }}</span>
-          <span class="dato-valor">{{ pagoSeleccionado.observaciones }}</span>
-        </div>
-        <div class="dato-fila destacado">
-          <span class="dato-label">{{ 'workers.payments.panel.totalPaid' | translate }}</span>
-          <span class="dato-valor monto-grande">${{ pagoSeleccionado.monto | number }}</span>
-        </div>
-      </div>
-
-      <!-- Spinner cargando nómina -->
-      <div *ngIf="cargandoDetalle" class="panel-cargando">
-        <span class="spinner"></span>
-        <p>{{ 'workers.payments.panel.loadingWages' | translate }}</p>
-      </div>
-
-      <!-- Jornales de la nómina -->
-      <div class="panel-seccion" *ngIf="!cargandoDetalle && nominaDetalle">
-        <div class="panel-seccion-titulo">
-          {{ 'workers.payments.panel.wagesIncluded' | translate }}
-          <span class="badge-count">{{ nominaDetalle.jornales?.length ?? 0 }}</span>
-        </div>
-
-        <!-- Período -->
-        <div class="dato-fila">
-          <span class="dato-label">{{ 'workers.payments.panel.period' | translate }}</span>
-          <span class="dato-valor">
-            {{ nominaDetalle.periodoInicio | date:'dd/MM/yyyy' }} →
-            {{ nominaDetalle.periodoFin | date:'dd/MM/yyyy' }}
-          </span>
-        </div>
-
-        <!-- Lista de jornales -->
-        <div class="jornal-item" *ngFor="let j of nominaDetalle.jornales">
-          <div class="jornal-fecha">{{ j.fecha | date:'dd/MM/yyyy' }}</div>
-          <div class="jornal-info">
-            <span class="jornal-cultivo">🌱 {{ j.nombreCultivo }}</span>
-            <span class="jornal-actividades">
-              <span *ngFor="let a of j.actividades" class="cargo-tag">{{ a.nombre }}</span>
-            </span>
-          </div>
-          <div class="jornal-valor">${{ j.valorJornal | number }}</div>
-        </div>
-
-        <div *ngIf="!nominaDetalle.jornales || nominaDetalle.jornales.length === 0"
-             class="sin-resultados">{{ 'workers.payments.panel.noWages' | translate }}</div>
-
-        <!-- Total nómina -->
-        <div class="jornal-total">
-          <span>{{ 'workers.payments.panel.payrollTotal' | translate }}</span>
-          <span>${{ nominaDetalle.valorTotal | number }}</span>
-        </div>
-      </div>
-
+    <div class="kpi">
+      <span class="ic gris"><i class="ti ti-users" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.payments.summary.workers' | translate }}</small><strong>{{ grupos.length }}</strong></div>
     </div>
-  </div>
+    <div class="kpi">
+      <span class="ic ambar"><i class="ti ti-clock" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.ui.lastPayment' | translate }}</small><strong>{{ ultimoPago ? (ultimoPago.fechaPago | fecha) : '—' }}</strong>@if (ultimoPago) { <em>{{ ultimoPago.trabajadorNombre }}</em> }</div>
+    </div>
+  </section>
 
-  <!-- Barra sticky total global -->
-  <div class="total-global-bar" *ngIf="!cargando && grupos.length > 0">
-    <span class="total-global-label">{{ 'workers.payments.grandTotal' | translate }}</span>
-    <span class="total-global-valor">${{ totalGlobal | number }}</span>
-  </div>
-
+  <section class="tarjeta">
+    <header><h2><i class="ti ti-history" aria-hidden="true"></i> {{ 'workers.ui.paymentHistory' | translate }}</h2></header>
+    @if (cargando) {
+      <div class="esq" aria-hidden="true"></div>
+      <p class="sr-only" role="status">{{ 'workers.payments.loading' | translate }}</p>
+    } @else if (visibles.length === 0) {
+      <div class="vacio"><i class="ti ti-receipt-off" aria-hidden="true"></i><p>{{ 'workers.payments.empty' | translate }}</p></div>
+    } @else {
+      <div class="tabla-wrap">
+        <table class="tabla resp">
+          <thead>
+            <tr>
+              <th>{{ 'workers.payments.panel.paymentDate' | translate }}</th>
+              <th>{{ 'workers.payments.panel.worker' | translate }}</th>
+              <th>{{ 'workers.payments.panel.method' | translate }}</th>
+              <th>{{ 'workers.payments.panel.receipt' | translate }}</th>
+              <th>{{ 'workers.ui.payroll' | translate }}</th>
+              <th class="num">{{ 'workers.ui.amount' | translate }}</th>
+              <th><span class="sr-only">{{ 'workers.payments.viewDetail' | translate }}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of visibles; track p.id) {
+              <tr class="clic" tabindex="0" [class.sel]="pagoSeleccionado?.id === p.id" (click)="abrirDetalle(p)" (keydown.enter)="abrirDetalle(p)">
+                <td class="suave">{{ p.fechaPago | fecha }}</td>
+                <td class="prin">
+                  <span class="persona"><span class="av" aria-hidden="true">{{ iniciales(p.trabajadorNombre ?? '') }}</span>{{ p.trabajadorNombre || ('workers.payments.noName' | translate) }}</span>
+                </td>
+                <td><span class="metodo"><i class="ti" [class]="metodoIcono(p.metodoPago)" aria-hidden="true"></i>{{ p.metodoPago ? ('enums.metodoPago.' + p.metodoPago | translate) : '—' }}</span></td>
+                <td class="ocultar-m">@if (p.comprobante) { <span class="mono">{{ p.comprobante }}</span> } @else { <span class="suave">—</span> }</td>
+                <td class="ocultar-m">@if (p.nominaId) { <a class="etq" [routerLink]="['/worker/nominas', p.nominaId]" (click)="$event.stopPropagation()">#{{ p.nominaId }}</a> }</td>
+                <td class="num fuerte-n">{{ p.monto | pesos }}</td>
+                <td class="acc"><i class="ti ti-chevron-right fin" aria-hidden="true"></i></td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5">{{ 'workers.payments.grandTotal' | translate }}</td>
+              <td class="num fuerte">{{ totalGlobal | pesos }}</td>
+              <td class="ocultar-m"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    }
+  </section>
 </div>
+
+@if (pagoSeleccionado; as p) {
+  <button type="button" class="overlay-l" (click)="cerrarDetalle()" [attr.aria-label]="'workers.payments.panel.close' | translate"></button>
+  <dialog class="lado" open (keydown.escape)="cerrarDetalle()">
+    <header class="lado-head">
+      <span class="ic verde" aria-hidden="true"><i class="ti" [class]="metodoIcono(p.metodoPago)"></i></span>
+      <div><h2>{{ 'workers.payments.panel.title' | translate }}</h2>@if (p.nominaId) { <p>{{ 'workers.payments.panel.payrollNo' | translate: { id: p.nominaId } }}</p> }</div>
+      <button type="button" class="btn-ic" (click)="cerrarDetalle()" [attr.aria-label]="'workers.payments.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </header>
+    <div class="lado-cuerpo">
+      <div>
+        <small class="suave">{{ 'workers.payments.panel.totalPaid' | translate }}</small>
+        <div class="monto-g">{{ p.monto | pesos }}</div>
+      </div>
+      <dl class="datos">
+        <div><dt>{{ 'workers.payments.panel.worker' | translate }}</dt><dd>{{ p.trabajadorNombre || ('workers.payments.noName' | translate) }}</dd></div>
+        <div><dt>{{ 'workers.payments.panel.paymentDate' | translate }}</dt><dd>{{ p.fechaPago | fecha }}</dd></div>
+        <div><dt>{{ 'workers.payments.panel.method' | translate }}</dt><dd>{{ p.metodoPago ? ('enums.metodoPago.' + p.metodoPago | translate) : '—' }}</dd></div>
+        <div><dt>{{ 'workers.payments.panel.receipt' | translate }}</dt><dd>@if (p.comprobante) { <span class="mono">{{ p.comprobante }}</span> } @else { — }</dd></div>
+        @if (p.observaciones) { <div class="campo ancho"><dt>{{ 'workers.payments.panel.notes' | translate }}</dt><dd>{{ p.observaciones }}</dd></div> }
+      </dl>
+
+      <section class="bloque">
+        <h3>{{ 'workers.payments.panel.wagesIncluded' | translate }}@if (nominaDetalle) { · {{ nominaDetalle.jornales?.length ?? 0 }} }</h3>
+        @if (cargandoDetalle) {
+          <div class="esq" aria-hidden="true"></div>
+        } @else if (nominaDetalle) {
+          <p class="suave">{{ 'workers.payments.panel.period' | translate }}: {{ nominaDetalle.periodoInicio | periodo: nominaDetalle.periodoFin }}</p>
+          @if (!nominaDetalle.jornales || nominaDetalle.jornales.length === 0) {
+            <p class="suave">{{ 'workers.payments.panel.noWages' | translate }}</p>
+          } @else {
+            <ul class="jornales">
+              @for (j of nominaDetalle.jornales; track j.id) {
+                <li>
+                  <span class="f">{{ j.fecha | fecha }}</span>
+                  <span>{{ j.nombreCultivo }}</span>
+                  <span class="v">{{ j.valorJornal | pesos }}</span>
+                  <span class="etqs">@for (a of j.actividades; track a.id) { <span class="etq">{{ a.nombre }}</span> }</span>
+                </li>
+              }
+            </ul>
+          }
+          <div class="tot-n"><span>{{ 'workers.payments.panel.payrollTotal' | translate }}</span><span>{{ nominaDetalle.valorTotal | pesos }}</span></div>
+          <a class="btn" [routerLink]="['/worker/nominas', nominaDetalle.id]"><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.ui.openPayroll' | translate }}</a>
+        }
+      </section>
+    </div>
+  </dialog>
+}

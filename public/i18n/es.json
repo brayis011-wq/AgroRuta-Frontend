@@ -720,10 +720,11 @@
     }
   },
   "workers": {
+    "ui": {"team": "Equipo", "summary": "Resumen del equipo", "ofTotal": "de {{total}} registrados", "seeRosters": "Ver nóminas", "paymentsCount": "{{count}} pagos", "people": "Personas", "filterState": "Filtrar por estado", "col": {"worker": "Trabajador", "post": "Cargo", "wage": "Jornal", "state": "Estado", "actions": "Acciones"}, "idShort": "C.C.", "data": "Datos", "contract": "Contrato", "hireDate": "Ingreso", "phone": "Teléfono", "address": "Dirección", "workDays": "Días trabajados", "searchCrop": "Buscar cultivo...", "lastPayment": "Último pago", "paymentHistory": "Historial de pagos", "payroll": "Nómina", "amount": "Monto", "openPayroll": "Abrir la nómina", "summaryShort": "Resumen", "rosters": {"toApprove": "Por aprobar", "toPay": "Aprobadas sin pagar", "paid": "Pagado", "count": "{{count}} nóminas pagadas", "all": "Todas", "flow": "Avance de la nómina", "step1": "Generada", "step2": "Aprobada", "step3": "Pagada", "cancelledNote": "Esta nómina está anulada. Sus jornales quedaron libres para incluirlos en otra nómina."}},
     "posts": {
       "title": "Cargos",
       "subtitle": "Define los roles y el valor de jornal por cargo",
-      "new": "＋ Nuevo Cargo",
+      "new": "Nuevo Cargo",
       "formNew": "Nuevo cargo",
       "formEdit": "Editar cargo",
       "name": "Nombre *",
@@ -749,7 +750,7 @@
     "activities": {
       "title": "Actividades",
       "subtitle": "Gestión de actividades realizadas en campo",
-      "new": "＋ Nueva Actividad",
+      "new": "Nueva Actividad",
       "formNew": "Nueva actividad",
       "formEdit": "Editar actividad",
       "name": "Nombre *",
@@ -775,7 +776,7 @@
         "subtitleOf": "Nóminas de",
         "subtitleAll": "Gestión y generación de nóminas por período",
         "showAll": "Ver todas",
-        "generate": "＋ Generar Nómina",
+        "generate": "Generar Nómina",
         "formTitle": "Generar nómina",
         "worker": "Trabajador *",
         "select": "Selecciona...",
@@ -808,9 +809,9 @@
           "delete": "¿Eliminar esta nómina definitivamente? Esta acción no se puede deshacer."
         },
         "success": {
-          "approved": "✅ Nómina aprobada. Abre el detalle para registrar el pago.",
-          "reactivated": "✅ Nómina reactivada como Pendiente",
-          "deleted": "🗑 Nómina eliminada"
+          "approved": "Nómina aprobada. Abre el detalle para registrar el pago.",
+          "reactivated": "Nómina reactivada como Pendiente",
+          "deleted": "Nómina eliminada"
         },
         "errors": {
           "load": "Error al cargar nóminas",
@@ -822,13 +823,13 @@
         }
       },
       "detail": {
-        "back": "← Nóminas",
+        "back": "Nóminas",
         "title": "Nómina #{{id}}",
-        "approve": "✔ Aprobar",
-        "registerPayment": "💵 Registrar pago",
-        "processing": "⏳ Procesando...",
-        "viewPayment": "💰 Ver Pago",
-        "cancel": "✖ Anular",
+        "approve": "Aprobar",
+        "registerPayment": "Registrar pago",
+        "processing": "Procesando...",
+        "viewPayment": "Ver Pago",
+        "cancel": "Anular",
         "summary": {
           "totalWages": "Total Jornales",
           "totalValue": "Valor Total",
@@ -848,14 +849,14 @@
         "emptyWages": "Sin jornales en esta nómina",
         "loading": "Cargando nómina...",
         "notFound": "No se encontró la nómina.",
-        "backShort": "← Volver",
+        "backShort": "Volver",
         "confirm": {
           "approve": "¿Aprobar esta nómina? Después podrás registrar el pago.",
           "cancel": "¿Anular esta nómina? Esta acción no se puede deshacer."
         },
         "success": {
-          "approved": "✅ Nómina aprobada. Ahora registra el pago.",
-          "paid": "✅ Pago de ${{amount}} registrado ({{method}})"
+          "approved": "Nómina aprobada. Ahora registra el pago.",
+          "paid": "Pago de ${{amount}} registrado ({{method}})"
         },
         "errors": {
           "load": "Error al cargar la nómina",
@@ -876,7 +877,7 @@
     },
     "wages": {
       "new": {
-        "back": "← Jornales",
+        "back": "Jornales",
         "title": "Registrar Jornal",
         "subtitle": "Registra el trabajo diario de un trabajador",
         "info": "Información del Jornal",
@@ -889,7 +890,7 @@
         "selectCrop": "Selecciona el cultivo",
         "selectFarmFirst": "Primero elige la finca",
         "noCrops": "No tienes cultivos activos. Registra una siembra en un lote para poder asignar jornales.",
-        "goToCrops": "Ir a Cultivos →",
+        "goToCrops": "Ir a Cultivos",
         "notes": "Observaciones",
         "notesPlaceholder": "Notas adicionales (opcional)",
         "activitiesTitle": "Actividades Realizadas *",
@@ -906,18 +907,18 @@
         }
       },
       "list": {
-        "back": "← Trabajadores",
+        "back": "Trabajadores",
         "title": "Jornales",
         "subtitleNoWorker": "Registro diario de trabajo en campo",
         "generatePayroll": "Generar Nómina",
-        "register": "＋ Registrar Jornal",
+        "register": "Registrar Jornal",
         "perWage": "${{amount}}/jornal",
         "selectWorkerTitle": "Selecciona un trabajador",
         "selectWorkerDesc": "Elige de quién quieres ver los jornales.",
         "workerLabel": "Trabajador",
         "selectWorkerPlaceholder": "Selecciona un trabajador",
         "noWorkers": "Aún no tienes trabajadores registrados.",
-        "goToWorkers": "Ir a Trabajadores →",
+        "goToWorkers": "Ir a Trabajadores",
         "stats": {
           "total": "Total jornales",
           "unsettled": "Sin liquidar",
@@ -934,7 +935,7 @@
         },
         "loading": "Cargando jornales...",
         "empty": "No hay jornales registrados para este período.",
-        "registerFirst": "＋ Registrar primer jornal",
+        "registerFirst": "Registrar primer jornal",
         "table": {
           "date": "Fecha",
           "worker": "Trabajador",
@@ -962,7 +963,7 @@
           "includedWages": "Jornales incluidos",
           "total": "Total",
           "close2": "Cerrar",
-          "viewPayrolls": "Ver nóminas del trabajador →"
+          "viewPayrolls": "Ver nóminas del trabajador"
         },
         "errors": {
           "load": "Error al cargar jornales",
@@ -975,7 +976,7 @@
       "title": "Pagos",
       "subtitleAll": "Historial de pagos realizados a trabajadores",
       "subtitleOf": "Pago de nómina",
-      "seeAll": "← Ver todos",
+      "seeAll": "Ver todos",
       "summary": {
         "totalPaid": "Total pagado",
         "workers": "Trabajadores",
@@ -1025,7 +1026,7 @@
         "noneText": "Sin acceso. Puede pedirlo registrándose en AgroRuta como Trabajador con la cédula {{cedula}}.",
         "confirmReject": "¿Rechazar la solicitud de acceso de {{name}}?",
         "confirmRevoke": "¿Retirar el acceso de {{name}}? Ya no podrá ver sus pagos.",
-        "approved": "✅ Acceso aprobado",
+        "approved": "Acceso aprobado",
         "rejected": "Solicitud rechazada",
         "revoked": "Acceso retirado",
         "errors": {
@@ -1037,7 +1038,7 @@
       "subtitle": "Administra tu equipo de trabajo",
       "activities": "Actividades",
       "posts": "Cargos",
-      "newWorker": "＋ Nuevo Trabajador",
+      "newWorker": "Nuevo Trabajador",
       "tabs": {
         "workers": "Trabajadores",
         "rosters": "Nóminas",
@@ -1062,7 +1063,7 @@
         "emptySuspended": "No hay trabajadores suspendidos.",
         "emptyNone": "No hay trabajadores registrados aún.",
         "emptySearch": "No se encontraron resultados para \"{{query}}\"",
-        "registerFirst": "＋ Registrar primer trabajador",
+        "registerFirst": "Registrar primer trabajador",
         "wageLabel": "Jornal:",
         "perDay": "/día",
         "registerWage": "Registrar jornal",
@@ -1096,7 +1097,7 @@
         "deactivate": "Desactivar trabajador"
       },
       "new": {
-        "title": "＋ Nuevo Trabajador",
+        "title": "Nuevo Trabajador",
         "subtitle": "Completa los datos del trabajador",
         "personalInfo": "Información personal",
         "firstName": "Nombre *",
@@ -1119,7 +1120,7 @@
       },
       "edit": {
         "title": "Editar trabajador",
-        "back": "← Volver",
+        "back": "Volver",
         "saving": "Guardando...",
         "submit": "Guardar cambios"
       },
@@ -1134,13 +1135,13 @@
         "reactivate": "¿Reactivar a {{name}}?"
       },
       "success": {
-        "rosterGenerated": "✅ Nómina generada correctamente",
-        "registered": "✅ {{name}} registrado exitosamente",
-        "updated": "✅ Trabajador actualizado",
-        "postUpdated": "✅ Cargo actualizado",
-        "deactivated": "⚠️ Trabajador desactivado",
-        "suspended": "⚠️ Trabajador suspendido",
-        "reactivated": "✅ Trabajador reactivado"
+        "rosterGenerated": "Nómina generada correctamente",
+        "registered": "{{name}} registrado exitosamente",
+        "updated": "Trabajador actualizado",
+        "postUpdated": "Cargo actualizado",
+        "deactivated": "Trabajador desactivado",
+        "suspended": "Trabajador suspendido",
+        "reactivated": "Trabajador reactivado"
       },
       "errors": {
         "load": "Error al cargar trabajadores",

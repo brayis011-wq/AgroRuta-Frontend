@@ -1,161 +1,154 @@
-<div class="page">
-  <div class="page-header">
+<div class="cv">
+  <header class="cv-head">
     <div>
-      <h1 class="page-title">{{ 'workers.rosters.list.title' | translate }}</h1>
-      <p class="page-subtitle" *ngIf="trabajadorFiltrado">
-        {{ 'workers.rosters.list.subtitleOf' | translate }} <strong>{{ trabajadorFiltrado.nombreCompleto }}</strong>
-      </p>
-      <p class="page-subtitle" *ngIf="!trabajadorFiltrado">
-        {{ 'workers.rosters.list.subtitleAll' | translate }}
-      </p>
+      <p class="eyebrow">{{ 'workers.home.title' | translate }}</p>
+      <h1>{{ 'workers.rosters.list.title' | translate }}</h1>
+      @if (trabajadorFiltrado) {
+        <p class="cv-sub"><span><i class="ti ti-user" aria-hidden="true"></i> {{ 'workers.rosters.list.subtitleOf' | translate }} <strong>{{ trabajadorFiltrado.nombreCompleto }}</strong></span></p>
+      } @else {
+        <p class="cv-sub">{{ 'workers.rosters.list.subtitleAll' | translate }}</p>
+      }
     </div>
-    <div class="header-acciones">
-      <button *ngIf="trabajadorFiltrado" class="btn-secundario" (click)="verTodas()">
-        {{ 'workers.rosters.list.showAll' | translate }}
-      </button>
-      <button class="btn-primary"
-              *ngIf="!trabajadorFiltrado || puedeGenerarNomina"
-              (click)="mostrarForm = !mostrarForm">{{ 'workers.rosters.list.generate' | translate }}</button>
+    <div class="cv-acciones">
+      @if (trabajadorFiltrado) {
+        <button type="button" class="btn" (click)="verTodas()"><i class="ti ti-users" aria-hidden="true"></i> {{ 'workers.rosters.list.showAll' | translate }}</button>
+      }
+      @if (!trabajadorFiltrado || puedeGenerarNomina) {
+        <button type="button" class="btn btn-prim" (click)="mostrarForm = true"><i class="ti ti-file-plus" aria-hidden="true"></i> {{ 'workers.rosters.list.generate' | translate }}</button>
+      }
     </div>
-  </div>
+  </header>
 
-  <!-- Mensajes -->
-  <div *ngIf="error" class="alerta-error">{{ error | translate }}</div>
-  <div *ngIf="exito" class="alerta-exito">{{ exito | translate: exitoParams }}</div>
+  @if (error && !mostrarForm) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
 
-  <!-- Formulario generar nómina -->
-  <div *ngIf="mostrarForm" class="form-card">
-    <h3 class="form-titulo">{{ 'workers.rosters.list.formTitle' | translate }}</h3>
-    <form [formGroup]="form" (ngSubmit)="generar()">
-      <div class="grid-3">
+  <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">
+    <button type="button" class="kpi clic" (click)="filtroEstado = 'PENDIENTE'">
+      <span class="ic ambar"><i class="ti ti-hourglass" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.ui.rosters.toApprove' | translate }}</small><strong>{{ cuenta('PENDIENTE') }}</strong><em>{{ suma('PENDIENTE') | pesos }}</em></div>
+    </button>
+    <button type="button" class="kpi clic" (click)="filtroEstado = 'APROBADA'">
+      <span class="ic azul"><i class="ti ti-receipt" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.ui.rosters.toPay' | translate }}</small><strong>{{ cuenta('APROBADA') }}</strong><em>{{ suma('APROBADA') | pesos }}</em></div>
+    </button>
+    <button type="button" class="kpi clic" (click)="filtroEstado = 'PAGADA'">
+      <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.ui.rosters.paid' | translate }}</small><strong>{{ suma('PAGADA') | pesos }}</strong><em>{{ 'workers.ui.rosters.count' | translate: { count: cuenta('PAGADA') } }}</em></div>
+    </button>
+    <div class="kpi">
+      <span class="ic gris"><i class="ti ti-file-invoice" aria-hidden="true"></i></span>
+      <div><small>{{ 'workers.home.stats.totalRosters' | translate }}</small><strong>{{ nominas.length }}</strong></div>
+    </div>
+  </section>
 
-        <div class="campo">
-          <label for="trabajadorId">{{ 'workers.rosters.list.worker' | translate }}</label>
-          <select id="trabajadorId" formControlName="trabajadorId" [class.invalido]="invalido('trabajadorId')">
-            <option [ngValue]="null" disabled>{{ 'workers.rosters.list.select' | translate }}</option>
-            <option *ngFor="let t of trabajadores" [ngValue]="t.id">{{ t.nombreCompleto }}</option>
-          </select>
-          <span *ngIf="invalido('trabajadorId')" class="error-msg">{{ 'common.required' | translate }}</span>
-        </div>
-
-        <div class="campo">
-          <label for="periodoInicio">{{ 'workers.rosters.list.periodStart' | translate }}</label>
-          <input id="periodoInicio" formControlName="periodoInicio" type="date"
-                 [class.invalido]="invalido('periodoInicio')"/>
-          <span *ngIf="invalido('periodoInicio')" class="error-msg">{{ 'common.required' | translate }}</span>
-        </div>
-
-        <div class="campo">
-          <label for="periodoFin">{{ 'workers.rosters.list.periodEnd' | translate }}</label>
-          <input id="periodoFin" formControlName="periodoFin" type="date"
-                 [class.invalido]="invalido('periodoFin')"/>
-          <span *ngIf="invalido('periodoFin')" class="error-msg">{{ 'common.required' | translate }}</span>
-        </div>
-
+  <section class="tarjeta">
+    <header class="tabla-head">
+      <h2><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.rosters.list.title' | translate }}</h2>
+      <div class="seg" role="group" [attr.aria-label]="'workers.ui.filterState' | translate">
+        <button type="button" [class.on]="filtroEstado === 'TODAS'" [attr.aria-pressed]="filtroEstado === 'TODAS'" (click)="filtroEstado = 'TODAS'">{{ 'workers.ui.rosters.all' | translate }}</button>
+        <button type="button" [class.on]="filtroEstado === 'PENDIENTE'" [attr.aria-pressed]="filtroEstado === 'PENDIENTE'" (click)="filtroEstado = 'PENDIENTE'">{{ 'enums.estadoNomina.PENDIENTE' | translate }}</button>
+        <button type="button" [class.on]="filtroEstado === 'APROBADA'" [attr.aria-pressed]="filtroEstado === 'APROBADA'" (click)="filtroEstado = 'APROBADA'">{{ 'enums.estadoNomina.APROBADA' | translate }}</button>
+        <button type="button" [class.on]="filtroEstado === 'PAGADA'" [attr.aria-pressed]="filtroEstado === 'PAGADA'" (click)="filtroEstado = 'PAGADA'">{{ 'enums.estadoNomina.PAGADA' | translate }}</button>
+        <button type="button" [class.on]="filtroEstado === 'ANULADA'" [attr.aria-pressed]="filtroEstado === 'ANULADA'" (click)="filtroEstado = 'ANULADA'">{{ 'enums.estadoNomina.ANULADA' | translate }}</button>
       </div>
-      <div class="form-footer">
-        <button type="button" class="btn-secundario" (click)="mostrarForm = false">{{ 'common.cancel' | translate }}</button>
-        <button type="submit" class="btn-primary" [disabled]="guardando">
-          {{ (guardando ? 'workers.rosters.list.generating' : 'workers.rosters.list.generateSubmit') | translate }}
-        </button>
+    </header>
+
+    @if (cargando) {
+      <div class="esq" aria-hidden="true"></div>
+    } @else if (visibles.length === 0) {
+      <div class="vacio">
+        <i class="ti ti-file-off" aria-hidden="true"></i>
+        <p>{{ (trabajadorFiltrado ? 'workers.rosters.list.emptyFiltered' : 'workers.rosters.list.empty') | translate }}</p>
       </div>
-    </form>
-  </div>
+    } @else {
+      <div class="tabla-wrap">
+        <table class="tabla resp">
+          <thead>
+            <tr>
+              <th>{{ 'workers.rosters.list.table.worker' | translate }}</th>
+              <th>{{ 'workers.rosters.list.table.period' | translate }}</th>
+              <th class="num">{{ 'workers.rosters.list.table.wages' | translate }}</th>
+              <th class="num">{{ 'workers.rosters.list.table.total' | translate }}</th>
+              <th>{{ 'common.status' | translate }}</th>
+              <th><span class="sr-only">{{ 'common.actions' | translate }}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (n of visibles; track n.id) {
+              <tr [class.apagada]="n.estado === 'ANULADA'">
+                <td class="prin">
+                  <a class="persona enlace" [routerLink]="['/worker/nominas', n.id]">
+                    <span class="av" aria-hidden="true">{{ n.trabajador?.nombre?.[0] }}{{ n.trabajador?.apellido?.[0] }}</span>
+                    <span>{{ n.trabajador?.nombreCompleto }}<small>#{{ n.id }}</small></span>
+                  </a>
+                </td>
+                <td class="suave nowrap">{{ n.periodoInicio | periodo: n.periodoFin }}</td>
+                <td class="num ocultar-m">{{ n.totalJornales }}</td>
+                <td class="num fuerte-n">{{ n.valorTotal | pesos }}</td>
+                <td><span class="est" [class]="n.estado">{{ 'enums.estadoNomina.' + n.estado | translate }}</span></td>
+                <td class="acc">
+                  <span class="acc-in">
+                    @switch (n.estado) {
+                      @case ('PENDIENTE') {
+                        <button type="button" class="btn btn-prim chico" [disabled]="aprobando === n.id" (click)="aprobar(n.id)"><i class="ti" [class.ti-check]="aprobando !== n.id" [class.ti-loader-2]="aprobando === n.id" aria-hidden="true"></i> {{ 'workers.rosters.list.actions.approve' | translate }}</button>
+                        <button type="button" class="btn-ic peligro" [title]="'workers.rosters.list.actions.cancel' | translate" [attr.aria-label]="'workers.rosters.list.actions.cancel' | translate" (click)="anular(n.id)"><i class="ti ti-ban" aria-hidden="true"></i></button>
+                      }
+                      @case ('APROBADA') {
+                        <a class="btn btn-prim chico" [routerLink]="['/worker/nominas', n.id]"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'workers.rosters.list.actions.registerPayment' | translate }}</a>
+                        <button type="button" class="btn-ic peligro" [title]="'workers.rosters.list.actions.cancel' | translate" [attr.aria-label]="'workers.rosters.list.actions.cancel' | translate" (click)="anular(n.id)"><i class="ti ti-ban" aria-hidden="true"></i></button>
+                      }
+                      @case ('PAGADA') {
+                        <a class="btn chico" [routerLink]="['/worker/pagos']" [queryParams]="{ nominaId: n.id }"><i class="ti ti-receipt" aria-hidden="true"></i> {{ 'workers.rosters.list.actions.viewPayment' | translate }}</a>
+                      }
+                      @case ('ANULADA') {
+                        <button type="button" class="btn-ic verde-h" [title]="'workers.rosters.list.actions.reactivate' | translate" [attr.aria-label]="'workers.rosters.list.actions.reactivate' | translate" (click)="reactivar(n.id)"><i class="ti ti-restore" aria-hidden="true"></i></button>
+                        <button type="button" class="btn-ic peligro" [title]="'workers.rosters.list.actions.deleteForever' | translate" [attr.aria-label]="'workers.rosters.list.actions.deleteForever' | translate" (click)="eliminar(n.id)"><i class="ti ti-trash" aria-hidden="true"></i></button>
+                      }
+                    }
+                    <a class="btn-ic" [routerLink]="['/worker/nominas', n.id]" [title]="'workers.rosters.list.actions.viewDetail' | translate" [attr.aria-label]="'workers.rosters.list.actions.viewDetail' | translate"><i class="ti ti-chevron-right" aria-hidden="true"></i></a>
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
 
-  <!-- Tabla -->
-  <div class="tabla-wrap">
-    <table class="tabla">
-      <thead>
-      <tr>
-        <th>{{ 'workers.rosters.list.table.worker' | translate }}</th>
-        <th>{{ 'workers.rosters.list.table.period' | translate }}</th>
-        <th>{{ 'workers.rosters.list.table.wages' | translate }}</th>
-        <th>{{ 'workers.rosters.list.table.total' | translate }}</th>
-        <th>{{ 'common.status' | translate }}</th>
-        <th>{{ 'workers.rosters.list.table.generated' | translate }}</th>
-        <th>{{ 'common.actions' | translate }}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let n of nominas" class="fila">
-        <td>
-          <div class="trabajador-cell">
-            <div class="avatar">{{ n.trabajador?.nombre?.[0] }}{{ n.trabajador?.apellido?.[0] }}</div>
-            <span class="negrita">{{ n.trabajador?.nombreCompleto }}</span>
-          </div>
-        </td>
-        <td class="texto-suave">
-          {{ n.periodoInicio | date:'dd/MM/yy' }} → {{ n.periodoFin | date:'dd/MM/yy' }}
-        </td>
-        <td class="centrado">{{ n.totalJornales }}</td>
-        <td class="valor">${{ n.valorTotal | number }}</td>
-        <td>
-          <span class="badge" [ngClass]="estadoClass(n.estado)">{{ 'enums.estadoNomina.' + n.estado | translate }}</span>
-        </td>
-        <td class="texto-suave">{{ n.fechaGeneracion | date:'dd/MM/yyyy' }}</td>
-        <td>
-          <div class="acciones">
-
-            <!-- Ver detalle (siempre visible) -->
-            <a [routerLink]="['/worker/nominas', n.id]"
-               class="btn-accion btn-ver"
-               [title]="'workers.rosters.list.actions.viewDetail' | translate">👁</a>
-
-            <!-- PENDIENTE: aprobar -->
-            <button *ngIf="n.estado === 'PENDIENTE'"
-                    class="btn-accion btn-reactivar"
-                    [title]="'workers.rosters.list.actions.approve' | translate"
-                    [disabled]="aprobando === n.id"
-                    (click)="aprobar(n.id)">
-              {{ aprobando === n.id ? '⏳' : '✔' }}
-            </button>
-
-            <!-- PENDIENTE: anular -->
-            <button *ngIf="n.estado === 'PENDIENTE'"
-                    class="btn-accion btn-desactivar"
-                    [title]="'workers.rosters.list.actions.cancel' | translate"
-                    (click)="anular(n.id)">✖</button>
-
-            <!-- APROBADA: registrar pago (en el detalle) -->
-            <a *ngIf="n.estado === 'APROBADA'"
-               [routerLink]="['/worker/nominas', n.id]"
-               class="btn-accion btn-pago"
-               [title]="'workers.rosters.list.actions.registerPayment' | translate">💵</a>
-
-            <!-- PAGADA: ver pago -->
-            <a *ngIf="n.estado === 'PAGADA'"
-               [routerLink]="['/worker/pagos']"
-               [queryParams]="{ nominaId: n.id }"
-               class="btn-accion btn-pago"
-               [title]="'workers.rosters.list.actions.viewPayment' | translate">💰</a>
-
-            <!-- APROBADA: anular (una nómina pagada no se anula) -->
-            <button *ngIf="n.estado === 'APROBADA'"
-                    class="btn-accion btn-desactivar"
-                    [title]="'workers.rosters.list.actions.cancel' | translate"
-                    (click)="anular(n.id)">✖</button>
-
-            <!-- ANULADA: reactivar (vuelve a PENDIENTE) -->
-            <button *ngIf="n.estado === 'ANULADA'"
-                    class="btn-accion btn-reactivar"
-                    [title]="'workers.rosters.list.actions.reactivate' | translate"
-                    (click)="reactivar(n.id)">♻</button>
-
-            <!-- ANULADA: eliminar definitivamente -->
-            <button *ngIf="n.estado === 'ANULADA'"
-                    class="btn-accion btn-eliminar"
-                    [title]="'workers.rosters.list.actions.deleteForever' | translate"
-                    (click)="eliminar(n.id)">🗑</button>
-
-          </div>
-        </td>
-      </tr>
-      <tr *ngIf="nominas.length === 0">
-        <td colspan="7" class="sin-resultados">
-          {{ (trabajadorFiltrado ? 'workers.rosters.list.emptyFiltered' : 'workers.rosters.list.empty') | translate }}
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+  @if (exito) { <p class="aviso verde msj" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}</p> }
 </div>
+
+@if (mostrarForm) {
+  <button type="button" class="overlay-l" (click)="mostrarForm = false" [attr.aria-label]="'workers.home.panel.close' | translate"></button>
+  <dialog class="lado" open (keydown.escape)="mostrarForm = false">
+    <header class="lado-head">
+      <span class="ic azul" aria-hidden="true"><i class="ti ti-file-plus"></i></span>
+      <div><h2>{{ 'workers.rosters.list.formTitle' | translate }}</h2><p>{{ 'workers.wages.list.panel.periodHelp' | translate }}</p></div>
+      <button type="button" class="btn-ic" (click)="mostrarForm = false" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </header>
+    <form class="lado-cuerpo" [formGroup]="form" (ngSubmit)="generar()">
+      @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+      <div class="campos">
+        <label class="campo ancho"><span>{{ 'workers.rosters.list.worker' | translate }}</span>
+          <select formControlName="trabajadorId" [class.invalido]="invalido('trabajadorId')">
+            <option [ngValue]="null" disabled>{{ 'workers.rosters.list.select' | translate }}</option>
+            @for (t of trabajadores; track t.id) { <option [ngValue]="t.id">{{ t.nombreCompleto }}</option> }
+          </select>
+          @if (invalido('trabajadorId')) { <em class="err">{{ 'common.required' | translate }}</em> }
+        </label>
+        <label class="campo"><span>{{ 'workers.rosters.list.periodStart' | translate }}</span>
+          <input formControlName="periodoInicio" type="date" [class.invalido]="invalido('periodoInicio')" />
+          @if (invalido('periodoInicio')) { <em class="err">{{ 'common.required' | translate }}</em> }
+        </label>
+        <label class="campo"><span>{{ 'workers.rosters.list.periodEnd' | translate }}</span>
+          <input formControlName="periodoFin" type="date" [class.invalido]="invalido('periodoFin')" />
+          @if (invalido('periodoFin')) { <em class="err">{{ 'common.required' | translate }}</em> }
+        </label>
+      </div>
+      <footer class="lado-pie">
+        <button type="button" class="btn btn-texto" (click)="mostrarForm = false">{{ 'common.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando ? 'workers.rosters.list.generating' : 'workers.rosters.list.generateSubmit') | translate }}</button>
+      </footer>
+    </form>
+  </dialog>
+}

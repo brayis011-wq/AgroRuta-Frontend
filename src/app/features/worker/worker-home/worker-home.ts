@@ -14,15 +14,16 @@ import {
 } from '../../../core/services/worker.service';
 import { Trabajador, Nomina, Pago, Cargo } from '../../../core/models/worker.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
+import { PesosPipe, FechaPipe } from '../../../shared/formato.pipe';
 
 type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 
 @Component({
   selector: 'app-worker-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe],
   templateUrl: './worker-home.html',
-  styleUrls: ['./worker-home.css', './worker-acceso.css']
+  styleUrls: ['../../cultivo/cultivo-ui.css', '../../cultivo/cultivo-bloques.css', '../../report/report-tabla.css', '../worker-ui.css', '../worker-panel.css']
 })
 export class WorkerHomeComponent implements OnInit {
   private readonly confirmService = inject(ConfirmService);

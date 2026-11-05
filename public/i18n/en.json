@@ -720,10 +720,11 @@
     }
   },
   "workers": {
+    "ui": {"team": "Team", "summary": "Team summary", "ofTotal": "of {{total}} registered", "seeRosters": "See payrolls", "paymentsCount": "{{count}} payments", "people": "People", "filterState": "Filter by status", "col": {"worker": "Worker", "post": "Role", "wage": "Day wage", "state": "Status", "actions": "Actions"}, "idShort": "ID", "data": "Details", "contract": "Contract", "hireDate": "Hired", "phone": "Phone", "address": "Address", "workDays": "Days worked", "searchCrop": "Search crop...", "lastPayment": "Last payment", "paymentHistory": "Payment history", "payroll": "Payroll", "amount": "Amount", "openPayroll": "Open payroll", "summaryShort": "Summary", "rosters": {"toApprove": "To approve", "toPay": "Approved, unpaid", "paid": "Paid", "count": "{{count}} paid payrolls", "all": "All", "flow": "Payroll progress", "step1": "Generated", "step2": "Approved", "step3": "Paid", "cancelledNote": "This payroll is cancelled. Its work days are free to include in another payroll."}},
     "posts": {
       "title": "Positions",
       "subtitle": "Define roles and the daily wage for each position",
-      "new": "＋ New Position",
+      "new": "New Position",
       "formNew": "New position",
       "formEdit": "Edit position",
       "name": "Name *",
@@ -749,7 +750,7 @@
     "activities": {
       "title": "Activities",
       "subtitle": "Management of activities performed in the field",
-      "new": "＋ New Activity",
+      "new": "New Activity",
       "formNew": "New activity",
       "formEdit": "Edit activity",
       "name": "Name *",
@@ -775,7 +776,7 @@
         "subtitleOf": "Payroll for",
         "subtitleAll": "Payroll management and generation by period",
         "showAll": "Show all",
-        "generate": "＋ Generate Payroll",
+        "generate": "Generate Payroll",
         "formTitle": "Generate payroll",
         "worker": "Worker *",
         "select": "Select...",
@@ -808,9 +809,9 @@
           "delete": "Permanently delete this payroll? This action cannot be undone."
         },
         "success": {
-          "approved": "✅ Payroll approved. Open its detail to record the payment.",
-          "reactivated": "✅ Payroll reactivated as Pending",
-          "deleted": "🗑 Payroll deleted"
+          "approved": "Payroll approved. Open its detail to record the payment.",
+          "reactivated": "Payroll reactivated as Pending",
+          "deleted": "Payroll deleted"
         },
         "errors": {
           "load": "Error loading payrolls",
@@ -822,13 +823,13 @@
         }
       },
       "detail": {
-        "back": "← Payroll",
+        "back": "Payroll",
         "title": "Payroll #{{id}}",
-        "approve": "✔ Approve",
-        "registerPayment": "💵 Record payment",
-        "processing": "⏳ Processing...",
-        "viewPayment": "💰 View Payment",
-        "cancel": "✖ Cancel",
+        "approve": "Approve",
+        "registerPayment": "Record payment",
+        "processing": "Processing...",
+        "viewPayment": "View Payment",
+        "cancel": "Cancel",
         "summary": {
           "totalWages": "Total Workdays",
           "totalValue": "Total Value",
@@ -848,14 +849,14 @@
         "emptyWages": "No workdays in this payroll",
         "loading": "Loading payroll...",
         "notFound": "Payroll not found.",
-        "backShort": "← Back",
+        "backShort": "Back",
         "confirm": {
           "approve": "Approve this payroll? You can record the payment afterwards.",
           "cancel": "Cancel this payroll? This action cannot be undone."
         },
         "success": {
-          "approved": "✅ Payroll approved. Now record the payment.",
-          "paid": "✅ Payment of ${{amount}} recorded ({{method}})"
+          "approved": "Payroll approved. Now record the payment.",
+          "paid": "Payment of ${{amount}} recorded ({{method}})"
         },
         "errors": {
           "load": "Error loading the payroll",
@@ -876,7 +877,7 @@
     },
     "wages": {
       "new": {
-        "back": "← Workdays",
+        "back": "Workdays",
         "title": "Log Workday",
         "subtitle": "Record a worker's daily work",
         "info": "Workday Information",
@@ -889,7 +890,7 @@
         "selectCrop": "Select the crop",
         "selectFarmFirst": "Choose the farm first",
         "noCrops": "You have no active crops. Register a planting on a plot to assign work days.",
-        "goToCrops": "Go to Crops →",
+        "goToCrops": "Go to Crops",
         "notes": "Notes",
         "notesPlaceholder": "Additional notes (optional)",
         "activitiesTitle": "Activities Performed *",
@@ -906,18 +907,18 @@
         }
       },
       "list": {
-        "back": "← Workers",
+        "back": "Workers",
         "title": "Workdays",
         "subtitleNoWorker": "Daily field work log",
         "generatePayroll": "Generate Payroll",
-        "register": "＋ Log Workday",
+        "register": "Log Workday",
         "perWage": "${{amount}}/workday",
         "selectWorkerTitle": "Select a worker",
         "selectWorkerDesc": "Choose whose work days you want to see.",
         "workerLabel": "Worker",
         "selectWorkerPlaceholder": "Select a worker",
         "noWorkers": "You have no registered workers yet.",
-        "goToWorkers": "Go to Workers →",
+        "goToWorkers": "Go to Workers",
         "stats": {
           "total": "Total workdays",
           "unsettled": "Unsettled",
@@ -934,7 +935,7 @@
         },
         "loading": "Loading workdays...",
         "empty": "No workdays recorded for this period.",
-        "registerFirst": "＋ Log first workday",
+        "registerFirst": "Log first workday",
         "table": {
           "date": "Date",
           "worker": "Worker",
@@ -962,7 +963,7 @@
           "includedWages": "Included workdays",
           "total": "Total",
           "close2": "Close",
-          "viewPayrolls": "View worker's payrolls →"
+          "viewPayrolls": "View worker's payrolls"
         },
         "errors": {
           "load": "Error loading workdays",
@@ -975,7 +976,7 @@
       "title": "Payments",
       "subtitleAll": "History of payments made to workers",
       "subtitleOf": "Payment for payroll",
-      "seeAll": "← Show all",
+      "seeAll": "Show all",
       "summary": {
         "totalPaid": "Total paid",
         "workers": "Workers",
@@ -1025,7 +1026,7 @@
         "noneText": "No access. They can request it by signing up to AgroRuta as a Worker with ID number {{cedula}}.",
         "confirmReject": "Reject {{name}}'s access request?",
         "confirmRevoke": "Remove {{name}}'s access? They will no longer see their payments.",
-        "approved": "✅ Access approved",
+        "approved": "Access approved",
         "rejected": "Request rejected",
         "revoked": "Access removed",
         "errors": {
@@ -1037,7 +1038,7 @@
       "subtitle": "Manage your work team",
       "activities": "Activities",
       "posts": "Positions",
-      "newWorker": "＋ New Worker",
+      "newWorker": "New Worker",
       "tabs": {
         "workers": "Workers",
         "rosters": "Payroll",
@@ -1062,7 +1063,7 @@
         "emptySuspended": "There are no suspended workers.",
         "emptyNone": "No workers registered yet.",
         "emptySearch": "No results found for \"{{query}}\"",
-        "registerFirst": "＋ Register first worker",
+        "registerFirst": "Register first worker",
         "wageLabel": "Daily wage:",
         "perDay": "/day",
         "registerWage": "Log workday",
@@ -1096,7 +1097,7 @@
         "deactivate": "Deactivate worker"
       },
       "new": {
-        "title": "＋ New Worker",
+        "title": "New Worker",
         "subtitle": "Fill in the worker's details",
         "personalInfo": "Personal information",
         "firstName": "First name *",
@@ -1119,7 +1120,7 @@
       },
       "edit": {
         "title": "Edit worker",
-        "back": "← Back",
+        "back": "Back",
         "saving": "Saving...",
         "submit": "Save changes"
       },
@@ -1134,13 +1135,13 @@
         "reactivate": "Reactivate {{name}}?"
       },
       "success": {
-        "rosterGenerated": "✅ Payroll generated successfully",
-        "registered": "✅ {{name}} registered successfully",
-        "updated": "✅ Worker updated",
-        "postUpdated": "✅ Position updated",
-        "deactivated": "⚠️ Worker deactivated",
-        "suspended": "⚠️ Worker suspended",
-        "reactivated": "✅ Worker reactivated"
+        "rosterGenerated": "Payroll generated successfully",
+        "registered": "{{name}} registered successfully",
+        "updated": "Worker updated",
+        "postUpdated": "Position updated",
+        "deactivated": "Worker deactivated",
+        "suspended": "Worker suspended",
+        "reactivated": "Worker reactivated"
       },
       "errors": {
         "load": "Error loading workers",

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { PesosPipe } from '../../../../shared/formato.pipe';
 import {
   JornalService,
   JornalRequest,
@@ -15,9 +16,9 @@ import { Trabajador, Actividad } from '../../../../core/models/worker.model';
 @Component({
   selector: 'app-nuevo-jornal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe],
   templateUrl: './new-wage.html',
-  styleUrls: ['./new-wage.css']
+  styleUrls: ['../../../cultivo/cultivo-ui.css', '../../../cultivo/cultivo-bloques.css', '../../worker-ui.css', '../../worker-panel.css', './new-wage.css']
 })
 export class NuevoJornalComponent implements OnInit {
   form!: FormGroup;
@@ -102,6 +103,12 @@ export class NuevoJornalComponent implements OnInit {
   }
 
   /** Cultivos de la finca elegida */
+  /** Trabajador elegido en el formulario, para mostrar su cargo y el valor del jornal */
+  get trabajadorElegido(): Trabajador | null {
+    const id = this.form?.get('trabajadorId')?.value;
+    return this.trabajadores.find(t => t.id === id) ?? null;
+  }
+
   get cultivosDeFinca(): CultivoDisponible[] {
     const fincaId = this.form?.get('fincaId')?.value;
     return this.cultivos.filter(c => c.fincaId === fincaId);

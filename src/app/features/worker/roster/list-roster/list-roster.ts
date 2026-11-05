@@ -12,13 +12,14 @@ import {
 } from '../../../../core/services/worker.service';
 import { Nomina, Trabajador } from '../../../../core/models/worker.model';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
+import { PesosPipe, PeriodoPipe } from '../../../../shared/formato.pipe';
 
 @Component({
   selector: 'app-lista-nominas',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PeriodoPipe],
   templateUrl: './list-roster.html',
-  styleUrls: ['./list-roster.css']
+  styleUrls: ['../../../cultivo/cultivo-ui.css', '../../../cultivo/cultivo-bloques.css', '../../../report/report-tabla.css', '../../worker-ui.css', '../../worker-panel.css']
 })
 export class ListaNominasComponent implements OnInit {
   todasLasNominas: Nomina[] = [];
@@ -29,6 +30,9 @@ export class ListaNominasComponent implements OnInit {
   mostrarForm = false;
   guardando = false;
   aprobando: number | null = null;
+  /** Filtro rápido por estado de la tabla */
+  filtroEstado: 'TODAS' | 'PENDIENTE' | 'APROBADA' | 'PAGADA' | 'ANULADA' = 'TODAS';
+  cargando = true;
   error = '';                                   // clave de traducción
   exito = '';                                   // clave de traducción
   exitoParams: Record<string, unknown> = {};    // parámetros de la clave de éxito
@@ -75,9 +79,10 @@ export class ListaNominasComponent implements OnInit {
           trabajadorId: nomina.trabajador?.id ?? nomina.trabajadorId ?? 0
         }));
         this.aplicarFiltro();
+        this.cargando = false;
         this.cdr.detectChanges();
       },
-      error: () => { this.error = 'workers.rosters.list.errors.load'; this.cdr.detectChanges(); }
+      error: () => { this.error = 'workers.rosters.list.errors.load'; this.cargando = false; this.cdr.detectChanges(); }
     });
   }
 
@@ -97,6 +102,16 @@ export class ListaNominasComponent implements OnInit {
    * - No hay filtro de trabajador (vista global), O
    * - El trabajador filtrado no tiene ninguna nómina en PENDIENTE, APROBADA o PAGADA
    */
+  get visibles(): Nomina[] {
+    return this.filtroEstado === 'TODAS' ? this.nominas : this.nominas.filter(n => n.estado === this.filtroEstado);
+  }
+
+  cuenta(estado: string): number { return this.nominas.filter(n => n.estado === estado).length; }
+
+  suma(estado: string): number {
+    return this.nominas.filter(n => n.estado === estado).reduce((a, n) => a + (n.valorTotal ?? 0), 0);
+  }
+
   get puedeGenerarNomina(): boolean {
     if (!this.trabajadorFiltrado) return true;
     return !this.nominas.some(n =>

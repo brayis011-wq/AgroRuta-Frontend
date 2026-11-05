@@ -1,175 +1,141 @@
-<div class="page" *ngIf="!cargando && nomina">
-  <a routerLink="../" class="btn-back">{{ 'workers.rosters.detail.back' | translate }}</a>
-
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">{{ 'workers.rosters.detail.title' | translate: { id: nomina.id } }}</h1>
-      <p class="page-subtitle">
-        {{ nomina.trabajador?.nombreCompleto }} ·
-        {{ nomina.periodoInicio | date:'dd/MM/yyyy' }} → {{ nomina.periodoFin | date:'dd/MM/yyyy' }}
-      </p>
-    </div>
-    <div class="header-acciones">
-      <span class="badge badge-lg" [ngClass]="estadoClass(nomina.estado)">{{ 'enums.estadoNomina.' + nomina.estado | translate }}</span>
-
-      <!-- PENDIENTE: confirmar/aprobar -->
-      <button
-        *ngIf="nomina.estado === 'PENDIENTE'"
-        class="btn-primary btn-confirmar"
-        [disabled]="guardando"
-        (click)="aprobar()">
-        <span *ngIf="!guardando">{{ 'workers.rosters.detail.approve' | translate }}</span>
-        <span *ngIf="guardando">{{ 'workers.rosters.detail.processing' | translate }}</span>
-      </button>
-
-      <!-- APROBADA: registrar pago -->
-      <button
-        *ngIf="nomina.estado === 'APROBADA' && !mostrarFormPago"
-        class="btn-primary btn-confirmar"
-        [disabled]="guardando"
-        (click)="abrirFormPago()">
-        {{ 'workers.rosters.detail.registerPayment' | translate }}
-      </button>
-
-      <!-- PAGADA: ver pago -->
-      <button
-        *ngIf="nomina.estado === 'PAGADA'"
-        class="btn-primary btn-ver-pago"
-        (click)="verPago()">
-        {{ 'workers.rosters.detail.viewPayment' | translate }}
-      </button>
-
-      <!-- Anular: solo PENDIENTE o APROBADA (una nómina pagada no se anula) -->
-      <button
-        *ngIf="nomina.estado === 'PENDIENTE' || nomina.estado === 'APROBADA'"
-        class="btn-secundario"
-        [disabled]="guardando"
-        (click)="anular()">
-        {{ 'workers.rosters.detail.cancel' | translate }}
-      </button>
-    </div>
+@if (cargando) {
+  <div class="cv">
+    <div class="esq" aria-hidden="true"></div>
+    <p class="sr-only" role="status">{{ 'workers.rosters.detail.loading' | translate }}</p>
   </div>
-
-  <!-- Mensajes -->
-  <div *ngIf="error" class="alerta-error">{{ error | translate }}</div>
-  <div *ngIf="exito" class="alerta-exito">{{ exito | translate: exitoParams }}</div>
-
-  <!-- Registrar pago (solo APROBADA) -->
-  <form *ngIf="nomina.estado === 'APROBADA' && mostrarFormPago"
-        class="form-card" [formGroup]="pagoForm" (ngSubmit)="registrarPago()" novalidate>
-    <h2 class="form-titulo">{{ 'workers.rosters.detail.paymentForm.title' | translate }}</h2>
-    <p class="pago-form-monto">
-      {{ 'workers.rosters.detail.paymentForm.amount' | translate }}
-      <strong>${{ nomina.valorTotal | number }}</strong>
-    </p>
-
-    <div class="grid-2">
-      <div class="campo">
-        <label for="metodoPago">{{ 'workers.rosters.detail.paymentForm.method' | translate }}</label>
-        <select id="metodoPago" formControlName="metodoPago">
-          <option *ngFor="let m of metodosPago" [value]="m">{{ 'enums.metodoPago.' + m | translate }}</option>
-        </select>
+} @else if (!nomina) {
+  <div class="cv">
+    <section class="tarjeta">
+      <div class="vacio">
+        <i class="ti ti-file-off" aria-hidden="true"></i>
+        <h3>{{ 'workers.rosters.detail.notFound' | translate }}</h3>
+        <a routerLink="../" class="btn"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'workers.rosters.detail.backShort' | translate }}</a>
       </div>
-      <div class="campo">
-        <label for="comprobante">{{ 'workers.rosters.detail.paymentForm.receipt' | translate }}</label>
-        <input id="comprobante" type="text" formControlName="comprobante" maxlength="100"
-               [placeholder]="'workers.rosters.detail.paymentForm.receiptPlaceholder' | translate" />
-      </div>
-    </div>
-
-    <div class="campo" style="margin-top:1rem">
-      <label for="observacionesPago">{{ 'workers.rosters.detail.paymentForm.notes' | translate }}</label>
-      <input id="observacionesPago" type="text" formControlName="observaciones" maxlength="500" />
-    </div>
-
-    <div class="form-footer">
-      <button type="button" class="btn-secundario" [disabled]="guardando" (click)="mostrarFormPago = false">
-        {{ 'common.cancel' | translate }}
-      </button>
-      <button type="submit" class="btn-primary btn-confirmar" [disabled]="guardando">
-        <span *ngIf="!guardando">{{ 'workers.rosters.detail.paymentForm.submit' | translate }}</span>
-        <span *ngIf="guardando">{{ 'workers.rosters.detail.processing' | translate }}</span>
-      </button>
-    </div>
-  </form>
-
-  <!-- Resumen -->
-  <div class="resumen-grid">
-    <div class="resumen-card">
-      <div class="resumen-valor">{{ nomina.totalJornales }}</div>
-      <div class="resumen-label">{{ 'workers.rosters.detail.summary.totalWages' | translate }}</div>
-    </div>
-    <div class="resumen-card resumen-destacado">
-      <div class="resumen-valor">${{ nomina.valorTotal | number }}</div>
-      <div class="resumen-label">{{ 'workers.rosters.detail.summary.totalValue' | translate }}</div>
-    </div>
-    <div class="resumen-card">
-      <div class="resumen-valor">{{ nomina.fechaGeneracion | date:'dd/MM/yyyy' }}</div>
-      <div class="resumen-label">{{ 'workers.rosters.detail.summary.generatedDate' | translate }}</div>
-    </div>
-    <div class="resumen-card">
-      <div class="resumen-valor">{{ nomina.trabajador?.cargo?.nombre ?? '—' }}</div>
-      <div class="resumen-label">{{ 'workers.rosters.detail.summary.post' | translate }}</div>
-    </div>
+    </section>
   </div>
+} @else {
+  <div class="cv">
+    <a routerLink="../" class="volver"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'workers.rosters.detail.back' | translate }}</a>
 
-  <!-- Pago registrado (visible cuando está PAGADA) -->
-  <div *ngIf="pagos.length > 0" class="pago-registrado-banner">
-    <div class="pago-banner-izq">
-      <span class="pago-banner-icono">💵</span>
+    <header class="cv-head">
       <div>
-        <div class="pago-banner-titulo">{{ 'workers.rosters.detail.paymentRegistered' | translate }}</div>
-        <div class="pago-banner-meta">
-          {{ pagos[0].metodoPago ? ('enums.metodoPago.' + pagos[0].metodoPago | translate) : '' }} · {{ pagos[0].fechaPago | date:'dd/MM/yyyy' }}
-        </div>
+        <p class="eyebrow">{{ 'workers.rosters.detail.title' | translate: { id: nomina.id } }}</p>
+        <h1>{{ nomina.trabajador?.nombreCompleto }}</h1>
+        <p class="cv-sub">
+          <span><i class="ti ti-calendar" aria-hidden="true"></i> {{ nomina.periodoInicio | periodo: nomina.periodoFin }}</span>
+          <span class="est" [class]="nomina.estado">{{ 'enums.estadoNomina.' + nomina.estado | translate }}</span>
+        </p>
       </div>
-    </div>
-    <div class="pago-banner-monto">${{ pagos[0].monto | number }}</div>
+      <div class="cv-acciones">
+        @if (nomina.estado === 'PENDIENTE' || nomina.estado === 'APROBADA') {
+          <button type="button" class="btn btn-borrar" [disabled]="guardando" (click)="anular()"><i class="ti ti-ban" aria-hidden="true"></i> {{ 'workers.rosters.detail.cancel' | translate }}</button>
+        }
+        @if (nomina.estado === 'PENDIENTE') {
+          <button type="button" class="btn btn-prim" [disabled]="guardando" (click)="aprobar()"><i class="ti" [class.ti-check]="!guardando" [class.ti-loader-2]="guardando" aria-hidden="true"></i> {{ (guardando ? 'workers.rosters.detail.processing' : 'workers.rosters.detail.approve') | translate }}</button>
+        }
+        @if (nomina.estado === 'APROBADA' && !mostrarFormPago) {
+          <button type="button" class="btn btn-prim" [disabled]="guardando" (click)="abrirFormPago()"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'workers.rosters.detail.registerPayment' | translate }}</button>
+        }
+        @if (nomina.estado === 'PAGADA') {
+          <button type="button" class="btn" (click)="verPago()"><i class="ti ti-receipt" aria-hidden="true"></i> {{ 'workers.rosters.detail.viewPayment' | translate }}</button>
+        }
+      </div>
+    </header>
+
+    @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+    @if (exito) { <p class="aviso verde" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}</p> }
+
+    @if (paso > 0) {
+      <ol class="pasos" [attr.aria-label]="'workers.ui.rosters.flow' | translate">
+        <li [class.hecho]="paso > 1" [class.actual]="paso === 1"><i class="ti" [class.ti-check]="paso > 1" [class.ti-file-invoice]="paso === 1" aria-hidden="true"></i><span>{{ 'workers.ui.rosters.step1' | translate }}<small>{{ nomina.fechaGeneracion | fecha }}</small></span></li>
+        <li [class.hecho]="paso > 2" [class.actual]="paso === 2"><i class="ti" [class.ti-check]="paso > 2" [class.ti-checks]="paso <= 2" aria-hidden="true"></i><span>{{ 'workers.ui.rosters.step2' | translate }}</span></li>
+        <li [class.hecho]="paso === 3"><i class="ti" [class.ti-check]="paso === 3" [class.ti-cash]="paso < 3" aria-hidden="true"></i><span>{{ 'workers.ui.rosters.step3' | translate }}</span></li>
+      </ol>
+    } @else {
+      <p class="aviso rojo" role="note"><i class="ti ti-ban" aria-hidden="true"></i> {{ 'workers.ui.rosters.cancelledNote' | translate }}</p>
+    }
+
+    <section class="kpis tres">
+      <div class="kpi">
+        <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
+        <div><small>{{ 'workers.rosters.detail.summary.totalValue' | translate }}</small><strong>{{ nomina.valorTotal | pesos }}</strong></div>
+      </div>
+      <div class="kpi">
+        <span class="ic azul"><i class="ti ti-calendar-week" aria-hidden="true"></i></span>
+        <div><small>{{ 'workers.rosters.detail.summary.totalWages' | translate }}</small><strong>{{ nomina.totalJornales }}</strong></div>
+      </div>
+      <div class="kpi">
+        <span class="ic gris"><i class="ti ti-tag" aria-hidden="true"></i></span>
+        <div><small>{{ 'workers.rosters.detail.summary.post' | translate }}</small><strong>{{ nomina.trabajador?.cargo?.nombre ?? '—' }}</strong></div>
+      </div>
+    </section>
+
+    @if (nomina.estado === 'APROBADA' && mostrarFormPago) {
+      <section class="tarjeta">
+        <header><h2><i class="ti ti-cash" aria-hidden="true"></i> {{ 'workers.rosters.detail.paymentForm.title' | translate }}</h2><strong class="fuerte">{{ nomina.valorTotal | pesos }}</strong></header>
+        <form class="form-pago" [formGroup]="pagoForm" (ngSubmit)="registrarPago()" novalidate>
+          <div class="campos">
+            <label class="campo"><span>{{ 'workers.rosters.detail.paymentForm.method' | translate }}</span>
+              <select formControlName="metodoPago">
+                @for (m of metodosPago; track m) { <option [value]="m">{{ 'enums.metodoPago.' + m | translate }}</option> }
+              </select>
+            </label>
+            <label class="campo"><span>{{ 'workers.rosters.detail.paymentForm.receipt' | translate }}</span>
+              <input type="text" formControlName="comprobante" maxlength="100" [placeholder]="'workers.rosters.detail.paymentForm.receiptPlaceholder' | translate" />
+            </label>
+            <label class="campo ancho"><span>{{ 'workers.rosters.detail.paymentForm.notes' | translate }}</span>
+              <input type="text" formControlName="observaciones" maxlength="500" />
+            </label>
+          </div>
+          <div class="pie">
+            <button type="button" class="btn btn-texto" [disabled]="guardando" (click)="mostrarFormPago = false">{{ 'common.cancel' | translate }}</button>
+            <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti" [class.ti-check]="!guardando" [class.ti-loader-2]="guardando" aria-hidden="true"></i> {{ (guardando ? 'workers.rosters.detail.processing' : 'workers.rosters.detail.paymentForm.submit') | translate }}</button>
+          </div>
+        </form>
+      </section>
+    }
+
+    @if (pagos.length > 0) {
+      <section class="tarjeta pago">
+        <span class="ic verde" aria-hidden="true"><i class="ti ti-circle-check"></i></span>
+        <div>
+          <strong>{{ 'workers.rosters.detail.paymentRegistered' | translate }}</strong>
+          <p>{{ pagos[0].metodoPago ? ('enums.metodoPago.' + pagos[0].metodoPago | translate) : '' }} · {{ pagos[0].fechaPago | fecha }}@if (pagos[0].comprobante) { · {{ pagos[0].comprobante }} }</p>
+        </div>
+        <strong class="monto">{{ pagos[0].monto | pesos }}</strong>
+      </section>
+    }
+
+    <section class="tarjeta">
+      <header><h2><i class="ti ti-list-details" aria-hidden="true"></i> {{ 'workers.rosters.detail.wagesIncluded' | translate }}</h2></header>
+      @if (!nomina.jornales || nomina.jornales.length === 0) {
+        <div class="vacio"><i class="ti ti-calendar-off" aria-hidden="true"></i><p>{{ 'workers.rosters.detail.emptyWages' | translate }}</p></div>
+      } @else {
+        <div class="tabla-wrap">
+          <table class="tabla resp">
+            <thead>
+              <tr>
+                <th>{{ 'workers.rosters.detail.table.date' | translate }}</th>
+                <th>{{ 'workers.rosters.detail.table.crop' | translate }}</th>
+                <th>{{ 'workers.rosters.detail.table.activities' | translate }}</th>
+                <th class="num">{{ 'workers.rosters.detail.table.value' | translate }}</th>
+                <th>{{ 'common.status' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (j of nomina.jornales; track j.id) {
+                <tr>
+                  <td class="suave">{{ j.fecha | fecha }}</td>
+                  <td class="prin fuerte-n">{{ j.nombreCultivo }}</td>
+                  <td><span class="etqs">@for (a of j.actividades; track a.id) { <span class="etq">{{ a.nombre }}</span> }</span></td>
+                  <td class="num fuerte-n">{{ j.valorJornal | pesos }}</td>
+                  <td><span class="est" [class.si]="j.liquidado" [class.PENDIENTE]="!j.liquidado">{{ (j.liquidado ? 'workers.rosters.detail.settled' : 'workers.rosters.detail.pending') | translate }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
   </div>
-
-  <!-- Detalle jornales -->
-  <div class="seccion-titulo" style="margin-top:1.5rem">{{ 'workers.rosters.detail.wagesIncluded' | translate }}</div>
-  <div class="tabla-wrap">
-    <table class="tabla">
-      <thead>
-      <tr>
-        <th>{{ 'workers.rosters.detail.table.date' | translate }}</th>
-        <th>{{ 'workers.rosters.detail.table.crop' | translate }}</th>
-        <th>{{ 'workers.rosters.detail.table.activities' | translate }}</th>
-        <th>{{ 'workers.rosters.detail.table.value' | translate }}</th>
-        <th>{{ 'common.status' | translate }}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let j of nomina.jornales" class="fila">
-        <td>{{ j.fecha | date:'dd/MM/yyyy' }}</td>
-        <td>{{ j.nombreCultivo }}</td>
-        <td>
-            <span *ngFor="let a of j.actividades" class="cargo-tag" style="margin-right:4px">
-              {{ a.nombre }}
-            </span>
-        </td>
-        <td class="valor">${{ j.valorJornal | number }}</td>
-        <td>
-            <span class="badge" [ngClass]="j.liquidado ? 'badge-activo' : 'badge-borrador'">
-              {{ (j.liquidado ? 'workers.rosters.detail.settled' : 'workers.rosters.detail.pending') | translate }}
-            </span>
-        </td>
-      </tr>
-      <tr *ngIf="!nomina.jornales || nomina.jornales.length === 0">
-        <td colspan="5" class="sin-resultados">{{ 'workers.rosters.detail.emptyWages' | translate }}</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div *ngIf="cargando" class="estado-vacio">
-  <span class="spinner"></span>
-  <p>{{ 'workers.rosters.detail.loading' | translate }}</p>
-</div>
-
-<div *ngIf="!cargando && !nomina" class="estado-vacio">
-  <p>{{ 'workers.rosters.detail.notFound' | translate }}</p>
-  <a routerLink="../" class="btn-secundario">{{ 'workers.rosters.detail.backShort' | translate }}</a>
-</div>
+}
