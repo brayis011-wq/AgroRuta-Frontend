@@ -1,0 +1,100 @@
+<section class="tarjeta rend">
+  <header>
+    <h2><i class="ti ti-chart-bar"></i> {{ 'temporadas.rend.title' | translate }}</h2>
+    @if (resumen()?.totalKg) {
+      <ul class="leyenda" [attr.aria-label]="'temporadas.rend.legend' | translate">
+        <li><i class="sw c1"></i>{{ 'enums.calidadCosecha.PRIMERA' | translate }}</li>
+        <li><i class="sw c2"></i>{{ 'enums.calidadCosecha.SEGUNDA' | translate }}</li>
+        <li><i class="sw c3"></i>{{ 'enums.calidadCosecha.TERCERA' | translate }}</li>
+      </ul>
+    }
+  </header>
+
+  @if (!resumen()) {
+    <div class="esq alta"></div>
+  } @else if (!resumen()!.totalKg) {
+    <div class="nada">
+      <i class="ti ti-basket"></i>
+      <p>{{ 'temporadas.rend.empty' | translate }}</p>
+    </div>
+  } @else {
+    @let r = resumen()!;
+    <div class="cuerpo">
+      <!-- Números -->
+      <div class="numeros">
+        <div class="dato">
+          <small>{{ 'temporadas.rend.total' | translate }}</small>
+          <strong>{{ num(r.totalKg, 1) }} <span>kg</span></strong>
+          <em>{{ 'siembra.detail.cards.harvestsCount' | translate: { count: r.cosechas } }}</em>
+        </div>
+        <div class="dato">
+          <small>{{ 'temporadas.rend.perPlant' | translate }}</small>
+          <strong>{{ r.kgPorPlanta != null ? num(r.kgPorPlanta, 2) : '—' }} <span>kg</span></strong>
+        </div>
+        <div class="dato">
+          <small>{{ 'temporadas.rend.perHa' | translate }}</small>
+          <strong>{{ r.kgPorHectarea != null ? num(r.kgPorHectarea, 0) : '—' }} <span>kg/ha</span></strong>
+          @if (r.areaHa) { <em>{{ num(r.areaHa, 2) }} ha</em> }
+        </div>
+        <div class="dato calidad">
+          <small>{{ 'temporadas.rend.quality' | translate }}</small>
+          <div class="partes" role="img" [attr.aria-label]="('enums.calidadCosecha.PRIMERA' | translate) + ' ' + calidad().primera + '%, ' + ('enums.calidadCosecha.SEGUNDA' | translate) + ' ' + calidad().segunda + '%, ' + ('enums.calidadCosecha.TERCERA' | translate) + ' ' + calidad().tercera + '%'">
+            @if (r.kgPrimera) { <span class="c1" [style.flex-grow]="r.kgPrimera" [title]="num(r.kgPrimera, 1) + ' kg'"></span> }
+            @if (r.kgSegunda) { <span class="c2" [style.flex-grow]="r.kgSegunda" [title]="num(r.kgSegunda, 1) + ' kg'"></span> }
+            @if (r.kgTercera) { <span class="c3" [style.flex-grow]="r.kgTercera" [title]="num(r.kgTercera, 1) + ' kg'"></span> }
+          </div>
+          <em>{{ calidad().primera }}% · {{ calidad().segunda }}% · {{ calidad().tercera }}%</em>
+        </div>
+      </div>
+
+      <!-- Kilos por semana -->
+      <figure class="grafica">
+        <figcaption>{{ 'temporadas.rend.perWeek' | translate }} <span>{{ 'temporadas.rend.max' | translate: { kg: num(maxSemana(), 0) } }}</span></figcaption>
+        <div class="columnas" role="list">
+          @for (b of barras(); track b.semana; let i = $index) {
+            <div class="col" role="listitem" tabindex="0"
+                 [attr.aria-label]="('temporadas.rend.weekOf' | translate: { date: dia(b.semana) }) + ': ' + num(b.total, 1) + ' kg'">
+              <div class="pila">
+                <!-- de abajo hacia arriba: primera, segunda, tercera -->
+                @if (b.primera) { <span class="c1" [style.height.%]="b.primera"></span> }
+                @if (b.segunda) { <span class="c2" [style.height.%]="b.segunda"></span> }
+                @if (b.tercera) { <span class="c3" [style.height.%]="b.tercera"></span> }
+              </div>
+              <span class="etq">{{ i % paso() === 0 ? dia(b.semana) : '' }}</span>
+              <div class="tip" role="tooltip">
+                <strong>{{ 'temporadas.rend.weekOf' | translate: { date: dia(b.semana) } }}</strong>
+                <span><i class="sw c1"></i>{{ num(b.datos.primera, 1) }} kg</span>
+                <span><i class="sw c2"></i>{{ num(b.datos.segunda, 1) }} kg</span>
+                <span><i class="sw c3"></i>{{ num(b.datos.tercera, 1) }} kg</span>
+                <b>{{ num(b.total, 1) }} kg</b>
+              </div>
+            </div>
+          }
+        </div>
+      </figure>
+
+      <!-- Comparación con temporadas anteriores -->
+      <div class="comp">
+        <h3>{{ (comp().porPlanta ? 'temporadas.rend.compareTitlePlant' : 'temporadas.rend.compareTitleKg') | translate }}</h3>
+        @if (comp().filas.length < 2) {
+          <p class="nota">{{ 'temporadas.rend.compareEmpty' | translate }}</p>
+        } @else {
+          <ul>
+            @for (f of comp().filas; track f.id) {
+              <li [class.actual]="f.actual">
+                <a [routerLink]="['/cultivo/siembra', f.id]">
+                  <span class="comp-nom">{{ f.actual ? ('temporadas.rend.thisSeason' | translate) : mes(f.desde) + ' – ' + mes(f.hasta) }}</span>
+                  <span class="comp-pista"><span [style.width.%]="f.ancho"></span></span>
+                  <span class="comp-val">{{ comp().porPlanta ? num(f.kgPorPlanta, 2) + ' kg' : num(f.kg, 0) + ' kg' }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+          @if (comp().filas[0].actual) {
+            <p class="nota">{{ 'temporadas.rend.compareNote' | translate }}</p>
+          }
+        }
+      </div>
+    </div>
+  }
+</section>

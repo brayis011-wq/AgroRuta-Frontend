@@ -97,6 +97,11 @@
           </div>
         </div>
 
+        <div class="alert alert--carencia" *ngIf="enCarencia" role="alert">
+          <i class="ti ti-basket-off alert__icon" aria-hidden="true"></i>
+          <span>{{ 'temporadas.carencia.harvestWarning' | translate: { producto: carencia!.producto, date: fmtFecha(carencia!.libreDesde) } }}</span>
+        </div>
+
         <button type="submit" class="btn-submit" [disabled]="cargando">
           <span class="btn-submit__text" *ngIf="!cargando">
             <span>{{ (registroId ? 'common.save' : 'siembra.harvest.submit') | translate }}</span>

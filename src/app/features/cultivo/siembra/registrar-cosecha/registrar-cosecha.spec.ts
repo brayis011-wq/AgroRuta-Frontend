@@ -13,6 +13,7 @@ describe('RegistrarCosecha', () => {
 
   beforeEach(async () => {
     cultivoServiceMock = {
+      resumenSiembra: vi.fn().mockReturnValue(of(null)),
       registrarCosecha: vi.fn().mockReturnValue(of({})),
     };
 

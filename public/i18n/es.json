@@ -1435,6 +1435,41 @@
     "confirm": "Confirmar"
   },
   "temporadas": {
+    "carencia": {
+      "field": "Días de carencia",
+      "short": "Carencia",
+      "unknown": "Sin dato",
+      "labelHint": "Días entre la aplicación y la cosecha. Revisa la etiqueta: puede cambiar según el cultivo.",
+      "fieldHint": "No se puede cosechar hasta que pasen. Lo dice la etiqueta del producto.",
+      "reentryField": "Horas de reentrada",
+      "reentryHint": "Tiempo sin entrar al lote después de aplicar.",
+      "noHarvestUntil": "No cosechar hasta el {{date}}",
+      "left": "faltan {{days}} días",
+      "leftOne": "falta 1 día",
+      "canHarvest": "Sin carencia: se puede cosechar",
+      "noEntryUntil": "No entrar al lote hasta el {{date}}",
+      "reentryHours": "reentrada de {{hours}} h",
+      "daysShort": "carencia {{days}} d",
+      "reentryShort": "reentrada {{hours}} h",
+      "harvestWarning": "Esta fecha está dentro de la carencia de {{producto}}: lo recomendado es cosechar desde el {{date}}."
+    },
+    "rend": {
+      "title": "Cosechas y rendimiento",
+      "legend": "Calidades",
+      "empty": "Todavía no hay cosechas en esta temporada. Cuando registres la primera verás aquí los kilos por semana y el rendimiento.",
+      "total": "Total cosechado",
+      "perPlant": "Por planta",
+      "perHa": "Por hectárea",
+      "quality": "Calidad",
+      "perWeek": "Kilos por semana",
+      "max": "máx. {{kg}} kg",
+      "weekOf": "Semana del {{date}}",
+      "compareTitlePlant": "Kg por planta frente a temporadas anteriores",
+      "compareTitleKg": "Kilos frente a temporadas anteriores",
+      "compareEmpty": "Cuando este lote tenga otra temporada del mismo cultivo podrás compararlas aquí.",
+      "thisSeason": "Esta temporada (en curso)",
+      "compareNote": "La temporada en curso sigue sumando cosechas."
+    },
     "ui": {
       "registerNew": "Registrar nuevo",
       "daysInField": "Días en campo",

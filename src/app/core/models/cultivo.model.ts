@@ -95,6 +95,10 @@ export interface Fumigacion {
   fecha: string;
   producto: string;
   agriculturalInputId?: number | null;
+  /** Días sin cosechar después de aplicar */
+  diasCarencia?: number | null;
+  /** Horas sin entrar al lote después de aplicar */
+  reentradaHoras?: number | null;
   dosis: number;
   unidadMedida: 'LITROS' | 'ML' | 'GRAMOS' | 'KG';
   areaAplicada: number;
@@ -109,4 +113,51 @@ export interface Cosecha {
   calidad: 'PRIMERA' | 'SEGUNDA' | 'TERCERA';
   observaciones?: string;
   siembraId: number;
+}
+
+/** Una restricción vigente de una fumigación (carencia o reentrada) */
+export interface RestriccionVigente {
+  producto: string;
+  aplicada: string;
+  /** Primer día en que ya se puede cosechar o entrar */
+  libreDesde: string;
+  diasRestantes: number;
+  /** Días de carencia u horas de reentrada del producto */
+  valor: number;
+}
+
+export interface SemanaCosecha {
+  /** Lunes de la semana */
+  semana: string;
+  primera: number;
+  segunda: number;
+  tercera: number;
+}
+
+export interface TemporadaComparada {
+  siembraId: number;
+  cultivo: string;
+  fechaSiembra: string;
+  fechaFin: string | null;
+  enCurso: boolean;
+  totalKg: number;
+  kgPorPlanta: number | null;
+  mismoCultivo: boolean;
+}
+
+/** GET /api/siembras/{id}/resumen */
+export interface ResumenSiembra {
+  siembraId: number;
+  totalKg: number;
+  cosechas: number;
+  kgPrimera: number;
+  kgSegunda: number;
+  kgTercera: number;
+  kgPorPlanta: number | null;
+  kgPorHectarea: number | null;
+  areaHa: number | null;
+  semanas: SemanaCosecha[];
+  carencia: RestriccionVigente | null;
+  reentrada: RestriccionVigente | null;
+  otrasTemporadas: TemporadaComparada[];
 }

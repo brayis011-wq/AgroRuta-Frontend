@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import {
   Finca,
   Lote,
-  Siembra, SiembraRequest, EtapaSiembra, EstadoLote,
+  Siembra, SiembraRequest, EtapaSiembra, EstadoLote, ResumenSiembra,
   ActividadCultivo,
   Fumigacion,
   Cosecha,
@@ -84,6 +84,11 @@ export class CultivoService {
 
   actualizarSiembra(id: number, siembra: SiembraRequest): Observable<Siembra> {
     return this.http.put<Siembra>(`${this.apiUrl}/api/siembras/${id}`, siembra);
+  }
+
+  /** Rendimiento, cosechas por semana, carencia y reentrada vigentes */
+  resumenSiembra(id: number): Observable<ResumenSiembra> {
+    return this.http.get<ResumenSiembra>(`${this.apiUrl}/api/siembras/${id}/resumen`);
   }
 
   etapasSiembra(id: number): Observable<EtapaSiembra[]> {

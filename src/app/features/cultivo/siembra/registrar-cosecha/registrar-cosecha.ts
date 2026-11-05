@@ -1,9 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CultivoService } from '../../../../core/services/cultivo.service';
+import { RestriccionVigente } from '../../../../core/models/cultivo.model';
+import { LanguageService } from '../../../../core/services/language.service';
+import { formatoFecha } from '../../../../shared/formato';
 
 @Component({
   selector: 'app-registrar-cosecha',
@@ -17,6 +20,13 @@ export class RegistrarCosecha implements OnInit {
   siembraId!: number;
   /** Id de la cosecha cuando se está editando */
   registroId: number | null = null;
+  /** Carencia vigente de la siembra (para avisar antes de registrar) */
+  carencia: RestriccionVigente | null = null;
+  private lang = inject(LanguageService);
+
+  fmtFecha(v: string | null | undefined): string {
+    return formatoFecha(v, this.lang.current());
+  }
   cargando = false;
   error = '';   // clave de traducción (o mensaje crudo del backend)
   exito = '';   // clave de traducción
@@ -42,6 +52,11 @@ export class RegistrarCosecha implements OnInit {
     this.siembraId = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
     this.form.fecha = new Date().toLocaleDateString('en-CA');
+
+    this.cultivoService.resumenSiembra(this.siembraId).subscribe({
+      next: (r) => { this.carencia = r?.carencia ?? null; this.cdr.detectChanges(); },
+      error: () => { /* sin aviso de carencia */ },
+    });
 
     const registro = this.route.snapshot.paramMap.get('registroId');
     if (registro) {
@@ -79,6 +94,11 @@ export class RegistrarCosecha implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  /** La fecha elegida cae dentro del periodo de carencia de un producto aplicado */
+  get enCarencia(): boolean {
+    return !!this.carencia && !!this.form.fecha && this.form.fecha < this.carencia.libreDesde;
   }
 
   volver(): void {
