@@ -134,7 +134,7 @@ describe('RegistrarFumigacion', () => {
     inputServiceMock.getAll.mockReturnValue(throwError(() => new Error()));
     component.verCatalogoCompleto();
     await fixture.whenStable();
-    expect(component.error).toBe('Error al cargar el catálogo completo.');
+    expect(component.error).toBe('siembra.spray.errors.loadCatalog');
   });
 
   // ── getCatalogoAgrupado ──────────────────────────────────────
@@ -142,7 +142,7 @@ describe('RegistrarFumigacion', () => {
     component.catalogoCompleto.set([mockInsumo]);
     const grupos = component.getCatalogoAgrupado();
     expect(grupos.length).toBe(1);
-    expect(grupos[0].tipo).toBe('Herbicida');
+    expect(grupos[0].tipo).toBe('HERBICIDA'); // el código del tipo; la pantalla lo traduce
     expect(grupos[0].items).toEqual([mockInsumo]);
   });
 
@@ -165,7 +165,7 @@ describe('RegistrarFumigacion', () => {
   it('onSubmit() should set error when no producto', () => {
     component.form.producto = '';
     component.onSubmit();
-    expect(component.error).toBe('Por favor selecciona o escribe un producto.');
+    expect(component.error).toBe('siembra.spray.errors.productRequired');
     expect(cultivoServiceMock.registrarFumigacion).not.toHaveBeenCalled();
   });
 
@@ -173,7 +173,7 @@ describe('RegistrarFumigacion', () => {
     component.form.producto      = 'Herbicida';
     component.form.unidadMedida  = '';
     component.onSubmit();
-    expect(component.error).toBe('Por favor selecciona una unidad de medida.');
+    expect(component.error).toBe('siembra.spray.errors.unitRequired');
     expect(cultivoServiceMock.registrarFumigacion).not.toHaveBeenCalled();
   });
 
@@ -186,7 +186,7 @@ describe('RegistrarFumigacion', () => {
     component.onSubmit();
     await fixture.whenStable();
     expect(cultivoServiceMock.registrarFumigacion).toHaveBeenCalled();
-    expect(component.exito).toBe('¡Fumigación registrada exitosamente!');
+    expect(component.exito).toBe('siembra.spray.success');
     expect(component.cargando).toBe(false);
   });
 
@@ -220,7 +220,7 @@ describe('RegistrarFumigacion', () => {
     component.form.unidadMedida = 'LITROS';
     component.onSubmit();
     await fixture.whenStable();
-    expect(component.error).toBe('Error al registrar la fumigación.');
+    expect(component.error).toBe('siembra.spray.errors.register');
   });
 
   // ── volver ───────────────────────────────────────────────────

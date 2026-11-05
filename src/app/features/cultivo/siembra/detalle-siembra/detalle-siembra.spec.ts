@@ -63,7 +63,7 @@ describe('DetalleSiembraComponent', () => {
   it('ngOnInit() should set error on buscarSiembra failure', () => {
     cultivoServiceMock.buscarSiembra.mockReturnValue(throwError(() => new Error()));
     component.ngOnInit();
-    expect(component.error).toBe('Error al cargar la siembra.');
+    expect(component.error).toBe('siembra.detail.errors.load');
   });
   it('ngOnInit() should not set coords if lote has no centroide', () => {
     cultivoServiceMock.buscarLote.mockReturnValue(of({ id: 10, centroideLat: null, centroideLng: null }));
@@ -131,16 +131,16 @@ describe('DetalleSiembraComponent', () => {
   });
   it('confirmarEliminacion() should navigate on success', () => {
     component.siembra = mockSiembra as any;
-    component.textoConfirmacion = 'confirmar';
+    component.textoConfirmacion = component.palabraConfirmacion;
     component.confirmarEliminacion();
     expect(routerMock.navigate).toHaveBeenCalledWith(['/cultivo/lote', 10]);
   });
   it('confirmarEliminacion() should set error on failure', () => {
     cultivoServiceMock.eliminarSiembra.mockReturnValue(throwError(() => new Error()));
     component.siembra = mockSiembra as any;
-    component.textoConfirmacion = 'confirmar';
+    component.textoConfirmacion = component.palabraConfirmacion;
     component.confirmarEliminacion();
-    expect(component.error).toBe('Error al eliminar la siembra.');
+    expect(component.error).toBe('siembra.detail.errors.delete');
   });
   it('getDiasTranscurridos() should return 0 if no siembra', () => {
     component.siembra = null;
@@ -152,7 +152,7 @@ describe('DetalleSiembraComponent', () => {
   });
   it('getUltimaActividad() should return Sin actividades when empty', () => {
     component.actividades = [];
-    expect(component.getUltimaActividad()).toBe('Sin actividades');
+    expect(component.getUltimaActividad()).toBe('siembra.detail.cards.noActivities');
   });
   it('getUltimaActividad() should return last activity', () => {
     component.actividades = mockActividades as any;
@@ -160,7 +160,7 @@ describe('DetalleSiembraComponent', () => {
   });
   it('getUltimaFumigacion() should return Sin fumigaciones when empty', () => {
     component.fumigaciones = [];
-    expect(component.getUltimaFumigacion()).toBe('Sin fumigaciones');
+    expect(component.getUltimaFumigacion()).toBe('siembra.detail.cards.noSprays');
   });
   it('getUltimaFumigacion() should return last fumigacion', () => {
     component.fumigaciones = mockFumigaciones as any;
@@ -168,7 +168,7 @@ describe('DetalleSiembraComponent', () => {
   });
   it('getAlerta() should return red when no fumigaciones', () => {
     component.fumigaciones = [];
-    expect(component.getAlerta()).toContain('Sin fumigaciones');
+    expect(component.getAlerta()).toContain('siembra.detail.alert.noSprays');
   });
   it('getAlerta() should return red when >7 days ago', () => {
     component.fumigaciones = [{ ...mockFumigaciones[0], fecha: '2020-01-01' }] as any;

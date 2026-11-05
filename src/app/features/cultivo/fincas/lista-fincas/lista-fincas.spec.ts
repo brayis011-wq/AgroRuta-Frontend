@@ -101,7 +101,7 @@ describe('ListaFincasComponent', () => {
     authServiceMock.getUsuario.mockReturnValue(null);
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.error).toBe('No se encontró el usuario. Por favor inicia sesión de nuevo.');
+    expect(component.error).toBe('cultivo.fincas.errors.noUser');
     expect(component.cargando).toBe(false);
   });
 
@@ -109,7 +109,7 @@ describe('ListaFincasComponent', () => {
     cultivoServiceMock.listarFincasPorAgricultor.mockReturnValue(throwError(() => new Error()));
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.error).toBe('Error al cargar las fincas.');
+    expect(component.error).toBe('cultivo.fincas.errors.load');
     expect(component.cargando).toBe(false);
   });
 
@@ -177,7 +177,7 @@ describe('ListaFincasComponent', () => {
     await fixture.whenStable();
     component.fincas = [...mockFincas];
     component.fincaAEliminar = mockFincas[0];
-    component.textoConfirmacion = 'confirmar';
+    component.textoConfirmacion = component.palabraConfirmacion;
     component.confirmarEliminacion();
     await fixture.whenStable();
     expect(cultivoServiceMock.eliminarFinca).toHaveBeenCalledWith(1);
@@ -188,10 +188,10 @@ describe('ListaFincasComponent', () => {
     cultivoServiceMock.eliminarFinca.mockReturnValue(throwError(() => new Error()));
     component.fincas = [...mockFincas];
     component.fincaAEliminar = mockFincas[0];
-    component.textoConfirmacion = 'confirmar';
+    component.textoConfirmacion = component.palabraConfirmacion;
     component.confirmarEliminacion();
     await fixture.whenStable();
-    expect(component.error).toBe('Error al eliminar la finca.');
+    expect(component.error).toBe('cultivo.fincas.errors.delete');
   });
 
   it('resaltarFinca() should set fincaResaltada', () => {

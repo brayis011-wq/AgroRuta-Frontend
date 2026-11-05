@@ -42,18 +42,18 @@ describe('NuevoLoteComponent', () => {
   it('ngOnInit() should set error when finca fails', () => {
     cultivoServiceMock.buscarFinca.mockReturnValue(throwError(() => new Error()));
     component.ngOnInit();
-    expect(component.error).toBe('No se pudo cargar la información de la finca.');
+    expect(component.error).toBe('cultivo.lotes.new.errors.loadFarm');
   });
   it('registrar() should set error when nombre empty', () => {
     component.form.nombre = '';
     component.registrar();
-    expect(component.error).toBe('Por favor ingresa el nombre del lote.');
+    expect(component.error).toBe('cultivo.lotes.new.errors.nameRequired');
   });
   it('registrar() should set error when no coordenadas', () => {
     component.form.nombre = 'Lote 1';
     component.coordenadas = null;
     component.registrar();
-    expect(component.error).toContain('Dibuja');
+    expect(component.error).toBe('cultivo.lotes.new.errors.drawRequired');
   });
   it('registrar() should set error when area exceeds finca', () => {
     component.form.nombre = 'Lote 1';
@@ -61,7 +61,7 @@ describe('NuevoLoteComponent', () => {
     component.areaCalculada = 20;
     component.hectareasFinca = 10;
     component.registrar();
-    expect(component.error).toContain('supera');
+    expect(component.error).toBe('cultivo.lotes.new.errors.exceeds');
   });
   it('registrar() should call registrarLote', () => {
     component.form.nombre = 'Lote 1';
@@ -83,7 +83,7 @@ describe('NuevoLoteComponent', () => {
     component.centroideLat = 4.5;
     component.centroideLng = -74.1;
     component.registrar();
-    expect(component.error).toBe('Error al registrar el lote. Intenta de nuevo.');
+    expect(component.error).toBe('cultivo.lotes.new.errors.register');
   });
   it('cancelar() should navigate to finca', () => {
     component.fincaId = 3;

@@ -62,7 +62,7 @@ describe('ListaJornalesComponent', () => {
 
   it('should create', () => expect(component).toBeTruthy());
 
-  it.skip('ngOnInit() should load jornales when trabajadorId param exists', async () => {
+  it('ngOnInit() should load jornales when trabajadorId param exists', async () => {
     jornalSvc.porTrabajador.mockClear();
     trabajadorSvc.buscarPorId.mockClear();
     queryParamsSubject.next({ trabajadorId: '1' });

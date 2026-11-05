@@ -82,7 +82,8 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "setupFiles": ["src/test-translate.ts"]
+            "setupFiles": ["src/test-translate.ts"],
+            "runnerConfig": "vitest.ng.config.ts"
           }
         }
       }

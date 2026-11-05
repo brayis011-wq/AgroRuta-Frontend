@@ -81,7 +81,7 @@ describe('WorkerHomeComponent', () => {
   it('cargarDatos() should set error when trabajadorService fails', () => {
     trabajadorSvc.listarTodos.mockReturnValue(throwError(() => new Error()));
     component.cargarDatos();
-    expect(component.error).toContain('Error al cargar');
+    expect(component.error).toBe('workers.home.errors.load');
     expect(component.cargando).toBe(false);
   });
 
@@ -181,7 +181,7 @@ describe('WorkerHomeComponent', () => {
       tipoContrato: 'FIJO', cargoId: 1
     });
     component.guardarNuevo();
-    expect(component.error).toContain('Error');
+    expect(component.error).toBe('workers.home.errors.register');
   });
 
   it('guardarEdicion() should not call service when form invalid', () => {
@@ -206,7 +206,7 @@ describe('WorkerHomeComponent', () => {
     trabajadorSvc.actualizar.mockReturnValue(throwError(() => new Error()));
     component.abrirEditar(mkTrabajador());
     component.guardarEdicion();
-    expect(component.error).toContain('Error');
+    expect(component.error).toBe('workers.home.errors.update');
   });
 
   it('guardarCargo() should not call service when form invalid', () => {
@@ -230,7 +230,7 @@ describe('WorkerHomeComponent', () => {
     trabajadorSvc.cambiarCargo.mockReturnValue(throwError(() => new Error()));
     component.abrirCambiarCargo(mkTrabajador());
     component.guardarCargo();
-    expect(component.error).toContain('Error');
+    expect(component.error).toBe('workers.home.errors.changePost');
   });
 
   it('desactivar() should call service and remove from list', async () => {
@@ -253,7 +253,7 @@ describe('WorkerHomeComponent', () => {
     trabajadorSvc.desactivar.mockReturnValue(throwError(() => new Error()));
     respuesta = true;
     await component.desactivar(mkTrabajador());
-    expect(component.error).toContain('Error');
+    expect(component.error).toBe('workers.home.errors.deactivate');
   });
 
   it('suspender() should update estado to SUSPENDIDO', async () => {
@@ -276,7 +276,7 @@ describe('WorkerHomeComponent', () => {
     trabajadorSvc.suspender.mockReturnValue(throwError(() => new Error()));
     respuesta = true;
     await component.suspender(mkTrabajador());
-    expect(component.error).toContain('Error');
+    expect(component.error).toBe('workers.home.errors.suspend');
   });
 
   it('reactivar() should update estado to ACTIVO', async () => {
@@ -294,7 +294,7 @@ describe('WorkerHomeComponent', () => {
     trabajadorSvc.reactivar.mockReturnValue(throwError(() => new Error()));
     respuesta = true;
     await component.reactivar(mkTrabajador());
-    expect(component.error).toContain('Error');
+    expect(component.error).toBe('workers.home.errors.reactivate');
   });
 
   it('abrirFormNomina() should show the form', () => {

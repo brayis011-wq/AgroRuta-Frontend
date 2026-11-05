@@ -79,7 +79,7 @@ describe('RegistrarCosecha', () => {
   
   component.onSubmit();
   
-  expect(component.exito).toBe('¡Cosecha registrada exitosamente!');
+  expect(component.exito).toBe('siembra.harvest.success');
   expect(component.cargando).toBe(false);
   expect(navigateCalled).toBe(true);
   expect(routerMock.navigate).toHaveBeenCalledWith(['/cultivo/siembra', 5]);
@@ -109,7 +109,7 @@ it('onSubmit() should navigate after 1500ms on success', () => {
       throwError(() => ({ error: {} }))
     );
     component.onSubmit();
-    expect(component.error).toBe('Error al registrar la cosecha.');
+    expect(component.error).toBe('siembra.harvest.errors.register');
   });
 
   it('onSubmit() should clear previous error and exito before submitting', () => {

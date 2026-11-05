@@ -1,8 +1,10 @@
+import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { DetalleFincaComponent } from './detalle-finca';
 import { Finca, Lote } from '../../../../core/models/cultivo.model';
+import { FincaActivaService } from '../../../../core/services/finca-activa.service';
 
 describe('DetalleFincaComponent', () => {
   let component: DetalleFincaComponent;
@@ -22,13 +24,17 @@ describe('DetalleFincaComponent', () => {
       buscarFinca:         vi.fn().mockReturnValue(of(fincaMock)),
       listarLotesPorFinca: vi.fn().mockReturnValue(of(lotesMock)),
       eliminarLote:        vi.fn().mockReturnValue(of(void 0)),
+      buscarSiembraPorLote: vi.fn().mockReturnValue(of(null)),
     };
 
     routerMock = { navigate: vi.fn() };
     routeMock  = { snapshot: { paramMap: { get: () => '1' } } };
     cdrMock    = { detectChanges: vi.fn() };
 
-    component = new DetalleFincaComponent(routeMock, routerMock, cultivoServiceMock, cdrMock);
+    // La pantalla pide algunos servicios con inject(): se crea dentro del contexto de Angular
+    TestBed.configureTestingModule({ providers: [{ provide: FincaActivaService, useValue: { cargar: vi.fn() } }] });
+    component = TestBed.runInInjectionContext(
+      () => new DetalleFincaComponent(routeMock, routerMock, cultivoServiceMock, cdrMock));
   });
 
   it('should create', () => {
@@ -50,7 +56,7 @@ describe('DetalleFincaComponent', () => {
 
     component.ngOnInit();
 
-    expect(component.error).toBe('Error al cargar la finca.');
+    expect(component.error).toBe('cultivo.fincas.detail.errors.loadFarm');
     expect(component.cargando).toBe(false);
   });
 
@@ -59,7 +65,7 @@ describe('DetalleFincaComponent', () => {
 
     component.cargarLotes(1);
 
-    expect(component.error).toBe('Error al cargar los lotes.');
+    expect(component.error).toBe('cultivo.fincas.detail.errors.loadLots');
     expect(component.cargando).toBe(false);
   });
 
@@ -71,10 +77,10 @@ describe('DetalleFincaComponent', () => {
   });
 
   it('getEstadoLabel retorna la etiqueta correcta', () => {
-    expect(component.getEstadoLabel('DISPONIBLE')).toBe('🟢 Disponible');
-    expect(component.getEstadoLabel('EN_CULTIVO')).toBe('🟡 En cultivo');
-    expect(component.getEstadoLabel('EN_DESCANSO')).toBe('⚫ En descanso');
-    expect(component.getEstadoLabel('OTRO')).toBe('OTRO');
+    expect(component.getEstadoLabel('DISPONIBLE')).toBe('enums.loteEstado.DISPONIBLE');
+    expect(component.getEstadoLabel('EN_CULTIVO')).toBe('enums.loteEstado.EN_CULTIVO');
+    expect(component.getEstadoLabel('EN_DESCANSO')).toBe('enums.loteEstado.EN_DESCANSO');
+    expect(component.getEstadoLabel('OTRO')).toBe('enums.loteEstado.OTRO');
   });
 
   it('entrarLote navega a la ruta del lote', () => {
@@ -106,7 +112,7 @@ describe('DetalleFincaComponent', () => {
 
   it('cancelarEliminacion limpia el lote y el texto', () => {
     component.loteAEliminar     = lotesMock[0];
-    component.textoConfirmacion = 'confirmar';
+    component.textoConfirmacion = component.palabraConfirmacion;
 
     component.cancelarEliminacion();
 
@@ -126,7 +132,7 @@ describe('DetalleFincaComponent', () => {
   it('confirmarEliminacionLote elimina el lote de la lista', () => {
     component.lotes             = [...lotesMock];
     component.loteAEliminar     = lotesMock[0];
-    component.textoConfirmacion = 'confirmar';
+    component.textoConfirmacion = component.palabraConfirmacion;
 
     component.confirmarEliminacionLote();
 
@@ -141,11 +147,11 @@ describe('DetalleFincaComponent', () => {
     cultivoServiceMock.eliminarLote = vi.fn().mockReturnValue(throwError(() => new Error()));
     component.lotes             = [...lotesMock];
     component.loteAEliminar     = lotesMock[0];
-    component.textoConfirmacion = 'confirmar';
+    component.textoConfirmacion = component.palabraConfirmacion;
 
     component.confirmarEliminacionLote();
 
-    expect(component.error).toBe('Error al eliminar el lote.');
+    expect(component.error).toBe('cultivo.fincas.detail.errors.deleteLot');
     expect(component.eliminando).toBe(false);
   });
 });

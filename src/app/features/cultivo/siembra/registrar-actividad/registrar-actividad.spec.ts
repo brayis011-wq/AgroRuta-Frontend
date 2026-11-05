@@ -102,7 +102,7 @@ describe('RegistrarActividad', () => {
       throwError(() => ({ error: {} }))
     );
     component.onSubmit();
-    expect(component.error).toBe('Error al registrar la actividad.');
+    expect(component.error).toBe('siembra.activity.errors.register');
   });
 
   it('onSubmit() should clear previous error and exito before submitting', () => {

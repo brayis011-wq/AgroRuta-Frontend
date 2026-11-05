@@ -46,7 +46,7 @@ describe('ListaActividadesComponent', () => {
   it('cargar() should set error on failure', () => {
     actividadServiceMock.listar.mockReturnValue(throwError(() => new Error()));
     component.cargar();
-    expect(component.error).toBe('Error al cargar actividades');
+    expect(component.error).toBe('workers.activities.errors.load');
   });
   it('iniciarForm() should create empty form', () => {
     component.iniciarForm();
@@ -87,7 +87,7 @@ describe('ListaActividadesComponent', () => {
     component.form.get('nombre')?.setValue('Nueva');
     component.form.get('descripcion')?.setValue('Desc');
     component.guardar();
-    expect(component.error).toBe('Error al guardar');
+    expect(component.error).toBe('workers.activities.errors.save');
   });
   it('desactivar() should do nothing when id is null', async () => {
     await component.desactivar({ nombre: 'Test', descripcion: 'Test' } as any);
