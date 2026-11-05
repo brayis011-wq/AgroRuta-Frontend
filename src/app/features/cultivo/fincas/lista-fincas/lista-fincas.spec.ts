@@ -65,6 +65,7 @@ describe('ListaFincasComponent', () => {
     cultivoServiceMock = {
       listarFincasPorAgricultor: vi.fn().mockReturnValue(of(mockFincas)),
       eliminarFinca: vi.fn().mockReturnValue(of(null)),
+      listarLotesPorFinca: vi.fn().mockReturnValue(of([])),
     };
     authServiceMock = {
       getUsuario: vi.fn().mockReturnValue(mockUsuario),

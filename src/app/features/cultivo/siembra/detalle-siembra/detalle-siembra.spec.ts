@@ -36,6 +36,11 @@ describe('DetalleSiembraComponent', () => {
       listarCosechas: vi.fn().mockReturnValue(of(mockCosechas)),
       totalKgCosechado: vi.fn().mockReturnValue(of(500)),
       eliminarSiembra: vi.fn().mockReturnValue(of({})),
+      buscarFinca: vi.fn().mockReturnValue(of({ id: 1, nombre: 'Finca Test' })),
+      etapasSiembra: vi.fn().mockReturnValue(of([])),
+      avanzarEtapa: vi.fn().mockReturnValue(of({})),
+      retrocederEtapa: vi.fn().mockReturnValue(of({})),
+      finalizarSiembra: vi.fn().mockReturnValue(of({})),
     };
     routerMock = { navigate: vi.fn() };
 
