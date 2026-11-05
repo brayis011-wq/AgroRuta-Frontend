@@ -14,6 +14,14 @@ export const authRoutes: Routes = [
         path: 'registro',
         loadComponent: () => import('./registro/registro').then((m) => m.RegistroComponent),
       },
+      {
+        path: 'recuperar',
+        loadComponent: () => import('./recuperar/recuperar').then((m) => m.RecuperarComponent),
+      },
+      {
+        path: 'restablecer',
+        loadComponent: () => import('./restablecer/restablecer').then((m) => m.RestablecerComponent),
+      },
     ],
   },
 ];

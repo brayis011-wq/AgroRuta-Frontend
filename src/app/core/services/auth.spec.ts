@@ -159,4 +159,21 @@ describe('AuthService', () => {
   it('getUsuario() should return null when no usuario in localStorage', () => {
     expect(service.getUsuario()).toBeNull();
   });
+
+  // ── recuperar contraseña ────────────────────────────────
+  it('recuperar() should POST the email', () => {
+    service.recuperar('ana@x.com').subscribe();
+    const req = httpMock.expectOne(`${apiUrl}/recuperar`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'ana@x.com' });
+    req.flush({ mensaje: 'ok' });
+  });
+
+  it('restablecer() should POST token and password', () => {
+    service.restablecer('tok', 'nueva-clave').subscribe();
+    const req = httpMock.expectOne(`${apiUrl}/restablecer`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ token: 'tok', password: 'nueva-clave' });
+    req.flush({ mensaje: 'ok' });
+  });
 });

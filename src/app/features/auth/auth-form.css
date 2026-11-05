@@ -17,6 +17,11 @@ form { display: grid; gap: 1.1rem; }
 .con-ojo input { padding-right: 2.75rem; }
 .ojo { position: absolute; right: .3rem; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 8px; background: none; color: var(--ar-tinta-3); cursor: pointer; display: grid; place-items: center; font-size: 18px; }
 .ojo:hover { color: var(--ar-tinta); }
+.etq-fila { display: flex; justify-content: space-between; align-items: baseline; gap: .75rem; }
+.etq-fila label { font-size: .8rem; font-weight: 600; color: var(--ar-tinta-2); }
+.olvido { font-size: .8rem; font-weight: 600; color: var(--ar-verde-700); text-decoration: none; }
+.olvido:hover { text-decoration: underline; }
+.olvido:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; border-radius: 4px; }
 .ayuda { font-size: .77rem; line-height: 1.45; color: var(--ar-tinta-3); }
 
 /* Rol: dos opciones en un control segmentado */

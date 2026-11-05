@@ -1,0 +1,33 @@
+@if (!enviado()) {
+  <h1>{{ 'auth.forgot.title' | translate }}</h1>
+  <p class="sub">{{ 'auth.forgot.subtitle' | translate }}</p>
+
+  @if (error()) {
+    <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i><span>{{ error() | translate }}</span></p>
+  }
+
+  <form (ngSubmit)="enviar()">
+    <div class="campo">
+      <label for="email">{{ 'auth.login.email' | translate }}</label>
+      <input id="email" type="email" [(ngModel)]="email" name="email" autocomplete="email"
+             [placeholder]="'auth.login.emailPlaceholder' | translate" required />
+    </div>
+
+    <button type="submit" class="btn-prim" [disabled]="cargando() || !email.trim()">
+      @if (cargando()) { <i class="ti ti-loader-2 gira" aria-hidden="true"></i> }
+      {{ (cargando() ? 'auth.forgot.sending' : 'auth.forgot.submit') | translate }}
+    </button>
+  </form>
+} @else {
+  <div class="hecho" role="status">
+    <span class="hecho-ic" aria-hidden="true"><i class="ti ti-mail-check"></i></span>
+    <h1>{{ 'auth.forgot.sentTitle' | translate }}</h1>
+    <p class="sub">{{ 'auth.forgot.sent' | translate: { email: email.trim() } }}</p>
+    <p class="ayuda">{{ 'auth.forgot.sentHint' | translate }}</p>
+    <button type="button" class="btn-sec" (click)="otraVez()">{{ 'auth.forgot.again' | translate }}</button>
+  </div>
+}
+
+<p class="link">
+  <a routerLink="/auth/login" [queryParams]="email.trim() ? { email: email.trim() } : {}">{{ 'auth.forgot.back' | translate }}</a>
+</p>

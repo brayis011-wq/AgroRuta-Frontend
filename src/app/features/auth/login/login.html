@@ -3,6 +3,8 @@
 
 @if (error) {
   <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i><span>{{ error | translate }}</span></p>
+} @else if (aviso) {
+  <p class="aviso ok" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i><span>{{ aviso | translate }}</span></p>
 }
 
 <form (ngSubmit)="onSubmit()">
@@ -13,7 +15,10 @@
   </div>
 
   <div class="campo">
-    <label for="password">{{ 'auth.login.password' | translate }}</label>
+    <div class="etq-fila">
+      <label for="password">{{ 'auth.login.password' | translate }}</label>
+      <a class="olvido" routerLink="/auth/recuperar" [queryParams]="form.email ? { email: form.email } : {}">{{ 'auth.login.forgot' | translate }}</a>
+    </div>
     <div class="con-ojo">
       <input id="password" [type]="verPass ? 'text' : 'password'" [(ngModel)]="form.password" name="password"
              autocomplete="current-password" placeholder="••••••••" required />

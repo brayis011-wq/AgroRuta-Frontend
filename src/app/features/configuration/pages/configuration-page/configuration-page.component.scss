@@ -34,3 +34,15 @@
 .pref > div:first-child { flex: 1 1 280px; min-width: 0; }
 .cuenta, .secciones { min-width: 0; }
 @media (max-width: 720px) { .indice { display: none; } }
+
+/* Interruptor de correos */
+.interruptor { position: relative; display: inline-flex; flex: none; cursor: pointer; }
+.interruptor input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: inherit; }
+.interruptor span { width: 44px; height: 26px; border-radius: 99px; background: color-mix(in srgb, var(--ar-tinta-3) 45%, transparent); transition: background .2s; position: relative; }
+.interruptor span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); transition: transform .2s; }
+.interruptor input:checked + span { background: var(--ar-verde-600); }
+.interruptor input:checked + span::after { transform: translateX(18px); }
+.interruptor input:focus-visible + span { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.interruptor input:disabled + span { opacity: .55; }
+.nota { display: flex; gap: .45rem; align-items: center; margin: .2rem 0 0; padding-top: .8rem; border-top: 1px solid var(--ar-borde); font-size: .8rem; color: var(--ar-tinta-3); }
+@media (prefers-reduced-motion: reduce) { .interruptor span, .interruptor span::after { transition: none; } }

@@ -22,6 +22,8 @@ export class LoginComponent implements OnInit {
   };
 
   error: string = '';
+  /** Mensaje de éxito (por ejemplo, después de crear una contraseña nueva) */
+  aviso = '';
   cargando: boolean = false;
 
   constructor(
@@ -36,6 +38,11 @@ export class LoginComponent implements OnInit {
     if (this.route.snapshot.queryParamMap.get('sesion') === 'expirada') {
       this.error = 'auth.login.sessionExpired';
     }
+    if (this.route.snapshot.queryParamMap.get('clave') === 'nueva') {
+      this.aviso = 'auth.reset.done';
+    }
+    const email = this.route.snapshot.queryParamMap.get('email');
+    if (email) this.form.email = email;
   }
 
   onSubmit(): void {

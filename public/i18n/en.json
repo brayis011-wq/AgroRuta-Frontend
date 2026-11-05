@@ -99,8 +99,11 @@
     }
   },
   "auth": {
+    "forgot": {"title": "Recover your password", "subtitle": "Enter your account email and we'll send you a link to create a new password.", "submit": "Send link", "sending": "Sending…", "sentTitle": "Check your email", "sent": "If {{email}} has an AgroRuta account, a link will arrive in a few minutes. It works once and expires in 30 minutes.", "sentHint": "Can't find it? Check your spam or promotions folder.", "again": "Use another email", "invalidEmail": "Enter a valid email.", "back": "Back to sign in"},
+    "reset": {"title": "Create your new password", "subtitle": "Saving it signs you out on other devices.", "password": "New password", "confirm": "Repeat the password", "hint": "Between 8 and 72 characters.", "length": "The password must be between 8 and 72 characters.", "mismatch": "The two passwords don't match.", "submit": "Save password", "saving": "Saving…", "done": "Done, your password changed. You can sign in now.", "invalidTitle": "This link no longer works", "invalid": "It may have expired (it lasts 30 minutes) or already been used. Request a new one.", "requestNew": "Request a new link"},
     "art": {"caption": "Healthy crops, clear numbers.", "alt": "Plants growing in the sun"},
     "login": {
+      "forgot": "Forgot it?",
       "tooManyAttempts": "Too many failed attempts. Wait 15 minutes and try again.",
       "subtitle": "Sign in with your email and password to continue.",
       "title": "Sign in",
@@ -1176,6 +1179,7 @@
     }
   },
   "config": {
+    "mail": {"title": "Emails", "desc": "Notices sent to {{email}}.", "crop": "Daily crop summary", "cropHint": "Every morning, if there's something for today: sprayings due or overdue, scheduled tasks, re-entry, pre-harvest interval and frost or rain alerts.", "workers": "Requests from your workers", "workersHint": "When a worker asks for access to their portal.", "security": "Security notices (password changed, failed attempts, password recovery) are always sent.", "saved": "Email preferences saved.", "error": "Couldn't save the email preferences."},
     "prefs": {"title": "Preferences", "desc": "How you use AgroRuta on this device", "language": "Language", "languageHint": "Language for menus, texts and reports", "farm": "Farm on start", "farmHint": "The farm shown when you open the panel. You can also change it in the side menu.", "farmSaved": "Farm saved as default", "session": "Session", "sessionHint": "Sign out of your account on this device"},
     "upToDate": "All saved",
     "discard": "Discard",

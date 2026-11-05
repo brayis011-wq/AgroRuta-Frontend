@@ -30,6 +30,7 @@
         <nav class="tarjeta indice" [attr.aria-label]="'config.sections' | translate">
           <a href="#perfil" (click)="$event.preventDefault(); ir('perfil')"><i class="ti ti-user" aria-hidden="true"></i> {{ 'config.profileCard.title' | translate }}</a>
           <a href="#seguridad" (click)="$event.preventDefault(); ir('seguridad')"><i class="ti ti-lock" aria-hidden="true"></i> {{ 'config.passwordCard.title' | translate }}</a>
+          <a href="#correos" (click)="$event.preventDefault(); ir('correos')"><i class="ti ti-mail" aria-hidden="true"></i> {{ 'config.mail.title' | translate }}</a>
           <a href="#preferencias" (click)="$event.preventDefault(); ir('preferencias')"><i class="ti ti-adjustments" aria-hidden="true"></i> {{ 'config.prefs.title' | translate }}</a>
         </nav>
       </aside>
@@ -53,6 +54,37 @@
             </div>
           </header>
           <app-change-password-form [loading]="loadingPassword" (changePassword)="onChangePassword($event)" />
+        </section>
+
+        <section class="tarjeta" id="correos">
+          <header>
+            <div class="tit">
+              <span class="ic verde" aria-hidden="true"><i class="ti ti-mail"></i></span>
+              <div><h2>{{ 'config.mail.title' | translate }}</h2><p>{{ 'config.mail.desc' | translate: { email: perfil?.email ?? '' } }}</p></div>
+            </div>
+          </header>
+
+          <div class="pref">
+            <div><strong id="correo-cultivo">{{ 'config.mail.crop' | translate }}</strong><small>{{ 'config.mail.cropHint' | translate }}</small></div>
+            <label class="interruptor">
+              <input type="checkbox" role="switch" aria-labelledby="correo-cultivo"
+                     [checked]="correos()?.alertasCultivo ?? true" [disabled]="!correos() || guardandoCorreos()"
+                     (change)="cambiarCorreo('alertasCultivo', $any($event.target).checked)" />
+              <span aria-hidden="true"></span>
+            </label>
+          </div>
+
+          <div class="pref">
+            <div><strong id="correo-trabajadores">{{ 'config.mail.workers' | translate }}</strong><small>{{ 'config.mail.workersHint' | translate }}</small></div>
+            <label class="interruptor">
+              <input type="checkbox" role="switch" aria-labelledby="correo-trabajadores"
+                     [checked]="correos()?.avisosTrabajadores ?? true" [disabled]="!correos() || guardandoCorreos()"
+                     (change)="cambiarCorreo('avisosTrabajadores', $any($event.target).checked)" />
+              <span aria-hidden="true"></span>
+            </label>
+          </div>
+
+          <p class="nota"><i class="ti ti-shield-lock" aria-hidden="true"></i> {{ 'config.mail.security' | translate }}</p>
         </section>
 
         <section class="tarjeta" id="preferencias">

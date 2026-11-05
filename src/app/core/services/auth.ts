@@ -27,6 +27,16 @@ export class AuthService {
     );
   }
 
+  /** Pide el enlace para crear una contraseña nueva. Responde igual exista o no la cuenta. */
+  recuperar(email: string): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/recuperar`, { email });
+  }
+
+  /** Crea la contraseña nueva con el token del enlace que llegó al correo. */
+  restablecer(token: string, password: string): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/restablecer`, { token, password });
+  }
+
   /** Cambió la contraseña: el servidor cerró las sesiones viejas y mandó un token nuevo. */
   renovarToken(token: string): void {
     localStorage.setItem('token', token);

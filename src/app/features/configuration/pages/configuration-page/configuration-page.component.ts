@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef, ViewChild, computed } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, ViewChild, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -10,6 +10,7 @@ import { ProfileFormComponent } from '../../profile-form/profile-form.component'
 import { ChangePasswordFormComponent } from '../../change-password-form/change-password-form.component';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { Perfil, UpdateProfileRequest, ChangePasswordRequest } from '../../../../core/models/profile.model';
+import { NotificacionesService, PreferenciasCorreo } from '../../../../core/services/notificaciones.service';
 
 interface Toast {
   message: string;
@@ -32,6 +33,11 @@ export class ConfigurationPageComponent implements OnInit {
   readonly idioma = inject(LanguageService);
   readonly fincaActiva = inject(FincaActivaService);
   readonly temaSvc = inject(TemaService);
+  private notificaciones = inject(NotificacionesService);
+
+  /** Correos opcionales (null mientras cargan) */
+  readonly correos = signal<PreferenciasCorreo | null>(null);
+  readonly guardandoCorreos = signal(false);
 
   @ViewChild(ChangePasswordFormComponent) private formClave?: ChangePasswordFormComponent;
 
@@ -46,6 +52,31 @@ export class ConfigurationPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPerfil();
+    this.notificaciones.obtener().subscribe({
+      next: (p) => this.correos.set(p),
+      error: () => this.correos.set(null),
+    });
+  }
+
+  /** Guarda al momento; si falla, el interruptor vuelve a como estaba */
+  cambiarCorreo(campo: keyof PreferenciasCorreo, valor: boolean): void {
+    const antes = this.correos();
+    if (!antes) return;
+    const nuevas = { ...antes, [campo]: valor };
+    this.correos.set(nuevas);
+    this.guardandoCorreos.set(true);
+    this.notificaciones.guardar(nuevas).subscribe({
+      next: (p) => {
+        this.correos.set(p);
+        this.guardandoCorreos.set(false);
+        this.showToast('config.mail.saved', 'success');
+      },
+      error: () => {
+        this.correos.set(antes);
+        this.guardandoCorreos.set(false);
+        this.showToast('config.mail.error', 'error');
+      },
+    });
   }
 
   loadPerfil(): void {
