@@ -29,6 +29,10 @@
               "src/styles.css",
               "node_modules/leaflet/dist/leaflet.css",
               "node_modules/leaflet-draw/dist/leaflet.draw.css"
+            ],
+            "allowedCommonJsDependencies": [
+              "leaflet",
+              "leaflet-draw"
             ]
           },
           "configurations": {
@@ -82,7 +86,9 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "setupFiles": ["src/test-translate.ts"],
+            "setupFiles": [
+              "src/test-translate.ts"
+            ],
             "runnerConfig": "vitest.ng.config.ts"
           }
         }
