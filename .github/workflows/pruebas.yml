@@ -1,0 +1,33 @@
+# Corre las pruebas y la compilación en cada push y en cada pull request a main.
+# Así un error se ve en GitHub antes de gastar créditos de Netlify en un despliegue roto.
+name: Pruebas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Pruebas
+        run: npx ng test --watch=false
+
+      - name: Compilar para producción
+        run: npm run build
+
+      - name: Revisar dependencias con fallas de seguridad
+        run: npm audit --omit=dev --audit-level=high
