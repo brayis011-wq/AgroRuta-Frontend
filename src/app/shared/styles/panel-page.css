@@ -155,7 +155,7 @@ tbody tr:hover td { background: var(--ar-superficie-2); }
   color: var(--a-green-dark);
   border: 1px solid var(--ar-borde-fuerte);
 }
-.banner.error { background: var(--a-red-soft); color: var(--a-red); border-color: #f5c6c6; }
+.banner.error { background: var(--a-red-soft); color: var(--a-red); border-color: var(--ar-rojo-borde); }
 .banner button { background: none; border: 0; font-size: 1.1rem; color: inherit; cursor: pointer; }
 
 .estado { padding: 2rem 1.1rem; text-align: center; color: var(--a-muted); font-size: 0.9rem; }

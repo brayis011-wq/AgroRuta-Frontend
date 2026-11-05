@@ -55,9 +55,9 @@
 .clima-txt small { font-size: 11.5px; color: var(--ar-tinta-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .clima-txt b { font-size: 15px; color: var(--ar-tinta); margin-right: 3px; }
 .clima-txt em { font-style: normal; font-size: 12px; color: var(--ar-verde-700); font-weight: 500; }
-.clima.rain, .clima.wind { background: linear-gradient(135deg, var(--ar-ambar-bg), var(--ar-ambar-bg)); border-color: #f1dca8; }
+.clima.rain, .clima.wind { background: linear-gradient(135deg, var(--ar-ambar-bg), var(--ar-ambar-bg)); border-color: var(--ar-ambar-borde); }
 .clima.rain em, .clima.wind em { color: var(--ar-ambar); }
-.clima.hot { background: linear-gradient(135deg, #ffe7dc, #fff4ee); border-color: #f5cdb8; }
+.clima.hot { background: linear-gradient(135deg, var(--ar-ambar-bg), var(--ar-ambar-bg)); border-color: var(--ar-ambar-borde); }
 .clima.hot em { color: #b4471a; }
 
 /* Colapsado: solo el buscador como ícono */

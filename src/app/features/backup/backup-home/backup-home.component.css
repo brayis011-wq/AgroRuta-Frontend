@@ -54,8 +54,8 @@
 }
 .banner.error {
   background: var(--ar-rojo-bg);
-  color: #b71c1c;
-  border-color: #f5c6cb;
+  color: var(--ar-rojo);
+  border-color: var(--ar-rojo-borde);
 }
 .banner-close {
   background: none;
@@ -66,7 +66,7 @@
 }
 
 .estado { padding: 1rem; color: var(--ar-tinta-2); }
-.estado.error { color: #b71c1c; }
+.estado.error { color: var(--ar-rojo); }
 .link-btn {
   background: none;
   border: none;
@@ -113,7 +113,7 @@
 .backup-table td {
   padding: 0.8rem 1rem;
   border-bottom: 1px solid var(--ar-linea);
-  color: #333;
+  color: var(--ar-tinta);
 }
 .backup-table tbody tr:last-child td { border-bottom: none; }
 .backup-table tbody tr:hover { background: var(--ar-verde-50); }
@@ -184,7 +184,7 @@
   border-radius: 6px;
   word-break: break-all;
 }
-.modal-warn { color: #b71c1c; font-size: 0.9rem; line-height: 1.4; }
+.modal-warn { color: var(--ar-rojo); font-size: 0.9rem; line-height: 1.4; }
 .modal label { display: block; font-size: 0.85rem; margin: 0.75rem 0 0.35rem; color: var(--ar-tinta-2); }
 .modal input {
   width: 100%;

@@ -9,7 +9,7 @@
   gap: 8px;
   margin-bottom: 2rem;
   padding: 4px;
-  background-color: #f1f5f1;
+  background-color: var(--ar-seg);
   border-radius: 12px;
   width: fit-content;
 }
