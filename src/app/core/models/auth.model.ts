@@ -18,4 +18,6 @@ export interface AuthResponse {
   email: string;
   nombre: string;
   rol: string;
+  /** La cuenta se creó pero falta confirmar el correo (no trae token) */
+  verificacionPendiente?: boolean;
 }

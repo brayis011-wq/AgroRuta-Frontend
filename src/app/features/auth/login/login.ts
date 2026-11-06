@@ -24,6 +24,9 @@ export class LoginComponent implements OnInit {
   error: string = '';
   /** Mensaje de éxito (por ejemplo, después de crear una contraseña nueva) */
   aviso = '';
+  /** La contraseña era correcta pero falta confirmar el correo */
+  sinConfirmar = false;
+  reenviado = false;
   cargando: boolean = false;
 
   constructor(
@@ -57,13 +60,34 @@ export class LoginComponent implements OnInit {
       error: (err) => {
         this.cargando = false;
         const cuentaDesactivada = err.status === 401 && /desactivada/i.test(err.error?.message ?? '');
+        this.sinConfirmar = err.status === 403 && err.error?.errorCode === 'AGR-033';
+        this.reenviado = false;
         this.error = cuentaDesactivada
           ? 'auth.login.accountDisabled'
+          : this.sinConfirmar
+            ? 'auth.login.notVerified'
           : err.status === 429
             ? 'auth.login.tooManyAttempts'
           : err.status === 401 || err.status === 403
             ? 'auth.login.invalidCredentials'
             : 'auth.login.serverError';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  /** Vuelve a mandar el correo de confirmación */
+  reenviarConfirmacion(): void {
+    const email = this.form.email.trim();
+    if (!email) return;
+    this.authService.reenviarVerificacion(email).subscribe({
+      next: () => {
+        this.reenviado = true;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.error = 'auth.login.serverError';
+        this.sinConfirmar = false;
         this.cdr.detectChanges();
       },
     });

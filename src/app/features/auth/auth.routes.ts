@@ -19,6 +19,10 @@ export const authRoutes: Routes = [
         loadComponent: () => import('./recuperar/recuperar').then((m) => m.RecuperarComponent),
       },
       {
+        path: 'verificar',
+        loadComponent: () => import('./verificar/verificar').then((m) => m.VerificarComponent),
+      },
+      {
         path: 'restablecer',
         loadComponent: () => import('./restablecer/restablecer').then((m) => m.RestablecerComponent),
       },

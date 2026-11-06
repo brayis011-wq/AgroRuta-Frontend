@@ -10,7 +10,7 @@ import { RegisterRequest } from '../../../core/models/auth.model';
   standalone: true,
   imports: [FormsModule, RouterLink, TranslatePipe],
   templateUrl: './registro.html',
-  styleUrl: '../auth-form.css',
+  styleUrls: ['../auth-form.css', '../auth-recuperar.css'],
 })
 export class RegistroComponent {
   verPass = false;
@@ -26,6 +26,11 @@ export class RegistroComponent {
   error: string = '';
   exito: string = '';
   cargando: boolean = false;
+  /** Correo al que se mandó el enlace de confirmación (la cuenta ya se creó) */
+  pendiente = '';
+  trabajador = false;
+  reenviando = false;
+  reenviado = false;
 
   constructor(
     private authService: AuthService,
@@ -47,8 +52,14 @@ export class RegistroComponent {
     const datos = { ...this.form, cedula: esTrabajador ? this.form.cedula?.trim() : undefined };
 
     this.authService.registro(datos).subscribe({
-      next: () => {
+      next: (r) => {
         this.cargando = false;
+        if (r?.verificacionPendiente) {
+          this.pendiente = r.email || datos.email.trim();
+          this.trabajador = esTrabajador;
+          this.cdr.detectChanges();
+          return;
+        }
         this.exito = esTrabajador ? 'auth.register.successWorker' : 'auth.register.success';
         this.cdr.detectChanges();
         setTimeout(() => {
@@ -58,6 +69,24 @@ export class RegistroComponent {
       error: (err) => {
         this.cargando = false;
         this.error = err.error?.message || 'auth.register.error';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  /** Por si el correo no llegó */
+  reenviar(): void {
+    if (!this.pendiente || this.reenviando) return;
+    this.reenviando = true;
+    this.authService.reenviarVerificacion(this.pendiente).subscribe({
+      next: () => {
+        this.reenviando = false;
+        this.reenviado = true;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.reenviando = false;
+        this.error = 'auth.login.serverError';
         this.cdr.detectChanges();
       },
     });

@@ -15,6 +15,7 @@ describe('RegistroComponent', () => {
   beforeEach(async () => {
     authServiceMock = {
       registro: vi.fn(),
+      reenviarVerificacion: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -140,5 +141,20 @@ describe('RegistroComponent', () => {
     component.form = { nombre: 'Ana', email: 'ana@test.com', password: '12345678', rol: 'Agricultor', cedula: '999999' };
     component.onSubmit();
     expect(authServiceMock.registro.mock.calls[0][0].cedula).toBeUndefined();
+  });
+
+  it('si falta confirmar el correo muestra el aviso y no navega', async () => {
+    authServiceMock.registro.mockReturnValue(of({ id: 1, token: null, email: 'ana@x.com', nombre: 'Ana', rol: 'Agricultor', verificacionPendiente: true }));
+    component.form = { nombre: 'Ana', email: 'ana@x.com', password: 'clave-larga', rol: 'Agricultor', cedula: '' };
+    component.onSubmit();
+    fixture.detectChanges();
+    expect(component.pendiente).toBe('ana@x.com');
+    expect(fixture.nativeElement.querySelector('.hecho')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('form')).toBeNull();
+
+    authServiceMock.reenviarVerificacion.mockReturnValue(of({ mensaje: 'ok' }));
+    component.reenviar();
+    expect(authServiceMock.reenviarVerificacion).toHaveBeenCalledWith('ana@x.com');
+    expect(component.reenviado).toBe(true);
   });
 });

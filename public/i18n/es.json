@@ -101,9 +101,11 @@
   "auth": {
     "privacy": "Privacidad",
     "forgot": {"title": "Recupera tu contraseña", "subtitle": "Escribe el correo de tu cuenta y te enviamos un enlace para crear una contraseña nueva.", "submit": "Enviar enlace", "sending": "Enviando…", "sentTitle": "Revisa tu correo", "sent": "Si {{email}} tiene una cuenta en AgroRuta, te llegará un enlace en unos minutos. Sirve una sola vez y vence en 30 minutos.", "sentHint": "¿No lo ves? Busca en la carpeta de spam o promociones.", "again": "Usar otro correo", "invalidEmail": "Escribe un correo válido.", "back": "Volver a iniciar sesión"},
+    "verify": {"checkTitle": "Confirma tu correo", "check": "Te enviamos un enlace a {{email}}. Ábrelo para activar tu cuenta; vence en 24 horas.", "checkWorker": "Después de confirmarlo, tu empleador debe aprobar tu acceso al portal.", "resend": "Reenviar el correo", "resent": "Listo. Si la cuenta falta por confirmar, te llegará un enlace nuevo en unos minutos.", "confirming": "Confirmando tu correo…", "doneTitle": "Correo confirmado", "done": "Tu cuenta quedó activa. Entrando…", "errorTitle": "No pudimos confirmar", "invalid": "Puede que haya vencido (dura 24 horas) o que ya se haya usado. Escribe tu correo y te mandamos uno nuevo."},
     "reset": {"title": "Crea tu contraseña nueva", "subtitle": "Al guardarla se cierran las sesiones abiertas en otros equipos.", "password": "Contraseña nueva", "confirm": "Repite la contraseña", "hint": "Entre 8 y 72 caracteres.", "length": "La contraseña debe tener entre 8 y 72 caracteres.", "mismatch": "Las dos contraseñas no coinciden.", "submit": "Guardar contraseña", "saving": "Guardando…", "done": "Listo, tu contraseña cambió. Ya puedes iniciar sesión.", "invalidTitle": "Este enlace ya no sirve", "invalid": "Puede que haya vencido (dura 30 minutos) o que ya se haya usado. Pide uno nuevo.", "requestNew": "Pedir un enlace nuevo"},
     "art": {"caption": "Cultivos sanos, cuentas claras.", "alt": "Plantas creciendo bajo el sol"},
     "login": {
+      "notVerified": "Falta confirmar tu correo. Abre el enlace que te enviamos.",
       "forgot": "¿La olvidaste?",
       "tooManyAttempts": "Demasiados intentos fallidos. Espera 15 minutos e inténtalo de nuevo.",
       "subtitle": "Ingresa con tu correo y contraseña para continuar.",

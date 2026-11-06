@@ -101,9 +101,11 @@
   "auth": {
     "privacy": "Privacy",
     "forgot": {"title": "Recover your password", "subtitle": "Enter your account email and we'll send you a link to create a new password.", "submit": "Send link", "sending": "Sending…", "sentTitle": "Check your email", "sent": "If {{email}} has an AgroRuta account, a link will arrive in a few minutes. It works once and expires in 30 minutes.", "sentHint": "Can't find it? Check your spam or promotions folder.", "again": "Use another email", "invalidEmail": "Enter a valid email.", "back": "Back to sign in"},
+    "verify": {"checkTitle": "Confirm your email", "check": "We sent a link to {{email}}. Open it to activate your account; it expires in 24 hours.", "checkWorker": "After confirming it, your employer must approve your access to the portal.", "resend": "Resend the email", "resent": "Done. If the account still needs confirming, a new link will arrive in a few minutes.", "confirming": "Confirming your email…", "doneTitle": "Email confirmed", "done": "Your account is active. Signing you in…", "errorTitle": "We couldn't confirm it", "invalid": "It may have expired (it lasts 24 hours) or already been used. Enter your email and we'll send a new one."},
     "reset": {"title": "Create your new password", "subtitle": "Saving it signs you out on other devices.", "password": "New password", "confirm": "Repeat the password", "hint": "Between 8 and 72 characters.", "length": "The password must be between 8 and 72 characters.", "mismatch": "The two passwords don't match.", "submit": "Save password", "saving": "Saving…", "done": "Done, your password changed. You can sign in now.", "invalidTitle": "This link no longer works", "invalid": "It may have expired (it lasts 30 minutes) or already been used. Request a new one.", "requestNew": "Request a new link"},
     "art": {"caption": "Healthy crops, clear numbers.", "alt": "Plants growing in the sun"},
     "login": {
+      "notVerified": "Your email isn't confirmed yet. Open the link we sent you.",
       "forgot": "Forgot it?",
       "tooManyAttempts": "Too many failed attempts. Wait 15 minutes and try again.",
       "subtitle": "Sign in with your email and password to continue.",

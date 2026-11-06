@@ -1,0 +1,45 @@
+@switch (estado()) {
+  @case ('confirmando') {
+    <div class="hecho" role="status">
+      <span class="hecho-ic" aria-hidden="true"><i class="ti ti-loader-2 gira"></i></span>
+      <h1>{{ 'auth.verify.confirming' | translate }}</h1>
+    </div>
+  }
+  @case ('listo') {
+    <div class="hecho" role="status">
+      <span class="hecho-ic" aria-hidden="true"><i class="ti ti-circle-check"></i></span>
+      <h1>{{ 'auth.verify.doneTitle' | translate }}</h1>
+      <p class="sub">{{ 'auth.verify.done' | translate }}</p>
+    </div>
+  }
+  @case ('error') {
+    <div class="hecho" role="alert">
+      <span class="hecho-ic malo" aria-hidden="true"><i class="ti ti-wifi-off"></i></span>
+      <h1>{{ 'auth.verify.errorTitle' | translate }}</h1>
+      <p class="sub">{{ 'auth.login.serverError' | translate }}</p>
+    </div>
+  }
+  @default {
+    <div class="hecho" role="alert">
+      <span class="hecho-ic malo" aria-hidden="true"><i class="ti ti-link-off"></i></span>
+      <h1>{{ 'auth.reset.invalidTitle' | translate }}</h1>
+      <p class="sub">{{ 'auth.verify.invalid' | translate }}</p>
+    </div>
+    @if (reenviado()) {
+      <p class="aviso ok" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i><span>{{ 'auth.verify.resent' | translate }}</span></p>
+    } @else {
+      <form (ngSubmit)="reenviar()">
+        <div class="campo">
+          <label for="email">{{ 'auth.login.email' | translate }}</label>
+          <input id="email" type="email" [(ngModel)]="email" name="email" autocomplete="email"
+                 [placeholder]="'auth.login.emailPlaceholder' | translate" required />
+        </div>
+        <button type="submit" class="btn-prim" [disabled]="reenviando() || !email.trim()">
+          {{ (reenviando() ? 'auth.forgot.sending' : 'auth.verify.resend') | translate }}
+        </button>
+      </form>
+    }
+  }
+}
+
+<p class="link"><a routerLink="/auth/login">{{ 'auth.forgot.back' | translate }}</a></p>

@@ -27,6 +27,22 @@ export class AuthService {
     );
   }
 
+  /** Enlace del correo de confirmación: confirma la cuenta y deja la sesión iniciada. */
+  verificar(token: string): Observable<AuthResponse> {
+    this.logout();
+    return this.http.post<AuthResponse>(`${this.apiUrl}/verificar`, { token }).pipe(
+      tap((response) => {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('usuario', JSON.stringify(response));
+      }),
+    );
+  }
+
+  /** Vuelve a mandar el correo de confirmación. Responde igual exista o no la cuenta. */
+  reenviarVerificacion(email: string): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/reenviar-verificacion`, { email });
+  }
+
   /** Pide el enlace para crear una contraseña nueva. Responde igual exista o no la cuenta. */
   recuperar(email: string): Observable<{ mensaje: string }> {
     return this.http.post<{ mensaje: string }>(`${this.apiUrl}/recuperar`, { email });

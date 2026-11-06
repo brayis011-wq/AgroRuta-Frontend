@@ -14,6 +14,7 @@ describe('LoginComponent', () => {
   beforeEach(async () => {
     authServiceMock = {
       login: vi.fn(),
+      reenviarVerificacion: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -117,5 +118,24 @@ describe('LoginComponent', () => {
     authServiceMock.login.mockReturnValue(throwError(() => ({ status: 0 })));
     component.onSubmit();
     expect(component.error).toBe('auth.login.serverError');
+  });
+
+  it('correo sin confirmar (403 AGR-033): avisa y permite reenviar el enlace', () => {
+    authServiceMock.login.mockReturnValue(throwError(() => ({ status: 403, error: { errorCode: 'AGR-033' } })));
+    component.form = { email: 'ana@x.com', password: 'clave-larga' };
+    component.onSubmit();
+    expect(component.error).toBe('auth.login.notVerified');
+    expect(component.sinConfirmar).toBe(true);
+
+    authServiceMock.reenviarVerificacion.mockReturnValue(of({ mensaje: 'ok' }));
+    component.reenviarConfirmacion();
+    expect(authServiceMock.reenviarVerificacion).toHaveBeenCalledWith('ana@x.com');
+    expect(component.reenviado).toBe(true);
+  });
+
+  it('un 403 que no es de correo sigue siendo credenciales inválidas', () => {
+    authServiceMock.login.mockReturnValue(throwError(() => ({ status: 403, error: {} })));
+    component.onSubmit();
+    expect(component.error).toBe('auth.login.invalidCredentials');
   });
 });

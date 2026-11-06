@@ -176,4 +176,19 @@ describe('AuthService', () => {
     expect(req.request.body).toEqual({ token: 'tok', password: 'nueva-clave' });
     req.flush({ mensaje: 'ok' });
   });
+
+  it('verificar() should POST the token and store the session', () => {
+    service.verificar('tok').subscribe();
+    const req = httpMock.expectOne(`${apiUrl}/verificar`);
+    expect(req.request.body).toEqual({ token: 'tok' });
+    req.flush(mockAuthResponse);
+    expect(localStorage.getItem('token')).toBe(mockAuthResponse.token);
+  });
+
+  it('reenviarVerificacion() should POST the email', () => {
+    service.reenviarVerificacion('ana@x.com').subscribe();
+    const req = httpMock.expectOne(`${apiUrl}/reenviar-verificacion`);
+    expect(req.request.body).toEqual({ email: 'ana@x.com' });
+    req.flush({ mensaje: 'ok' });
+  });
 });
