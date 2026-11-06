@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Mismo logo del encabezado: cuadro verde con la planta (icono plant-2 de Tabler, licencia MIT) -->
+  <rect width="64" height="64" rx="19" fill="#2e7d32"/>
+  <g transform="translate(13 13.8) scale(1.583)" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 9a10 10 0 1 0 20 0"/>
+    <path d="M12 19a10 10 0 0 1 10 -10"/>
+    <path d="M2 9a10 10 0 0 1 10 10"/>
+    <path d="M12 4a9.7 9.7 0 0 1 2.99 7.5"/>
+    <path d="M9.01 11.5a9.7 9.7 0 0 1 2.99 -7.5"/>
+  </g>
+</svg>
