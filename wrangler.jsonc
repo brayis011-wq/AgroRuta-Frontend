@@ -1,0 +1,11 @@
+// Publicación en Cloudflare (Workers con archivos estáticos).
+// Cloudflare compila con "npx ng build" y publica con "npx wrangler deploy".
+{
+  "name": "agroruta-frontend",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist/agroruta-frontend/browser",
+    // Rutas como /auth/verificar o /cultivo/calendario las resuelve Angular: se sirve index.html
+    "not_found_handling": "single-page-application"
+  }
+}
