@@ -1,0 +1,11 @@
+# Sin esto, "COPY . ." copia el node_modules de Windows encima del de Linux y la compilación falla
+node_modules
+dist
+.angular
+coverage
+playwright-report
+test-results
+.git
+.idea
+.vscode
+*.log
