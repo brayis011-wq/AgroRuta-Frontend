@@ -3,6 +3,8 @@
 {
   "name": "app",
   "compatibility_date": "2026-10-01",
+  // Las ramas y PR se publican con "npx wrangler preview", que exige este bloque (puede ir vacío)
+  "previews": {},
   "assets": {
     "directory": "./dist/agroruta-frontend/browser",
     // Rutas como /auth/verificar o /cultivo/calendario las resuelve Angular: se sirve index.html
