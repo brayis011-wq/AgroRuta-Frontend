@@ -664,7 +664,7 @@
       },
       "danger": {
         "title": "Eliminar siembra",
-        "desc": "Se eliminarán todas las actividades, fumigaciones y cosechas asociadas.",
+        "desc": "Dejará de verse en el lote. Sus gastos e ingresos se conservan en los reportes.",
         "button": "Eliminar siembra"
       },
       "delete": {
