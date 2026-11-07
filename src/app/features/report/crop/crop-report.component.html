@@ -104,7 +104,7 @@
           <tbody>
             @for (c of filas(); track c.siembraId) {
               <tr>
-                <td class="fuerte-n">{{ c.variedad }}</td>
+                <td class="fuerte-n">{{ c.variedad }}@if (c.eliminada) { <span class="eliminada" [title]="'reports.deletedHint' | translate">{{ 'reports.deleted' | translate }}</span> }</td>
                 <td class="suave">{{ ubicacion(c) }}</td>
                 <td><span [class]="'pill-et ' + c.estado">{{ 'enums.etapaCultivo.' + c.estado | translate }}</span></td>
                 <td class="suave">{{ fecha(c.fechaSiembra) }}</td>

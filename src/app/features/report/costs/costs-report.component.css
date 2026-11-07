@@ -18,3 +18,6 @@ td.pierde { color: var(--ar-rojo) !important; font-weight: 700; }
 .det-head h3 { margin: 0; font-size: 1.15rem; }
 .det-sub { margin: .2rem 0 0; font-size: .84rem; color: var(--ar-tinta-2); }
 .det-head .btn-sec { display: inline-flex; align-items: center; gap: .4rem; text-decoration: none; color: var(--ar-tinta); font-size: .86rem; }
+
+/* Siembra eliminada (borrado lógico): se conserva en el reporte con su historial */
+.eliminada { display: inline-block; margin-left: .35rem; font-size: .68rem; font-weight: 600; border-radius: 99px; padding: .05rem .5rem; background: var(--ar-gris-bg); color: var(--ar-tinta-2); border: 1px dashed var(--ar-borde-fuerte); vertical-align: middle; }
