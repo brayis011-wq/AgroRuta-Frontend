@@ -41,6 +41,8 @@ export interface CropDetail {
   cultivo?: string | null;
   loteNombre?: string | null;
   fincaNombre?: string | null;
+  /** La siembra, su lote o su finca se eliminaron: ya no se ve en la app, pero su historial sigue aquí */
+  eliminada?: boolean;
 }
 
 export interface CropReport {

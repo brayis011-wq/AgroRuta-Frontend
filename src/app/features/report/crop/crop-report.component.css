@@ -26,3 +26,6 @@
 .pill-et.FINALIZADO { background: var(--ar-gris-bg); color: var(--ar-tinta-3); }
 @keyframes aparecer { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .seg-et { animation: none; } }
+
+/* Siembra eliminada (borrado lógico): se conserva en el reporte con su historial */
+.eliminada { display: inline-block; margin-left: .35rem; font-size: .68rem; font-weight: 600; border-radius: 99px; padding: .05rem .5rem; background: var(--ar-gris-bg); color: var(--ar-tinta-2); border: 1px dashed var(--ar-borde-fuerte); vertical-align: middle; }

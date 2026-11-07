@@ -278,8 +278,10 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dibujarMarcadores();
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.error = 'cultivo.fincas.errors.delete';
+      error: (e) => {
+        // p. ej. "El lote 'Norte' tiene una siembra en curso..."
+        this.error = e?.error?.message || 'cultivo.fincas.errors.delete';
+        this.fincaAEliminar = null;
         this.eliminandoId = null;
         this.cdr.detectChanges();
       },

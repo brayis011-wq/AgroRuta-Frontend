@@ -360,6 +360,8 @@
     "error": "No se pudieron cargar los datos.",
     "vsPrevious": "{{pct}} % vs. mes anterior",
     "noMatches": "No hay resultados con ese filtro.",
+    "deleted": "Eliminado",
+    "deletedHint": "Se eliminó de la app, pero sus gastos e ingresos se conservan aquí.",
     "total": "Total",
     "sortBy": "Ordenar por",
     "payroll": {
@@ -452,7 +454,7 @@
         "title": "Eliminar finca",
         "aboutTo": "Estás a punto de eliminar",
         "andLots": "y todos sus lotes.",
-        "warnPrefix": "Esta acción no se puede deshacer. Escribe",
+        "warnPrefix": "Dejará de verse en la app. El historial de gastos e ingresos de sus siembras se conserva en los reportes. Escribe",
         "confirmWord": "confirmar",
         "warnSuffix": "para continuar:",
         "placeholder": "Escribe confirmar",
@@ -662,13 +664,13 @@
       },
       "danger": {
         "title": "Eliminar siembra",
-        "desc": "Se eliminarán todas las actividades, fumigaciones y cosechas asociadas.",
+        "desc": "Dejará de verse en el lote. Sus gastos e ingresos se conservan en los reportes.",
         "button": "Eliminar siembra"
       },
       "delete": {
         "title": "Eliminar siembra",
         "aboutTo": "Estás a punto de eliminar la siembra de",
-        "warnPrefix": "Se eliminarán todas las actividades, fumigaciones y cosechas. Escribe",
+        "warnPrefix": "La siembra dejará de verse en el lote; si sigue en curso, se finaliza hoy. Sus actividades, fumigaciones, cosechas y jornales se conservan en los reportes de cultivos y costos. Escribe",
         "submit": "Eliminar siembra"
       },
       "errors": {

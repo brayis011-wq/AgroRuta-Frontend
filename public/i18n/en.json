@@ -360,6 +360,8 @@
     "error": "The data could not be loaded.",
     "vsPrevious": "{{pct}}% vs. last month",
     "noMatches": "No results for that filter.",
+    "deleted": "Deleted",
+    "deletedHint": "It was deleted from the app, but its costs and income are kept here.",
     "total": "Total",
     "sortBy": "Sort by",
     "payroll": {
@@ -452,7 +454,7 @@
         "title": "Delete farm",
         "aboutTo": "You are about to delete",
         "andLots": "and all its lots.",
-        "warnPrefix": "This action cannot be undone. Type",
+        "warnPrefix": "It will no longer show in the app. The cost and income history of its plantings is kept in the reports. Type",
         "confirmWord": "confirm",
         "warnSuffix": "to continue:",
         "placeholder": "Type confirm",
@@ -662,13 +664,13 @@
       },
       "danger": {
         "title": "Delete planting",
-        "desc": "All associated activities, sprayings and harvests will be deleted.",
+        "desc": "It will no longer show in the lot. Its costs and income are kept in the reports.",
         "button": "Delete planting"
       },
       "delete": {
         "title": "Delete planting",
         "aboutTo": "You are about to delete the planting of",
-        "warnPrefix": "All activities, sprayings and harvests will be deleted. Type",
+        "warnPrefix": "The planting will no longer show in the lot; if it is still in progress, it ends today. Its activities, sprayings, harvests and workdays are kept in the crop and cost reports. Type",
         "submit": "Delete planting"
       },
       "errors": {
