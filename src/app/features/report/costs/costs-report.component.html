@@ -97,7 +97,9 @@
             <p class="det-sub">{{ d.siembra.loteNombre }}@if (d.siembra.fincaNombre) { · {{ d.siembra.fincaNombre }} } · {{ fecha(d.siembra.fechaSiembra) }}</p>
             @if (d.siembra.eliminada) { <p class="det-sub"><span class="eliminada">{{ 'reports.deleted' | translate }}</span> {{ 'reports.deletedHint' | translate }}</p> }
           </div>
-          <a class="btn-sec" [routerLink]="['/cultivo/siembra', d.siembra.siembraId]"><i class="ti ti-external-link"></i> {{ 'reports.costs.openPlanting' | translate }}</a>
+          @if (!d.siembra.eliminada) {
+            <a class="btn-sec" [routerLink]="['/cultivo/siembra', d.siembra.siembraId]"><i class="ti ti-external-link"></i> {{ 'reports.costs.openPlanting' | translate }}</a>
+          }
         </header>
         <app-costos-siembra [siembraId]="d.siembra.siembraId" />
       </section>
