@@ -664,7 +664,7 @@
       },
       "danger": {
         "title": "Delete planting",
-        "desc": "All associated activities, sprayings and harvests will be deleted.",
+        "desc": "It will no longer show in the lot. Its costs and income are kept in the reports.",
         "button": "Delete planting"
       },
       "delete": {

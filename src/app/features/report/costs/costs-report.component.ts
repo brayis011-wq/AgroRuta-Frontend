@@ -63,8 +63,8 @@ export class CostsReportComponent extends ReportBase implements OnInit {
     if (this.elegida()) setTimeout(() => document.getElementById('detalle-costos')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   }
 
+  /** El backend ya envía "Cultivo · Variedad" (p. ej. "Café · Castillo"); antes se repetía el cultivo */
   nombre(f: FilaCostos): string {
-    const s = f.siembra;
-    return s.cultivo ? `${s.cultivo} · ${s.variedad}` : s.variedad;
+    return f.siembra.variedad;
   }
 }
