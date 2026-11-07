@@ -8,7 +8,10 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --silent
 COPY . .
-RUN npm run build -- --configuration=production
+# "production,docker" = build de producción, pero con environment.docker.ts (backend en localhost:8080).
+# Para compilar apuntando al backend de Render: docker build --build-arg NG_CONFIG=production .
+ARG NG_CONFIG=production,docker
+RUN npm run build -- --configuration=${NG_CONFIG}
 
 # STAGE 2: Nginx sirve los archivos estáticos
 FROM nginx:1.25-alpine
