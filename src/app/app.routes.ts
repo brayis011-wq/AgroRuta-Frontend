@@ -54,11 +54,6 @@ export const routes: Routes = [
         runGuardsAndResolvers: 'always'
       },
       {
-            path: 'backups',
-            canActivate: [adminGuard],
-            loadChildren: () => import('./features/backup/backup.routes').then((m) => m.BACKUP_ROUTES),
-      },
-      {
         path: 'configuracion',
         loadChildren: () =>
           import('./features/configuration/configuration.routes').then((m) => m.configurationRoutes),
