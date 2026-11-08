@@ -12,3 +12,9 @@ ul { padding-left: 1.2rem; margin: 0; }
 li { margin-bottom: .35rem; }
 a { color: var(--ar-verde-700); }
 .volver { margin-top: 2rem; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.idiomas { display: inline-flex; gap: .25rem; padding: .2rem; border-radius: 10px; background: var(--ar-superficie); border: 1px solid var(--ar-borde); }
+.idiomas button { border: 0; background: none; padding: .3rem .7rem; border-radius: 8px; font: inherit; font-size: .82rem; font-weight: 600; color: var(--ar-tinta-2); cursor: pointer; }
+.idiomas button.on { background: var(--ar-verde-100); color: var(--ar-verde-800); }
+.idiomas button:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.nota { margin: -1rem 0 1.25rem; font-size: .82rem; font-style: italic; color: var(--ar-tinta-3); }
