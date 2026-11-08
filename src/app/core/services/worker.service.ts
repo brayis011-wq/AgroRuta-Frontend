@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
-  Actividad, Pago, Cargo, Trabajador, Nomina, Jornal
+  Labor, Pago, Cargo, Trabajador, Nomina, Jornal
 } from '../models/worker.model';
 
 // ── DTOs ──────────────────────────────────────────────────────────────────────
@@ -65,13 +65,13 @@ export interface NominaRequest {
 // ── Servicios ──────────────────────────────────────────────────────────────────
 
 @Injectable({ providedIn: 'root' })
-export class ActividadService {
-  private api = `${environment.apiUrl}/api/worker/actividades`;
+export class LaborService {
+  private api = `${environment.apiUrl}/api/labores`;
   constructor(private http: HttpClient) {}
 
-  listar(): Observable<Actividad[]> { return this.http.get<Actividad[]>(this.api); }
-  crear(a: { nombre: string; descripcion?: string }): Observable<Actividad> { return this.http.post<Actividad>(this.api, a); }
-  actualizar(id: number, a: { nombre: string; descripcion?: string }): Observable<Actividad> { return this.http.put<Actividad>(`${this.api}/${id}`, a); }
+  listar(): Observable<Labor[]> { return this.http.get<Labor[]>(this.api); }
+  crear(a: { nombre: string; descripcion?: string }): Observable<Labor> { return this.http.post<Labor>(this.api, a); }
+  actualizar(id: number, a: { nombre: string; descripcion?: string }): Observable<Labor> { return this.http.put<Labor>(`${this.api}/${id}`, a); }
   desactivar(id: number): Observable<void> { return this.http.delete<void>(`${this.api}/${id}`); }
 }
 

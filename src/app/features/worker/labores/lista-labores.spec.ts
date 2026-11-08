@@ -4,20 +4,20 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
-import { ListaActividadesComponent } from './list-activities';
-import { ActividadService } from '../../../core/services/worker.service';
+import { ListaLaboresComponent } from './lista-labores';
+import { LaborService } from '../../../core/services/worker.service';
 
 const mockActividades = [
   { id: 1, nombre: 'Poda', descripcion: 'Poda de ramas', activo: true },
   { id: 2, nombre: 'Riego', descripcion: 'Riego manual', activo: true },
 ];
 
-describe('ListaActividadesComponent', () => {
+describe('ListaLaboresComponent', () => {
   // El diálogo de confirmación responde lo que diga cada prueba
   let respuesta = true;
   const confirmSvc = { preguntar: vi.fn(() => Promise.resolve(respuesta)) };
-  let component: ListaActividadesComponent;
-  let fixture: ComponentFixture<ListaActividadesComponent>;
+  let component: ListaLaboresComponent;
+  let fixture: ComponentFixture<ListaLaboresComponent>;
   let actividadServiceMock: any;
 
   beforeEach(async () => {
@@ -29,14 +29,14 @@ describe('ListaActividadesComponent', () => {
       desactivar: vi.fn().mockReturnValue(of({})),
     };
     await TestBed.configureTestingModule({
-      imports: [ListaActividadesComponent, ReactiveFormsModule, CommonModule],
+      imports: [ListaLaboresComponent, ReactiveFormsModule, CommonModule],
       providers: [
         { provide: ConfirmService, useValue: confirmSvc },
-        { provide: ActividadService, useValue: actividadServiceMock },
+        { provide: LaborService, useValue: actividadServiceMock },
         ChangeDetectorRef,
       ],
     }).compileComponents();
-    fixture = TestBed.createComponent(ListaActividadesComponent);
+    fixture = TestBed.createComponent(ListaLaboresComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

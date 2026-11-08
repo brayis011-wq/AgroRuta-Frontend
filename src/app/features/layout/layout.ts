@@ -78,7 +78,7 @@ export class LayoutComponent {
     { ruta: '/worker/nominas', clave: 'layout.nav.payrolls', contador: true },
     { ruta: '/worker/pagos', clave: 'layout.nav.payments' },
     { ruta: '/worker/cargos', clave: 'layout.nav.positions' },
-    { ruta: '/worker/actividades', clave: 'layout.nav.activities' },
+    { ruta: '/worker/labores', clave: 'layout.nav.activities' },
   ];
 
   readonly subReportes: ItemSubmenu[] = [

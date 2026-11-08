@@ -34,7 +34,7 @@
       "payrolls": "Payrolls",
       "payments": "Payments",
       "positions": "Positions",
-      "activities": "Activities",
+      "activities": "Tasks",
       "more": "More",
       "myFarms": "My farms",
       "newFarm": "New farm",
@@ -779,25 +779,25 @@
     "activities": {
       "commonHint": "Shared AgroRuta task: every farmer can use it and only the administrator can change it.",
       "common": "Shared",
-      "title": "Activities",
+      "title": "Tasks",
       "subtitle": "The tasks you record in wages. Shared ones come with AgroRuta; yours are only visible to you.",
-      "new": "New Activity",
-      "formNew": "New activity",
-      "formEdit": "Edit activity",
+      "new": "New task",
+      "formNew": "New task",
+      "formEdit": "Edit task",
       "name": "Name *",
       "namePlaceholder": "E.g.: Weeding",
       "description": "Description *",
-      "descriptionPlaceholder": "Activity description",
+      "descriptionPlaceholder": "Task description",
       "table": {
-        "activity": "Activity",
+        "activity": "Task",
         "description": "Description"
       },
       "active": "Active",
       "inactive": "Inactive",
-      "empty": "No activities registered",
-      "confirmDeactivate": "Deactivate the activity \"{{name}}\"?",
+      "empty": "No tasks registered",
+      "confirmDeactivate": "Deactivate the task \"{{name}}\"?",
       "errors": {
-        "load": "Error loading activities",
+        "load": "Error loading tasks",
         "save": "Error saving"
       }
     },
@@ -872,7 +872,7 @@
         "table": {
           "date": "Date",
           "crop": "Crop",
-          "activities": "Activities",
+          "activities": "Tasks",
           "value": "Value"
         },
         "settled": "Settled",
@@ -924,16 +924,16 @@
         "goToCrops": "Go to Crops",
         "notes": "Notes",
         "notesPlaceholder": "Additional notes (optional)",
-        "activitiesTitle": "Activities Performed *",
-        "selectAtLeast": "Select at least one activity",
-        "selectedCount": "{{count}} activity(ies) selected",
+        "activitiesTitle": "Tasks performed *",
+        "selectAtLeast": "Select at least one task",
+        "selectedCount": "{{count}} task(s) selected",
         "submit": "Log Workday",
         "saving": "Saving...",
         "errors": {
           "loadWorkers": "Error loading workers",
-          "loadActivities": "Error loading activities",
+          "loadActivities": "Error loading tasks",
           "loadCrops": "Your crops could not be loaded.",
-          "noActivity": "Select at least one activity",
+          "noActivity": "Select at least one task",
           "register": "Error logging workday"
         }
       },
@@ -971,7 +971,7 @@
           "date": "Date",
           "worker": "Worker",
           "crop": "Crop",
-          "activities": "Activities",
+          "activities": "Tasks",
           "value": "Value",
           "total": "Total"
         },
@@ -1067,7 +1067,7 @@
       },
       "title": "Workers",
       "subtitle": "Manage your work team",
-      "activities": "Activities",
+      "activities": "Tasks",
       "posts": "Positions",
       "newWorker": "New Worker",
       "tabs": {

@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { NuevoJornalComponent } from './new-wage';
-import { JornalService, TrabajadorService, ActividadService } from '../../../../core/services/worker.service';
+import { JornalService, TrabajadorService, LaborService } from '../../../../core/services/worker.service';
 
 const mkTrabajador = (estado = 'ACTIVO'): any => ({ id: 1, nombre: 'Juan', estado, nombreCompleto: 'Juan Perez' });
 const mkActividad  = (): any => ({ id: 1, nombre: 'Riego' });
@@ -35,7 +35,7 @@ describe('NuevoJornalComponent', () => {
         provideRouter([]),
         { provide: JornalService,     useValue: jornalSvc },
         { provide: TrabajadorService, useValue: trabajadorSvc },
-        { provide: ActividadService,  useValue: actividadSvc },
+        { provide: LaborService,  useValue: actividadSvc },
         {
           provide: ActivatedRoute,
           useValue: {

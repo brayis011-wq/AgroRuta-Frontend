@@ -8,12 +8,14 @@ export const workerRoutes: Routes = [
       import('./worker-home/worker-home').then((m) => m.WorkerHomeComponent),
   },
 
-  // ── Actividades
+  // ── Labores (catálogo de lo que hacen los trabajadores; no confundir con las actividades de una siembra)
   {
-    path: 'actividades',
+    path: 'labores',
     loadComponent: () =>
-      import('./activities/list-activities').then((m) => m.ListaActividadesComponent),
+      import('./labores/lista-labores').then((m) => m.ListaLaboresComponent),
   },
+  // Ruta anterior: se redirige para no romper enlaces guardados
+  { path: 'actividades', redirectTo: 'labores', pathMatch: 'full' },
 
   // ── Cargos
   {
