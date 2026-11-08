@@ -1,0 +1,212 @@
+<div class="cv">
+  <header class="cv-head">
+    <div>
+      <p class="eyebrow">{{ 'inventario.eyebrow' | translate }}</p>
+      <h1>{{ 'inventario.title' | translate }}</h1>
+      <p class="cv-sub">{{ 'inventario.subtitle' | translate }}</p>
+    </div>
+    <div class="cv-acciones">
+      <button type="button" class="btn btn-prim" (click)="abrirCompra()"><i class="ti ti-shopping-cart-plus" aria-hidden="true"></i> {{ 'inventario.buy' | translate }}</button>
+    </div>
+  </header>
+
+  @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error() | translate }}</p> }
+
+  @if (stock(); as lista) {
+    @if (lista.length) {
+      <div class="kpis tres">
+        <article class="kpi"><span class="ic verde" aria-hidden="true"><i class="ti ti-packages"></i></span>
+          <div><small>{{ 'inventario.kpi.items' | translate }}</small><strong>{{ lista.length }}</strong></div></article>
+        <article class="kpi"><span class="ic azul" aria-hidden="true"><i class="ti ti-coin"></i></span>
+          <div><small>{{ 'inventario.kpi.value' | translate }}</small><strong>{{ pesos(valorTotal()) }}</strong><em>{{ 'inventario.kpi.valueHint' | translate }}</em></div></article>
+        <article class="kpi"><span class="ic" [class.ambar]="conAvisos()" [class.gris]="!conAvisos()" aria-hidden="true"><i class="ti ti-alert-triangle"></i></span>
+          <div><small>{{ 'inventario.kpi.alerts' | translate }}</small><strong>{{ conAvisos() }}</strong><em>{{ 'inventario.kpi.alertsHint' | translate }}</em></div></article>
+      </div>
+    }
+
+    <section class="tarjeta">
+      <header><h2><i class="ti ti-building-warehouse" aria-hidden="true"></i> {{ 'inventario.list' | translate }}</h2></header>
+      @if (!lista.length) {
+        <div class="vacio">
+          <i class="ti ti-building-warehouse" aria-hidden="true"></i>
+          <p>{{ 'inventario.empty' | translate }}</p>
+          <button type="button" class="btn btn-prim" (click)="abrirCompra()"><i class="ti ti-shopping-cart-plus" aria-hidden="true"></i> {{ 'inventario.buy' | translate }}</button>
+        </div>
+      } @else {
+        <div class="tabla-wrap">
+          <table class="tabla resp">
+            <thead>
+              <tr>
+                <th>{{ 'inventario.table.item' | translate }}</th>
+                <th class="num">{{ 'inventario.table.stock' | translate }}</th>
+                <th class="num">{{ 'inventario.table.minimum' | translate }}</th>
+                <th class="num">{{ 'inventario.table.avgCost' | translate }}</th>
+                <th class="num">{{ 'inventario.table.value' | translate }}</th>
+                <th><span class="sr-only">{{ 'common.actions' | translate }}</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of lista; track s.insumoId) {
+                <tr [class.sel]="abierto() === s.insumoId">
+                  <td class="prin">
+                    <span class="fuerte-n">{{ s.nombre }}</span>
+                    @if (s.tipo) { <small class="suave bloque">{{ 'enums.tipoInsumo.' + s.tipo | translate }}</small> }
+                  </td>
+                  <td class="num">
+                    <span class="fuerte-n">{{ cantidad(s.cantidad, s.unidadBase) }}</span>
+                    @if (s.estado !== 'OK') { <span class="est-stock" [class]="'est-stock ' + s.estado">{{ 'inventario.status.' + s.estado | translate }}</span> }
+                  </td>
+                  <td class="num suave">{{ s.stockMinimo == null ? '—' : cantidad(s.stockMinimo, s.unidadBase) }}</td>
+                  <td class="num suave">{{ costoGrande(s) }}</td>
+                  <td class="num">{{ pesos(s.valorStock) }}</td>
+                  <td class="acc">
+                    <span class="acc-in">
+                      <button type="button" class="btn-ic verde-h" (click)="abrirCompra(s)" [title]="'inventario.buy' | translate" [attr.aria-label]="'inventario.buy' | translate"><i class="ti ti-shopping-cart-plus" aria-hidden="true"></i></button>
+                      <button type="button" class="btn-ic" (click)="abrirAjuste(s)" [title]="'inventario.adjust' | translate" [attr.aria-label]="'inventario.adjust' | translate"><i class="ti ti-scale" aria-hidden="true"></i></button>
+                      <button type="button" class="btn-ic" (click)="abrirMinimo(s)" [title]="'inventario.minimum' | translate" [attr.aria-label]="'inventario.minimum' | translate"><i class="ti ti-bell" aria-hidden="true"></i></button>
+                      <button type="button" class="btn-ic" (click)="alternarHistorial(s)" [title]="'inventario.history.title' | translate" [attr.aria-label]="'inventario.history.title' | translate" [attr.aria-expanded]="abierto() === s.insumoId"><i class="ti ti-history" aria-hidden="true"></i></button>
+                    </span>
+                  </td>
+                </tr>
+                @if (abierto() === s.insumoId) {
+                  <tr class="historial-fila">
+                    <td colspan="6">
+                      <div class="historial">
+                        <p class="historial-tit">{{ 'inventario.history.title' | translate }} · {{ s.nombre }}</p>
+                        @if (!movimientos().length) {
+                          <p class="suave">{{ 'inventario.history.empty' | translate }}</p>
+                        } @else {
+                          <ul>
+                            @for (m of movimientos(); track m.id) {
+                              <li>
+                                <span class="mov-tipo" [class]="'mov-tipo ' + m.tipo">{{ 'inventario.history.type.' + m.tipo | translate }}</span>
+                                <span class="mov-cant" [class.resta]="efecto(m) < 0">{{ efecto(m) > 0 ? '+' : '' }}{{ cantidad(efecto(m), s.unidadBase) }}</span>
+                                <span class="suave">{{ m.fecha }}</span>
+                                @if (m.costoTotal != null) { <span>{{ pesos(m.costoTotal) }}</span> }
+                                @if (m.proveedor) { <span class="suave">{{ m.proveedor }}</span> }
+                                @if (m.observaciones) { <span class="suave">{{ m.observaciones }}</span> }
+                                @if (m.tipo === 'USO') {
+                                  <span class="suave" [title]="'inventario.history.fromSprayHint' | translate"><i class="ti ti-spray" aria-hidden="true"></i> {{ 'inventario.history.fromSpray' | translate }}</span>
+                                } @else {
+                                  <button type="button" class="btn-ic peligro" (click)="eliminar(m, s)" [title]="'temporadas.registro.delete' | translate" [attr.aria-label]="'temporadas.registro.delete' | translate"><i class="ti ti-trash" aria-hidden="true"></i></button>
+                                }
+                              </li>
+                            }
+                          </ul>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="nota pista">{{ 'inventario.hint' | translate }}</p>
+      }
+    </section>
+  } @else {
+    <p class="suave">{{ 'common.loading' | translate }}</p>
+  }
+</div>
+
+@if (panel(); as p) {
+  <button type="button" class="overlay-l" (click)="cerrar()" [attr.aria-label]="'common.cancel' | translate"></button>
+  <dialog class="lado" open (keydown.escape)="cerrar()">
+    <header class="lado-head">
+      <span class="ic verde" aria-hidden="true"><i class="ti" [class.ti-shopping-cart-plus]="p === 'compra'" [class.ti-scale]="p === 'ajuste'" [class.ti-bell]="p === 'minimo'"></i></span>
+      <div>
+        <h2>{{ ('inventario.form.' + p + 'Title') | translate }}</h2>
+        @if (sobre(); as s) { <p>{{ s.nombre }} · {{ cantidad(s.cantidad, s.unidadBase) }}</p> }
+      </div>
+      <button type="button" class="btn-ic" (click)="cerrar()" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </header>
+
+    @if (p === 'compra') {
+      <form class="lado-cuerpo" [formGroup]="compra" (ngSubmit)="guardarCompra()">
+        @if (errorForm()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ errorForm() | translate }}</p> }
+        <div class="campos">
+          <label class="campo ancho"><span>{{ 'inventario.form.item' | translate }}</span>
+            <select formControlName="insumoId" [class.invalido]="invalido('compra', 'insumoId')">
+              <option [ngValue]="null" disabled>{{ 'inventario.form.itemPlaceholder' | translate }}</option>
+              @for (i of catalogo(); track i.id) { <option [ngValue]="i.id">{{ i.nombre }} · {{ 'enums.tipoInsumo.' + i.tipo | translate }}</option> }
+            </select>
+            @if (invalido('compra', 'insumoId')) { <em class="err">{{ 'common.required' | translate }}</em> }
+          </label>
+          <label class="campo"><span>{{ 'inventario.form.quantity' | translate }}</span>
+            <input formControlName="cantidad" type="number" min="0" step="any" inputmode="decimal" [class.invalido]="invalido('compra', 'cantidad')" />
+            @if (invalido('compra', 'cantidad')) { <em class="err">{{ 'inventario.form.quantityError' | translate }}</em> }
+          </label>
+          <label class="campo"><span>{{ 'inventario.form.unit' | translate }}</span>
+            <select formControlName="unidad">
+              @for (u of unidadesCompra(); track u) { <option [value]="u">{{ 'enums.unidadMedida.' + u | translate }}</option> }
+            </select>
+          </label>
+          <label class="campo"><span>{{ 'inventario.form.totalCost' | translate }} <small class="suave">({{ 'common.optional' | translate }})</small></span>
+            <input formControlName="costoTotal" type="number" min="0" step="any" inputmode="decimal" />
+            <small class="suave">{{ 'inventario.form.totalCostHint' | translate }}</small>
+          </label>
+          <label class="campo"><span>{{ 'inventario.form.date' | translate }}</span>
+            <input formControlName="fecha" type="date" />
+          </label>
+          <label class="campo ancho"><span>{{ 'inventario.form.supplier' | translate }} <small class="suave">({{ 'common.optional' | translate }})</small></span>
+            <input formControlName="proveedor" type="text" maxlength="150" />
+          </label>
+          <label class="campo ancho"><span>{{ 'inventario.form.notes' | translate }} <small class="suave">({{ 'common.optional' | translate }})</small></span>
+            <input formControlName="observaciones" type="text" maxlength="500" />
+          </label>
+        </div>
+        <footer class="lado-pie">
+          <button type="button" class="btn btn-texto" (click)="cerrar()">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-prim" [disabled]="guardando()"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando() ? 'common.saving' : 'common.save') | translate }}</button>
+        </footer>
+      </form>
+    }
+
+    @if (p === 'ajuste' && sobre(); as s) {
+      <form class="lado-cuerpo" [formGroup]="ajuste" (ngSubmit)="guardarAjuste()">
+        @if (errorForm()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ errorForm() | translate }}</p> }
+        <p class="suave">{{ 'inventario.form.adjustHint' | translate }}</p>
+        <div class="campos">
+          <label class="campo"><span>{{ 'inventario.form.counted' | translate }}</span>
+            <input formControlName="cantidadReal" type="number" min="0" step="any" inputmode="decimal" [class.invalido]="invalido('ajuste', 'cantidadReal')" />
+          </label>
+          <label class="campo"><span>{{ 'inventario.form.unit' | translate }}</span>
+            <select formControlName="unidad">
+              @for (u of unidadesDe(s.unidadBase); track u) { <option [value]="u">{{ 'enums.unidadMedida.' + u | translate }}</option> }
+            </select>
+          </label>
+          <label class="campo ancho"><span>{{ 'inventario.form.reason' | translate }} <small class="suave">({{ 'common.optional' | translate }})</small></span>
+            <input formControlName="observaciones" type="text" maxlength="500" [placeholder]="'inventario.form.reasonPlaceholder' | translate" />
+          </label>
+        </div>
+        <footer class="lado-pie">
+          <button type="button" class="btn btn-texto" (click)="cerrar()">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-prim" [disabled]="guardando()"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando() ? 'common.saving' : 'common.save') | translate }}</button>
+        </footer>
+      </form>
+    }
+
+    @if (p === 'minimo' && sobre(); as s) {
+      <form class="lado-cuerpo" [formGroup]="minimo" (ngSubmit)="guardarMinimo()">
+        @if (errorForm()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ errorForm() | translate }}</p> }
+        <p class="suave">{{ 'inventario.form.minimumHint' | translate }}</p>
+        <div class="campos">
+          <label class="campo"><span>{{ 'inventario.form.minimum' | translate }}</span>
+            <input formControlName="minimo" type="number" min="0" step="any" inputmode="decimal" />
+          </label>
+          <label class="campo"><span>{{ 'inventario.form.unit' | translate }}</span>
+            <select formControlName="unidad">
+              @for (u of unidadesDe(s.unidadBase); track u) { <option [value]="u">{{ 'enums.unidadMedida.' + u | translate }}</option> }
+            </select>
+          </label>
+        </div>
+        <footer class="lado-pie">
+          @if (s.stockMinimo != null) { <button type="button" class="btn btn-texto" (click)="guardarMinimo(true)">{{ 'inventario.form.removeMinimum' | translate }}</button> }
+          <button type="button" class="btn btn-texto" (click)="cerrar()">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-prim" [disabled]="guardando()"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando() ? 'common.saving' : 'common.save') | translate }}</button>
+        </footer>
+      </form>
+    }
+  </dialog>
+}

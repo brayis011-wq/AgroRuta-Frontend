@@ -103,6 +103,9 @@ export interface Fumigacion {
   reentradaHoras?: number | null;
   /** Costo del producto aplicado (COP) */
   costo?: number | null;
+  /** Producto gastado en total (se descontó de la bodega); la dosis es una concentración */
+  cantidadUsada?: number | null;
+  unidadCantidad?: 'LITROS' | 'ML' | 'GRAMOS' | 'KG' | null;
   dosis: number;
   unidadMedida: 'LITROS' | 'ML' | 'GRAMOS' | 'KG';
   areaAplicada: number;

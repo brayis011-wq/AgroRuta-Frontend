@@ -225,6 +225,37 @@
           </div>
         </div>
 
+        <!-- Cantidad total gastada: se descuenta de la bodega (solo con producto del catálogo) -->
+        <div class="field-row bodega" *ngIf="insumoSeleccionado() as insumo">
+          <div class="field">
+            <label class="field__label" for="cantidadUsada"><i class="ti ti-building-warehouse" aria-hidden="true"></i> {{ 'inventario.spray.used' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
+            <div class="field__input-wrap">
+              <input id="cantidadUsada" type="number" min="0" step="any" inputmode="decimal"
+                     [(ngModel)]="form.cantidadUsada" name="cantidadUsada" placeholder="0" (ngModelChange)="actualizarEstimado()" />
+            </div>
+            <small class="campo-hint">{{ 'inventario.spray.usedHint' | translate }}</small>
+          </div>
+          <div class="field">
+            <label class="field__label" for="unidadCantidad"><i class="ti ti-ruler-2" aria-hidden="true"></i> {{ 'siembra.spray.unit' | translate }}</label>
+            <div class="field__input-wrap">
+              <select id="unidadCantidad" [(ngModel)]="form.unidadCantidad" name="unidadCantidad" (ngModelChange)="actualizarEstimado()">
+                <option *ngFor="let u of unidadesCantidad(insumo)" [value]="u">{{ 'enums.unidadMedida.' + u | translate }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="bodega-info" *ngIf="insumoSeleccionado() && estimado() as e">
+          <p *ngIf="e.disponible !== 0 || e.costoPorUnidad != null; else sinCompras">
+            <i class="ti ti-packages" aria-hidden="true"></i> {{ 'inventario.spray.inStock' | translate: { cantidad: cantidadBodega(e) } }}
+          </p>
+          <ng-template #sinCompras><p class="suave"><i class="ti ti-info-circle" aria-hidden="true"></i> {{ 'inventario.spray.notInStock' | translate }}</p></ng-template>
+          <p *ngIf="e.costo != null && form.cantidadUsada">
+            <i class="ti ti-calculator" aria-hidden="true"></i> {{ 'inventario.spray.estimated' | translate: { costo: pesos(e.costo) } }}
+            <button type="button" class="btn-link" *ngIf="form.costo !== e.costo" (click)="usarCostoEstimado()">{{ 'inventario.spray.useEstimated' | translate }}</button>
+          </p>
+          <p class="suave" *ngIf="e.costoPorUnidad == null && form.cantidadUsada">{{ 'inventario.spray.noPrice' | translate }}</p>
+        </div>
+
         <div class="field">
           <label class="field__label" for="costoProducto"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'temporadas.costos.sprayCost' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
           <div class="field__input-wrap">
