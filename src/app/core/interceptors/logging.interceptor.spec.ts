@@ -5,6 +5,9 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 import { loggingInterceptor } from './logging.interceptor';
 import { LoggingService } from '../services/logging.service';
+import { environment } from '../../../environments/environment';
+
+const API = environment.apiUrl;
 
 describe('loggingInterceptor', () => {
   let loggingServiceMock: any;
@@ -28,12 +31,23 @@ describe('loggingInterceptor', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
+  it('no toca las llamadas a servicios externos (clima, mapas, traducciones)', () => {
+    const req: any = { method: 'GET', url: 'https://api.openweathermap.org/data/2.5/weather', clone: vi.fn() };
+    const next = vi.fn().mockReturnValue(of({}));
+
+    interceptor(req, next).subscribe();
+
+    expect(req.clone).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(req);
+    expect(loggingServiceMock.debug).not.toHaveBeenCalled();
+  });
+
   it('should add X-Trace-Id header and log request', () => {
     return new Promise<void>((resolve) => {
       const req = {
         method: 'GET',
-        url: '/api/test',
-        clone: vi.fn().mockReturnValue({ method: 'GET', url: '/api/test' }),
+        url: API + '/api/test',
+        clone: vi.fn().mockReturnValue({ method: 'GET', url: API + '/api/test' }),
       } as any;
       const next = vi.fn().mockReturnValue(of({ type: 4 }));
 
@@ -45,10 +59,10 @@ describe('loggingInterceptor', () => {
             })
           );
           expect(loggingServiceMock.debug).toHaveBeenCalledWith(
-            expect.stringContaining('GET /api/test')
+            expect.stringContaining('GET ' + API + '/api/test')
           );
           expect(loggingServiceMock.info).toHaveBeenCalledWith(
-            expect.stringContaining('GET /api/test')
+            expect.stringContaining('GET ' + API + '/api/test')
           );
           resolve();
         },
@@ -60,8 +74,8 @@ describe('loggingInterceptor', () => {
     return new Promise<void>((resolve) => {
       const req = {
         method: 'POST',
-        url: '/api/fail',
-        clone: vi.fn().mockReturnValue({ method: 'POST', url: '/api/fail' }),
+        url: API + '/api/fail',
+        clone: vi.fn().mockReturnValue({ method: 'POST', url: API + '/api/fail' }),
       } as any;
       const httpError = new HttpErrorResponse({ status: 500, error: 'Server error' });
       const next = vi.fn().mockReturnValue(throwError(() => httpError));
@@ -83,8 +97,8 @@ describe('loggingInterceptor', () => {
     return new Promise<void>((resolve) => {
       const req = {
         method: 'GET',
-        url: '/api/trace',
-        clone: vi.fn().mockReturnValue({ method: 'GET', url: '/api/trace' }),
+        url: API + '/api/trace',
+        clone: vi.fn().mockReturnValue({ method: 'GET', url: API + '/api/trace' }),
       } as any;
       const next = vi.fn().mockReturnValue(of({ type: 4 }));
 
