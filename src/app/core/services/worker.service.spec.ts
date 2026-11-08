@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import {
-  ActividadService,
+  LaborService,
   CargoService,
   TrabajadorService,
   NominaService,
@@ -23,18 +23,18 @@ const mockJornal: any     = { id: 1, trabajadorId: 1, cultivoId: 2, fecha: '2024
 const mockPago: any       = { id: 1, nominaId: 1, monto: 200000, metodoPago: 'EFECTIVO' };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// ActividadService
+// LaborService
 // ═══════════════════════════════════════════════════════════════════════════
-describe('ActividadService', () => {
-  let service: ActividadService;
+describe('LaborService', () => {
+  let service: LaborService;
   let http: HttpTestingController;
-  const base = `${api}/api/worker/actividades`;
+  const base = `${api}/api/labores`;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting(), ActividadService],
+      providers: [provideHttpClient(), provideHttpClientTesting(), LaborService],
     });
-    service = TestBed.inject(ActividadService);
+    service = TestBed.inject(LaborService);
     http    = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());

@@ -27,7 +27,7 @@ const PAGINAS: { clave: string; icono: string; ruta: string; query?: Record<stri
   { clave: 'layout.nav.payrolls', icono: 'ti-file-invoice', ruta: '/worker/nominas' },
   { clave: 'layout.nav.payments', icono: 'ti-cash', ruta: '/worker/pagos' },
   { clave: 'layout.nav.positions', icono: 'ti-id-badge-2', ruta: '/worker/cargos' },
-  { clave: 'layout.nav.activities', icono: 'ti-checklist', ruta: '/worker/actividades' },
+  { clave: 'layout.nav.activities', icono: 'ti-checklist', ruta: '/worker/labores' },
   { clave: 'layout.nav.reportPayroll', icono: 'ti-report-money', ruta: '/reportes', query: { tab: 'payroll' } },
   { clave: 'layout.nav.reportCrops', icono: 'ti-chart-bar', ruta: '/reportes', query: { tab: 'crops' } },
   { clave: 'layout.nav.settings', icono: 'ti-settings', ruta: '/configuracion' },

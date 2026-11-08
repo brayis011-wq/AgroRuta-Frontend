@@ -1,6 +1,6 @@
 // src/app/core/models/worker.model.ts
 
-export interface Actividad {
+export interface Labor {
   id?: number;
   nombre: string;
   descripcion?: string;
@@ -67,7 +67,7 @@ export interface Jornal {
   pago: number;
   fecha?: string | Date;
   trabajador?: Trabajador;
-  actividades?: Actividad[];
+  actividades?: Labor[];
   nombreCultivo?: string;
   cultivoId?: number;
   valorJornal?: number;

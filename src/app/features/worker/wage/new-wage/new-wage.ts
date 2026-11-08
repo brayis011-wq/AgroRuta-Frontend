@@ -9,9 +9,9 @@ import {
   JornalRequest,
   CultivoDisponible,
   TrabajadorService,
-  ActividadService
+  LaborService
 } from '../../../../core/services/worker.service';
-import { Trabajador, Actividad } from '../../../../core/models/worker.model';
+import { Trabajador, Labor } from '../../../../core/models/worker.model';
 
 @Component({
   selector: 'app-nuevo-jornal',
@@ -23,7 +23,7 @@ import { Trabajador, Actividad } from '../../../../core/models/worker.model';
 export class NuevoJornalComponent implements OnInit {
   form!: FormGroup;
   trabajadores: Trabajador[] = [];
-  actividades: Actividad[] = [];
+  actividades: Labor[] = [];
   actividadesSeleccionadas: Set<number> = new Set();
 
   /** Cultivos activos del agricultor y las fincas donde están */
@@ -43,7 +43,7 @@ export class NuevoJornalComponent implements OnInit {
     private fb: FormBuilder,
     private jornalService: JornalService,
     private trabajadorService: TrabajadorService,
-    private actividadService: ActividadService,
+    private actividadService: LaborService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -97,7 +97,7 @@ export class NuevoJornalComponent implements OnInit {
     });
 
     this.actividadService.listar().subscribe({
-      next: (a: Actividad[]) => { this.actividades = a; this.cdr.markForCheck(); },
+      next: (a: Labor[]) => { this.actividades = a; this.cdr.markForCheck(); },
       error: () => { this.error = 'workers.wages.new.errors.loadActivities'; this.cdr.markForCheck(); }
     });
   }

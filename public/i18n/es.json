@@ -34,7 +34,7 @@
       "payrolls": "Nóminas",
       "payments": "Pagos",
       "positions": "Cargos",
-      "activities": "Actividades",
+      "activities": "Labores",
       "more": "Más",
       "myFarms": "Mis fincas",
       "newFarm": "Nueva finca",
@@ -779,25 +779,25 @@
     "activities": {
       "commonHint": "Labor común de AgroRuta: la pueden usar todos los agricultores y solo el administrador la modifica.",
       "common": "Común",
-      "title": "Actividades",
+      "title": "Labores",
       "subtitle": "Las labores que registras en los jornales. Las comunes vienen con AgroRuta; las tuyas solo las ves tú.",
-      "new": "Nueva Actividad",
-      "formNew": "Nueva actividad",
-      "formEdit": "Editar actividad",
+      "new": "Nueva labor",
+      "formNew": "Nueva labor",
+      "formEdit": "Editar labor",
       "name": "Nombre *",
       "namePlaceholder": "Ej: Deshierbe",
       "description": "Descripción *",
-      "descriptionPlaceholder": "Descripción de la actividad",
+      "descriptionPlaceholder": "Descripción de la labor",
       "table": {
-        "activity": "Actividad",
+        "activity": "Labor",
         "description": "Descripción"
       },
       "active": "Activa",
       "inactive": "Inactiva",
-      "empty": "No hay actividades registradas",
-      "confirmDeactivate": "¿Desactivar la actividad \"{{name}}\"?",
+      "empty": "No hay labores registradas",
+      "confirmDeactivate": "¿Desactivar la labor \"{{name}}\"?",
       "errors": {
-        "load": "Error al cargar actividades",
+        "load": "Error al cargar las labores",
         "save": "Error al guardar"
       }
     },
@@ -872,7 +872,7 @@
         "table": {
           "date": "Fecha",
           "crop": "Cultivo",
-          "activities": "Actividades",
+          "activities": "Labores",
           "value": "Valor"
         },
         "settled": "Liquidado",
@@ -924,16 +924,16 @@
         "goToCrops": "Ir a Cultivos",
         "notes": "Observaciones",
         "notesPlaceholder": "Notas adicionales (opcional)",
-        "activitiesTitle": "Actividades Realizadas *",
-        "selectAtLeast": "Selecciona al menos una actividad",
-        "selectedCount": "{{count}} actividad(es) seleccionada(s)",
+        "activitiesTitle": "Labores realizadas *",
+        "selectAtLeast": "Selecciona al menos una labor",
+        "selectedCount": "{{count}} labor(es) seleccionada(s)",
         "submit": "Registrar Jornal",
         "saving": "Registrando...",
         "errors": {
           "loadWorkers": "Error al cargar trabajadores",
-          "loadActivities": "Error al cargar actividades",
+          "loadActivities": "Error al cargar las labores",
           "loadCrops": "No se pudieron cargar tus cultivos.",
-          "noActivity": "Selecciona al menos una actividad",
+          "noActivity": "Selecciona al menos una labor",
           "register": "Error al registrar jornal"
         }
       },
@@ -971,7 +971,7 @@
           "date": "Fecha",
           "worker": "Trabajador",
           "crop": "Cultivo",
-          "activities": "Actividades",
+          "activities": "Labores",
           "value": "Valor",
           "total": "Total"
         },
@@ -1067,7 +1067,7 @@
       },
       "title": "Trabajadores",
       "subtitle": "Administra tu equipo de trabajo",
-      "activities": "Actividades",
+      "activities": "Labores",
       "posts": "Cargos",
       "newWorker": "Nuevo Trabajador",
       "tabs": {
