@@ -13,6 +13,12 @@ export const cultivoRoutes: Routes = [
     canActivate: [authGuard]
   },
   {
+    // Bodega de insumos (una por agricultor)
+    path: 'inventario',
+    loadComponent: () => import('./inventario/inventario').then(m => m.InventarioComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'nueva-finca',
     loadComponent: () => import('./fincas/nueva-finca/nueva-finca').then(m => m.NuevaFincaComponent),
     canActivate: [authGuard]

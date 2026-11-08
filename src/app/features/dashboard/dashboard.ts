@@ -9,6 +9,7 @@ import { CultivoService } from '../../core/services/cultivo.service';
 import { LanguageService } from '../../core/services/language.service';
 import { FincaActivaService } from '../../core/services/finca-activa.service';
 import { JornalService, NominaService, PagoService, TrabajadorService } from '../../core/services/worker.service';
+import { InventarioService } from '../../core/services/inventario.service';
 import { Jornal, Nomina, Pago, Trabajador } from '../../core/models/worker.model';
 import { EventoCalendario, Finca, Lote, Siembra } from '../../core/models/cultivo.model';
 import { ICONO_EVENTO, TONO_EVENTO, diasHasta, esPorVenir, ordenAgenda, textoEvento } from '../cultivo/calendario/eventos';
@@ -56,6 +57,7 @@ export class DashboardComponent implements OnInit {
   private readonly pagos = inject(PagoService);
   private readonly trabajadores = inject(TrabajadorService);
   private readonly jornales = inject(JornalService);
+  private readonly inventario = inject(InventarioService);
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
   readonly lang = inject(LanguageService);
@@ -74,6 +76,8 @@ export class DashboardComponent implements OnInit {
   readonly cultivos = signal<CultivoEnCurso[] | null>(null);
   /** Lo que viene en el calendario de las próximas semanas (null mientras carga) */
   readonly agenda = signal<EventoCalendario[] | null>(null);
+  /** Insumos bajos, agotados o en negativo en la bodega */
+  readonly avisosBodega = signal(0);
 
   /** Lo que requiere atención, en orden de urgencia; solo lo que tiene algo */
   readonly pendientes = computed<Pendiente[]>(() => {
@@ -84,6 +88,7 @@ export class DashboardComponent implements OnInit {
       { clave: 'toPay', n: r.sinPagar.n, monto: r.sinPagar.total, icono: 'ti-cash', tono: 'azul', ruta: '/worker/nominas', accion: 'pay' },
       { clave: 'portal', n: r.solicitudesPortal, icono: 'ti-user-check', tono: 'verde', ruta: '/worker', accion: 'approve' },
       { clave: 'noWage', n: r.sinJornalHoy, icono: 'ti-calendar-plus', tono: 'gris', ruta: '/worker/jornales/nuevo', accion: 'register' },
+      { clave: 'storeroom', n: this.avisosBodega(), icono: 'ti-building-warehouse', tono: 'ambar', ruta: '/cultivo/inventario', accion: 'review' },
       { clave: 'freeLots', n: r.lotesDisponibles, icono: 'ti-seeding', tono: 'verde', ruta: '/cultivo', accion: 'plant' },
     ];
     return lista.filter((p) => p.n > 0);
@@ -102,6 +107,7 @@ export class DashboardComponent implements OnInit {
     if (id == null) { this.cargando.set(false); return; }
     const desde = iso(inicioMesAnterior(this.hoy));
     const hasta = iso(this.hoy);
+    this.inventario.avisos().pipe(catchError(() => of([]))).subscribe((a) => this.avisosBodega.set(a.length));
     // Si una consulta falla, el Inicio igual se muestra con lo demás
     const vacio = <T>(o: Observable<T[]>): Observable<T[]> => o.pipe(catchError(() => of([] as T[])));
 

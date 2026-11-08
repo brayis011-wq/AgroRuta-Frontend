@@ -27,6 +27,11 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CultivoService }           from '../../../../core/services/cultivo.service';
 import { AgriculturalInputService } from '../../../../core/services/AgriculturalInput.service';
 import { AgriculturalInput, MeasurementUnit } from '../../../../core/models/AgriculturalInput.model';
+import { InventarioService } from '../../../../core/services/inventario.service';
+import { LanguageService } from '../../../../core/services/language.service';
+import {
+  CostoEstimado, formatoCantidad, unidadBaseDe, unidadGrande, unidadesDe,
+} from '../../../../core/models/inventario.model';
 
 interface FumigacionForm {
   fecha: string;
@@ -43,6 +48,9 @@ interface FumigacionForm {
   reentradaHoras: number | null;
   /** Costo del producto aplicado (COP) */
   costo: number | null;
+  /** Producto gastado en total (se descuenta de la bodega); la dosis es una concentración */
+  cantidadUsada: number | null;
+  unidadCantidad: MeasurementUnit | '';
 }
 
 @Component({
@@ -61,6 +69,12 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   private readonly cultivoSvc = inject(CultivoService);
   private readonly inputSvc: AgriculturalInputService = inject(AgriculturalInputService);
   private readonly translate = inject(TranslateService);
+  private readonly inventario = inject(InventarioService);
+  private readonly lang = inject(LanguageService);
+
+  /** Lo que hay en bodega del insumo elegido y el costo de la cantidad usada a precio promedio */
+  estimado = signal<CostoEstimado | null>(null);
+  private readonly estimar$ = new Subject<void>();
 
   siembraId!: number;
   /** Id de la fumigación cuando se está editando */
@@ -98,6 +112,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     diasCarencia: null,
     reentradaHoras: null,
     costo: null,
+    cantidadUsada: null,
+    unidadCantidad: '',
   };
 
   readonly unidades: MeasurementUnit[] = ['LITROS', 'ML', 'GRAMOS', 'KG'];
@@ -143,6 +159,24 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
         this.mostrarCatalogo.set(resultados.length > 0);
         this.cdr.markForCheck();
       });
+
+    // Bodega: lo disponible y el costo de la cantidad usada (sin cantidad se pide con 0 para ver lo disponible)
+    this.estimar$
+      .pipe(
+        debounceTime(250),
+        switchMap(() => {
+          const insumo = this.insumoSeleccionado();
+          const unidad = this.form.unidadCantidad;
+          if (!insumo || !unidad) return of(null);
+          const cantidad = Number(this.form.cantidadUsada) > 0 ? Number(this.form.cantidadUsada) : 0;
+          return this.inventario.costoEstimado(insumo.id, cantidad, unidad).pipe(catchError(() => of(null)));
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((e) => {
+        this.estimado.set(e);
+        this.cdr.markForCheck();
+      });
   }
 
   /** Llena el formulario con la fumigación guardada (y su insumo del catálogo, si tenía) */
@@ -161,6 +195,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           diasCarencia: f.diasCarencia ?? null,
           reentradaHoras: f.reentradaHoras ?? null,
           costo: f.costo ?? null,
+          cantidadUsada: f.cantidadUsada ?? null,
+          unidadCantidad: f.unidadCantidad ?? '',
         };
         this.busquedaProducto = f.producto;
         this.cdr.markForCheck();
@@ -168,6 +204,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           this.inputSvc.getById(f.agriculturalInputId).pipe(takeUntil(this.destroy$)).subscribe({
             next: (insumo) => {
               this.insumoSeleccionado.set(insumo);
+              if (!this.form.unidadCantidad) this.form.unidadCantidad = unidadGrande(unidadBaseDe(insumo.unidadSugerida));
+              this.actualizarEstimado();
               this.cdr.markForCheck();
             },
             error: () => { /* el insumo ya no está en el catálogo: queda como texto */ },
@@ -200,7 +238,10 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.form.dosis               = insumo.dosisSugerida;
     this.form.reentradaHoras      = insumo.reentradaHoras ?? null;
     this.form.diasCarencia        = insumo.diasCarencia ?? null;
+    this.form.cantidadUsada       = null;
+    this.form.unidadCantidad      = unidadGrande(unidadBaseDe(insumo.unidadSugerida));
     this.mostrarCatalogo.set(false);
+    this.actualizarEstimado();
   }
 
   limpiarInsumo(): void {
@@ -212,6 +253,36 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.form.dosis               = undefined;
     this.form.reentradaHoras      = null;
     this.form.diasCarencia        = null;
+    this.form.cantidadUsada       = null;
+    this.form.unidadCantidad      = '';
+    this.estimado.set(null);
+  }
+
+  // ── Bodega de insumos ────────────────────────────────────────
+  actualizarEstimado(): void {
+    this.estimar$.next();
+  }
+
+  /** Solo unidades del mismo tipo que el insumo (litros/ml o kilos/gramos) */
+  unidadesCantidad(insumo: AgriculturalInput): MeasurementUnit[] {
+    return unidadesDe(unidadBaseDe(insumo.unidadSugerida));
+  }
+
+  usarCostoEstimado(): void {
+    const e = this.estimado();
+    if (e?.costo != null) this.form.costo = e.costo;
+  }
+
+  cantidadBodega(e: CostoEstimado): string {
+    return formatoCantidad(e.disponible, e.unidadBase, this.locale());
+  }
+
+  pesos(v: number): string {
+    return new Intl.NumberFormat(this.locale(), { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
+  }
+
+  private locale(): string {
+    return this.lang.current() === 'en' ? 'en-US' : 'es-CO';
   }
 
   usarProductoManual(): void {
@@ -303,6 +374,9 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       diasCarencia:        this.form.diasCarencia,
       reentradaHoras:      this.form.reentradaHoras,
       costo:               this.form.costo,
+      // Solo con producto del catálogo se descuenta de la bodega
+      cantidadUsada:       this.form.agriculturalInputId && Number(this.form.cantidadUsada) > 0 ? Number(this.form.cantidadUsada) : null,
+      unidadCantidad:      this.form.agriculturalInputId && Number(this.form.cantidadUsada) > 0 ? (this.form.unidadCantidad || null) : null,
     };
 
     const peticion = this.registroId
