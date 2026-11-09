@@ -1,0 +1,121 @@
+<div class="cv">
+  <header class="cv-head">
+    <div>
+      <p class="eyebrow">{{ 'temporadas.ui.crops' | translate }}</p>
+      <h1>{{ 'cultivo.fincas.list.title' | translate }}</h1>
+      <p class="cv-sub">{{ 'cultivo.fincas.list.subtitle' | translate }}</p>
+    </div>
+    <div class="cv-acciones">
+      <a class="btn" routerLink="/crops/inventory"><i class="ti ti-building-warehouse" aria-hidden="true"></i> {{ 'inventario.nav' | translate }}</a>
+      <button type="button" class="btn btn-prim" (click)="nuevaFinca()"><i class="ti ti-map-pin-plus"></i> {{ 'temporadas.ui.newFarm' | translate }}</button>
+    </div>
+  </header>
+
+  @if (error) {
+    <p class="aviso error" role="alert"><i class="ti ti-alert-circle"></i> {{ error | translate }}</p>
+  }
+
+  @if (cargando) {
+    <section class="kpis"><div class="esq"></div><div class="esq"></div><div class="esq"></div><div class="esq"></div></section>
+  } @else if (fincas.length) {
+    <section class="kpis">
+      <article class="kpi">
+        <span class="ic verde"><i class="ti ti-home-2"></i></span>
+        <div><small>{{ 'cultivo.fincas.list.summary.farms' | translate }}</small><strong>{{ fincas.length }}</strong>
+          <em>{{ 'cultivo.fincas.list.summary.average' | translate }}: {{ fmtDec(promedioHectareas()) }} ha</em></div>
+      </article>
+      <article class="kpi">
+        <span class="ic azul"><i class="ti ti-ruler-2"></i></span>
+        <div><small>{{ 'cultivo.fincas.list.summary.totalHectares' | translate }}</small><strong>{{ fmtDec(totalHectareas()) }}</strong></div>
+      </article>
+      <article class="kpi">
+        <span class="ic gris"><i class="ti ti-layout-grid"></i></span>
+        <div><small>{{ 'temporadas.ui.lots' | translate }}</small><strong>{{ totalLotes() ?? '—' }}</strong></div>
+      </article>
+      <article class="kpi">
+        <span class="ic verde"><i class="ti ti-plant"></i></span>
+        <div><small>{{ 'temporadas.ui.lotsPlanted' | translate }}</small><strong>{{ totalLotes() === null ? '—' : totalEnCultivo() }}</strong></div>
+      </article>
+    </section>
+  }
+
+  <!-- El mapa siempre está en el DOM para que Leaflet tenga dónde dibujar -->
+  <section class="mapa-card" [style.display]="cargando || !fincas.length ? 'none' : 'block'">
+    <div id="mapa-fincas" class="mapa"></div>
+    <div class="mapa-pie">
+      <span><i class="ti ti-pointer"></i> {{ 'cultivo.fincas.list.mapHint' | translate }}</span>
+      @if (fincasSinUbicacion() > 0) {
+        <span class="sin-ubic"><i class="ti ti-map-pin-off"></i> {{ 'cultivo.fincas.list.noLocationCount' | translate: { count: fincasSinUbicacion() } }}</span>
+      }
+    </div>
+  </section>
+
+  @if (!cargando && !fincas.length && !error) {
+    <section class="tarjeta vacio">
+      <i class="ti ti-home-2"></i>
+      <h3>{{ 'temporadas.ui.noFarmsTitle' | translate }}</h3>
+      <p>{{ 'cultivo.fincas.list.empty' | translate }}</p>
+      <button type="button" class="btn btn-prim" (click)="nuevaFinca()"><i class="ti ti-plus"></i> {{ 'cultivo.fincas.list.registerFirst' | translate }}</button>
+    </section>
+  }
+
+  @if (!cargando && fincas.length) {
+    <h2 class="seccion-titulo">{{ 'temporadas.ui.yourFarms' | translate }}</h2>
+    <section class="fincas">
+      @for (finca of fincas; track finca.id) {
+        <article class="finca" [class.activa]="fincaResaltada === finca.id"
+                 (mouseenter)="resaltarFinca(finca)" (mouseleave)="quitarResaltado()">
+          <button type="button" class="finca-cuerpo" (click)="entrarFinca(finca.id!)">
+            <span class="ic verde"><i class="ti ti-home-2"></i></span>
+            <span class="finca-txt">
+              <strong>{{ finca.nombre }}</strong>
+              <small><i class="ti ti-map-pin"></i> {{ finca.ubicacion }}</small>
+            </span>
+            <i class="ti ti-chevron-right flecha"></i>
+          </button>
+          <footer class="finca-pie">
+            <span><i class="ti ti-ruler-2"></i> {{ fmtDec(finca.hectareas) }} ha</span>
+            @if (lotesDe(finca); as lotes) {
+              <span><i class="ti ti-layout-grid"></i> {{ 'temporadas.ui.lotsCount' | translate: { count: lotes.length } }}</span>
+              @if (enCultivo(finca)) {
+                <span class="chip chip-EN_CULTIVO"><i class="ti ti-plant"></i> {{ 'temporadas.ui.plantedCount' | translate: { count: enCultivo(finca) } }}</span>
+              }
+            }
+            @if (!finca.centroideLat) {
+              <span class="chip chip-EN_DESCANSO">{{ 'cultivo.fincas.list.noLocationBadge' | translate }}</span>
+            }
+            <span class="finca-btns">
+              @if (finca.centroideLat) {
+                <button type="button" class="btn-ic" (click)="centrarEnFinca(finca)"
+                        [title]="'cultivo.fincas.list.viewOnMap' | translate" [attr.aria-label]="'cultivo.fincas.list.viewOnMap' | translate">
+                  <i class="ti ti-map-2"></i>
+                </button>
+              }
+              <button type="button" class="btn-ic peligro" (click)="iniciarEliminacion($event, finca)" [disabled]="eliminandoId === finca.id"
+                      [title]="'cultivo.fincas.list.deleteTitle' | translate" [attr.aria-label]="'cultivo.fincas.list.deleteTitle' | translate">
+                <i class="ti ti-trash"></i>
+              </button>
+            </span>
+          </footer>
+        </article>
+      }
+    </section>
+  }
+</div>
+
+@if (fincaAEliminar) {
+  <dialog class="overlay" (click)="cancelarEliminacion()" (keydown.escape)="cancelarEliminacion()" open>
+    <div class="confirm-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+      <h3><i class="ti ti-alert-triangle"></i> {{ 'cultivo.fincas.delete.title' | translate }}</h3>
+      <p>{{ 'cultivo.fincas.delete.aboutTo' | translate }} <strong>{{ fincaAEliminar.nombre }}</strong> {{ 'cultivo.fincas.delete.andLots' | translate }}</p>
+      <p>{{ 'cultivo.fincas.delete.warnPrefix' | translate }} <strong>{{ 'cultivo.fincas.delete.confirmWord' | translate }}</strong> {{ 'cultivo.fincas.delete.warnSuffix' | translate }}</p>
+      <input type="text" [(ngModel)]="textoConfirmacion" [placeholder]="'cultivo.fincas.delete.placeholder' | translate" class="input-confirmacion" />
+      <div class="confirm-actions">
+        <button type="button" class="btn btn-texto" (click)="cancelarEliminacion()">{{ 'cultivo.fincas.delete.cancel' | translate }}</button>
+        <button type="button" class="btn btn-peligro" [disabled]="textoConfirmacion !== palabraConfirmacion || eliminandoId !== null" (click)="confirmarEliminacion()">
+          {{ (eliminandoId !== null ? 'cultivo.fincas.delete.deleting' : 'cultivo.fincas.delete.submit') | translate }}
+        </button>
+      </div>
+    </div>
+  </dialog>
+}

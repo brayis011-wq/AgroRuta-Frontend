@@ -19,13 +19,13 @@ describe('PortalService', () => {
 
   it('cargarEstado() keeps the latest state', () => {
     service.cargarEstado().subscribe();
-    http.expectOne(`${api}/estado`).flush({ estado: 'PENDIENTE', trabajador: null });
+    http.expectOne(`${api}/status`).flush({ estado: 'PENDIENTE', trabajador: null });
     expect(service.estado$.value?.estado).toBe('PENDIENTE');
   });
 
   it('solicitar() posts the cédula', () => {
     service.solicitar('1052334120').subscribe();
-    const req = http.expectOne(`${api}/solicitud`);
+    const req = http.expectOne(`${api}/request`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ cedula: '1052334120' });
     req.flush({ estado: 'PENDIENTE', trabajador: null });

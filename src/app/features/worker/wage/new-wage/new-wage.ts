@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { PesosPipe } from '../../../../shared/formato.pipe';
+import { PesosPipe } from '../../../../shared/format.pipe';
 import {
   JornalService,
   JornalRequest,
@@ -18,7 +18,7 @@ import { Trabajador, Labor } from '../../../../core/models/worker.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe],
   templateUrl: './new-wage.html',
-  styleUrls: ['../../../cultivo/cultivo-ui.css', '../../../cultivo/cultivo-bloques.css', '../../worker-ui.css', '../../worker-panel.css', './new-wage.css']
+  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../worker-ui.css', '../../worker-panel.css', './new-wage.css']
 })
 export class NuevoJornalComponent implements OnInit {
   form!: FormGroup;
@@ -165,7 +165,7 @@ export class NuevoJornalComponent implements OnInit {
         // Si vino desde un trabajador específico, mostrar sus jornales
         // Si no, ir al home de trabajadores
         if (this.trabajadorIdOrigen) {
-          this.router.navigate(['/worker/jornales'], {
+          this.router.navigate(['/worker/workdays'], {
             queryParams: { trabajadorId: this.trabajadorIdOrigen }
           });
         } else {

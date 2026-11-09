@@ -4,11 +4,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthService } from '../../../core/services/auth';
+import { AuthService } from '../../../core/services/auth.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { PortalService } from '../../../core/services/portal.service';
 import { ProfileService } from '../../../core/services/profile.service';
-import { TemaService } from '../../../core/services/tema.service';
+import { TemaService } from '../../../core/services/theme.service';
 
 const CLAVE_COLAPSADO = 'portal-menu-colapsado';
 
@@ -35,10 +35,10 @@ export class PortalLayoutComponent implements OnInit {
   errorEstado = false;
 
   readonly pestanas = [
-    { ruta: 'inicio', icono: 'ti-home', etiqueta: 'portal.nav.home', soloAprobado: false },
-    { ruta: 'jornales', icono: 'ti-calendar-event', etiqueta: 'portal.nav.wages', soloAprobado: true },
-    { ruta: 'nominas', icono: 'ti-receipt-2', etiqueta: 'portal.nav.rosters', soloAprobado: true },
-    { ruta: 'pagos', icono: 'ti-cash', etiqueta: 'portal.nav.payments', soloAprobado: true },
+    { ruta: 'home', icono: 'ti-home', etiqueta: 'portal.nav.home', soloAprobado: false },
+    { ruta: 'workdays', icono: 'ti-calendar-event', etiqueta: 'portal.nav.wages', soloAprobado: true },
+    { ruta: 'payrolls', icono: 'ti-receipt-2', etiqueta: 'portal.nav.rosters', soloAprobado: true },
+    { ruta: 'payments', icono: 'ti-cash', etiqueta: 'portal.nav.payments', soloAprobado: true },
   ];
 
   constructor() {

@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { LanguageService } from '../../core/services/language.service';
-import { formatoFecha, formatoNumero, formatoPesos } from '../../shared/formato';
+import { formatoFecha, formatoNumero, formatoPesos } from '../../shared/format';
 
 /** Formato y descarga comunes a los dos reportes */
 export abstract class ReportBase {

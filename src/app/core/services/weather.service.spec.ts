@@ -10,7 +10,7 @@ describe('WeatherService', () => {
   let service: WeatherService;
   let httpMock: HttpTestingController;
 
-  const baseUrl = `${environment.apiUrl}/api/v1/weather`;
+  const baseUrl = `${environment.apiUrl}/api/weather`;
 
   const mockWeather: Weather = {
     city: 'Bogotá',

@@ -4,17 +4,17 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DecimalPipe, NgTemplateOutlet, UpperCasePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter } from 'rxjs';
-import { AuthService } from '../../core/services/auth';
+import { AuthService } from '../../core/services/auth.service';
 import { AuthResponse } from '../../core/models/auth.model';
 import { LanguageService, Lang } from '../../core/services/language.service';
 import { ProfileService } from '../../core/services/profile.service';
-import { TemaService } from '../../core/services/tema.service';
+import { TemaService } from '../../core/services/theme.service';
 import { NominaService } from '../../core/services/worker.service';
-import { FincaActivaService } from '../../core/services/finca-activa.service';
+import { FincaActivaService } from '../../core/services/active-farm.service';
 import { WeatherService } from '../../core/services/weather.service';
 import { Weather } from '../../core/models/weather.model';
-import { BuscadorComponent } from '../../shared/buscador/buscador';
-import { consejoFumigacion, municipio } from '../../shared/clima';
+import { BuscadorComponent } from '../../shared/search/search';
+import { consejoFumigacion, municipio } from '../../shared/weather';
 
 const CLAVE_COLAPSADO = 'sidebarColapsado';
 /** Lotes de la finca activa que se muestran en el submenú de Cultivos */
@@ -74,17 +74,17 @@ export class LayoutComponent {
 
   readonly subTrabajadores: ItemSubmenu[] = [
     { ruta: '/worker', clave: 'layout.nav.team', exacto: true },
-    { ruta: '/worker/jornales', clave: 'layout.nav.wages' },
-    { ruta: '/worker/nominas', clave: 'layout.nav.payrolls', contador: true },
-    { ruta: '/worker/pagos', clave: 'layout.nav.payments' },
-    { ruta: '/worker/cargos', clave: 'layout.nav.positions' },
-    { ruta: '/worker/labores', clave: 'layout.nav.activities' },
+    { ruta: '/worker/workdays', clave: 'layout.nav.wages' },
+    { ruta: '/worker/payrolls', clave: 'layout.nav.payrolls', contador: true },
+    { ruta: '/worker/payments', clave: 'layout.nav.payments' },
+    { ruta: '/worker/positions', clave: 'layout.nav.positions' },
+    { ruta: '/worker/labors', clave: 'layout.nav.activities' },
   ];
 
   readonly subReportes: ItemSubmenu[] = [
-    { ruta: '/reportes', clave: 'layout.nav.reportPayroll', query: { tab: 'payroll' } },
-    { ruta: '/reportes', clave: 'layout.nav.reportCrops', query: { tab: 'crops' } },
-    { ruta: '/reportes', clave: 'reports.tabs.costs.name', query: { tab: 'costs' } },
+    { ruta: '/reports', clave: 'layout.nav.reportPayroll', query: { tab: 'payroll' } },
+    { ruta: '/reports', clave: 'layout.nav.reportCrops', query: { tab: 'crops' } },
+    { ruta: '/reports', clave: 'reports.tabs.costs.name', query: { tab: 'costs' } },
   ];
 
   /**
@@ -94,16 +94,16 @@ export class LayoutComponent {
   subCultivos(): ItemSubmenu[] {
     const finca = this.fincaActiva.activa();
     const items: ItemSubmenu[] = [
-      { ruta: '/cultivo', clave: 'layout.nav.myFarms', exacto: true },
-      { ruta: '/cultivo/inventario', clave: 'inventario.nav', exacto: true },
+      { ruta: '/crops', clave: 'layout.nav.myFarms', exacto: true },
+      { ruta: '/crops/inventory', clave: 'inventario.nav', exacto: true },
     ];
     if (finca) {
-      items.push({ ruta: `/cultivo/finca/${finca.id}`, clave: 'layout.nav.farmSummary', exacto: true });
-      items.push({ ruta: '/cultivo/calendario', clave: 'temporadas.cal.menu', exacto: true });
+      items.push({ ruta: `/crops/farm/${finca.id}`, clave: 'layout.nav.farmSummary', exacto: true });
+      items.push({ ruta: '/crops/calendar', clave: 'temporadas.cal.menu', exacto: true });
       const lotes = this.fincaActiva.lotes();
       if (lotes.length) {
         items.push({ ruta: '#lotes', titulo: true, clave: 'layout.nav.plots' });
-        items.push(...lotes.slice(0, MAX_LOTES_MENU).map((l) => ({ ruta: `/cultivo/lote/${l.id}`, texto: l.nombre, icono: 'ti-point-filled' })));
+        items.push(...lotes.slice(0, MAX_LOTES_MENU).map((l) => ({ ruta: `/crops/plot/${l.id}`, texto: l.nombre, icono: 'ti-point-filled' })));
       }
     }
     return items;
@@ -151,7 +151,7 @@ export class LayoutComponent {
   elegirFinca(id: number | null): void {
     this.fincaActiva.elegir(id);
     this.menuFincas.set(false);
-    this.router.navigate(id == null ? ['/cultivo'] : ['/cultivo/finca', id]);
+    this.router.navigate(id == null ? ['/crops'] : ['/crops/farm', id]);
   }
 
   abierto(g: IdGrupo): boolean {
@@ -211,12 +211,12 @@ export class LayoutComponent {
   }
 }
 
-const RUTA_GRUPO: Record<IdGrupo, string> = { cultivos: '/cultivo', trabajadores: '/worker', reportes: '/reportes' };
+const RUTA_GRUPO: Record<IdGrupo, string> = { cultivos: '/crops', trabajadores: '/worker', reportes: '/reports' };
 
 function grupoDeUrl(url: string): IdGrupo | null {
-  if (url.startsWith('/cultivo')) return 'cultivos';
+  if (url.startsWith('/crops')) return 'cultivos';
   if (url.startsWith('/worker')) return 'trabajadores';
-  if (url.startsWith('/reportes')) return 'reportes';
+  if (url.startsWith('/reports')) return 'reportes';
   return null;
 }
 

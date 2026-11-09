@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/formato.pipe';
+import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 import { JornalService, TrabajadorService, NominaService, NominaRequest } from '../../../../core/services/worker.service';
 import { Jornal, Trabajador, Nomina } from '../../../../core/models/worker.model';
 
@@ -12,7 +12,7 @@ import { Jornal, Trabajador, Nomina } from '../../../../core/models/worker.model
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe],
   templateUrl: './list-wage.html',
-  styleUrls: ['../../../cultivo/cultivo-ui.css', '../../../cultivo/cultivo-bloques.css', '../../../report/report-tabla.css', '../../worker-ui.css', '../../worker-panel.css', './list-wage.css']
+  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './list-wage.css']
 })
 export class ListaJornalesComponent implements OnInit {
 
@@ -235,11 +235,11 @@ export class ListaJornalesComponent implements OnInit {
   verNominaCompleta(): void {
     if (!this.trabajadorId) return;
     this.cerrarPanel();
-    this.router.navigate(['/worker/nominas'], { queryParams: { trabajadorId: this.trabajadorId } });
+    this.router.navigate(['/worker/payrolls'], { queryParams: { trabajadorId: this.trabajadorId } });
   }
 
   irANuevoJornal(): void {
-    this.router.navigate(['/worker/jornales/nuevo'], {
+    this.router.navigate(['/worker/workdays/new'], {
       queryParams: this.trabajadorId ? { trabajadorId: this.trabajadorId } : {}
     });
   }

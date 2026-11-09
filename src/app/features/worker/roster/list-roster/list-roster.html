@@ -76,7 +76,7 @@
             @for (n of visibles; track n.id) {
               <tr [class.apagada]="n.estado === 'ANULADA'">
                 <td class="prin">
-                  <a class="persona enlace" [routerLink]="['/worker/nominas', n.id]">
+                  <a class="persona enlace" [routerLink]="['/worker/payrolls', n.id]">
                     <span class="av" aria-hidden="true">{{ n.trabajador?.nombre?.[0] }}{{ n.trabajador?.apellido?.[0] }}</span>
                     <span>{{ n.trabajador?.nombreCompleto }}<small>#{{ n.id }}</small></span>
                   </a>
@@ -93,18 +93,18 @@
                         <button type="button" class="btn-ic peligro" [title]="'workers.rosters.list.actions.cancel' | translate" [attr.aria-label]="'workers.rosters.list.actions.cancel' | translate" (click)="anular(n.id)"><i class="ti ti-ban" aria-hidden="true"></i></button>
                       }
                       @case ('APROBADA') {
-                        <a class="btn btn-prim chico" [routerLink]="['/worker/nominas', n.id]"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'workers.rosters.list.actions.registerPayment' | translate }}</a>
+                        <a class="btn btn-prim chico" [routerLink]="['/worker/payrolls', n.id]"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'workers.rosters.list.actions.registerPayment' | translate }}</a>
                         <button type="button" class="btn-ic peligro" [title]="'workers.rosters.list.actions.cancel' | translate" [attr.aria-label]="'workers.rosters.list.actions.cancel' | translate" (click)="anular(n.id)"><i class="ti ti-ban" aria-hidden="true"></i></button>
                       }
                       @case ('PAGADA') {
-                        <a class="btn chico" [routerLink]="['/worker/pagos']" [queryParams]="{ nominaId: n.id }"><i class="ti ti-receipt" aria-hidden="true"></i> {{ 'workers.rosters.list.actions.viewPayment' | translate }}</a>
+                        <a class="btn chico" [routerLink]="['/worker/payments']" [queryParams]="{ nominaId: n.id }"><i class="ti ti-receipt" aria-hidden="true"></i> {{ 'workers.rosters.list.actions.viewPayment' | translate }}</a>
                       }
                       @case ('ANULADA') {
                         <button type="button" class="btn-ic verde-h" [title]="'workers.rosters.list.actions.reactivate' | translate" [attr.aria-label]="'workers.rosters.list.actions.reactivate' | translate" (click)="reactivar(n.id)"><i class="ti ti-restore" aria-hidden="true"></i></button>
                         <button type="button" class="btn-ic peligro" [title]="'workers.rosters.list.actions.deleteForever' | translate" [attr.aria-label]="'workers.rosters.list.actions.deleteForever' | translate" (click)="eliminar(n.id)"><i class="ti ti-trash" aria-hidden="true"></i></button>
                       }
                     }
-                    <a class="btn-ic" [routerLink]="['/worker/nominas', n.id]" [title]="'workers.rosters.list.actions.viewDetail' | translate" [attr.aria-label]="'workers.rosters.list.actions.viewDetail' | translate"><i class="ti ti-chevron-right" aria-hidden="true"></i></a>
+                    <a class="btn-ic" [routerLink]="['/worker/payrolls', n.id]" [title]="'workers.rosters.list.actions.viewDetail' | translate" [attr.aria-label]="'workers.rosters.list.actions.viewDetail' | translate"><i class="ti ti-chevron-right" aria-hidden="true"></i></a>
                   </span>
                 </td>
               </tr>

@@ -2,8 +2,8 @@ import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthService } from '../../../core/services/auth';
-import { inicioPorRol } from '../../../core/guards/rol-guards';
+import { AuthService } from '../../../core/services/auth.service';
+import { inicioPorRol } from '../../../core/guards/role-guards';
 import { LoginRequest } from '../../../core/models/auth.model';
 
 @Component({

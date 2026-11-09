@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ConfirmDialogComponent } from './shared/confirm-dialog/confirm-dialog';
-import { TemaService } from './core/services/tema.service';
+import { TemaService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',

@@ -213,7 +213,7 @@ describe('ListaJornalesComponent', () => {
     component.trabajadorId = 1;
     component.verNominaCompleta();
     expect(router.navigate).toHaveBeenCalledWith(
-      ['/worker/nominas'],
+      ['/worker/payrolls'],
       expect.objectContaining({ queryParams: { trabajadorId: 1 } })
     );
   });
@@ -232,7 +232,7 @@ describe('ListaJornalesComponent', () => {
     component.trabajadorId = 1;
     component.irANuevoJornal();
     expect(router.navigate).toHaveBeenCalledWith(
-      ['/worker/jornales/nuevo'],
+      ['/worker/workdays/new'],
       { queryParams: { trabajadorId: 1 } }
     );
   });
@@ -243,7 +243,7 @@ describe('ListaJornalesComponent', () => {
     component.trabajadorId = null;
     component.irANuevoJornal();
     expect(router.navigate).toHaveBeenCalledWith(
-      ['/worker/jornales/nuevo'],
+      ['/worker/workdays/new'],
       { queryParams: {} }
     );
   });

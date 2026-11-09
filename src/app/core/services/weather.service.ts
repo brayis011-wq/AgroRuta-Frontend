@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class WeatherService {
   private http = inject(HttpClient);
-private baseUrl = `${environment.apiUrl}/api/v1/weather`;
+private baseUrl = `${environment.apiUrl}/api/weather`;
   getByCity(city: string): Observable<Weather> {
     return this.http.get<Weather>(`${this.baseUrl}/city`, {
       params: { city }

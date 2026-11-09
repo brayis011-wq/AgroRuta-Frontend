@@ -23,7 +23,7 @@
   <div class="campo">
     <div class="etq-fila">
       <label for="password">{{ 'auth.login.password' | translate }}</label>
-      <a class="olvido" routerLink="/auth/recuperar" [queryParams]="form.email ? { email: form.email } : {}">{{ 'auth.login.forgot' | translate }}</a>
+      <a class="olvido" routerLink="/auth/forgot-password" [queryParams]="form.email ? { email: form.email } : {}">{{ 'auth.login.forgot' | translate }}</a>
     </div>
     <div class="con-ojo">
       <input id="password" [type]="verPass ? 'text' : 'password'" [(ngModel)]="form.password" name="password"
@@ -43,5 +43,5 @@
 
 <p class="link">
   {{ 'auth.login.noAccount' | translate }}
-  <a routerLink="/auth/registro">{{ 'auth.login.register' | translate }}</a>
+  <a routerLink="/auth/register">{{ 'auth.login.register' | translate }}</a>
 </p>

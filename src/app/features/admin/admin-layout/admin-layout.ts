@@ -4,10 +4,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthService } from '../../../core/services/auth';
+import { AuthService } from '../../../core/services/auth.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { ProfileService } from '../../../core/services/profile.service';
-import { TemaService } from '../../../core/services/tema.service';
+import { TemaService } from '../../../core/services/theme.service';
 
 interface NavItem {
   ruta: string;
@@ -43,22 +43,22 @@ export class AdminLayoutComponent {
   readonly secciones: NavSeccion[] = [
     {
       titulo: 'admin.nav.sections.panel',
-      items: [{ ruta: 'resumen', icono: 'ti-layout-dashboard', etiqueta: 'admin.nav.summary' }],
+      items: [{ ruta: 'summary', icono: 'ti-layout-dashboard', etiqueta: 'admin.nav.summary' }],
     },
     {
       titulo: 'admin.nav.sections.management',
       items: [
-        { ruta: 'usuarios', icono: 'ti-users', etiqueta: 'admin.nav.users' },
-        { ruta: 'agricultores', icono: 'ti-plant-2', etiqueta: 'admin.nav.farmers' },
-        { ruta: 'cultivos', icono: 'ti-seeding', etiqueta: 'admin.nav.crops' },
-        { ruta: 'insumos', icono: 'ti-flask', etiqueta: 'admin.nav.inputs' },
+        { ruta: 'users', icono: 'ti-users', etiqueta: 'admin.nav.users' },
+        { ruta: 'farmers', icono: 'ti-plant-2', etiqueta: 'admin.nav.farmers' },
+        { ruta: 'crops', icono: 'ti-seeding', etiqueta: 'admin.nav.crops' },
+        { ruta: 'inputs', icono: 'ti-flask', etiqueta: 'admin.nav.inputs' },
       ],
     },
     {
       titulo: 'admin.nav.sections.system',
       items: [
         { ruta: 'backups', icono: 'ti-database', etiqueta: 'admin.nav.backups' },
-        { ruta: 'cuenta', icono: 'ti-user-cog', etiqueta: 'admin.nav.account' },
+        { ruta: 'account', icono: 'ti-user-cog', etiqueta: 'admin.nav.account' },
       ],
     },
   ];

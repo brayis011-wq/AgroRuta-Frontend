@@ -5,41 +5,41 @@ export const ADMIN_ROUTES: Routes = [
     path: '',
     loadComponent: () => import('./admin-layout/admin-layout').then((m) => m.AdminLayoutComponent),
     children: [
-      { path: '', redirectTo: 'resumen', pathMatch: 'full' },
+      { path: '', redirectTo: 'summary', pathMatch: 'full' },
       {
-        path: 'resumen',
-        loadComponent: () => import('./resumen/admin-resumen').then((m) => m.AdminResumenComponent),
+        path: 'summary',
+        loadComponent: () => import('./summary/admin-summary').then((m) => m.AdminResumenComponent),
       },
       {
-        path: 'usuarios',
-        loadComponent: () => import('./usuarios/admin-usuarios').then((m) => m.AdminUsuariosComponent),
+        path: 'users',
+        loadComponent: () => import('./users/admin-users').then((m) => m.AdminUsuariosComponent),
       },
       {
-        path: 'agricultores',
+        path: 'farmers',
         loadComponent: () =>
-          import('./agricultores/admin-agricultores').then((m) => m.AdminAgricultoresComponent),
+          import('./farmers/admin-farmers').then((m) => m.AdminAgricultoresComponent),
       },
       {
-        path: 'agricultores/:id',
+        path: 'farmers/:id',
         loadComponent: () =>
-          import('./agricultor-detalle/admin-agricultor-detalle').then(
+          import('./farmer-detail/admin-farmer-detail').then(
             (m) => m.AdminAgricultorDetalleComponent,
           ),
       },
       {
-        path: 'insumos',
-        loadComponent: () => import('./insumos/admin-insumos').then((m) => m.AdminInsumosComponent),
+        path: 'inputs',
+        loadComponent: () => import('./inputs/admin-inputs').then((m) => m.AdminInsumosComponent),
       },
       {
-        path: 'cultivos',
-        loadComponent: () => import('./cultivos/admin-cultivos').then((m) => m.AdminCultivosComponent),
+        path: 'crops',
+        loadComponent: () => import('./crops/admin-crops').then((m) => m.AdminCultivosComponent),
       },
       {
         path: 'backups',
         loadChildren: () => import('../backup/backup.routes').then((m) => m.BACKUP_ROUTES),
       },
       {
-        path: 'cuenta',
+        path: 'account',
         loadChildren: () =>
           import('../configuration/configuration.routes').then((m) => m.configurationRoutes),
       },

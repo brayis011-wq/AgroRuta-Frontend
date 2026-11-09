@@ -5,7 +5,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { jwtInterceptor } from './jwt-interceptor';
-import { AuthService } from '../services/auth';
+import { AuthService } from '../services/auth.service';
 
 describe('jwtInterceptor', () => {
   let authServiceMock: any;
@@ -142,8 +142,8 @@ describe('jwtInterceptor', () => {
   it('on 401 should logout and redirect to login with sesion=expirada', () => {
     return new Promise<void>((resolve) => {
       authServiceMock.getToken.mockReturnValue('tok');
-      const req = requestFalso('/api/fincas/1');
-      const next = respuestaConError(401, '/api/fincas/1');
+      const req = requestFalso('/api/farms/1');
+      const next = respuestaConError(401, '/api/farms/1');
 
       interceptor(req, next).subscribe({
         error: (err) => {
@@ -178,8 +178,8 @@ describe('jwtInterceptor', () => {
   it('on 403 should propagate the error without closing the session', () => {
     return new Promise<void>((resolve) => {
       authServiceMock.getToken.mockReturnValue('tok');
-      const req = requestFalso('/api/fincas/2');
-      const next = respuestaConError(403, '/api/fincas/2');
+      const req = requestFalso('/api/farms/2');
+      const next = respuestaConError(403, '/api/farms/2');
 
       interceptor(req, next).subscribe({
         error: (err) => {
@@ -195,8 +195,8 @@ describe('jwtInterceptor', () => {
   it('on 500 should propagate the error without closing the session', () => {
     return new Promise<void>((resolve) => {
       authServiceMock.getToken.mockReturnValue('tok');
-      const req = requestFalso('/api/fincas');
-      const next = respuestaConError(500, '/api/fincas');
+      const req = requestFalso('/api/farms');
+      const next = respuestaConError(500, '/api/farms');
 
       interceptor(req, next).subscribe({
         error: (err) => {
@@ -232,12 +232,12 @@ describe('jwtInterceptor', () => {
     });
   });
 
-  it('should NOT add Authorization header to /api/auth/registro', () => {
+  it('should NOT add Authorization header to /api/auth/register', () => {
     return new Promise<void>((resolve) => {
       authServiceMock.getToken.mockReturnValue('expired-jwt-token');
 
       const req = {
-        url: 'http://localhost:8080/api/auth/registro',
+        url: 'http://localhost:8080/api/auth/register',
         headers: { set: vi.fn() },
         clone: vi.fn(),
       } as any;

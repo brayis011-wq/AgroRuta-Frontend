@@ -11,20 +11,20 @@ export const authRoutes: Routes = [
         loadComponent: () => import('./login/login').then((m) => m.LoginComponent),
       },
       {
-        path: 'registro',
-        loadComponent: () => import('./registro/registro').then((m) => m.RegistroComponent),
+        path: 'register',
+        loadComponent: () => import('./register/register').then((m) => m.RegistroComponent),
       },
       {
-        path: 'recuperar',
-        loadComponent: () => import('./recuperar/recuperar').then((m) => m.RecuperarComponent),
+        path: 'forgot-password',
+        loadComponent: () => import('./forgot-password/forgot-password').then((m) => m.RecuperarComponent),
       },
       {
-        path: 'verificar',
-        loadComponent: () => import('./verificar/verificar').then((m) => m.VerificarComponent),
+        path: 'verify',
+        loadComponent: () => import('./verify/verify').then((m) => m.VerificarComponent),
       },
       {
-        path: 'restablecer',
-        loadComponent: () => import('./restablecer/restablecer').then((m) => m.RestablecerComponent),
+        path: 'reset-password',
+        loadComponent: () => import('./reset-password/reset-password').then((m) => m.RestablecerComponent),
       },
     ],
   },

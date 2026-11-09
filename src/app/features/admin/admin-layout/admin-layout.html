@@ -77,10 +77,10 @@
 
   <!-- Barra inferior (celular) -->
   <nav class="barra" [attr.aria-label]="'admin.nav.label' | translate">
-    <a routerLink="resumen" routerLinkActive="on"><i class="ti ti-layout-dashboard"></i><span>{{ 'admin.nav.summary' | translate }}</span></a>
-    <a routerLink="usuarios" routerLinkActive="on"><i class="ti ti-users"></i><span>{{ 'admin.nav.users' | translate }}</span></a>
-    <a routerLink="agricultores" routerLinkActive="on"><i class="ti ti-plant-2"></i><span>{{ 'admin.nav.farmers' | translate }}</span></a>
-    <a routerLink="insumos" routerLinkActive="on"><i class="ti ti-flask"></i><span>{{ 'admin.nav.inputs' | translate }}</span></a>
+    <a routerLink="summary" routerLinkActive="on"><i class="ti ti-layout-dashboard"></i><span>{{ 'admin.nav.summary' | translate }}</span></a>
+    <a routerLink="users" routerLinkActive="on"><i class="ti ti-users"></i><span>{{ 'admin.nav.users' | translate }}</span></a>
+    <a routerLink="farmers" routerLinkActive="on"><i class="ti ti-plant-2"></i><span>{{ 'admin.nav.farmers' | translate }}</span></a>
+    <a routerLink="inputs" routerLinkActive="on"><i class="ti ti-flask"></i><span>{{ 'admin.nav.inputs' | translate }}</span></a>
     <button type="button" (click)="cajonAbierto.set(true)" [attr.aria-expanded]="cajonAbierto()">
       <i class="ti ti-menu-2"></i><span>{{ 'layout.nav.more' | translate }}</span>
     </button>

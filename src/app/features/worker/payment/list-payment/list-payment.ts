@@ -4,7 +4,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/formato.pipe';
+import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 import { PagoService, NominaService } from '../../../../core/services/worker.service';
 import { Pago, Nomina } from '../../../../core/models/worker.model';
 
@@ -19,7 +19,7 @@ export interface GrupoPago {
   standalone: true,
   imports: [CommonModule, RouterModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe],
   templateUrl: './list-payment.html',
-  styleUrls: ['../../../cultivo/cultivo-ui.css', '../../../cultivo/cultivo-bloques.css', '../../../report/report-tabla.css', '../../worker-ui.css', '../../worker-panel.css', './list-payment.css']
+  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './list-payment.css']
 })
 export class ListaPagosComponent implements OnInit {
   pagos: Pago[] = [];

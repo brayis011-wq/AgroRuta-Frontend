@@ -12,14 +12,14 @@ import {
 } from '../../../../core/services/worker.service';
 import { Nomina, Trabajador } from '../../../../core/models/worker.model';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
-import { PesosPipe, PeriodoPipe } from '../../../../shared/formato.pipe';
+import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 
 @Component({
   selector: 'app-lista-nominas',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PeriodoPipe],
   templateUrl: './list-roster.html',
-  styleUrls: ['../../../cultivo/cultivo-ui.css', '../../../cultivo/cultivo-bloques.css', '../../../report/report-tabla.css', '../../worker-ui.css', '../../worker-panel.css']
+  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css']
 })
 export class ListaNominasComponent implements OnInit {
   todasLasNominas: Nomina[] = [];

@@ -4,19 +4,19 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../core/services/auth';
-import { CultivoService } from '../../core/services/cultivo.service';
+import { AuthService } from '../../core/services/auth.service';
+import { CultivoService } from '../../core/services/crop.service';
 import { LanguageService } from '../../core/services/language.service';
-import { FincaActivaService } from '../../core/services/finca-activa.service';
+import { FincaActivaService } from '../../core/services/active-farm.service';
 import { JornalService, NominaService, PagoService, TrabajadorService } from '../../core/services/worker.service';
-import { InventarioService } from '../../core/services/inventario.service';
+import { InventarioService } from '../../core/services/inventory.service';
 import { Jornal, Nomina, Pago, Trabajador } from '../../core/models/worker.model';
-import { EventoCalendario, Finca, Lote, Siembra } from '../../core/models/cultivo.model';
-import { ICONO_EVENTO, TONO_EVENTO, diasHasta, esPorVenir, ordenAgenda, textoEvento } from '../cultivo/calendario/eventos';
-import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget.component';
-import { formatoPesos, formatoNumero } from '../../shared/formato';
-import { municipio } from '../../shared/clima';
-import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './resumen-inicio';
+import { EventoCalendario, Finca, Lote, Siembra } from '../../core/models/crop.model';
+import { ICONO_EVENTO, TONO_EVENTO, diasHasta, esPorVenir, ordenAgenda, textoEvento } from '../crop/calendar/events';
+import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget';
+import { formatoPesos, formatoNumero } from '../../shared/format';
+import { municipio } from '../../shared/weather';
+import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
 
 const iso = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -47,7 +47,7 @@ export interface Pendiente {
   standalone: true,
   imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css', './dashboard-pendientes.css', './dashboard-cuerpo.css'],
+  styleUrls: ['./dashboard.css', './dashboard-pending.css', './dashboard-body.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit {
@@ -84,12 +84,12 @@ export class DashboardComponent implements OnInit {
     const r = this.resumen();
     if (!r) return [];
     const lista: Pendiente[] = [
-      { clave: 'toApprove', n: r.porAprobar.n, monto: r.porAprobar.total, icono: 'ti-clock-hour-4', tono: 'ambar', ruta: '/worker/nominas', accion: 'review' },
-      { clave: 'toPay', n: r.sinPagar.n, monto: r.sinPagar.total, icono: 'ti-cash', tono: 'azul', ruta: '/worker/nominas', accion: 'pay' },
+      { clave: 'toApprove', n: r.porAprobar.n, monto: r.porAprobar.total, icono: 'ti-clock-hour-4', tono: 'ambar', ruta: '/worker/payrolls', accion: 'review' },
+      { clave: 'toPay', n: r.sinPagar.n, monto: r.sinPagar.total, icono: 'ti-cash', tono: 'azul', ruta: '/worker/payrolls', accion: 'pay' },
       { clave: 'portal', n: r.solicitudesPortal, icono: 'ti-user-check', tono: 'verde', ruta: '/worker', accion: 'approve' },
-      { clave: 'noWage', n: r.sinJornalHoy, icono: 'ti-calendar-plus', tono: 'gris', ruta: '/worker/jornales/nuevo', accion: 'register' },
-      { clave: 'storeroom', n: this.avisosBodega(), icono: 'ti-building-warehouse', tono: 'ambar', ruta: '/cultivo/inventario', accion: 'review' },
-      { clave: 'freeLots', n: r.lotesDisponibles, icono: 'ti-seeding', tono: 'verde', ruta: '/cultivo', accion: 'plant' },
+      { clave: 'noWage', n: r.sinJornalHoy, icono: 'ti-calendar-plus', tono: 'gris', ruta: '/worker/workdays/new', accion: 'register' },
+      { clave: 'storeroom', n: this.avisosBodega(), icono: 'ti-building-warehouse', tono: 'ambar', ruta: '/crops/inventory', accion: 'review' },
+      { clave: 'freeLots', n: r.lotesDisponibles, icono: 'ti-seeding', tono: 'verde', ruta: '/crops', accion: 'plant' },
     ];
     return lista.filter((p) => p.n > 0);
   });
