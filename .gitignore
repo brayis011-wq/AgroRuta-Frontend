@@ -54,3 +54,6 @@ node_modules/
 
 # SonarQube
 .scannerwork/
+
+# Archivos temporales de wrangler dev
+.wrangler/
