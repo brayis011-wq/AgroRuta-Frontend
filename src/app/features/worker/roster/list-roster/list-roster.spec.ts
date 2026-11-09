@@ -13,6 +13,18 @@ const mkNomina = (estado = 'PENDIENTE', id = 1): any => ({
   trabajador: { id: 1, nombreCompleto: 'Juan Perez' }
 });
 const mkTrabajador = (): any => ({ id: 1, nombreCompleto: 'Juan Perez', estado: 'ACTIVO' });
+/** Respuesta de GET /api/payrolls/page con todas las nóminas en una sola página */
+const pag = (lista: any[]): any => ({ contenido: lista, pagina: 0, tamano: 20, total: lista.length, totalPaginas: 1 });
+/** Respuesta de GET /api/payrolls/summary calculada a partir de la lista */
+const resumenDe = (lista: any[]): any[] => {
+  const m: Record<string, any> = {};
+  for (const n of lista) {
+    m[n.estado] ??= { estado: n.estado, cantidad: 0, total: 0 };
+    m[n.estado].cantidad++;
+    m[n.estado].total += n.valorTotal;
+  }
+  return Object.values(m);
+};
 
 describe('ListaNominasComponent', () => {
   let component: ListaNominasComponent;
@@ -50,7 +62,8 @@ describe('ListaNominasComponent', () => {
   beforeEach(() => {
     respuesta = true;
     nominaSvc = {
-      listarTodas: vi.fn().mockReturnValue(of([mkNomina()])),
+      pagina:      vi.fn().mockReturnValue(of(pag([mkNomina()]))),
+      resumen:     vi.fn().mockReturnValue(of(resumenDe([mkNomina()]))),
       generar:     vi.fn(),
       aprobar:     vi.fn(),
       anular:      vi.fn(),
@@ -64,6 +77,12 @@ describe('ListaNominasComponent', () => {
       registrar: vi.fn()
     };
   });
+
+  /** Lo que devuelve el servidor: la página y el resumen de esas nóminas */
+  function datos(lista: any[]) {
+    nominaSvc.pagina.mockReturnValue(of(pag(lista)));
+    nominaSvc.resumen.mockReturnValue(of(resumenDe(lista)));
+  }
 
   it('should create', async () => {
     await createComponent();
@@ -83,7 +102,7 @@ describe('ListaNominasComponent', () => {
   });
 
   it('cargar() should set error on failure', async () => {
-    nominaSvc.listarTodas.mockReturnValue(throwError(() => new Error()));
+    nominaSvc.pagina.mockReturnValue(throwError(() => new Error()));
     await createComponent();
     expect(component.error).toContain('workers.rosters.list.errors.');
   });
@@ -100,7 +119,7 @@ describe('ListaNominasComponent', () => {
   });
 
   it('puedeGenerarNomina should be true when trabajador has only ANULADA nominas', async () => {
-    nominaSvc.listarTodas.mockReturnValue(of([mkNomina('ANULADA')]));
+    datos([mkNomina('ANULADA')]);
     await createComponent({ trabajadorId: '1' });
     expect(component.puedeGenerarNomina).toBe(true);
   });
@@ -157,7 +176,7 @@ describe('ListaNominasComponent', () => {
     await component.aprobar(1);
     expect(nominaSvc.aprobar).toHaveBeenCalledWith(1);
     expect(pagoSvc.registrar).not.toHaveBeenCalled();
-    expect(nominaSvc.listarTodas).toHaveBeenCalledTimes(2);
+    expect(nominaSvc.pagina).toHaveBeenCalledTimes(2);
     expect(component.exito).toBe('workers.rosters.list.success.approved');
     expect(component.aprobando).toBeNull();
     vi.advanceTimersByTime(4000);
@@ -175,7 +194,7 @@ describe('ListaNominasComponent', () => {
   });
 
   it('puedeGenerarNomina should be false when trabajador has APROBADA nomina', async () => {
-    nominaSvc.listarTodas.mockReturnValue(of([mkNomina('APROBADA')]));
+    datos([mkNomina('APROBADA')]);
     await createComponent({ trabajadorId: '1' });
     expect(component.puedeGenerarNomina).toBe(false);
   });
@@ -192,7 +211,7 @@ describe('ListaNominasComponent', () => {
     respuesta = true;
     await createComponent();
     await component.anular(1);
-    expect(nominaSvc.listarTodas).toHaveBeenCalledTimes(2);
+    expect(nominaSvc.pagina).toHaveBeenCalledTimes(2);
   });
 
   it('anular() should set error on failure', async () => {
@@ -241,6 +260,7 @@ describe('ListaNominasComponent', () => {
     respuesta = true;
     vi.useFakeTimers();
     await createComponent();
+    datos([]);   // después de borrar, el servidor ya no la devuelve
     await component.eliminar(1);
     expect(component.nominas.length).toBe(0);
     vi.advanceTimersByTime(3500);
@@ -253,6 +273,43 @@ describe('ListaNominasComponent', () => {
     await createComponent();
     await component.eliminar(1);
     expect(component.error).toBe('workers.rosters.list.errors.delete');
+  });
+
+  it('ngOnInit() pide la primera página filtrada por el trabajador de la URL', async () => {
+    await createComponent({ trabajadorId: '1' });
+    expect(nominaSvc.pagina).toHaveBeenCalledWith(0, { trabajadorId: 1, estado: null });
+    expect(nominaSvc.resumen).toHaveBeenCalledWith(1);
+  });
+
+  it('las tarjetas salen del resumen del servidor, no de las páginas cargadas', async () => {
+    nominaSvc.resumen.mockReturnValue(of([
+      { estado: 'PENDIENTE', cantidad: 30, total: 3000000 },
+      { estado: 'PAGADA', cantidad: 12, total: 1200000 },
+    ]));
+    await createComponent();
+    expect(component.cuenta('PENDIENTE')).toBe(30);
+    expect(component.suma('PAGADA')).toBe(1200000);
+    expect(component.totalNominas).toBe(42);
+  });
+
+  it('cambiar el filtro de estado vuelve a pedir la primera página con ese estado', async () => {
+    await createComponent();
+    component.filtroEstado = 'PAGADA';
+    expect(nominaSvc.pagina).toHaveBeenLastCalledWith(0, { trabajadorId: null, estado: 'PAGADA' });
+    component.filtroEstado = 'TODAS';
+    expect(nominaSvc.pagina).toHaveBeenLastCalledWith(0, { trabajadorId: null, estado: null });
+  });
+
+  it('cargarMas() suma la página siguiente', async () => {
+    nominaSvc.pagina
+      .mockReturnValueOnce(of({ contenido: [mkNomina('PENDIENTE', 1)], pagina: 0, tamano: 1, total: 2, totalPaginas: 2 }))
+      .mockReturnValueOnce(of({ contenido: [mkNomina('PAGADA', 2)], pagina: 1, tamano: 1, total: 2, totalPaginas: 2 }));
+    await createComponent();
+    expect(component.hayMas).toBe(true);
+    component.cargarMas();
+    expect(nominaSvc.pagina).toHaveBeenLastCalledWith(1, { trabajadorId: null, estado: null });
+    expect(component.nominas.map((n: any) => n.id)).toEqual([1, 2]);
+    expect(component.hayMas).toBe(false);
   });
 
   it('estadoClass() should return correct badge class', async () => {

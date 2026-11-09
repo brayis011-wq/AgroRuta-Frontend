@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { TranslatePipe } from '@ngx-translate/core';
 import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 import { JornalService, TrabajadorService, NominaService, NominaRequest } from '../../../../core/services/worker.service';
-import { Jornal, Trabajador, Nomina } from '../../../../core/models/worker.model';
+import { Jornal, Trabajador, Nomina, ResumenJornales } from '../../../../core/models/worker.model';
 
 @Component({
   selector: 'app-lista-jornales',
@@ -16,7 +16,14 @@ import { Jornal, Trabajador, Nomina } from '../../../../core/models/worker.model
 })
 export class ListaJornalesComponent implements OnInit {
 
+  /** Jornales cargados hasta ahora, más recientes primero (se suman páginas con "Cargar más") */
   jornales:   Jornal[]      = [];
+  /** Jornales en total del trabajador en el rango, en todas las páginas */
+  total = 0;
+  private pagina = 0;
+  cargandoMas = false;
+  /** Totales calculados en el servidor para el trabajador y el rango (no dependen de las páginas cargadas) */
+  resumen: ResumenJornales | null = null;
   trabajador: Trabajador | null = null;
   /** Trabajadores del agricultor, para elegir de quién ver los jornales */
   trabajadores: Trabajador[] = [];
@@ -71,6 +78,8 @@ export class ListaJornalesComponent implements OnInit {
         this.trabajadorId = null;
         this.trabajador = null;
         this.jornales = [];
+        this.total = 0;
+        this.resumen = null;
         this.abrirPrimeroSiNoHay();
       }
       this.cdr.detectChanges();
@@ -85,25 +94,53 @@ export class ListaJornalesComponent implements OnInit {
     });
   }
 
+  /** Primera página y totales del trabajador en el rango de fechas */
   cargarJornales(): void {
     if (!this.trabajadorId) return;
-    this.cargando = true;
-    this.error    = '';
-    this.cdr.detectChanges();
+    this.error = '';
+    this.resumen = null;
+    this.cargarPagina(0);
+    const id = this.trabajadorId;
+    this.jornalService.resumenPorTrabajador(id, this.fechaInicio || undefined, this.fechaFin || undefined).subscribe({
+      next: (r) => {
+        if (id === this.trabajadorId) { this.resumen = r; this.cdr.detectChanges(); }
+      },
+      error: () => {}
+    });
+  }
 
-    this.jornalService.porTrabajador(
-      this.trabajadorId,
+  cargarMas(): void {
+    if (!this.hayMas || this.cargandoMas) return;
+    this.cargarPagina(this.pagina + 1);
+  }
+
+  get hayMas(): boolean { return this.jornales.length < this.total; }
+
+  private cargarPagina(pagina: number): void {
+    if (!this.trabajadorId) return;
+    if (pagina === 0) this.cargando = true; else this.cargandoMas = true;
+    this.cdr.detectChanges();
+    const id = this.trabajadorId;
+
+    this.jornalService.paginaPorTrabajador(
+      id,
+      pagina,
       this.fechaInicio || undefined,
       this.fechaFin    || undefined
     ).subscribe({
-      next: (j) => {
-        this.jornales = j;
+      next: (p) => {
+        if (id !== this.trabajadorId) return;   // cambió de trabajador mientras cargaba
+        this.jornales = pagina === 0 ? p.contenido : [...this.jornales, ...p.contenido];
+        this.total = p.total;
+        this.pagina = pagina;
         this.cargando = false;
+        this.cargandoMas = false;
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error    = 'workers.wages.list.errors.load';
-        this.cargando = false;
+        this.error       = 'workers.wages.list.errors.load';
+        this.cargando    = false;
+        this.cargandoMas = false;
         this.cdr.detectChanges();
       }
     });
@@ -154,31 +191,40 @@ export class ListaJornalesComponent implements OnInit {
     );
   }
 
+  /**
+   * Los totales salen del resumen del servidor (todos los jornales del rango, no solo los cargados).
+   * Con una búsqueda escrita se calculan sobre los jornales que coinciden entre los ya cargados.
+   */
+  private get conBusqueda(): boolean { return !!this.busqueda.trim(); }
+
+  get cantidadJornales(): number {
+    if (!this.conBusqueda && this.resumen) return this.resumen.cantidad;
+    return this.filtrados.length;
+  }
+
   get totalJornales(): number {
+    if (!this.conBusqueda && this.resumen) return this.resumen.valorTotal;
     return this.filtrados.reduce((a, j) => a + (j.valorJornal ?? 0), 0);
   }
 
   get pendientes(): number {
+    if (!this.conBusqueda && this.resumen) return this.resumen.pendientes;
     return this.filtrados.filter(j => !j.liquidado).length;
   }
 
   get totalPendiente(): number {
+    if (!this.conBusqueda && this.resumen) return this.resumen.valorPendiente;
     return this.filtrados
       .filter(j => !j.liquidado)
       .reduce((a, j) => a + (j.valorJornal ?? 0), 0);
   }
 
   abrirGenerarNomina(): void {
-    const pendientes = this.filtrados.filter(j => !j.liquidado);
-    if (pendientes.length > 0) {
-      const fechas = pendientes
-        .map(j => j.fecha ? new Date(j.fecha).getTime() : 0)
-        .filter(f => f > 0);
-      if (fechas.length) {
-        const min = new Date(Math.min(...fechas)).toISOString().split('T')[0];
-        const max = new Date(Math.max(...fechas)).toISOString().split('T')[0];
-        this.formNomina.patchValue({ periodoInicio: min, periodoFin: max });
-      }
+    // El periodo propuesto va del jornal sin liquidar más antiguo al más reciente (de todo el rango)
+    const desde = this.resumen?.primeraPendiente ?? this.fechaPendiente(Math.min);
+    const hasta = this.resumen?.ultimaPendiente ?? this.fechaPendiente(Math.max);
+    if (desde && hasta) {
+      this.formNomina.patchValue({ periodoInicio: desde, periodoFin: hasta });
     } else {
       this.formNomina.reset();
     }
@@ -186,6 +232,14 @@ export class ListaJornalesComponent implements OnInit {
     this.error  = '';
     this.panelNomina = true;
     this.cdr.detectChanges();
+  }
+
+  /** Fecha (yyyy-mm-dd) del jornal pendiente más antiguo o más reciente entre los cargados, si no hay resumen */
+  private fechaPendiente(elegir: (...n: number[]) => number): string | null {
+    const fechas = this.jornales
+      .filter(j => !j.liquidado && j.fecha)
+      .map(j => new Date(j.fecha!).getTime());
+    return fechas.length ? new Date(elegir(...fechas)).toISOString().split('T')[0] : null;
   }
 
   cerrarPanel(): void {

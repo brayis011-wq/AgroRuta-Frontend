@@ -16,6 +16,9 @@ const mkJornal = (liquidado = false): any => ({
 const mkTrabajador = (): any => ({ id: 1, nombreCompleto: 'Juan Perez' });
 const mkNomina     = (): any => ({ id: 1, trabajadorId: 1, valorTotal: 100000, estado: 'PENDIENTE' });
 
+/** Respuesta de GET /api/workdays/worker/{id}/page con todo en una sola página */
+const pag = (lista: any[]): any => ({ contenido: lista, pagina: 0, tamano: 20, total: lista.length, totalPaginas: 1 });
+
 describe('ListaJornalesComponent', () => {
   let component: ListaJornalesComponent;
   let fixture:   ComponentFixture<ListaJornalesComponent>;
@@ -28,7 +31,9 @@ describe('ListaJornalesComponent', () => {
     queryParamsSubject = new Subject();
 
     jornalSvc = {
-      porTrabajador: vi.fn().mockReturnValue(of([mkJornal()]))
+      paginaPorTrabajador: vi.fn().mockReturnValue(of(pag([mkJornal()]))),
+      // Sin resumen, los totales se calculan con los jornales cargados (así lo esperan varias pruebas)
+      resumenPorTrabajador: vi.fn().mockReturnValue(of(null))
     };
     trabajadorSvc = {
       buscarPorId: vi.fn().mockReturnValue(of(mkTrabajador())),
@@ -63,18 +68,18 @@ describe('ListaJornalesComponent', () => {
   it('should create', () => expect(component).toBeTruthy());
 
   it('ngOnInit() should load jornales when trabajadorId param exists', async () => {
-    jornalSvc.porTrabajador.mockClear();
+    jornalSvc.paginaPorTrabajador.mockClear();
     trabajadorSvc.buscarPorId.mockClear();
     queryParamsSubject.next({ trabajadorId: '1' });
     await fixture.whenStable();
-    expect(jornalSvc.porTrabajador).toHaveBeenCalledWith(1, undefined, undefined);
+    expect(jornalSvc.paginaPorTrabajador).toHaveBeenCalledWith(1, 0, undefined, undefined);
     expect(component.jornales.length).toBe(1);
   });
 
   it('ngOnInit() should not load jornales when no trabajadorId param', () => {
-    jornalSvc.porTrabajador.mockClear();
+    jornalSvc.paginaPorTrabajador.mockClear();
     queryParamsSubject.next({});
-    expect(jornalSvc.porTrabajador).not.toHaveBeenCalled();
+    expect(jornalSvc.paginaPorTrabajador).not.toHaveBeenCalled();
   });
 
   it('cargarTrabajador() should load trabajador data', () => {
@@ -84,17 +89,17 @@ describe('ListaJornalesComponent', () => {
   });
 
   it('cargarJornales() should set error on failure', () => {
-    jornalSvc.porTrabajador.mockReturnValue(throwError(() => new Error()));
+    jornalSvc.paginaPorTrabajador.mockReturnValue(throwError(() => new Error()));
     component.trabajadorId = 1;
     component.cargarJornales();
     expect(component.error).toBe('workers.wages.list.errors.load');
   });
 
   it('cargarJornales() should do nothing without trabajadorId', () => {
-    jornalSvc.porTrabajador.mockClear();
+    jornalSvc.paginaPorTrabajador.mockClear();
     component.trabajadorId = null;
     component.cargarJornales();
-    expect(jornalSvc.porTrabajador).not.toHaveBeenCalled();
+    expect(jornalSvc.paginaPorTrabajador).not.toHaveBeenCalled();
   });
 
   it('filtrados should return all when busqueda is empty', () => {
@@ -128,20 +133,20 @@ describe('ListaJornalesComponent', () => {
 
   it('filtrarFechas() should call cargarJornales', () => {
     component.trabajadorId = 1;
-    jornalSvc.porTrabajador.mockClear();
+    jornalSvc.paginaPorTrabajador.mockClear();
     component.filtrarFechas();
-    expect(jornalSvc.porTrabajador).toHaveBeenCalled();
+    expect(jornalSvc.paginaPorTrabajador).toHaveBeenCalled();
   });
 
   it('limpiarFiltros() should reset dates and reload', () => {
     component.trabajadorId = 1;
     component.fechaInicio = '2024-01-01';
     component.fechaFin    = '2024-01-31';
-    jornalSvc.porTrabajador.mockClear();
+    jornalSvc.paginaPorTrabajador.mockClear();
     component.limpiarFiltros();
     expect(component.fechaInicio).toBe('');
     expect(component.fechaFin).toBe('');
-    expect(jornalSvc.porTrabajador).toHaveBeenCalled();
+    expect(jornalSvc.paginaPorTrabajador).toHaveBeenCalled();
   });
 
   it('abrirGenerarNomina() should open panel and reset form when no pendientes', () => {
@@ -191,7 +196,7 @@ describe('ListaJornalesComponent', () => {
   it('generarNomina() should call generar and set nominaGenerada on success', () => {
     nominaSvc.generar.mockReturnValue(of(mkNomina()));
     component.trabajadorId = 1;
-    jornalSvc.porTrabajador.mockReturnValue(of([]));
+    jornalSvc.paginaPorTrabajador.mockReturnValue(of(pag([])));
     component.abrirGenerarNomina();
     component.formNomina.setValue({ periodoInicio: '2024-01-01', periodoFin: '2024-01-31' });
     component.generarNomina();
@@ -259,6 +264,32 @@ describe('ListaJornalesComponent', () => {
     component.formNomina.get('periodoInicio')!.setValue('');
     component.formNomina.get('periodoInicio')!.markAsTouched();
     expect(component.invalido('periodoInicio')).toBe(true);
+  });
+
+  it('con resumen, los totales y el periodo de la nómina salen del servidor', () => {
+    component.jornales = [mkJornal()];
+    component.resumen = { cantidad: 45, valorTotal: 3600000, pendientes: 30, valorPendiente: 2400000,
+      primeraPendiente: '2024-03-01', ultimaPendiente: '2024-04-15' };
+    expect(component.cantidadJornales).toBe(45);
+    expect(component.totalJornales).toBe(3600000);
+    expect(component.pendientes).toBe(30);
+    expect(component.totalPendiente).toBe(2400000);
+    component.abrirGenerarNomina();
+    expect(component.formNomina.value).toEqual({ periodoInicio: '2024-03-01', periodoFin: '2024-04-15' });
+  });
+
+  it('cargarMas() pide la página siguiente con el mismo rango de fechas', () => {
+    component.trabajadorId = 1;
+    component.fechaInicio = '2024-01-01';
+    jornalSvc.paginaPorTrabajador
+      .mockReturnValueOnce(of({ contenido: [mkJornal()], pagina: 0, tamano: 1, total: 2, totalPaginas: 2 }))
+      .mockReturnValueOnce(of({ contenido: [{ ...mkJornal(), id: 99 }], pagina: 1, tamano: 1, total: 2, totalPaginas: 2 }));
+    component.cargarJornales();
+    expect(component.hayMas).toBe(true);
+    component.cargarMas();
+    expect(jornalSvc.paginaPorTrabajador).toHaveBeenLastCalledWith(1, 1, '2024-01-01', undefined);
+    expect(component.jornales.length).toBe(2);
+    expect(component.hayMas).toBe(false);
   });
 
   it('loads the workers for the selector, sorted by name', () => {

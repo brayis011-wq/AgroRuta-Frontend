@@ -75,3 +75,28 @@ export interface Jornal {
   observaciones?: string;
   actividadIds?: number[];
 }
+
+/** GET /api/payrolls/summary: cuántas nóminas hay en cada estado y cuánto suman. */
+export interface ResumenNominas {
+  estado: string;
+  cantidad: number;
+  total: number;
+}
+
+/** GET /api/workdays/worker/{id}/summary: totales de los jornales del trabajador en el rango pedido. */
+export interface ResumenJornales {
+  cantidad: number;
+  valorTotal: number;
+  pendientes: number;
+  valorPendiente: number;
+  /** Fecha del jornal sin liquidar más antiguo y del más reciente (para proponer el periodo de la nómina) */
+  primeraPendiente: string | null;
+  ultimaPendiente: string | null;
+}
+
+/** GET /api/payments/summary: cuántos pagos hay, cuánto suman y a cuántos trabajadores. */
+export interface ResumenPagos {
+  cantidad: number;
+  total: number;
+  trabajadores: number;
+}

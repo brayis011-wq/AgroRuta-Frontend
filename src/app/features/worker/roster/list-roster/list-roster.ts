@@ -10,7 +10,9 @@ import {
   TrabajadorService,
   NominaRequest
 } from '../../../../core/services/worker.service';
-import { Nomina, Trabajador } from '../../../../core/models/worker.model';
+import { Nomina, ResumenNominas, Trabajador } from '../../../../core/models/worker.model';
+
+type FiltroEstado = 'TODAS' | 'PENDIENTE' | 'APROBADA' | 'PAGADA' | 'ANULADA';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 
@@ -22,16 +24,23 @@ import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css']
 })
 export class ListaNominasComponent implements OnInit {
-  todasLasNominas: Nomina[] = [];
+  /** Nóminas cargadas hasta ahora (se van sumando páginas con "Cargar más") */
   nominas: Nomina[] = [];
+  /** Total de nóminas con los filtros actuales, en todas las páginas */
+  total = 0;
+  private pagina = 0;
+  cargandoMas = false;
+  /** Cantidad y valor por estado, calculados en el servidor (no dependen de las páginas cargadas) */
+  private resumen: Record<string, ResumenNominas> = {};
   trabajadores: Trabajador[] = [];
   trabajadorFiltrado: Trabajador | null = null;
+  /** Id del trabajador filtrado; llega en la URL antes de que cargue la lista de trabajadores */
+  private trabajadorIdFiltro: number | null = null;
   form!: FormGroup;
   mostrarForm = false;
   guardando = false;
   aprobando: number | null = null;
-  /** Filtro rápido por estado de la tabla */
-  filtroEstado: 'TODAS' | 'PENDIENTE' | 'APROBADA' | 'PAGADA' | 'ANULADA' = 'TODAS';
+  private _filtroEstado: FiltroEstado = 'TODAS';
   cargando = true;
   error = '';                                   // clave de traducción
   exito = '';                                   // clave de traducción
@@ -54,14 +63,17 @@ export class ListaNominasComponent implements OnInit {
       periodoFin:    ['',   Validators.required]
     });
 
+    const idParam = this.route.snapshot.queryParamMap.get('trabajadorId');
+    if (idParam) {
+      this.trabajadorIdFiltro = Number(idParam);
+      this.form.patchValue({ trabajadorId: this.trabajadorIdFiltro });
+    }
+
     this.trabajadorService.listar().subscribe({
       next: (t: Trabajador[]) => {
         this.trabajadores = [...t];
-        const idParam = this.route.snapshot.queryParamMap.get('trabajadorId');
-        if (idParam) {
-          const id = Number(idParam);
-          this.trabajadorFiltrado = t.find(w => w.id === id) ?? null;
-          this.form.patchValue({ trabajadorId: id });
+        if (this.trabajadorIdFiltro != null) {
+          this.trabajadorFiltrado = t.find(w => w.id === this.trabajadorIdFiltro) ?? null;
         }
         this.cdr.detectChanges();
       },
@@ -71,30 +83,68 @@ export class ListaNominasComponent implements OnInit {
     this.cargar();
   }
 
+  /** Filtro rápido por estado de la tabla. Se aplica en el servidor: cambiarlo vuelve a la primera página. */
+  get filtroEstado(): FiltroEstado { return this._filtroEstado; }
+  set filtroEstado(valor: FiltroEstado) {
+    if (valor === this._filtroEstado) return;
+    this._filtroEstado = valor;
+    this.cargarPagina(0);
+  }
+
+  /** Recarga la primera página y el resumen (después de generar, aprobar, anular, etc.) */
   cargar(): void {
-    this.nominaService.listarTodas().subscribe({
-      next: (n: Nomina[]) => {
-        this.todasLasNominas = n.map(nomina => ({
-          ...nomina,
-          trabajadorId: nomina.trabajador?.id ?? nomina.trabajadorId ?? 0
-        }));
-        this.aplicarFiltro();
-        this.cargando = false;
+    this.cargarPagina(0);
+    this.nominaService.resumen(this.trabajadorIdFiltro).subscribe({
+      next: (r) => {
+        this.resumen = Object.fromEntries(r.map(x => [x.estado, x]));
         this.cdr.detectChanges();
       },
-      error: () => { this.error = 'workers.rosters.list.errors.load'; this.cargando = false; this.cdr.detectChanges(); }
+      error: () => {}
     });
   }
 
-  aplicarFiltro(): void {
-    if (this.trabajadorFiltrado) {
-      this.nominas = this.todasLasNominas.filter(n =>
-        n.trabajador?.id === this.trabajadorFiltrado!.id ||
-        n.trabajadorId   === this.trabajadorFiltrado!.id
-      );
-    } else {
-      this.nominas = this.todasLasNominas;
-    }
+  cargarMas(): void {
+    if (!this.hayMas || this.cargandoMas) return;
+    this.cargarPagina(this.pagina + 1);
+  }
+
+  get hayMas(): boolean { return this.nominas.length < this.total; }
+
+  private cargarPagina(pagina: number): void {
+    if (pagina === 0) this.cargando = true; else this.cargandoMas = true;
+    const estado = this._filtroEstado === 'TODAS' ? null : this._filtroEstado;
+    this.nominaService.pagina(pagina, { trabajadorId: this.trabajadorIdFiltro, estado }).subscribe({
+      next: (p) => {
+        const nuevas = p.contenido.map(nomina => ({
+          ...nomina,
+          trabajadorId: nomina.trabajador?.id ?? nomina.trabajadorId ?? 0
+        }));
+        this.nominas = pagina === 0 ? nuevas : [...this.nominas, ...nuevas];
+        this.total = p.total;
+        this.pagina = pagina;
+        this.cargando = false;
+        this.cargandoMas = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.error = 'workers.rosters.list.errors.load';
+        this.cargando = false;
+        this.cargandoMas = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  /** Las nóminas de la tabla ya vienen filtradas por estado y trabajador desde el servidor */
+  get visibles(): Nomina[] { return this.nominas; }
+
+  cuenta(estado: string): number { return this.resumen[estado]?.cantidad ?? 0; }
+
+  suma(estado: string): number { return this.resumen[estado]?.total ?? 0; }
+
+  /** Nóminas del trabajador (o de todos) en todos los estados */
+  get totalNominas(): number {
+    return Object.values(this.resumen).reduce((a, r) => a + r.cantidad, 0);
   }
 
   /**
@@ -102,28 +152,16 @@ export class ListaNominasComponent implements OnInit {
    * - No hay filtro de trabajador (vista global), O
    * - El trabajador filtrado no tiene ninguna nómina en PENDIENTE, APROBADA o PAGADA
    */
-  get visibles(): Nomina[] {
-    return this.filtroEstado === 'TODAS' ? this.nominas : this.nominas.filter(n => n.estado === this.filtroEstado);
-  }
-
-  cuenta(estado: string): number { return this.nominas.filter(n => n.estado === estado).length; }
-
-  suma(estado: string): number {
-    return this.nominas.filter(n => n.estado === estado).reduce((a, n) => a + (n.valorTotal ?? 0), 0);
-  }
-
   get puedeGenerarNomina(): boolean {
     if (!this.trabajadorFiltrado) return true;
-    return !this.nominas.some(n =>
-      n.estado === 'PENDIENTE' || n.estado === 'APROBADA' || n.estado === 'PAGADA'
-    );
+    return this.cuenta('PENDIENTE') + this.cuenta('APROBADA') + this.cuenta('PAGADA') === 0;
   }
 
   verTodas(): void {
     this.trabajadorFiltrado = null;
+    this.trabajadorIdFiltro = null;
     this.form.patchValue({ trabajadorId: null });
-    this.aplicarFiltro();
-    this.cdr.detectChanges();
+    this.cargar();
   }
 
   generar(): void {
@@ -203,8 +241,7 @@ export class ListaNominasComponent implements OnInit {
     if (!(await this.confirmar('workers.rosters.list.confirm.delete', true))) return;
     this.nominaService.eliminar(id).subscribe({
       next: () => {
-        this.todasLasNominas = this.todasLasNominas.filter(n => n.id !== id);
-        this.aplicarFiltro();
+        this.cargar();
         this.exito = 'workers.rosters.list.success.deleted';
         this.exitoParams = {};
         this.cdr.detectChanges();

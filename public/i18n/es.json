@@ -16,7 +16,9 @@
     "deactivate": "Desactivar",
     "actions": "Acciones",
     "status": "Estado",
-    "required": "Requerido"
+    "required": "Requerido",
+    "loadMore": "Cargar más",
+    "showingOf": "Mostrando {{shown}} de {{total}}"
   },
   "search": {"title": "Buscar en AgroRuta", "button": "Buscar…", "placeholder": "Busca una finca, un trabajador o una página", "empty": "Sin resultados", "move": "moverse", "open": "abrir", "types": {"page": "Página", "farm": "Finca", "worker": "Trabajador"}},
   "layout": {
