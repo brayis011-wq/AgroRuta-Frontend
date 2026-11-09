@@ -16,11 +16,11 @@ export class ProfileService {
   constructor(private http: HttpClient) {}
 
   getPerfil(): Observable<Perfil> {
-    return this.http.get<Perfil>(`${this.base}/perfil`).pipe(tap((p) => this.recordarFoto(p)));
+    return this.http.get<Perfil>(`${this.base}/profile`).pipe(tap((p) => this.recordarFoto(p)));
   }
 
   updatePerfil(data: UpdateProfileRequest): Observable<Perfil> {
-    return this.http.put<Perfil>(`${this.base}/perfil`, data).pipe(tap((p) => this.recordarFoto(p)));
+    return this.http.put<Perfil>(`${this.base}/profile`, data).pipe(tap((p) => this.recordarFoto(p)));
   }
 
   /** Carga la foto una sola vez por sesión (el menú la pide al abrirse) */
@@ -43,7 +43,7 @@ export class ProfileService {
 
   /** Al cambiar la contraseña el servidor cierra las demás sesiones y devuelve un token nuevo para esta. */
   changePassword(data: ChangePasswordRequest): Observable<void> {
-    return this.http.patch<{ token?: string } | null>(`${this.base}/perfil/password`, data).pipe(
+    return this.http.patch<{ token?: string } | null>(`${this.base}/profile/password`, data).pipe(
       tap((r) => {
         if (r?.token) this.auth.renovarToken(r.token);
       }),

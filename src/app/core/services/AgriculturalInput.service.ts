@@ -16,12 +16,12 @@ private readonly baseUrl = `${environment.apiUrl}/api/agricultural-inputs`;
 
   /** Administrador: el catálogo completo, también los desactivados. */
   getAllAdmin(): Observable<AgriculturalInput[]> {
-    return this.http.get<AgriculturalInput[]>(`${this.baseUrl}/todos`);
+    return this.http.get<AgriculturalInput[]>(`${this.baseUrl}/all`);
   }
 
   /** Administrador: activa o desactiva un insumo (no se borra nada). */
   changeStatus(id: number, activo: boolean): Observable<AgriculturalInput> {
-    return this.http.patch<AgriculturalInput>(`${this.baseUrl}/${id}/estado`, null, {
+    return this.http.patch<AgriculturalInput>(`${this.baseUrl}/${id}/status`, null, {
       params: new HttpParams().set('activo', activo),
     });
   }

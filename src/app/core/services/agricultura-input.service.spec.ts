@@ -95,16 +95,16 @@ describe('AgriculturalInputService', () => {
     req.flush(null);
   });
 
-  it('getAllAdmin() should GET /todos', () => {
+  it('getAllAdmin() should GET /all', () => {
     service.getAllAdmin().subscribe();
-    const req = httpMock.expectOne(`${baseUrl}/todos`);
+    const req = httpMock.expectOne(`${baseUrl}/all`);
     expect(req.request.method).toBe('GET');
     req.flush([]);
   });
 
-  it('changeStatus() should PATCH /{id}/estado with the new state', () => {
+  it('changeStatus() should PATCH /{id}/status with the new state', () => {
     service.changeStatus(1, false).subscribe();
-    const req = httpMock.expectOne((r) => r.url === `${baseUrl}/1/estado`);
+    const req = httpMock.expectOne((r) => r.url === `${baseUrl}/1/status`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.params.get('activo')).toBe('false');
     req.flush(mockInput);

@@ -13,24 +13,24 @@ export class PortalService {
   readonly estado$ = new BehaviorSubject<EstadoPortal | null>(null);
 
   cargarEstado(): Observable<EstadoPortal> {
-    return this.http.get<EstadoPortal>(`${this.api}/estado`).pipe(tap((e) => this.estado$.next(e)));
+    return this.http.get<EstadoPortal>(`${this.api}/status`).pipe(tap((e) => this.estado$.next(e)));
   }
 
   solicitar(cedula: string): Observable<EstadoPortal> {
     return this.http
-      .post<EstadoPortal>(`${this.api}/solicitud`, { cedula })
+      .post<EstadoPortal>(`${this.api}/request`, { cedula })
       .pipe(tap((e) => this.estado$.next(e)));
   }
 
   jornales(): Observable<MiJornal[]> {
-    return this.http.get<MiJornal[]>(`${this.api}/jornales`);
+    return this.http.get<MiJornal[]>(`${this.api}/workdays`);
   }
 
   nominas(): Observable<MiNomina[]> {
-    return this.http.get<MiNomina[]>(`${this.api}/nominas`);
+    return this.http.get<MiNomina[]>(`${this.api}/payrolls`);
   }
 
   pagos(): Observable<MiPago[]> {
-    return this.http.get<MiPago[]>(`${this.api}/pagos`);
+    return this.http.get<MiPago[]>(`${this.api}/payments`);
   }
 }

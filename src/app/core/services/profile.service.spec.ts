@@ -36,14 +36,14 @@ describe('ProfileService', () => {
 
   it('getPerfil() should GET perfil', () => {
     service.getPerfil().subscribe(r => expect(r).toEqual(mockPerfil));
-    const req = httpMock.expectOne(`${base}/perfil`);
+    const req = httpMock.expectOne(`${base}/profile`);
     expect(req.request.method).toBe('GET');
     req.flush(mockPerfil);
   });
 
   it('updatePerfil() should PUT and return updated perfil', () => {
     service.updatePerfil(mockUpdateRequest).subscribe(r => expect(r).toEqual(mockPerfil));
-    const req = httpMock.expectOne(`${base}/perfil`);
+    const req = httpMock.expectOne(`${base}/profile`);
     expect(req.request.method).toBe('PUT');
     expect(req.request.body).toEqual(mockUpdateRequest);
     req.flush(mockPerfil);
@@ -51,7 +51,7 @@ describe('ProfileService', () => {
 
   it('changePassword() should PATCH password', () => {
     service.changePassword(mockPasswordRequest).subscribe(r => expect(r).toBeUndefined());
-    const req = httpMock.expectOne(`${base}/perfil/password`);
+    const req = httpMock.expectOne(`${base}/profile/password`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual(mockPasswordRequest);
     req.flush(null);
@@ -61,7 +61,7 @@ describe('ProfileService', () => {
     localStorage.setItem('token', 'viejo');
     localStorage.setItem('usuario', JSON.stringify({ id: 1, token: 'viejo', nombre: 'Ana' }));
     service.changePassword(mockPasswordRequest).subscribe();
-    httpMock.expectOne(`${base}/perfil/password`).flush({ token: 'nuevo' });
+    httpMock.expectOne(`${base}/profile/password`).flush({ token: 'nuevo' });
     expect(localStorage.getItem('token')).toBe('nuevo');
     expect(JSON.parse(localStorage.getItem('usuario')!).token).toBe('nuevo');
     localStorage.clear();

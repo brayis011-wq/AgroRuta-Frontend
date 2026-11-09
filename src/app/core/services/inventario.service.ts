@@ -11,7 +11,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class InventarioService {
   private readonly http = inject(HttpClient);
-  private readonly api = `${environment.apiUrl}/api/inventario`;
+  private readonly api = `${environment.apiUrl}/api/inventory`;
 
   stock(): Observable<StockInsumo[]> {
     return this.http.get<StockInsumo[]>(this.api);
@@ -19,32 +19,32 @@ export class InventarioService {
 
   /** Insumos bajos, agotados o en negativo */
   avisos(): Observable<StockInsumo[]> {
-    return this.http.get<StockInsumo[]>(`${this.api}/avisos`);
+    return this.http.get<StockInsumo[]>(`${this.api}/alerts`);
   }
 
   movimientos(insumoId: number): Observable<MovimientoInventario[]> {
-    return this.http.get<MovimientoInventario[]>(`${this.api}/${insumoId}/movimientos`);
+    return this.http.get<MovimientoInventario[]>(`${this.api}/${insumoId}/movements`);
   }
 
   registrarCompra(req: CompraRequest): Observable<MovimientoInventario> {
-    return this.http.post<MovimientoInventario>(`${this.api}/compras`, req);
+    return this.http.post<MovimientoInventario>(`${this.api}/purchases`, req);
   }
 
   ajustar(req: AjusteRequest): Observable<MovimientoInventario> {
-    return this.http.post<MovimientoInventario>(`${this.api}/ajustes`, req);
+    return this.http.post<MovimientoInventario>(`${this.api}/adjustments`, req);
   }
 
   /** minimo = null quita el aviso */
   definirMinimo(insumoId: number, minimo: number | null, unidad: MeasurementUnit): Observable<StockInsumo> {
-    return this.http.put<StockInsumo>(`${this.api}/${insumoId}/minimo`, { minimo, unidad });
+    return this.http.put<StockInsumo>(`${this.api}/${insumoId}/minimum`, { minimo, unidad });
   }
 
   eliminarMovimiento(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/movimientos/${id}`);
+    return this.http.delete<void>(`${this.api}/movements/${id}`);
   }
 
   costoEstimado(insumoId: number, cantidad: number, unidad: MeasurementUnit): Observable<CostoEstimado> {
     const params = new HttpParams().set('insumoId', insumoId).set('cantidad', cantidad).set('unidad', unidad);
-    return this.http.get<CostoEstimado>(`${this.api}/costo-estimado`, { params });
+    return this.http.get<CostoEstimado>(`${this.api}/estimated-cost`, { params });
   }
 }

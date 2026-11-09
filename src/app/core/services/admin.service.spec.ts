@@ -19,27 +19,27 @@ describe('AdminService', () => {
 
   afterEach(() => http.verify());
 
-  it('resumen() should GET /resumen', () => {
+  it('resumen() should GET /summary', () => {
     service.resumen().subscribe();
-    expect(http.expectOne(`${api}/resumen`).request.method).toBe('GET');
+    expect(http.expectOne(`${api}/summary`).request.method).toBe('GET');
   });
 
   it('cambiarEstado() should PATCH the estado with { activo }', () => {
     service.cambiarEstado(3, false).subscribe();
-    const req = http.expectOne(`${api}/usuarios/3/estado`);
+    const req = http.expectOne(`${api}/users/3/status`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual({ activo: false });
   });
 
   it('cambiarRol() should PATCH the rol', () => {
     service.cambiarRol(4, 'Agricultor').subscribe();
-    const req = http.expectOne(`${api}/usuarios/4/rol`);
+    const req = http.expectOne(`${api}/users/4/role`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual({ rol: 'Agricultor' });
   });
 
   it('agricultor() should GET the detail', () => {
     service.agricultor(7).subscribe();
-    expect(http.expectOne(`${api}/agricultores/7`).request.method).toBe('GET');
+    expect(http.expectOne(`${api}/farmers/7`).request.method).toBe('GET');
   });
 });

@@ -13,7 +13,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   registro(data: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/registro`, data);
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data);
   }
 
   login(data: LoginRequest): Observable<AuthResponse> {
@@ -30,7 +30,7 @@ export class AuthService {
   /** Enlace del correo de confirmación: confirma la cuenta y deja la sesión iniciada. */
   verificar(token: string): Observable<AuthResponse> {
     this.logout();
-    return this.http.post<AuthResponse>(`${this.apiUrl}/verificar`, { token }).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/verify`, { token }).pipe(
       tap((response) => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('usuario', JSON.stringify(response));
@@ -40,17 +40,17 @@ export class AuthService {
 
   /** Vuelve a mandar el correo de confirmación. Responde igual exista o no la cuenta. */
   reenviarVerificacion(email: string): Observable<{ mensaje: string }> {
-    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/reenviar-verificacion`, { email });
+    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/resend-verification`, { email });
   }
 
   /** Pide el enlace para crear una contraseña nueva. Responde igual exista o no la cuenta. */
   recuperar(email: string): Observable<{ mensaje: string }> {
-    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/recuperar`, { email });
+    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/forgot-password`, { email });
   }
 
   /** Crea la contraseña nueva con el token del enlace que llegó al correo. */
   restablecer(token: string, password: string): Observable<{ mensaje: string }> {
-    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/restablecer`, { token, password });
+    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/reset-password`, { token, password });
   }
 
   /** Cambió la contraseña: el servidor cerró las sesiones viejas y mandó un token nuevo. */

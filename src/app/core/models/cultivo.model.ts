@@ -154,7 +154,7 @@ export interface TemporadaComparada {
   mismoCultivo: boolean;
 }
 
-/** GET /api/siembras/{id}/resumen */
+/** GET /api/plantings/{id}/summary */
 export interface ResumenSiembra {
   siembraId: number;
   totalKg: number;
@@ -171,7 +171,7 @@ export interface ResumenSiembra {
   otrasTemporadas: TemporadaComparada[];
 }
 
-/** GET /api/siembras/{id}/costos (pesos colombianos) */
+/** GET /api/plantings/{id}/costs (pesos colombianos) */
 export interface CostosSiembra {
   siembraId: number;
   manoObra: number;

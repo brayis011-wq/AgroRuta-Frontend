@@ -14,7 +14,7 @@ export interface PreferenciasCorreo {
 @Injectable({ providedIn: 'root' })
 export class NotificacionesService {
   private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiUrl}/api/notificaciones/preferencias`;
+  private readonly base = `${environment.apiUrl}/api/notifications/preferences`;
 
   obtener(): Observable<PreferenciasCorreo> {
     return this.http.get<PreferenciasCorreo>(this.base);

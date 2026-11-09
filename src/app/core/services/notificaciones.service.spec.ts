@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
 describe('NotificacionesService', () => {
   let service: NotificacionesService;
   let http: HttpTestingController;
-  const url = `${environment.apiUrl}/api/notificaciones/preferencias`;
+  const url = `${environment.apiUrl}/api/notifications/preferences`;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });

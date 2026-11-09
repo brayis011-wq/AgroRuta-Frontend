@@ -76,7 +76,7 @@ describe('AuthService', () => {
     service.registro(mockRegisterRequest).subscribe(r => {
       expect(r).toEqual(mockAuthResponse);
     });
-    const req = httpMock.expectOne(`${apiUrl}/registro`);
+    const req = httpMock.expectOne(`${apiUrl}/register`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(mockRegisterRequest);
     req.flush(mockAuthResponse);
@@ -163,7 +163,7 @@ describe('AuthService', () => {
   // ── recuperar contraseña ────────────────────────────────
   it('recuperar() should POST the email', () => {
     service.recuperar('ana@x.com').subscribe();
-    const req = httpMock.expectOne(`${apiUrl}/recuperar`);
+    const req = httpMock.expectOne(`${apiUrl}/forgot-password`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ email: 'ana@x.com' });
     req.flush({ mensaje: 'ok' });
@@ -171,7 +171,7 @@ describe('AuthService', () => {
 
   it('restablecer() should POST token and password', () => {
     service.restablecer('tok', 'nueva-clave').subscribe();
-    const req = httpMock.expectOne(`${apiUrl}/restablecer`);
+    const req = httpMock.expectOne(`${apiUrl}/reset-password`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ token: 'tok', password: 'nueva-clave' });
     req.flush({ mensaje: 'ok' });
@@ -179,7 +179,7 @@ describe('AuthService', () => {
 
   it('verificar() should POST the token and store the session', () => {
     service.verificar('tok').subscribe();
-    const req = httpMock.expectOne(`${apiUrl}/verificar`);
+    const req = httpMock.expectOne(`${apiUrl}/verify`);
     expect(req.request.body).toEqual({ token: 'tok' });
     req.flush(mockAuthResponse);
     expect(localStorage.getItem('token')).toBe(mockAuthResponse.token);
@@ -187,7 +187,7 @@ describe('AuthService', () => {
 
   it('reenviarVerificacion() should POST the email', () => {
     service.reenviarVerificacion('ana@x.com').subscribe();
-    const req = httpMock.expectOne(`${apiUrl}/reenviar-verificacion`);
+    const req = httpMock.expectOne(`${apiUrl}/resend-verification`);
     expect(req.request.body).toEqual({ email: 'ana@x.com' });
     req.flush({ mensaje: 'ok' });
   });
