@@ -1,5 +1,6 @@
 // src/app/core/services/profile.service.spec.ts
 import { TestBed } from '@angular/core/testing';
+import { AuthService } from './auth.service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { ProfileService } from './profile.service';
@@ -58,12 +59,10 @@ describe('ProfileService', () => {
   });
 
   it('changePassword() should keep the session with the new token', () => {
-    localStorage.setItem('token', 'viejo');
-    localStorage.setItem('usuario', JSON.stringify({ id: 1, token: 'viejo', nombre: 'Ana' }));
+    const auth = TestBed.inject(AuthService);
     service.changePassword(mockPasswordRequest).subscribe();
     httpMock.expectOne(`${base}/profile/password`).flush({ token: 'nuevo' });
-    expect(localStorage.getItem('token')).toBe('nuevo');
-    expect(JSON.parse(localStorage.getItem('usuario')!).token).toBe('nuevo');
-    localStorage.clear();
+    expect(auth.getToken()).toBe('nuevo');
+    expect(localStorage.getItem('token')).toBeNull();
   });
 });

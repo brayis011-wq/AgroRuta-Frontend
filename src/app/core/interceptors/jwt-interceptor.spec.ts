@@ -1,256 +1,156 @@
 // src/app/core/interceptors/jwt-interceptor.spec.ts
 import { vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
 import { jwtInterceptor } from './jwt-interceptor';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../../environments/environment';
+
+/** JWT de prueba con el exp indicado (segundos desde ahora). La firma no importa en el frontend. */
+function jwt(segundos: number, nombre = 'x'): string {
+  const payload = btoa(JSON.stringify({ sub: nombre, exp: Math.floor(Date.now() / 1000) + segundos }));
+  return `h.${payload}.s`;
+}
 
 describe('jwtInterceptor', () => {
-  let authServiceMock: any;
-  let routerMock: any;
+  const api = `${environment.apiUrl}/api`;
+  let http: HttpClient;
+  let httpMock: HttpTestingController;
+  let auth: AuthService;
+  let router: { navigate: ReturnType<typeof vi.fn> };
 
-  const interceptor: HttpInterceptorFn = (req, next) =>
-    TestBed.runInInjectionContext(() => jwtInterceptor(req, next));
+  /** Simula un login para tener token en memoria y la marca de sesión. */
+  function iniciarSesion(token = jwt(900)) {
+    auth.login({ email: 'a@x.com', password: 'p' } as any).subscribe();
+    httpMock.expectOne(`${api}/auth/login`).flush({ id: 1, token, nombre: 'Ana', rol: 'Agricultor' });
+  }
 
   beforeEach(() => {
-    authServiceMock = {
-      getToken: vi.fn(),
-      logout: vi.fn(),
-    };
-    routerMock = {
-      navigate: vi.fn(),
-    };
-
+    localStorage.clear();
+    router = { navigate: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
-        { provide: AuthService, useValue: authServiceMock },
-        { provide: Router, useValue: routerMock },
+        provideHttpClient(withInterceptors([jwtInterceptor])),
+        provideHttpClientTesting(),
+        { provide: Router, useValue: router },
       ],
     });
+    http = TestBed.inject(HttpClient);
+    httpMock = TestBed.inject(HttpTestingController);
+    auth = TestBed.inject(AuthService);
   });
 
-  afterEach(() => vi.restoreAllMocks());
-
-  it('should add Authorization header when token exists', () => {
-    return new Promise<void>((resolve) => {
-      authServiceMock.getToken.mockReturnValue('fake-jwt-token');
-
-      const req = {
-        url: 'http://localhost:8080/api/test',
-        headers: {
-          set: vi.fn().mockReturnValue('headers-with-auth'),
-        },
-        clone: vi.fn().mockReturnValue({ url: '/api/test', withAuth: true }),
-      } as any;
-
-      const next = vi.fn().mockReturnValue(of({ type: 4 }));
-
-      interceptor(req, next).subscribe({
-        next: () => {
-          expect(req.headers.set).toHaveBeenCalledWith(
-            'Authorization',
-            'Bearer fake-jwt-token'
-          );
-          expect(req.clone).toHaveBeenCalledWith({
-            headers: 'headers-with-auth',
-          });
-          expect(next).toHaveBeenCalledWith({ url: '/api/test', withAuth: true });
-          resolve();
-        },
-      });
-    });
+  afterEach(() => {
+    httpMock.verify();
+    localStorage.clear();
   });
 
-  it('should NOT send the token to external services', () => {
-    return new Promise<void>((resolve) => {
-      authServiceMock.getToken.mockReturnValue('fake-jwt-token');
+  it('pone el token y withCredentials en las llamadas a nuestra API', () => {
+    const token = jwt(900);
+    iniciarSesion(token);
 
-      const req = {
-        url: 'https://nominatim.openstreetmap.org/search?q=Tunja',
-        headers: { set: vi.fn() },
-        clone: vi.fn(),
-      } as any;
+    http.get(`${api}/farms`).subscribe();
+    const req = httpMock.expectOne(`${api}/farms`);
 
-      const next = vi.fn().mockReturnValue(of({ type: 4 }));
-
-      interceptor(req, next).subscribe({
-        next: () => {
-          expect(req.clone).not.toHaveBeenCalled();
-          expect(next).toHaveBeenCalledWith(req);
-          resolve();
-        },
-      });
-    });
+    expect(req.request.headers.get('Authorization')).toBe(`Bearer ${token}`);
+    expect(req.request.withCredentials).toBe(true);
+    req.flush([]);
   });
 
-  it('should NOT add Authorization header when no token', () => {
-    return new Promise<void>((resolve) => {
-      authServiceMock.getToken.mockReturnValue(null);
+  it('no pone token en /api/auth/*, pero sí manda la cookie', () => {
+    iniciarSesion();
 
-      const req = {
-        headers: { set: vi.fn() },
-        clone: vi.fn(),
-      } as any;
+    http.post(`${api}/auth/refresh`, {}).subscribe();
+    const req = httpMock.expectOne(`${api}/auth/refresh`);
 
-      const next = vi.fn().mockReturnValue(of({ type: 4 }));
-
-      interceptor(req, next).subscribe({
-        next: () => {
-          expect(req.clone).not.toHaveBeenCalled();
-          expect(next).toHaveBeenCalledWith(req);
-          resolve();
-        },
-      });
-    });
+    expect(req.request.headers.has('Authorization')).toBe(false);
+    expect(req.request.withCredentials).toBe(true);
+    req.flush({});
   });
 
-  it('should pass request unchanged when token is empty string', () => {
-    return new Promise<void>((resolve) => {
-      authServiceMock.getToken.mockReturnValue('');
+  it('no toca las llamadas a servicios externos', () => {
+    iniciarSesion();
 
-      const req = {
-        headers: { set: vi.fn() },
-        clone: vi.fn(),
-      } as any;
+    http.get('https://nominatim.openstreetmap.org/search').subscribe();
+    const req = httpMock.expectOne('https://nominatim.openstreetmap.org/search');
 
-      const next = vi.fn().mockReturnValue(of({ type: 4 }));
-
-      interceptor(req, next).subscribe({
-        next: () => {
-          expect(req.clone).not.toHaveBeenCalled();
-          expect(next).toHaveBeenCalledWith(req);
-          resolve();
-        },
-      });
-    });
+    expect(req.request.headers.has('Authorization')).toBe(false);
+    expect(req.request.withCredentials).toBe(false);
+    req.flush([]);
   });
 
-  // ── manejo de errores HTTP ────────────────────────────────────────────
+  it('con sesión pero sin token en memoria (página recargada) lo renueva antes de llamar', () => {
+    localStorage.setItem('usuario', JSON.stringify({ id: 1, nombre: 'Ana' }));
+    const nuevo = jwt(900, 'nuevo');
 
-  const requestFalso = (url: string) =>
-    ({
-      url,
-      headers: { set: vi.fn().mockReturnValue('headers') },
-      clone: vi.fn().mockReturnValue({ url }),
-    }) as any;
+    http.get(`${api}/farms`).subscribe();
+    httpMock.expectOne(`${api}/auth/refresh`).flush({ id: 1, token: nuevo, nombre: 'Ana', rol: 'Agricultor' });
 
-  const respuestaConError = (status: number, url: string) =>
-    vi.fn().mockReturnValue(throwError(() => new HttpErrorResponse({ status, url })));
-
-  it('on 401 should logout and redirect to login with sesion=expirada', () => {
-    return new Promise<void>((resolve) => {
-      authServiceMock.getToken.mockReturnValue('tok');
-      const req = requestFalso('/api/farms/1');
-      const next = respuestaConError(401, '/api/farms/1');
-
-      interceptor(req, next).subscribe({
-        error: (err) => {
-          expect(err.status).toBe(401);
-          expect(authServiceMock.logout).toHaveBeenCalledTimes(1);
-          expect(routerMock.navigate).toHaveBeenCalledWith(['/auth/login'], {
-            queryParams: { sesion: 'expirada' },
-          });
-          resolve();
-        },
-      });
-    });
+    const req = httpMock.expectOne(`${api}/farms`);
+    expect(req.request.headers.get('Authorization')).toBe(`Bearer ${nuevo}`);
+    req.flush([]);
   });
 
-  it('on 401 from /api/auth/login should NOT logout nor redirect', () => {
-    return new Promise<void>((resolve) => {
-      authServiceMock.getToken.mockReturnValue(null);
-      const req = requestFalso('http://localhost:8080/api/auth/login');
-      const next = respuestaConError(401, '/api/auth/login');
+  it('varias llamadas a la vez comparten una sola renovación', () => {
+    localStorage.setItem('usuario', JSON.stringify({ id: 1 }));
 
-      interceptor(req, next).subscribe({
-        error: (err) => {
-          expect(err.status).toBe(401);
-          expect(authServiceMock.logout).not.toHaveBeenCalled();
-          expect(routerMock.navigate).not.toHaveBeenCalled();
-          resolve();
-        },
-      });
-    });
+    http.get(`${api}/farms`).subscribe();
+    http.get(`${api}/plots/1`).subscribe();
+    httpMock.expectOne(`${api}/auth/refresh`).flush({ id: 1, token: jwt(900) });
+
+    httpMock.expectOne(`${api}/farms`).flush([]);
+    httpMock.expectOne(`${api}/plots/1`).flush({});
   });
 
-  it('on 403 should propagate the error without closing the session', () => {
-    return new Promise<void>((resolve) => {
-      authServiceMock.getToken.mockReturnValue('tok');
-      const req = requestFalso('/api/farms/2');
-      const next = respuestaConError(403, '/api/farms/2');
+  it('si una llamada responde 401, renueva y la repite una vez', () => {
+    iniciarSesion(jwt(900, 'viejo'));
+    const nuevo = jwt(900, 'nuevo');
+    let respuesta: unknown;
 
-      interceptor(req, next).subscribe({
-        error: (err) => {
-          expect(err.status).toBe(403);
-          expect(authServiceMock.logout).not.toHaveBeenCalled();
-          expect(routerMock.navigate).not.toHaveBeenCalled();
-          resolve();
-        },
-      });
-    });
+    http.get(`${api}/farms`).subscribe((r) => (respuesta = r));
+    httpMock.expectOne(`${api}/farms`).flush(null, { status: 401, statusText: 'Unauthorized' });
+    httpMock.expectOne(`${api}/auth/refresh`).flush({ id: 1, token: nuevo });
+
+    const repetida = httpMock.expectOne(`${api}/farms`);
+    expect(repetida.request.headers.get('Authorization')).toBe(`Bearer ${nuevo}`);
+    repetida.flush(['ok']);
+    expect(respuesta).toEqual(['ok']);
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('on 500 should propagate the error without closing the session', () => {
-    return new Promise<void>((resolve) => {
-      authServiceMock.getToken.mockReturnValue('tok');
-      const req = requestFalso('/api/farms');
-      const next = respuestaConError(500, '/api/farms');
+  it('si la renovación responde 401, cierra la sesión y va al login con sesion=expirada', () => {
+    localStorage.setItem('usuario', JSON.stringify({ id: 1 }));
+    let error: any;
 
-      interceptor(req, next).subscribe({
-        error: (err) => {
-          expect(err.status).toBe(500);
-          expect(authServiceMock.logout).not.toHaveBeenCalled();
-          expect(routerMock.navigate).not.toHaveBeenCalled();
-          resolve();
-        },
-      });
-    });
+    http.get(`${api}/farms`).subscribe({ error: (e) => (error = e) });
+    httpMock.expectOne(`${api}/auth/refresh`).flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    expect(error.status).toBe(401);
+    expect(auth.isLoggedIn()).toBe(false);
+    expect(router.navigate).toHaveBeenCalledWith(['/auth/login'], { queryParams: { sesion: 'expirada' } });
   });
 
-  it('should NOT add Authorization header to /api/auth/login even with an old token', () => {
-    return new Promise<void>((resolve) => {
-      authServiceMock.getToken.mockReturnValue('expired-jwt-token');
+  it('un error de red al renovar no cierra la sesión', () => {
+    localStorage.setItem('usuario', JSON.stringify({ id: 1 }));
+    let error: any;
 
-      const req = {
-        url: 'http://localhost:8080/api/auth/login',
-        headers: { set: vi.fn() },
-        clone: vi.fn(),
-      } as any;
+    http.get(`${api}/farms`).subscribe({ error: (e) => (error = e) });
+    httpMock.expectOne(`${api}/auth/refresh`).error(new ProgressEvent('error'));
 
-      const next = vi.fn().mockReturnValue(of({ type: 4 }));
-
-      interceptor(req, next).subscribe({
-        next: () => {
-          expect(req.clone).not.toHaveBeenCalled();
-          expect(req.headers.set).not.toHaveBeenCalled();
-          expect(next).toHaveBeenCalledWith(req);
-          resolve();
-        },
-      });
-    });
+    expect(error.status).toBe(0);
+    expect(auth.isLoggedIn()).toBe(true);
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should NOT add Authorization header to /api/auth/register', () => {
-    return new Promise<void>((resolve) => {
-      authServiceMock.getToken.mockReturnValue('expired-jwt-token');
+  it('un 403 no cierra la sesión', () => {
+    iniciarSesion();
 
-      const req = {
-        url: 'http://localhost:8080/api/auth/register',
-        headers: { set: vi.fn() },
-        clone: vi.fn(),
-      } as any;
+    http.get(`${api}/admin/users`).subscribe({ error: () => undefined });
+    httpMock.expectOne(`${api}/admin/users`).flush(null, { status: 403, statusText: 'Forbidden' });
 
-      const next = vi.fn().mockReturnValue(of({ type: 4 }));
-
-      interceptor(req, next).subscribe({
-        next: () => {
-          expect(req.clone).not.toHaveBeenCalled();
-          expect(next).toHaveBeenCalledWith(req);
-          resolve();
-        },
-      });
-    });
+    expect(auth.isLoggedIn()).toBe(true);
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 });

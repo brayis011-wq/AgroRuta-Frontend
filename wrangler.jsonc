@@ -5,8 +5,16 @@
   "compatibility_date": "2026-10-01",
   // Las ramas y PR se publican con "npx wrangler preview", que exige este bloque (puede ir vacío)
   "previews": {},
+  // Reenvía /api/* al backend en Render, para que la API quede en este mismo dominio
+  "main": "./worker/index.js",
+  "vars": {
+    "API_ORIGIN": "https://agroruta-backend.onrender.com"
+  },
   "assets": {
     "directory": "./dist/agroruta-frontend/browser",
+    "binding": "ASSETS",
+    // Solo /api/* ejecuta el Worker; lo demás se sirve directo como archivo estático
+    "run_worker_first": ["/api/*"],
     // Rutas como /auth/verify o /crops/calendar las resuelve Angular: se sirve index.html
     "not_found_handling": "single-page-application"
   }
