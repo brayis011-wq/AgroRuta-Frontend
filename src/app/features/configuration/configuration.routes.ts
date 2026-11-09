@@ -4,7 +4,7 @@ export const configurationRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/configuration-page/configuration-page.component').then(
+      import('./pages/configuration-page/configuration-page').then(
         (m) => m.ConfigurationPageComponent
       ),
   },

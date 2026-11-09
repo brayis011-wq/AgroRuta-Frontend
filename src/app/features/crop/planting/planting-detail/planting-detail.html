@@ -1,0 +1,215 @@
+<div class="cv">
+  <button type="button" class="volver" (click)="volver()">
+    <i class="ti ti-arrow-left"></i> {{ nombreLote ? ('temporadas.ui.backToLot' | translate: { lote: nombreLote }) : ('temporadas.lote.backPlain' | translate) }}
+  </button>
+
+  @if (error) {
+    <p class="aviso error" role="alert"><i class="ti ti-alert-circle"></i> {{ error | translate }}</p>
+  }
+
+  @if (cargando) {
+    <section class="kpis"><div class="esq"></div><div class="esq"></div><div class="esq"></div><div class="esq"></div></section>
+  }
+
+  @if (!cargando && siembra) {
+    <header class="cv-head">
+      <div>
+        <p class="eyebrow">{{ 'temporadas.ui.planting' | translate }}@if (nombreLote) { · {{ nombreLote }} }@if (nombreFinca) { · {{ nombreFinca }} }</p>
+        <h1>{{ nombreCultivo(siembra) }}</h1>
+        <p class="cv-sub">
+          <span><i class="ti ti-calendar"></i> {{ 'temporadas.lote.plantedOn' | translate: { date: fmtFechaLarga(siembra.fechaSiembra) } }}</span>
+          <span><i class="ti ti-plant-2"></i> {{ 'temporadas.lote.plants' | translate: { count: num(siembra.cantidadPlantas) } }}</span>
+          <span class="chip" [class.chip-EN_CULTIVO]="activa" [class.chip-cerrada]="!activa">{{ 'enums.etapaCultivo.' + siembra.estadoCultivo | translate }}</span>
+        </p>
+      </div>
+      <div class="cv-acciones">
+        <a class="btn" routerLink="/reports" [queryParams]="{ tab: 'costs', siembra: siembra.id }"><i class="ti ti-coins"></i> {{ 'reports.costs.seeCosts' | translate }}</a>
+        <button type="button" class="btn" (click)="editarSiembra()"><i class="ti ti-pencil"></i> {{ 'common.edit' | translate }}</button>
+      </div>
+    </header>
+
+    @if (!activa) {
+      <p class="aviso gris"><i class="ti ti-flag-check"></i> {{ 'temporadas.siembra.closed' | translate: { date: fmtFechaLarga(siembra.fechaFin) } }}</p>
+    }
+
+    <!-- Condiciones de hoy: el clima decide si se fumiga, se cosecha o se riega -->
+    <section class="hoy" [class]="'hoy ' + (consejo ?? 'sin-datos')">
+      <div class="hoy-clima">
+        @if (clima; as c) {
+          <img [src]="c.iconUrl" alt="" width="64" height="64">
+          <div>
+            <p class="eyebrow">{{ 'temporadas.ui.weatherToday' | translate }}@if (c.city) { · {{ c.city }} }</p>
+            <strong class="hoy-temp">{{ c.temperature | number: '1.0-0' }}°C</strong>
+            <span class="hoy-desc">{{ c.description | titlecase }}</span>
+          </div>
+        } @else {
+          <span class="ic gris"><i class="ti ti-cloud-off"></i></span>
+          <div>
+            <p class="eyebrow">{{ 'temporadas.ui.weatherToday' | translate }}</p>
+            <span class="hoy-desc">{{ 'temporadas.ui.noWeather' | translate }}</span>
+          </div>
+        }
+      </div>
+      @if (clima; as c) {
+        <dl class="hoy-datos">
+          <div><dt><i class="ti ti-droplet"></i> {{ 'weather.humidity' | translate }}</dt><dd>{{ c.humidity }}%</dd></div>
+          <div><dt><i class="ti ti-wind"></i> {{ 'weather.wind' | translate }}</dt><dd>{{ c.windSpeed | number: '1.0-1' }} m/s</dd></div>
+          <div><dt><i class="ti ti-temperature"></i> {{ 'weather.feelsLike' | translate }}</dt><dd>{{ c.feelsLike | number: '1.0-0' }}°C</dd></div>
+        </dl>
+      }
+      <div class="hoy-decision">
+        @if (consejo) {
+          <p class="consejo" [class]="'consejo ' + consejo">
+            <i class="ti" [class.ti-circle-check]="consejo === 'good'" [class.ti-cloud-rain]="consejo === 'rain'" [class.ti-wind]="consejo === 'wind'" [class.ti-sun-high]="consejo === 'hot'"></i>
+            {{ 'layout.weather.' + consejo | translate }}
+          </p>
+        }
+        @if (activa && resumen) {
+          @if (resumen.carencia; as c) {
+            <p class="alerta-cultivo rojo">
+              <i class="ti ti-basket-off"></i>
+              <span><b>{{ 'temporadas.carencia.noHarvestUntil' | translate: { date: fmtDia(c.libreDesde) } }}</b>
+                <small>{{ c.producto }} · {{ (c.diasRestantes === 1 ? 'temporadas.carencia.leftOne' : 'temporadas.carencia.left') | translate: { days: c.diasRestantes } }}</small></span>
+            </p>
+          } @else {
+            <p class="alerta-cultivo verde"><i class="ti ti-basket-check"></i> <span><b>{{ 'temporadas.carencia.canHarvest' | translate }}</b></span></p>
+          }
+          @if (resumen.reentrada; as r) {
+            <p class="alerta-cultivo ambar">
+              <i class="ti ti-door-off"></i>
+              <span><b>{{ 'temporadas.carencia.noEntryUntil' | translate: { date: fmtDia(r.libreDesde) } }}</b>
+                <small>{{ r.producto }} · {{ 'temporadas.carencia.reentryHours' | translate: { hours: r.valor } }}</small></span>
+            </p>
+          }
+        }
+        @if (activa) {
+          @let est = estadoFumigacion();
+          <p class="fumi" [class]="'fumi ' + est.nivel"><i class="ti ti-spray"></i> {{ est.clave | translate: { days: est.dias } }}</p>
+        }
+      </div>
+    </section>
+
+    <section class="kpis">
+      <article class="kpi">
+        <span class="ic verde"><i class="ti ti-calendar-stats"></i></span>
+        <div><small>{{ (activa ? 'temporadas.ui.daysInField' : 'temporadas.ui.seasonLength') | translate }}</small>
+          <strong>{{ getDiasTranscurridos() }}</strong></div>
+      </article>
+      <article class="kpi">
+        <span class="ic ambar"><i class="ti ti-basket"></i></span>
+        <div><small>{{ 'siembra.detail.cards.harvested' | translate }}</small><strong>{{ num(totalKg, 1) }}</strong>
+          <em>{{ 'siembra.detail.cards.harvestsCount' | translate: { count: cosechas.length } }}</em></div>
+      </article>
+      <article class="kpi">
+        <span class="ic azul"><i class="ti ti-spray"></i></span>
+        <div><small>{{ 'siembra.detail.cards.sprays' | translate }}</small><strong>{{ fumigaciones.length }}</strong>
+          <em>{{ getUltimaFumigacion() }}</em></div>
+      </article>
+      <article class="kpi">
+        <span class="ic gris"><i class="ti ti-clipboard-list"></i></span>
+        <div><small>{{ 'siembra.detail.cards.activities' | translate }}</small><strong>{{ actividades.length }}</strong>
+          <em>{{ getUltimaActividad() }}</em></div>
+      </article>
+    </section>
+
+    @if (activa) {
+      <section class="registrar" [attr.aria-label]="'temporadas.ui.registerNew' | translate">
+        <p class="registrar-titulo"><i class="ti ti-circle-plus"></i> {{ 'temporadas.ui.registerNew' | translate }}</p>
+        <button type="button" class="accion act" (click)="registrarActividad()">
+          <span class="ic"><i class="ti ti-clipboard-list"></i></span>
+          <span class="accion-txt"><strong>{{ 'siembra.detail.actions.activity.title' | translate }}</strong><small>{{ 'siembra.detail.actions.activity.desc' | translate }}</small></span>
+          <i class="ti ti-plus mas" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="accion fum" (click)="registrarFumigacion()">
+          <span class="ic"><i class="ti ti-spray"></i></span>
+          <span class="accion-txt"><strong>{{ 'siembra.detail.actions.spray.title' | translate }}</strong><small>{{ 'siembra.detail.actions.spray.desc' | translate }}</small></span>
+          <i class="ti ti-plus mas" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="accion cos" (click)="registrarCosecha()">
+          <span class="ic"><i class="ti ti-basket"></i></span>
+          <span class="accion-txt"><strong>{{ 'siembra.detail.actions.harvest.title' | translate }}</strong><small>{{ 'siembra.detail.actions.harvest.desc' | translate }}</small></span>
+          <i class="ti ti-plus mas" aria-hidden="true"></i>
+        </button>
+      </section>
+    }
+
+    <app-ciclo-etapas [siembra]="siembra" (cambio)="alCambiarSiembra($event)" />
+
+    <app-agenda-siembra [siembraId]="siembra.id!" [loteId]="siembra.loteId" [activa]="activa" [version]="version" />
+
+    <app-rendimiento-siembra [resumen]="resumen" [siembra]="siembra" />
+
+    <section class="tarjeta historial">
+        <header>
+          <h2><i class="ti ti-history"></i> {{ 'siembra.detail.history.title' | translate }}</h2>
+          <div class="filtros" role="group">
+            @for (f of ['todo', 'actividad', 'fumigacion', 'cosecha']; track f) {
+              <button type="button" class="filtro" [class.on]="filtroActivo === f" [attr.aria-pressed]="filtroActivo === f" (click)="setFiltro($any(f))">
+                {{ (f === 'todo' ? 'siembra.detail.history.filterAll' : f === 'actividad' ? 'siembra.detail.history.filterActivities' : f === 'fumigacion' ? 'siembra.detail.history.filterSprays' : 'siembra.detail.history.filterHarvests') | translate }}
+              </button>
+            }
+          </div>
+        </header>
+
+        @if (!timelineCompleto.length) {
+          <div class="vacio">
+            <i class="ti ti-notebook"></i>
+            <p>{{ 'siembra.detail.history.emptyAll' | translate }}</p>
+          </div>
+        } @else if (!timelineFiltrado.length) {
+          <p class="nada">{{ 'siembra.detail.history.emptyFilter' | translate }}</p>
+        } @else {
+          <ul class="registros">
+            @for (item of timelineFiltrado; track item.tipo + item.id) {
+              <li class="registro">
+                <span class="ic" [class.gris]="item.tipo === 'actividad'" [class.azul]="item.tipo === 'fumigacion'" [class.ambar]="item.tipo === 'cosecha'">
+                  <i class="ti" [class]="'ti ' + icono(item.tipo)"></i>
+                </span>
+                <div class="reg-txt">
+                  <strong>{{ item.tituloKey ? (item.tituloKey | translate) : item.titulo }}</strong>
+                  <small>
+                    @switch (item.tipo) {
+                      @case ('actividad') { {{ item.detalle }} }
+                      @case ('fumigacion') { {{ num(item.dosis, 2) }} {{ 'enums.unidadMedida.' + item.unidad | translate }} · {{ num(item.area, 2) }} ha@if (item.carencia) { · {{ 'temporadas.carencia.daysShort' | translate: { days: item.carencia } }} }@if (item.reentrada) { · {{ 'temporadas.carencia.reentryShort' | translate: { hours: item.reentrada } }} } }
+                      @case ('cosecha') { {{ 'siembra.detail.history.quality' | translate }}: {{ 'enums.calidadCosecha.' + item.calidad | translate }} }
+                    }
+                  </small>
+                  @if (item.extra) { <small class="extra">{{ item.extra }}</small> }
+                </div>
+                <time>{{ fmtFecha(item.fecha) }}</time>
+                <span class="reg-btns">
+                  <button type="button" class="reg-btn" (click)="editarRegistro(item)" [title]="'common.edit' | translate"><i class="ti ti-pencil"></i><span>{{ 'common.edit' | translate }}</span></button>
+                  <button type="button" class="reg-btn peligro" (click)="eliminarRegistro(item)" [title]="'temporadas.registro.delete' | translate" [attr.aria-label]="'temporadas.registro.delete' | translate"><i class="ti ti-trash"></i></button>
+                </span>
+              </li>
+            }
+          </ul>
+        }
+    </section>
+
+    <section class="tarjeta peligro-zona">
+      <div>
+        <strong>{{ 'siembra.detail.danger.title' | translate }}</strong>
+        <small>{{ 'siembra.detail.danger.desc' | translate }}</small>
+      </div>
+      <button type="button" class="btn btn-borrar" (click)="iniciarEliminacion()"><i class="ti ti-trash"></i> {{ 'siembra.detail.danger.button' | translate }}</button>
+    </section>
+  }
+</div>
+
+@if (mostrarConfirmacion) {
+  <dialog class="overlay" (click)="cancelarEliminacion()" (keydown.escape)="cancelarEliminacion()" open>
+    <div class="confirm-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+      <h3><i class="ti ti-alert-triangle"></i> {{ 'siembra.detail.delete.title' | translate }}</h3>
+      <p>{{ 'siembra.detail.delete.aboutTo' | translate }} <strong>{{ nombreCultivo(siembra) }}</strong>.</p>
+      <p>{{ 'siembra.detail.delete.warnPrefix' | translate }} <strong>{{ 'cultivo.fincas.delete.confirmWord' | translate }}</strong> {{ 'cultivo.fincas.delete.warnSuffix' | translate }}</p>
+      <input type="text" [(ngModel)]="textoConfirmacion" [placeholder]="'cultivo.fincas.delete.placeholder' | translate" class="input-confirmacion" />
+      <div class="confirm-actions">
+        <button type="button" class="btn btn-texto" (click)="cancelarEliminacion()">{{ 'cultivo.fincas.delete.cancel' | translate }}</button>
+        <button type="button" class="btn btn-peligro" [disabled]="textoConfirmacion !== palabraConfirmacion || eliminando" (click)="confirmarEliminacion()">
+          {{ (eliminando ? 'cultivo.fincas.delete.deleting' : 'siembra.detail.delete.submit') | translate }}
+        </button>
+      </div>
+    </div>
+  </dialog>
+}

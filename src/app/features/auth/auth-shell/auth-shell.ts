@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { TemaService } from '../../../core/services/tema.service';
+import { TemaService } from '../../../core/services/theme.service';
 import { LanguageSwitcher } from '../../../shared/language-switcher/language-switcher';
-import { AuthCultivo } from '../cultivo-anim/cultivo-anim';
+import { AuthCultivo } from '../crop-anim/crop-anim';
 
 /** Marco del login y el registro: la ilustración queda fija y solo cambia el contenido de la tarjeta */
 @Component({

@@ -14,7 +14,7 @@ import {
 } from '../../../core/services/worker.service';
 import { Trabajador, Nomina, Pago, Cargo } from '../../../core/models/worker.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
-import { PesosPipe, FechaPipe } from '../../../shared/formato.pipe';
+import { PesosPipe, FechaPipe } from '../../../shared/format.pipe';
 
 type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 
@@ -23,7 +23,7 @@ type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe],
   templateUrl: './worker-home.html',
-  styleUrls: ['../../cultivo/cultivo-ui.css', '../../cultivo/cultivo-bloques.css', '../../report/report-tabla.css', '../worker-ui.css', '../worker-panel.css']
+  styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../worker-ui.css', '../worker-panel.css']
 })
 export class WorkerHomeComponent implements OnInit {
   private readonly confirmService = inject(ConfirmService);
@@ -207,17 +207,17 @@ export class WorkerHomeComponent implements OnInit {
 
   registrarJornal(t: Trabajador): void {
     this.cerrarPanel();
-    this.router.navigate(['/worker/jornales/nuevo'], { queryParams: { trabajadorId: t.id } });
+    this.router.navigate(['/worker/workdays/new'], { queryParams: { trabajadorId: t.id } });
   }
 
   verJornales(t: Trabajador): void {
     this.cerrarPanel();
-    this.router.navigate(['/worker/jornales'], { queryParams: { trabajadorId: t.id } });
+    this.router.navigate(['/worker/workdays'], { queryParams: { trabajadorId: t.id } });
   }
 
   verNominas(t: Trabajador): void {
     this.cerrarPanel();
-    this.router.navigate(['/worker/nominas'], { queryParams: { trabajadorId: t.id } });
+    this.router.navigate(['/worker/payrolls'], { queryParams: { trabajadorId: t.id } });
   }
 
   irA(ruta: string): void { this.router.navigate(['/worker', ruta]); }

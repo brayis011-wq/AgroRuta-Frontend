@@ -30,7 +30,7 @@
           @if (!cargandoCultivos && cultivos.length === 0) {
             <p class="aviso ambar campo ancho" role="status">
               <i class="ti ti-plant-off" aria-hidden="true"></i>
-              <span>{{ 'workers.wages.new.noCrops' | translate }} <a routerLink="/cultivo">{{ 'workers.wages.new.goToCrops' | translate }}</a></span>
+              <span>{{ 'workers.wages.new.noCrops' | translate }} <a routerLink="/crops">{{ 'workers.wages.new.goToCrops' | translate }}</a></span>
             </p>
           } @else {
             <label class="campo"><span>{{ 'workers.wages.new.farm' | translate }}</span>

@@ -2,7 +2,8 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 import { adminGuard } from './core/guards/admin-guard';
-import { areaAgricultorGuard, trabajadorGuard } from './core/guards/rol-guards';
+import { areaAgricultorGuard, trabajadorGuard } from './core/guards/role-guards';
+import { rutasAntiguasGuard } from './core/guards/legacy-routes-guard';
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 
@@ -13,8 +14,8 @@ export const routes: Routes = [
 
   // Pública: la pide Google para usar la API de Gmail
   {
-    path: 'privacidad',
-    loadComponent: () => import('./features/legal/privacidad').then((m) => m.PrivacidadComponent),
+    path: 'privacy',
+    loadComponent: () => import('./features/legal/privacy').then((m) => m.PrivacidadComponent),
   },
 
   // Panel de administración: layout y menú propios
@@ -41,25 +42,26 @@ export const routes: Routes = [
         loadChildren: () => import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
       },
       {
-        path: 'cultivo',
-        loadChildren: () => import('./features/cultivo/cultivo.routes').then((m) => m.cultivoRoutes),
+        path: 'crops',
+        loadChildren: () => import('./features/crop/crop.routes').then((m) => m.cultivoRoutes),
       },
       {
         path: 'worker',
         loadChildren: () => import('./features/worker/worker.routes').then((m) => m.workerRoutes),
       },
       {
-        path: 'reportes',
+        path: 'reports',
         loadChildren: () => import('./features/report/report.routes').then(m => m.REPORT_ROUTES),
         runGuardsAndResolvers: 'always'
       },
       {
-        path: 'configuracion',
+        path: 'settings',
         loadChildren: () =>
           import('./features/configuration/configuration.routes').then((m) => m.configurationRoutes),
       },
     ],                           // ← cierra children[]
   },                             // ← cierra el objeto de ruta layout
 
-  { path: '**', redirectTo: 'dashboard' },
+  // URLs viejas en español (marcadores, correos ya enviados): se traducen; lo demás va al inicio
+  { path: '**', canActivate: [rutasAntiguasGuard], children: [] },
 ];

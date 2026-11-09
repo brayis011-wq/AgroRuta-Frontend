@@ -7,7 +7,7 @@
   "previews": {},
   "assets": {
     "directory": "./dist/agroruta-frontend/browser",
-    // Rutas como /auth/verificar o /cultivo/calendario las resuelve Angular: se sirve index.html
+    // Rutas como /auth/verify o /crops/calendar las resuelve Angular: se sirve index.html
     "not_found_handling": "single-page-application"
   }
 }

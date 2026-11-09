@@ -65,7 +65,7 @@
                 </td>
                 <td><span class="metodo"><i class="ti" [class]="metodoIcono(p.metodoPago)" aria-hidden="true"></i>{{ p.metodoPago ? ('enums.metodoPago.' + p.metodoPago | translate) : '—' }}</span></td>
                 <td class="ocultar-m">@if (p.comprobante) { <span class="mono">{{ p.comprobante }}</span> } @else { <span class="suave">—</span> }</td>
-                <td class="ocultar-m">@if (p.nominaId) { <a class="etq" [routerLink]="['/worker/nominas', p.nominaId]" (click)="$event.stopPropagation()">#{{ p.nominaId }}</a> }</td>
+                <td class="ocultar-m">@if (p.nominaId) { <a class="etq" [routerLink]="['/worker/payrolls', p.nominaId]" (click)="$event.stopPropagation()">#{{ p.nominaId }}</a> }</td>
                 <td class="num fuerte-n">{{ p.monto | pesos }}</td>
                 <td class="acc"><i class="ti ti-chevron-right fin" aria-hidden="true"></i></td>
               </tr>
@@ -126,7 +126,7 @@
             </ul>
           }
           <div class="tot-n"><span>{{ 'workers.payments.panel.payrollTotal' | translate }}</span><span>{{ nominaDetalle.valorTotal | pesos }}</span></div>
-          <a class="btn" [routerLink]="['/worker/nominas', nominaDetalle.id]"><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.ui.openPayroll' | translate }}</a>
+          <a class="btn" [routerLink]="['/worker/payrolls', nominaDetalle.id]"><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.ui.openPayroll' | translate }}</a>
         }
       </section>
     </div>

@@ -12,14 +12,14 @@ import {
 } from '../../../../core/services/worker.service';
 import { Nomina, Pago } from '../../../../core/models/worker.model';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
-import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/formato.pipe';
+import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 
 @Component({
   selector: 'app-detalle-nomina',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe],
   templateUrl: './detail-roster.html',
-  styleUrls: ['../../../cultivo/cultivo-ui.css', '../../../cultivo/cultivo-bloques.css', '../../../report/report-tabla.css', '../../worker-ui.css', '../../worker-panel.css', './detail-roster.css']
+  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './detail-roster.css']
 })
 export class DetalleNominaComponent implements OnInit {
   private readonly confirmService = inject(ConfirmService);
@@ -190,7 +190,7 @@ export class DetalleNominaComponent implements OnInit {
   }
 
   verPago(): void {
-    this.router.navigate(['/worker/pagos'], {
+    this.router.navigate(['/worker/payments'], {
       queryParams: { nominaId: this.nomina?.id }
     });
   }

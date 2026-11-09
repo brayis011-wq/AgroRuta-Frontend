@@ -214,13 +214,13 @@ describe('DetalleNominaComponent', () => {
     expect(component.guardando).toBe(false);
   });
 
-  it('verPago() should navigate to /worker/pagos', async () => {
+  it('verPago() should navigate to /worker/payments', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
     await createComponent();
     const router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate');
     component.verPago();
-    expect(router.navigate).toHaveBeenCalledWith(['/worker/pagos'], expect.any(Object));
+    expect(router.navigate).toHaveBeenCalledWith(['/worker/payments'], expect.any(Object));
   });
 
   it('estadoClass() should return correct badge class', async () => {

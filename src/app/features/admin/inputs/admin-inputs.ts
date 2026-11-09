@@ -1,0 +1,192 @@
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { AgriculturalInputService } from '../../../core/services/agricultural-input.service';
+import { LanguageService } from '../../../core/services/language.service';
+import {
+  AgriculturalInput,
+  AgriculturalInputRequest,
+  AgriculturalInputType,
+  MeasurementUnit,
+} from '../../../core/models/agricultural-input.model';
+import { formatoNumero } from '../../../shared/format';
+
+@Component({
+  selector: 'app-admin-insumos',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  templateUrl: './admin-inputs.html',
+  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-inputs.css'],
+})
+export class AdminInsumosComponent implements OnInit {
+  private readonly insumoService = inject(AgriculturalInputService);
+  private readonly lang = inject(LanguageService);
+  private readonly translate = inject(TranslateService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly fb = inject(FormBuilder);
+
+  /** Tipos y unidades que acepta el backend (AgriculturalInputRequest). */
+  readonly tipos: AgriculturalInputType[] = ['FUNGICIDA', 'INSECTICIDA', 'HERBICIDA', 'FERTILIZANTE_FOLIAR'];
+  readonly unidades: MeasurementUnit[] = ['LITROS', 'ML', 'GRAMOS', 'KG'];
+
+  insumos: AgriculturalInput[] = [];
+  cargando = true;
+  error = false;
+  busqueda = '';
+
+  formularioAbierto = false;
+  editando: AgriculturalInput | null = null;
+  guardando = false;
+  /** Insumo que se va a desactivar (se pide confirmación) */
+  porDesactivar: AgriculturalInput | null = null;
+  filtroEstado: 'todos' | 'activos' | 'inactivos' = 'todos';
+  mensaje: { tipo: 'ok' | 'error'; texto: string } | null = null;
+
+  readonly form = this.fb.nonNullable.group({
+    nombre: ['', [Validators.required, Validators.maxLength(150)]],
+    tipo: ['FUNGICIDA' as AgriculturalInputType, Validators.required],
+    unidadSugerida: ['LITROS' as MeasurementUnit, Validators.required],
+    dosisSugerida: [1, [Validators.required, Validators.min(0.01)]],
+    reentradaHoras: [24, [Validators.required, Validators.min(0)]],
+    // Opcional: depende del producto y del cultivo (etiqueta)
+    diasCarencia: [null as number | null, [Validators.min(0), Validators.max(365)]],
+  });
+
+  ngOnInit(): void {
+    this.cargar();
+  }
+
+  cargar(): void {
+    this.cargando = true;
+    this.error = false;
+    this.insumoService.getAllAdmin().subscribe({
+      next: (lista) => {
+        this.insumos = lista;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.error = true;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  get visibles(): AgriculturalInput[] {
+    const q = this.busqueda.trim().toLowerCase();
+    return this.insumos
+      .filter((i) => this.filtroEstado === 'todos' || (this.filtroEstado === 'activos') === i.activo)
+      .filter((i) => !q || i.nombre.toLowerCase().includes(q))
+      .sort((a, b) => a.nombre.localeCompare(b.nombre));
+  }
+
+  nuevo(): void {
+    this.editando = null;
+    this.form.reset();
+    this.formularioAbierto = true;
+    this.mensaje = null;
+  }
+
+  editar(insumo: AgriculturalInput): void {
+    this.editando = insumo;
+    this.form.reset({
+      nombre: insumo.nombre,
+      tipo: insumo.tipo,
+      unidadSugerida: insumo.unidadSugerida,
+      dosisSugerida: insumo.dosisSugerida,
+      reentradaHoras: insumo.reentradaHoras,
+      diasCarencia: insumo.diasCarencia ?? null,
+    });
+    this.formularioAbierto = true;
+    this.mensaje = null;
+  }
+
+  cerrarFormulario(): void {
+    if (!this.guardando) this.formularioAbierto = false;
+  }
+
+  invalido(campo: keyof typeof this.form.controls): boolean {
+    const c = this.form.controls[campo];
+    return c.invalid && c.touched;
+  }
+
+  guardar(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const v = this.form.getRawValue();
+    const req: AgriculturalInputRequest = { ...v, nombre: v.nombre.trim() };
+    const peticion = this.editando
+      ? this.insumoService.update(this.editando.id, req)
+      : this.insumoService.create(req);
+
+    this.guardando = true;
+    peticion.subscribe({
+      next: (guardado) => {
+        const existe = this.insumos.some((i) => i.id === guardado.id);
+        this.insumos = existe
+          ? this.insumos.map((i) => (i.id === guardado.id ? guardado : i))
+          : [...this.insumos, guardado];
+        this.guardando = false;
+        this.formularioAbierto = false;
+        this.mensaje = {
+          tipo: 'ok',
+          texto: this.translate.instant(existe ? 'admin.inputs.updated' : 'admin.inputs.created', { name: guardado.nombre }),
+        };
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.guardando = false;
+        this.mensaje = { tipo: 'error', texto: err?.error?.message || this.translate.instant('admin.inputs.saveError') };
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  get cuentaActivos(): number {
+    return this.insumos.filter((i) => i.activo).length;
+  }
+
+  /** Desactivar pide confirmación; activar es inmediato. */
+  alternarEstado(insumo: AgriculturalInput): void {
+    if (insumo.activo) {
+      this.porDesactivar = insumo;
+    } else {
+      this.cambiarEstado(insumo, true);
+    }
+  }
+
+  confirmarDesactivar(): void {
+    if (this.porDesactivar) this.cambiarEstado(this.porDesactivar, false);
+  }
+
+  private cambiarEstado(insumo: AgriculturalInput, activo: boolean): void {
+    this.guardando = true;
+    this.mensaje = null;
+    this.insumoService.changeStatus(insumo.id, activo).subscribe({
+      next: (actualizado) => {
+        this.insumos = this.insumos.map((i) => (i.id === actualizado.id ? actualizado : i));
+        this.guardando = false;
+        this.porDesactivar = null;
+        this.mensaje = {
+          tipo: 'ok',
+          texto: this.translate.instant(activo ? 'admin.inputs.activated' : 'admin.inputs.deactivated', { name: insumo.nombre }),
+        };
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.guardando = false;
+        this.porDesactivar = null;
+        this.mensaje = { tipo: 'error', texto: err?.error?.message || this.translate.instant('admin.inputs.statusError') };
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  num(valor: number, decimales = 0): string {
+    return formatoNumero(valor, this.lang.current(), decimales);
+  }
+}

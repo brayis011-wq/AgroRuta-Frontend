@@ -5,7 +5,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { jwtInterceptor } from './jwt-interceptor';
-import { AuthService } from '../services/auth';
+import { AuthService } from '../services/auth.service';
 
 describe('jwtInterceptor', () => {
   let authServiceMock: any;

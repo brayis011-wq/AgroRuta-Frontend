@@ -1,4 +1,4 @@
-import { CostosSiembra } from '../../../core/models/cultivo.model';
+import { CostosSiembra } from '../../../core/models/crop.model';
 import { CropDetail } from '../../../core/services/report.service';
 
 export interface FilaCostos {

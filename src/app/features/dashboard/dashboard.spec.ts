@@ -3,9 +3,9 @@ import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { DashboardComponent } from './dashboard';
-import { AuthService } from '../../core/services/auth';
-import { CultivoService } from '../../core/services/cultivo.service';
-import { FincaActivaService } from '../../core/services/finca-activa.service';
+import { AuthService } from '../../core/services/auth.service';
+import { CultivoService } from '../../core/services/crop.service';
+import { FincaActivaService } from '../../core/services/active-farm.service';
 import { JornalService, NominaService, PagoService, TrabajadorService } from '../../core/services/worker.service';
 
 describe('DashboardComponent', () => {

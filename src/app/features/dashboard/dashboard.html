@@ -16,11 +16,11 @@
       </p>
     </div>
     <div class="acciones">
-      <a class="accion principal" routerLink="/worker/jornales/nuevo"><i class="ti ti-calendar-plus" aria-hidden="true"></i>{{ 'dashboard.actions.wage' | translate }}</a>
-      <a class="accion" routerLink="/worker/nominas"><i class="ti ti-file-invoice" aria-hidden="true"></i>{{ 'dashboard.actions.payroll' | translate }}</a>
-      <a class="accion" routerLink="/cultivo"><i class="ti ti-seeding" aria-hidden="true"></i>{{ 'dashboard.actions.plant' | translate }}</a>
-      <a class="accion" routerLink="/cultivo/nueva-finca"><i class="ti ti-map-pin-plus" aria-hidden="true"></i>{{ 'dashboard.actions.farm' | translate }}</a>
-      <a class="accion" routerLink="/cultivo/inventario"><i class="ti ti-building-warehouse" aria-hidden="true"></i>{{ 'inventario.nav' | translate }}</a>
+      <a class="accion principal" routerLink="/worker/workdays/new"><i class="ti ti-calendar-plus" aria-hidden="true"></i>{{ 'dashboard.actions.wage' | translate }}</a>
+      <a class="accion" routerLink="/worker/payrolls"><i class="ti ti-file-invoice" aria-hidden="true"></i>{{ 'dashboard.actions.payroll' | translate }}</a>
+      <a class="accion" routerLink="/crops"><i class="ti ti-seeding" aria-hidden="true"></i>{{ 'dashboard.actions.plant' | translate }}</a>
+      <a class="accion" routerLink="/crops/new-farm"><i class="ti ti-map-pin-plus" aria-hidden="true"></i>{{ 'dashboard.actions.farm' | translate }}</a>
+      <a class="accion" routerLink="/crops/inventory"><i class="ti ti-building-warehouse" aria-hidden="true"></i>{{ 'inventario.nav' | translate }}</a>
     </div>
     <i class="ti ti-plant-2 hoja" aria-hidden="true"></i>
   </section>
@@ -71,14 +71,14 @@
       <section class="tarjeta sec-cultivos">
         <header>
           <h2><i class="ti ti-plant-2" aria-hidden="true"></i> {{ 'dashboard.crops.title' | translate }}</h2>
-          <a class="ver" routerLink="/cultivo">{{ 'dashboard.crops.all' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+          <a class="ver" routerLink="/crops">{{ 'dashboard.crops.all' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
         </header>
         @if (cultivos() === null) {
           @for (i of [1, 2, 3]; track i) { <div class="fila esqueleto"></div> }
         } @else {
           <div class="cultivos">
             @for (c of cultivos(); track c.siembra.id; let i = $index) {
-              <a class="cultivo" [routerLink]="['/cultivo/siembra', c.siembra.id]" [style.animation-delay.ms]="i * 50">
+              <a class="cultivo" [routerLink]="['/crops/planting', c.siembra.id]" [style.animation-delay.ms]="i * 50">
                 <span class="cul-ic"><i class="ti ti-seedling" aria-hidden="true"></i></span>
                 <span class="cul-txt">
                   <strong>{{ c.siembra.tipoCultivo || ('dashboard.crops.crop' | translate) }}@if (c.siembra.variedad) { · {{ c.siembra.variedad }} }</strong>
@@ -97,7 +97,7 @@
               <div class="al-dia">
                 <span class="check gris"><i class="ti ti-plant-off" aria-hidden="true"></i></span>
                 <strong>{{ 'dashboard.crops.none' | translate }}</strong>
-                <a class="accion principal chica" routerLink="/cultivo"><i class="ti ti-seeding" aria-hidden="true"></i>{{ 'dashboard.actions.plant' | translate }}</a>
+                <a class="accion principal chica" routerLink="/crops"><i class="ti ti-seeding" aria-hidden="true"></i>{{ 'dashboard.actions.plant' | translate }}</a>
               </div>
             }
           </div>
@@ -109,7 +109,7 @@
       <section class="tarjeta sec-agenda">
         <header>
           <h2><i class="ti ti-calendar-event" aria-hidden="true"></i> {{ 'dashboard.agenda.title' | translate }}</h2>
-          <a class="ver" routerLink="/cultivo/calendario">{{ 'temporadas.cal.open' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+          <a class="ver" routerLink="/crops/calendar">{{ 'temporadas.cal.open' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
         </header>
         @if (agenda() === null) {
           @for (i of [1, 2]; track i) { <div class="fila esqueleto"></div> }

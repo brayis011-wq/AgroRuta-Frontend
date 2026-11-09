@@ -4,6 +4,6 @@ export const REPORT_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./report-home/report-home.component').then(m => m.ReportHomeComponent)
+      import('./report-home/report-home').then(m => m.ReportHomeComponent)
   }
 ];

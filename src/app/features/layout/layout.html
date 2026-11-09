@@ -53,7 +53,7 @@
               @if (fincaActiva.idActiva() === f.id) { <i class="ti ti-check ok" aria-hidden="true"></i> }
             </button>
           }
-          <a routerLink="/cultivo/nueva-finca" class="fm-nueva"><i class="ti ti-plus" aria-hidden="true"></i>{{ 'layout.nav.newFarm' | translate }}</a>
+          <a routerLink="/crops/new-farm" class="fm-nueva"><i class="ti ti-plus" aria-hidden="true"></i>{{ 'layout.nav.newFarm' | translate }}</a>
         </div>
       }
     </div>
@@ -82,7 +82,7 @@
       <ng-container *ngTemplateOutlet="grupo; context: { id: 'reportes', icono: 'ti-chart-bar', clave: 'layout.nav.reports', items: subReportes }" />
 
       <span class="sec">{{ 'layout.sections.system' | translate }}</span>
-      <a class="item" routerLink="/configuracion" routerLinkActive="on">
+      <a class="item" routerLink="/settings" routerLinkActive="on">
         <i class="ti ti-settings" aria-hidden="true"></i>
         <span class="txt">{{ 'layout.nav.settings' | translate }}</span>
         <em class="tip">{{ 'layout.nav.settings' | translate }}</em>
@@ -188,14 +188,14 @@
     <a routerLink="/dashboard" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: true }">
       <i class="ti ti-layout-dashboard"></i><span>{{ 'layout.nav.home' | translate }}</span>
     </a>
-    <a routerLink="/cultivo" routerLinkActive="on">
+    <a routerLink="/crops" routerLinkActive="on">
       <i class="ti ti-plant"></i><span>{{ 'layout.nav.crops' | translate }}</span>
     </a>
     <a routerLink="/worker" routerLinkActive="on">
       <i class="ti ti-users-group"></i><span>{{ 'layout.nav.team' | translate }}</span>
       @if (nominasPendientes() > 0) { <b class="punto">{{ nominasPendientes() }}</b> }
     </a>
-    <a routerLink="/reportes" routerLinkActive="on">
+    <a routerLink="/reports" routerLinkActive="on">
       <i class="ti ti-chart-bar"></i><span>{{ 'layout.nav.reports' | translate }}</span>
     </a>
     <button type="button" (click)="cajonAbierto.set(true)" [attr.aria-expanded]="cajonAbierto()">

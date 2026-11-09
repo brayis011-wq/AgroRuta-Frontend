@@ -152,7 +152,7 @@ describe('NuevoJornalComponent', () => {
     component.toggleActividad(1);
     component.guardar();
     expect(router.navigate).toHaveBeenCalledWith(
-      ['/worker/jornales'],
+      ['/worker/workdays'],
       { queryParams: { trabajadorId: 1 } }
     );
   });
