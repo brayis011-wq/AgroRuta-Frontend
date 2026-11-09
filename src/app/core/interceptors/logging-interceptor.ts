@@ -4,7 +4,7 @@ import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { LoggingService } from '../services/logging.service';
-import { environment } from '../../../environments/environment';
+import { esNuestraApi } from './api-url';
 
 /**
  * A cada llamada a nuestro backend le pone un X-Trace-Id: el backend lo usa en sus logs (MDC),
@@ -13,7 +13,7 @@ import { environment } from '../../../environments/environment';
  * haría que el navegador pida permiso (CORS) y algunos de esos servicios lo rechazan.
  */
 export const loggingInterceptor: HttpInterceptorFn = (req, next) => {
-  if (!req.url?.startsWith(environment.apiUrl)) return next(req);
+  if (!esNuestraApi(req.url)) return next(req);
 
   const logger = inject(LoggingService);
   const traceId = crypto.randomUUID().substring(0, 8).toUpperCase();
