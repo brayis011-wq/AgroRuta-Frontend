@@ -20,7 +20,10 @@ describe('ListaPagosComponent', () => {
   let nominaServiceMock: any;
 
   beforeEach(async () => {
-    pagoServiceMock = { listarTodos: vi.fn().mockReturnValue(of(mockPagos)) };
+    pagoServiceMock = {
+      pagina: vi.fn().mockReturnValue(of({ contenido: mockPagos, pagina: 0, tamano: 20, total: 3, totalPaginas: 1 })),
+      resumen: vi.fn().mockReturnValue(of({ cantidad: 3, total: 1200000, trabajadores: 2 })),
+    };
     nominaServiceMock = { obtener: vi.fn().mockReturnValue(of(mockNomina)) };
     await TestBed.configureTestingModule({
       imports: [ListaPagosComponent, CommonModule, RouterModule.forRoot([])],
@@ -37,21 +40,40 @@ describe('ListaPagosComponent', () => {
   });
 
   it('should create', () => { expect(component).toBeTruthy(); });
-  it('ngOnInit() should load and group pagos', () => {
+  it('ngOnInit() carga la primera página y el resumen', () => {
+    expect(pagoServiceMock.pagina).toHaveBeenCalledWith(0, null);
     expect(component.pagos).toEqual(mockPagos);
-    expect(component.grupos.length).toBe(2);
+    expect(component.totalTrabajadores).toBe(2);
+    expect(component.hayMas).toBe(false);
   });
   it('ngOnInit() should set error on failure', () => {
-    pagoServiceMock.listarTodos.mockReturnValue(throwError(() => new Error()));
+    pagoServiceMock.pagina.mockReturnValue(throwError(() => new Error()));
     component.ngOnInit();
     expect(component.error).toBe('workers.payments.errors.load');
   });
-  it('totalGlobal should sum all totals', () => { expect(component.totalGlobal).toBe(1200000); });
-  it('totalPagos should count all pagos', () => { expect(component.totalPagos).toBe(3); });
-  it('verTodos() should reset nominaIdFiltro', () => {
+  it('los totales salen del resumen del servidor', () => {
+    expect(component.totalGlobal).toBe(1200000);
+    expect(component.totalPagos).toBe(3);
+  });
+  it('ultimoPago es el primero de la lista (viene ordenada del servidor)', () => {
+    expect(component.ultimoPago).toEqual(mockPagos[0]);
+  });
+  it('cargarMas() suma la página siguiente', () => {
+    const otro = { id: 4, trabajadorNombre: 'Ana', monto: 100000, nominaId: 12 };
+    pagoServiceMock.pagina
+      .mockReturnValueOnce(of({ contenido: mockPagos.slice(0, 2), pagina: 0, tamano: 2, total: 4, totalPaginas: 2 }))
+      .mockReturnValueOnce(of({ contenido: [otro], pagina: 1, tamano: 2, total: 4, totalPaginas: 2 }));
+    component.ngOnInit();
+    expect(component.hayMas).toBe(true);
+    component.cargarMas();
+    expect(pagoServiceMock.pagina).toHaveBeenLastCalledWith(1, null);
+    expect(component.pagos.map(p => p.id)).toEqual([1, 2, 4]);
+  });
+  it('verTodos() quita el filtro de nómina y recarga', () => {
     component.nominaIdFiltro = 10;
     component.verTodos();
     expect(component.nominaIdFiltro).toBeNull();
+    expect(pagoServiceMock.resumen).toHaveBeenLastCalledWith(null);
   });
   it('abrirDetalle() should set pagoSeleccionado', () => {
     component.abrirDetalle(mockPagos[0] as any);

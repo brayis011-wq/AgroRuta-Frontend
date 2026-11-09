@@ -36,7 +36,7 @@
     </button>
     <div class="kpi">
       <span class="ic gris"><i class="ti ti-file-invoice" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.totalRosters' | translate }}</small><strong>{{ nominas.length }}</strong></div>
+      <div><small>{{ 'workers.home.stats.totalRosters' | translate }}</small><strong>{{ totalNominas }}</strong></div>
     </div>
   </section>
 
@@ -112,6 +112,14 @@
           </tbody>
         </table>
       </div>
+      @if (hayMas) {
+        <div class="cargar-mas">
+          <button type="button" class="btn" [disabled]="cargandoMas" (click)="cargarMas()">
+            <i class="ti" [class.ti-chevron-down]="!cargandoMas" [class.ti-loader-2]="cargandoMas" aria-hidden="true"></i> {{ 'common.loadMore' | translate }}
+          </button>
+          <small>{{ 'common.showingOf' | translate: { shown: nominas.length, total: total } }}</small>
+        </div>
+      }
     }
   </section>
 

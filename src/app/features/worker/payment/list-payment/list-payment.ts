@@ -6,13 +6,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 import { PagoService, NominaService } from '../../../../core/services/worker.service';
-import { Pago, Nomina } from '../../../../core/models/worker.model';
-
-export interface GrupoPago {
-  trabajadorNombre: string;   // vacío = sin nombre (la plantilla muestra el texto traducido)
-  pagos: Pago[];
-  total: number;
-}
+import { Pago, Nomina, ResumenPagos } from '../../../../core/models/worker.model';
 
 @Component({
   selector: 'app-lista-pagos',
@@ -22,8 +16,14 @@ export interface GrupoPago {
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './list-payment.css']
 })
 export class ListaPagosComponent implements OnInit {
+  /** Pagos cargados hasta ahora, del más reciente al más antiguo (se suman páginas con "Cargar más") */
   pagos: Pago[] = [];
-  grupos: GrupoPago[] = [];
+  /** Pagos en total con el filtro actual, en todas las páginas */
+  total = 0;
+  private pagina = 0;
+  cargandoMas = false;
+  /** Totales calculados en el servidor (no dependen de las páginas cargadas) */
+  resumen: ResumenPagos = { cantidad: 0, total: 0, trabajadores: 0 };
   cargando = false;
   error = '';   // clave de traducción
 
@@ -35,21 +35,18 @@ export class ListaPagosComponent implements OnInit {
   nominaDetalle: Nomina | null = null;
   cargandoDetalle = false;
 
-  get totalGlobal(): number {
-    return this.grupos.reduce((acc, g) => acc + g.total, 0);
-  }
+  get totalGlobal(): number { return this.resumen.total; }
 
-  /** Pagos visibles (filtrados por nómina si viene en la URL), del más reciente al más antiguo */
-  get visibles(): Pago[] {
-    const lista = this.nominaIdFiltro ? this.pagos.filter(p => p.nominaId === this.nominaIdFiltro) : this.pagos;
-    return [...lista].sort((a, b) => String(b.fechaPago ?? b.fecha ?? '').localeCompare(String(a.fechaPago ?? a.fecha ?? '')));
-  }
+  get totalPagos(): number { return this.resumen.cantidad; }
 
-  get ultimoPago(): Pago | null { return this.visibles[0] ?? null; }
+  get totalTrabajadores(): number { return this.resumen.trabajadores; }
 
-  get totalPagos(): number {
-    return this.grupos.reduce((acc, g) => acc + g.pagos.length, 0);
-  }
+  /** Ya vienen filtrados por nómina y ordenados desde el servidor */
+  get visibles(): Pago[] { return this.pagos; }
+
+  get ultimoPago(): Pago | null { return this.pagos[0] ?? null; }
+
+  get hayMas(): boolean { return this.pagos.length < this.total; }
 
   constructor(
     private pagoService: PagoService,
@@ -62,45 +59,46 @@ export class ListaPagosComponent implements OnInit {
     const nominaParam = this.route.snapshot.queryParamMap.get('nominaId');
     this.nominaIdFiltro = nominaParam ? Number(nominaParam) : null;
 
-    this.cargando = true;
-    this.pagoService.listarTodos().subscribe({
-      next: (p: Pago[]) => {
-        this.pagos = p;
-        this.agrupar();
+    this.cargar();
+  }
+
+  /** Primera página y totales con el filtro actual */
+  cargar(): void {
+    this.cargarPagina(0);
+    this.pagoService.resumen(this.nominaIdFiltro).subscribe({
+      next: (r) => { this.resumen = r; this.cdr.detectChanges(); },
+      error: () => {}
+    });
+  }
+
+  cargarMas(): void {
+    if (!this.hayMas || this.cargandoMas) return;
+    this.cargarPagina(this.pagina + 1);
+  }
+
+  private cargarPagina(pagina: number): void {
+    if (pagina === 0) this.cargando = true; else this.cargandoMas = true;
+    this.pagoService.pagina(pagina, this.nominaIdFiltro).subscribe({
+      next: (p) => {
+        this.pagos = pagina === 0 ? p.contenido : [...this.pagos, ...p.contenido];
+        this.total = p.total;
+        this.pagina = pagina;
         this.cargando = false;
+        this.cargandoMas = false;
         this.cdr.detectChanges();
       },
       error: () => {
         this.error = 'workers.payments.errors.load';
         this.cargando = false;
+        this.cargandoMas = false;
         this.cdr.detectChanges();
       }
     });
   }
 
-  private agrupar(): void {
-    const pagosVer = this.nominaIdFiltro
-      ? this.pagos.filter(p => p.nominaId === this.nominaIdFiltro)
-      : this.pagos;
-
-    const mapa = new Map<string, Pago[]>();
-    for (const p of pagosVer) {
-      const nombre = p.trabajadorNombre ?? '';
-      if (!mapa.has(nombre)) mapa.set(nombre, []);
-      mapa.get(nombre)!.push(p);
-    }
-
-    this.grupos = Array.from(mapa.entries()).map(([nombre, pagos]) => ({
-      trabajadorNombre: nombre,
-      pagos,
-      total: pagos.reduce((acc, p) => acc + (p.monto ?? 0), 0)
-    }));
-  }
-
   verTodos(): void {
     this.nominaIdFiltro = null;
-    this.agrupar();
-    this.cdr.detectChanges();
+    this.cargar();
   }
 
   // ── Panel detalle ─────────────────────────────────────────────────────────

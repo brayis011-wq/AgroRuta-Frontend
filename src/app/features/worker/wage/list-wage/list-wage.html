@@ -58,7 +58,7 @@
     <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">
       <div class="kpi">
         <span class="ic verde"><i class="ti ti-calendar-week" aria-hidden="true"></i></span>
-        <div><small>{{ 'workers.wages.list.stats.total' | translate }}</small><strong>{{ filtrados.length }}</strong></div>
+        <div><small>{{ 'workers.wages.list.stats.total' | translate }}</small><strong>{{ cantidadJornales }}</strong></div>
       </div>
       <div class="kpi">
         <span class="ic ambar"><i class="ti ti-hourglass" aria-hidden="true"></i></span>
@@ -137,6 +137,14 @@
             </tfoot>
           </table>
         </div>
+        @if (hayMas) {
+          <div class="cargar-mas">
+            <button type="button" class="btn" [disabled]="cargandoMas" (click)="cargarMas()">
+              <i class="ti" [class.ti-chevron-down]="!cargandoMas" [class.ti-loader-2]="cargandoMas" aria-hidden="true"></i> {{ 'common.loadMore' | translate }}
+            </button>
+            <small>{{ 'common.showingOf' | translate: { shown: jornales.length, total: total } }}</small>
+          </div>
+        }
       }
     </section>
   }

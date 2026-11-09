@@ -3,8 +3,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
-  Labor, Pago, Cargo, Trabajador, Nomina, Jornal
+  Labor, Pago, Cargo, Trabajador, Nomina, Jornal, ResumenNominas, ResumenJornales, ResumenPagos
 } from '../models/worker.model';
+import { Pagina, TAMANO_PAGINA } from '../models/pagina.model';
 
 // ── DTOs ──────────────────────────────────────────────────────────────────────
 export interface TrabajadorRequest {
@@ -111,6 +112,18 @@ export class NominaService {
   constructor(private http: HttpClient) {}
 
   listarTodas(): Observable<Nomina[]> { return this.http.get<Nomina[]>(this.api); }
+  /** Nóminas por páginas, más recientes primero (listarTodas sigue para los totales del inicio y el menú). */
+  pagina(page: number, filtros: { trabajadorId?: number | null; estado?: string | null } = {}, size = TAMANO_PAGINA): Observable<Pagina<Nomina>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (filtros.trabajadorId != null) params = params.set('trabajadorId', filtros.trabajadorId);
+    if (filtros.estado) params = params.set('estado', filtros.estado);
+    return this.http.get<Pagina<Nomina>>(`${this.api}/page`, { params });
+  }
+  /** Cantidad y total por estado, para las tarjetas de la lista. */
+  resumen(trabajadorId?: number | null): Observable<ResumenNominas[]> {
+    const params = trabajadorId != null ? new HttpParams().set('trabajadorId', trabajadorId) : undefined;
+    return this.http.get<ResumenNominas[]>(`${this.api}/summary`, { params });
+  }
   listarPorTrabajador(trabajadorId: number): Observable<Nomina[]> { return this.http.get<Nomina[]>(`${this.api}/worker/${trabajadorId}`); }
   obtener(id: number): Observable<Nomina> { return this.http.get<Nomina>(`${this.api}/${id}`); }
   generar(req: NominaRequest): Observable<Nomina> { return this.http.post<Nomina>(`${this.api}/generate`, req); }
@@ -128,6 +141,20 @@ export class JornalService {
   registrar(req: JornalRequest): Observable<Jornal> { return this.http.post<Jornal>(this.api, req); }
   cultivosDisponibles(): Observable<CultivoDisponible[]> { return this.http.get<CultivoDisponible[]>(`${this.api}/available-plantings`); }
   buscarPorId(id: number): Observable<Jornal> { return this.http.get<Jornal>(`${this.api}/${id}`); }
+  /** Jornales del trabajador por páginas, más recientes primero. */
+  paginaPorTrabajador(trabajadorId: number, page: number, inicio?: string, fin?: string, size = TAMANO_PAGINA): Observable<Pagina<Jornal>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (inicio) params = params.set('inicio', inicio);
+    if (fin)    params = params.set('fin', fin);
+    return this.http.get<Pagina<Jornal>>(`${this.api}/worker/${trabajadorId}/page`, { params });
+  }
+  /** Totales de los jornales del trabajador en el mismo rango de fechas. */
+  resumenPorTrabajador(trabajadorId: number, inicio?: string, fin?: string): Observable<ResumenJornales> {
+    let params = new HttpParams();
+    if (inicio) params = params.set('inicio', inicio);
+    if (fin)    params = params.set('fin', fin);
+    return this.http.get<ResumenJornales>(`${this.api}/worker/${trabajadorId}/summary`, { params });
+  }
   porTrabajador(trabajadorId: number, inicio?: string, fin?: string): Observable<Jornal[]> {
     let params = new HttpParams();
     if (inicio) params = params.set('inicio', inicio);
@@ -150,6 +177,17 @@ export class PagoService {
   constructor(private http: HttpClient) {}
 
   listarTodos(): Observable<Pago[]> { return this.http.get<Pago[]>(this.api); }
+  /** Pagos por páginas, más recientes primero. */
+  pagina(page: number, nominaId?: number | null, size = TAMANO_PAGINA): Observable<Pagina<Pago>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (nominaId != null) params = params.set('nominaId', nominaId);
+    return this.http.get<Pagina<Pago>>(`${this.api}/page`, { params });
+  }
+  /** Totales de los pagos (con el mismo filtro de nómina), para las tarjetas de la lista. */
+  resumen(nominaId?: number | null): Observable<ResumenPagos> {
+    const params = nominaId != null ? new HttpParams().set('nominaId', nominaId) : undefined;
+    return this.http.get<ResumenPagos>(`${this.api}/summary`, { params });
+  }
   buscarPorId(id: number): Observable<Pago> { return this.http.get<Pago>(`${this.api}/${id}`); }
   historialPorTrabajador(trabajadorId: number): Observable<Pago[]> { return this.http.get<Pago[]>(`${this.api}/worker/${trabajadorId}`); }
   registrar(req: PagoRequest): Observable<Pago> { return this.http.post<Pago>(this.api, req); }

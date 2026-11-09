@@ -16,7 +16,9 @@
     "deactivate": "Deactivate",
     "actions": "Actions",
     "status": "Status",
-    "required": "Required"
+    "required": "Required",
+    "loadMore": "Load more",
+    "showingOf": "Showing {{shown}} of {{total}}"
   },
   "search": {"title": "Search AgroRuta", "button": "Search…", "placeholder": "Search a farm, a worker or a page", "empty": "No results", "move": "move", "open": "open", "types": {"page": "Page", "farm": "Farm", "worker": "Worker"}},
   "layout": {
