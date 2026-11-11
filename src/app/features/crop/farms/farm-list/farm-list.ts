@@ -10,6 +10,7 @@ import { CultivoService } from '../../../../core/services/crop.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { Finca, Lote } from '../../../../core/models/crop.model';
+import { escaparHtml } from '../../../../shared/html';
 import * as L from 'leaflet';
 
 @Component({
@@ -138,12 +139,12 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
       // Popup con botón "Entrar" — permite ver el entorno antes de navegar
       const popupContent = `
         <div class="popup-finca">
-          <div class="popup-finca-header">${finca.nombre}</div>
+          <div class="popup-finca-header">${escaparHtml(finca.nombre)}</div>
           <div class="popup-finca-body">
-            ${finca.ubicacion}<br>
-            ${finca.hectareas} ${tHa}
-            <button class="popup-finca-btn" id="btn-entrar-${finca.id}">
-              ${tEnter}
+            ${escaparHtml(finca.ubicacion)}<br>
+            ${escaparHtml(finca.hectareas)} ${escaparHtml(tHa)}
+            <button class="popup-finca-btn" id="btn-entrar-${escaparHtml(finca.id)}">
+              ${escaparHtml(tEnter)}
             </button>
           </div>
         </div>`;
