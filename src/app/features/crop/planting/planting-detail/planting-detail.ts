@@ -16,6 +16,7 @@ import {
 import { CicloEtapasComponent } from '../stage-cycle/stage-cycle';
 import { RendimientoSiembraComponent } from '../yield/yield';
 import { AgendaSiembraComponent } from '../agenda/agenda';
+import { DiagnosticoSiembraComponent } from '../diagnosis/diagnosis';
 import { diasEntre, hoyIso } from '../stage-cycle/stage-cycle.logic';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { ResumenSiembra, siembraActiva } from '../../../../core/models/crop.model';
@@ -44,7 +45,7 @@ interface TimelineItem {
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, RouterLink],
+  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink],
   templateUrl: './planting-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css'],
 })

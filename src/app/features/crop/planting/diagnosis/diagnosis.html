@@ -1,0 +1,123 @@
+<section class="tarjeta diag">
+  <header>
+    <h2><i class="ti ti-stethoscope" aria-hidden="true"></i> {{ 'diagnostico.title' | translate }}</h2>
+    @if (estado()?.disponible) {
+      <span class="quedan" [class.agotado]="!estado()!.restantesHoy">
+        {{ (estado()!.restantesHoy ? 'diagnostico.left' : 'diagnostico.noneLeft') | translate: { count: estado()!.restantesHoy } }}
+      </span>
+    }
+  </header>
+
+  @if (cargando()) {
+    <div class="esq"></div>
+  } @else if (!estado()) {
+    <p class="apagado"><i class="ti ti-wifi-off" aria-hidden="true"></i> {{ 'diagnostico.loadError' | translate }}</p>
+  } @else {
+    @let e = estado()!;
+    <p class="pista">{{ 'diagnostico.hint' | translate }}</p>
+
+    @if (!e.disponible) {
+      <p class="apagado"><i class="ti ti-plug-off" aria-hidden="true"></i> {{ 'diagnostico.off' | translate }}</p>
+    } @else if (fase() === 'inicio') {
+      <div class="acciones">
+        <label class="btn btn-prim" [class.inactivo]="!e.restantesHoy">
+          <i class="ti ti-camera" aria-hidden="true"></i> {{ 'diagnostico.take' | translate }}
+          <input class="oculto" type="file" accept="image/*" capture="environment" [disabled]="!e.restantesHoy" (change)="elegir($event)" />
+        </label>
+        <label class="btn" [class.inactivo]="!e.restantesHoy">
+          <i class="ti ti-photo" aria-hidden="true"></i> {{ 'diagnostico.choose' | translate }}
+          <input class="oculto" type="file" accept="image/jpeg,image/png,image/webp" [disabled]="!e.restantesHoy" (change)="elegir($event)" />
+        </label>
+      </div>
+    } @else {
+      <div class="previa">
+        <img [src]="vista()" [alt]="'diagnostico.previewAlt' | translate" />
+        <div class="formulario">
+          <label for="diag-nota">{{ 'diagnostico.note' | translate }}</label>
+          <textarea id="diag-nota" rows="2" maxlength="300" [value]="nota()" (input)="nota.set($any($event.target).value)"
+                    [disabled]="fase() === 'analizando'" [placeholder]="'diagnostico.notePlaceholder' | translate"></textarea>
+          <div class="acciones">
+            <button type="button" class="btn btn-prim" (click)="analizar()" [disabled]="fase() === 'analizando'">
+              @if (fase() === 'analizando') {
+                <span class="giro" aria-hidden="true"></span> {{ 'diagnostico.analyzing' | translate }}
+              } @else {
+                <i class="ti ti-stethoscope" aria-hidden="true"></i> {{ 'diagnostico.analyze' | translate }}
+              }
+            </button>
+            <button type="button" class="btn btn-texto" (click)="cancelar()" [disabled]="fase() === 'analizando'">
+              {{ 'diagnostico.cancel' | translate }}
+            </button>
+          </div>
+          @if (fase() === 'analizando') {
+            <p class="espera" role="status">{{ 'diagnostico.wait' | translate }}</p>
+          }
+        </div>
+      </div>
+    }
+
+    @if (error()) {
+      <p class="error" role="alert"><i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ error()! | translate }}</p>
+    }
+
+    @if (e.disponible) {
+      <p class="privacidad"><i class="ti ti-info-circle" aria-hidden="true"></i> {{ 'diagnostico.privacy' | translate }}</p>
+    }
+
+    @if (e.diagnosticos.length) {
+      <ul class="lista">
+        @for (d of e.diagnosticos; track d.id) {
+          <li [class.abierto]="abierto() === d.id">
+            <button type="button" class="fila" (click)="alternar(d)" [attr.aria-expanded]="abierto() === d.id">
+              <span [class]="'ic ' + tono(d.tipo)"><i [class]="'ti ' + icono(d.tipo)" aria-hidden="true"></i></span>
+              <span class="txt">
+                <strong>{{ d.problema }}</strong>
+                <small>{{ 'diagnostico.tipo.' + d.tipo | translate }} · {{ 'diagnostico.confianza.' + d.confianza | translate }} · {{ fecha(d.fecha) }}</small>
+              </span>
+              <i class="ti ti-chevron-down flecha" aria-hidden="true"></i>
+            </button>
+
+            @if (abierto() === d.id) {
+              <div class="detalle">
+                @if (fotos()[d.id]; as url) {
+                  <img [src]="url" [alt]="'diagnostico.photoAlt' | translate" />
+                } @else {
+                  <div class="esq foto"></div>
+                }
+                <div class="texto">
+                  @if (d.advertencia) {
+                    <p class="alerta"><i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ d.advertencia }}</p>
+                  }
+                  @if (d.nota) {
+                    <p class="tu-nota"><b>{{ 'diagnostico.yourNote' | translate }}:</b> {{ d.nota }}</p>
+                  }
+                  @if (d.sintomas) {
+                    <h3>{{ 'diagnostico.seen' | translate }}</h3>
+                    <p>{{ d.sintomas }}</p>
+                  }
+                  @if (d.recomendaciones.length) {
+                    <h3>{{ 'diagnostico.steps' | translate }}</h3>
+                    <ol>
+                      @for (r of d.recomendaciones; track $index) { <li>{{ r }}</li> }
+                    </ol>
+                  }
+                  @if (d.otrasPosibilidades.length) {
+                    <h3>{{ 'diagnostico.others' | translate }}</h3>
+                    <ul>
+                      @for (o of d.otrasPosibilidades; track $index) { <li>{{ o }}</li> }
+                    </ul>
+                  }
+                  <p class="legal">{{ 'diagnostico.disclaimer' | translate }}</p>
+                  <button type="button" class="btn btn-texto borrar" (click)="eliminar(d)">
+                    <i class="ti ti-trash" aria-hidden="true"></i> {{ 'diagnostico.delete' | translate }}
+                  </button>
+                </div>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    } @else if (e.disponible) {
+      <p class="nada">{{ 'diagnostico.empty' | translate }}</p>
+    }
+  }
+</section>

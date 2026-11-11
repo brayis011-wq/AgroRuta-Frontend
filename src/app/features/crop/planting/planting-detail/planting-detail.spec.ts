@@ -4,6 +4,7 @@ import { of, throwError } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { DetalleSiembraComponent } from './planting-detail';
 import { CultivoService } from '../../../../core/services/crop.service';
+import { DiagnosticoService } from '../../../../core/services/diagnosis.service';
 
 const mockSiembra = { id: 1, loteId: 10, cultivo: 'Maiz', fechaSiembra: '2024-01-01', estado: 'ACTIVA' };
 const mockLote = { id: 10, nombre: 'Lote A', centroideLat: 4.5, centroideLng: -74.1 };
@@ -48,6 +49,7 @@ describe('DetalleSiembraComponent', () => {
       imports: [DetalleSiembraComponent],
       providers: [
         { provide: CultivoService, useValue: cultivoServiceMock },
+        { provide: DiagnosticoService, useValue: { listar: () => of({ disponible: false, restantesHoy: 0, diagnosticos: [] }) } },
         { provide: Router, useValue: routerMock },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },
         ChangeDetectorRef,
