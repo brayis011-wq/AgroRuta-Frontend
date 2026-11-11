@@ -317,6 +317,7 @@
     }
   },
   "reports": {
+    "profit": {"title":"Profitability by plot","subtitle":"What each plot earned and how each season did against the previous one.","kpi":{"profit":"Total profit","lots":"{{count}} plots","margin":"Margin","marginHint":"What is left of every $100 sold","best":"Most profitable plot","worst":"Least profitable plot"},"col":{"margin":"Margin","perHa":"Profit/ha","yield":"Yield","vsPrevious":"Vs. previous"},"ongoing":"ongoing","bestSeason":"Best season","noPrices":"No harvest has a sale price. Add the price per kilo when logging harvests to see the profit.","hint":"Profit is sales minus labor, supplies and other expenses. Tap a season to see its cost detail."},
     "costs": {
       "title": "Costs per season",
       "subtitle": "What each planting cost and earned: wages, inputs, other expenses and sales.",
@@ -347,6 +348,7 @@
       "seeCosts": "Costs"
     },
     "tabs": {
+      "profitability": {"name":"Profitability","sub":"Which plot earns more"},
       "costs": {"name": "Costs", "sub": "Cost and profit per season"},
       "payroll": {
         "name": "Payroll",

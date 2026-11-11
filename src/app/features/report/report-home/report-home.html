@@ -21,6 +21,13 @@
         <span class="tab-sub">{{ 'reports.tabs.costs.sub' | translate }}</span>
       </div>
     </button>
+    <button class="tab-btn profitability" [class.active]="activeTab === 'profitability'" (click)="setTab('profitability')">
+      <div class="tab-icon"><i class="ti ti-chart-bar"></i></div>
+      <div class="tab-label">
+        <span class="tab-name">{{ 'reports.tabs.profitability.name' | translate }}</span>
+        <span class="tab-sub">{{ 'reports.tabs.profitability.sub' | translate }}</span>
+      </div>
+    </button>
   </div>
 
   <div *ngIf="activeTab === 'payroll'">
@@ -31,5 +38,8 @@
   </div>
   <div *ngIf="activeTab === 'costs'">
     <app-costs-report [siembraInicial]="siembra" />
+  </div>
+  <div *ngIf="activeTab === 'profitability'">
+    <app-profitability-report />
   </div>
 </div>

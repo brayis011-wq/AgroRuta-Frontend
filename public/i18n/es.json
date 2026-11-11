@@ -317,6 +317,7 @@
     }
   },
   "reports": {
+    "profit": {"title":"Rentabilidad por lote","subtitle":"Cuánto dejó cada lote y cómo le fue a cada temporada frente a la anterior.","kpi":{"profit":"Ganancia total","lots":"{{count}} lotes","margin":"Margen","marginHint":"De cada $100 vendidos, lo que queda","best":"Lote más rentable","worst":"Lote menos rentable"},"col":{"margin":"Margen","perHa":"Ganancia/ha","yield":"Rendimiento","vsPrevious":"Frente a la anterior"},"ongoing":"en curso","bestSeason":"Mejor temporada","noPrices":"Ninguna cosecha tiene precio de venta. Agrega el precio por kilo al registrar las cosechas para ver la ganancia.","hint":"La ganancia es lo vendido menos jornales, insumos y otros gastos. Toca una temporada para ver el detalle de sus costos."},
     "costs": {
       "title": "Costos por temporada",
       "subtitle": "Lo que costó y lo que dejó cada siembra: jornales, insumos, otros gastos y ventas.",
@@ -347,6 +348,7 @@
       "seeCosts": "Costos"
     },
     "tabs": {
+      "profitability": {"name":"Rentabilidad","sub":"Qué lote deja más"},
       "costs": {"name": "Costos", "sub": "Costo y ganancia por temporada"},
       "payroll": {
         "name": "Nómina",

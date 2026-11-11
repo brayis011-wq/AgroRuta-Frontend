@@ -1,0 +1,111 @@
+<section class="rep">
+  <header class="rep-head">
+    <div>
+      <h2>{{ 'reports.profit.title' | translate }}</h2>
+      <p>{{ 'reports.profit.subtitle' | translate }}</p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="tarjeta vacio">
+      <i class="ti ti-cloud-off" aria-hidden="true"></i>
+      <strong>{{ 'reports.error' | translate }}</strong>
+      <button type="button" class="btn-sec" (click)="cargar()">{{ 'common.retry' | translate }}</button>
+    </div>
+  } @else if (filas() === null) {
+    <div class="kpis">@for (i of [1, 2, 3, 4]; track i) { <div class="kpi esq"></div> }</div>
+    <div class="tarjeta esq alta"></div>
+  } @else if (!lotes().length) {
+    <div class="tarjeta vacio">
+      <i class="ti ti-plant-off" aria-hidden="true"></i>
+      <strong>{{ 'reports.crops.empty' | translate }}</strong>
+    </div>
+  } @else {
+    @let r = resumen();
+    <div class="kpis">
+      <article class="kpi"><span class="ic" [class.verde]="(r.ganancia ?? 0) >= 0" [class.rojo]="(r.ganancia ?? 0) < 0"><i class="ti ti-trending-up" aria-hidden="true"></i></span>
+        <div><small>{{ 'reports.profit.kpi.profit' | translate }}</small><strong [class.pierde]="(r.ganancia ?? 0) < 0">{{ r.ganancia != null ? pesos(r.ganancia) : '—' }}</strong>
+          <em>{{ 'reports.profit.kpi.lots' | translate: { count: r.lotes } }}</em></div></article>
+      <article class="kpi"><span class="ic azul"><i class="ti ti-percentage" aria-hidden="true"></i></span>
+        <div><small>{{ 'reports.profit.kpi.margin' | translate }}</small><strong>{{ porcentaje(r.margen) }}</strong>
+          <em>{{ 'reports.profit.kpi.marginHint' | translate }}</em></div></article>
+      <article class="kpi"><span class="ic verde"><i class="ti ti-trophy" aria-hidden="true"></i></span>
+        <div><small>{{ 'reports.profit.kpi.best' | translate }}</small><strong class="texto">{{ r.mejorLote?.loteNombre ?? '—' }}</strong>
+          @if (r.mejorLote; as m) { <em>{{ pesos(m.ganancia) }}</em> }</div></article>
+      <article class="kpi"><span class="ic ambar"><i class="ti ti-alert-triangle" aria-hidden="true"></i></span>
+        <div><small>{{ 'reports.profit.kpi.worst' | translate }}</small><strong class="texto">{{ r.peorLote?.loteNombre ?? '—' }}</strong>
+          @if (r.peorLote; as p) { <em>{{ pesos(p.ganancia) }}</em> }</div></article>
+    </div>
+
+    @if (r.ganancia == null) {
+      <p class="aviso-precio"><i class="ti ti-info-circle" aria-hidden="true"></i> {{ 'reports.profit.noPrices' | translate }}</p>
+    }
+
+    @for (l of lotes(); track l.clave) {
+      <article class="tarjeta lote">
+        <header class="lote-head">
+          <div>
+            <h3>{{ l.loteNombre }}</h3>
+            <p>@if (l.fincaNombre) { {{ l.fincaNombre }} · }@if (l.areaHa) { {{ numero(l.areaHa, 2) }} ha · }{{ 'reports.costs.kpi.seasons' | translate: { count: l.temporadas.length } }}</p>
+          </div>
+          <dl class="lote-totales">
+            <div><dt>{{ 'reports.costs.col.profit' | translate }}</dt>
+              <dd [class.gana]="(l.ganancia ?? 0) > 0" [class.pierde]="(l.ganancia ?? 0) < 0">{{ l.ganancia != null ? pesos(l.ganancia) : '—' }}</dd></div>
+            <div><dt>{{ 'reports.profit.col.margin' | translate }}</dt><dd>{{ porcentaje(l.margen) }}</dd></div>
+            <div><dt>{{ 'reports.profit.col.perHa' | translate }}</dt><dd>{{ l.gananciaPorHa != null ? pesos(l.gananciaPorHa) : '—' }}</dd></div>
+          </dl>
+        </header>
+
+        <div class="tabla-wrap">
+          <table class="tabla">
+            <thead><tr>
+              <th>{{ 'reports.costs.col.season' | translate }}</th>
+              <th class="num">{{ 'reports.costs.col.cost' | translate }}</th>
+              <th class="num">{{ 'reports.costs.col.income' | translate }}</th>
+              <th class="num">{{ 'reports.costs.col.profit' | translate }}</th>
+              <th class="num">{{ 'reports.profit.col.margin' | translate }}</th>
+              <th class="num">{{ 'reports.profit.col.perHa' | translate }}</th>
+              <th class="num">{{ 'reports.profit.col.yield' | translate }}</th>
+              <th>{{ 'reports.profit.col.vsPrevious' | translate }}</th>
+            </tr></thead>
+            <tbody>
+              @for (t of l.temporadas; track t.siembraId) {
+                <tr>
+                  <td>
+                    <span class="temp">
+                      @if (t.eliminada) { <strong>{{ t.nombre }}</strong> }
+                      @else { <a [routerLink]="['/reports']" [queryParams]="{ tab: 'costs', siembra: t.siembraId }"><strong>{{ t.nombre }}</strong></a> }
+                      <small>{{ fecha(t.fechaSiembra) }} – {{ t.fechaFin ? fecha(t.fechaFin) : ('reports.profit.ongoing' | translate) }}
+                        @if (l.mejorId === t.siembraId) { <span class="mejor"><i class="ti ti-trophy" aria-hidden="true"></i> {{ 'reports.profit.bestSeason' | translate }}</span> }
+                      </small>
+                    </span>
+                  </td>
+                  <td class="num">{{ t.costo ? pesos(t.costo) : '—' }}</td>
+                  <td class="num">{{ t.ganancia != null ? pesos(t.ingresos) : '—' }}</td>
+                  <td class="num" [class.gana]="(t.ganancia ?? 0) > 0" [class.pierde]="(t.ganancia ?? 0) < 0">
+                    {{ t.ganancia != null ? pesos(t.ganancia) : '—' }}
+                    @if (t.ganancia != null) {
+                      <span class="barra" aria-hidden="true"><span [class.neg]="t.ganancia < 0" [style.width.%]="ancho(t, l)"></span></span>
+                    }
+                  </td>
+                  <td class="num">{{ porcentaje(t.margen) }}</td>
+                  <td class="num">{{ t.gananciaPorHa != null ? pesos(t.gananciaPorHa) : '—' }}</td>
+                  <td class="num suave">{{ t.kgPorHa != null ? numero(t.kgPorHa) + ' kg/ha' : '—' }}</td>
+                  <td>
+                    @if (t.cambio != null) {
+                      <span class="cambio" [class.sube]="t.cambio >= 0" [class.baja]="t.cambio < 0">
+                        <i class="ti" [class.ti-arrow-up-right]="t.cambio >= 0" [class.ti-arrow-down-right]="t.cambio < 0" aria-hidden="true"></i>
+                        {{ conSigno(t.cambio) }}@if (t.cambioPct != null) { <small>({{ numero(t.cambioPct) }} %)</small> }
+                      </span>
+                    } @else { <span class="suave">—</span> }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+    }
+    <p class="nota pista">{{ 'reports.profit.hint' | translate }}</p>
+  }
+</section>

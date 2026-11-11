@@ -85,6 +85,7 @@ export class LayoutComponent {
     { ruta: '/reports', clave: 'layout.nav.reportPayroll', query: { tab: 'payroll' } },
     { ruta: '/reports', clave: 'layout.nav.reportCrops', query: { tab: 'crops' } },
     { ruta: '/reports', clave: 'reports.tabs.costs.name', query: { tab: 'costs' } },
+    { ruta: '/reports', clave: 'reports.tabs.profitability.name', query: { tab: 'profitability' } },
   ];
 
   /**
