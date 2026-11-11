@@ -300,6 +300,7 @@
     }
   },
   "weather": {
+    "advice": {"title":"El clima y tu agenda","calendar":"Ver calendario","today":"hoy","tomorrow":"mañana","reason":{"LLUVIA":"Lluvia","VIENTO":"Viento fuerte"},"whyIn":"{{motivo}} en {{n}} horas ({{hora}}).","whyInOne":"{{motivo}} en 1 hora ({{hora}}).","whyNow":"{{motivo}} en este momento.","whyTomorrow":"{{motivo}} desde las {{hora}}.","better":"Mejor {{dia}} entre las {{desde}} y las {{hasta}}.","noSpray":"No fumigues {{dia}}","sprayWindow":"Fumiga {{dia}} entre las {{desde}} y las {{hasta}}","sprayOk":"Buen tiempo para fumigar {{dia}}","sprayOkSub":"Sin lluvia ni viento fuerte: el producto alcanza a secar.","noWater":"No hace falta regar hoy","noWaterSub":"Se esperan {{mm}} mm de lluvia.","noWaterSubAt":"Se esperan {{mm}} mm de lluvia desde las {{hora}}.","frost":"Riesgo de helada","frostSub":"Mínima de {{temp}} °C en las próximas 24 horas.","frostSubAt":"Mínima de {{temp}} °C hacia las {{hora}}. Protege los cultivos sensibles.","heavyRain":"Lluvia fuerte","heavyRainSub":"Se esperan {{mm}} mm en las próximas 24 horas.","heavyRainSubAt":"Se esperan {{mm}} mm en las próximas 24 horas, desde las {{hora}}. Revisa los drenajes."},
     "loading": "Cargando clima...",
     "error": "No se pudo cargar el clima",
     "humidity": "Humedad",

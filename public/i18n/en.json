@@ -300,6 +300,7 @@
     }
   },
   "weather": {
+    "advice": {"title":"Weather and your schedule","calendar":"Open calendar","today":"today","tomorrow":"tomorrow","reason":{"LLUVIA":"Rain","VIENTO":"Strong wind"},"whyIn":"{{motivo}} in {{n}} hours ({{hora}}).","whyInOne":"{{motivo}} in 1 hour ({{hora}}).","whyNow":"{{motivo}} right now.","whyTomorrow":"{{motivo}} from {{hora}}.","better":"Better {{dia}} between {{desde}} and {{hasta}}.","noSpray":"Do not spray {{dia}}","sprayWindow":"Spray {{dia}} between {{desde}} and {{hasta}}","sprayOk":"Good weather to spray {{dia}}","sprayOkSub":"No rain or strong wind: the product has time to dry.","noWater":"No need to water today","noWaterSub":"{{mm}} mm of rain expected.","noWaterSubAt":"{{mm}} mm of rain expected from {{hora}}.","frost":"Frost risk","frostSub":"Low of {{temp}} °C in the next 24 hours.","frostSubAt":"Low of {{temp}} °C around {{hora}}. Protect sensitive crops.","heavyRain":"Heavy rain","heavyRainSub":"{{mm}} mm expected in the next 24 hours.","heavyRainSubAt":"{{mm}} mm expected in the next 24 hours, from {{hora}}. Check the drains."},
     "loading": "Loading weather...",
     "error": "Could not load the weather",
     "humidity": "Humidity",
