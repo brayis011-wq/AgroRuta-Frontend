@@ -1,0 +1,72 @@
+@if (visible()) {
+  <div class="sc">
+    @if (abierto()) {
+      <section class="panel" role="dialog" [attr.aria-label]="'offline.title' | translate">
+        <header>
+          <h2>{{ 'offline.title' | translate }}</h2>
+          <button type="button" class="x" (click)="alternar()" [attr.aria-label]="'offline.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+        </header>
+
+        <p class="expl">
+          {{ (cola.enLinea() ? 'offline.onlineHint' : 'offline.offlineHint') | translate }}
+          @if (!cola.enLinea() && cola.copiaDesde()) { <strong>{{ 'offline.copyFrom' | translate: { fecha: fecha(cola.copiaDesde()) } }}</strong> }
+        </p>
+
+        @if (cola.pendientes().length) {
+          <ul class="lista">
+            @for (p of cola.pendientes(); track p.id) {
+              <li [class.rechazado]="p.error">
+                <span class="ic" aria-hidden="true"><i class="ti" [class]="'ti ' + icono(p)"></i></span>
+                <div class="dato">
+                  <strong>{{ 'offline.tipo.' + p.tipo | translate }}</strong>
+                  <small>{{ 'offline.savedAt' | translate: { fecha: fecha(p.creadoEn) } }}</small>
+                  @if (p.error) {
+                    <p class="motivo"><i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ esClave(p.error) ? (p.error | translate) : p.error }}</p>
+                    <div class="acc">
+                      @if (esCarencia(p)) {
+                        <button type="button" class="b" (click)="confirmarCarencia(p)">{{ 'offline.confirmWithdrawal' | translate }}</button>
+                      } @else {
+                        <button type="button" class="b" (click)="reintentar(p)">{{ 'offline.retry' | translate }}</button>
+                      }
+                    </div>
+                  }
+                </div>
+                <button type="button" class="b quitar" [class.seguro]="porDescartar() === p.id" (click)="descartar(p)">
+                  {{ (porDescartar() === p.id ? 'offline.discardSure' : 'offline.discard') | translate }}
+                </button>
+              </li>
+            }
+          </ul>
+
+          <button type="button" class="enviar" (click)="enviar()" [disabled]="!cola.enLinea() || cola.sincronizando() || cola.porEnviar() === 0">
+            <i class="ti" [class.ti-cloud-upload]="!cola.sincronizando()" [class.ti-loader-2]="cola.sincronizando()" [class.gira]="cola.sincronizando()" aria-hidden="true"></i>
+            {{ (cola.sincronizando() ? 'offline.sending' : 'offline.sendNow') | translate }}
+          </button>
+        } @else {
+          <p class="vacio"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ 'offline.nothing' | translate }}</p>
+        }
+      </section>
+    }
+
+    <button type="button" class="pastilla" [class.sin]="!cola.enLinea()" [class.rojo]="cola.conError() > 0" [class.ok]="aviso() === 'enviados' && cola.pendientes().length === 0"
+            (click)="alternar()" [attr.aria-expanded]="abierto()" aria-live="polite">
+      @if (aviso() === 'enviados' && cola.pendientes().length === 0) {
+        <i class="ti ti-circle-check" aria-hidden="true"></i>
+        <span>{{ 'offline.sent' | translate: { n: cola.enviados() } }}</span>
+      } @else if (aviso() === 'guardado') {
+        <i class="ti ti-device-floppy" aria-hidden="true"></i>
+        <span>{{ 'offline.savedHere' | translate }}</span>
+      } @else if (cola.sincronizando()) {
+        <i class="ti ti-loader-2 gira" aria-hidden="true"></i>
+        <span>{{ 'offline.sending' | translate }}</span>
+      } @else {
+        <i class="ti" [class.ti-wifi-off]="!cola.enLinea()" [class.ti-cloud-upload]="cola.enLinea()" aria-hidden="true"></i>
+        <span>
+          @if (!cola.enLinea()) { {{ 'offline.offline' | translate }} }
+          @if (!cola.enLinea() && cola.pendientes().length) { · }
+          @if (cola.pendientes().length) { {{ 'offline.pending' | translate: { n: cola.pendientes().length } }} }
+        </span>
+      }
+    </button>
+  </div>
+}
