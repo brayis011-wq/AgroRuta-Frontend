@@ -1,3 +1,6 @@
 /* La cosecha usa solo los estilos comunes de los formularios (cultivo-form.css) */
 .form-header__icon { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
 .alert--carencia { grid-column: 1 / -1; background: var(--ar-ambar-bg); color: var(--ar-ambar); border: 1px solid var(--ar-ambar-borde); }
+.carencia-cuerpo { display: flex; flex-direction: column; gap: .5rem; }
+.carencia-confirmar { display: flex; align-items: flex-start; gap: .5rem; font-weight: 600; color: var(--ar-tinta); cursor: pointer; }
+.carencia-confirmar input { margin-top: .15rem; width: 1.05rem; height: 1.05rem; accent-color: var(--ar-ambar); flex: none; }

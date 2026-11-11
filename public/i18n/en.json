@@ -1626,6 +1626,8 @@
       "noEntryUntil": "Do not enter the lot until {{date}}",
       "reentryHours": "{{hours}} h re-entry",
       "daysShort": "PHI {{days}} d",
+      "confirmHarvest": "I understand the risk and want to log this harvest anyway",
+      "harvestedInside": "harvested within the PHI",
       "reentryShort": "re-entry {{hours}} h",
       "harvestWarning": "This date is within the pre-harvest interval of {{producto}}: harvesting from {{date}} is recommended."
     },

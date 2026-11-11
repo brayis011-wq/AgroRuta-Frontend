@@ -38,6 +38,7 @@
               id="fecha"
               type="date"
               [(ngModel)]="form.fecha"
+              (ngModelChange)="alCambiarFecha()"
               name="fecha"
               required
             />
@@ -105,12 +106,19 @@
           </div>
         </div>
 
-        <div class="alert alert--carencia" *ngIf="enCarencia" role="alert">
+        <div class="alert alert--carencia" *ngIf="pideConfirmacion" role="alert">
           <i class="ti ti-basket-off alert__icon" aria-hidden="true"></i>
-          <span>{{ 'temporadas.carencia.harvestWarning' | translate: { producto: carencia!.producto, date: fmtFecha(carencia!.libreDesde) } }}</span>
+          <div class="carencia-cuerpo">
+            <span *ngIf="mensajeCarencia">{{ mensajeCarencia }}</span>
+            <span *ngIf="!mensajeCarencia">{{ 'temporadas.carencia.harvestWarning' | translate: { producto: carencia!.producto, date: fmtFecha(carencia!.libreDesde) } }}</span>
+            <label class="carencia-confirmar">
+              <input type="checkbox" name="confirmarCarencia" [(ngModel)]="confirmarCarencia" />
+              <span>{{ 'temporadas.carencia.confirmHarvest' | translate }}</span>
+            </label>
+          </div>
         </div>
 
-        <button type="submit" class="btn-submit" [disabled]="cargando">
+        <button type="submit" class="btn-submit" [disabled]="cargando || (pideConfirmacion && !confirmarCarencia)">
           <span class="btn-submit__text" *ngIf="!cargando">
             <span>{{ (registroId ? 'common.save' : 'siembra.harvest.submit') | translate }}</span>
             <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>

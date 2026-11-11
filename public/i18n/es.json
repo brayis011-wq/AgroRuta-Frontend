@@ -1626,6 +1626,8 @@
       "noEntryUntil": "No entrar al lote hasta el {{date}}",
       "reentryHours": "reentrada de {{hours}} h",
       "daysShort": "carencia {{days}} d",
+      "confirmHarvest": "Entiendo el riesgo y quiero registrar esta cosecha de todos modos",
+      "harvestedInside": "cosechada en carencia",
       "reentryShort": "reentrada {{hours}} h",
       "harvestWarning": "Esta fecha está dentro de la carencia de {{producto}}: lo recomendado es cosechar desde el {{date}}."
     },

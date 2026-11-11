@@ -171,7 +171,7 @@
                     @switch (item.tipo) {
                       @case ('actividad') { {{ item.detalle }} }
                       @case ('fumigacion') { {{ num(item.dosis, 2) }} {{ 'enums.unidadMedida.' + item.unidad | translate }} · {{ num(item.area, 2) }} ha@if (item.carencia) { · {{ 'temporadas.carencia.daysShort' | translate: { days: item.carencia } }} }@if (item.reentrada) { · {{ 'temporadas.carencia.reentryShort' | translate: { hours: item.reentrada } }} } }
-                      @case ('cosecha') { {{ 'siembra.detail.history.quality' | translate }}: {{ 'enums.calidadCosecha.' + item.calidad | translate }} }
+                      @case ('cosecha') { {{ 'siembra.detail.history.quality' | translate }}: {{ 'enums.calidadCosecha.' + item.calidad | translate }}@if (item.enCarencia) { · <b class="en-carencia">{{ 'temporadas.carencia.harvestedInside' | translate }}</b> } }
                     }
                   </small>
                   @if (item.extra) { <small class="extra">{{ item.extra }}</small> }
