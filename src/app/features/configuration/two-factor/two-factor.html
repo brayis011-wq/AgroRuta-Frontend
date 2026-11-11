@@ -1,0 +1,119 @@
+@if (sinDatos()) {
+  <p class="aviso gris"><i class="ti ti-cloud-off" aria-hidden="true"></i> {{ 'config.twoFactor.loadError' | translate }}</p>
+} @else if (!estado()) {
+  <p class="cargando"><i class="ti ti-loader-2 gira" aria-hidden="true"></i> {{ 'config.twoFactor.loading' | translate }}</p>
+} @else {
+  @switch (paso()) {
+    @case ('inicio') {
+      <div class="resumen">
+        <div>
+          <span class="estado-chip" [class.on]="estado()!.activo">
+            <i class="ti" [class.ti-shield-check]="estado()!.activo" [class.ti-shield-off]="!estado()!.activo" aria-hidden="true"></i>
+            {{ (estado()!.activo ? 'config.twoFactor.on' : 'config.twoFactor.off') | translate }}
+          </span>
+          <p>{{ (estado()!.activo ? 'config.twoFactor.onHint' : 'config.twoFactor.offHint') | translate }}</p>
+          @if (estado()!.activo) {
+            <p class="respaldo" [class.pocos]="estado()!.codigosRespaldo <= 2">
+              <i class="ti ti-key" aria-hidden="true"></i> {{ 'config.twoFactor.backupLeft' | translate: { n: estado()!.codigosRespaldo } }}
+            </p>
+          }
+        </div>
+        @if (estado()!.activo) {
+          <button type="button" class="btn btn-quitar" (click)="ir('quitar')"><i class="ti ti-shield-off" aria-hidden="true"></i> {{ 'config.twoFactor.disable' | translate }}</button>
+        } @else {
+          <button type="button" class="btn btn-prim" (click)="ir('clave')"><i class="ti ti-shield-plus" aria-hidden="true"></i> {{ 'config.twoFactor.enable' | translate }}</button>
+        }
+      </div>
+    }
+
+    @case ('clave') {
+      <form class="paso" (ngSubmit)="preparar()">
+        <p class="guia">{{ 'config.twoFactor.passwordStep' | translate }}</p>
+        <div class="campo corto">
+          <label for="dp-clave">{{ 'config.password.current' | translate }}</label>
+          <input id="dp-clave" type="password" name="password" [(ngModel)]="password" autocomplete="current-password" maxlength="72" required />
+        </div>
+        @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error() | translate }}</p> }
+        <div class="botones">
+          <button type="button" class="btn btn-texto" (click)="ir('inicio')">{{ 'config.twoFactor.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-prim" [disabled]="!password || ocupado()">
+            @if (ocupado()) { <i class="ti ti-loader-2 gira" aria-hidden="true"></i> }
+            {{ 'config.twoFactor.continue' | translate }}
+          </button>
+        </div>
+      </form>
+    }
+
+    @case ('qr') {
+      <form class="paso" (ngSubmit)="activar()">
+        <ol class="pasos">
+          <li>{{ 'config.twoFactor.step1' | translate }}</li>
+          <li>
+            {{ 'config.twoFactor.step2' | translate }}
+            <div class="qr-fila">
+              <img class="qr" [src]="preparacion()!.qr" width="168" height="168" [alt]="'config.twoFactor.qrAlt' | translate" />
+              <div class="manual">
+                <small>{{ 'config.twoFactor.manual' | translate }}</small>
+                <code>{{ secretoLegible }}</code>
+              </div>
+            </div>
+          </li>
+          <li>
+            <label for="dp-codigo">{{ 'config.twoFactor.step3' | translate }}</label>
+            <input id="dp-codigo" class="codigo" type="text" name="codigo" [(ngModel)]="codigo" inputmode="numeric" pattern="[0-9 ]*"
+                   autocomplete="one-time-code" maxlength="7" placeholder="123456" required />
+          </li>
+        </ol>
+        @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error() | translate }}</p> }
+        <div class="botones">
+          <button type="button" class="btn btn-texto" (click)="ir('inicio')">{{ 'config.twoFactor.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-prim" [disabled]="!codigo.trim() || ocupado()">
+            @if (ocupado()) { <i class="ti ti-loader-2 gira" aria-hidden="true"></i> }
+            {{ 'config.twoFactor.confirm' | translate }}
+          </button>
+        </div>
+      </form>
+    }
+
+    @case ('codigos') {
+      <div class="paso">
+        <p class="aviso verde" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ 'config.twoFactor.enabled' | translate }}</p>
+        <p class="guia"><strong>{{ 'config.twoFactor.backupTitle' | translate }}</strong> {{ 'config.twoFactor.backupDesc' | translate }}</p>
+        <ul class="codigos">
+          @for (c of codigos(); track c) { <li><code>{{ c }}</code></li> }
+        </ul>
+        <div class="botones">
+          <button type="button" class="btn" (click)="copiarCodigos()">
+            <i class="ti" [class.ti-copy]="!copiado()" [class.ti-check]="copiado()" aria-hidden="true"></i>
+            {{ (copiado() ? 'config.twoFactor.copied' : 'config.twoFactor.copy') | translate }}
+          </button>
+          <button type="button" class="btn btn-prim" (click)="ir('inicio')">{{ 'config.twoFactor.saved' | translate }}</button>
+        </div>
+      </div>
+    }
+
+    @case ('quitar') {
+      <form class="paso" (ngSubmit)="desactivar()">
+        <p class="guia">{{ 'config.twoFactor.disableStep' | translate }}</p>
+        <div class="campos">
+          <div class="campo">
+            <label for="dp-clave-q">{{ 'config.password.current' | translate }}</label>
+            <input id="dp-clave-q" type="password" name="password" [(ngModel)]="password" autocomplete="current-password" maxlength="72" required />
+          </div>
+          <div class="campo">
+            <label for="dp-codigo-q">{{ 'config.twoFactor.codeOrBackup' | translate }}</label>
+            <input id="dp-codigo-q" type="text" name="codigo" [(ngModel)]="codigo" autocomplete="one-time-code" maxlength="20" spellcheck="false" required />
+          </div>
+        </div>
+        @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error() | translate }}</p> }
+        <div class="botones">
+          <button type="button" class="btn btn-texto" (click)="ir('inicio')">{{ 'config.twoFactor.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-peligro" [disabled]="!password || !codigo.trim() || ocupado()">
+            @if (ocupado()) { <i class="ti ti-loader-2 gira" aria-hidden="true"></i> }
+            {{ 'config.twoFactor.disable' | translate }}
+          </button>
+        </div>
+      </form>
+    }
+  }
+}

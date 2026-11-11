@@ -10,6 +10,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { TemaService } from '../../../../core/services/theme.service';
+import { SeguridadService } from '../../../../core/services/security.service';
 
 describe('ConfigurationPageComponent — correos', () => {
   const notificaciones = { obtener: vi.fn(), guardar: vi.fn() };
@@ -25,6 +26,7 @@ describe('ConfigurationPageComponent — correos', () => {
         { provide: FincaActivaService, useValue: { fincas: signal([]), idActiva: signal(null), elegir: vi.fn() } },
         { provide: LanguageService, useValue: { current: signal('es'), set: vi.fn() } },
         { provide: TemaService, useValue: { tema: signal('claro'), elegir: vi.fn() } },
+        { provide: SeguridadService, useValue: { estado: () => of({ activo: false, codigosRespaldo: 0 }), sesiones: () => of([]) } },
       ],
     });
     const f = TestBed.createComponent(ConfigurationPageComponent);

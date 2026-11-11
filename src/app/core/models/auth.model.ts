@@ -10,6 +10,8 @@ export interface RegisterRequest {
 export interface LoginRequest {
   email: string;
   password: string;
+  /** Código de la app de autenticación (o uno de respaldo) si la cuenta tiene verificación en dos pasos */
+  codigo?: string;
 }
 
 export interface AuthResponse {
