@@ -91,7 +91,20 @@ export class AuthService {
     // Las copias para trabajar sin señal no se quedan en un teléfono prestado.
     // Los registros por enviar sí: son de esa cuenta y salen cuando vuelva a entrar.
     void this.almacen.borrarLecturas().catch(() => undefined);
+    this.quitarAvisosPush();
     this.http.post(`${this.apiUrl}/logout`, {}).subscribe({ error: () => undefined });
+  }
+
+  /**
+   * Da de baja la suscripción push de este navegador. No hace falta avisar al servidor:
+   * su próximo envío rebota y él mismo la borra.
+   */
+  private quitarAvisosPush(): void {
+    if (typeof navigator === 'undefined' || !navigator.serviceWorker?.getRegistration) return;
+    navigator.serviceWorker.getRegistration()
+      .then((registro) => registro?.pushManager?.getSubscription())
+      .then((suscripcion) => suscripcion?.unsubscribe())
+      .catch(() => undefined);
   }
 
   /** Borra la sesión solo en este navegador (la cookie ya no sirve o se va a reemplazar). */

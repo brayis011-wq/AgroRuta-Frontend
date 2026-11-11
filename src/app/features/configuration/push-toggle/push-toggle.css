@@ -1,0 +1,7 @@
+/* Va después de los interruptores de correo: conserva la línea que los separa */
+:host { display: block; }
+.pref, .pref:first-of-type { border-top: 1px solid var(--ar-borde); padding-top: .9rem; }
+.controles { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.resultado { display: flex !important; align-items: center; gap: .3rem; margin-top: .35rem !important; color: var(--ar-verde-800) !important; font-weight: 600; }
+.resultado.mal { color: var(--ar-rojo) !important; }
+.resultado .ti { font-size: 15px; }

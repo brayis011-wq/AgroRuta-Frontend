@@ -95,3 +95,38 @@ self.addEventListener('fetch', (event) => {
     }),
   );
 });
+
+// ───────────── Avisos push ─────────────
+// El servidor manda { title, body, url, tag } cifrado; aquí se muestra como notificación del sistema.
+
+self.addEventListener('push', (event) => {
+  let aviso = {};
+  try {
+    aviso = event.data ? event.data.json() : {};
+  } catch (e) {
+    aviso = { body: event.data ? event.data.text() : '' };
+  }
+  event.waitUntil(
+    self.registration.showNotification(aviso.title || 'AgroRuta', {
+      body: aviso.body || '',
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      tag: aviso.tag || undefined,
+      data: { url: aviso.url || '/' },
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const destino = new URL((event.notification.data && event.notification.data.url) || '/', self.location.origin);
+  // Solo pantallas de la propia app
+  if (destino.origin !== self.location.origin) return;
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((ventanas) => {
+      const abierta = ventanas.find((v) => 'focus' in v);
+      if (!abierta) return self.clients.openWindow(destino.href);
+      return abierta.focus().then((v) => (v && 'navigate' in v ? v.navigate(destino.href).catch(() => undefined) : undefined));
+    }),
+  );
+});

@@ -10,6 +10,7 @@ import { ProfileFormComponent } from '../../profile-form/profile-form';
 import { ChangePasswordFormComponent } from '../../change-password-form/change-password-form';
 import { TwoFactorComponent } from '../../two-factor/two-factor';
 import { OpenSessionsComponent } from '../../open-sessions/open-sessions';
+import { PushToggleComponent } from '../../push-toggle/push-toggle';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { Perfil, UpdateProfileRequest, ChangePasswordRequest } from '../../../../core/models/profile.model';
 import { NotificacionesService, PreferenciasCorreo } from '../../../../core/services/notifications.service';
@@ -22,7 +23,7 @@ interface Toast {
 @Component({
   selector: 'app-configuration-page',
   standalone: true,
-  imports: [CommonModule, ProfileFormComponent, ChangePasswordFormComponent, TwoFactorComponent, OpenSessionsComponent, TranslatePipe],
+  imports: [CommonModule, ProfileFormComponent, ChangePasswordFormComponent, TwoFactorComponent, OpenSessionsComponent, PushToggleComponent, TranslatePipe],
   templateUrl: './configuration-page.html',
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', './configuration-page.scss'],
 })
