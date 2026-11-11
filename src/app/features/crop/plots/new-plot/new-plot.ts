@@ -103,7 +103,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private actualizarTextoBotonGps(): void {
     if (this.locateBtnEl) {
-      this.locateBtnEl.innerHTML = '📍 ' + this.translate.instant('cultivo.fincas.new.myLocation');
+      this.locateBtnEl.textContent ='📍 ' + this.translate.instant('cultivo.fincas.new.myLocation');
     }
   }
 

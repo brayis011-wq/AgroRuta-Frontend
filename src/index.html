@@ -12,15 +12,11 @@
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#2e7d32">
   <meta name="color-scheme" content="light dark">
-  <!-- Aplica el modo oscuro antes de pintar, para que no se vea un destello blanco al cargar -->
-  <script>
-    try {
-      var t = localStorage.getItem('tema') || 'sistema';
-      var oscuro = t === 'oscuro' || (t === 'sistema' && matchMedia('(prefers-color-scheme: dark)').matches);
-      document.documentElement.setAttribute('data-tema', oscuro ? 'oscuro' : 'claro');
-    } catch (e) {}
-  </script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+  <!-- Aplica el modo oscuro antes de pintar, para que no se vea un destello blanco al cargar.
+       Archivo aparte: la política de seguridad (public/_headers) no permite scripts dentro de la página. -->
+  <script src="theme-init.js"></script>
+  <!-- Iconos Tabler 3.31.0 servidos desde el propio sitio (public/vendor/tabler-icons), no desde un CDN -->
+  <link rel="stylesheet" href="vendor/tabler-icons/tabler-icons.min.css">
 </head>
 <body>
 <app-root></app-root>

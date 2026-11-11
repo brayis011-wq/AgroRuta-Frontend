@@ -69,7 +69,7 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
 
   private actualizarTextoBotonGps(): void {
     if (this.locateBtnEl) {
-      this.locateBtnEl.innerHTML = '📍 ' + this.translate.instant('cultivo.fincas.new.myLocation');
+      this.locateBtnEl.textContent ='📍 ' + this.translate.instant('cultivo.fincas.new.myLocation');
     }
   }
 
@@ -132,8 +132,9 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
 
     this.marcador = L.marker(latlng, {
       icon: L.icon({
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        // Copiados desde node_modules/leaflet al compilar (assets en angular.json)
+        iconUrl: 'leaflet/marker-icon.png',
+        shadowUrl: 'leaflet/marker-shadow.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41],
       })

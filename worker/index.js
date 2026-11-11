@@ -49,11 +49,13 @@ export default {
       });
     } catch (e) {
       // Render no respondió (por ejemplo, mientras despierta) o algo falló aquí:
-      // el frontend lo trata como error de red. El nombre del error ayuda a diagnosticar.
+      // el frontend lo trata como error de red. El mensaje completo va solo al log del Worker
+      // (puede traer direcciones internas); al navegador llega nada más el tipo de error.
+      console.error('Proxy /api falló:', e);
       return new Response(
         JSON.stringify({
           message: 'El servidor no está disponible. Intenta de nuevo.',
-          detalle: e instanceof Error ? e.name + ': ' + e.message : String(e),
+          detalle: e instanceof Error ? e.name : 'Error',
         }),
         { status: 502, headers: { 'Content-Type': 'application/json' } },
       );

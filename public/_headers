@@ -1,0 +1,18 @@
+# Cabeceras de seguridad de los archivos estáticos (Cloudflare Workers las lee de este archivo).
+# No aplican a /api/*: esas respuestas las arma el backend y ya traen las suyas.
+#
+# Si se agrega un servicio externo nuevo hay que sumarlo a Content-Security-Policy, o el navegador
+# lo bloquea (se ve en la consola como "Refused to ... because it violates ... Content Security Policy"):
+#   script-src   solo código propio; por eso el script del tema está en theme-init.js y no dentro de index.html
+#   style-src    'unsafe-inline' lo necesita Angular (inserta los estilos de cada componente)
+#   font-src     solo fuentes propias (Inter y los iconos Tabler van dentro del build)
+#   img-src      cualquier https: teselas de mapas (Google, Esri, Copernicus), iconos del clima y la foto de perfil
+#   connect-src  nuestra API (mismo dominio) y Nominatim (buscar direcciones)
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https://nominatim.openstreetmap.org; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(), microphone=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin

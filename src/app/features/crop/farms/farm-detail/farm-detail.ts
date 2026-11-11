@@ -6,6 +6,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription, forkJoin, of, catchError } from 'rxjs';
 import { LanguageService } from '../../../../core/services/language.service';
 import { formatoNumero } from '../../../../shared/format';
+import { escaparHtml } from '../../../../shared/html';
 import { progresoCiclo } from '../../planting/stage-cycle/stage-cycle.logic';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { EstadoLote, Finca, Lote, Siembra, nombreCultivo } from '../../../../core/models/crop.model';
@@ -145,7 +146,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // Tooltip con nombre y estado
         poligono.bindTooltip(
-          `<strong>${lote.nombre}</strong><br>${this.getEstadoLabel(lote.estado)}<br>${lote.area} ha`,
+          `<strong>${escaparHtml(lote.nombre)}</strong><br>${escaparHtml(this.getEstadoLabel(lote.estado))}<br>${escaparHtml(lote.area)} ha`,
           { permanent: false, direction: 'center' }
         );
 
