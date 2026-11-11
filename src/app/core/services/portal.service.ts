@@ -33,4 +33,9 @@ export class PortalService {
   pagos(): Observable<MiPago[]> {
     return this.http.get<MiPago[]>(`${this.api}/payments`);
   }
+
+  /** Comprobante en PDF de uno de mis pagos */
+  comprobante(pagoId: number): Observable<Blob> {
+    return this.http.get(`${this.api}/payments/${pagoId}/receipt`, { responseType: 'blob' });
+  }
 }

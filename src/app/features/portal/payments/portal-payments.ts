@@ -5,6 +5,7 @@ import { PortalService } from '../../../core/services/portal.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { MiPago } from '../../../core/models/portal.model';
 import { formatoFecha, formatoPesos } from '../../../shared/format';
+import { descargarArchivo, numeroComprobante } from '../../../shared/download';
 
 @Component({
   selector: 'app-portal-pagos',
@@ -21,6 +22,9 @@ export class PortalPagosComponent implements OnInit {
   pagos: MiPago[] = [];
   cargando = true;
   error = false;
+  /** Id del pago cuyo comprobante se está descargando */
+  descargando: number | null = null;
+  errorComprobante = false;
 
   ngOnInit(): void {
     this.cargar();
@@ -38,6 +42,24 @@ export class PortalPagosComponent implements OnInit {
       error: () => {
         this.error = true;
         this.cargando = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  descargar(p: MiPago): void {
+    if (this.descargando) return;
+    this.descargando = p.id;
+    this.errorComprobante = false;
+    this.portal.comprobante(p.id).subscribe({
+      next: (pdf) => {
+        descargarArchivo(pdf, `comprobante-${numeroComprobante(p.id)}.pdf`);
+        this.descargando = null;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.descargando = null;
+        this.errorComprobante = true;
         this.cdr.detectChanges();
       },
     });

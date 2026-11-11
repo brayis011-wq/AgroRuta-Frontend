@@ -191,4 +191,6 @@ export class PagoService {
   buscarPorId(id: number): Observable<Pago> { return this.http.get<Pago>(`${this.api}/${id}`); }
   historialPorTrabajador(trabajadorId: number): Observable<Pago[]> { return this.http.get<Pago[]>(`${this.api}/worker/${trabajadorId}`); }
   registrar(req: PagoRequest): Observable<Pago> { return this.http.post<Pago>(this.api, req); }
+  /** Comprobante del pago en PDF, con un QR para verificarlo */
+  comprobante(id: number): Observable<Blob> { return this.http.get(`${this.api}/${id}/receipt`, { responseType: 'blob' }); }
 }

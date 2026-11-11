@@ -30,3 +30,4 @@
   color: var(--a-muted);
 }
 .total-chip strong { font-size: 1.15rem; color: var(--a-ink); font-variant-numeric: tabular-nums; }
+.btn-comprobante { display: inline-flex; align-items: center; gap: .3rem; white-space: nowrap; }

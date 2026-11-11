@@ -18,6 +18,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/legal/privacy').then((m) => m.PrivacidadComponent),
   },
 
+  // Pública: la abre quien escanea el QR de un comprobante de pago
+  {
+    path: 'receipt/:id/:code',
+    loadComponent: () => import('./features/receipt/receipt-verify').then((m) => m.ReceiptVerifyComponent),
+  },
+
   // Panel de administración: layout y menú propios
   {
     path: 'admin',

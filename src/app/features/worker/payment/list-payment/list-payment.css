@@ -11,3 +11,7 @@
 .jornales .v { font-weight: 600; font-variant-numeric: tabular-nums; }
 .jornales .etqs { grid-column: 2 / -1; }
 .tot-n { display: flex; justify-content: space-between; padding-top: .6rem; border-top: 1px solid var(--ar-borde); font-weight: 700; }
+
+/* Comprobante en PDF */
+.comprobante { display: flex; flex-direction: column; align-items: flex-start; gap: .4rem; }
+.comprobante small { display: inline-flex; align-items: center; gap: .3rem; font-size: .78rem; }
