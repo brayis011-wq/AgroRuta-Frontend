@@ -52,6 +52,11 @@
   color: #1f5fa8;
 }
 
+.tab-btn.profitability .tab-icon {
+  background-color: var(--ar-verde-100);
+  color: var(--ar-verde-800);
+}
+
 .tab-label {
   display: flex;
   flex-direction: column;

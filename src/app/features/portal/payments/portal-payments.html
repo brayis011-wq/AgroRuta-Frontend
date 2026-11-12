@@ -18,6 +18,10 @@
   </div>
   <div class="card estado" *ngIf="!cargando && !error && pagos.length === 0">{{ 'portal.payments.empty' | translate }}</div>
 
+  <div class="banner error" *ngIf="errorComprobante" role="alert">
+    <span>{{ 'receipt.downloadError' | translate }}</span>
+  </div>
+
   <div class="card" *ngIf="pagos.length > 0">
     <ul class="lista">
       <li *ngFor="let p of pagos" class="item">
@@ -31,6 +35,10 @@
         <div class="item-side">
           <span class="item-amount">{{ pesos(p.monto) }}</span>
           <span class="pill info" *ngIf="p.metodoPago">{{ 'enums.metodoPago.' + p.metodoPago | translate }}</span>
+          <button type="button" class="btn btn-sm btn-ghost btn-comprobante" [disabled]="descargando === p.id" (click)="descargar(p)">
+            <i class="ti" [class.ti-file-download]="descargando !== p.id" [class.ti-loader-2]="descargando === p.id" aria-hidden="true"></i>
+            {{ 'receipt.downloadShort' | translate }}
+          </button>
         </div>
       </li>
     </ul>

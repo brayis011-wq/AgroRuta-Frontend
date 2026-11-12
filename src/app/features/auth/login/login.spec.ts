@@ -120,6 +120,23 @@ describe('LoginComponent', () => {
     expect(component.error).toBe('auth.login.serverError');
   });
 
+  it('verificación en dos pasos (403 AGR-034): pide el código y lo manda en el segundo intento', () => {
+    authServiceMock.login.mockReturnValue(throwError(() => ({ status: 403, error: { errorCode: 'AGR-034' } })));
+    component.form = { email: 'ana@x.com', password: 'secreta123' };
+    component.onSubmit();
+    expect(component.pideCodigo).toBe(true);
+    expect(component.error).toBe('');
+    expect(component.aviso).toBe('auth.login.codeNeeded');
+
+    authServiceMock.login.mockReturnValue(throwError(() => ({ status: 422, error: { errorCode: 'AGR-035' } })));
+    component.codigo = ' 123456 ';
+    component.onSubmit();
+    expect(authServiceMock.login).toHaveBeenLastCalledWith({ email: 'ana@x.com', password: 'secreta123', codigo: '123456' });
+    expect(component.error).toBe('auth.login.codeWrong');
+    expect(component.pideCodigo).toBe(true);
+    expect(component.codigo).toBe('');
+  });
+
   it('correo sin confirmar (403 AGR-033): avisa y permite reenviar el enlace', () => {
     authServiceMock.login.mockReturnValue(throwError(() => ({ status: 403, error: { errorCode: 'AGR-033' } })));
     component.form = { email: 'ana@x.com', password: 'clave-larga' };

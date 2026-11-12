@@ -43,6 +43,11 @@ export interface CropDetail {
   fincaNombre?: string | null;
   /** La siembra, su lote o su finca se eliminaron: ya no se ve en la app, pero su historial sigue aquí */
   eliminada?: boolean;
+  /** Para comparar temporadas del mismo lote */
+  loteId?: number | null;
+  loteAreaHa?: number | null;
+  /** null o ausente: la temporada sigue en curso */
+  fechaFin?: string | null;
 }
 
 export interface CropReport {

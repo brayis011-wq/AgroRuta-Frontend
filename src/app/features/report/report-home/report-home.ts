@@ -6,14 +6,15 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { PayrollReportComponent } from '../payroll/payroll-report';
 import { CropReportComponent } from '../crop/crop-report';
 import { CostsReportComponent } from '../costs/costs-report';
+import { ProfitabilityReportComponent } from '../profitability/profitability-report';
 
-type Tab = 'payroll' | 'crops' | 'costs';
-const TABS: Tab[] = ['payroll', 'crops', 'costs'];
+type Tab = 'payroll' | 'crops' | 'costs' | 'profitability';
+const TABS: Tab[] = ['payroll', 'crops', 'costs', 'profitability'];
 
 @Component({
   selector: 'app-report-home',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, PayrollReportComponent, CropReportComponent, CostsReportComponent],
+  imports: [CommonModule, TranslatePipe, PayrollReportComponent, CropReportComponent, CostsReportComponent, ProfitabilityReportComponent],
   templateUrl: './report-home.html',
   styleUrl: './report-home.css'
 })

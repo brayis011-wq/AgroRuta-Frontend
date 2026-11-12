@@ -1,0 +1,37 @@
+@if (sinDatos()) {
+  <p class="aviso gris"><i class="ti ti-cloud-off" aria-hidden="true"></i> {{ 'config.sessions.loadError' | translate }}</p>
+} @else if (!sesiones()) {
+  <p class="cargando"><i class="ti ti-loader-2 gira" aria-hidden="true"></i> {{ 'config.sessions.loading' | translate }}</p>
+} @else {
+  <ul class="sesiones">
+    @for (s of sesiones(); track s.id) {
+      <li>
+        <span class="disp" [class.esta]="s.actual" aria-hidden="true"><i class="ti" [class.ti-device-mobile]="esMovil(s)" [class.ti-device-desktop]="!esMovil(s)"></i></span>
+        <div class="datos">
+          <strong>
+            {{ s.dispositivo || ('config.sessions.unknown' | translate) }}
+            @if (s.actual) { <span class="esta-chip">{{ 'config.sessions.current' | translate }}</span> }
+          </strong>
+          <small>{{ 'config.sessions.started' | translate: { fecha: fecha(s.iniciadaEn) } }} · {{ 'config.sessions.lastUse' | translate: { fecha: fecha(s.ultimoUso) } }}</small>
+        </div>
+        <button type="button" class="btn btn-quitar" [disabled]="cerrando() !== null" (click)="cerrar(s)"
+                [attr.aria-label]="('config.sessions.close' | translate) + ': ' + (s.dispositivo || '')">
+          <i class="ti" [class.ti-logout]="cerrando() !== s.id" [class.ti-loader-2]="cerrando() === s.id" [class.gira]="cerrando() === s.id" aria-hidden="true"></i>
+          {{ (s.actual ? 'layout.logout' : 'config.sessions.close') | translate }}
+        </button>
+      </li>
+    }
+  </ul>
+
+  @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ 'config.sessions.error' | translate }}</p> }
+
+  <div class="pie-sesiones">
+    <span><i class="ti ti-info-circle" aria-hidden="true"></i> {{ 'config.sessions.note' | translate }}</span>
+    @if (hayOtras) {
+      <button type="button" class="btn btn-quitar" [disabled]="cerrando() !== null" (click)="cerrarOtras()">
+        <i class="ti" [class.ti-logout-2]="cerrando() !== 'otras'" [class.ti-loader-2]="cerrando() === 'otras'" [class.gira]="cerrando() === 'otras'" aria-hidden="true"></i>
+        {{ 'config.sessions.closeOthers' | translate }}
+      </button>
+    }
+  </div>
+}

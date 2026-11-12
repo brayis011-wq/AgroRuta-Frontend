@@ -1,0 +1,20 @@
+@if (items().length) {
+  <section class="consejos" [attr.aria-label]="'weather.advice.title' | translate">
+    <header>
+      <h2><i class="ti ti-cloud-rain" aria-hidden="true"></i> {{ 'weather.advice.title' | translate }}</h2>
+      <a routerLink="/crops/calendar">{{ 'weather.advice.calendar' | translate }}</a>
+    </header>
+    <ul>
+      @for (c of items(); track $index) {
+        <li [class.alerta]="c.nivel === 'ALERTA'" [class.precaucion]="c.nivel === 'PRECAUCION'" [class.bien]="c.nivel === 'BIEN'">
+          <span class="ic" aria-hidden="true"><i class="ti" [class]="c.icono"></i></span>
+          <div>
+            <strong>{{ c.titulo }}</strong>
+            <p>{{ c.detalle }}</p>
+            <small>{{ donde(c) }}@if (c.cultivo) { · {{ c.cultivo }} }</small>
+          </div>
+        </li>
+      }
+    </ul>
+  </section>
+}

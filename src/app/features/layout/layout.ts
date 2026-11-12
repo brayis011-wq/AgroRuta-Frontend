@@ -14,6 +14,7 @@ import { FincaActivaService } from '../../core/services/active-farm.service';
 import { WeatherService } from '../../core/services/weather.service';
 import { Weather } from '../../core/models/weather.model';
 import { BuscadorComponent } from '../../shared/search/search';
+import { OfflineStatusComponent } from './offline-status/offline-status';
 import { consejoFumigacion, municipio } from '../../shared/weather';
 
 const CLAVE_COLAPSADO = 'sidebarColapsado';
@@ -39,7 +40,7 @@ export interface ItemSubmenu {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterModule, TranslatePipe, UpperCasePipe, DecimalPipe, NgTemplateOutlet, BuscadorComponent],
+  imports: [RouterModule, TranslatePipe, UpperCasePipe, DecimalPipe, NgTemplateOutlet, BuscadorComponent, OfflineStatusComponent],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css', './layout-movil.css', './layout-extras.css', './layout-anim.css'],
 })
@@ -85,6 +86,7 @@ export class LayoutComponent {
     { ruta: '/reports', clave: 'layout.nav.reportPayroll', query: { tab: 'payroll' } },
     { ruta: '/reports', clave: 'layout.nav.reportCrops', query: { tab: 'crops' } },
     { ruta: '/reports', clave: 'reports.tabs.costs.name', query: { tab: 'costs' } },
+    { ruta: '/reports', clave: 'reports.tabs.profitability.name', query: { tab: 'profitability' } },
   ];
 
   /**

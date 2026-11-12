@@ -30,6 +30,8 @@
         <nav class="tarjeta indice" [attr.aria-label]="'config.sections' | translate">
           <a href="#perfil" (click)="$event.preventDefault(); ir('perfil')"><i class="ti ti-user" aria-hidden="true"></i> {{ 'config.profileCard.title' | translate }}</a>
           <a href="#seguridad" (click)="$event.preventDefault(); ir('seguridad')"><i class="ti ti-lock" aria-hidden="true"></i> {{ 'config.passwordCard.title' | translate }}</a>
+          <a href="#dos-pasos" (click)="$event.preventDefault(); ir('dos-pasos')"><i class="ti ti-shield-lock" aria-hidden="true"></i> {{ 'config.twoFactor.title' | translate }}</a>
+          <a href="#sesiones" (click)="$event.preventDefault(); ir('sesiones')"><i class="ti ti-devices" aria-hidden="true"></i> {{ 'config.sessions.title' | translate }}</a>
           <a href="#correos" (click)="$event.preventDefault(); ir('correos')"><i class="ti ti-mail" aria-hidden="true"></i> {{ 'config.mail.title' | translate }}</a>
           <a href="#preferencias" (click)="$event.preventDefault(); ir('preferencias')"><i class="ti ti-adjustments" aria-hidden="true"></i> {{ 'config.prefs.title' | translate }}</a>
         </nav>
@@ -54,6 +56,26 @@
             </div>
           </header>
           <app-change-password-form [loading]="loadingPassword" (changePassword)="onChangePassword($event)" />
+        </section>
+
+        <section class="tarjeta" id="dos-pasos">
+          <header>
+            <div class="tit">
+              <span class="ic verde" aria-hidden="true"><i class="ti ti-shield-lock"></i></span>
+              <div><h2>{{ 'config.twoFactor.title' | translate }}</h2><p>{{ 'config.twoFactor.desc' | translate }}</p></div>
+            </div>
+          </header>
+          <app-two-factor />
+        </section>
+
+        <section class="tarjeta" id="sesiones">
+          <header>
+            <div class="tit">
+              <span class="ic azul" aria-hidden="true"><i class="ti ti-devices"></i></span>
+              <div><h2>{{ 'config.sessions.title' | translate }}</h2><p>{{ 'config.sessions.desc' | translate }}</p></div>
+            </div>
+          </header>
+          <app-open-sessions />
         </section>
 
         <section class="tarjeta" id="correos">
@@ -83,6 +105,8 @@
               <span aria-hidden="true"></span>
             </label>
           </div>
+
+          <app-push-toggle />
 
           <p class="nota"><i class="ti ti-shield-lock" aria-hidden="true"></i> {{ 'config.mail.security' | translate }}</p>
         </section>

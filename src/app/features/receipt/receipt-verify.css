@@ -1,0 +1,33 @@
+:host { display: block; min-height: 100vh; background: var(--ar-fondo); color: var(--ar-tinta); }
+.verif { max-width: 520px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+header { margin-bottom: 1.25rem; }
+.brand { display: inline-flex; align-items: center; gap: .55rem; font-weight: 700; font-size: 1.05rem; color: var(--ar-tinta); text-decoration: none; }
+.logo { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--ar-verde-600); color: #fff; font-size: 20px; }
+main { background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 18px; padding: 1.75rem clamp(1.1rem, 5vw, 2rem); display: flex; flex-direction: column; gap: 1.25rem; }
+
+.estado { display: flex; flex-direction: column; align-items: center; text-align: center; gap: .5rem; }
+.estado h1 { margin: .25rem 0 0; font-size: 1.3rem; letter-spacing: -.01em; }
+.estado p { margin: 0; font-size: .92rem; line-height: 1.55; color: var(--ar-tinta-2); }
+.sello { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; font-size: 34px; }
+.sello.verde { background: var(--ar-verde-100); color: var(--ar-verde-700); }
+.sello.rojo { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
+.sello.gris { background: var(--ar-fondo); color: var(--ar-tinta-2); }
+.gira { animation: girar 1s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
+
+.monto { display: flex; flex-direction: column; align-items: center; gap: .15rem; padding: 1rem; border-radius: 14px; background: var(--ar-verde-50); }
+.monto small { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ar-tinta-2); }
+.monto strong { font-size: 2rem; font-variant-numeric: tabular-nums; color: var(--ar-verde-800); }
+.monto span { font-size: .88rem; color: var(--ar-tinta-2); }
+
+dl { margin: 0; display: flex; flex-direction: column; }
+dl div { display: flex; justify-content: space-between; gap: 1rem; padding: .65rem 0; border-bottom: 1px solid var(--ar-borde); }
+dl div:last-child { border-bottom: 0; }
+dt { font-size: .86rem; color: var(--ar-tinta-2); }
+dd { margin: 0; font-size: .92rem; font-weight: 600; text-align: right; display: flex; flex-direction: column; }
+dd small { font-weight: 500; font-size: .78rem; color: var(--ar-tinta-2); }
+
+.pista { margin: 0; display: flex; gap: .45rem; font-size: .84rem; line-height: 1.5; color: var(--ar-tinta-2); }
+.pista i { margin-top: .15rem; }
+.reintentar { margin-top: .5rem; border: 1px solid var(--ar-borde-fuerte); background: var(--ar-superficie); color: var(--ar-tinta); border-radius: 10px; padding: .55rem 1.1rem; font: inherit; font-weight: 600; cursor: pointer; }
+.reintentar:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }

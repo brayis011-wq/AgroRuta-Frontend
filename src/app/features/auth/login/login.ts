@@ -27,6 +27,9 @@ export class LoginComponent implements OnInit {
   /** La contraseña era correcta pero falta confirmar el correo */
   sinConfirmar = false;
   reenviado = false;
+  /** La contraseña era correcta y la cuenta pide además el código de la verificación en dos pasos */
+  pideCodigo = false;
+  codigo = '';
   cargando: boolean = false;
 
   constructor(
@@ -52,7 +55,10 @@ export class LoginComponent implements OnInit {
     this.error = '';
     this.cargando = true;
 
-    this.authService.login(this.form).subscribe({
+    const codigo = this.codigo.trim();
+    const datos = this.pideCodigo && codigo ? { ...this.form, codigo } : this.form;
+
+    this.authService.login(datos).subscribe({
       next: (respuesta) => {
         this.cargando = false;
         this.router.navigate([inicioPorRol(respuesta.rol)]);
@@ -62,8 +68,22 @@ export class LoginComponent implements OnInit {
         const cuentaDesactivada = err.status === 401 && /desactivada/i.test(err.error?.message ?? '');
         this.sinConfirmar = err.status === 403 && err.error?.errorCode === 'AGR-033';
         this.reenviado = false;
+        const faltaCodigo = err.status === 403 && err.error?.errorCode === 'AGR-034';
+        const codigoMalo = err.error?.errorCode === 'AGR-035';
+        if (faltaCodigo) {
+          // No es un error: la contraseña estuvo bien y ahora toca el segundo paso
+          this.pideCodigo = true;
+          this.codigo = '';
+          this.aviso = 'auth.login.codeNeeded';
+          this.cdr.detectChanges();
+          return;
+        }
+        if (codigoMalo) this.codigo = '';
+        else if (err.status !== 429) this.pideCodigo = false;
         this.error = cuentaDesactivada
           ? 'auth.login.accountDisabled'
+          : codigoMalo
+            ? 'auth.login.codeWrong'
           : this.sinConfirmar
             ? 'auth.login.notVerified'
           : err.status === 429

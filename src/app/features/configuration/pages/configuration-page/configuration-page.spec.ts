@@ -10,6 +10,8 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { TemaService } from '../../../../core/services/theme.service';
+import { SeguridadService } from '../../../../core/services/security.service';
+import { AvisosPushService } from '../../../../core/services/push.service';
 
 describe('ConfigurationPageComponent — correos', () => {
   const notificaciones = { obtener: vi.fn(), guardar: vi.fn() };
@@ -25,6 +27,8 @@ describe('ConfigurationPageComponent — correos', () => {
         { provide: FincaActivaService, useValue: { fincas: signal([]), idActiva: signal(null), elegir: vi.fn() } },
         { provide: LanguageService, useValue: { current: signal('es'), set: vi.fn() } },
         { provide: TemaService, useValue: { tema: signal('claro'), elegir: vi.fn() } },
+        { provide: SeguridadService, useValue: { estado: () => of({ activo: false, codigosRespaldo: 0 }), sesiones: () => of([]) } },
+        { provide: AvisosPushService, useValue: { estado: () => Promise.resolve('no-soportado') } },
       ],
     });
     const f = TestBed.createComponent(ConfigurationPageComponent);
@@ -41,7 +45,7 @@ describe('ConfigurationPageComponent — correos', () => {
   it('carga las preferencias y muestra los dos interruptores', () => {
     notificaciones.obtener.mockReturnValue(of({ alertasCultivo: true, avisosTrabajadores: false }));
     const f = crear();
-    const switches = f.nativeElement.querySelectorAll('#correos input[role="switch"]') as NodeListOf<HTMLInputElement>;
+    const switches = f.nativeElement.querySelectorAll('#correos > .pref input[role="switch"]') as NodeListOf<HTMLInputElement>;
     expect(switches.length).toBe(2);
     expect(switches[0].checked).toBe(true);
     expect(switches[1].checked).toBe(false);

@@ -122,6 +122,10 @@ export interface Cosecha {
   siembraId: number;
   /** Precio de venta por kilo (COP) */
   precioKg?: number | null;
+  /** Se registró dentro de la carencia de una fumigación (la persona lo confirmó) */
+  enCarencia?: boolean;
+  /** Solo al enviar: confirma que se cosecha aunque no haya terminado la carencia */
+  confirmarCarencia?: boolean;
 }
 
 /** Una restricción vigente de una fumigación (carencia o reentrada) */

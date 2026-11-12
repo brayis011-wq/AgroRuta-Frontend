@@ -7,6 +7,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 import { PagoService, NominaService } from '../../../../core/services/worker.service';
 import { Pago, Nomina, ResumenPagos } from '../../../../core/models/worker.model';
+import { descargarArchivo, numeroComprobante } from '../../../../shared/download';
 
 @Component({
   selector: 'app-lista-pagos',
@@ -34,6 +35,9 @@ export class ListaPagosComponent implements OnInit {
   pagoSeleccionado: Pago | null = null;
   nominaDetalle: Nomina | null = null;
   cargandoDetalle = false;
+  /** Id del pago cuyo comprobante se está descargando */
+  descargando: number | null = null;
+  errorComprobante = false;
 
   get totalGlobal(): number { return this.resumen.total; }
 
@@ -128,6 +132,25 @@ export class ListaPagosComponent implements OnInit {
   cerrarDetalle(): void {
     this.pagoSeleccionado = null;
     this.nominaDetalle = null;
+    this.errorComprobante = false;
+  }
+
+  descargarComprobante(pago: Pago): void {
+    if (!pago.id || this.descargando) return;
+    this.descargando = pago.id;
+    this.errorComprobante = false;
+    this.pagoService.comprobante(pago.id).subscribe({
+      next: (pdf) => {
+        descargarArchivo(pdf, `comprobante-${numeroComprobante(pago.id!)}.pdf`);
+        this.descargando = null;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.descargando = null;
+        this.errorComprobante = true;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────

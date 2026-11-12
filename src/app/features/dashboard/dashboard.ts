@@ -14,6 +14,7 @@ import { Jornal, Nomina, Pago, Trabajador } from '../../core/models/worker.model
 import { EventoCalendario, Finca, Lote, Siembra } from '../../core/models/crop.model';
 import { ICONO_EVENTO, TONO_EVENTO, diasHasta, esPorVenir, ordenAgenda, textoEvento } from '../crop/calendar/events';
 import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget';
+import { WeatherAdviceComponent } from '../weather/weather-advice/weather-advice';
 import { formatoPesos, formatoNumero } from '../../shared/format';
 import { municipio } from '../../shared/weather';
 import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
@@ -45,7 +46,7 @@ export interface Pendiente {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent],
+  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent, WeatherAdviceComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css', './dashboard-pending.css', './dashboard-body.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

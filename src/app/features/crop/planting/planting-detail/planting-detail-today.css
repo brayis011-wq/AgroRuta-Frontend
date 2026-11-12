@@ -34,3 +34,5 @@
 .alerta-cultivo.rojo { background: var(--ar-rojo-bg); color: var(--ar-rojo); border-color: var(--ar-rojo-borde); }
 .alerta-cultivo.ambar { background: var(--ar-ambar-bg); color: var(--ar-ambar); border-color: var(--ar-ambar-borde); }
 .alerta-cultivo.verde { background: var(--ar-vidrio); color: var(--ar-verde-800); border-color: var(--ar-borde); }
+
+.en-carencia { color: var(--ar-ambar); font-weight: 600; }

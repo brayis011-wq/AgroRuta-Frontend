@@ -35,6 +35,15 @@
     </div>
   </div>
 
+  @if (pideCodigo) {
+    <div class="campo">
+      <label for="codigo">{{ 'auth.login.code' | translate }}</label>
+      <input id="codigo" type="text" [(ngModel)]="codigo" name="codigo" autocomplete="one-time-code" inputmode="text"
+             maxlength="20" autocapitalize="characters" spellcheck="false" placeholder="123456" required />
+      <small class="pista">{{ 'auth.login.codeHint' | translate }}</small>
+    </div>
+  }
+
   <button type="submit" class="btn-prim" [disabled]="cargando">
     @if (cargando) { <i class="ti ti-loader-2 gira" aria-hidden="true"></i> }
     {{ (cargando ? 'auth.login.loggingIn' : 'auth.login.submit') | translate }}

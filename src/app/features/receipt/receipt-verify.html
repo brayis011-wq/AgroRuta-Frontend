@@ -1,0 +1,51 @@
+<div class="verif">
+  <header>
+    <a class="brand" routerLink="/auth/login"><span class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></span>AgroRuta</a>
+  </header>
+
+  <main>
+    @switch (estado()) {
+      @case ('cargando') {
+        <div class="estado" role="status">
+          <span class="sello gris"><i class="ti ti-loader-2 gira" aria-hidden="true"></i></span>
+          <h1>{{ 'receipt.verify.checking' | translate }}</h1>
+        </div>
+      }
+      @case ('valido') {
+        @let c = comprobante()!;
+        <div class="estado">
+          <span class="sello verde"><i class="ti ti-rosette-discount-check" aria-hidden="true"></i></span>
+          <h1>{{ 'receipt.verify.validTitle' | translate }}</h1>
+          <p>{{ 'receipt.verify.validText' | translate }}</p>
+        </div>
+        <div class="monto">
+          <small>{{ 'receipt.verify.amount' | translate }}</small>
+          <strong>{{ pesos(c.monto) }}</strong>
+          <span>{{ fecha(c.fechaPago) }}@if (c.metodoPago) { · {{ 'enums.metodoPago.' + c.metodoPago | translate }} }</span>
+        </div>
+        <dl>
+          <div><dt>{{ 'receipt.verify.number' | translate }}</dt><dd>{{ c.numero }}</dd></div>
+          @if (c.trabajador) { <div><dt>{{ 'receipt.verify.worker' | translate }}</dt><dd>{{ c.trabajador }}@if (c.cedula) { <small>{{ 'receipt.verify.idNumber' | translate }} {{ c.cedula }}</small> }</dd></div> }
+          @if (c.empleador) { <div><dt>{{ 'receipt.verify.employer' | translate }}</dt><dd>{{ c.empleador }}</dd></div> }
+          @if (c.periodoInicio) { <div><dt>{{ 'receipt.verify.period' | translate }}</dt><dd>{{ fecha(c.periodoInicio) }} – {{ fecha(c.periodoFin) }}</dd></div> }
+        </dl>
+        <p class="pista"><i class="ti ti-info-circle" aria-hidden="true"></i> {{ 'receipt.verify.compare' | translate }}</p>
+      }
+      @case ('invalido') {
+        <div class="estado">
+          <span class="sello rojo"><i class="ti ti-alert-triangle" aria-hidden="true"></i></span>
+          <h1>{{ 'receipt.verify.invalidTitle' | translate }}</h1>
+          <p>{{ 'receipt.verify.invalidText' | translate }}</p>
+        </div>
+      }
+      @default {
+        <div class="estado">
+          <span class="sello gris"><i class="ti ti-cloud-off" aria-hidden="true"></i></span>
+          <h1>{{ 'receipt.verify.offlineTitle' | translate }}</h1>
+          <p>{{ 'receipt.verify.offlineText' | translate }}</p>
+          <button type="button" class="reintentar" (click)="verificar()">{{ 'common.retry' | translate }}</button>
+        </div>
+      }
+    }
+  </main>
+</div>

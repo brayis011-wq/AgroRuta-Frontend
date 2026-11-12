@@ -23,6 +23,7 @@ form { display: grid; gap: 1.1rem; }
 .olvido:hover { text-decoration: underline; }
 .olvido:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; border-radius: 4px; }
 .en-linea { display: inline; padding: 0; margin-left: .25rem; border: 0; background: none; font: inherit; font-weight: 700; color: inherit; text-decoration: underline; cursor: pointer; }
+.pista { display: block; margin-top: .35rem; font-size: .78rem; color: var(--ar-tinta-3); line-height: 1.35; }
 .ayuda { font-size: .77rem; line-height: 1.45; color: var(--ar-tinta-3); }
 
 /* Rol: dos opciones en un control segmentado */

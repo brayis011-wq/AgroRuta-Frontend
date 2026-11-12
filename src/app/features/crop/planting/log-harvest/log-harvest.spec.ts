@@ -67,7 +67,7 @@ describe('RegistrarCosecha', () => {
       siembraId: 5,
     };
     component.onSubmit();
-    expect(cultivoServiceMock.registrarCosecha).toHaveBeenCalledWith(component.form);
+    expect(cultivoServiceMock.registrarCosecha).toHaveBeenCalledWith({ ...component.form, confirmarCarencia: false });
   });
 
   it('onSubmit() should set exito and navigate on success', () => {
@@ -126,6 +126,30 @@ it('onSubmit() should navigate after 1500ms on success', () => {
     component.onSubmit();
     // después de next ya es false
     expect(component.cargando).toBe(false);
+  });
+
+  it('si el backend rechaza por carencia (AGR-012) pide confirmación en vez de mostrar error', () => {
+    cultivoServiceMock.registrarCosecha.mockReturnValue(
+      throwError(() => ({ error: { errorCode: 'AGR-012', message: 'Todavía no se puede cosechar: Mancozeb...' } })),
+    );
+    component.onSubmit();
+    expect(component.error).toBe('');
+    expect(component.pideConfirmacion).toBe(true);
+    expect(component.mensajeCarencia).toContain('Mancozeb');
+  });
+
+  it('con la casilla marcada envía confirmarCarencia: true', () => {
+    component.confirmarCarencia = true;
+    component.onSubmit();
+    expect(cultivoServiceMock.registrarCosecha).toHaveBeenCalledWith(expect.objectContaining({ confirmarCarencia: true }));
+  });
+
+  it('al cambiar la fecha se borra la confirmación anterior', () => {
+    component.mensajeCarencia = 'x';
+    component.confirmarCarencia = true;
+    component.alCambiarFecha();
+    expect(component.pideConfirmacion).toBe(false);
+    expect(component.confirmarCarencia).toBe(false);
   });
 
   it('volver() should navigate to siembra route', () => {

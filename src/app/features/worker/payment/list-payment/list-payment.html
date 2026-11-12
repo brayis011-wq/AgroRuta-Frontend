@@ -113,6 +113,15 @@
         @if (p.observaciones) { <div class="campo ancho"><dt>{{ 'workers.payments.panel.notes' | translate }}</dt><dd>{{ p.observaciones }}</dd></div> }
       </dl>
 
+      <div class="comprobante">
+        <button type="button" class="btn prim" [disabled]="descargando === p.id" (click)="descargarComprobante(p)">
+          <i class="ti" [class.ti-file-download]="descargando !== p.id" [class.ti-loader-2]="descargando === p.id" aria-hidden="true"></i>
+          {{ 'receipt.download' | translate }}
+        </button>
+        <small class="suave"><i class="ti ti-qrcode" aria-hidden="true"></i> {{ 'receipt.downloadHint' | translate }}</small>
+        @if (errorComprobante) { <p class="aviso error" role="alert">{{ 'receipt.downloadError' | translate }}</p> }
+      </div>
+
       <section class="bloque">
         <h3>{{ 'workers.payments.panel.wagesIncluded' | translate }}@if (nominaDetalle) { · {{ nominaDetalle.jornales?.length ?? 0 }} }</h3>
         @if (cargandoDetalle) {

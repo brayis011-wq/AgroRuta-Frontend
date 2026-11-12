@@ -22,6 +22,10 @@ export class RegistrarCosecha implements OnInit {
   registroId: number | null = null;
   /** Carencia vigente de la siembra (para avisar antes de registrar) */
   carencia: RestriccionVigente | null = null;
+  /** El backend rechazó la fecha por carencia (p. ej. una fecha pasada que el aviso de hoy no cubre) */
+  mensajeCarencia = '';
+  /** La persona marcó que cosecha de todos modos */
+  confirmarCarencia = false;
   private lang = inject(LanguageService);
 
   pesos(v: number): string {
@@ -81,9 +85,10 @@ export class RegistrarCosecha implements OnInit {
     this.exito = '';
     this.cargando = true;
 
+    const datos = { ...this.form, confirmarCarencia: this.confirmarCarencia };
     const peticion = this.registroId
-      ? this.cultivoService.actualizarCosecha(this.registroId, this.form)
-      : this.cultivoService.registrarCosecha(this.form);
+      ? this.cultivoService.actualizarCosecha(this.registroId, datos)
+      : this.cultivoService.registrarCosecha(datos);
     peticion.subscribe({
       next: () => {
         this.cargando = false;
@@ -95,6 +100,12 @@ export class RegistrarCosecha implements OnInit {
       },
       error: (err) => {
         this.cargando = false;
+        // AGR-012: la fecha cae en la carencia de una fumigación; se muestra el aviso con la casilla para confirmar
+        if (err.error?.errorCode === 'AGR-012') {
+          this.mensajeCarencia = err.error?.message ?? '';
+          this.cdr.detectChanges();
+          return;
+        }
         this.error = err.error?.message || 'siembra.harvest.errors.register';
         this.cdr.detectChanges();
       }
@@ -104,6 +115,17 @@ export class RegistrarCosecha implements OnInit {
   /** La fecha elegida cae dentro del periodo de carencia de un producto aplicado */
   get enCarencia(): boolean {
     return !!this.carencia && !!this.form.fecha && this.form.fecha < this.carencia.libreDesde;
+  }
+
+  /** Hay que confirmar antes de guardar: lo dice el aviso de hoy o lo dijo el backend */
+  get pideConfirmacion(): boolean {
+    return this.enCarencia || !!this.mensajeCarencia;
+  }
+
+  /** Al cambiar la fecha se vuelve a evaluar: la confirmación era para la fecha anterior */
+  alCambiarFecha(): void {
+    this.mensajeCarencia = '';
+    this.confirmarCarencia = false;
   }
 
   volver(): void {

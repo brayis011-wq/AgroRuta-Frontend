@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, finalize, map, shareReplay, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.model';
+import { AlmacenSinConexion } from '../offline/offline-store';
 
 /** Datos de la persona con sesión (sin token). Sirven para el menú y los guards, y marcan que hay sesión. */
 const CLAVE_USUARIO = 'usuario';
@@ -20,6 +21,7 @@ export class AuthService {
   private apiUrl = `${environment.apiUrl}/api/auth`;
   private token: string | null = null;
   private renovando$: Observable<string> | null = null;
+  private almacen = inject(AlmacenSinConexion);
 
   constructor(private http: HttpClient) {
     // Las versiones anteriores guardaban el token en localStorage
@@ -86,7 +88,23 @@ export class AuthService {
   /** La persona cierra sesión: se avisa al servidor para que la cookie deje de servir. */
   logout(): void {
     this.olvidarSesion();
+    // Las copias para trabajar sin señal no se quedan en un teléfono prestado.
+    // Los registros por enviar sí: son de esa cuenta y salen cuando vuelva a entrar.
+    void this.almacen.borrarLecturas().catch(() => undefined);
+    this.quitarAvisosPush();
     this.http.post(`${this.apiUrl}/logout`, {}).subscribe({ error: () => undefined });
+  }
+
+  /**
+   * Da de baja la suscripción push de este navegador. No hace falta avisar al servidor:
+   * su próximo envío rebota y él mismo la borra.
+   */
+  private quitarAvisosPush(): void {
+    if (typeof navigator === 'undefined' || !navigator.serviceWorker?.getRegistration) return;
+    navigator.serviceWorker.getRegistration()
+      .then((registro) => registro?.pushManager?.getSubscription())
+      .then((suscripcion) => suscripcion?.unsubscribe())
+      .catch(() => undefined);
   }
 
   /** Borra la sesión solo en este navegador (la cookie ya no sirve o se va a reemplazar). */
