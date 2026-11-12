@@ -1,7 +1,10 @@
 <div class="inicio">
 
   <!-- Saludo y acciones rápidas -->
-  <section class="hero">
+  <section class="hero" [attr.data-momento]="saludo">
+    <span class="astro" aria-hidden="true">
+      <i class="ti" [class.ti-sun]="saludo === 'morning'" [class.ti-sunset-2]="saludo === 'afternoon'" [class.ti-moon-stars]="saludo === 'evening'"></i>
+    </span>
     <div class="hero-txt">
       <p class="fecha">{{ fechaHoy() }}</p>
       <h1>{{ 'dashboard.greeting.' + saludo | translate: { name: nombreCorto() } }}</h1>
@@ -32,7 +35,7 @@
         <span class="kpi-ic verde"><i class="ti ti-calendar-event" aria-hidden="true"></i></span>
         <div>
           <small>{{ 'dashboard.kpi.wages' | translate }}</small>
-          <strong>{{ numero(r.jornalesMes.actual) }}</strong>
+          <strong [arContar]="r.jornalesMes.actual" [formato]="comoNumero"></strong>
           <ng-container *ngTemplateOutlet="tend; context: { t: r.jornalesMes }" />
         </div>
       </article>
@@ -40,7 +43,7 @@
         <span class="kpi-ic azul"><i class="ti ti-cash" aria-hidden="true"></i></span>
         <div>
           <small>{{ 'dashboard.kpi.paid' | translate }}</small>
-          <strong>{{ pesos(r.pagadoMes.actual) }}</strong>
+          <strong [arContar]="r.pagadoMes.actual" [formato]="comoPesos"></strong>
           <ng-container *ngTemplateOutlet="tend; context: { t: r.pagadoMes }" />
         </div>
       </article>
@@ -48,7 +51,7 @@
         <span class="kpi-ic ambar"><i class="ti ti-users-group" aria-hidden="true"></i></span>
         <div>
           <small>{{ 'dashboard.kpi.workers' | translate }}</small>
-          <strong>{{ numero(r.trabajadoresActivos) }}</strong>
+          <strong [arContar]="r.trabajadoresActivos" [formato]="comoNumero"></strong>
           <em class="neutro">{{ (r.trabajadoresActivos === 0 ? 'dashboard.kpi.noWorkers' : r.sinJornalHoy === 0 ? 'dashboard.kpi.allHaveWage' : 'dashboard.kpi.withoutWageToday') | translate: { count: r.sinJornalHoy } }}</em>
         </div>
       </article>
@@ -56,7 +59,7 @@
         <span class="kpi-ic verde"><i class="ti ti-plant" aria-hidden="true"></i></span>
         <div>
           <small>{{ 'dashboard.kpi.lots' | translate }}</small>
-          <strong>{{ numero(r.lotesEnCultivo) }}<span class="de"> / {{ numero(r.lotesTotal) }}</span></strong>
+          <strong><span [arContar]="r.lotesEnCultivo" [formato]="comoNumero"></span><span class="de"> / {{ numero(r.lotesTotal) }}</span></strong>
           <em class="neutro">{{ (r.lotesTotal === 0 ? 'dashboard.kpi.noLots' : r.lotesDisponibles === 0 ? 'dashboard.kpi.allPlanted' : r.lotesDisponibles === 1 ? 'dashboard.kpi.freeLotsOne' : 'dashboard.kpi.freeLots') | translate: { count: r.lotesDisponibles } }}</em>
         </div>
       </article>
