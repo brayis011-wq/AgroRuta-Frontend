@@ -5,7 +5,7 @@
  * Nunca toca /api/: los datos y los registros pendientes los maneja la propia app
  * (src/app/core/offline), que sabe de quién son y los borra al cerrar sesión.
  */
-const CACHE = 'agroruta-app-v1';
+const CACHE = 'agroruta-app-v2';
 const MAXIMO = 240;
 
 /** Lo mínimo para que la app arranque sin conexión; el resto se guarda a medida que se usa */
@@ -24,7 +24,8 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE)
       // Uno por uno: si un archivo falla no se pierde el resto
-      .then((cache) => Promise.all(BASE.map((url) => cache.add(url).catch(() => undefined))))
+      // cache: 'reload' = pedirlo al servidor, sin usar una copia vieja que tenga el navegador
+      .then((cache) => Promise.all(BASE.map((url) => cache.add(new Request(url, { cache: 'reload' })).catch(() => undefined))))
       .then(() => self.skipWaiting()),
   );
 });
@@ -82,10 +83,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Textos, iconos y demás: responde con la copia y la refresca por detrás
+  // Textos de la app: siempre los de la versión publicada. Con una copia vieja, las pantallas
+  // nuevas mostrarían la clave ("diagnostico.title") en vez del texto. La copia es solo para cuando no hay señal.
+  if (url.pathname.startsWith('/i18n/')) {
+    event.respondWith(
+      fetch(peticion, { cache: 'no-cache' })
+        .then((respuesta) => {
+          guardar(peticion, respuesta);
+          return respuesta;
+        })
+        .catch(() => caches.match(peticion).then((copia) => copia || Response.error())),
+    );
+    return;
+  }
+
+  // Iconos y demás: responde con la copia y la refresca por detrás
   event.respondWith(
     caches.match(peticion).then((copia) => {
-      const deLaRed = fetch(peticion).then((respuesta) => {
+      const deLaRed = fetch(peticion, { cache: 'no-cache' }).then((respuesta) => {
         guardar(peticion, respuesta);
         return respuesta;
       });
