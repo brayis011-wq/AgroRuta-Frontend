@@ -15,6 +15,7 @@ import { WeatherService } from '../../core/services/weather.service';
 import { Weather } from '../../core/models/weather.model';
 import { BuscadorComponent } from '../../shared/search/search';
 import { OfflineStatusComponent } from './offline-status/offline-status';
+import { ProgresoComponent } from './progress/progress';
 import { consejoFumigacion, municipio } from '../../shared/weather';
 
 const CLAVE_COLAPSADO = 'sidebarColapsado';
@@ -40,7 +41,7 @@ export interface ItemSubmenu {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterModule, TranslatePipe, UpperCasePipe, DecimalPipe, NgTemplateOutlet, BuscadorComponent, OfflineStatusComponent],
+  imports: [RouterModule, TranslatePipe, UpperCasePipe, DecimalPipe, NgTemplateOutlet, BuscadorComponent, OfflineStatusComponent, ProgresoComponent],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css', './layout-movil.css', './layout-extras.css', './layout-anim.css'],
 })

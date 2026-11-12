@@ -111,11 +111,36 @@ input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1
 .main { view-transition-name: contenido; }
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
 ::view-transition-old(contenido) { animation: salir-pagina .14s ease-in both; }
-::view-transition-new(contenido) { animation: entrar-pagina .26s cubic-bezier(.2, .8, .2, 1) both; }
+::view-transition-new(contenido) { animation: entrar-pagina .28s .04s cubic-bezier(.2, .8, .2, 1) both; }
 @keyframes salir-pagina { to { opacity: 0; transform: translateY(-4px); } }
 @keyframes entrar-pagina { from { opacity: 0; transform: translateY(8px); } }
+/* Con sentido: entrar a un detalle llega desde la derecha y volver a la lista, desde la izquierda (lo marca nav-direction.ts) */
+:root[data-nav="adelante"]::view-transition-old(contenido) { animation-name: salir-adelante; }
+:root[data-nav="adelante"]::view-transition-new(contenido) { animation-name: entrar-adelante; }
+:root[data-nav="atras"]::view-transition-old(contenido) { animation-name: salir-atras; }
+:root[data-nav="atras"]::view-transition-new(contenido) { animation-name: entrar-atras; }
+@keyframes salir-adelante { to { opacity: 0; transform: translateX(-14px); } }
+@keyframes entrar-adelante { from { opacity: 0; transform: translateX(22px); } }
+@keyframes salir-atras { to { opacity: 0; transform: translateX(14px); } }
+@keyframes entrar-atras { from { opacity: 0; transform: translateX(-22px); } }
+/* El resaltado del menú se desliza de la opción anterior a la nueva (el nombre lo ponen los estilos del panel) */
+::view-transition-group(nav-activo), ::view-transition-group(barra-activa) { animation-duration: .34s; animation-timing-function: cubic-bezier(.3, 1.2, .4, 1); }
+::view-transition-old(nav-activo), ::view-transition-new(nav-activo),
+::view-transition-old(barra-activa), ::view-transition-new(barra-activa) { height: 100%; width: 100%; object-fit: none; object-position: 0 50%; }
+::view-transition-old(barra-activa), ::view-transition-new(barra-activa) { object-position: 50% 50%; }
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(contenido), ::view-transition-new(contenido) { animation: none; }
+  ::view-transition-old(contenido), ::view-transition-new(contenido),
+  ::view-transition-group(nav-activo), ::view-transition-group(barra-activa) { animation: none; }
+}
+
+/* ── Respuesta al toque ─────────────────────────────────
+   Todo lo que se puede pulsar se hunde un poco al presionarlo. Se usa "scale" (no "transform") para no
+   chocar con los movimientos que cada pantalla ya tiene, y :where() para que cualquier estilo propio gane. */
+:where(button, a, summary, label, [role="button"], [role="tab"], [role="option"]) { -webkit-tap-highlight-color: transparent; }
+:where(button:not(:disabled), [role="button"], [role="tab"], a.btn, a.accion, a.item, a.btn-prim, a.btn-submit, a.tab, a.chip) { transition: scale .14s cubic-bezier(.3, .7, .4, 1); }
+:where(button:not(:disabled), [role="button"], [role="tab"], a.btn, a.accion, a.item, a.btn-prim, a.btn-submit, a.tab, a.chip):active { scale: .965; }
+@media (prefers-reduced-motion: reduce) {
+  :where(button, [role="button"], [role="tab"], a):active { scale: none; }
 }
 /* Acceso: al pasar de login a registro la tarjeta cambia de tamaño con suavidad y el contenido se funde */
 ::view-transition-group(auth-caja), ::view-transition-group(auth-arte) { animation-duration: .38s; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }

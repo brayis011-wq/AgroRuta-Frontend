@@ -17,6 +17,7 @@ import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget
 import { WeatherAdviceComponent } from '../weather/weather-advice/weather-advice';
 import { formatoPesos, formatoNumero } from '../../shared/format';
 import { municipio } from '../../shared/weather';
+import { ContarDirective } from '../../shared/count-up.directive';
 import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
 
 const iso = (d: Date) =>
@@ -46,9 +47,9 @@ export interface Pendiente {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent, WeatherAdviceComponent],
+  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent, WeatherAdviceComponent, ContarDirective],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css', './dashboard-pending.css', './dashboard-body.css'],
+  styleUrls: ['./dashboard.css', './dashboard-hero.css', './dashboard-pending.css', './dashboard-body.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit {
@@ -184,6 +185,10 @@ export class DashboardComponent implements OnInit {
   numero(v: number): string {
     return formatoNumero(v, this.lang.current());
   }
+
+  /** Los mismos formatos, como funciones sueltas para los números que suben ([arContar]) */
+  readonly comoPesos = (v: number) => this.pesos(v);
+  readonly comoNumero = (v: number) => this.numero(v);
 
   /** Título y detalle traducidos de un evento del calendario */
   textoEvento(e: EventoCalendario): { titulo: string; sub: string } {
