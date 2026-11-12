@@ -7,7 +7,7 @@ import { esNuestraApi } from './api-url';
 export const SIN_CACHE = new HttpContextToken<boolean>(() => false);
 
 /** Cuánto sirve una respuesta guardada. Corto a propósito: es para ir y volver entre pantallas, no para trabajar con datos viejos. */
-export const VIDA_CACHE_MS = 20_000;
+export const VIDA_CACHE_MS = 10_000;
 const MAXIMO = 150;
 
 /** Sesión, seguridad, configuración y administración siempre se consultan de nuevo */
@@ -44,7 +44,7 @@ function guardar(clave: string, respuesta: HttpResponse<unknown>): void {
 
 /**
  * Memoria breve de consultas, para que ir y volver entre pantallas sea inmediato:
- * - Una consulta repetida en menos de 20 segundos se responde con lo que ya se trajo.
+ * - Una consulta repetida en menos de 10 segundos se responde con lo que ya se trajo.
  * - Dos pantallas que piden lo mismo a la vez comparten una sola llamada.
  * - Cualquier cambio (crear, editar, borrar) vacía todo: nunca se muestra un dato viejo después de guardar.
  * Las copias van atadas al token de la sesión, así que no pasan de un usuario a otro. Va después del

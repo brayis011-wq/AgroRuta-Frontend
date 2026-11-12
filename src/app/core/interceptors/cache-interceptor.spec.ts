@@ -78,7 +78,7 @@ describe('cacheBreveInterceptor', () => {
     servidor.expectOne(`${API}/farms`).flush([]);
   });
 
-  it('la copia vence a los 20 segundos', () => {
+  it('la copia vence a los 10 segundos', () => {
     vi.useFakeTimers();
     http.get(`${API}/farms`, sesion()).subscribe();
     servidor.expectOne(`${API}/farms`).flush([]);
