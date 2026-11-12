@@ -10,6 +10,7 @@ import {
   signal,
   computed,
 } from '@angular/core';
+import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule }           from '@angular/common';
 import { FormsModule }            from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -62,6 +63,7 @@ interface FumigacionForm {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegistrarFumigacion implements OnInit, OnDestroy {
+  private readonly avisos = inject(AvisosService);
 
   private readonly route      = inject(ActivatedRoute);
   private readonly router     = inject(Router);
@@ -389,7 +391,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           this.cargando = false;
           this.exito    = this.registroId ? 'temporadas.registro.saved' : 'siembra.spray.success';
           this.cdr.markForCheck();
-          setTimeout(() => this.router.navigate(['/crops/planting', this.siembraId]), 1500);
+          this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.spray');
+          this.router.navigate(['/crops/planting', this.siembraId]);
         },
         error: (err: { error?: { message?: string } }) => {
           this.cargando = false;

@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -21,6 +22,7 @@ import { Trabajador, Labor } from '../../../../core/models/worker.model';
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../worker-ui.css', '../../worker-panel.css', './new-wage.css']
 })
 export class NuevoJornalComponent implements OnInit {
+  private readonly avisos = inject(AvisosService);
   form!: FormGroup;
   trabajadores: Trabajador[] = [];
   actividades: Labor[] = [];
@@ -164,6 +166,7 @@ export class NuevoJornalComponent implements OnInit {
         // ✅ Fix: redirigir a la lista de jornales del trabajador
         // Si vino desde un trabajador específico, mostrar sus jornales
         // Si no, ir al home de trabajadores
+        this.avisos.exito('avisos.wage');
         if (this.trabajadorIdOrigen) {
           this.router.navigate(['/worker/workdays'], {
             queryParams: { trabajadorId: this.trabajadorIdOrigen }

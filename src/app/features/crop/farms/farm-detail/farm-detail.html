@@ -42,20 +42,20 @@
     <section class="kpis">
       <article class="kpi">
         <span class="ic gris"><i class="ti ti-layout-grid"></i></span>
-        <div><small>{{ 'temporadas.ui.lots' | translate }}</small><strong>{{ lotes.length }}</strong>
+        <div><small>{{ 'temporadas.ui.lots' | translate }}</small><strong [arContar]="lotes.length"></strong>
           <em>{{ fmt(areaLotes(), 1) }} ha {{ 'temporadas.ui.mapped' | translate }}</em></div>
       </article>
       <article class="kpi">
         <span class="ic verde"><i class="ti ti-plant"></i></span>
-        <div><small>{{ 'enums.loteEstado.EN_CULTIVO' | translate }}</small><strong>{{ contar('EN_CULTIVO') }}</strong></div>
+        <div><small>{{ 'enums.loteEstado.EN_CULTIVO' | translate }}</small><strong [arContar]="contar('EN_CULTIVO')"></strong></div>
       </article>
       <article class="kpi">
         <span class="ic azul"><i class="ti ti-circle-check"></i></span>
-        <div><small>{{ 'enums.loteEstado.DISPONIBLE' | translate }}</small><strong>{{ contar('DISPONIBLE') }}</strong></div>
+        <div><small>{{ 'enums.loteEstado.DISPONIBLE' | translate }}</small><strong [arContar]="contar('DISPONIBLE')"></strong></div>
       </article>
       <article class="kpi">
         <span class="ic ambar"><i class="ti ti-moon"></i></span>
-        <div><small>{{ 'enums.loteEstado.EN_DESCANSO' | translate }}</small><strong>{{ contar('EN_DESCANSO') }}</strong></div>
+        <div><small>{{ 'enums.loteEstado.EN_DESCANSO' | translate }}</small><strong [arContar]="contar('EN_DESCANSO')"></strong></div>
       </article>
     </section>
   }

@@ -616,6 +616,7 @@
     "editSubtext": "Haz clic en cancelar para deshacer los cambios.",
     "removeText": "Haz clic en una forma para eliminarla."
   },
+  "avisos": { "saved": "Cambios guardados", "activity": "Actividad registrada", "harvest": "Cosecha registrada", "spray": "Fumigación registrada", "planting": "Siembra registrada", "plot": "Lote registrado", "farm": "Finca registrada", "wage": "Jornal registrado" },
   "siembra": {
     "new": {
       "title": "Nueva siembra",

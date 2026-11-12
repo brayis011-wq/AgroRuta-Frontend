@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,6 +17,7 @@ import { formatoFecha, formatoPesos } from '../../../../shared/format';
   styleUrls: ['../../crop-form.css', './log-harvest.css']
 })
 export class RegistrarCosecha implements OnInit {
+  private readonly avisos = inject(AvisosService);
 
   siembraId!: number;
   /** Id de la cosecha cuando se está editando */
@@ -94,9 +96,8 @@ export class RegistrarCosecha implements OnInit {
         this.cargando = false;
         this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.harvest.success';
         this.cdr.detectChanges();
-        setTimeout(() => {
-          this.router.navigate(['/crops/planting', this.siembraId]);
-        }, 1500);
+        this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.harvest');
+        this.router.navigate(['/crops/planting', this.siembraId]);
       },
       error: (err) => {
         this.cargando = false;

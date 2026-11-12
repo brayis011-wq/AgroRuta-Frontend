@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -16,6 +17,7 @@ import { forkJoin, of, switchMap, map } from 'rxjs';
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-planting.css'],
 })
 export class NuevaSiembraComponent implements OnInit {
+  private readonly avisos = inject(AvisosService);
   form = {
     fechaSiembra: '',
     cantidadPlantas: null as number | null,
@@ -130,7 +132,8 @@ export class NuevaSiembraComponent implements OnInit {
         this.cdr.detectChanges();
         // al lote, donde se ve el ciclo de la nueva temporada; al editar, de vuelta a la siembra
         const destino = this.siembraId ? ['/crops/planting', this.siembraId] : ['/crops/plot', s?.loteId ?? this.loteId];
-        setTimeout(() => this.router.navigate(destino), 1200);
+        this.avisos.exito(this.siembraId ? 'avisos.saved' : 'avisos.planting');
+        this.router.navigate(destino);
       },
       error: (err) => {
         // El backend explica el motivo (lote ocupado, variedad desactivada...)

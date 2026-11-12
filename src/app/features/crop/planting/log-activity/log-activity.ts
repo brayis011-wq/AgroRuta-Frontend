@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +14,7 @@ import { CultivoService } from '../../../../core/services/crop.service';
   styleUrls: ['../../crop-form.css', './log-activity.css']
 })
 export class RegistrarActividad implements OnInit {
+  private readonly avisos = inject(AvisosService);
 
   siembraId!: number;
   /** Id de la actividad cuando se está editando */
@@ -83,9 +85,8 @@ export class RegistrarActividad implements OnInit {
         this.cargando = false;
         this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.activity.success';
         this.cdr.detectChanges();
-        setTimeout(() => {
-          this.router.navigate(['/crops/planting', this.siembraId]);
-        }, 1500);
+        this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.activity');
+        this.router.navigate(['/crops/planting', this.siembraId]);
       },
       error: (err) => {
         this.cargando = false;

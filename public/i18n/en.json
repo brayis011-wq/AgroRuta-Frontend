@@ -616,6 +616,7 @@
     "editSubtext": "Click cancel to undo changes.",
     "removeText": "Click on a feature to remove."
   },
+  "avisos": { "saved": "Changes saved", "activity": "Activity logged", "harvest": "Harvest logged", "spray": "Spraying logged", "planting": "Planting registered", "plot": "Plot registered", "farm": "Farm registered", "wage": "Workday logged" },
   "siembra": {
     "new": {
       "title": "New planting",

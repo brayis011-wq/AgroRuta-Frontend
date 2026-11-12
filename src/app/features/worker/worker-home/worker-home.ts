@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ContarDirective } from '../../../shared/count-up.directive';
 import {
   TrabajadorService,
   NominaService,
@@ -21,7 +22,7 @@ type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 @Component({
   selector: 'app-worker-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, ContarDirective],
   templateUrl: './worker-home.html',
   styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../worker-ui.css', '../worker-panel.css']
 })
