@@ -1,4 +1,5 @@
 import { Component, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -18,6 +19,7 @@ import { GeocodingService } from '../../../../core/services/geocoding.service';
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-farm.css'],
 })
 export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
+  private readonly avisos = inject(AvisosService);
 
   private translate = inject(TranslateService);
   private lang = inject(LanguageService);
@@ -200,12 +202,14 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
           next: () => {
             this.exito = true;
             this.cdr.detectChanges();
-            setTimeout(() => this.router.navigate(['/crops']), 1200);
+            this.avisos.exito('avisos.farm');
+            this.router.navigate(['/crops']);
           },
           error: () => {
             this.exito = true;
             this.cdr.detectChanges();
-            setTimeout(() => this.router.navigate(['/crops']), 1200);
+            this.avisos.exito('avisos.farm');
+            this.router.navigate(['/crops']);
           }
         });
       },

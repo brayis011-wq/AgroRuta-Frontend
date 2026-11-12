@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ContarDirective } from '../../../../shared/count-up.directive';
 import { Subscription, forkJoin, of, catchError } from 'rxjs';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -16,7 +17,7 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-lista-fincas',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, RouterLink],
+  imports: [CommonModule, FormsModule, TranslatePipe, RouterLink, ContarDirective],
   templateUrl: './farm-list.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './farm-list.css'],
 })
@@ -209,6 +210,9 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /** Número con 1 decimal según el idioma activo */
+  /** El mismo formato, como función suelta para el número que sube ([arContar]) */
+  readonly comoDec = (valor: number) => this.fmtDec(valor);
+
   fmtDec(valor: number): string {
     return new Intl.NumberFormat(this.lang.current(), {
       minimumFractionDigits: 1, maximumFractionDigits: 1,

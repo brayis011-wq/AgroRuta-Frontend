@@ -18,15 +18,15 @@
   <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">
     <div class="kpi">
       <span class="ic verde"><i class="ti ti-users" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.active' | translate }}</small><strong>{{ cantidadActivos }}</strong><em>{{ 'workers.ui.ofTotal' | translate: { total: trabajadores.length } }}</em></div>
+      <div><small>{{ 'workers.home.stats.active' | translate }}</small><strong [arContar]="cantidadActivos"></strong><em>{{ 'workers.ui.ofTotal' | translate: { total: trabajadores.length } }}</em></div>
     </div>
     <div class="kpi">
       <span class="ic ambar"><i class="ti ti-player-pause" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.suspended' | translate }}</small><strong>{{ cantidadSuspendidos }}</strong></div>
+      <div><small>{{ 'workers.home.stats.suspended' | translate }}</small><strong [arContar]="cantidadSuspendidos"></strong></div>
     </div>
     <button type="button" class="kpi clic" (click)="irA('nominas')">
       <span class="ic azul"><i class="ti ti-file-invoice" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.draftRosters' | translate }}</small><strong>{{ nominasPendientes }}</strong><em>{{ 'workers.ui.seeRosters' | translate }}</em></div>
+      <div><small>{{ 'workers.home.stats.draftRosters' | translate }}</small><strong [arContar]="nominasPendientes"></strong><em>{{ 'workers.ui.seeRosters' | translate }}</em></div>
     </button>
     <button type="button" class="kpi clic" (click)="irA('pagos')">
       <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ContarDirective } from '../../../../shared/count-up.directive';
 import { Subscription, forkJoin, of, catchError } from 'rxjs';
 import { LanguageService } from '../../../../core/services/language.service';
 import { formatoNumero } from '../../../../shared/format';
@@ -16,7 +17,7 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-detalle-finca',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, ContarDirective],
   templateUrl: './farm-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './farm-detail.css'],
 })

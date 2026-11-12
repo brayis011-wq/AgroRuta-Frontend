@@ -21,12 +21,12 @@
     <section class="kpis">
       <article class="kpi">
         <span class="ic verde"><i class="ti ti-home-2"></i></span>
-        <div><small>{{ 'cultivo.fincas.list.summary.farms' | translate }}</small><strong>{{ fincas.length }}</strong>
+        <div><small>{{ 'cultivo.fincas.list.summary.farms' | translate }}</small><strong [arContar]="fincas.length"></strong>
           <em>{{ 'cultivo.fincas.list.summary.average' | translate }}: {{ fmtDec(promedioHectareas()) }} ha</em></div>
       </article>
       <article class="kpi">
         <span class="ic azul"><i class="ti ti-ruler-2"></i></span>
-        <div><small>{{ 'cultivo.fincas.list.summary.totalHectares' | translate }}</small><strong>{{ fmtDec(totalHectareas()) }}</strong></div>
+        <div><small>{{ 'cultivo.fincas.list.summary.totalHectares' | translate }}</small><strong [arContar]="totalHectareas()" [formato]="comoDec"></strong></div>
       </article>
       <article class="kpi">
         <span class="ic gris"><i class="ti ti-layout-grid"></i></span>
