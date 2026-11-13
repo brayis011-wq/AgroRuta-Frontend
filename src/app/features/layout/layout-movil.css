@@ -67,15 +67,24 @@ img.av { object-fit: cover; }
   .cajon .side { transform: none; box-shadow: 0 10px 40px rgba(0, 0, 0, .2); }
   .colapsar { display: none; }
   .cerrar-cajon { display: grid; }
-  .velo { position: fixed; inset: 0; z-index: 90; background: rgba(15, 25, 19, .4); }
-  .cajon .velo { display: block; }
-  .main { margin-left: 0; padding: 0 0 76px; }
+  /* El velo aparece y se va con suavidad en vez de saltar */
+  .velo {
+    display: block; position: fixed; inset: 0; z-index: 90; background: rgba(15, 25, 19, .42); backdrop-filter: blur(2px);
+    opacity: 0; pointer-events: none; transition: opacity .28s ease;
+  }
+  .cajon .velo { opacity: 1; pointer-events: auto; }
+  .side { transition: transform .34s cubic-bezier(.2, .9, .3, 1), box-shadow .34s ease; overscroll-behavior: contain; }
+  .buscar kbd { display: none; }
+  .main { margin-left: 0; padding: 0 0 calc(76px + env(safe-area-inset-bottom, 0px)); }
 
   .barra {
     display: flex; position: fixed; inset: auto 0 0 0; z-index: 80; justify-content: space-around;
     padding: 6px 4px calc(8px + env(safe-area-inset-bottom)); background: var(--ar-superficie);
     border-top: 1px solid var(--ar-borde); box-shadow: 0 -4px 16px rgba(0, 0, 0, .06);
+    transition: translate .32s cubic-bezier(.3, .8, .3, 1);
   }
+  /* Al bajar por la página o al escribir, la barra se aparta para no tapar el contenido */
+  .barra.oculta { translate: 0 calc(100% + 10px); }
   .barra a, .barra button {
     position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 58px;
     padding: 5px 8px; border: 0; border-radius: 10px; background: none; font: inherit; font-size: 11px;
@@ -90,5 +99,5 @@ img.av { object-fit: cover; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .side, .main, .sub, .item > i:first-child, .flecha { transition: none; animation: none; }
+  .side, .main, .sub, .item > i:first-child, .flecha, .velo, .barra { transition: none; animation: none; }
 }

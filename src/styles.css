@@ -151,3 +151,11 @@ input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1
 ::view-transition-old(auth-arte) { animation: none; opacity: 0; }
 ::view-transition-new(auth-arte) { animation: none; }
 @media (prefers-reduced-motion: reduce) { ::view-transition-group(auth-caja), ::view-transition-group(auth-arte), ::view-transition-new(auth-caja), ::view-transition-old(auth-caja) { animation: none; } }
+
+/* ── Celular: lo que entra en pantalla al deslizar asoma con suavidad ─────
+   La marca data-asoma la pone y la quita features/layout/reveal.ts, una sola vez por bloque.
+   :where() deja ganar a cualquier animación propia de cada pantalla. */
+@media (max-width: 760px) and (prefers-reduced-motion: no-preference) {
+  .main :where([data-asoma]) { animation: asomar .5s cubic-bezier(.2, .8, .3, 1); }
+}
+@keyframes asomar { from { opacity: 0; translate: 0 22px; scale: .975; } }
