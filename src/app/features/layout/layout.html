@@ -1,6 +1,6 @@
 <div class="shell" [class.mini]="colapsado()" [class.cajon]="cajonAbierto()">
 
-  <aside class="side" [attr.aria-label]="'layout.menu' | translate">
+  <aside class="side" [attr.aria-label]="'layout.menu' | translate" (arDeslizaCierra)="cerrarCajon()">
 
     <div class="brand">
       <div class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
@@ -59,7 +59,7 @@
     </div>
 
     <!-- Buscador -->
-    <button type="button" class="buscar" (click)="buscador.abrir()" [attr.aria-label]="'search.title' | translate">
+    <button type="button" class="buscar" (click)="cerrarCajon(); buscador.abrir()" [attr.aria-label]="'search.title' | translate">
       <i class="ti ti-search" aria-hidden="true"></i>
       <span class="txt">{{ 'search.button' | translate }}</span>
       <kbd>Ctrl K</kbd>
@@ -190,7 +190,7 @@
   </main>
 
   <!-- Barra inferior (celular) -->
-  <nav class="barra" [attr.aria-label]="'layout.menu' | translate">
+  <nav class="barra" [class.oculta]="barraOculta() || escribiendo()" [attr.aria-label]="'layout.menu' | translate" (click)="tocarBarra($event)">
     <a routerLink="/dashboard" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: true }">
       <i class="ti ti-layout-dashboard"></i><span>{{ 'layout.nav.home' | translate }}</span>
     </a>

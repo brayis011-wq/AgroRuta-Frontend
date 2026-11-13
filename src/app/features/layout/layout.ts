@@ -1,4 +1,4 @@
-import { Component, DestroyRef, HostListener, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, NgZone, afterNextRender, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DecimalPipe, NgTemplateOutlet, UpperCasePipe } from '@angular/common';
@@ -17,6 +17,9 @@ import { BuscadorComponent } from '../../shared/search/search';
 import { OfflineStatusComponent } from './offline-status/offline-status';
 import { ProgresoComponent } from './progress/progress';
 import { AvisoComponent } from './toast/toast';
+import { DeslizaCierraDirective } from '../../shared/swipe-close.directive';
+import { abreTeclado, barraOcultaTras } from './scroll-bar';
+import { vigilarEntradas } from './reveal';
 import { consejoFumigacion, municipio } from '../../shared/weather';
 
 const CLAVE_COLAPSADO = 'sidebarColapsado';
@@ -42,7 +45,7 @@ export interface ItemSubmenu {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterModule, TranslatePipe, UpperCasePipe, DecimalPipe, NgTemplateOutlet, BuscadorComponent, OfflineStatusComponent, ProgresoComponent, AvisoComponent],
+  imports: [RouterModule, TranslatePipe, UpperCasePipe, DecimalPipe, NgTemplateOutlet, BuscadorComponent, OfflineStatusComponent, ProgresoComponent, AvisoComponent, DeslizaCierraDirective],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css', './layout-movil.css', './layout-extras.css', './layout-anim.css'],
 })
@@ -72,6 +75,11 @@ export class LayoutComponent {
   readonly consejo = computed(() => { const c = this.clima(); return c ? consejoFumigacion(c) : null; });
   /** Menú completo abierto como cajón (solo celular) */
   readonly cajonAbierto = signal(false);
+  /** Celular: la barra inferior se esconde al bajar por la página y mientras se escribe en un campo */
+  readonly barraOculta = signal(false);
+  readonly escribiendo = signal(false);
+  private ultimoY = 0;
+  private relojTeclado: ReturnType<typeof setTimeout> | null = null;
   /** Nóminas que esperan aprobación (contador del menú) */
   readonly nominasPendientes = signal(0);
 
@@ -121,10 +129,69 @@ export class LayoutComponent {
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd), takeUntilDestroyed(inject(DestroyRef)))
       .subscribe((e) => this.alNavegar((e as NavigationEnd).urlAfterRedirects));
+
+    // Fuera de Angular: el desplazamiento dispara muchos eventos y solo interesa cuando cambia el estado
+    const alDeslizar = () => this.seguirDesplazamiento();
+    const zona = inject(NgZone);
+    const raiz = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    let dejarDeVigilar = () => {};
+    zona.runOutsideAngular(() => window.addEventListener('scroll', alDeslizar, { passive: true }));
+    afterNextRender(() => {
+      const contenido = raiz.querySelector<HTMLElement>('.main');
+      if (contenido) dejarDeVigilar = zona.runOutsideAngular(() => vigilarEntradas(contenido));
+    });
+    inject(DestroyRef).onDestroy(() => {
+      window.removeEventListener('scroll', alDeslizar);
+      dejarDeVigilar();
+      if (this.relojTeclado) clearTimeout(this.relojTeclado);
+    });
+  }
+
+  private seguirDesplazamiento(): void {
+    const ahora = window.scrollY;
+    const maximo = document.documentElement.scrollHeight - window.innerHeight;
+    const oculta = barraOcultaTras(this.barraOculta(), { antes: this.ultimoY, ahora, maximo });
+    this.ultimoY = ahora;
+    if (oculta !== this.barraOculta()) this.barraOculta.set(oculta);
+  }
+
+  /** Con el teclado abierto la barra estorba: se esconde hasta salir del campo */
+  @HostListener('document:focusin', ['$event.target'])
+  alEnfocar(el: EventTarget | null): void {
+    if (!abreTeclado(el)) return;
+    if (this.relojTeclado) clearTimeout(this.relojTeclado);
+    this.relojTeclado = null;
+    this.escribiendo.set(true);
+  }
+
+  @HostListener('document:focusout')
+  alDesenfocar(): void {
+    if (!this.escribiendo()) return;
+    // Un respiro: al pasar de un campo al siguiente no debe aparecer y desaparecer
+    if (this.relojTeclado) clearTimeout(this.relojTeclado);
+    this.relojTeclado = setTimeout(() => {
+      this.relojTeclado = null;
+      this.escribiendo.set(false);
+    }, 150);
+  }
+
+  /** Tocar la pestaña en la que ya se está lleva al inicio de la página */
+  tocarBarra(evento: Event): void {
+    try {
+      navigator.vibrate?.(6);
+    } catch {
+      // sin vibración
+    }
+    const enlace = (evento.target as HTMLElement | null)?.closest('a');
+    if (!enlace || !enlace.classList.contains('on')) return;
+    if (enlace.getAttribute('href') !== this.router.url.split('?')[0]) return;
+    evento.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   private alNavegar(url: string): void {
     this.cajonAbierto.set(false);
+    this.barraOculta.set(false);
     this.menuFincas.set(false);
     const grupo = grupoDeUrl(url);
     if (grupo) this.abiertos.update((s) => new Set(s).add(grupo));

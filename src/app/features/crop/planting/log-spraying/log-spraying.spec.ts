@@ -46,6 +46,8 @@ describe('RegistrarFumigacion', () => {
     fixture   = TestBed.createComponent(RegistrarFumigacion);
     component = fixture.componentInstance;
     router    = TestBed.inject(Router);
+    // Al guardar se navega enseguida y aquí no hay rutas: se observa la llamada sin navegar de verdad
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture.detectChanges();
   });
 
@@ -192,7 +194,6 @@ describe('RegistrarFumigacion', () => {
 
   it('onSubmit() should navigate after 1500ms on success', async () => {
     vi.useFakeTimers();
-    vi.spyOn(router, 'navigate');
     component.form.producto     = 'Herbicida X';
     component.form.unidadMedida = 'LITROS';
     component.onSubmit();

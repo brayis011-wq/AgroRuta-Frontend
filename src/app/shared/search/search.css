@@ -28,3 +28,10 @@ kbd { font: 600 11px var(--ar-fuente); border: 1px solid var(--ar-borde); border
 @keyframes entrar { from { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(.97); } }
 @keyframes deslizar { from { opacity: 0; transform: translateY(4px); } }
 @media (prefers-reduced-motion: reduce) { .velo, .caja, .lista li { animation: none; } }
+
+/* Celular: pegado arriba para que el teclado no tape los resultados; los atajos de teclado no aplican */
+@media (max-width: 760px) {
+  .caja { top: calc(10px + env(safe-area-inset-top, 0px)); width: calc(100vw - 20px); }
+  .lista { max-height: min(46vh, 46dvh); }
+  .pie, .entrada kbd { display: none; }
+}
