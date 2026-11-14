@@ -42,8 +42,8 @@ describe('DashboardComponent', () => {
           { fecha: '2026-01-12', tipo: 'FUMIGACION_SUGERIDA', estado: 'ATRASADO', siembraId: 9 },
         ])),
       },
-      nominas: { listarTodas: vi.fn(() => of([{ estado: 'PENDIENTE', valorTotal: 10 }])) },
-      pagos: { listarTodos: vi.fn(() => of([])) },
+      nominas: { resumen: vi.fn(() => of([{ estado: 'PENDIENTE', cantidad: 1, total: 10 }])) },
+      pagos: { porMes: vi.fn(() => of([])) },
       trabajadores: { listarTodos: vi.fn(() => of([{ id: 5, estado: 'ACTIVO' }, { id: 6, estado: 'INACTIVO' }])) },
       jornales: { porTrabajador: vi.fn(() => of([])) },
     };
@@ -55,6 +55,14 @@ describe('DashboardComponent', () => {
     expect(c.pendientes().map((p) => p.clave)).toEqual(['toApprove', 'noWage', 'freeLots']);
   });
 
+  it('asks for totals, not for every payroll and payment', () => {
+    const c = crear();
+    expect(c.resumen()!.porAprobar).toEqual({ n: 1, total: 10 });
+    expect(svc['nominas'].resumen).toHaveBeenCalledTimes(1);
+    // lo pagado se pide desde el primer día del mes anterior
+    expect(svc['pagos'].porMes.mock.calls[0][0]).toMatch(/^\d{4}-\d{2}-01$/);
+  });
+
   it('asks work days only for active workers', () => {
     crear();
     expect(svc['jornales'].porTrabajador).toHaveBeenCalledTimes(1);
@@ -62,7 +70,7 @@ describe('DashboardComponent', () => {
   });
 
   it('still shows the rest when one source fails', () => {
-    svc['nominas'].listarTodas = vi.fn(() => throwError(() => new Error('x')));
+    svc['nominas'].resumen = vi.fn(() => throwError(() => new Error('x')));
     const c = crear();
     expect(c.resumen()!.porAprobar.n).toBe(0);
     expect(c.resumen()!.lotesDisponibles).toBe(1);

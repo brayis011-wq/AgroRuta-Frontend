@@ -52,8 +52,8 @@ describe('DetalleNominaComponent', () => {
       anular:  vi.fn()
     };
     pagoSvc = {
-      listarTodos: vi.fn(),
-      registrar:   vi.fn()
+      pagina:    vi.fn(),
+      registrar: vi.fn()
     };
   });
 
@@ -71,17 +71,17 @@ describe('DetalleNominaComponent', () => {
   });
 
   it('ngOnInit() should load pagos when nomina is PAGADA', async () => {
-    pagoSvc.listarTodos.mockReturnValue(of([mkPago()]));
+    pagoSvc.pagina.mockReturnValue(of({ contenido: [mkPago()], pagina: 0, tamano: 20, total: 1, totalPaginas: 1 }));
     nominaSvc.obtener.mockReturnValue(of(mkNomina('PAGADA')));
     await createComponent();
-    expect(pagoSvc.listarTodos).toHaveBeenCalled();
+    expect(pagoSvc.pagina).toHaveBeenCalledWith(0, 1);
     expect(component.pagos.length).toBe(1);
   });
 
   it('ngOnInit() should not load pagos when nomina is APROBADA (not paid yet)', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina('APROBADA')));
     await createComponent();
-    expect(pagoSvc.listarTodos).not.toHaveBeenCalled();
+    expect(pagoSvc.pagina).not.toHaveBeenCalled();
   });
 
   it('ngOnInit() should set error on load failure', async () => {

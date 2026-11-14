@@ -235,8 +235,9 @@ export class LayoutComponent {
   }
 
   private cargarPendientes(): void {
-    this.nominaService.listarTodas().subscribe({
-      next: (n) => this.nominasPendientes.set(n.filter((x) => x.estado === 'PENDIENTE').length),
+    // Solo el conteo por estado: antes se traían todas las nóminas para contarlas aquí
+    this.nominaService.resumen().subscribe({
+      next: (r) => this.nominasPendientes.set(r.find((x) => x.estado === 'PENDIENTE')?.cantidad ?? 0),
       error: () => this.nominasPendientes.set(0),
     });
   }

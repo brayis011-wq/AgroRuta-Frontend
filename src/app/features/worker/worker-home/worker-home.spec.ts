@@ -44,11 +44,11 @@ describe('WorkerHomeComponent', () => {
       listar: vi.fn().mockReturnValue(of([mkCargo()]))
     };
     nominaSvc = {
-      listarTodas: vi.fn().mockReturnValue(of([mkNomina()])),
-      generar:     vi.fn()
+      resumen: vi.fn().mockReturnValue(of([{ estado: 'PENDIENTE', cantidad: 1, total: 100000 }, { estado: 'PAGADA', cantidad: 3, total: 300000 }])),
+      generar: vi.fn()
     };
     pagoSvc = {
-      listarTodos: vi.fn().mockReturnValue(of([mkPago()]))
+      resumen: vi.fn().mockReturnValue(of({ cantidad: 1, total: 100000, trabajadores: 1 }))
     };
 
     await TestBed.configureTestingModule({
@@ -70,11 +70,11 @@ describe('WorkerHomeComponent', () => {
 
   it('should create', () => expect(component).toBeTruthy());
 
-  it('cargarDatos() should load trabajadores, cargos, nominas and pagos', () => {
+  it('cargarDatos() should load trabajadores, cargos and the payroll and payment totals', () => {
     expect(component.trabajadores.length).toBe(1);
     expect(component.cargos.length).toBe(1);
-    expect(component.nominas.length).toBe(1);
-    expect(component.pagos.length).toBe(1);
+    expect(component.nominasPendientes).toBe(1);
+    expect(component.resumenPagos.cantidad).toBe(1);
     expect(component.cargando).toBe(false);
   });
 
@@ -110,7 +110,7 @@ describe('WorkerHomeComponent', () => {
     expect(component.cantidadSuspendidos).toBe(0);
   });
 
-  it('totalPagado should sum pago montos', () => {
+  it('totalPagado should come from the payments summary', () => {
     expect(component.totalPagado).toBe(100000);
   });
 
@@ -323,6 +323,7 @@ describe('WorkerHomeComponent', () => {
     component.formNomina.setValue({ periodoInicio: '2024-01-01', periodoFin: '2024-01-31' });
     component.generarNomina();
     expect(component.mostrarFormNomina).toBe(false);
+    expect(component.nominasPendientes).toBe(2); // la que ya había y la recién generada
     vi.advanceTimersByTime(3500);
     expect(component.exitoNomina).toBe('');
     vi.useRealTimers();

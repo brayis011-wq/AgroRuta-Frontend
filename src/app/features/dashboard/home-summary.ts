@@ -1,9 +1,11 @@
-import { Jornal, Nomina, Pago, Trabajador } from '../../core/models/worker.model';
+import { Jornal, PagosDelMes, ResumenNominas, Trabajador } from '../../core/models/worker.model';
 import { Lote } from '../../core/models/crop.model';
 
 export interface DatosInicio {
-  nominas: Nomina[];
-  pagos: Pago[];
+  /** Cantidad y total de nóminas por estado (GET /api/payrolls/summary) */
+  nominas: ResumenNominas[];
+  /** Lo pagado cada mes desde el mes anterior (GET /api/payments/monthly) */
+  pagosPorMes: PagosDelMes[];
   trabajadores: Trabajador[];
   jornales: Jornal[];
   lotes: Lote[];
@@ -58,10 +60,12 @@ export function saludoSegunHora(hoy: Date): 'morning' | 'afternoon' | 'evening' 
 
 export function calcularResumen(d: DatosInicio, hoy = new Date()): ResumenInicio {
   const mesAnterior = inicioMesAnterior(hoy);
-  const suma = (ns: Nomina[]) => ns.reduce((s, n) => s + (n.valorTotal ?? 0), 0);
-
-  const pend = d.nominas.filter((n) => n.estado === 'PENDIENTE');
-  const aprob = d.nominas.filter((n) => n.estado === 'APROBADA');
+  const deEstado = (estado: string) => {
+    const r = d.nominas.find((x) => x.estado === estado);
+    return { n: r?.cantidad ?? 0, total: Number(r?.total ?? 0) };
+  };
+  const pend = deEstado('PENDIENTE');
+  const aprob = deEstado('APROBADA');
   const activos = d.trabajadores.filter((t) => t.estado === 'ACTIVO');
 
   const conJornalHoy = new Set(
@@ -70,17 +74,16 @@ export function calcularResumen(d: DatosInicio, hoy = new Date()): ResumenInicio
   );
 
   const jornalesDe = (ref: Date) => d.jornales.filter((j) => { const f = fechaLocal(j.fecha); return f && mismoMes(f, ref); }).length;
-  const pagadoEn = (ref: Date) => d.pagos
-    .filter((p) => { const f = fechaLocal(p.fechaPago ?? p.fecha); return f && mismoMes(f, ref); })
-    .reduce((s, p) => s + (p.monto ?? 0), 0);
+  const claveMes = (ref: Date) => `${ref.getFullYear()}-${String(ref.getMonth() + 1).padStart(2, '0')}`;
+  const pagadoEn = (ref: Date) => Number(d.pagosPorMes.find((m) => m.mes === claveMes(ref))?.total ?? 0);
 
   const solicitudes = d.trabajadores.filter((t) => t.accesoEstado === 'PENDIENTE').length;
   const disponibles = d.lotes.filter((l) => l.estado === 'DISPONIBLE').length;
   const sinJornal = activos.filter((t) => t.id == null || !conJornalHoy.has(t.id)).length;
 
   return {
-    porAprobar: { n: pend.length, total: suma(pend) },
-    sinPagar: { n: aprob.length, total: suma(aprob) },
+    porAprobar: pend,
+    sinPagar: aprob,
     solicitudesPortal: solicitudes,
     lotesDisponibles: disponibles,
     lotesEnCultivo: d.lotes.filter((l) => l.estado === 'EN_CULTIVO').length,
@@ -89,7 +92,7 @@ export function calcularResumen(d: DatosInicio, hoy = new Date()): ResumenInicio
     sinJornalHoy: sinJornal,
     jornalesMes: tendencia(jornalesDe(hoy), jornalesDe(mesAnterior)),
     pagadoMes: tendencia(pagadoEn(hoy), pagadoEn(mesAnterior)),
-    pendientes: pend.length + aprob.length + solicitudes,
+    pendientes: pend.n + aprob.n + solicitudes,
   };
 }
 

@@ -95,6 +95,13 @@ export interface ResumenJornales {
 }
 
 /** GET /api/payments/summary: cuántos pagos hay, cuánto suman y a cuántos trabajadores. */
+/** GET /api/payments/monthly: lo pagado en un mes ("2026-11"). Los meses sin pagos no vienen. */
+export interface PagosDelMes {
+  mes: string;
+  total: number;
+  cantidad: number;
+}
+
 export interface ResumenPagos {
   cantidad: number;
   total: number;
