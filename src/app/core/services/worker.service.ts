@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
-  Labor, Pago, Cargo, Trabajador, Nomina, Jornal, ResumenNominas, ResumenJornales, ResumenPagos
+  Labor, Pago, Cargo, Trabajador, Nomina, Jornal, ResumenNominas, ResumenJornales, ResumenPagos, PagosDelMes
 } from '../models/worker.model';
 import { Pagina, TAMANO_PAGINA } from '../models/pagina.model';
 
@@ -111,15 +111,14 @@ export class NominaService {
   private api = `${environment.apiUrl}/api/payrolls`;
   constructor(private http: HttpClient) {}
 
-  listarTodas(): Observable<Nomina[]> { return this.http.get<Nomina[]>(this.api); }
-  /** Nóminas por páginas, más recientes primero (listarTodas sigue para los totales del inicio y el menú). */
+  /** Nóminas por páginas, más recientes primero. */
   pagina(page: number, filtros: { trabajadorId?: number | null; estado?: string | null } = {}, size = TAMANO_PAGINA): Observable<Pagina<Nomina>> {
     let params = new HttpParams().set('page', page).set('size', size);
     if (filtros.trabajadorId != null) params = params.set('trabajadorId', filtros.trabajadorId);
     if (filtros.estado) params = params.set('estado', filtros.estado);
     return this.http.get<Pagina<Nomina>>(`${this.api}/page`, { params });
   }
-  /** Cantidad y total por estado, para las tarjetas de la lista. */
+  /** Cantidad y total por estado: para las tarjetas de la lista, el inicio y el contador del menú. */
   resumen(trabajadorId?: number | null): Observable<ResumenNominas[]> {
     const params = trabajadorId != null ? new HttpParams().set('trabajadorId', trabajadorId) : undefined;
     return this.http.get<ResumenNominas[]>(`${this.api}/summary`, { params });
@@ -176,7 +175,6 @@ export class PagoService {
   private api = `${environment.apiUrl}/api/payments`;
   constructor(private http: HttpClient) {}
 
-  listarTodos(): Observable<Pago[]> { return this.http.get<Pago[]>(this.api); }
   /** Pagos por páginas, más recientes primero. */
   pagina(page: number, nominaId?: number | null, size = TAMANO_PAGINA): Observable<Pagina<Pago>> {
     let params = new HttpParams().set('page', page).set('size', size);
@@ -187,6 +185,10 @@ export class PagoService {
   resumen(nominaId?: number | null): Observable<ResumenPagos> {
     const params = nominaId != null ? new HttpParams().set('nominaId', nominaId) : undefined;
     return this.http.get<ResumenPagos>(`${this.api}/summary`, { params });
+  }
+  /** Lo pagado cada mes desde una fecha ("2026-10-01"), para comparar un mes con el anterior. */
+  porMes(desde: string): Observable<PagosDelMes[]> {
+    return this.http.get<PagosDelMes[]>(`${this.api}/monthly`, { params: new HttpParams().set('since', desde) });
   }
   buscarPorId(id: number): Observable<Pago> { return this.http.get<Pago>(`${this.api}/${id}`); }
   historialPorTrabajador(trabajadorId: number): Observable<Pago[]> { return this.http.get<Pago[]>(`${this.api}/worker/${trabajadorId}`); }

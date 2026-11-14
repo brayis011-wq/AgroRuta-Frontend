@@ -232,11 +232,12 @@ describe('NominaService', () => {
 
   it('should be created', () => expect(service).toBeTruthy());
 
-  it('listarTodas() should GET all nominas', () => {
-    service.listarTodas().subscribe(r => expect(r).toEqual([mockNomina]));
-    const req = http.expectOne(base);
+  it('resumen() should GET the totals by state', () => {
+    const totales = [{ estado: 'PENDIENTE', cantidad: 2, total: 150000 }];
+    service.resumen().subscribe(r => expect(r).toEqual(totales));
+    const req = http.expectOne(`${base}/summary`);
     expect(req.request.method).toBe('GET');
-    req.flush([mockNomina]);
+    req.flush(totales);
   });
 
   it('listarPorTrabajador() should GET nominas by trabajador', () => {
@@ -391,11 +392,12 @@ describe('PagoService', () => {
 
   it('should be created', () => expect(service).toBeTruthy());
 
-  it('listarTodos() should GET all pagos', () => {
-    service.listarTodos().subscribe(r => expect(r).toEqual([mockPago]));
-    const req = http.expectOne(base);
+  it('porMes() should GET what was paid each month since a date', () => {
+    const meses = [{ mes: '2026-10', total: 200000, cantidad: 2 }];
+    service.porMes('2026-10-01').subscribe(r => expect(r).toEqual(meses));
+    const req = http.expectOne(r => r.url === `${base}/monthly` && r.params.get('since') === '2026-10-01');
     expect(req.request.method).toBe('GET');
-    req.flush([mockPago]);
+    req.flush(meses);
   });
 
   it('buscarPorId() should GET pago by id', () => {

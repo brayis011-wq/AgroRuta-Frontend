@@ -30,7 +30,7 @@
     </button>
     <button type="button" class="kpi clic" (click)="irA('pagos')">
       <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.totalPaid' | translate }}</small><strong>{{ totalPagado | pesos }}</strong><em>{{ 'workers.ui.paymentsCount' | translate: { count: pagos.length } }}</em></div>
+      <div><small>{{ 'workers.home.stats.totalPaid' | translate }}</small><strong>{{ totalPagado | pesos }}</strong><em>{{ 'workers.ui.paymentsCount' | translate: { count: resumenPagos.cantidad } }}</em></div>
     </button>
   </section>
 

@@ -78,10 +78,10 @@ export class DetalleNominaComponent implements OnInit {
   }
 
   private cargarPagos(nominaId: number): void {
-    // Cargamos todos los pagos y filtramos por nominaId
-    this.pagoService.listarTodos().subscribe({
-      next: (pagos: Pago[]) => {
-        this.pagos = pagos.filter(p => p.nominaId === nominaId);
+    // Solo los pagos de esta nómina
+    this.pagoService.pagina(0, nominaId).subscribe({
+      next: (p) => {
+        this.pagos = p.contenido;
         this.cdr.detectChanges();
       },
       error: () => {}

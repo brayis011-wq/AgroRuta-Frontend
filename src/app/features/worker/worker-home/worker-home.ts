@@ -13,7 +13,7 @@ import {
   TrabajadorUpdateRequest,
   NominaRequest
 } from '../../../core/services/worker.service';
-import { Trabajador, Nomina, Pago, Cargo } from '../../../core/models/worker.model';
+import { Trabajador, Nomina, Cargo, ResumenPagos } from '../../../core/models/worker.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { PesosPipe, FechaPipe } from '../../../shared/format.pipe';
 
@@ -31,8 +31,9 @@ export class WorkerHomeComponent implements OnInit {
 
   trabajadores: Trabajador[] = [];
   cargos:  Cargo[]  = [];
-  nominas: Nomina[] = [];
-  pagos:   Pago[]   = [];
+  /** Totales que muestran las tarjetas; la base los cuenta, no se traen las listas completas */
+  nominasPendientes = 0;
+  resumenPagos: ResumenPagos = { cantidad: 0, total: 0, trabajadores: 0 };
 
   busqueda  = '';
   tabActivo = 'trabajadores';
@@ -116,13 +117,16 @@ export class WorkerHomeComponent implements OnInit {
       error: () => {}
     });
 
-    this.nominaService.listarTodas().subscribe({
-      next: (n) => { this.nominas = n; this.cdr.detectChanges(); },
+    this.nominaService.resumen().subscribe({
+      next: (r) => {
+        this.nominasPendientes = r.find(x => x.estado === 'PENDIENTE')?.cantidad ?? 0;
+        this.cdr.detectChanges();
+      },
       error: () => {}
     });
 
-    this.pagoService.listarTodos().subscribe({
-      next: (p) => { this.pagos = p; this.cdr.detectChanges(); },
+    this.pagoService.resumen().subscribe({
+      next: (r) => { this.resumenPagos = r; this.cdr.detectChanges(); },
       error: () => {}
     });
   }
@@ -150,8 +154,7 @@ export class WorkerHomeComponent implements OnInit {
 
   get cantidadActivos():     number { return this.trabajadores.filter(t => t.estado === 'ACTIVO').length; }
   get cantidadSuspendidos(): number { return this.trabajadores.filter(t => t.estado === 'SUSPENDIDO').length; }
-  get totalPagado():         number { return this.pagos.reduce((a, p) => a + (p.monto ?? 0), 0); }
-  get nominasPendientes():   number { return this.nominas.filter(n => n.estado === 'PENDIENTE').length; }
+  get totalPagado():         number { return this.resumenPagos.total ?? 0; }
 
   // ── Panel ────────────────────────────────────────────────────────────────
 
@@ -253,7 +256,7 @@ export class WorkerHomeComponent implements OnInit {
     };
     this.nominaService.generar(req).subscribe({
       next: (n: Nomina) => {
-        this.nominas = [...this.nominas, n]; // ✅ actualiza el contador de pendientes
+        if (n.estado === 'PENDIENTE') this.nominasPendientes++; // la nómina nueva nace pendiente
         this.guardandoNomina = false;
         this.mostrarFormNomina = false;
         this.formNomina.reset();

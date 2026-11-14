@@ -10,7 +10,7 @@ import { LanguageService } from '../../core/services/language.service';
 import { FincaActivaService } from '../../core/services/active-farm.service';
 import { JornalService, NominaService, PagoService, TrabajadorService } from '../../core/services/worker.service';
 import { InventarioService } from '../../core/services/inventory.service';
-import { Jornal, Nomina, Pago, Trabajador } from '../../core/models/worker.model';
+import { Jornal, PagosDelMes, ResumenNominas, Trabajador } from '../../core/models/worker.model';
 import { EventoCalendario, Finca, Lote, Siembra } from '../../core/models/crop.model';
 import { ICONO_EVENTO, TONO_EVENTO, diasHasta, esPorVenir, ordenAgenda, textoEvento } from '../crop/calendar/events';
 import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget';
@@ -159,8 +159,9 @@ export class DashboardComponent implements OnInit {
     ).subscribe((ev) => this.agenda.set(ev.filter(esPorVenir).sort(ordenAgenda).slice(0, 6)));
 
     forkJoin({
-      nominas: vacio<Nomina>(this.nominas.listarTodas()),
-      pagos: vacio<Pago>(this.pagos.listarTodos()),
+      // Totales ya sumados por la base: antes se traían todas las nóminas y todos los pagos
+      nominas: vacio<ResumenNominas>(this.nominas.resumen()),
+      pagosPorMes: vacio<PagosDelMes>(this.pagos.porMes(desde)),
       trabajadores: trabajadores$,
       jornales: jornales$,
       lotes: lotes$,

@@ -1,7 +1,7 @@
 import { calcularResumen, diasDesde, fechaLocal, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
 
 const HOY = new Date(2026, 10, 4, 15, 0); // 4 nov 2026, 3 p. m.
-const base = { nominas: [], pagos: [], trabajadores: [], jornales: [], lotes: [] } as any;
+const base = { nominas: [], pagosPorMes: [], trabajadores: [], jornales: [], lotes: [] } as any;
 
 describe('resumen del Inicio', () => {
   it('reads "YYYY-MM-DD" as a local date (no day shift in UTC-5)', () => {
@@ -20,8 +20,8 @@ describe('resumen del Inicio', () => {
 
   it('counts payrolls to approve and to pay with their totals', () => {
     const r = calcularResumen({ ...base, nominas: [
-      { estado: 'PENDIENTE', valorTotal: 100 }, { estado: 'PENDIENTE', valorTotal: 50 },
-      { estado: 'APROBADA', valorTotal: 70 }, { estado: 'PAGADA', valorTotal: 999 },
+      { estado: 'PENDIENTE', cantidad: 2, total: 150 },
+      { estado: 'APROBADA', cantidad: 1, total: 70 }, { estado: 'PAGADA', cantidad: 4, total: 999 },
     ] }, HOY);
     expect(r.porAprobar).toEqual({ n: 2, total: 150 });
     expect(r.sinPagar).toEqual({ n: 1, total: 70 });
@@ -40,10 +40,16 @@ describe('resumen del Inicio', () => {
   it('month trends compare with the previous month', () => {
     const r = calcularResumen({ ...base,
       jornales: [{ fecha: '2026-11-02' }, { fecha: '2026-11-03' }, { fecha: '2026-11-04' }, { fecha: '2026-10-10' }, { fecha: '2026-10-11' }],
-      pagos: [{ monto: 300, fechaPago: '2026-11-01' }, { monto: 200, fecha: '2026-10-20' }],
+      pagosPorMes: [{ mes: '2026-10', total: 200, cantidad: 1 }, { mes: '2026-11', total: 300, cantidad: 1 }],
     }, HOY);
     expect(r.jornalesMes).toEqual({ actual: 3, anterior: 2, porcentaje: 50 });
     expect(r.pagadoMes).toEqual({ actual: 300, anterior: 200, porcentaje: 50 });
+  });
+
+  it('a month without payments counts as zero', () => {
+    const r = calcularResumen({ ...base, pagosPorMes: [{ mes: '2026-11', total: 300, cantidad: 2 }] }, HOY);
+    expect(r.pagadoMes).toEqual({ actual: 300, anterior: 0, porcentaje: null });
+    expect(calcularResumen(base, HOY).porAprobar).toEqual({ n: 0, total: 0 });
   });
 
   it('no percentage when last month was zero', () => {
