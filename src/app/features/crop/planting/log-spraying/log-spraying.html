@@ -2,10 +2,7 @@
 <div class="page-bg registro">
   <div class="container">
 
-    <button class="btn-back" (click)="volver()">
-      <i class="ti ti-arrow-left" aria-hidden="true"></i>
-      <span>{{ 'siembra.spray.back' | translate }}</span>
-    </button>
+    <app-migas-cultivo [siembra]="siembraId" [actual]="registroId ? 'temporadas.registro.editSpray' : 'siembra.spray.title'" />
 
     <div class="form-header">
       <div class="form-header__icon" aria-hidden="true"><i class="ti ti-spray"></i></div>

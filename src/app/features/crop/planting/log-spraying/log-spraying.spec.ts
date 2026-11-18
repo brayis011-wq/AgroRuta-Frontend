@@ -394,9 +394,4 @@ describe('RegistrarFumigacion', () => {
   });
 
   // ── volver ───────────────────────────────────────────────────
-  it('volver() should navigate to siembra', () => {
-    vi.spyOn(router, 'navigate');
-    component.volver();
-    expect(router.navigate).toHaveBeenCalledWith(['/crops/planting', 1]);
-  });
 });

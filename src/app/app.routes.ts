@@ -15,12 +15,14 @@ export const routes: Routes = [
   // Pública: la pide Google para usar la API de Gmail
   {
     path: 'privacy',
+    title: 'titles.privacy',
     loadComponent: () => import('./features/legal/privacy').then((m) => m.PrivacidadComponent),
   },
 
   // Pública: la abre quien escanea el QR de un comprobante de pago
   {
     path: 'receipt/:id/:code',
+    title: 'titles.receipt',
     loadComponent: () => import('./features/receipt/receipt-verify').then((m) => m.ReceiptVerifyComponent),
   },
 

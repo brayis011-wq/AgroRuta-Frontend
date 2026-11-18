@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { CultivoService } from '../../../../core/services/crop.service';
 
 @Component({
   selector: 'app-registrar-actividad',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, MigasCultivoComponent],
   templateUrl: './log-activity.html',
   styleUrls: ['../../crop-form.css', './log-activity.css']
 })
@@ -96,7 +97,4 @@ export class RegistrarActividad implements OnInit {
     });
   }
 
-  volver(): void {
-    this.router.navigate(['/crops/planting', this.siembraId]);
-  }
 }

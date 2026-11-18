@@ -4,6 +4,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { forkJoin, of, catchError, Subscription } from 'rxjs';
 import * as L from 'leaflet';
 import { CultivoService } from '../../../../core/services/crop.service';
@@ -28,7 +29,7 @@ export interface Temporada {
 @Component({
   selector: 'app-detalle-lote',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, CicloEtapasComponent],
+  imports: [FormsModule, RouterLink, TranslatePipe, CicloEtapasComponent, MigasCultivoComponent],
   templateUrl: './plot-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-dialog.css', './plot-detail.css', './plot-detail-seasons.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,7 +64,7 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   private poligono?: L.Polygon;
   private rutaSub?: Subscription;
   private ndviLayer?: L.TileLayer.WMS;
-  private loteId = 0;
+  protected loteId = 0;
 
   ngOnInit(): void {
     // Angular reutiliza esta página al pasar de un lote a otro (p. ej. desde el panel
@@ -197,10 +198,6 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     const l = this.lote();
     if (!l) return;
     this.router.navigate(['/crops/farm', l.fincaId, 'plot', l.id, 'new-planting']);
-  }
-
-  volver(): void {
-    this.router.navigate(['/crops/farm', this.lote()?.fincaId]);
   }
 
   // ── Mapa ──────────────────────────────────────────────────────────

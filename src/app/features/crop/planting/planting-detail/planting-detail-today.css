@@ -36,3 +36,6 @@
 .alerta-cultivo.verde { background: var(--ar-vidrio); color: var(--ar-verde-800); border-color: var(--ar-borde); }
 
 .en-carencia { color: var(--ar-ambar); font-weight: 600; }
+
+/* Botón (?) a la derecha de cada aviso */
+.alerta-cultivo app-ayuda { margin-left: auto; }

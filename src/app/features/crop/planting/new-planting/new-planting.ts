@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { CatalogoCultivoService } from '../../../../core/services/crop-catalog.service';
 import { Siembra, TipoCultivo } from '../../../../core/models/crop.model';
@@ -12,7 +13,7 @@ import { forkJoin, of, switchMap, map } from 'rxjs';
 @Component({
   selector: 'app-nueva-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, MigasCultivoComponent],
   templateUrl: './new-planting.html',
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-planting.css'],
 })

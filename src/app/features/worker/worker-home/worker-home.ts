@@ -1,9 +1,10 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ContarDirective } from '../../../shared/count-up.directive';
+import { AyudaComponent } from '../../../shared/help-tip/help-tip';
 import {
   TrabajadorService,
   NominaService,
@@ -23,7 +24,7 @@ type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 @Component({
   selector: 'app-worker-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, ContarDirective],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, ContarDirective, AyudaComponent],
   templateUrl: './worker-home.html',
   styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../worker-ui.css', '../worker-panel.css']
 })
@@ -72,9 +73,14 @@ export class WorkerHomeComponent implements OnInit {
     private pagoService: PagoService
   ) {}
 
+  /** Opcional: algunas pruebas montan la pantalla sin rutas */
+  private readonly route = inject(ActivatedRoute, { optional: true });
+
   ngOnInit(): void {
     this.iniciarForms();
     this.cargarDatos();
+    // /worker?nuevo=1 abre el formulario de una vez (lo usa "Primeros pasos" del inicio)
+    if (this.route?.snapshot?.queryParamMap?.get('nuevo')) this.abrirNuevo();
   }
 
   iniciarForms(): void {

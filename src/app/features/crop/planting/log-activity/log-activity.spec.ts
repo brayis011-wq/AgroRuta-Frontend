@@ -118,9 +118,4 @@ describe('RegistrarActividad', () => {
     expect(component.cargando).toBe(false);
   });
 
-  it('volver() should navigate to siembra route', () => {
-    component.siembraId = 7;
-    component.volver();
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 7]);
-  });
 });

@@ -1,0 +1,27 @@
+<nav class="migas" [attr.aria-label]="'breadcrumbs.label' | translate">
+  <!-- Celular: solo el paso anterior -->
+  @if (padre(); as p) {
+    <a class="atras" [routerLink]="p.ruta" [attr.aria-label]="'breadcrumbs.backTo' | translate: { name: nombre(p) || ('breadcrumbs.loading' | translate) }">
+      <i class="ti ti-arrow-left" aria-hidden="true"></i>
+      @if (nombre(p); as n) { <span>{{ n }}</span> } @else { <span class="hueco" aria-hidden="true"></span> }
+    </a>
+  }
+
+  <!-- Pantallas anchas: el camino completo -->
+  <ol>
+    @for (m of items(); track $index; let ultimo = $last) {
+      <li>
+        @if (nombre(m); as n) {
+          @if (!ultimo && m.ruta) {
+            <a [routerLink]="m.ruta" [title]="n">{{ n }}</a>
+          } @else {
+            <span [attr.aria-current]="ultimo ? 'page' : null" [title]="n">{{ n }}</span>
+          }
+        } @else {
+          <span class="hueco" [attr.aria-label]="'breadcrumbs.loading' | translate"></span>
+        }
+        @if (!ultimo) { <i class="ti ti-chevron-right sep" aria-hidden="true"></i> }
+      </li>
+    }
+  </ol>
+</nav>

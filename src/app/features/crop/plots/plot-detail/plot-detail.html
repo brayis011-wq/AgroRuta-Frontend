@@ -1,5 +1,5 @@
 <div class="cv">
-  <button type="button" class="volver" (click)="volver()"><i class="ti ti-arrow-left"></i> {{ 'temporadas.lote.back' | translate }}</button>
+  <app-migas-cultivo [lote]="loteId" />
 
   @if (error()) {
     <p class="aviso error" role="alert"><i class="ti ti-alert-circle"></i> {{ error() | translate }}</p>

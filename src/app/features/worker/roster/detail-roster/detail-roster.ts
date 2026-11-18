@@ -13,11 +13,12 @@ import {
 import { Nomina, Pago } from '../../../../core/models/worker.model';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
+import { Miga, MigasComponent } from '../../../../shared/breadcrumbs/breadcrumbs';
 
 @Component({
   selector: 'app-detalle-nomina',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe, MigasComponent],
   templateUrl: './detail-roster.html',
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './detail-roster.css']
 })
@@ -25,6 +26,21 @@ export class DetalleNominaComponent implements OnInit {
   private readonly confirmService = inject(ConfirmService);
   nomina: Nomina | null = null;
   pagos: Pago[] = [];
+
+  /** Equipo › Nóminas › (trabajador). Se rehace solo cuando cambia la nómina */
+  private migasDe: Nomina | null = null;
+  private migasCache: Miga[] = [];
+  get migas(): Miga[] {
+    if (this.migasDe !== this.nomina) {
+      this.migasDe = this.nomina;
+      this.migasCache = [
+        { clave: 'layout.nav.team', ruta: ['/worker'] },
+        { clave: 'workers.rosters.list.title', ruta: ['/worker/payrolls'] },
+        { texto: this.nomina?.trabajador?.nombreCompleto || null, clave: 'titles.payroll' },
+      ];
+    }
+    return this.migasCache;
+  }
   cargando = true;
   guardando = false;
   error = '';                                   // clave de traducción

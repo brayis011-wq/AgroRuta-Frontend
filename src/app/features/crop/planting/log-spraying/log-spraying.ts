@@ -25,6 +25,7 @@ import {
 } from 'rxjs';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { CultivoService }           from '../../../../core/services/crop.service';
 import { AgriculturalInputService } from '../../../../core/services/agricultural-input.service';
 import { AgriculturalInput, MeasurementUnit } from '../../../../core/models/agricultural-input.model';
@@ -70,7 +71,7 @@ interface FumigacionForm {
 @Component({
   selector: 'app-registrar-fumigacion',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent],
   templateUrl: './log-spraying.html',
   styleUrls: ['../../crop-form.css', './log-spraying.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -457,10 +458,6 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
       });
-  }
-
-  volver(): void {
-    this.router.navigate(['/crops/planting', this.siembraId]);
   }
 
   // ── Helpers ──────────────────────────────────────────────────

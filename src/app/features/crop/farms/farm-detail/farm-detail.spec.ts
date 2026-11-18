@@ -94,11 +94,6 @@ describe('DetalleFincaComponent', () => {
     expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/farm', 1, 'new-plot']);
   });
 
-  it('volver navega a /crops', () => {
-    component.volver();
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/crops']);
-  });
-
   it('iniciarEliminacionLote asigna el lote y limpia el texto', () => {
     const evento = new MouseEvent('click');
     vi.spyOn(evento, 'stopPropagation');

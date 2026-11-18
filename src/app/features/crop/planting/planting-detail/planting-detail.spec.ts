@@ -206,9 +206,4 @@ describe('DetalleSiembraComponent', () => {
     component.registrarCosecha();
     expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 1, 'harvest']);
   });
-  it('volver() should navigate to lote', () => {
-    component.siembra = mockSiembra as any;
-    component.volver();
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/plot', 10]);
-  });
 });

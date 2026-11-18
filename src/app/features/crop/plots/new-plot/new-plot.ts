@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { Subscription } from 'rxjs';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -15,7 +16,7 @@ import { GeocodingService } from '../../../../core/services/geocoding.service';
 @Component({
   selector: 'app-nuevo-lote',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, MigasCultivoComponent],
   templateUrl: './new-plot.html',
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-plot.css'],
 })
@@ -274,14 +275,14 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
           next: () => {
             this.exito = true;
             this.cdr.detectChanges();
-            this.avisos.exito('avisos.plot');
-            this.router.navigate(['/crops/farm', this.fincaId]);
+            this.avisos.exito('avisos.plotNext');
+            this.router.navigate(['/crops/plot', lote.id]); // siguiente paso: sembrar en él
           },
           error: () => {
             this.exito = true;
             this.cdr.detectChanges();
-            this.avisos.exito('avisos.plot');
-            this.router.navigate(['/crops/farm', this.fincaId]);
+            this.avisos.exito('avisos.plotNext');
+            this.router.navigate(['/crops/plot', lote.id]);
           }
         });
       },

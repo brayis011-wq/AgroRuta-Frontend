@@ -1,6 +1,6 @@
 <div class="page-bg">
   <div class="container">
-    <button type="button" class="btn-back" (click)="cancelar()"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'temporadas.ui.back' | translate }}</button>
+    <app-migas-cultivo [lote]="loteId" [siembra]="siembraId" [actual]="siembraId ? 'temporadas.siembra.editTitle' : 'siembra.new.title'" />
 
     <div class="form-header">
       <div class="form-header__icon" aria-hidden="true"><i class="ti" [class.ti-seedling]="!siembraId" [class.ti-pencil]="siembraId"></i></div>

@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
+import { AyudaComponent } from '../../../../shared/help-tip/help-tip';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import {
@@ -45,7 +47,7 @@ interface TimelineItem {
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink],
+  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink, MigasCultivoComponent, AyudaComponent],
   templateUrl: './planting-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css'],
 })
@@ -71,6 +73,8 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     return siembraActiva(this.siembra);
   }
 
+  /** Id de la ruta (se conoce antes de que llegue la siembra: las migas de pan lo usan) */
+  siembraId: number | null = null;
   siembra: Siembra | null = null;
   actividades: ActividadCultivo[] = [];
   fumigaciones: Fumigacion[] = [];
@@ -118,6 +122,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   }
 
   private cargarSiembra(id: number): void {
+    this.siembraId = id;
     this.siembra = null;
     this.actividades = []; this.fumigaciones = []; this.cosechas = [];
     this.timelineCompleto = []; this.totalKg = 0;
@@ -413,7 +418,4 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.router.navigate(['/crops/planting', this.siembra!.id, 'harvest']);
   }
 
-  volver(): void {
-    this.router.navigate(['/crops/plot', this.siembra?.loteId]);
-  }
 }
