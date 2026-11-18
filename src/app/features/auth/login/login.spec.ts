@@ -131,10 +131,30 @@ describe('LoginComponent', () => {
     authServiceMock.login.mockReturnValue(throwError(() => ({ status: 422, error: { errorCode: 'AGR-035' } })));
     component.codigo = ' 123456 ';
     component.onSubmit();
-    expect(authServiceMock.login).toHaveBeenLastCalledWith({ email: 'ana@x.com', password: 'secreta123', codigo: '123456' });
+    expect(authServiceMock.login).toHaveBeenLastCalledWith({ email: 'ana@x.com', password: 'secreta123', codigo: '123456', recordarDispositivo: true });
     expect(component.error).toBe('auth.login.codeWrong');
     expect(component.pideCodigo).toBe(true);
     expect(component.codigo).toBe('');
+  });
+
+  it('recordar el dispositivo: la casilla viene marcada y se puede desmarcar; sin código no se manda', () => {
+    expect(component.recordarDispositivo).toBe(true);
+    authServiceMock.login.mockReturnValue(throwError(() => ({ status: 403, error: { errorCode: 'AGR-034' } })));
+    component.form = { email: 'ana@x.com', password: 'secreta123' };
+    component.onSubmit();
+    expect(authServiceMock.login).toHaveBeenLastCalledWith({ email: 'ana@x.com', password: 'secreta123' });
+
+    component.codigo = '123456';
+    component.recordarDispositivo = false;
+    component.onSubmit();
+    expect(authServiceMock.login).toHaveBeenLastCalledWith({ email: 'ana@x.com', password: 'secreta123', codigo: '123456', recordarDispositivo: false });
+  });
+
+  it('muestra la casilla de recordar el dispositivo junto al campo del código', () => {
+    component.pideCodigo = true;
+    fixture.detectChanges();
+    const casilla = (fixture.nativeElement as HTMLElement).querySelector('.recordar input[type=checkbox]');
+    expect(casilla).not.toBeNull();
   });
 
   it('correo sin confirmar (403 AGR-033): avisa y permite reenviar el enlace', () => {

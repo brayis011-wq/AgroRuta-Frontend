@@ -41,6 +41,10 @@
       <input id="codigo" type="text" [(ngModel)]="codigo" name="codigo" autocomplete="one-time-code" inputmode="text"
              maxlength="20" autocapitalize="characters" spellcheck="false" placeholder="123456" required />
       <small class="pista">{{ 'auth.login.codeHint' | translate }}</small>
+      <label class="recordar">
+        <input type="checkbox" [(ngModel)]="recordarDispositivo" name="recordarDispositivo" />
+        <span>{{ 'auth.login.rememberDevice' | translate }}</span>
+      </label>
     </div>
   }
 

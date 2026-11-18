@@ -12,6 +12,8 @@ export interface LoginRequest {
   password: string;
   /** Código de la app de autenticación (o uno de respaldo) si la cuenta tiene verificación en dos pasos */
   codigo?: string;
+  /** Con el código: no volver a pedirlo en este navegador por 30 días */
+  recordarDispositivo?: boolean;
 }
 
 export interface AuthResponse {
