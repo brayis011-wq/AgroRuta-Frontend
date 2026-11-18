@@ -63,3 +63,15 @@
   .buscar-t, .buscar-t input { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { .rep, .hbar-pista > span, .esq, .gira { animation: none; } }
+
+/* Botones de descarga: Excel (CSV) al lado del PDF */
+.rep-acciones { display: flex; gap: .5rem; flex-wrap: wrap; }
+.btn-csv {
+  display: inline-flex; align-items: center; gap: .45rem; padding: .65rem 1rem; border-radius: 11px; cursor: pointer;
+  border: 1px solid var(--ar-borde); background: var(--ar-superficie); color: var(--ar-tinta); font: inherit; font-weight: 600; font-size: .9rem;
+  box-shadow: var(--ar-sombra-1); transition: transform .15s, border-color .15s;
+}
+.btn-csv .ti { font-size: 19px; color: var(--ar-verde-700); }
+.btn-csv:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--ar-borde-fuerte); }
+.btn-csv:disabled { opacity: .6; cursor: not-allowed; }
+.btn-csv:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }

@@ -24,28 +24,28 @@ vi.mock('leaflet', () => {
     flyTo: vi.fn(),
     fitBounds: vi.fn(),
   };
+  // También sirve como capa de los lotes (addTo, clearLayers, addLayer, getLayers)
   const featureGroupMock = {
     getBounds: vi.fn().mockReturnValue({}),
+    addTo: vi.fn().mockReturnThis(),
+    clearLayers: vi.fn().mockReturnThis(),
+    addLayer: vi.fn().mockReturnThis(),
+    getLayers: vi.fn().mockReturnValue([]),
   };
+  const poligonoMock = { bindTooltip: vi.fn().mockReturnThis(), on: vi.fn().mockReturnThis(), setStyle: vi.fn() };
   const tileMock = { addTo: vi.fn().mockReturnThis() };
   const controlLayersMock = { addTo: vi.fn().mockReturnThis() };
 
-  return {
-    default: {
-      map: vi.fn().mockReturnValue(mapasMock),
-      tileLayer: vi.fn().mockReturnValue(tileMock),
-      marker: vi.fn().mockReturnValue(marcadorMock),
-      divIcon: vi.fn().mockReturnValue({}),
-      featureGroup: vi.fn().mockReturnValue(featureGroupMock),
-      control: { layers: vi.fn().mockReturnValue(controlLayersMock) },
-    },
+  const leaflet = {
     map: vi.fn().mockReturnValue(mapasMock),
     tileLayer: vi.fn().mockReturnValue(tileMock),
     marker: vi.fn().mockReturnValue(marcadorMock),
     divIcon: vi.fn().mockReturnValue({}),
     featureGroup: vi.fn().mockReturnValue(featureGroupMock),
+    polygon: vi.fn().mockReturnValue(poligonoMock),
     control: { layers: vi.fn().mockReturnValue(controlLayersMock) },
   };
+  return { default: leaflet, ...leaflet };
 });
 
 describe('ListaFincasComponent', () => {

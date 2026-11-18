@@ -40,3 +40,8 @@
   background: #2e7d32; color: #fff; font: inherit; font-weight: 600;
 }
 :host ::ng-deep .popup-finca-btn:hover { background: #1b5e20; }
+
+/* Leyenda de colores de los lotes en el mapa */
+.leyenda { display: inline-flex; flex-wrap: wrap; gap: .3rem .8rem; }
+.leyenda > span { display: inline-flex; align-items: center; gap: .35rem; }
+.leyenda .chip { width: 12px; height: 12px; border-radius: 4px; opacity: .85; }

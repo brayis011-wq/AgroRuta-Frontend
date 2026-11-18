@@ -4,10 +4,15 @@
       <h2>{{ 'reports.costs.title' | translate }}</h2>
       <p>{{ 'reports.costs.subtitle' | translate }}</p>
     </div>
-    <button type="button" class="btn-pdf" (click)="descargarPdf()" [disabled]="downloading() || error()">
-      <i class="ti" [class.ti-file-type-pdf]="!downloading()" [class.ti-loader-2]="downloading()" [class.gira]="downloading()" aria-hidden="true"></i>
-      {{ (downloading() ? 'reports.downloading' : 'reports.downloadPdf') | translate }}
-    </button>
+    <div class="rep-acciones">
+      <button type="button" class="btn-csv" (click)="descargarExcel()" [disabled]="error() || !filas().length" [title]="'reports.csv.hint' | translate">
+        <i class="ti ti-file-spreadsheet" aria-hidden="true"></i> {{ 'reports.csv.button' | translate }}
+      </button>
+      <button type="button" class="btn-pdf" (click)="descargarPdf()" [disabled]="downloading() || error()">
+        <i class="ti" [class.ti-file-type-pdf]="!downloading()" [class.ti-loader-2]="downloading()" [class.gira]="downloading()" aria-hidden="true"></i>
+        {{ (downloading() ? 'reports.downloading' : 'reports.downloadPdf') | translate }}
+      </button>
+    </div>
   </header>
   @if (downloadError()) { <div class="aviso error" role="alert">{{ 'reports.downloadError' | translate }}</div> }
 

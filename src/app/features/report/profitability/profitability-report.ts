@@ -5,6 +5,7 @@ import { forkJoin, of, catchError } from 'rxjs';
 import { ReportService } from '../../../core/services/report.service';
 import { CultivoService } from '../../../core/services/crop.service';
 import { ReportBase } from '../report-base';
+import { tablaRentabilidad } from '../report-csv';
 import { FilaCostos } from '../costs/costs-calc';
 import { RentabilidadLote, TemporadaLote, anchoBarra, rentabilidadPorLote, resumenRentabilidad } from './profitability-calc';
 
@@ -44,6 +45,11 @@ export class ProfitabilityReportComponent extends ReportBase implements OnInit {
       },
       error: () => this.error.set(true),
     });
+  }
+
+  /** Lo que se ve en pantalla (con filtros y orden) como CSV para Excel */
+  descargarExcel(): void {
+    this.exportarCsv('reporte-rentabilidad', tablaRentabilidad(this.lotes(), this.t));
   }
 
   descargarPdf(): void {
