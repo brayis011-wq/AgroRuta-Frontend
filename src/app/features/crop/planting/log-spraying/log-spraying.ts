@@ -13,11 +13,11 @@ import {
 import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule }           from '@angular/common';
 import { FormsModule }            from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   Subject,
   debounceTime,
-  distinctUntilChanged,
+  forkJoin,
   switchMap,
   of,
   takeUntil,
@@ -31,8 +31,18 @@ import { AgriculturalInput, MeasurementUnit } from '../../../../core/models/agri
 import { InventarioService } from '../../../../core/services/inventory.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import {
-  CostoEstimado, formatoCantidad, unidadBaseDe, unidadGrande, unidadesDe,
+  CostoEstimado, StockInsumo, formatoCantidad, unidadBaseDe, unidadGrande, unidadesDe,
 } from '../../../../core/models/inventory.model';
+
+/** Un producto de la bodega del agricultor, con su ficha del catálogo (dosis, reentrada, carencia) si sigue activa */
+export interface InsumoBodega {
+  stock: StockInsumo;
+  insumo: AgriculturalInput | null;
+}
+
+/** Sin tildes ni mayúsculas, para que "fungicida" encuentre "Fungicída" */
+const normalizar = (t: string | null | undefined): string =>
+  (t ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
 interface FumigacionForm {
   fecha: string;
@@ -57,7 +67,7 @@ interface FumigacionForm {
 @Component({
   selector: 'app-registrar-fumigacion',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './log-spraying.html',
   styleUrls: ['../../crop-form.css', './log-spraying.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -85,18 +95,20 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   error    = '';   // clave de traducción (o mensaje crudo del backend)
   exito    = '';   // clave de traducción
 
-  // ── Búsqueda rápida ──────────────────────────────────────────
+  // ── Insumos de la bodega: lo único que se ofrece (no todo el catálogo) ──
+  /** Productos con movimientos en la bodega del agricultor, por nombre */
+  bodega         = signal<InsumoBodega[]>([]);
+  cargandoBodega = signal(true);
+
+  // ── Búsqueda rápida (dentro de la bodega) ────────────────────
   busquedaProducto = '';
-  catalogoFiltrado   = signal<AgriculturalInput[]>([]);
+  catalogoFiltrado   = signal<InsumoBodega[]>([]);
   mostrarCatalogo    = signal(false);
   insumoSeleccionado = signal<AgriculturalInput | null>(null);
-  cargandoCatalogo   = signal(false);
 
-  // ── Catálogo completo ────────────────────────────────────────
-  mostrarCatalogoCompleto = signal(false);
-  catalogoCompleto        = signal<AgriculturalInput[]>([]);
-  cargandoCompleto        = signal(false);
-  filtroCatalogo          = '';                             // ← propiedad que faltaba
+  // ── Lista completa de la bodega ──────────────────────────────
+  mostrarBodega = signal(false);
+  filtroBodega  = '';
 
   tipoBadgeClass = computed(() =>
     this.getTipoBadgeClass(this.insumoSeleccionado()?.tipo ?? '')
@@ -120,7 +132,6 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
 
   readonly unidades: MeasurementUnit[] = ['LITROS', 'ML', 'GRAMOS', 'KG'];
 
-  private readonly busqueda$ = new Subject<string>();
   private readonly destroy$  = new Subject<void>();
 
   // ── Lifecycle ────────────────────────────────────────────────
@@ -135,32 +146,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       this.cargarParaEditar(this.registroId);
     }
 
-    this.busqueda$
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        switchMap((query: string) => {
-          if (!query.trim()) {
-            this.catalogoFiltrado.set([]);
-            this.mostrarCatalogo.set(false);
-            return of<AgriculturalInput[]>([]);
-          }
-          this.cargandoCatalogo.set(true);
-          return this.inputSvc.search(query).pipe(
-            catchError(() => {
-              this.error = 'siembra.spray.errors.search';
-              return of<AgriculturalInput[]>([]);
-            })
-          );
-        }),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((resultados: AgriculturalInput[]) => {
-        this.cargandoCatalogo.set(false);
-        this.catalogoFiltrado.set(resultados);
-        this.mostrarCatalogo.set(resultados.length > 0);
-        this.cdr.markForCheck();
-      });
+    this.cargarBodega();
 
     // Bodega: lo disponible y el costo de la cantidad usada (sin cantidad se pide con 0 para ver lo disponible)
     this.estimar$
@@ -226,9 +212,78 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  // ── Bodega ───────────────────────────────────────────────────
+  /**
+   * Trae lo que hay en la bodega y le suma la ficha del catálogo de cada producto.
+   * Si el catálogo falla, la lista sale igual (sin dosis sugerida).
+   */
+  private cargarBodega(): void {
+    this.cargandoBodega.set(true);
+    forkJoin({
+      stock: this.inventario.stock(),
+      catalogo: this.inputSvc.getAll().pipe(catchError(() => of<AgriculturalInput[]>([]))),
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ stock, catalogo }) => {
+          const fichas = new Map(catalogo.map((i) => [i.id, i]));
+          this.bodega.set(
+            stock
+              .map((s): InsumoBodega => ({ stock: s, insumo: fichas.get(s.insumoId) ?? null }))
+              .sort((a, b) => a.stock.nombre.localeCompare(b.stock.nombre)),
+          );
+          this.cargandoBodega.set(false);
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.error = 'siembra.spray.errors.loadStock';
+          this.cargandoBodega.set(false);
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  /** "2,5 L" o "750 g" que quedan de ese producto */
+  cantidadDe(b: InsumoBodega): string {
+    return formatoCantidad(b.stock.cantidad, b.stock.unidadBase, this.locale());
+  }
+
+  private coincide(b: InsumoBodega, texto: string): boolean {
+    const q = normalizar(texto);
+    if (!q) return true;
+    const tipo = b.stock.tipo ?? '';
+    return normalizar(b.stock.nombre).includes(q)
+      || normalizar(tipo).includes(q)
+      || (!!tipo && normalizar(this.translate.instant('enums.tipoInsumo.' + tipo) as string).includes(q));
+  }
+
   // ── Búsqueda rápida ──────────────────────────────────────────
   onBusquedaChange(): void {
-    this.busqueda$.next(this.busquedaProducto);
+    if (!this.busquedaProducto.trim()) {
+      this.catalogoFiltrado.set([]);
+      this.mostrarCatalogo.set(false);
+      return;
+    }
+    this.catalogoFiltrado.set(this.bodega().filter((b) => this.coincide(b, this.busquedaProducto)));
+    // También se abre sin resultados, para avisar que ese producto no está en la bodega
+    this.mostrarCatalogo.set(true);
+  }
+
+  /** Elige un producto de la bodega; si su ficha del catálogo ya no está activa, se arma con lo que hay */
+  seleccionarDeBodega(b: InsumoBodega): void {
+    this.seleccionarInsumo(b.insumo ?? {
+      id: b.stock.insumoId,
+      nombre: b.stock.nombre,
+      tipo: (b.stock.tipo ?? '') as AgriculturalInput['tipo'],
+      tipoDisplay: '',
+      unidadSugerida: unidadGrande(b.stock.unidadBase),
+      dosisSugerida: 0,
+      reentradaHoras: 0,
+      diasCarencia: null,
+      activo: false,
+      creadoEn: '',
+    });
+    this.mostrarBodega.set(false);
   }
 
   seleccionarInsumo(insumo: AgriculturalInput): void {
@@ -237,8 +292,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.form.producto            = insumo.nombre;
     this.form.agriculturalInputId = insumo.id;
     this.form.unidadMedida        = insumo.unidadSugerida;
-    this.form.dosis               = insumo.dosisSugerida;
-    this.form.reentradaHoras      = insumo.reentradaHoras ?? null;
+    this.form.dosis               = insumo.dosisSugerida || undefined;
+    this.form.reentradaHoras      = insumo.reentradaHoras || null;
     this.form.diasCarencia        = insumo.diasCarencia ?? null;
     this.form.cantidadUsada       = null;
     this.form.unidadCantidad      = unidadGrande(unidadBaseDe(insumo.unidadSugerida));
@@ -295,55 +350,23 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.mostrarCatalogo.set(false);
   }
 
-  // ── Catálogo completo ────────────────────────────────────────
-  verCatalogoCompleto(): void {
-    if (this.mostrarCatalogoCompleto()) {
-      this.mostrarCatalogoCompleto.set(false);
-      return;
-    }
-
-    // Si ya se cargó antes, solo mostrar
-    if (this.catalogoCompleto().length > 0) {
-      this.mostrarCatalogoCompleto.set(true);
-      return;
-    }
-
-    this.cargandoCompleto.set(true);
-    this.inputSvc.getAll()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.catalogoCompleto.set(data);
-          this.cargandoCompleto.set(false);
-          this.mostrarCatalogoCompleto.set(true);
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.error = 'siembra.spray.errors.loadCatalog';
-          this.cargandoCompleto.set(false);
-          this.cdr.markForCheck();
-        }
-      });
+  // ── Lista completa de la bodega ──────────────────────────────
+  verBodega(): void {
+    this.mostrarBodega.set(!this.mostrarBodega());
   }
 
-  getCatalogoAgrupado(): { tipo: string; items: AgriculturalInput[] }[] {
-    const filtro = this.filtroCatalogo.toLowerCase().trim();
+  /** Productos de la bodega agrupados por tipo, con el filtro de la lista aplicado */
+  getBodegaAgrupada(): { tipo: string; items: InsumoBodega[] }[] {
     const label = (tipo: string) =>
-      this.translate.instant('enums.tipoInsumo.' + tipo) as string;
+      tipo ? (this.translate.instant('enums.tipoInsumo.' + tipo) as string) : '';
 
-    const items = filtro
-      ? this.catalogoCompleto().filter(i =>
-          i.nombre.toLowerCase().includes(filtro) ||
-          i.tipo.toLowerCase().includes(filtro) ||
-          label(i.tipo).toLowerCase().includes(filtro)
-        )
-      : this.catalogoCompleto();
-
-    // Se agrupa por la clave del enum (no por tipoDisplay, que viene del backend en un solo idioma)
-    const grupos = items.reduce((acc, item) => {
-      (acc[item.tipo] ??= []).push(item);
-      return acc;
-    }, {} as Record<string, AgriculturalInput[]>);
+    // Se agrupa por la clave del enum (no por el nombre traducido)
+    const grupos = this.bodega()
+      .filter((b) => this.coincide(b, this.filtroBodega))
+      .reduce((acc, b) => {
+        (acc[b.stock.tipo ?? ''] ??= []).push(b);
+        return acc;
+      }, {} as Record<string, InsumoBodega[]>);
 
     return Object.entries(grupos)
       .map(([tipo, items]) => ({ tipo, items }))
@@ -376,7 +399,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       diasCarencia:        this.form.diasCarencia,
       reentradaHoras:      this.form.reentradaHoras,
       costo:               this.form.costo,
-      // Solo con producto del catálogo se descuenta de la bodega
+      // Solo con producto de la bodega se descuenta de ella
       cantidadUsada:       this.form.agriculturalInputId && Number(this.form.cantidadUsada) > 0 ? Number(this.form.cantidadUsada) : null,
       unidadCantidad:      this.form.agriculturalInputId && Number(this.form.cantidadUsada) > 0 ? (this.form.unidadCantidad || null) : null,
     };
