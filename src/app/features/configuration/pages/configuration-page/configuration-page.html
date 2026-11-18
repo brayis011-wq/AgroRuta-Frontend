@@ -86,27 +86,35 @@
             </div>
           </header>
 
-          <div class="pref">
-            <div><strong id="correo-cultivo">{{ 'config.mail.crop' | translate }}</strong><small>{{ 'config.mail.cropHint' | translate }}</small></div>
-            <label class="interruptor">
-              <input type="checkbox" role="switch" aria-labelledby="correo-cultivo"
-                     [checked]="correos()?.alertasCultivo ?? true" [disabled]="!correos() || guardandoCorreos()"
-                     (change)="cambiarCorreo('alertasCultivo', $any($event.target).checked)" />
-              <span aria-hidden="true"></span>
-            </label>
-          </div>
+          @if (esAgricultor) {
+            <div class="pref">
+              <div><strong id="correo-cultivo">{{ 'config.mail.crop' | translate }}</strong><small>{{ 'config.mail.cropHint' | translate }}</small></div>
+              <label class="interruptor">
+                <input type="checkbox" role="switch" aria-labelledby="correo-cultivo"
+                       [checked]="correos()?.alertasCultivo ?? true" [disabled]="!correos() || guardandoCorreos()"
+                       (change)="cambiarCorreo('alertasCultivo', $any($event.target).checked)" />
+                <span aria-hidden="true"></span>
+              </label>
+            </div>
 
-          <div class="pref">
-            <div><strong id="correo-trabajadores">{{ 'config.mail.workers' | translate }}</strong><small>{{ 'config.mail.workersHint' | translate }}</small></div>
-            <label class="interruptor">
-              <input type="checkbox" role="switch" aria-labelledby="correo-trabajadores"
-                     [checked]="correos()?.avisosTrabajadores ?? true" [disabled]="!correos() || guardandoCorreos()"
-                     (change)="cambiarCorreo('avisosTrabajadores', $any($event.target).checked)" />
-              <span aria-hidden="true"></span>
-            </label>
-          </div>
+            <div class="pref">
+              <div><strong id="correo-trabajadores">{{ 'config.mail.workers' | translate }}</strong><small>{{ 'config.mail.workersHint' | translate }}</small></div>
+              <label class="interruptor">
+                <input type="checkbox" role="switch" aria-labelledby="correo-trabajadores"
+                       [checked]="correos()?.avisosTrabajadores ?? true" [disabled]="!correos() || guardandoCorreos()"
+                       (change)="cambiarCorreo('avisosTrabajadores', $any($event.target).checked)" />
+                <span aria-hidden="true"></span>
+              </label>
+            </div>
 
-          <app-push-toggle />
+            <app-push-toggle />
+          } @else if (esTrabajador) {
+            <!-- Al trabajador solo le llegan sus pagos y la respuesta a su solicitud: no hay nada que apagar por correo -->
+            <div class="pref">
+              <div><strong>{{ 'config.mail.workerTitle' | translate }}</strong><small>{{ 'config.mail.workerHint' | translate }}</small></div>
+            </div>
+            <app-push-toggle pista="config.push.hintWorker" />
+          }
 
           <p class="nota"><i class="ti ti-shield-lock" aria-hidden="true"></i> {{ 'config.mail.security' | translate }}</p>
         </section>

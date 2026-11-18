@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { TranslatePipe } from '@ngx-translate/core';
 import { PayrollReport, ReportService } from '../../../core/services/report.service';
 import { ReportBase } from '../report-base';
+import { tablaNomina } from '../report-csv';
 import { OrdenNomina, barrasMensuales, ordenarTrabajadores, participacion, resumenNomina, variacionUltimoMes } from '../report-calc';
 import { iniciales as inicialesDe } from '../../../shared/iniciales';
 
@@ -41,6 +42,11 @@ export class PayrollReportComponent extends ReportBase implements OnInit {
       next: (r) => { this.report.set(r); this.loading.set(false); },
       error: () => { this.error.set(true); this.loading.set(false); },
     });
+  }
+
+  /** Lo que se ve en pantalla (con filtros y orden) como CSV para Excel */
+  descargarExcel(): void {
+    this.exportarCsv('reporte-nomina', tablaNomina(this.filas(), this.t));
   }
 
   descargarPdf(): void {

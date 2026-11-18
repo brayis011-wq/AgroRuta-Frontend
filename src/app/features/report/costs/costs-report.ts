@@ -6,6 +6,7 @@ import { ReportService } from '../../../core/services/report.service';
 import { CultivoService } from '../../../core/services/crop.service';
 import { CostosSiembraComponent } from '../../crop/planting/costs/costs';
 import { ReportBase } from '../report-base';
+import { tablaCostos } from '../report-csv';
 import { FilaCostos, OrdenCostos, ordenarCostos, totalesCostos } from './costs-calc';
 
 /** Reportes → Costos: costo, ingresos y ganancia de cada temporada, con el detalle de la elegida */
@@ -63,6 +64,11 @@ export class CostsReportComponent extends ReportBase implements OnInit {
     this.elegida.set(this.elegida() === id ? null : id);
     this.router.navigate([], { queryParams: { tab: 'costs', siembra: this.elegida() }, replaceUrl: true });
     if (this.elegida()) setTimeout(() => document.getElementById('detalle-costos')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+
+  /** Lo que se ve en pantalla (con filtros y orden) como CSV para Excel */
+  descargarExcel(): void {
+    this.exportarCsv('reporte-costos', tablaCostos(this.filas(), this.t));
   }
 
   descargarPdf(): void {

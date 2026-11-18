@@ -44,6 +44,14 @@
     <div id="mapa-fincas" class="mapa"></div>
     <div class="mapa-pie">
       <span><i class="ti ti-pointer"></i> {{ 'cultivo.fincas.list.mapHint' | translate }}</span>
+      @if (estadosEnMapa.length) {
+        <!-- Leyenda de los colores de los lotes -->
+        <span class="leyenda" role="list" [attr.aria-label]="'cultivo.fincas.list.legend' | translate">
+          @for (e of estadosEnMapa; track e) {
+            <span role="listitem"><i class="chip" [style.background]="colorEstado(e)" aria-hidden="true"></i>{{ 'temporadas.lote.estado.' + e | translate }}</span>
+          }
+        </span>
+      }
       @if (fincasSinUbicacion() > 0) {
         <span class="sin-ubic"><i class="ti ti-map-pin-off"></i> {{ (fincasSinUbicacion() === 1 ? 'cultivo.fincas.list.noLocationCountOne' : 'cultivo.fincas.list.noLocationCount') | translate: { count: fincasSinUbicacion() } }}</span>
       }

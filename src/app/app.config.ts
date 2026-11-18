@@ -1,5 +1,6 @@
 import { ApplicationConfig, ErrorHandler } from '@angular/core';
-import { provideRouter, withPreloading, withViewTransitions } from '@angular/router';
+import { TitleStrategy, provideRouter, withPreloading, withViewTransitions } from '@angular/router';
+import { TituloEstrategia } from './core/services/page-title.service';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -24,6 +25,8 @@ export const appConfig: ApplicationConfig = {
     // actividad cuenta las llamadas en curso (barra de progreso); cacheBreve va después del token porque guarda por sesión
     provideHttpClient(withInterceptors([actividadInterceptor, sinConexionInterceptor, jwtInterceptor, cacheBreveInterceptor, loggingInterceptor])),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    // Título de la pestaña por pantalla ("Nóminas · AgroRuta"), traducido
+    { provide: TitleStrategy, useClass: TituloEstrategia },
     provideTranslateService({ lang: savedLang, fallbackLang: 'es' }),
     ...provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
   ],

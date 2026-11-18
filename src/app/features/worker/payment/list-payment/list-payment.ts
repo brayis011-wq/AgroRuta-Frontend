@@ -9,11 +9,12 @@ import { PagoService, NominaService } from '../../../../core/services/worker.ser
 import { Pago, Nomina, ResumenPagos } from '../../../../core/models/worker.model';
 import { descargarArchivo, numeroComprobante } from '../../../../shared/download';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
+import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
 
 @Component({
   selector: 'app-lista-pagos',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe],
+  imports: [CommonModule, RouterModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe, FlujoPagoComponent],
   templateUrl: './list-payment.html',
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './list-payment.css']
 })

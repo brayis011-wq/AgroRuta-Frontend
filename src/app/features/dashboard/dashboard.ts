@@ -21,6 +21,8 @@ import { ContarDirective } from '../../shared/count-up.directive';
 import { almanaqueDe } from './almanac';
 import { emparejarColumnas } from './dashboard-columns';
 import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
+import { PasoInicial, calcularPrimerosPasos } from './first-steps';
+import { PrimerosPasosComponent } from './first-steps-card';
 
 const iso = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -49,7 +51,7 @@ export interface Pendiente {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent, WeatherAdviceComponent, ContarDirective],
+  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent, WeatherAdviceComponent, ContarDirective, PrimerosPasosComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css', './dashboard-hero.css', './dashboard-pending.css', './dashboard-body.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -83,6 +85,8 @@ export class DashboardComponent implements OnInit {
   readonly agenda = signal<EventoCalendario[] | null>(null);
   /** Insumos bajos, agotados o en negativo en la bodega */
   readonly avisosBodega = signal(0);
+  /** Primeros pasos para dejar lista la cuenta (null mientras carga) */
+  readonly primerosPasos = signal<PasoInicial[] | null>(null);
 
   /** Lo que requiere atención, en orden de urgencia; solo lo que tiene algo */
   readonly pendientes = computed<Pendiente[]>(() => {
@@ -172,8 +176,10 @@ export class DashboardComponent implements OnInit {
       trabajadores: trabajadores$,
       jornales: jornales$,
       lotes: lotes$,
+      fincas: fincas$,
     }).subscribe((d) => {
       this.resumen.set(calcularResumen(d, this.hoy));
+      this.primerosPasos.set(calcularPrimerosPasos(d));
       this.cargando.set(false);
     });
   }

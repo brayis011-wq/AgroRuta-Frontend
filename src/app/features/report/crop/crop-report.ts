@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { TranslatePipe } from '@ngx-translate/core';
 import { CropReport, ReportService } from '../../../core/services/report.service';
 import { ReportBase } from '../report-base';
+import { tablaCultivos } from '../report-csv';
 import { ETAPAS, filtrarSiembras, resumenCultivos, ubicacionDe } from '../report-calc';
 
 @Component({
@@ -37,6 +38,11 @@ export class CropReportComponent extends ReportBase implements OnInit {
       next: (r) => { this.report.set(r); this.loading.set(false); },
       error: () => { this.error.set(true); this.loading.set(false); },
     });
+  }
+
+  /** Lo que se ve en pantalla (con filtros y orden) como CSV para Excel */
+  descargarExcel(): void {
+    this.exportarCsv('reporte-cultivos', tablaCultivos(this.filas(), this.t));
   }
 
   descargarPdf(): void {

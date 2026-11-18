@@ -4,9 +4,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { Subscription } from 'rxjs';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { FincaActivaService } from '../../../../core/services/active-farm.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import * as L from 'leaflet';
 import { GeocodingService } from '../../../../core/services/geocoding.service';
@@ -14,12 +16,13 @@ import { GeocodingService } from '../../../../core/services/geocoding.service';
 @Component({
   selector: 'app-nueva-finca',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, MigasCultivoComponent],
   templateUrl: './new-farm.html',
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-farm.css'],
 })
 export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
   private readonly avisos = inject(AvisosService);
+  private readonly fincaActiva = inject(FincaActivaService);
 
   private translate = inject(TranslateService);
   private lang = inject(LanguageService);
@@ -202,14 +205,16 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
           next: () => {
             this.exito = true;
             this.cdr.detectChanges();
-            this.avisos.exito('avisos.farm');
-            this.router.navigate(['/crops']);
+            this.fincaActiva.cargar(); // que aparezca en el selector de fincas del menú
+            this.avisos.exito('avisos.farmNext');
+            this.router.navigate(['/crops/farm', finca.id]); // siguiente paso: su primer lote
           },
           error: () => {
             this.exito = true;
             this.cdr.detectChanges();
-            this.avisos.exito('avisos.farm');
-            this.router.navigate(['/crops']);
+            this.fincaActiva.cargar(); // que aparezca en el selector de fincas del menú
+            this.avisos.exito('avisos.farmNext');
+            this.router.navigate(['/crops/farm', finca.id]);
           }
         });
       },

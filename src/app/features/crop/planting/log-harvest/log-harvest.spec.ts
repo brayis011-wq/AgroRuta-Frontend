@@ -152,9 +152,4 @@ it('onSubmit() should navigate after 1500ms on success', () => {
     expect(component.confirmarCarencia).toBe(false);
   });
 
-  it('volver() should navigate to siembra route', () => {
-    component.siembraId = 5;
-    component.volver();
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 5]);
-  });
 });

@@ -14,6 +14,9 @@
     }
   </header>
 
+  <!-- Jornales → Nóminas → Pagos: en qué paso está esta pantalla -->
+  <app-flujo-pago actual="payments" />
+
   @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
 
   <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">

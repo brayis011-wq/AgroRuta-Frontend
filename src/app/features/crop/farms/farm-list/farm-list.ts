@@ -12,6 +12,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { Finca, Lote } from '../../../../core/models/crop.model';
 import { escaparHtml } from '../../../../shared/html';
+import { ESTADOS_LOTE, colorEstadoLote, puntosDelLote } from '../../lot-map';
 import * as L from 'leaflet';
 
 @Component({
@@ -37,6 +38,11 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private map!: L.Map;
   private marcadores: Map<number, L.Marker> = new Map();
+  /** Los lotes de todas las fincas, coloreados por estado */
+  private lotesLayer = L.featureGroup();
+  /** Estados que tienen al menos un lote dibujado (para la leyenda) */
+  estadosEnMapa: string[] = [];
+  readonly colorEstado = colorEstadoLote;
   private langSub?: Subscription;
 
   constructor(
@@ -54,7 +60,10 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     // Al cambiar de idioma se redibujan los marcadores para actualizar los popups
     this.langSub = this.translate.onLangChange.subscribe(() => {
-      if (this.map && this.fincas.length > 0) this.dibujarMarcadores(false);
+      if (this.map && this.fincas.length > 0) {
+        this.dibujarMarcadores(false);
+        this.dibujarLotes(false);
+      }
     });
 
     const usuario = this.authService.getUsuario();
@@ -69,6 +78,8 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.map) {
               this.map.invalidateSize();
               this.dibujarMarcadores();
+              // Si los lotes llegaron antes que este dibujo, se vuelven a encuadrar con ellos
+              if (Object.keys(this.lotesPorFinca).length) this.dibujarLotes(true);
             }
           }, 100);
         },
@@ -107,6 +118,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     google.addTo(this.map);
+    this.lotesLayer.addTo(this.map);
     L.control.layers(
       { 'Google Satellite': google, 'Esri Satellite': esri },
       {},
@@ -173,8 +185,43 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
     forkJoin(this.fincas.map(f => this.cultivoService.listarLotesPorFinca(f.id!).pipe(catchError(() => of([] as Lote[])))))
       .subscribe(listas => {
         this.fincas.forEach((f, i) => this.lotesPorFinca[f.id!] = listas[i]);
+        if (this.map) this.dibujarLotes(true);
         this.cdr.detectChanges();
       });
+  }
+
+  /**
+   * Todos los lotes de todas las fincas, coloreados por estado. Al tocar uno se abre su detalle.
+   * Las fincas sin ubicación pero con lotes dibujados también quedan a la vista.
+   */
+  private dibujarLotes(ajustarVista: boolean): void {
+    this.lotesLayer.clearLayers();
+    const estados = new Set<string>();
+    for (const finca of this.fincas) {
+      for (const lote of this.lotesPorFinca[finca.id!] ?? []) {
+        const puntos = puntosDelLote(lote.coordenadas);
+        if (!puntos) continue;
+        estados.add(lote.estado);
+        const color = colorEstadoLote(lote.estado);
+        const poligono = L.polygon(puntos, { color, weight: 2, fillOpacity: 0.35 });
+        const estado = this.translate.instant('temporadas.lote.estado.' + lote.estado);
+        poligono.bindTooltip(
+          `<strong>${escaparHtml(lote.nombre)}</strong><br>${escaparHtml(finca.nombre)} · ${escaparHtml(estado)}`,
+          { direction: 'top', sticky: true },
+        );
+        poligono.on('click', () => this.router.navigate(['/crops/plot', lote.id]));
+        poligono.on('mouseover', () => poligono.setStyle({ fillOpacity: 0.6, weight: 3 }));
+        poligono.on('mouseout', () => poligono.setStyle({ fillOpacity: 0.35, weight: 2 }));
+        this.lotesLayer.addLayer(poligono);
+      }
+    }
+    this.estadosEnMapa = ESTADOS_LOTE.filter((e) => estados.has(e));
+
+    // Si hay fincas sin marcador (sin ubicación) pero con lotes, el encuadre debe incluirlos
+    if (ajustarVista && this.lotesLayer.getLayers().length > 0) {
+      const todo = L.featureGroup([...this.marcadores.values(), ...(this.lotesLayer.getLayers() as L.Layer[])]);
+      this.map.fitBounds(todo.getBounds(), { padding: [40, 40], maxZoom: 16 });
+    }
   }
 
   // ── Helpers de template ──────────────────────────────────────

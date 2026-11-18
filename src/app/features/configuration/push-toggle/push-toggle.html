@@ -5,7 +5,7 @@
       @switch (estado()) {
         @case ('no-soportado') { {{ 'config.push.unsupported' | translate }} }
         @case ('bloqueado') { {{ 'config.push.blocked' | translate }} }
-        @default { {{ 'config.push.hint' | translate }} }
+        @default { {{ pista() | translate }} }
       }
     </small>
     @if (mensaje(); as m) {

@@ -18,6 +18,7 @@ import { OfflineStatusComponent } from './offline-status/offline-status';
 import { ProgresoComponent } from './progress/progress';
 import { AvisoComponent } from './toast/toast';
 import { DeslizaCierraDirective } from '../../shared/swipe-close.directive';
+import { CampanaComponent } from '../../shared/inbox-bell/inbox-bell';
 import { abreTeclado, barraOcultaTras } from './scroll-bar';
 import { vigilarEntradas } from './reveal';
 import { consejoFumigacion, iconoClima, municipio } from '../../shared/weather';
@@ -46,7 +47,7 @@ export interface ItemSubmenu {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterModule, TranslatePipe, UpperCasePipe, DecimalPipe, NgTemplateOutlet, BuscadorComponent, OfflineStatusComponent, ProgresoComponent, AvisoComponent, DeslizaCierraDirective],
+  imports: [RouterModule, TranslatePipe, UpperCasePipe, DecimalPipe, NgTemplateOutlet, BuscadorComponent, OfflineStatusComponent, ProgresoComponent, AvisoComponent, DeslizaCierraDirective, CampanaComponent],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css', './layout-movil.css', './layout-extras.css', './layout-anim.css'],
 })

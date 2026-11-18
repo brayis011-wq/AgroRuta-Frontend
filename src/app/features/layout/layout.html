@@ -8,6 +8,8 @@
         <strong class="ar-titulo">AgroRuta</strong>
         <small>{{ 'layout.subtitle' | translate }}</small>
       </div>
+      <!-- Bandeja de avisos (en el celular también va en la barra inferior) -->
+      <app-campana />
       <button type="button" class="ib colapsar" (click)="alternarColapsado()"
               [attr.aria-label]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate"
               [title]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate">
@@ -204,6 +206,7 @@
     <a routerLink="/reports" routerLinkActive="on">
       <i class="ti ti-chart-bar"></i><span>{{ 'layout.nav.reports' | translate }}</span>
     </a>
+    <app-campana modo="barra" />
     <button type="button" (click)="cajonAbierto.set(true)" [attr.aria-expanded]="cajonAbierto()">
       <i class="ti ti-menu-2"></i><span>{{ 'layout.nav.more' | translate }}</span>
     </button>

@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { ContarDirective } from '../../../../shared/count-up.directive';
 import { Subscription, forkJoin, of, catchError } from 'rxjs';
 import { LanguageService } from '../../../../core/services/language.service';
 import { formatoNumero } from '../../../../shared/format';
 import { escaparHtml } from '../../../../shared/html';
+import { colorEstadoLote } from '../../lot-map';
 import { progresoCiclo } from '../../planting/stage-cycle/stage-cycle.logic';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { EstadoLote, Finca, Lote, Siembra, nombreCultivo } from '../../../../core/models/crop.model';
@@ -17,7 +19,7 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-detalle-finca',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, ContarDirective],
+  imports: [CommonModule, FormsModule, TranslatePipe, ContarDirective, MigasCultivoComponent],
   templateUrl: './farm-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './farm-detail.css'],
 })
@@ -227,12 +229,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getColorEstado(estado: string): string {
-    switch (estado) {
-      case 'DISPONIBLE': return '#1f5fa8';
-      case 'EN_CULTIVO': return '#2e7d32';
-      case 'EN_DESCANSO': return '#b26a00';
-      default: return '#2e7d32';
-    }
+    return colorEstadoLote(estado);
   }
 
   getEstadoColor(estado: string): string {
@@ -329,7 +326,4 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  volver(): void {
-    this.router.navigate(['/crops']);
-  }
 }

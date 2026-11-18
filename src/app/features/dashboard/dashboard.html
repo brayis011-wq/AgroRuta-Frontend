@@ -53,6 +53,11 @@
     </svg>
   </section>
 
+  <!-- Primeros pasos: solo mientras falte alguno (y la persona no la haya ocultado) -->
+  @if (primerosPasos(); as pasos) {
+    <app-primeros-pasos [pasos]="pasos" />
+  }
+
   <!-- Números del mes -->
   <section class="kpis" [attr.aria-busy]="cargando()">
     @if (resumen(); as r) {

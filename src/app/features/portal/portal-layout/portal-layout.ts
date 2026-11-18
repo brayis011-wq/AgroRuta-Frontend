@@ -10,13 +10,14 @@ import { PortalService } from '../../../core/services/portal.service';
 import { ProfileService } from '../../../core/services/profile.service';
 import { TemaService } from '../../../core/services/theme.service';
 import { iniciales as inicialesDe } from '../../../shared/iniciales';
+import { CampanaComponent } from '../../../shared/inbox-bell/inbox-bell';
 
 const CLAVE_COLAPSADO = 'portal-menu-colapsado';
 
 @Component({
   selector: 'app-portal-layout',
   standalone: true,
-  imports: [AsyncPipe, UpperCasePipe, RouterModule, TranslatePipe],
+  imports: [AsyncPipe, UpperCasePipe, RouterModule, TranslatePipe, CampanaComponent],
   templateUrl: './portal-layout.html',
   styleUrls: ['../../layout/layout.css', '../../layout/layout-movil.css', './portal-layout.css'],
 })

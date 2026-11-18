@@ -1,0 +1,28 @@
+:host { display: block; align-self: stretch; min-width: 0; }
+
+.migas { font-size: .85rem; font-weight: 600; color: var(--ar-tinta-3); }
+
+ol { display: flex; align-items: center; flex-wrap: wrap; gap: .15rem .3rem; margin: 0; padding: 0; list-style: none; }
+li { display: inline-flex; align-items: center; gap: .3rem; min-width: 0; }
+li a, li span { max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+li a { color: var(--ar-tinta-2); text-decoration: none; border-radius: 6px; padding: .15rem .1rem; transition: color .15s; }
+li a:hover { color: var(--ar-verde-700); text-decoration: underline; text-underline-offset: 3px; }
+li [aria-current='page'] { color: var(--ar-tinta); }
+.sep { font-size: 14px; color: var(--ar-tinta-3); opacity: .7; }
+
+a:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+
+/* Mientras llega el nombre */
+.hueco { display: inline-block; width: 5.5rem; height: .8rem; border-radius: 6px; background: var(--ar-borde); animation: latir 1.2s ease-in-out infinite; }
+@keyframes latir { 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .hueco { animation: none; } }
+
+/* Botón de volver: solo en el celular */
+.atras { display: none; align-items: center; gap: .35rem; max-width: 100%; color: var(--ar-tinta-2); text-decoration: none; padding: .2rem 0; }
+.atras span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.atras:hover { color: var(--ar-verde-700); }
+
+@media (max-width: 720px) {
+  ol { display: none; }
+  .atras { display: inline-flex; }
+}

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { RestriccionVigente } from '../../../../core/models/crop.model';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -12,7 +13,7 @@ import { formatoFecha, formatoPesos } from '../../../../shared/format';
 @Component({
   selector: 'app-registrar-cosecha',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, MigasCultivoComponent],
   templateUrl: './log-harvest.html',
   styleUrls: ['../../crop-form.css', './log-harvest.css']
 })
@@ -129,7 +130,4 @@ export class RegistrarCosecha implements OnInit {
     this.confirmarCarencia = false;
   }
 
-  volver(): void {
-    this.router.navigate(['/crops/planting', this.siembraId]);
-  }
 }

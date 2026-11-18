@@ -25,6 +25,9 @@
     </div>
   </header>
 
+  <!-- Jornales → Nóminas → Pagos: en qué paso está esta pantalla -->
+  <app-flujo-pago actual="wages" />
+
   @if (!cargandoTrabajadores && trabajadores.length === 0) {
     <section class="tarjeta">
       <div class="vacio">

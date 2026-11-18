@@ -1,7 +1,5 @@
 <div class="cv">
-  <button type="button" class="volver" (click)="volver()">
-    <i class="ti ti-arrow-left"></i> {{ nombreLote ? ('temporadas.ui.backToLot' | translate: { lote: nombreLote }) : ('temporadas.lote.backPlain' | translate) }}
-  </button>
+  <app-migas-cultivo [siembra]="siembraId" />
 
   @if (error) {
     <p class="aviso error" role="alert"><i class="ti ti-alert-circle"></i> {{ error | translate }}</p>
@@ -70,15 +68,17 @@
               <i class="ti ti-basket-off"></i>
               <span><b>{{ 'temporadas.carencia.noHarvestUntil' | translate: { date: fmtDia(c.libreDesde) } }}</b>
                 <small>{{ c.producto }} · {{ (c.diasRestantes === 1 ? 'temporadas.carencia.leftOne' : 'temporadas.carencia.left') | translate: { days: c.diasRestantes } }}</small></span>
+              <app-ayuda clave="help.carencia" termino="help.carenciaTerm" />
             </p>
           } @else {
-            <p class="alerta-cultivo verde"><i class="ti ti-basket-check"></i> <span><b>{{ 'temporadas.carencia.canHarvest' | translate }}</b></span></p>
+            <p class="alerta-cultivo verde"><i class="ti ti-basket-check"></i> <span><b>{{ 'temporadas.carencia.canHarvest' | translate }}</b></span> <app-ayuda clave="help.carencia" termino="help.carenciaTerm" /></p>
           }
           @if (resumen.reentrada; as r) {
             <p class="alerta-cultivo ambar">
               <i class="ti ti-door-off"></i>
               <span><b>{{ 'temporadas.carencia.noEntryUntil' | translate: { date: fmtDia(r.libreDesde) } }}</b>
                 <small>{{ r.producto }} · {{ 'temporadas.carencia.reentryHours' | translate: { hours: r.valor } }}</small></span>
+              <app-ayuda clave="help.reentrada" termino="help.reentradaTerm" />
             </p>
           }
         }

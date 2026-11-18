@@ -82,7 +82,7 @@
               <th>{{ 'workers.ui.col.post' | translate }}</th>
               <th class="num">{{ 'workers.ui.col.wage' | translate }}</th>
               <th>{{ 'workers.ui.col.state' | translate }}</th>
-              <th>{{ 'workers.home.access.title' | translate }}</th>
+              <th>{{ 'workers.home.access.title' | translate }} <app-ayuda clave="help.portal" termino="help.portalTerm" /></th>
               <th><span class="sr-only">{{ 'workers.ui.col.actions' | translate }}</span></th>
             </tr>
           </thead>
@@ -165,7 +165,7 @@
         </section>
 
         <section class="bloque">
-          <h3>{{ 'workers.home.access.title' | translate }}</h3>
+          <h3>{{ 'workers.home.access.title' | translate }} <app-ayuda clave="help.portal" termino="help.portalTerm" /></h3>
           <div class="acceso" [class]="'acceso-' + (t.accesoEstado || 'NINGUNO')">
             @switch (t.accesoEstado) {
               @case ('PENDIENTE') {

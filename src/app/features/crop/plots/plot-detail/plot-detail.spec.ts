@@ -148,9 +148,11 @@ describe('DetalleLoteComponent', () => {
   it('al cerrar la temporada recarga el lote y el historial', async () => {
     fixture.detectChanges();
     await fixture.whenStable();
+    // Las migas de pan también leen el lote al abrir: se cuenta solo lo que pide el cierre
+    cultivoServiceMock.buscarLote.mockClear();
     cultivoServiceMock.historialLote.mockClear();
     component.alCambiarSiembra({ ...activa, estadoCultivo: 'FINALIZADO', fechaFin: '2026-06-01' });
-    expect(cultivoServiceMock.buscarLote).toHaveBeenCalledTimes(2);
+    expect(cultivoServiceMock.buscarLote).toHaveBeenCalledTimes(1);
     expect(cultivoServiceMock.historialLote).toHaveBeenCalledTimes(1);
   });
 
