@@ -7,18 +7,34 @@ import { of, throwError } from 'rxjs';
 import { RegistrarFumigacion } from './log-spraying';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { AgriculturalInputService } from '../../../../core/services/agricultural-input.service';
+import { InventarioService } from '../../../../core/services/inventory.service';
 
 describe('RegistrarFumigacion', () => {
   let component: RegistrarFumigacion;
   let fixture: ComponentFixture<RegistrarFumigacion>;
   let cultivoServiceMock: any;
   let inputServiceMock: any;
+  let inventarioMock: any;
   let router: Router;
 
   const mockInsumo: any = {
     id: 1, nombre: 'Herbicida X', tipo: 'HERBICIDA',
     unidadSugerida: 'LITROS', dosisSugerida: 2,
-    tipoDisplay: 'Herbicida',
+    tipoDisplay: 'Herbicida', reentradaHoras: 12, diasCarencia: 7,
+  };
+  /** En el catálogo, pero sin compras: no está en la bodega */
+  const fueraDeBodega: any = {
+    id: 2, nombre: 'Mancozeb', tipo: 'FUNGICIDA',
+    unidadSugerida: 'KG', dosisSugerida: 1, tipoDisplay: 'Fungicida', reentradaHoras: 24,
+  };
+  const stockHerbicida: any = {
+    insumoId: 1, nombre: 'Herbicida X', tipo: 'HERBICIDA', unidadBase: 'ML',
+    cantidad: 2500, stockMinimo: null, costoPromedio: 40, valorStock: 100000, estado: 'OK', ultimoMovimiento: null,
+  };
+  /** En la bodega, pero su ficha ya no está en el catálogo activo */
+  const stockSinFicha: any = {
+    insumoId: 9, nombre: 'Abono viejo', tipo: null, unidadBase: 'GRAMOS',
+    cantidad: 0, stockMinimo: null, costoPromedio: null, valorStock: null, estado: 'AGOTADO', ultimoMovimiento: null,
   };
 
   beforeEach(async () => {
@@ -26,8 +42,12 @@ describe('RegistrarFumigacion', () => {
       registrarFumigacion: vi.fn().mockReturnValue(of({})),
     };
     inputServiceMock = {
-      search: vi.fn().mockReturnValue(of([mockInsumo])),
-      getAll: vi.fn().mockReturnValue(of([mockInsumo])),
+      search: vi.fn().mockReturnValue(of([mockInsumo, fueraDeBodega])),
+      getAll: vi.fn().mockReturnValue(of([mockInsumo, fueraDeBodega])),
+    };
+    inventarioMock = {
+      stock: vi.fn().mockReturnValue(of([stockSinFicha, stockHerbicida])),
+      costoEstimado: vi.fn().mockReturnValue(of(null)),
     };
 
     await TestBed.configureTestingModule({
@@ -36,6 +56,7 @@ describe('RegistrarFumigacion', () => {
         provideRouter([]),
         { provide: CultivoService,           useValue: cultivoServiceMock },
         { provide: AgriculturalInputService, useValue: inputServiceMock   },
+        { provide: InventarioService,        useValue: inventarioMock     },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: vi.fn((k: string) => (k === 'id' ? '1' : null)) } } },
@@ -110,49 +131,128 @@ describe('RegistrarFumigacion', () => {
     expect(component.form.producto).toBe('Herbicida X');
   });
 
-  // ── verCatalogoCompleto ──────────────────────────────────────
-  it('verCatalogoCompleto() should toggle off when already showing', () => {
-    component.mostrarCatalogoCompleto.set(true);
-    component.verCatalogoCompleto();
-    expect(component.mostrarCatalogoCompleto()).toBe(false);
+  // ── Solo insumos de la bodega ────────────────────────────────
+  it('loads only the inputs recorded in the warehouse, not the whole catalog', () => {
+    expect(inventarioMock.stock).toHaveBeenCalledTimes(1);
+    expect(component.cargandoBodega()).toBe(false);
+    expect(component.bodega().map((b) => b.stock.nombre)).toEqual(['Abono viejo', 'Herbicida X']);
+    expect(component.bodega().some((b) => b.stock.nombre === 'Mancozeb')).toBe(false);
+    // La ficha del catálogo acompaña al producto de la bodega (dosis sugerida, reentrada)
+    expect(component.bodega()[1].insumo).toEqual(mockInsumo);
+    expect(component.bodega()[0].insumo).toBeNull();
   });
 
-  it('verCatalogoCompleto() should load and show catalogo', async () => {
-    component.verCatalogoCompleto();
-    await fixture.whenStable();
-    expect(inputServiceMock.getAll).toHaveBeenCalled();
-    expect(component.catalogoCompleto()).toEqual([mockInsumo]);
-    expect(component.mostrarCatalogoCompleto()).toBe(true);
+  it('searches inside the warehouse without asking the catalog', () => {
+    component.busquedaProducto = 'herbi';
+    component.onBusquedaChange();
+    expect(component.catalogoFiltrado().map((b) => b.stock.insumoId)).toEqual([1]);
+    expect(component.mostrarCatalogo()).toBe(true);
+    expect(inputServiceMock.search).not.toHaveBeenCalled();
   });
 
-  it('verCatalogoCompleto() should not reload if already loaded', () => {
-    component.catalogoCompleto.set([mockInsumo]);
-    component.verCatalogoCompleto();
-    expect(inputServiceMock.getAll).not.toHaveBeenCalled();
-    expect(component.mostrarCatalogoCompleto()).toBe(true);
+  it('does not offer a catalog product that is not in the warehouse', () => {
+    component.busquedaProducto = 'mancozeb';
+    component.onBusquedaChange();
+    expect(component.catalogoFiltrado()).toEqual([]);
+    // La lista se abre igual, para avisar que no está en la bodega
+    expect(component.mostrarCatalogo()).toBe(true);
   });
 
-  it('verCatalogoCompleto() should set error on failure', async () => {
+  it('ignores accents and capitals when searching', () => {
+    component.busquedaProducto = 'ÁBONO';
+    component.onBusquedaChange();
+    expect(component.catalogoFiltrado().map((b) => b.stock.insumoId)).toEqual([9]);
+  });
+
+  it('closes the results when the search is emptied', () => {
+    component.busquedaProducto = 'herbi';
+    component.onBusquedaChange();
+    component.busquedaProducto = '  ';
+    component.onBusquedaChange();
+    expect(component.mostrarCatalogo()).toBe(false);
+    expect(component.catalogoFiltrado()).toEqual([]);
+  });
+
+  it('seleccionarDeBodega() fills the form with the catalog sheet of the product', () => {
+    component.mostrarBodega.set(true);
+    component.seleccionarDeBodega(component.bodega()[1]);
+    expect(component.form.agriculturalInputId).toBe(1);
+    expect(component.form.dosis).toBe(2);
+    expect(component.form.reentradaHoras).toBe(12);
+    expect(component.form.diasCarencia).toBe(7);
+    expect(component.form.unidadCantidad).toBe('LITROS');
+    expect(component.mostrarBodega()).toBe(false);
+  });
+
+  it('seleccionarDeBodega() works for a product whose catalog sheet is gone', () => {
+    component.seleccionarDeBodega(component.bodega()[0]);
+    expect(component.form.agriculturalInputId).toBe(9);
+    expect(component.form.producto).toBe('Abono viejo');
+    expect(component.form.unidadMedida).toBe('KG');
+    expect(component.form.dosis).toBeUndefined();
+    expect(component.form.reentradaHoras).toBeNull();
+  });
+
+  it('cantidadDe() shows what is left of the product', () => {
+    expect(component.cantidadDe(component.bodega()[1])).toBe('2,5 L');
+  });
+
+  it('still lists the warehouse when the catalog fails', () => {
     inputServiceMock.getAll.mockReturnValue(throwError(() => new Error()));
-    component.verCatalogoCompleto();
-    await fixture.whenStable();
-    expect(component.error).toBe('siembra.spray.errors.loadCatalog');
+    const otro = TestBed.createComponent(RegistrarFumigacion);
+    otro.detectChanges();
+    expect(otro.componentInstance.bodega().length).toBe(2);
+    expect(otro.componentInstance.bodega()[1].insumo).toBeNull();
+    expect(otro.componentInstance.error).toBe('');
   });
 
-  // ── getCatalogoAgrupado ──────────────────────────────────────
-  it('getCatalogoAgrupado() should group items by tipo', () => {
-    component.catalogoCompleto.set([mockInsumo]);
-    const grupos = component.getCatalogoAgrupado();
-    expect(grupos.length).toBe(1);
-    expect(grupos[0].tipo).toBe('HERBICIDA'); // el código del tipo; la pantalla lo traduce
-    expect(grupos[0].items).toEqual([mockInsumo]);
+  it('sets an error when the warehouse cannot be loaded', () => {
+    inventarioMock.stock.mockReturnValue(throwError(() => new Error()));
+    const otro = TestBed.createComponent(RegistrarFumigacion);
+    otro.detectChanges();
+    expect(otro.componentInstance.error).toBe('siembra.spray.errors.loadStock');
+    expect(otro.componentInstance.cargandoBodega()).toBe(false);
+    expect(otro.componentInstance.bodega()).toEqual([]);
   });
 
-  it('getCatalogoAgrupado() should filter by filtroCatalogo', () => {
-    component.catalogoCompleto.set([mockInsumo]);
-    component.filtroCatalogo = 'fungicida';
-    const grupos = component.getCatalogoAgrupado();
-    expect(grupos.length).toBe(0);
+  it('shows a link to record a purchase when the warehouse is empty', () => {
+    inventarioMock.stock.mockReturnValue(of([]));
+    const otro = TestBed.createComponent(RegistrarFumigacion);
+    otro.detectChanges();
+    const el: HTMLElement = otro.nativeElement;
+    expect(el.querySelector('.bodega-vacia a')?.getAttribute('href')).toBe('/crops/inventory');
+    expect(el.querySelector('.btn-catalogo')).toBeNull();
+  });
+
+  // ── verBodega / getBodegaAgrupada ────────────────────────────
+  it('verBodega() toggles the warehouse list', () => {
+    component.verBodega();
+    expect(component.mostrarBodega()).toBe(true);
+    component.verBodega();
+    expect(component.mostrarBodega()).toBe(false);
+  });
+
+  it('getBodegaAgrupada() groups the warehouse by type', () => {
+    const grupos = component.getBodegaAgrupada();
+    expect(grupos.map((g) => g.tipo).sort()).toEqual(['', 'HERBICIDA']); // el código del tipo; la pantalla lo traduce
+    expect(grupos.find((g) => g.tipo === 'HERBICIDA')!.items.map((b) => b.stock.insumoId)).toEqual([1]);
+  });
+
+  it('getBodegaAgrupada() applies the list filter', () => {
+    component.filtroBodega = 'fungicida';
+    expect(component.getBodegaAgrupada().length).toBe(0);
+    component.filtroBodega = 'herbicida x';
+    expect(component.getBodegaAgrupada().length).toBe(1);
+  });
+
+  it('renders the warehouse list with the quantity left', () => {
+    component.verBodega();
+    fixture.componentRef.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    const filas = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('.catalogo-completo .catalogo-item'));
+    expect(filas.length).toBe(2);
+    expect(filas.some((f) => f.textContent?.includes('Herbicida X'))).toBe(true);
+    expect((fixture.nativeElement as HTMLElement).querySelector('.est-stock.AGOTADO')).not.toBeNull();
   });
 
   // ── getTipoBadgeClass ────────────────────────────────────────

@@ -26,7 +26,7 @@
     <div class="kpis">
       <article class="kpi"><span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
         <div><small>{{ 'reports.payroll.kpi.paid' | translate }}</small><strong>{{ pesos(s.total) }}</strong>
-          <em>{{ 'reports.payroll.kpi.paidSub' | translate: { count: s.pagos } }}</em></div></article>
+          <em>{{ (s.pagos === 1 ? 'reports.payroll.kpi.paidSubOne' : 'reports.payroll.kpi.paidSub') | translate: { count: s.pagos } }}</em></div></article>
       <article class="kpi"><span class="ic ambar"><i class="ti ti-clock-hour-4" aria-hidden="true"></i></span>
         <div><small>{{ 'reports.payroll.kpi.pending' | translate }}</small><strong>{{ pesos(s.pendiente) }}</strong>
           <em>{{ (s.nominasPendientes === 1 ? 'reports.payroll.kpi.pendingSubOne' : 'reports.payroll.kpi.pendingSub') | translate: { count: s.nominasPendientes } }}</em></div></article>
@@ -105,7 +105,7 @@
           <tbody>
             @for (w of filas(); track w.workerId) {
               <tr>
-                <td><span class="persona"><span class="av">{{ w.workerName.charAt(0) }}</span>{{ w.workerName }}</span></td>
+                <td><span class="persona"><span class="av" aria-hidden="true">{{ w.workerInitials || iniciales(w.workerName) }}</span>{{ w.workerName }}</span></td>
                 <td class="suave">{{ fecha(w.periodoInicio) }} – {{ fecha(w.periodoFin) }}</td>
                 <td class="num">{{ numero(w.totalJornales) }}</td>
                 <td class="num">{{ numero(w.totalPagos) }}</td>

@@ -16,6 +16,7 @@ import {
 import { Trabajador, Nomina, Cargo, ResumenPagos } from '../../../core/models/worker.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { PesosPipe, FechaPipe } from '../../../shared/format.pipe';
+import { iniciales as inicialesDe } from '../../../shared/iniciales';
 
 type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 
@@ -157,6 +158,10 @@ export class WorkerHomeComponent implements OnInit {
   get totalPagado():         number { return this.resumenPagos.total ?? 0; }
 
   // ── Panel ────────────────────────────────────────────────────────────────
+
+  iniciales(t: Trabajador): string {
+    return inicialesDe(t.nombre, t.apellido ?? null);
+  }
 
   abrirNuevo(): void {
     this.formNuevo.reset({ tipoContrato: 'FIJO', cargoId: null });

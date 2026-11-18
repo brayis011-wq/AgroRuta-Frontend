@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SimpleChange } from '@angular/core';
 import { ProfileFormComponent } from './profile-form';
 
-const mockPerfil = { id: 1, nombre: 'Juan Perez', email: 'juan@test.com', telefono: '3001234567', fotoPerfil: 'https://example.com/foto.jpg', rol: 'AGRICULTOR' };
+const mockPerfil = { id: 1, nombre: 'Juan Perez', email: 'juan@test.com', telefono: '3001234567', fotoPerfil: 'https://example.com/foto.jpg', rol: 'Agricultor' };
 
 describe('ProfileFormComponent', () => {
   let component: ProfileFormComponent;
@@ -77,7 +77,7 @@ describe('ProfileFormComponent', () => {
     expect(spy).toHaveBeenCalled();
   });
   it('descartar() returns to the saved data', () => {
-    component.perfil = { id: 1, nombre: 'Ana', email: 'a@b.co', telefono: '3001234567', fotoPerfil: '', rol: 'AGRICULTOR' };
+    component.perfil = { id: 1, nombre: 'Ana', email: 'a@b.co', telefono: '3001234567', fotoPerfil: '', rol: 'Agricultor' };
     component.ngOnChanges({ perfil: {} as never });
     component.form.get('nombre')?.setValue('Otra');
     component.form.markAsDirty();

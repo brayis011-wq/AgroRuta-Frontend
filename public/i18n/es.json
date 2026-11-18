@@ -1,16 +1,14 @@
 {
+  "almanaque": {"title":"Almanaque de hoy","moonLabel":"Fase de la luna: {{phase}}","phase":{"nueva":"Luna nueva","creciente":"Luna creciente","llena":"Luna llena","menguante":"Luna menguante"},"lore":{"nueva":"Dicen los abuelos: la tierra descansa; buen día para limpiar y abonar.","creciente":"Dicen los abuelos: buen tiempo para sembrar lo que crece hacia arriba.","llena":"Dicen los abuelos: buen tiempo para cosechar; las podas, mejor después.","menguante":"Dicen los abuelos: buen tiempo para podar y para sembrar raíces."},"sayingLabel":"Dicho del día","sayings":{"s1":"Al que madruga, Dios le ayuda.","s2":"El que siembra, recoge.","s3":"Cuentas claras, chocolate espeso.","s4":"Grano a grano llena la gallina el buche.","s5":"El ojo del amo engorda el ganado.","s6":"No dejes para mañana lo que puedas hacer hoy.","s7":"Al mal tiempo, buena cara.","s8":"Poco a poco se anda lejos.","s9":"Agua que no has de beber, déjala correr.","s10":"Camarón que se duerme, se lo lleva la corriente.","s11":"Más vale prevenir que lamentar.","s12":"Quien bien siembra, bien cosecha."}},
   "diagnostico": {"title":"Diagnóstico con foto","hint":"Toma una foto de la hoja, el tallo o el fruto que te preocupa y recibe una orientación sobre qué puede ser y qué hacer. Queda guardada en esta siembra.","left":"Quedan {{count}} hoy","noneLeft":"Ya usaste los análisis de hoy","take":"Tomar foto","choose":"Elegir una foto","note":"¿Qué estás viendo? (opcional)","notePlaceholder":"Ej.: manchas amarillas que salieron esta semana en las hojas de abajo","analyze":"Analizar foto","analyzing":"Analizando…","wait":"Puede tardar hasta un minuto. No cierres la página.","cancel":"Cancelar","off":"El diagnóstico con foto todavía no está activado.","loadError":"No se pudieron cargar los diagnósticos de esta siembra.","privacy":"La foto se envía a un servicio de inteligencia artificial (Gemini, de Google) solo para analizarla, sin datos de ubicación.","disclaimer":"Es una orientación a partir de una foto: no reemplaza la visita de un ingeniero agrónomo. Antes de aplicar un producto revisa la etiqueta y el periodo de carencia.","empty":"Aún no hay diagnósticos en esta siembra.","seen":"Lo que se ve","steps":"Qué hacer","others":"También podría ser","yourNote":"Tu nota","photoAlt":"Foto analizada","previewAlt":"Foto elegida","delete":"Eliminar","deleteTitle":"Eliminar diagnóstico","deleteMsg":"Se borrará «{{nombre}}» y su foto de esta siembra.","errors":{"tipo":"Ese archivo no es una imagen. Usa una foto JPG o PNG.","pesada":"La foto pesa demasiado (máximo 15 MB).","lectura":"No se pudo abrir la foto. Prueba con otra o tómala de nuevo.","offline":"Necesitas conexión a internet para esto.","generic":"No se pudo analizar la foto. Inténtalo de nuevo.","delete":"No se pudo eliminar el diagnóstico."},"tipo":{"PLAGA":"Plaga","ENFERMEDAD":"Enfermedad","DEFICIENCIA":"Deficiencia de nutrientes","DANO_AMBIENTAL":"Daño ambiental","SANA":"Planta sana","INDETERMINADO":"Sin determinar"},"confianza":{"ALTA":"confianza alta","MEDIA":"confianza media","BAJA":"confianza baja"}},
   "offline": {"title":"Trabajo sin conexión","close":"Cerrar","offline":"Sin conexión","pending":"{{n}} por enviar","sending":"Enviando…","sendNow":"Enviar ahora","sent":"Registros enviados: {{n}}","savedHere":"Guardado en este dispositivo","onlineHint":"Estos registros se hicieron sin señal y están guardados en este dispositivo. Se envían solos; también puedes enviarlos ahora.","offlineHint":"Puedes seguir registrando jornales, fumigaciones, cosechas y actividades: se guardan en este dispositivo y se envían solos cuando vuelva la señal.","copyFrom":"Estás viendo datos guardados el {{fecha}}.","savedAt":"Guardado el {{fecha}}","nothing":"No hay registros por enviar.","retry":"Reintentar","discard":"Descartar","discardSure":"¿Descartar?","confirmWithdrawal":"Cosechar de todas formas","rejected":"El servidor no aceptó este registro.","tipo":{"jornal":"Jornal","fumigacion":"Fumigación","cosecha":"Cosecha","actividad":"Actividad"}},
   "receipt": {"download":"Descargar comprobante","downloadShort":"Comprobante","downloadHint":"PDF con código QR para verificarlo","downloadError":"No se pudo descargar el comprobante. Intenta de nuevo.","verify":{"checking":"Verificando el comprobante…","validTitle":"Comprobante auténtico","validText":"Este pago está registrado en AgroRuta con estos datos.","amount":"Valor pagado","number":"Comprobante","worker":"Recibió","idNumber":"Cédula","employer":"Pagó","period":"Período trabajado","compare":"Compara el valor y la fecha con el papel. Si son distintos, el comprobante fue alterado.","invalidTitle":"Comprobante no válido","invalidText":"Este código no corresponde a ningún pago registrado en AgroRuta. Puede que el comprobante esté alterado o que el enlace esté incompleto.","offlineTitle":"No se pudo verificar","offlineText":"No hay conexión con el servidor en este momento. Esto no significa que el comprobante sea falso."}},
-  "inventario": {"nav":"Bodega de insumos","eyebrow":"Cultivos","title":"Bodega de insumos","subtitle":"Lo que tienes de cada producto, cuánto vale y en qué se ha gastado. Las fumigaciones descuentan solas lo que usan.","buy":"Registrar compra","adjust":"Conteo","minimum":"Aviso de mínimo","list":"Productos en bodega","empty":"Todavía no hay productos en tu bodega. Registra tu primera compra para empezar.","hint":"El costo promedio sale de tus compras con precio y es el que se usa para calcular el costo de cada fumigación.","kpi":{"items":"Productos","value":"Valor en bodega","valueHint":"a costo promedio de compra","alerts":"Por revisar","alertsHint":"bajos, agotados o en negativo"},"table":{"item":"Producto","stock":"Hay","minimum":"Mínimo","avgCost":"Costo promedio","value":"Valor"},"status":{"OK":"Bien","BAJO":"Bajo","AGOTADO":"Agotado","NEGATIVO":"En negativo"},"history":{"title":"Movimientos","empty":"Sin movimientos.","type":{"COMPRA":"Compra","USO":"Fumigación","AJUSTE":"Conteo"},"fromSpray":"desde la fumigación","fromSprayHint":"Para corregirlo, edita o elimina la fumigación.","confirmDelete":"¿Eliminar este movimiento? El stock se recalcula."},"form":{"compraTitle":"Registrar compra","ajusteTitle":"Conteo de bodega","minimoTitle":"Aviso de mínimo","item":"Producto del catálogo","itemPlaceholder":"Elige un producto","quantity":"Cantidad","quantityError":"Escribe una cantidad mayor a 0.","unit":"Unidad","totalCost":"Costo total de la compra","totalCostHint":"Lo que pagaste por toda la compra. Sirve para calcular el costo de cada fumigación.","date":"Fecha de compra","supplier":"Proveedor","notes":"Observaciones","adjustHint":"Escribe cuánto hay de verdad en la bodega. Se registra la diferencia con lo que dice la app.","counted":"Cantidad contada","reason":"Motivo","reasonPlaceholder":"p. ej. se derramó, préstamo, conteo de fin de mes","minimumHint":"Te avisamos en el inicio y en el correo diario cuando quede esta cantidad o menos.","minimum":"Avisar cuando queden","removeMinimum":"Quitar aviso"},"spray":{"used":"Cantidad total usada","usedHint":"Todo el producto que gastaste (no la dosis por tanque). Se descuenta de tu bodega.","inStock":"En bodega: {{cantidad}}","notInStock":"Este producto no tiene compras registradas en tu bodega.","estimated":"Costo calculado con tu precio promedio: {{costo}}","useEstimated":"Usar este costo","noPrice":"Registra el costo de tus compras para calcular el costo de la fumigación."},"dashboard":{"alerts":"{{n}} productos por revisar en la bodega","alertsOne":"1 producto por revisar en la bodega"},"errors":{"load":"No se pudo cargar la bodega.","save":"No se pudo guardar."}},
+  "inventario": {"nav":"Bodega de insumos","eyebrow":"Cultivos","title":"Bodega de insumos","subtitle":"Lo que tienes de cada producto, cuánto vale y en qué se ha gastado. Las fumigaciones descuentan solas lo que usan.","buy":"Registrar compra","adjust":"Conteo","minimum":"Aviso de mínimo","list":"Productos en bodega","empty":"Todavía no hay productos en tu bodega. Registra tu primera compra para empezar.","hint":"El costo promedio sale de tus compras con precio y es el que se usa para calcular el costo de cada fumigación.","kpi":{"items":"Productos","value":"Valor en bodega","valueHint":"a costo promedio de compra","alerts":"Por revisar","alertsHint":"bajos, agotados o en negativo"},"table":{"item":"Producto","stock":"Hay","minimum":"Mínimo","avgCost":"Costo promedio","value":"Valor"},"status":{"OK":"Bien","BAJO":"Bajo","AGOTADO":"Agotado","NEGATIVO":"En negativo"},"history":{"title":"Movimientos","empty":"Sin movimientos.","type":{"COMPRA":"Compra","USO":"Fumigación","AJUSTE":"Conteo"},"fromSpray":"desde la fumigación","fromSprayHint":"Para corregirlo, edita o elimina la fumigación.","confirmDelete":"¿Eliminar este movimiento? El stock se recalcula."},"form":{"compraTitle":"Registrar compra","ajusteTitle":"Conteo de bodega","minimoTitle":"Aviso de mínimo","item":"Producto del catálogo","itemPlaceholder":"Elige un producto","quantity":"Cantidad","quantityError":"Escribe una cantidad mayor a 0.","unit":"Unidad","totalCost":"Costo total de la compra","totalCostHint":"Lo que pagaste por toda la compra. Sirve para calcular el costo de cada fumigación.","date":"Fecha de compra","supplier":"Proveedor","notes":"Observaciones","adjustHint":"Escribe cuánto hay de verdad en la bodega. Se registra la diferencia con lo que dice la app.","counted":"Cantidad contada","reason":"Motivo","reasonPlaceholder":"p. ej. se derramó, préstamo, conteo de fin de mes","minimumHint":"Te avisamos en el inicio y en el correo diario cuando quede esta cantidad o menos.","minimum":"Avisar cuando queden","removeMinimum":"Quitar aviso"},"spray":{"used":"Cantidad total usada","usedHint":"Todo el producto que gastaste (no la dosis por tanque). Se descuenta de tu bodega.","inStock":"En bodega: {{cantidad}}","notInStock":"Este producto no tiene compras registradas en tu bodega.","estimated":"Costo calculado con tu precio promedio: {{costo}}","useEstimated":"Usar este costo","noPrice":"Registra el costo de tus compras para calcular el costo de la fumigación."},"errors":{"load":"No se pudo cargar la bodega.","save":"No se pudo guardar."}},
   "theme": {"title": "Apariencia", "hint": "Modo claro, oscuro o automático según tu celular o computador", "light": "Claro", "dark": "Oscuro", "system": "Automático", "toDark": "Cambiar a modo oscuro", "toLight": "Cambiar a modo claro"},
   "common": {
     "language": "Idioma",
-    "spanish": "Español",
-    "english": "Inglés",
     "loading": "Cargando...",
     "retry": "Reintentar",
-    "view": "Ver",
     "optional": "opcional",
     "cancel": "Cancelar",
     "save": "Guardar",
@@ -33,7 +31,6 @@
       "workers": "Trabajadores",
       "reports": "Reportes",
       "settings": "Configuración",
-      "backups": "Copias de seguridad",
       "team": "Equipo",
       "wages": "Jornales",
       "payrolls": "Nóminas",
@@ -164,15 +161,6 @@
       "Agricultor": "Agricultor",
       "Trabajador": "Trabajador"
     },
-    "cropReportStatus": {
-      "GERMINACION": "Germinación",
-      "ACTIVO": "Activo",
-      "COSECHADO": "Cosechado",
-      "INACTIVO": "Inactivo",
-      "PRODUCCION": "En producción",
-      "CRECIMIENTO": "Crecimiento",
-      "FINALIZADO": "Finalizado"
-    },
     "loteEstado": {
       "DISPONIBLE": "Disponible",
       "EN_CULTIVO": "En cultivo",
@@ -184,11 +172,6 @@
       "PRODUCCION": "Producción",
       "COSECHA": "Cosecha",
       "FINALIZADO": "Finalizado"
-    },
-    "variedad": {
-      "COLOMBIA": "Colombia",
-      "GIGANTE": "Gigante",
-      "KENYA": "Kenya"
     },
     "tipoActividad": {
       "PODA": "Poda",
@@ -229,9 +212,7 @@
     "metodoPago": {
       "EFECTIVO": "Efectivo",
       "TRANSFERENCIA": "Transferencia",
-      "CHEQUE": "Cheque",
-      "DAVIPLATA": "Daviplata",
-      "NEQUI": "Nequi"
+      "CHEQUE": "Cheque"
     },
     "estadoTrabajador": {
       "ACTIVO": "Activo",
@@ -248,7 +229,6 @@
     "agenda": {
   "emptyHint": "Programa podas, riegos o fumigaciones desde el calendario y aparecerán aquí.","title": "Lo que viene", "late": "Atrasado", "today": "Hoy", "tomorrow": "Mañana", "inDays": "En {{days}} días"},
     "crops": {"title": "Cultivos en curso", "all": "Ver cultivos", "crop": "Cultivo", "days": "días", "none": "No tienes cultivos sembrados ahora mismo."},
-    "title": "Inicio",
     "greeting": {
       "morning": "Buenos días, {{name}}",
       "afternoon": "Buenas tardes, {{name}}",
@@ -369,9 +349,9 @@
     },
     "generatedAt": "Generado el {{date}}",
     "downloadPdf": "Descargar PDF",
+    "full": {"button": "PDF con todo", "title": "Qué incluir en el PDF", "hint": "Marca las partes que quieres en un solo archivo.", "download": "Descargar PDF", "needOne": "Elige al menos una parte"},
     "downloading": "Preparando PDF…",
     "downloadError": "No se pudo descargar el PDF. Intenta de nuevo.",
-    "loading": "Cargando datos...",
     "error": "No se pudieron cargar los datos.",
     "vsPrevious": "{{pct}} % vs. mes anterior",
     "noMatches": "No hay resultados con ese filtro.",
@@ -385,6 +365,7 @@
       "kpi": {
         "paid": "Total pagado",
         "paidSub": "en {{count}} pagos",
+        "paidSubOne": "en 1 pago",
         "pending": "Pendiente por pagar",
         "pendingSub": "{{count}} nóminas sin pagar",
         "pendingSubOne": "1 nómina sin pagar",
@@ -449,10 +430,9 @@
       "list": {
         "title": "Mis fincas",
         "subtitle": "Gestiona tus fincas y cultivos",
-        "newFarm": "+ Nueva finca",
-        "loading": "Cargando fincas...",
         "mapHint": "Haz clic en un marcador para ver el entorno y entrar a la finca",
-        "noLocationCount": "{{count}} finca(s) sin ubicación en mapa",
+        "noLocationCount": "{{count}} fincas sin ubicación en mapa",
+        "noLocationCountOne": "1 finca sin ubicación en mapa",
         "noLocationBadge": "Sin ubicación en mapa",
         "viewOnMap": "Ver en mapa",
         "deleteTitle": "Eliminar finca",
@@ -485,7 +465,6 @@
       "new": {
         "title": "Nueva finca",
         "subtitle": "Registra una nueva finca",
-        "back": "← Volver",
         "name": "Nombre de la finca *",
         "namePlaceholder": "Ej: Finca El Paraíso",
         "hectares": "Hectáreas totales *",
@@ -512,10 +491,6 @@
         }
       },
       "detail": {
-        "back": "← Mis fincas",
-        "loading": "Cargando...",
-        "newLot": "+ Nuevo lote",
-        "lotsTitle": "Lotes ({{count}})",
         "empty": "No hay lotes registrados. Usa el botón para agregar el primero.",
         "noPolygon": "· Sin polígono",
         "deleteLot": {
@@ -535,7 +510,6 @@
     "new": {
       "title": "Nuevo lote",
       "subtitle": "Dibuja el lote directamente sobre la finca",
-      "back": "← Volver",
       "name": "Nombre del lote *",
       "namePlaceholder": "Ej: Lote A",
       "mapHelp": "Usa el ícono de polígono en el mapa para trazar los límites del lote. El área se calculará automáticamente.",
@@ -556,38 +530,11 @@
       }
     },
     "detail": {
-      "back": "← Volver a la finca",
-      "loading": "Cargando...",
       "showNdvi": "Ver NDVI",
       "hideNdvi": "Ocultar NDVI",
       "noPolygon": "Este lote no tiene polígono definido",
-      "statusActive": "Siembra activa",
-      "statusNone": "Sin siembra",
-      "noPlanting": {
-        "title": "Sin siembra activa",
-        "desc": "Este lote está disponible para iniciar una nueva siembra.",
-        "start": "+ Iniciar siembra"
-      },
-      "planting": {
-        "title": "Siembra activa",
-        "variety": "Variedad",
-        "date": "Fecha de siembra",
-        "plants": "Plantas",
-        "stage": "Etapa actual"
-      },
-      "daysLine1": "días",
-      "daysLine2": "en campo",
-      "cycle": {
-        "title": "Ciclo del cultivo",
-        "advance": "Avanzar etapa →",
-        "advancing": "Avanzando...",
-        "finished": "✅ Finalizado",
-        "progress": "{{current}} de {{total}} etapas"
-      },
-      "viewPlanting": "Ver detalle de siembra →",
       "errors": {
-        "load": "Error al cargar el lote.",
-        "advance": "Error al avanzar la etapa."
+        "load": "Error al cargar el lote."
       }
     }
   },
@@ -621,7 +568,6 @@
     "new": {
       "title": "Nueva siembra",
       "subtitle": "Registra una siembra en el lote",
-      "back": "← Volver",
       "date": "Fecha de siembra *",
       "plants": "Cantidad de plantas *",
       "plantsPlaceholder": "Ej: 500",
@@ -641,13 +587,6 @@
       }
     },
     "detail": {
-      "back": "← Volver al lote",
-      "loading": "Cargando...",
-      "title": "Siembra de {{cultivo}}",
-      "cropFallback": "cultivo",
-      "varietyLabel": "Variedad",
-      "plantsCount": "{{count}} plantas",
-      "days": "días",
       "alert": {
         "noSprays": "Sin fumigaciones registradas",
         "overdue": "Hace {{days}} días sin fumigación",
@@ -657,7 +596,8 @@
         "sprays": "Fumigaciones",
         "activities": "Actividades",
         "harvested": "Kg cosechados",
-        "harvestsCount": "{{count}} cosecha(s)",
+        "harvestsCount": "{{count}} cosechas",
+        "harvestsCountOne": "1 cosecha",
         "noActivities": "Sin actividades",
         "noSprays": "Sin fumigaciones"
       },
@@ -672,8 +612,6 @@
         "filterActivities": "Actividades",
         "filterSprays": "Fumigaciones",
         "filterHarvests": "Cosechas",
-        "recordOne": "{{count}} registro",
-        "recordMany": "{{count}} registros",
         "quality": "Calidad",
         "emptyFilter": "No hay registros de este tipo aún.",
         "emptyAll": "Aún no hay registros. Usa los botones de arriba para comenzar."
@@ -728,14 +666,16 @@
       "subtitle": "Registra una fumigación realizada en el cultivo",
       "date": "Fecha",
       "product": "Producto",
-      "searchPlaceholder": "Buscar en catálogo... ej: fungicida, mancozeb",
-      "searchHint": "Busca en el catálogo o escribe el nombre manualmente",
-      "noResultsManual": "Sin resultados. Se registrará como producto manual.",
-      "catalogOpen": "Ver catálogo completo",
-      "catalogClose": "Cerrar catálogo",
+      "searchPlaceholder": "Buscar en tu bodega... ej: fungicida, mancozeb",
+      "searchHint": "Solo salen los insumos registrados en tu bodega. Si escribes otro nombre, se registra sin descontar de la bodega.",
+      "noResultsManual": "No está en tu bodega. Se registrará como producto escrito a mano, sin descontar de la bodega.",
+      "catalogOpen": "Ver los insumos de mi bodega ({{n}})",
+      "stockEmpty": "Tu bodega no tiene insumos registrados.",
+      "stockGo": "Registrar una compra",
+      "noType": "Sin tipo",
+      "catalogClose": "Cerrar la lista",
       "filterPlaceholder": "Filtrar por nombre o tipo...",
       "noResultsFor": "Sin resultados para \"{{filter}}\"",
-      "doseSuggested": "Dosis sugerida: {{dose}} {{unit}}",
       "doseShort": "Dosis: {{dose}} {{unit}}",
       "doseHint": "Sugerida: {{dose}} {{unit}} / 200 L de agua",
       "reentryShort": "Reentrada: {{hours}} h",
@@ -753,8 +693,7 @@
       "saving": "Registrando...",
       "success": "¡Fumigación registrada exitosamente!",
       "errors": {
-        "search": "Error al buscar en el catálogo.",
-        "loadCatalog": "Error al cargar el catálogo completo.",
+        "loadStock": "No se pudieron cargar los insumos de tu bodega.",
         "productRequired": "Por favor selecciona o escribe un producto.",
         "unitRequired": "Por favor selecciona una unidad de medida.",
         "register": "Error al registrar la fumigación."
@@ -762,11 +701,11 @@
     }
   },
   "workers": {
-    "ui": {"team": "Equipo", "summary": "Resumen del equipo", "ofTotal": "de {{total}} registrados", "seeRosters": "Ver nóminas", "paymentsCount": "{{count}} pagos", "people": "Personas", "filterState": "Filtrar por estado", "col": {"worker": "Trabajador", "post": "Cargo", "wage": "Jornal", "state": "Estado", "actions": "Acciones"}, "idShort": "C.C.", "data": "Datos", "contract": "Contrato", "hireDate": "Ingreso", "phone": "Teléfono", "address": "Dirección", "workDays": "Días trabajados", "searchCrop": "Buscar cultivo...", "lastPayment": "Último pago", "paymentHistory": "Historial de pagos", "payroll": "Nómina", "amount": "Monto", "openPayroll": "Abrir la nómina", "summaryShort": "Resumen", "rosters": {"toApprove": "Por aprobar", "toPay": "Aprobadas sin pagar", "paid": "Pagado", "count": "{{count}} nóminas pagadas", "all": "Todas", "flow": "Avance de la nómina", "step1": "Generada", "step2": "Aprobada", "step3": "Pagada", "cancelledNote": "Esta nómina está anulada. Sus jornales quedaron libres para incluirlos en otra nómina."}},
+    "ui": {"team": "Equipo", "summary": "Resumen del equipo", "ofTotal": "de {{total}} registrados", "seeRosters": "Ver nóminas", "paymentsCount": "{{count}} pagos", "paymentsCountOne": "1 pago", "people": "Personas", "filterState": "Filtrar por estado", "col": {"worker": "Trabajador", "post": "Cargo", "wage": "Jornal", "state": "Estado", "actions": "Acciones"}, "idShort": "C.C.", "data": "Datos", "contract": "Contrato", "hireDate": "Ingreso", "phone": "Teléfono", "address": "Dirección", "workDays": "Días trabajados", "searchCrop": "Buscar cultivo...", "lastPayment": "Último pago", "paymentHistory": "Historial de pagos", "payroll": "Nómina", "amount": "Monto", "openPayroll": "Abrir la nómina", "summaryShort": "Resumen", "rosters": {"toApprove": "Por aprobar", "toPay": "Aprobadas sin pagar", "paid": "Pagado", "count": "{{count}} nóminas pagadas", "all": "Todas", "flow": "Avance de la nómina", "step1": "Generada", "step2": "Aprobada", "step3": "Pagada", "cancelledNote": "Esta nómina está anulada. Sus jornales quedaron libres para incluirlos en otra nómina."}},
     "posts": {
       "title": "Cargos",
       "subtitle": "Define los roles y el valor de jornal por cargo",
-      "new": "Nuevo Cargo",
+      "new": "Nuevo cargo",
       "formNew": "Nuevo cargo",
       "formEdit": "Editar cargo",
       "name": "Nombre *",
@@ -778,7 +717,7 @@
       "table": {
         "post": "Cargo",
         "description": "Descripción",
-        "dailyWage": "Valor Jornal"
+        "dailyWage": "Valor del jornal"
       },
       "active": "Activo",
       "inactive": "Inactivo",
@@ -820,7 +759,7 @@
         "subtitleOf": "Nóminas de",
         "subtitleAll": "Gestión y generación de nóminas por período",
         "showAll": "Ver todas",
-        "generate": "Generar Nómina",
+        "generate": "Generar nómina",
         "formTitle": "Generar nómina",
         "worker": "Trabajador *",
         "select": "Selecciona...",
@@ -832,8 +771,7 @@
           "worker": "Trabajador",
           "period": "Período",
           "wages": "Jornales",
-          "total": "Total",
-          "generated": "Generada"
+          "total": "Total"
         },
         "actions": {
           "viewDetail": "Ver detalle",
@@ -872,12 +810,11 @@
         "approve": "Aprobar",
         "registerPayment": "Registrar pago",
         "processing": "Procesando...",
-        "viewPayment": "Ver Pago",
+        "viewPayment": "Ver pago",
         "cancel": "Anular",
         "summary": {
-          "totalWages": "Total Jornales",
-          "totalValue": "Valor Total",
-          "generatedDate": "Fecha Generación",
+          "totalWages": "Total jornales",
+          "totalValue": "Valor total",
           "post": "Cargo"
         },
         "paymentRegistered": "Pago registrado",
@@ -910,7 +847,6 @@
         },
         "paymentForm": {
           "title": "Registrar pago",
-          "amount": "Monto a pagar:",
           "method": "Método de pago *",
           "receipt": "Comprobante",
           "receiptPlaceholder": "N.º de transferencia o cheque (opcional)",
@@ -922,9 +858,9 @@
     "wages": {
       "new": {
         "back": "Jornales",
-        "title": "Registrar Jornal",
+        "title": "Registrar jornal",
         "subtitle": "Registra el trabajo diario de un trabajador",
-        "info": "Información del Jornal",
+        "info": "Información del jornal",
         "worker": "Trabajador *",
         "selectWorker": "Selecciona un trabajador",
         "date": "Fecha *",
@@ -939,8 +875,9 @@
         "notesPlaceholder": "Notas adicionales (opcional)",
         "activitiesTitle": "Labores realizadas *",
         "selectAtLeast": "Selecciona al menos una labor",
-        "selectedCount": "{{count}} labor(es) seleccionada(s)",
-        "submit": "Registrar Jornal",
+        "selectedCount": "{{count}} labores seleccionadas",
+      "selectedCountOne": "1 labor seleccionada",
+        "submit": "Registrar jornal",
         "saving": "Registrando...",
         "errors": {
           "loadWorkers": "Error al cargar trabajadores",
@@ -951,16 +888,11 @@
         }
       },
       "list": {
-        "back": "Trabajadores",
         "title": "Jornales",
         "subtitleNoWorker": "Registro diario de trabajo en campo",
-        "generatePayroll": "Generar Nómina",
-        "register": "Registrar Jornal",
-        "perWage": "${{amount}}/jornal",
-        "selectWorkerTitle": "Selecciona un trabajador",
-        "selectWorkerDesc": "Elige de quién quieres ver los jornales.",
+        "generatePayroll": "Generar nómina",
+        "register": "Registrar jornal",
         "workerLabel": "Trabajador",
-        "selectWorkerPlaceholder": "Selecciona un trabajador",
         "noWorkers": "Aún no tienes trabajadores registrados.",
         "goToWorkers": "Ir a Trabajadores",
         "stats": {
@@ -971,10 +903,8 @@
         },
         "filters": {
           "search": "Buscar",
-          "searchPlaceholder": "Cultivo...",
           "from": "Desde",
           "to": "Hasta",
-          "filter": "Filtrar",
           "clear": "Limpiar"
         },
         "loading": "Cargando jornales...",
@@ -982,7 +912,6 @@
         "registerFirst": "Registrar primer jornal",
         "table": {
           "date": "Fecha",
-          "worker": "Trabajador",
           "crop": "Cultivo",
           "activities": "Labores",
           "value": "Valor",
@@ -992,7 +921,7 @@
         "pending": "Pendiente",
         "panel": {
           "close": "Cerrar panel",
-          "title": "Generar Nómina",
+          "title": "Generar nómina",
           "unsettledWages": "Jornales sin liquidar",
           "totalToGenerate": "Total a generar",
           "periodTitle": "Período de la nómina",
@@ -1000,7 +929,7 @@
           "startDate": "Fecha inicio *",
           "endDate": "Fecha fin *",
           "generating": "Generando...",
-          "generate": "Generar Nómina",
+          "generate": "Generar nómina",
           "success": "¡Nómina generada!",
           "payrollNo": "Nómina #",
           "period": "Período",
@@ -1029,21 +958,17 @@
       "loading": "Cargando pagos...",
       "empty": "No hay pagos registrados",
       "noName": "Sin nombre",
-      "paymentsCount": "{{count}} pago(s)",
-      "total": "Total",
       "viewDetail": "Ver detalle del pago",
       "panel": {
         "title": "Detalle del pago",
         "payrollNo": "Nómina #{{id}}",
         "close": "Cerrar",
-        "info": "Información del pago",
         "worker": "Trabajador",
         "paymentDate": "Fecha de pago",
         "method": "Método",
         "receipt": "Comprobante",
         "notes": "Observaciones",
         "totalPaid": "Monto total pagado",
-        "loadingWages": "Cargando jornales...",
         "wagesIncluded": "Jornales incluidos",
         "period": "Período",
         "noWages": "Sin jornales registrados",
@@ -1082,20 +1007,13 @@
       "subtitle": "Administra tu equipo de trabajo",
       "activities": "Labores",
       "posts": "Cargos",
-      "newWorker": "Nuevo Trabajador",
-      "tabs": {
-        "workers": "Trabajadores",
-        "rosters": "Nóminas",
-        "payments": "Pagos"
-      },
+      "newWorker": "Nuevo trabajador",
       "stats": {
         "active": "Activos",
         "suspended": "Suspendidos",
-        "draftRosters": "Nóminas en borrador",
+        "draftRosters": "Nóminas por aprobar",
         "totalPaid": "Total pagado",
-        "totalRosters": "Total nóminas",
-        "draft": "En borrador",
-        "paymentsMade": "Pagos realizados"
+        "totalRosters": "Total nóminas"
       },
       "list": {
         "searchLabel": "Buscar trabajadores",
@@ -1108,31 +1026,18 @@
         "emptyNone": "No hay trabajadores registrados aún.",
         "emptySearch": "No se encontraron resultados para \"{{query}}\"",
         "registerFirst": "Registrar primer trabajador",
-        "wageLabel": "Jornal:",
         "perDay": "/día",
         "registerWage": "Registrar jornal",
         "viewWages": "Ver jornales",
         "viewRosters": "Ver nóminas"
       },
-      "rostersTab": {
-        "empty": "No hay nóminas generadas aún.",
-        "rosterOf": "Nómina #{{id}} — {{name}}",
-        "total": "Total:"
-      },
-      "paymentsTab": {
-        "empty": "No hay pagos registrados aún.",
-        "paymentNo": "Pago #{{id}}",
-        "amount": "Monto:"
-      },
       "panel": {
         "close": "Cerrar panel",
         "suspendedNotice": "Este trabajador está suspendido. No puede registrar jornales nuevos.",
         "currentPost": "Cargo actual",
-        "perWage": "${{amount}}/jornal",
-        "quickActions": "Acciones rápidas",
-        "registerWage": "Registrar Jornal",
-        "viewWages": "Ver Jornales",
-        "viewRosters": "Ver Nóminas",
+        "registerWage": "Registrar jornal",
+        "viewWages": "Ver jornales",
+        "viewRosters": "Ver nóminas",
         "edit": "Editar datos",
         "changePost": "Cambiar cargo",
         "stateManagement": "Gestión de estado",
@@ -1141,7 +1046,7 @@
         "deactivate": "Desactivar trabajador"
       },
       "new": {
-        "title": "Nuevo Trabajador",
+        "title": "Nuevo trabajador",
         "subtitle": "Completa los datos del trabajador",
         "personalInfo": "Información personal",
         "firstName": "Nombre *",
@@ -1231,7 +1136,6 @@
       "removePhoto": "Quitar foto",
       "photoAlt": "Foto de perfil",
       "photoHint": "JPG, PNG o WebP. La recortamos en cuadrado automáticamente. También puedes arrastrarla aquí.",
-      "photoUrl": "URL de foto de perfil",
       "fullName": "Nombre completo",
       "fullNamePlaceholder": "Tu nombre completo",
       "nameError": "El nombre es obligatorio (mínimo 2 caracteres)",
@@ -1442,7 +1346,6 @@
       "new": "Nuevo insumo",
       "newTitle": "Nuevo insumo",
       "editTitle": "Editar insumo",
-      "count": "{{count}} insumos",
       "search": "Buscar insumo",
       "empty": "No hay insumos en el catálogo.",
       "loadError": "No se pudo cargar el catálogo.",
@@ -1674,7 +1577,9 @@
       "lots": "Lotes",
       "lotsPlanted": "Lotes sembrados",
       "lotsCount": "{{count}} lotes",
+      "lotsCountOne": "1 lote",
       "plantedCount": "{{count}} sembrados",
+      "plantedCountOne": "1 sembrado",
       "noFarmsTitle": "Todavía no tienes fincas",
       "yourFarms": "Tus fincas",
       "backToFarms": "Mis fincas",
@@ -1686,7 +1591,6 @@
       "readyToPlant": "Listo para sembrar",
       "resting": "Descansando",
       "seasonLength": "Duración de la temporada",
-      "sprayStatus": "Fumigación",
       "weatherToday": "Clima de hoy",
       "noWeather": "No hay datos del clima para esta finca.",
       "whereIsFarm": "¿Dónde está la finca?",

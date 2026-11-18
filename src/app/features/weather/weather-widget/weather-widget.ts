@@ -4,6 +4,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { WeatherService } from '../../../core/services/weather.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { Weather } from '../../../core/models/weather.model';
+import { iconoClima } from '../../../shared/weather';
 
 // Códigos de ícono de OpenWeather para los que hay traducción
 const CODIGOS_CLIMA = ['01', '02', '03', '04', '09', '10', '11', '13', '50'];
@@ -51,6 +52,9 @@ export class WeatherWidgetComponent implements OnInit {
       ? `weather.conditions.c${codigo}`
       : null;
   });
+
+  /** Ícono de la app según el clima (la descripción ya va escrita debajo de la temperatura) */
+  icono = computed(() => iconoClima(this.weather()?.iconUrl));
 
   ngOnInit() {
     this.loadWeather();

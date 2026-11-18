@@ -95,9 +95,29 @@
   color: var(--ar-verde-600);
 }
 
+/* Pestañas y, a la derecha, el PDF con todas las partes */
+.barra-sup { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+/* A la derecha aunque baje a otra fila: el panel se abre hacia la izquierda y no debe quedar bajo el menú lateral */
+.completo { position: relative; margin-left: auto; }
+.btn-completo { display: inline-flex; align-items: center; gap: .45rem; padding: .7rem 1rem; border: 1px solid var(--ar-borde-fuerte); border-radius: 11px; background: var(--ar-superficie); color: var(--ar-tinta); font: inherit; font-weight: 600; font-size: .9rem; cursor: pointer; }
+.btn-completo .ti { font-size: 18px; color: var(--ar-verde-600); }
+.btn-completo:hover { background: var(--ar-verde-50); }
+.btn-completo:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.panel-completo { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; width: min(300px, calc(100vw - 2rem)); box-sizing: border-box; padding: 1rem; border: 1px solid var(--ar-borde); border-radius: 14px; background: var(--ar-superficie); box-shadow: var(--ar-sombra-2, 0 12px 32px rgba(0, 0, 0, .14)); display: flex; flex-direction: column; gap: .55rem; }
+.panel-completo strong { font-size: .95rem; color: var(--ar-tinta); }
+.panel-completo p { margin: 0 0 .2rem; font-size: .82rem; color: var(--ar-tinta-3); }
+.parte { display: flex; align-items: center; gap: .55rem; padding: .45rem .55rem; border-radius: 9px; cursor: pointer; font-size: .9rem; color: var(--ar-tinta); }
+.parte:hover { background: var(--ar-fondo); }
+.parte input { width: 17px; height: 17px; accent-color: var(--ar-verde-600); }
+.panel-completo .btn-pdf { justify-content: center; margin-top: .3rem; }
+.aviso-completo { padding: .55rem .7rem; border-radius: 9px; background: var(--ar-rojo-bg); color: var(--ar-rojo); font-size: .82rem; }
+
 @media (max-width: 720px) {
   .report-home { padding: 1rem 1rem 6rem; }
-  .tabs-wrap { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; margin-bottom: 1.1rem; }
+  .barra-sup { margin-bottom: 1.1rem; gap: .6rem; }
+  .tabs-wrap { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+  .completo, .btn-completo { width: 100%; justify-content: center; }
+  .panel-completo { left: 0; right: 0; width: auto; }
   .tab-btn { gap: 10px; padding: 8px 10px; min-width: 0; }
   .tab-icon { width: 34px; height: 34px; font-size: 18px; }
   .tab-label { min-width: 0; }

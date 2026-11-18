@@ -61,7 +61,7 @@
               <tr class="clic" tabindex="0" [class.sel]="pagoSeleccionado?.id === p.id" (click)="abrirDetalle(p)" (keydown.enter)="abrirDetalle(p)">
                 <td class="suave">{{ p.fechaPago | fecha }}</td>
                 <td class="prin">
-                  <span class="persona"><span class="av" aria-hidden="true">{{ iniciales(p.trabajadorNombre ?? '') }}</span>{{ p.trabajadorNombre || ('workers.payments.noName' | translate) }}</span>
+                  <span class="persona"><span class="av" aria-hidden="true">{{ iniciales(p.trabajadorNombre ?? '', p.trabajadorIniciales) }}</span>{{ p.trabajadorNombre || ('workers.payments.noName' | translate) }}</span>
                 </td>
                 <td><span class="metodo"><i class="ti" [class]="metodoIcono(p.metodoPago)" aria-hidden="true"></i>{{ p.metodoPago ? ('enums.metodoPago.' + p.metodoPago | translate) : '—' }}</span></td>
                 <td class="ocultar-m">@if (p.comprobante) { <span class="mono">{{ p.comprobante }}</span> } @else { <span class="suave">—</span> }</td>

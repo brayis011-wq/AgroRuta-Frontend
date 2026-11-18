@@ -11,6 +11,7 @@ import {
   NominaRequest
 } from '../../../../core/services/worker.service';
 import { Nomina, ResumenNominas, Trabajador } from '../../../../core/models/worker.model';
+import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 
 type FiltroEstado = 'TODAS' | 'PENDIENTE' | 'APROBADA' | 'PAGADA' | 'ANULADA';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
@@ -249,6 +250,10 @@ export class ListaNominasComponent implements OnInit {
       },
       error: () => { this.error = 'workers.rosters.list.errors.delete'; this.cdr.detectChanges(); }
     });
+  }
+
+  iniciales(t: Trabajador | null | undefined): string {
+    return inicialesDe(t?.nombre, t?.apellido ?? null);
   }
 
   estadoClass(estado: string): string {

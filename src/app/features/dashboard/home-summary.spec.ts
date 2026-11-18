@@ -1,7 +1,7 @@
 import { calcularResumen, diasDesde, fechaLocal, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
 
 const HOY = new Date(2026, 10, 4, 15, 0); // 4 nov 2026, 3 p. m.
-const base = { nominas: [], pagosPorMes: [], trabajadores: [], jornales: [], lotes: [] } as any;
+const base = { nominas: [], pagosPorMes: [], trabajadores: [], jornales: null, lotes: [] } as any;
 
 describe('resumen del Inicio', () => {
   it('reads "YYYY-MM-DD" as a local date (no day shift in UTC-5)', () => {
@@ -31,7 +31,7 @@ describe('resumen del Inicio', () => {
   it('active workers without a work day today', () => {
     const r = calcularResumen({ ...base,
       trabajadores: [{ id: 1, estado: 'ACTIVO' }, { id: 2, estado: 'ACTIVO' }, { id: 3, estado: 'INACTIVO' }],
-      jornales: [{ fecha: '2026-11-04', trabajador: { id: 1 } }, { fecha: '2026-11-03', trabajador: { id: 2 } }],
+      jornales: { mesActual: 2, mesAnterior: 0, trabajadoresHoy: [1] },
     }, HOY);
     expect(r.trabajadoresActivos).toBe(2);
     expect(r.sinJornalHoy).toBe(1);
@@ -39,7 +39,7 @@ describe('resumen del Inicio', () => {
 
   it('month trends compare with the previous month', () => {
     const r = calcularResumen({ ...base,
-      jornales: [{ fecha: '2026-11-02' }, { fecha: '2026-11-03' }, { fecha: '2026-11-04' }, { fecha: '2026-10-10' }, { fecha: '2026-10-11' }],
+      jornales: { mesActual: 3, mesAnterior: 2, trabajadoresHoy: [] },
       pagosPorMes: [{ mes: '2026-10', total: 200, cantidad: 1 }, { mes: '2026-11', total: 300, cantidad: 1 }],
     }, HOY);
     expect(r.jornalesMes).toEqual({ actual: 3, anterior: 2, porcentaje: 50 });
@@ -53,7 +53,7 @@ describe('resumen del Inicio', () => {
   });
 
   it('no percentage when last month was zero', () => {
-    const r = calcularResumen({ ...base, jornales: [{ fecha: '2026-11-02' }] }, HOY);
+    const r = calcularResumen({ ...base, jornales: { mesActual: 1, mesAnterior: 0, trabajadoresHoy: [] } }, HOY);
     expect(r.jornalesMes.porcentaje).toBeNull();
   });
 

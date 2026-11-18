@@ -30,7 +30,7 @@
     </button>
     <button type="button" class="kpi clic" (click)="irA('pagos')">
       <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.totalPaid' | translate }}</small><strong>{{ totalPagado | pesos }}</strong><em>{{ 'workers.ui.paymentsCount' | translate: { count: resumenPagos.cantidad } }}</em></div>
+      <div><small>{{ 'workers.home.stats.totalPaid' | translate }}</small><strong>{{ totalPagado | pesos }}</strong><em>{{ (resumenPagos.cantidad === 1 ? 'workers.ui.paymentsCountOne' : 'workers.ui.paymentsCount') | translate: { count: resumenPagos.cantidad } }}</em></div>
     </button>
   </section>
 
@@ -92,7 +92,7 @@
                   (click)="abrirDetalle(t)" (keydown.enter)="abrirDetalle(t)">
                 <td class="prin">
                   <span class="persona">
-                    <span class="av" [class.gris]="t.estado !== 'ACTIVO'" aria-hidden="true">{{ t.nombre[0] }}{{ t.apellido[0] }}</span>
+                    <span class="av" [class.gris]="t.estado !== 'ACTIVO'" aria-hidden="true">{{ iniciales(t) }}</span>
                     <span>{{ t.nombreCompleto }}<small>{{ 'workers.ui.idShort' | translate }} {{ t.cedula }}</small></span>
                   </span>
                 </td>
@@ -130,7 +130,7 @@
 
     @if (modoPanel === 'detalle' && trabajadorSeleccionado; as t) {
       <header class="lado-head">
-        <span class="av grande" [class.gris]="t.estado !== 'ACTIVO'" aria-hidden="true">{{ t.nombre[0] }}{{ t.apellido[0] }}</span>
+        <span class="av grande" [class.gris]="t.estado !== 'ACTIVO'" aria-hidden="true">{{ iniciales(t) }}</span>
         <div>
           <h2>{{ t.nombreCompleto }}</h2>
           <p>{{ 'workers.ui.idShort' | translate }} {{ t.cedula }} @if (t.estado) { <span class="est" [class]="t.estado">{{ 'enums.estadoTrabajador.' + t.estado | translate }}</span> }</p>
@@ -261,7 +261,7 @@
 
     @if (modoPanel === 'editar' && trabajadorSeleccionado; as t) {
       <header class="lado-head">
-        <span class="av grande" aria-hidden="true">{{ t.nombre[0] }}{{ t.apellido[0] }}</span>
+        <span class="av grande" aria-hidden="true">{{ iniciales(t) }}</span>
         <div><h2>{{ 'workers.home.edit.title' | translate }}</h2><p>{{ t.nombreCompleto }}</p></div>
         <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
       </header>
@@ -297,7 +297,7 @@
 
     @if (modoPanel === 'cambiarCargo' && trabajadorSeleccionado; as t) {
       <header class="lado-head">
-        <span class="av grande" aria-hidden="true">{{ t.nombre[0] }}{{ t.apellido[0] }}</span>
+        <span class="av grande" aria-hidden="true">{{ iniciales(t) }}</span>
         <div><h2>{{ 'workers.home.changePost.title' | translate }}</h2><p>{{ t.nombreCompleto }}</p></div>
         <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
       </header>

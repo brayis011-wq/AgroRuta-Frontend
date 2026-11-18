@@ -3,6 +3,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { PayrollReport, ReportService } from '../../../core/services/report.service';
 import { ReportBase } from '../report-base';
 import { OrdenNomina, barrasMensuales, ordenarTrabajadores, participacion, resumenNomina, variacionUltimoMes } from '../report-calc';
+import { iniciales as inicialesDe } from '../../../shared/iniciales';
 
 @Component({
   selector: 'app-payroll-report',
@@ -52,4 +53,7 @@ export class PayrollReportComponent extends ReportBase implements OnInit {
   }
 
   ordenarPor(o: OrdenNomina): void { this.orden.set(o); }
+
+  /** Respaldo si el backend aún no manda las iniciales */
+  iniciales(nombre: string): string { return inicialesDe(nombre); }
 }

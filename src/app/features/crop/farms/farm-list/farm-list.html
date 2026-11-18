@@ -45,7 +45,7 @@
     <div class="mapa-pie">
       <span><i class="ti ti-pointer"></i> {{ 'cultivo.fincas.list.mapHint' | translate }}</span>
       @if (fincasSinUbicacion() > 0) {
-        <span class="sin-ubic"><i class="ti ti-map-pin-off"></i> {{ 'cultivo.fincas.list.noLocationCount' | translate: { count: fincasSinUbicacion() } }}</span>
+        <span class="sin-ubic"><i class="ti ti-map-pin-off"></i> {{ (fincasSinUbicacion() === 1 ? 'cultivo.fincas.list.noLocationCountOne' : 'cultivo.fincas.list.noLocationCount') | translate: { count: fincasSinUbicacion() } }}</span>
       }
     </div>
   </section>
@@ -76,9 +76,9 @@
           <footer class="finca-pie">
             <span><i class="ti ti-ruler-2"></i> {{ fmtDec(finca.hectareas) }} ha</span>
             @if (lotesDe(finca); as lotes) {
-              <span><i class="ti ti-layout-grid"></i> {{ 'temporadas.ui.lotsCount' | translate: { count: lotes.length } }}</span>
+              <span><i class="ti ti-layout-grid"></i> {{ (lotes.length === 1 ? 'temporadas.ui.lotsCountOne' : 'temporadas.ui.lotsCount') | translate: { count: lotes.length } }}</span>
               @if (enCultivo(finca)) {
-                <span class="chip chip-EN_CULTIVO"><i class="ti ti-plant"></i> {{ 'temporadas.ui.plantedCount' | translate: { count: enCultivo(finca) } }}</span>
+                <span class="chip chip-EN_CULTIVO"><i class="ti ti-plant"></i> {{ (enCultivo(finca) === 1 ? 'temporadas.ui.plantedCountOne' : 'temporadas.ui.plantedCount') | translate: { count: enCultivo(finca) } }}</span>
               }
             }
             @if (!finca.centroideLat) {

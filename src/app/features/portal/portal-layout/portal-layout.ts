@@ -9,6 +9,7 @@ import { LanguageService } from '../../../core/services/language.service';
 import { PortalService } from '../../../core/services/portal.service';
 import { ProfileService } from '../../../core/services/profile.service';
 import { TemaService } from '../../../core/services/theme.service';
+import { iniciales as inicialesDe } from '../../../shared/iniciales';
 
 const CLAVE_COLAPSADO = 'portal-menu-colapsado';
 
@@ -67,8 +68,7 @@ export class PortalLayoutComponent implements OnInit {
   }
 
   iniciales(): string {
-    const partes = (this.usuario?.nombre ?? '').trim().split(/\s+/).filter(Boolean);
-    return ((partes[0]?.[0] ?? '') + (partes[1]?.[0] ?? '')).toUpperCase() || '?';
+    return inicialesDe(this.usuario?.nombre);
   }
 
   alternarColapsado(): void {

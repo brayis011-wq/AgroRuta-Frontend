@@ -12,8 +12,10 @@ export interface Labor {
 export interface Pago {
   id?: number;
   monto: number;
-  fecha: string;
+  trabajadorId?: number;
   trabajadorNombre?: string;
+  /** Primera letra del nombre y del apellido (las calcula el backend) */
+  trabajadorIniciales?: string | null;
   nominaId?: number;
   fechaPago?: string | Date;
   metodoPago?: string;
@@ -33,7 +35,7 @@ export interface Trabajador {
   id?: number;
   nombre: string;
   apellido: string;
-  cedula: string;           // ← corregido (era 'documento')
+  cedula: string;
   nombreCompleto: string;
   telefono?: string;
   direccion?: string;
@@ -49,7 +51,8 @@ export interface Trabajador {
 
 export interface Nomina {
   id?: number;
-  trabajadorId: number;
+  /** No viene del servidor: lo completa la lista de nóminas a partir de `trabajador` */
+  trabajadorId?: number;
   trabajador?: Trabajador;
   periodoInicio: string | Date;
   periodoFin: string | Date;
@@ -57,14 +60,12 @@ export interface Nomina {
   valorTotal: number;
   estado: string;
   fechaGeneracion: string | Date;
+  observaciones?: string;
   jornales?: Jornal[];
 }
 
 export interface Jornal {
   id?: number;
-  trabajadorId: number;
-  actividadId: number;
-  pago: number;
   fecha?: string | Date;
   trabajador?: Trabajador;
   actividades?: Labor[];
@@ -73,7 +74,6 @@ export interface Jornal {
   valorJornal?: number;
   liquidado?: boolean;
   observaciones?: string;
-  actividadIds?: number[];
 }
 
 /** GET /api/payrolls/summary: cuántas nóminas hay en cada estado y cuánto suman. */
@@ -94,7 +94,15 @@ export interface ResumenJornales {
   ultimaPendiente: string | null;
 }
 
-/** GET /api/payments/summary: cuántos pagos hay, cuánto suman y a cuántos trabajadores. */
+/** GET /api/workdays/home-summary: los jornales que cuenta el Inicio, ya sumados por la base. */
+export interface ResumenJornalesInicio {
+  /** Jornales de este mes (hasta hoy) y del mes anterior, de los trabajadores activos */
+  mesActual: number;
+  mesAnterior: number;
+  /** Ids de los trabajadores activos que ya tienen jornal hoy */
+  trabajadoresHoy: number[];
+}
+
 /** GET /api/payments/monthly: lo pagado en un mes ("2026-11"). Los meses sin pagos no vienen. */
 export interface PagosDelMes {
   mes: string;
@@ -102,6 +110,7 @@ export interface PagosDelMes {
   cantidad: number;
 }
 
+/** GET /api/payments/summary: cuántos pagos hay, cuánto suman y a cuántos trabajadores. */
 export interface ResumenPagos {
   cantidad: number;
   total: number;

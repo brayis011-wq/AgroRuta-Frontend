@@ -6,6 +6,8 @@ import { environment } from '../../../environments/environment';
 export interface WorkerPayrollDetail {
   workerId: number;
   workerName: string;
+  /** Primera letra del nombre y del apellido, igual que en la lista del equipo */
+  workerInitials?: string | null;
   totalPagos: number;
   totalPaid: number;
   periodoInicio: string;
@@ -50,6 +52,10 @@ export interface CropDetail {
   fechaFin?: string | null;
 }
 
+/** Partes que puede llevar el PDF completo */
+export type ParteReporte = 'payroll' | 'crops' | 'costs' | 'profitability';
+export const PARTES_REPORTE: ParteReporte[] = ['payroll', 'crops', 'costs', 'profitability'];
+
 export interface CropReport {
   generatedAt: string;
   cropDetails: CropDetail[];
@@ -75,5 +81,21 @@ export class ReportService {
 
   downloadCropPdf(): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/api/reports/crops`, { responseType: 'blob' });
+  }
+
+  downloadCostsPdf(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/api/reports/costs`, { responseType: 'blob' });
+  }
+
+  downloadProfitabilityPdf(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/api/reports/profitability`, { responseType: 'blob' });
+  }
+
+  /** Las partes elegidas en un solo PDF (sin partes, el backend pone las cuatro) */
+  downloadFullPdf(partes: ParteReporte[]): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/api/reports/full`, {
+      responseType: 'blob',
+      params: partes.length ? { sections: partes.join(',') } : {},
+    });
   }
 }

@@ -1,6 +1,6 @@
 <div class="legal">
   <header>
-    <a class="brand" routerLink="/auth/login"><span class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></span>AgroRuta</a>
+    <a class="brand ar-titulo" routerLink="/auth/login"><span class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></span>AgroRuta</a>
     <nav class="idiomas" aria-label="Idioma / Language">
       <button type="button" [class.on]="idioma.current() === 'es'" [attr.aria-pressed]="idioma.current() === 'es'" (click)="cambiar('es')" lang="es">Español</button>
       <button type="button" [class.on]="idioma.current() === 'en'" [attr.aria-pressed]="idioma.current() === 'en'" (click)="cambiar('en')" lang="en">English</button>

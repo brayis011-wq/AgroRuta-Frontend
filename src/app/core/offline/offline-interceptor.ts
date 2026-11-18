@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { catchError, from, map, of, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { esNuestraApi } from '../interceptors/api-url';
+import { SIN_COPIA, sinCopia } from '../interceptors/rutas-sin-copia';
 import { CABECERA_ENVIO, ColaSinConexionService, SIN_COLA } from './offline-queue.service';
 import { TipoPendiente } from './offline-store';
 
@@ -14,8 +15,7 @@ const EN_COLA: Record<string, TipoPendiente> = {
   '/api/activities': 'actividad',
 };
 
-/** Consultas que no se copian al dispositivo: sesión, seguridad, administración y verificación pública */
-const SIN_COPIA = ['/api/auth/', '/api/admin', '/api/backups', '/api/configuration/security', '/api/public/'];
+// Las consultas que no se copian al dispositivo están en interceptors/rutas-sin-copia.ts
 
 const sinRed = (e: unknown) => e instanceof HttpErrorResponse && e.status === 0;
 
@@ -56,7 +56,7 @@ export const sinConexionInterceptor: HttpInterceptorFn = (req, next) => {
     );
   }
 
-  if (req.method === 'GET' && req.responseType === 'json' && !SIN_COPIA.some((p) => ruta.startsWith(p))) {
+  if (req.method === 'GET' && req.responseType === 'json' && !sinCopia(ruta, SIN_COPIA)) {
     const cola = inject(ColaSinConexionService);
     return next(req).pipe(
       tap((evento) => {

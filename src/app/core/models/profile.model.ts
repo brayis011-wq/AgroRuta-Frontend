@@ -7,7 +7,8 @@ export interface Perfil {
   rol: Rol;
 }
 
-export type Rol = 'ADMINISTRADOR' | 'AGRICULTOR' | 'OPERARIO';
+/** Los mismos nombres que envía el servidor (enum Rol) */
+export type Rol = 'Administrador' | 'Agricultor' | 'Trabajador';
 
 export interface UpdateProfileRequest {
   nombre: string;

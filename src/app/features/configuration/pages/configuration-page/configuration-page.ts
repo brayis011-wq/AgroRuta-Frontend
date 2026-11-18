@@ -14,6 +14,7 @@ import { PushToggleComponent } from '../../push-toggle/push-toggle';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { Perfil, UpdateProfileRequest, ChangePasswordRequest } from '../../../../core/models/profile.model';
 import { NotificacionesService, PreferenciasCorreo } from '../../../../core/services/notifications.service';
+import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 
 interface Toast {
   message: string;
@@ -157,8 +158,7 @@ export class ConfigurationPageComponent implements OnInit {
 
   /** Iniciales para el resumen de la cuenta */
   get iniciales(): string {
-    const n = this.perfil?.nombre ?? '';
-    return n.split(' ').filter(Boolean).map((w) => w[0]).join('').substring(0, 2).toUpperCase() || '?';
+    return inicialesDe(this.perfil?.nombre);
   }
 
   private showToast(message: string, type: 'success' | 'error'): void {

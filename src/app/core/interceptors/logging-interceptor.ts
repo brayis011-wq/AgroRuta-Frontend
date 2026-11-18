@@ -1,5 +1,5 @@
 // src/app/core/interceptors/logging-interceptor.ts
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { inject } from '@angular/core';
@@ -26,7 +26,9 @@ export const loggingInterceptor: HttpInterceptorFn = (req, next) => {
   logger.debug(`→ [${traceId}] ${req.method} ${req.url}`);
 
   return next(tracedReq).pipe(
-    tap(() => {
+    tap((evento) => {
+      // Solo la respuesta: antes llegan otros eventos (petición enviada, progreso) y cada uno dejaba su línea
+      if (evento.type !== HttpEventType.Response) return;
       const ms = Date.now() - start;
       logger.info(`← [${traceId}] ${req.method} ${req.url} (${ms}ms)`);
     }),

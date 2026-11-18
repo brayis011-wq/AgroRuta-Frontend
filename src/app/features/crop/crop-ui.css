@@ -6,7 +6,7 @@
 .volver:hover { color: var(--ar-verde-700); }
 
 .cv-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; }
-.eyebrow { margin: 0 0 .2rem; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ar-verde-600); }
+.eyebrow { margin: 0 0 .2rem; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ar-tierra); }
 .cv-head h1 { margin: 0; font-size: clamp(1.35rem, 2.2vw, 1.7rem); letter-spacing: -.02em; color: var(--ar-tinta); }
 .cv-sub { margin: .35rem 0 0; display: flex; align-items: center; gap: .4rem .9rem; flex-wrap: wrap; color: var(--ar-tinta-2); font-size: .9rem; }
 .cv-sub > span { display: inline-flex; align-items: center; gap: .3rem; }

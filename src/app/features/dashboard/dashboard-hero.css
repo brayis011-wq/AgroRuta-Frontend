@@ -31,3 +31,36 @@
   /* En pantallas angostas las estrellas se quedan en la esquina, lejos del saludo */
   .hero[data-momento="evening"]::after { width: 30%; height: 58px; }
 }
+
+/* Almanaque del día: la luna (dibujada con su parte iluminada) y un dicho del campo */
+.almanaque {
+  position: relative; z-index: 1; display: flex; align-items: center; gap: .9rem 1.75rem; flex-wrap: wrap;
+  max-width: min(100%, 780px); padding-top: .95rem; border-top: 1px dashed var(--ar-tierra-borde);
+}
+.almanaque p { margin: 0; min-width: 0; }
+.almanaque small { display: block; }
+.alm-luna { display: flex; align-items: center; gap: .65rem; min-width: 0; }
+.alm-luna svg { width: 34px; height: 34px; flex: none; }
+.luna-sombra { fill: color-mix(in srgb, var(--ar-tinta) 13%, transparent); }
+.luna-luz { fill: var(--ar-maiz); }
+.alm-luna strong { display: block; font-size: .86rem; color: var(--ar-tinta); }
+.alm-luna small { font-size: .8rem; color: var(--ar-tinta-2); }
+.alm-dicho { padding-left: 1.1rem; border-left: 2px solid var(--ar-tierra-borde); }
+.alm-dicho small { font-size: .66rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ar-tinta-3); }
+.alm-dicho q { font-family: var(--ar-fuente-titulo); font-variation-settings: 'SOFT' 100; font-size: 1.02rem; font-weight: 500; color: var(--ar-tierra); quotes: '«' '»'; }
+
+/* Paisaje de la marca, en la esquina del saludo */
+/* La loma arranca en el borde izquierdo del dibujo: se desvanece para que no quede cortada en línea recta */
+.campo {
+  position: absolute; right: 0; bottom: 0; width: min(44%, 460px); pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 42%); mask-image: linear-gradient(90deg, transparent 0, #000 42%);
+}
+.loma { fill: var(--ar-verde-100); opacity: .8; }
+.curva { fill: none; stroke: var(--ar-verde-600); stroke-width: 1.2; stroke-dasharray: 1 6; stroke-linecap: round; opacity: .4; }
+.tierra { fill: var(--ar-tierra-bg); }
+.surcos path { fill: none; stroke: var(--ar-tierra); stroke-width: 1.3; stroke-linecap: round; opacity: .28; }
+.brotes use { fill: var(--ar-verde-600); stroke: var(--ar-verde-600); stroke-width: 1.2; stroke-linecap: round; opacity: .75; }
+@media (max-width: 760px) {
+  .campo { width: 62%; opacity: .55; }
+  .alm-dicho { padding-left: 0; border-left: 0; }
+}
