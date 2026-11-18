@@ -687,6 +687,7 @@
       "dose": "Dose",
       "unit": "Unit",
       "unitPlaceholder": "Select",
+      "unitHint": "Used for both the dose and the total amount used.",
       "area": "Applied area (hectares)",
       "notes": "Notes",
       "notesPlaceholder": "Weather conditions, crop condition...",

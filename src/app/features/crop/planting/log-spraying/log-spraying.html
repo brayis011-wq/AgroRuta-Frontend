@@ -206,11 +206,12 @@
             </label>
             <div class="field__input-wrap">
               <select id="unidad"
-                      [(ngModel)]="form.unidadMedida" name="unidadMedida" required>
+                      [(ngModel)]="form.unidadMedida" name="unidadMedida" required (ngModelChange)="cambiarUnidad()">
                 <option value="">{{ 'siembra.spray.unitPlaceholder' | translate }}</option>
-                <option *ngFor="let u of unidades" [value]="u">{{ 'enums.unidadMedida.' + u | translate }}</option>
+                <option *ngFor="let u of unidadesDisponibles()" [value]="u">{{ 'enums.unidadMedida.' + u | translate }}</option>
               </select>
             </div>
+            <small class="campo-hint" *ngIf="insumoSeleccionado()">{{ 'siembra.spray.unitHint' | translate }}</small>
           </div>
         </div>
 
@@ -227,22 +228,17 @@
         </div>
 
         <!-- Cantidad total gastada: se descuenta de la bodega (solo con producto elegido de ella) -->
-        <div class="field-row bodega" *ngIf="insumoSeleccionado() as insumo">
+        <!-- Usa la misma unidad que la dosis: se muestra dentro del campo -->
+        <div class="field-row bodega" *ngIf="insumoSeleccionado()">
           <div class="field">
             <label class="field__label" for="cantidadUsada"><i class="ti ti-building-warehouse" aria-hidden="true"></i> {{ 'inventario.spray.used' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
-            <div class="field__input-wrap">
+            <div class="field__input-wrap con-unidad">
               <input id="cantidadUsada" type="number" min="0" step="any" inputmode="decimal"
-                     [(ngModel)]="form.cantidadUsada" name="cantidadUsada" placeholder="0" (ngModelChange)="actualizarEstimado()" />
+                     [(ngModel)]="form.cantidadUsada" name="cantidadUsada" placeholder="0" (ngModelChange)="actualizarEstimado()"
+                     [attr.aria-describedby]="form.unidadCantidad ? 'unidadCantidad' : null" />
+              <span class="sufijo-unidad" id="unidadCantidad" *ngIf="form.unidadCantidad">{{ 'enums.unidadMedida.' + form.unidadCantidad | translate }}</span>
             </div>
             <small class="campo-hint">{{ 'inventario.spray.usedHint' | translate }}</small>
-          </div>
-          <div class="field">
-            <label class="field__label" for="unidadCantidad"><i class="ti ti-ruler-2" aria-hidden="true"></i> {{ 'siembra.spray.unit' | translate }}</label>
-            <div class="field__input-wrap">
-              <select id="unidadCantidad" [(ngModel)]="form.unidadCantidad" name="unidadCantidad" (ngModelChange)="actualizarEstimado()">
-                <option *ngFor="let u of unidadesCantidad(insumo)" [value]="u">{{ 'enums.unidadMedida.' + u | translate }}</option>
-              </select>
-            </div>
           </div>
         </div>
         <div class="bodega-info" *ngIf="insumoSeleccionado() && estimado() as e">

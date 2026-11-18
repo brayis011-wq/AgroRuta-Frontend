@@ -40,6 +40,9 @@ export interface InsumoBodega {
   insumo: AgriculturalInput | null;
 }
 
+/** Cuántas unidades base (ml o g) hay en cada unidad */
+const FACTOR_BASE: Record<MeasurementUnit, number> = { LITROS: 1000, ML: 1, KG: 1000, GRAMOS: 1 };
+
 /** Sin tildes ni mayúsculas, para que "fungicida" encuentre "Fungicída" */
 const normalizar = (t: string | null | undefined): string =>
   (t ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
@@ -132,6 +135,25 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
 
   readonly unidades: MeasurementUnit[] = ['LITROS', 'ML', 'GRAMOS', 'KG'];
 
+  /**
+   * Una sola unidad para la dosis y para la cantidad total (antes se elegían por separado y podían quedar
+   * en litros y en kilos a la vez). Con un producto de la bodega, solo las de su tipo: g/kg o ml/L.
+   */
+  unidadesDisponibles(): MeasurementUnit[] {
+    const insumo = this.insumoSeleccionado();
+    if (!insumo) return this.unidades;
+    const delTipo = unidadesDe(unidadBaseDe(insumo.unidadSugerida));
+    // Un registro viejo con otra unidad la conserva en la lista para no perderla al editar
+    const actual = this.form.unidadMedida;
+    return actual && !delTipo.includes(actual) ? [...delTipo, actual] : delTipo;
+  }
+
+  /** La cantidad total usa la misma unidad que la dosis */
+  cambiarUnidad(): void {
+    this.form.unidadCantidad = this.form.unidadMedida;
+    this.actualizarEstimado();
+  }
+
   private readonly destroy$  = new Subject<void>();
 
   // ── Lifecycle ────────────────────────────────────────────────
@@ -192,7 +214,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           this.inputSvc.getById(f.agriculturalInputId).pipe(takeUntil(this.destroy$)).subscribe({
             next: (insumo) => {
               this.insumoSeleccionado.set(insumo);
-              if (!this.form.unidadCantidad) this.form.unidadCantidad = unidadGrande(unidadBaseDe(insumo.unidadSugerida));
+              this.unificarUnidades();
               this.actualizarEstimado();
               this.cdr.markForCheck();
             },
@@ -296,7 +318,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.form.reentradaHoras      = insumo.reentradaHoras || null;
     this.form.diasCarencia        = insumo.diasCarencia ?? null;
     this.form.cantidadUsada       = null;
-    this.form.unidadCantidad      = unidadGrande(unidadBaseDe(insumo.unidadSugerida));
+    this.form.unidadCantidad      = insumo.unidadSugerida;
     this.mostrarCatalogo.set(false);
     this.actualizarEstimado();
   }
@@ -320,9 +342,21 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.estimar$.next();
   }
 
-  /** Solo unidades del mismo tipo que el insumo (litros/ml o kilos/gramos) */
-  unidadesCantidad(insumo: AgriculturalInput): MeasurementUnit[] {
-    return unidadesDe(unidadBaseDe(insumo.unidadSugerida));
+  /**
+   * Fumigación guardada antes de unificar las unidades (p. ej. dosis en gramos y cantidad en kilos):
+   * la cantidad se pasa a la unidad de la dosis. Si son de tipos distintos (dato viejo inconsistente)
+   * no se toca, para no cambiar lo que se descontó de la bodega.
+   */
+  private unificarUnidades(): void {
+    const dosis = this.form.unidadMedida;
+    const cantidad = this.form.unidadCantidad;
+    if (!dosis) return;
+    if (!cantidad) { this.form.unidadCantidad = dosis; return; }
+    if (cantidad === dosis || unidadBaseDe(cantidad) !== unidadBaseDe(dosis)) return;
+    if (this.form.cantidadUsada != null) {
+      this.form.cantidadUsada = Math.round(this.form.cantidadUsada * FACTOR_BASE[cantidad] / FACTOR_BASE[dosis] * 1000) / 1000;
+    }
+    this.form.unidadCantidad = dosis;
   }
 
   usarCostoEstimado(): void {
