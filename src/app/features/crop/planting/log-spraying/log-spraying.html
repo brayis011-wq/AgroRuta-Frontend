@@ -1,5 +1,5 @@
 <!-- registrar-fumigacion.html -->
-<div class="page-bg">
+<div class="page-bg registro">
   <div class="container">
 
     <button class="btn-back" (click)="volver()">
@@ -28,6 +28,8 @@
 
       <form (ngSubmit)="onSubmit()" #fumigacionForm="ngForm">
 
+        <h3 class="seccion-form">{{ 'siembra.spray.sections.application' | translate }}</h3>
+
         <!-- Fecha -->
         <div class="field">
           <label class="field__label" for="fecha">
@@ -38,6 +40,20 @@
                    [(ngModel)]="form.fecha" name="fecha" required />
           </div>
         </div>
+
+        <!-- Área -->
+        <div class="field">
+          <label class="field__label" for="area">
+            <i class="ti ti-dimensions" aria-hidden="true"></i> {{ 'siembra.spray.area' | translate }}
+          </label>
+          <div class="field__input-wrap">
+            <input id="area" type="number"
+                   [(ngModel)]="form.areaAplicada" name="areaAplicada"
+                   placeholder="0.0" step="0.1" required />
+          </div>
+        </div>
+
+        <h3 class="seccion-form">{{ 'siembra.spray.sections.product' | translate }}</h3>
 
         <!-- Producto: solo se ofrecen los insumos registrados en la bodega -->
         <fieldset class="field">
@@ -215,33 +231,29 @@
           </div>
         </div>
 
-        <!-- Área -->
-        <div class="field">
-          <label class="field__label" for="area">
-            <i class="ti ti-dimensions" aria-hidden="true"></i> {{ 'siembra.spray.area' | translate }}
-          </label>
-          <div class="field__input-wrap">
-            <input id="area" type="number"
-                   [(ngModel)]="form.areaAplicada" name="areaAplicada"
-                   placeholder="0.0" step="0.1" required />
+        <h3 class="seccion-form">{{ 'siembra.spray.sections.stock' | translate }}</h3>
+
+        <!-- Cantidad total gastada: se descuenta de la bodega; usa la misma unidad que la dosis -->
+        <div class="field" *ngIf="insumoSeleccionado()">
+          <label class="field__label" for="cantidadUsada"><i class="ti ti-building-warehouse" aria-hidden="true"></i> {{ 'inventario.spray.used' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
+          <div class="field__input-wrap con-unidad">
+            <input id="cantidadUsada" type="number" min="0" step="any" inputmode="decimal"
+                   [(ngModel)]="form.cantidadUsada" name="cantidadUsada" placeholder="0" (ngModelChange)="actualizarEstimado()"
+                   [attr.aria-describedby]="form.unidadCantidad ? 'unidadCantidad' : null" />
+            <span class="sufijo-unidad" id="unidadCantidad" *ngIf="form.unidadCantidad">{{ 'enums.unidadMedida.' + form.unidadCantidad | translate }}</span>
           </div>
+          <small class="campo-hint">{{ 'inventario.spray.usedHint' | translate }}</small>
         </div>
 
-        <!-- Cantidad total gastada: se descuenta de la bodega (solo con producto elegido de ella) -->
-        <!-- Usa la misma unidad que la dosis: se muestra dentro del campo -->
-        <div class="field-row bodega" *ngIf="insumoSeleccionado()">
-          <div class="field">
-            <label class="field__label" for="cantidadUsada"><i class="ti ti-building-warehouse" aria-hidden="true"></i> {{ 'inventario.spray.used' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
-            <div class="field__input-wrap con-unidad">
-              <input id="cantidadUsada" type="number" min="0" step="any" inputmode="decimal"
-                     [(ngModel)]="form.cantidadUsada" name="cantidadUsada" placeholder="0" (ngModelChange)="actualizarEstimado()"
-                     [attr.aria-describedby]="form.unidadCantidad ? 'unidadCantidad' : null" />
-              <span class="sufijo-unidad" id="unidadCantidad" *ngIf="form.unidadCantidad">{{ 'enums.unidadMedida.' + form.unidadCantidad | translate }}</span>
-            </div>
-            <small class="campo-hint">{{ 'inventario.spray.usedHint' | translate }}</small>
+        <div class="field" [class.ancho]="!insumoSeleccionado()">
+          <label class="field__label" for="costoProducto"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'temporadas.costos.sprayCost' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
+          <div class="field__input-wrap">
+            <input id="costoProducto" type="number" min="0" step="any" inputmode="decimal" [(ngModel)]="form.costo" name="costoProducto" placeholder="0" />
           </div>
+          <small class="campo-hint">{{ 'temporadas.costos.sprayCostHint' | translate }}</small>
         </div>
-        <div class="bodega-info" *ngIf="insumoSeleccionado() && estimado() as e">
+
+        <div class="bodega-info ancho" *ngIf="insumoSeleccionado() && estimado() as e">
           <p *ngIf="e.disponible !== 0 || e.costoPorUnidad != null; else sinCompras">
             <i class="ti ti-packages" aria-hidden="true"></i> {{ 'inventario.spray.inStock' | translate: { cantidad: cantidadBodega(e) } }}
           </p>
@@ -253,13 +265,7 @@
           <p class="suave" *ngIf="e.costoPorUnidad == null && form.cantidadUsada">{{ 'inventario.spray.noPrice' | translate }}</p>
         </div>
 
-        <div class="field">
-          <label class="field__label" for="costoProducto"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'temporadas.costos.sprayCost' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
-          <div class="field__input-wrap">
-            <input id="costoProducto" type="number" min="0" step="any" inputmode="decimal" [(ngModel)]="form.costo" name="costoProducto" placeholder="0" />
-          </div>
-          <small class="campo-hint">{{ 'temporadas.costos.sprayCostHint' | translate }}</small>
-        </div>
+        <h3 class="seccion-form">{{ 'siembra.spray.sections.limits' | translate }}</h3>
 
         <!-- Restricciones del producto: deciden cuándo se puede cosechar y entrar al lote -->
         <div class="field-row restricciones">

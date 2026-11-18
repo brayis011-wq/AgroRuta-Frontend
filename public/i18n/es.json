@@ -688,6 +688,7 @@
       "unit": "Unidad",
       "unitPlaceholder": "Selecciona",
       "unitHint": "La misma para la dosis y para la cantidad total usada.",
+      "sections": {"application":"Aplicación","product":"Producto y dosis","stock":"Bodega y costo","limits":"Restricciones del producto"},
       "area": "Área aplicada (hectáreas)",
       "notes": "Observaciones",
       "notesPlaceholder": "Condiciones climáticas, estado del cultivo...",
