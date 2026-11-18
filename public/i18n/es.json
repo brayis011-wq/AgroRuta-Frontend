@@ -112,6 +112,7 @@
       "codeNeeded": "Contraseña correcta. Ahora escribe el código de tu app de autenticación.",
       "codeHint": "Los 6 dígitos de tu app de autenticación. Si no tienes el teléfono, escribe uno de tus códigos de respaldo.",
       "code": "Código de verificación",
+      "rememberDevice": "No volver a pedirlo en este dispositivo por 30 días",
       "notVerified": "Falta confirmar tu correo. Abre el enlace que te enviamos.",
       "forgot": "¿La olvidaste?",
       "tooManyAttempts": "Demasiados intentos fallidos. Espera 15 minutos e inténtalo de nuevo.",

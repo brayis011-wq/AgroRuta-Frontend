@@ -30,6 +30,8 @@ export class LoginComponent implements OnInit {
   /** La contraseña era correcta y la cuenta pide además el código de la verificación en dos pasos */
   pideCodigo = false;
   codigo = '';
+  /** No volver a pedir el código en este navegador por 30 días (se desmarca en un equipo prestado) */
+  recordarDispositivo = true;
   cargando: boolean = false;
 
   constructor(
@@ -56,7 +58,9 @@ export class LoginComponent implements OnInit {
     this.cargando = true;
 
     const codigo = this.codigo.trim();
-    const datos = this.pideCodigo && codigo ? { ...this.form, codigo } : this.form;
+    const datos = this.pideCodigo && codigo
+      ? { ...this.form, codigo, recordarDispositivo: this.recordarDispositivo }
+      : this.form;
 
     this.authService.login(datos).subscribe({
       next: (respuesta) => {
