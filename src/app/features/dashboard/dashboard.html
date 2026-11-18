@@ -25,7 +25,32 @@
       <a class="accion" routerLink="/crops/new-farm"><i class="ti ti-map-pin-plus" aria-hidden="true"></i>{{ 'dashboard.actions.farm' | translate }}</a>
       <a class="accion" routerLink="/crops/inventory"><i class="ti ti-building-warehouse" aria-hidden="true"></i>{{ 'inventario.nav' | translate }}</a>
     </div>
-    <i class="ti ti-plant-2 hoja" aria-hidden="true"></i>
+    <!-- Almanaque del día: la luna y un dicho del campo -->
+    <div class="almanaque" role="group" [attr.aria-label]="'almanaque.title' | translate">
+      <div class="alm-luna">
+        <svg viewBox="-12 -12 24 24" role="img" [attr.aria-label]="'almanaque.moonLabel' | translate: { phase: ('almanaque.phase.' + almanaque.fase | translate) }">
+          <circle r="10" class="luna-sombra" /><path [attr.d]="almanaque.camino" class="luna-luz" />
+        </svg>
+        <p><strong>{{ 'almanaque.phase.' + almanaque.fase | translate }}</strong><small>{{ 'almanaque.lore.' + almanaque.fase | translate }}</small></p>
+      </div>
+      <p class="alm-dicho"><small>{{ 'almanaque.sayingLabel' | translate }}</small><q>{{ 'almanaque.sayings.s' + almanaque.dicho | translate }}</q></p>
+    </div>
+    <!-- Paisaje de la marca: loma con curvas de nivel y un campo arado con sus primeros brotes -->
+    <svg class="campo" viewBox="0 0 440 190" aria-hidden="true">
+      <path class="loma" d="M0 190V122C60 80 122 64 192 86s118 50 248 4V190Z" />
+      <path class="curva" d="M12 136C72 98 130 86 192 106s116 46 248 10" />
+      <path class="curva" d="M34 158C88 124 138 114 194 130s110 38 246 14" />
+      <path class="tierra" d="M112 190C186 136 300 124 440 148V190Z" />
+      <g class="surcos">
+        <path d="M168 190Q322 156 440 151" /><path d="M224 190Q350 163 440 157" /><path d="M284 190Q378 170 440 164" />
+        <path d="M344 190Q402 177 440 172" /><path d="M400 190Q424 184 440 181" />
+      </g>
+      <g class="brotes">
+        <use href="#ar-brote" x="214" y="176" /><use href="#ar-brote" x="270" y="170" /><use href="#ar-brote" x="322" y="176" />
+        <use href="#ar-brote" x="366" y="166" /><use href="#ar-brote" x="408" y="172" />
+      </g>
+      <defs><path id="ar-brote" d="M0 0v-9M0-4c-5 0-7-2.5-7-6 5 0 7 2.5 7 6ZM0-6c5 0 7-2.5 7-6-5 0-7 2.5-7 6Z" /></defs>
+    </svg>
   </section>
 
   <!-- Números del mes -->

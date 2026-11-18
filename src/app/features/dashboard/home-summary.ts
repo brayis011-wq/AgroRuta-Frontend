@@ -1,4 +1,4 @@
-import { Jornal, PagosDelMes, ResumenNominas, Trabajador } from '../../core/models/worker.model';
+import { PagosDelMes, ResumenJornalesInicio, ResumenNominas, Trabajador } from '../../core/models/worker.model';
 import { Lote } from '../../core/models/crop.model';
 
 export interface DatosInicio {
@@ -7,7 +7,8 @@ export interface DatosInicio {
   /** Lo pagado cada mes desde el mes anterior (GET /api/payments/monthly) */
   pagosPorMes: PagosDelMes[];
   trabajadores: Trabajador[];
-  jornales: Jornal[];
+  /** Jornales del mes, del anterior y quiénes tienen jornal hoy (GET /api/workdays/home-summary); null si falló */
+  jornales: ResumenJornalesInicio | null;
   lotes: Lote[];
 }
 
@@ -41,9 +42,6 @@ export function fechaLocal(v: string | Date | null | undefined): Date | null {
   return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(v);
 }
 
-const mismoMes = (d: Date, ref: Date) => d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth();
-const mismoDia = (d: Date, ref: Date) => mismoMes(d, ref) && d.getDate() === ref.getDate();
-
 function tendencia(actual: number, anterior: number): Tendencia {
   return { actual, anterior, porcentaje: anterior > 0 ? Math.round(((actual - anterior) / anterior) * 100) : null };
 }
@@ -68,12 +66,7 @@ export function calcularResumen(d: DatosInicio, hoy = new Date()): ResumenInicio
   const aprob = deEstado('APROBADA');
   const activos = d.trabajadores.filter((t) => t.estado === 'ACTIVO');
 
-  const conJornalHoy = new Set(
-    d.jornales.filter((j) => { const f = fechaLocal(j.fecha); return f && mismoDia(f, hoy); })
-      .map((j) => j.trabajador?.id ?? j.trabajadorId),
-  );
-
-  const jornalesDe = (ref: Date) => d.jornales.filter((j) => { const f = fechaLocal(j.fecha); return f && mismoMes(f, ref); }).length;
+  const conJornalHoy = new Set(d.jornales?.trabajadoresHoy ?? []);
   const claveMes = (ref: Date) => `${ref.getFullYear()}-${String(ref.getMonth() + 1).padStart(2, '0')}`;
   const pagadoEn = (ref: Date) => Number(d.pagosPorMes.find((m) => m.mes === claveMes(ref))?.total ?? 0);
 
@@ -90,7 +83,7 @@ export function calcularResumen(d: DatosInicio, hoy = new Date()): ResumenInicio
     lotesTotal: d.lotes.length,
     trabajadoresActivos: activos.length,
     sinJornalHoy: sinJornal,
-    jornalesMes: tendencia(jornalesDe(hoy), jornalesDe(mesAnterior)),
+    jornalesMes: tendencia(d.jornales?.mesActual ?? 0, d.jornales?.mesAnterior ?? 0),
     pagadoMes: tendencia(pagadoEn(hoy), pagadoEn(mesAnterior)),
     pendientes: pend.n + aprob.n + solicitudes,
   };

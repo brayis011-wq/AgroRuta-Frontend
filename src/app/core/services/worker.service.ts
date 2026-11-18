@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
-  Labor, Pago, Cargo, Trabajador, Nomina, Jornal, ResumenNominas, ResumenJornales, ResumenPagos, PagosDelMes
+  Labor, Pago, Cargo, Trabajador, Nomina, Jornal, ResumenNominas, ResumenJornales, ResumenJornalesInicio, ResumenPagos, PagosDelMes
 } from '../models/worker.model';
 import { Pagina, TAMANO_PAGINA } from '../models/pagina.model';
 
@@ -153,6 +153,10 @@ export class JornalService {
     if (inicio) params = params.set('inicio', inicio);
     if (fin)    params = params.set('fin', fin);
     return this.http.get<ResumenJornales>(`${this.api}/worker/${trabajadorId}/summary`, { params });
+  }
+  /** Conteos de jornales para el Inicio en una sola consulta (hoy: "2026-11-16", la fecha del dispositivo). */
+  resumenInicio(hoy: string): Observable<ResumenJornalesInicio> {
+    return this.http.get<ResumenJornalesInicio>(`${this.api}/home-summary`, { params: new HttpParams().set('hoy', hoy) });
   }
   porTrabajador(trabajadorId: number, inicio?: string, fin?: string): Observable<Jornal[]> {
     let params = new HttpParams();

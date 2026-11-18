@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { LanguageService } from '../../core/services/language.service';
 import { FincaActivaService } from '../../core/services/active-farm.service';
 import { JornalService, NominaService, PagoService, TrabajadorService } from '../../core/services/worker.service';
 import { InventarioService } from '../../core/services/inventory.service';
-import { Jornal, PagosDelMes, ResumenNominas, Trabajador } from '../../core/models/worker.model';
+import { PagosDelMes, ResumenNominas, Trabajador } from '../../core/models/worker.model';
 import { EventoCalendario, Finca, Lote, Siembra } from '../../core/models/crop.model';
 import { ICONO_EVENTO, TONO_EVENTO, diasHasta, esPorVenir, ordenAgenda, textoEvento } from '../crop/calendar/events';
 import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget';
@@ -18,6 +18,7 @@ import { WeatherAdviceComponent } from '../weather/weather-advice/weather-advice
 import { formatoPesos, formatoNumero } from '../../shared/format';
 import { municipio } from '../../shared/weather';
 import { ContarDirective } from '../../shared/count-up.directive';
+import { almanaqueDe } from './almanac';
 import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
 
 const iso = (d: Date) =>
@@ -60,7 +61,6 @@ export class DashboardComponent implements OnInit {
   private readonly trabajadores = inject(TrabajadorService);
   private readonly jornales = inject(JornalService);
   private readonly inventario = inject(InventarioService);
-  private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
   readonly lang = inject(LanguageService);
   readonly fincaActiva = inject(FincaActivaService);
@@ -72,6 +72,8 @@ export class DashboardComponent implements OnInit {
   readonly usuario = this.auth.getUsuario();
   readonly hoy = new Date();
   readonly saludo = saludoSegunHora(this.hoy);
+  /** Fase de la luna y dicho del día (se calculan aquí mismo, sin consultar nada) */
+  readonly almanaque = almanaqueDe(this.hoy);
   readonly cargando = signal(true);
   readonly resumen = signal<ResumenInicio | null>(null);
   /** Siembras en curso (null mientras carga) */
@@ -114,15 +116,8 @@ export class DashboardComponent implements OnInit {
     const vacio = <T>(o: Observable<T[]>): Observable<T[]> => o.pipe(catchError(() => of([] as T[])));
 
     const trabajadores$ = vacio<Trabajador>(this.trabajadores.listarTodos());
-    const jornales$ = trabajadores$.pipe(
-      switchMap((ts) => {
-        const activos = ts.filter((t) => t.estado === 'ACTIVO' && t.id != null);
-        return activos.length
-          ? forkJoin(activos.map((t) => vacio<Jornal>(this.jornales.porTrabajador(t.id!, desde, hasta))))
-              .pipe(map((listas) => listas.flat()))
-          : of([] as Jornal[]);
-      }),
-    );
+    // Una sola consulta con los conteos: antes se pedían los jornales de cada trabajador activo
+    const jornales$ = this.jornales.resumenInicio(hasta).pipe(catchError(() => of(null)));
     const fincas$ = vacio<Finca>(this.cultivo.listarFincasPorAgricultor(id)).pipe(shareReplay(1));
     const lotes$ = fincas$.pipe(
       switchMap((fs) => fs.length
@@ -203,9 +198,5 @@ export class DashboardComponent implements OnInit {
     if (d <= 0) return this.translate.instant('dashboard.agenda.today');
     if (d === 1) return this.translate.instant('dashboard.agenda.tomorrow');
     return this.translate.instant('dashboard.agenda.inDays', { days: d });
-  }
-
-  irA(ruta: string): void {
-    this.router.navigate([ruta]);
   }
 }

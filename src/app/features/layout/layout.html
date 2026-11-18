@@ -5,7 +5,7 @@
     <div class="brand">
       <div class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
       <div class="brand-text">
-        <strong>AgroRuta</strong>
+        <strong class="ar-titulo">AgroRuta</strong>
         <small>{{ 'layout.subtitle' | translate }}</small>
       </div>
       <button type="button" class="ib colapsar" (click)="alternarColapsado()"
@@ -92,7 +92,7 @@
     <div class="pie">
       @if (clima(); as c) {
         <div [class]="'clima ' + (consejo() ?? '')">
-          <img [src]="c.iconUrl" alt="" width="40" height="40" />
+          <span class="clima-ic" aria-hidden="true"><i [class]="'ti ' + iconoClima()"></i></span>
           <div class="clima-txt">
             <small><b>{{ c.temperature | number: '1.0-0' }}°C</b> {{ lugarClima() }}</small>
             <em>{{ 'layout.weather.' + consejo() | translate }}</em>

@@ -45,7 +45,7 @@ describe('DashboardComponent', () => {
       nominas: { resumen: vi.fn(() => of([{ estado: 'PENDIENTE', cantidad: 1, total: 10 }])) },
       pagos: { porMes: vi.fn(() => of([])) },
       trabajadores: { listarTodos: vi.fn(() => of([{ id: 5, estado: 'ACTIVO' }, { id: 6, estado: 'INACTIVO' }])) },
-      jornales: { porTrabajador: vi.fn(() => of([])) },
+      jornales: { resumenInicio: vi.fn(() => of({ mesActual: 4, mesAnterior: 2, trabajadoresHoy: [] })) },
     };
   });
 
@@ -63,10 +63,18 @@ describe('DashboardComponent', () => {
     expect(svc['pagos'].porMes.mock.calls[0][0]).toMatch(/^\d{4}-\d{2}-01$/);
   });
 
-  it('asks work days only for active workers', () => {
-    crear();
-    expect(svc['jornales'].porTrabajador).toHaveBeenCalledTimes(1);
-    expect(svc['jornales'].porTrabajador.mock.calls[0][0]).toBe(5);
+  it('asks the work day counts once, not once per worker', () => {
+    const c = crear();
+    expect(svc['jornales'].resumenInicio).toHaveBeenCalledTimes(1);
+    expect(svc['jornales'].resumenInicio.mock.calls[0][0]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(c.resumen()!.jornalesMes).toEqual({ actual: 4, anterior: 2, porcentaje: 100 });
+  });
+
+  it('counts every active worker as without work day when the counts fail', () => {
+    svc['jornales'].resumenInicio = vi.fn(() => throwError(() => new Error('x')));
+    const c = crear();
+    expect(c.resumen()!.jornalesMes.actual).toBe(0);
+    expect(c.resumen()!.sinJornalHoy).toBe(1);
   });
 
   it('still shows the rest when one source fails', () => {

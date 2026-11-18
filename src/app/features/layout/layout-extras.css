@@ -47,10 +47,11 @@
 
 /* ── Clima ─────────────────────────────────────────── */
 .clima {
-  display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 4px; border-radius: 12px;
+  display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border-radius: 12px;
   background: linear-gradient(135deg, var(--ar-verde-100), var(--ar-verde-50)); border: 1px solid var(--ar-borde-fuerte); animation: item-in .3s ease-out both;
 }
-.clima img { width: 40px; height: 40px; flex: none; margin: -4px 0; }
+.clima-ic { width: 34px; height: 34px; flex: none; display: grid; place-items: center; font-size: 22px; color: var(--ar-verde-700); }
+.clima.rain .clima-ic, .clima.wind .clima-ic, .clima.hot .clima-ic { color: var(--ar-ambar); }
 .clima-txt { display: flex; flex-direction: column; min-width: 0; }
 .clima-txt small { font-size: 11.5px; color: var(--ar-tinta-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .clima-txt b { font-size: 15px; color: var(--ar-tinta); margin-right: 3px; }

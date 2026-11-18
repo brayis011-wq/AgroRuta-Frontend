@@ -20,7 +20,8 @@ import { AvisoComponent } from './toast/toast';
 import { DeslizaCierraDirective } from '../../shared/swipe-close.directive';
 import { abreTeclado, barraOcultaTras } from './scroll-bar';
 import { vigilarEntradas } from './reveal';
-import { consejoFumigacion, municipio } from '../../shared/weather';
+import { consejoFumigacion, iconoClima, municipio } from '../../shared/weather';
+import { iniciales as inicialesDe } from '../../shared/iniciales';
 
 const CLAVE_COLAPSADO = 'sidebarColapsado';
 /** Lotes de la finca activa que se muestran en el submenú de Cultivos */
@@ -73,6 +74,7 @@ export class LayoutComponent {
   readonly clima = signal<Weather | null>(null);
   readonly lugarClima = computed(() => municipio(this.fincaActiva.paraClima()) || this.clima()?.city || '');
   readonly consejo = computed(() => { const c = this.clima(); return c ? consejoFumigacion(c) : null; });
+  readonly iconoClima = computed(() => iconoClima(this.clima()?.iconUrl));
   /** Menú completo abierto como cajón (solo celular) */
   readonly cajonAbierto = signal(false);
   /** Celular: la barra inferior se esconde al bajar por la página y mientras se escribe en un campo */
@@ -266,8 +268,7 @@ export class LayoutComponent {
   }
 
   iniciales(): string {
-    const partes = (this.usuario?.nombre ?? '').trim().split(/\s+/).filter(Boolean);
-    return ((partes[0]?.[0] ?? '') + (partes[1]?.[0] ?? '')).toUpperCase() || '?';
+    return inicialesDe(this.usuario?.nombre);
   }
 
   @HostListener('document:keydown.escape')
