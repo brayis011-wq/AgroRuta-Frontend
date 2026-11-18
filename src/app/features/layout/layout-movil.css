@@ -39,7 +39,7 @@ img.av { object-fit: cover; }
   .mini .brand { flex-direction: column; padding: 2px 0 12px; gap: 12px; }
   .mini .brand-text, .mini .sec, .mini .txt, .mini .flecha, .mini .sub,
   .mini .item .badge, .mini .seg, .mini .usuario-txt, .mini .idioma > i, .mini .tema-btn { display: none; }
-  .mini .colapsar { margin: 0; }
+  .mini .colapsar, .mini .brand app-campana { margin: 0; }
   .mini .nav { align-items: center; margin: 0; padding: 0; gap: 6px; overflow: visible; }
   .mini .item { width: 46px; height: 46px; padding: 0; justify-content: center; }
   .mini .tip {
@@ -67,6 +67,8 @@ img.av { object-fit: cover; }
   .cajon .side { transform: none; box-shadow: 0 10px 40px rgba(0, 0, 0, .2); }
   .colapsar { display: none; }
   .cerrar-cajon { display: grid; }
+  /* En el celular la campana está en la barra inferior: en el cajón del menú sobraría */
+  .brand app-campana { display: none; }
   /* El velo aparece y se va con suavidad en vez de saltar */
   .velo {
     display: block; position: fixed; inset: 0; z-index: 90; background: rgba(15, 25, 19, .42); backdrop-filter: blur(2px);
@@ -85,11 +87,14 @@ img.av { object-fit: cover; }
   }
   /* Al bajar por la página o al escribir, la barra se aparta para no tapar el contenido */
   .barra.oculta { translate: 0 calc(100% + 10px); }
-  .barra a, .barra button {
-    position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 58px;
-    padding: 5px 8px; border: 0; border-radius: 10px; background: none; font: inherit; font-size: 11px;
+  /* Cada botón toma su parte del ancho: con la campana son seis y en 360 px deben caber todos */
+  .barra a, .barra button, .barra app-campana {
+    position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1 1 0; min-width: 0;
+    padding: 5px 2px; border: 0; border-radius: 10px; background: none; font: inherit; font-size: 11px;
     color: var(--ar-tinta-3); text-decoration: none; cursor: pointer;
   }
+  .barra app-campana { padding: 0; }
+  .barra span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .barra i { font-size: 22px; }
   .barra .on { color: var(--ar-verde-700); font-weight: 600; background: var(--ar-verde-50); }
   .punto {

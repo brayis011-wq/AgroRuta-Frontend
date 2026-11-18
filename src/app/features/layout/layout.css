@@ -32,6 +32,9 @@
 .ib:hover { color: var(--ar-verde-700); border-color: var(--ar-borde-fuerte); }
 .colapsar { margin-left: auto; }
 .cerrar-cajon { display: none; margin-left: auto; }
+/* La campana va a la derecha, antes del botón de colapsar */
+.brand app-campana { margin-left: auto; }
+.brand app-campana ~ .colapsar { margin-left: 0; }
 
 .nav { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; overflow-x: hidden; flex: 1; min-height: 0; margin: 0 -4px; padding: 0 4px; }
 .sec {

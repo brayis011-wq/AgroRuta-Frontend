@@ -9,6 +9,8 @@
         <strong class="ar-titulo">AgroRuta</strong>
         <small class="rol-tag"><i class="ti ti-id-badge-2" aria-hidden="true"></i>{{ 'portal.home.eyebrow' | translate }}</small>
       </div>
+      <!-- Bandeja de avisos (en el celular también va en la barra inferior) -->
+      <app-campana rutaAjustes="/portal/account" />
       <button type="button" class="ib colapsar" (click)="alternarColapsado()"
               [attr.aria-label]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate"
               [title]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate">
@@ -93,6 +95,7 @@
         </a>
       }
     }
+    <app-campana modo="barra" rutaAjustes="/portal/account" />
     <a routerLink="account" routerLinkActive="on"><i class="ti ti-user-cog"></i><span>{{ 'portal.nav.account' | translate }}</span></a>
   </nav>
 </div>

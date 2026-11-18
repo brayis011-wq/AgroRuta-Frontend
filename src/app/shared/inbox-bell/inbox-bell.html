@@ -1,0 +1,57 @@
+<button #boton type="button" [class]="modo() === 'menu' ? 'ib campana' : 'campana-barra'" (click)="alternar($event)"
+        [attr.aria-expanded]="abierta()" [attr.aria-controls]="id" aria-haspopup="dialog"
+        [attr.aria-label]="(bandeja.noLeidos() ? 'inbox.openUnread' : 'inbox.open') | translate: { count: bandeja.noLeidos() }"
+        [title]="'inbox.title' | translate">
+  <i class="ti ti-bell" [class.ti-bell-ringing]="bandeja.noLeidos() > 0" aria-hidden="true"></i>
+  @if (modo() === 'barra') { <span>{{ 'inbox.short' | translate }}</span> }
+  @if (bandeja.noLeidos() > 0) { <b class="globo" aria-hidden="true">{{ globo() }}</b> }
+</button>
+
+@if (abierta()) {
+  <section #panel class="panel" [id]="id" role="dialog" [attr.aria-label]="'inbox.title' | translate" tabindex="-1"
+           [attr.popover]="conPopover ? 'manual' : null" [class.hoja]="modo() === 'barra'"
+           [style.left]="estilo().left" [style.right]="estilo().right" [style.top]="estilo().top"
+           [style.bottom]="estilo().bottom" [style.width]="estilo().width">
+    <header>
+      <h2>{{ 'inbox.title' | translate }}</h2>
+      @if (bandeja.noLeidos() > 0) {
+        <button type="button" class="todo" (click)="bandeja.marcarTodos()">
+          <i class="ti ti-checks" aria-hidden="true"></i> {{ 'inbox.markAll' | translate }}
+        </button>
+      }
+      <button type="button" class="cerrar" (click)="cerrar(true)" [attr.aria-label]="'inbox.close' | translate">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <div class="lista">
+      @if (filas(); as lista) {
+        @for (f of lista; track f.aviso.id) {
+          <button type="button" class="aviso" [class.nuevo]="!f.aviso.leido" (click)="abrir(f)">
+            <span class="ic {{ f.texto.tono }}" aria-hidden="true"><i class="ti {{ f.texto.icono }}"></i></span>
+            <span class="txt">
+              <strong>{{ f.texto.titulo }}</strong>
+              <small>{{ f.texto.cuerpo }}</small>
+              <em>{{ f.cuando }}</em>
+            </span>
+            @if (!f.aviso.leido) { <span class="punto"><span class="sr-only">{{ 'inbox.unread' | translate }}</span></span> }
+          </button>
+        } @empty {
+          <div class="vacio">
+            <i class="ti ti-bell-off" aria-hidden="true"></i>
+            <strong>{{ (bandeja.error() ? 'inbox.error' : 'inbox.empty') | translate }}</strong>
+            @if (!bandeja.error()) { <small>{{ 'inbox.emptyHint' | translate }}</small> }
+          </div>
+        }
+      } @else {
+        @for (i of [1, 2, 3]; track i) { <div class="esq" aria-hidden="true"></div> }
+      }
+    </div>
+
+    <footer>
+      <a [routerLink]="rutaAjustes()" fragment="correos" (click)="cerrar()">
+        <i class="ti ti-adjustments" aria-hidden="true"></i> {{ 'inbox.settings' | translate }}
+      </a>
+    </footer>
+  </section>
+}
