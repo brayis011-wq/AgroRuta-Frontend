@@ -84,7 +84,7 @@
             <strong>{{ diasEnCampo() }}</strong>
             <span>{{ 'temporadas.lote.daysInField' | translate }}</span>
           </div>
-          <span class="resumen-ir">{{ 'temporadas.lote.open' | translate }} <i class="ti ti-arrow-right"></i></span>
+          <span class="resumen-ir"><i class="ti ti-eye" aria-hidden="true"></i> {{ 'temporadas.lote.open' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
         </a>
         <app-ciclo-etapas [siembra]="s" (cambio)="alCambiarSiembra($event)" />
       </section>
