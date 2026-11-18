@@ -16,7 +16,16 @@
 .resumen-dias { display: flex; flex-direction: column; align-items: center; line-height: 1.1; }
 .resumen-dias strong { font-size: 1.6rem; font-weight: 700; color: var(--ar-verde-700); font-variant-numeric: tabular-nums; }
 .resumen-dias span { font-size: .72rem; color: var(--ar-tinta-3); text-align: center; }
-.resumen-ir { font-size: .85rem; font-weight: 600; color: var(--ar-verde-700); display: inline-flex; align-items: center; gap: .25rem; white-space: nowrap; }
+/* Se ve como botón (antes era un texto pequeño que no se notaba); toda la tarjeta lleva al detalle */
+.resumen-ir {
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem; white-space: nowrap;
+  padding: .65rem 1.1rem; border-radius: 11px; font-size: .9rem; font-weight: 600; color: #fff;
+  background: linear-gradient(180deg, #38923d, var(--ar-verde-600)); box-shadow: 0 3px 10px rgba(46, 125, 50, .28);
+  transition: box-shadow .15s;
+}
+.resumen-ir .ti { font-size: 18px; transition: transform .15s; }
+.resumen:hover .resumen-ir { box-shadow: 0 6px 16px rgba(46, 125, 50, .35); }
+.resumen:hover .resumen-ir .ti:last-child { transform: translateX(3px); }
 
 .icono {
   flex: none; width: 44px; height: 44px; border-radius: 12px;
@@ -69,7 +78,8 @@
 
 @media (max-width: 720px) {
   .resumen { grid-template-columns: 1fr auto; }
-  .resumen-ir { display: none; }
+  /* En el celular el botón va abajo, a todo el ancho */
+  .resumen-ir { grid-column: 1 / -1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .resumen, .esqueleto { transition: none; animation: none; }
