@@ -1,16 +1,14 @@
 {
+  "almanaque": {"title":"Today's almanac","moonLabel":"Moon phase: {{phase}}","phase":{"nueva":"New moon","creciente":"Waxing moon","llena":"Full moon","menguante":"Waning moon"},"lore":{"nueva":"The old-timers say: the soil rests; a good day to weed and fertilize.","creciente":"The old-timers say: a good time to sow what grows upward.","llena":"The old-timers say: a good time to harvest; leave pruning for later.","menguante":"The old-timers say: a good time to prune and to plant root crops."},"sayingLabel":"Saying of the day","sayings":{"s1":"The early bird catches the worm.","s2":"You reap what you sow.","s3":"Clear accounts make good friends.","s4":"Grain by grain, the hen fills her crop.","s5":"The owner's eye fattens the cattle.","s6":"Don't put off until tomorrow what you can do today.","s7":"Put a good face on bad weather.","s8":"Little by little, one goes far.","s9":"Water you won't drink, let it run.","s10":"The shrimp that falls asleep is carried off by the current.","s11":"Better safe than sorry.","s12":"Sow well and you will harvest well."}},
   "diagnostico": {"title":"Photo diagnosis","hint":"Take a photo of the leaf, stem or fruit that worries you and get guidance on what it may be and what to do. It is saved in this planting.","left":"{{count}} left today","noneLeft":"You used today's analyses","take":"Take photo","choose":"Choose a photo","note":"What are you seeing? (optional)","notePlaceholder":"E.g. yellow spots that showed up this week on the lower leaves","analyze":"Analyze photo","analyzing":"Analyzing…","wait":"This can take up to a minute. Do not close the page.","cancel":"Cancel","off":"Photo diagnosis is not turned on yet.","loadError":"Could not load the diagnoses for this planting.","privacy":"The photo is sent to an artificial intelligence service (Gemini, by Google) only to analyze it, without location data.","disclaimer":"This is guidance based on a photo: it does not replace a visit from an agronomist. Before applying a product, check the label and the pre-harvest interval.","empty":"No diagnoses in this planting yet.","seen":"What is visible","steps":"What to do","others":"It could also be","yourNote":"Your note","photoAlt":"Analyzed photo","previewAlt":"Chosen photo","delete":"Delete","deleteTitle":"Delete diagnosis","deleteMsg":"\"{{nombre}}\" and its photo will be removed from this planting.","errors":{"tipo":"That file is not an image. Use a JPG or PNG photo.","pesada":"The photo is too large (15 MB maximum).","lectura":"Could not open the photo. Try another one or take it again.","offline":"You need an internet connection for this.","generic":"Could not analyze the photo. Try again.","delete":"Could not delete the diagnosis."},"tipo":{"PLAGA":"Pest","ENFERMEDAD":"Disease","DEFICIENCIA":"Nutrient deficiency","DANO_AMBIENTAL":"Environmental damage","SANA":"Healthy plant","INDETERMINADO":"Undetermined"},"confianza":{"ALTA":"high confidence","MEDIA":"medium confidence","BAJA":"low confidence"}},
   "offline": {"title":"Working offline","close":"Close","offline":"Offline","pending":"{{n}} to send","sending":"Sending…","sendNow":"Send now","sent":"Records sent: {{n}}","savedHere":"Saved on this device","onlineHint":"These records were made without signal and are stored on this device. They are sent automatically; you can also send them now.","offlineHint":"You can keep logging workdays, sprayings, harvests and activities: they are stored on this device and sent automatically when the signal comes back.","copyFrom":"You are seeing data saved on {{fecha}}.","savedAt":"Saved {{fecha}}","nothing":"Nothing waiting to be sent.","retry":"Retry","discard":"Discard","discardSure":"Discard?","confirmWithdrawal":"Harvest anyway","rejected":"The server did not accept this record.","tipo":{"jornal":"Workday","fumigacion":"Spraying","cosecha":"Harvest","actividad":"Activity"}},
   "receipt": {"download":"Download receipt","downloadShort":"Receipt","downloadHint":"PDF with a QR code to verify it","downloadError":"The receipt could not be downloaded. Try again.","verify":{"checking":"Checking the receipt…","validTitle":"Authentic receipt","validText":"This payment is recorded in AgroRuta with this information.","amount":"Amount paid","number":"Receipt","worker":"Received by","idNumber":"ID","employer":"Paid by","period":"Period worked","compare":"Compare the amount and date with the paper. If they differ, the receipt was altered.","invalidTitle":"Receipt not valid","invalidText":"This code does not match any payment recorded in AgroRuta. The receipt may have been altered or the link may be incomplete.","offlineTitle":"Could not verify","offlineText":"The server cannot be reached right now. This does not mean the receipt is fake."}},
-  "inventario": {"nav":"Supplies storeroom","eyebrow":"Crops","title":"Supplies storeroom","subtitle":"What you have of each product, what it is worth and what it was used for. Sprayings subtract what they use automatically.","buy":"Record purchase","adjust":"Count","minimum":"Minimum alert","list":"Products in storeroom","empty":"There are no products in your storeroom yet. Record your first purchase to start.","hint":"The average cost comes from your purchases with a price and is used to work out the cost of each spraying.","kpi":{"items":"Products","value":"Storeroom value","valueHint":"at average purchase cost","alerts":"To review","alertsHint":"low, out of stock or negative"},"table":{"item":"Product","stock":"In stock","minimum":"Minimum","avgCost":"Average cost","value":"Value"},"status":{"OK":"Fine","BAJO":"Low","AGOTADO":"Out of stock","NEGATIVO":"Negative"},"history":{"title":"Movements","empty":"No movements.","type":{"COMPRA":"Purchase","USO":"Spraying","AJUSTE":"Count"},"fromSpray":"from the spraying","fromSprayHint":"To correct it, edit or delete the spraying.","confirmDelete":"Delete this movement? Stock will be recalculated."},"form":{"compraTitle":"Record purchase","ajusteTitle":"Storeroom count","minimoTitle":"Minimum alert","item":"Catalog product","itemPlaceholder":"Choose a product","quantity":"Quantity","quantityError":"Enter a quantity greater than 0.","unit":"Unit","totalCost":"Total purchase cost","totalCostHint":"What you paid for the whole purchase. Used to work out the cost of each spraying.","date":"Purchase date","supplier":"Supplier","notes":"Notes","adjustHint":"Enter how much there really is in the storeroom. The difference with the app is recorded.","counted":"Counted quantity","reason":"Reason","reasonPlaceholder":"e.g. spilled, lent, end-of-month count","minimumHint":"We will warn you on the home page and in the daily email when this amount or less is left.","minimum":"Warn when left","removeMinimum":"Remove alert"},"spray":{"used":"Total amount used","usedHint":"All the product you used (not the dose per tank). It is subtracted from your storeroom.","inStock":"In storeroom: {{cantidad}}","notInStock":"This product has no purchases recorded in your storeroom.","estimated":"Cost at your average price: {{costo}}","useEstimated":"Use this cost","noPrice":"Record the cost of your purchases to work out the cost of the spraying."},"dashboard":{"alerts":"{{n}} products to review in the storeroom","alertsOne":"1 product to review in the storeroom"},"errors":{"load":"The storeroom could not be loaded.","save":"Could not save."}},
+  "inventario": {"nav":"Supplies storeroom","eyebrow":"Crops","title":"Supplies storeroom","subtitle":"What you have of each product, what it is worth and what it was used for. Sprayings subtract what they use automatically.","buy":"Record purchase","adjust":"Count","minimum":"Minimum alert","list":"Products in storeroom","empty":"There are no products in your storeroom yet. Record your first purchase to start.","hint":"The average cost comes from your purchases with a price and is used to work out the cost of each spraying.","kpi":{"items":"Products","value":"Storeroom value","valueHint":"at average purchase cost","alerts":"To review","alertsHint":"low, out of stock or negative"},"table":{"item":"Product","stock":"In stock","minimum":"Minimum","avgCost":"Average cost","value":"Value"},"status":{"OK":"Fine","BAJO":"Low","AGOTADO":"Out of stock","NEGATIVO":"Negative"},"history":{"title":"Movements","empty":"No movements.","type":{"COMPRA":"Purchase","USO":"Spraying","AJUSTE":"Count"},"fromSpray":"from the spraying","fromSprayHint":"To correct it, edit or delete the spraying.","confirmDelete":"Delete this movement? Stock will be recalculated."},"form":{"compraTitle":"Record purchase","ajusteTitle":"Storeroom count","minimoTitle":"Minimum alert","item":"Catalog product","itemPlaceholder":"Choose a product","quantity":"Quantity","quantityError":"Enter a quantity greater than 0.","unit":"Unit","totalCost":"Total purchase cost","totalCostHint":"What you paid for the whole purchase. Used to work out the cost of each spraying.","date":"Purchase date","supplier":"Supplier","notes":"Notes","adjustHint":"Enter how much there really is in the storeroom. The difference with the app is recorded.","counted":"Counted quantity","reason":"Reason","reasonPlaceholder":"e.g. spilled, lent, end-of-month count","minimumHint":"We will warn you on the home page and in the daily email when this amount or less is left.","minimum":"Warn when left","removeMinimum":"Remove alert"},"spray":{"used":"Total amount used","usedHint":"All the product you used (not the dose per tank). It is subtracted from your storeroom.","inStock":"In storeroom: {{cantidad}}","notInStock":"This product has no purchases recorded in your storeroom.","estimated":"Cost at your average price: {{costo}}","useEstimated":"Use this cost","noPrice":"Record the cost of your purchases to work out the cost of the spraying."},"errors":{"load":"The storeroom could not be loaded.","save":"Could not save."}},
   "theme": {"title": "Appearance", "hint": "Light, dark or automatic based on your phone or computer", "light": "Light", "dark": "Dark", "system": "Automatic", "toDark": "Switch to dark mode", "toLight": "Switch to light mode"},
   "common": {
     "language": "Language",
-    "spanish": "Spanish",
-    "english": "English",
     "loading": "Loading...",
     "retry": "Retry",
-    "view": "View",
     "optional": "optional",
     "cancel": "Cancel",
     "save": "Save",
@@ -33,7 +31,6 @@
       "workers": "Workers",
       "reports": "Reports",
       "settings": "Settings",
-      "backups": "backups",
       "team": "Team",
       "wages": "Work days",
       "payrolls": "Payrolls",
@@ -164,15 +161,6 @@
       "Agricultor": "Farmer",
       "Trabajador": "Worker"
     },
-    "cropReportStatus": {
-      "GERMINACION": "Germination",
-      "ACTIVO": "Active",
-      "COSECHADO": "Harvested",
-      "INACTIVO": "Inactive",
-      "PRODUCCION": "In production",
-      "FINALIZADO": "Finished",
-      "CRECIMIENTO": "Growth"
-    },
     "loteEstado": {
       "DISPONIBLE": "Available",
       "EN_CULTIVO": "In crop",
@@ -184,11 +172,6 @@
       "PRODUCCION": "Production",
       "COSECHA": "Harvest",
       "FINALIZADO": "Finished"
-    },
-    "variedad": {
-      "COLOMBIA": "Colombia",
-      "GIGANTE": "Giant",
-      "KENYA": "Kenya"
     },
     "tipoActividad": {
       "PODA": "Pruning",
@@ -229,9 +212,7 @@
     "metodoPago": {
       "EFECTIVO": "Cash",
       "TRANSFERENCIA": "Bank transfer",
-      "CHEQUE": "Check",
-      "DAVIPLATA": "Daviplata",
-      "NEQUI": "Nequi"
+      "CHEQUE": "Check"
     },
     "estadoTrabajador": {
       "ACTIVO": "Active",
@@ -248,7 +229,6 @@
     "agenda": {
   "emptyHint": "Schedule pruning, watering or spraying from the calendar and it will show up here.","title": "Coming up", "late": "Overdue", "today": "Today", "tomorrow": "Tomorrow", "inDays": "In {{days}} days"},
     "crops": {"title": "Crops in progress", "all": "See crops", "crop": "Crop", "days": "days", "none": "You don't have anything planted right now."},
-    "title": "Home",
     "greeting": {
       "morning": "Good morning, {{name}}",
       "afternoon": "Good afternoon, {{name}}",
@@ -369,9 +349,9 @@
     },
     "generatedAt": "Generated {{date}}",
     "downloadPdf": "Download PDF",
+    "full": {"button": "PDF with everything", "title": "What to include in the PDF", "hint": "Tick the parts you want in a single file.", "download": "Download PDF", "needOne": "Choose at least one part"},
     "downloading": "Preparing PDF…",
     "downloadError": "The PDF could not be downloaded. Please try again.",
-    "loading": "Loading data...",
     "error": "The data could not be loaded.",
     "vsPrevious": "{{pct}}% vs. last month",
     "noMatches": "No results for that filter.",
@@ -385,6 +365,7 @@
       "kpi": {
         "paid": "Total paid",
         "paidSub": "in {{count}} payments",
+        "paidSubOne": "in 1 payment",
         "pending": "Pending payment",
         "pendingSub": "{{count}} unpaid payrolls",
         "pendingSubOne": "1 unpaid payroll",
@@ -449,10 +430,9 @@
       "list": {
         "title": "My farms",
         "subtitle": "Manage your farms and crops",
-        "newFarm": "+ New farm",
-        "loading": "Loading farms...",
         "mapHint": "Click a marker to see the surroundings and enter the farm",
-        "noLocationCount": "{{count}} farm(s) without a map location",
+        "noLocationCount": "{{count}} farms without a map location",
+        "noLocationCountOne": "1 farm without a map location",
         "noLocationBadge": "No map location",
         "viewOnMap": "View on map",
         "deleteTitle": "Delete farm",
@@ -485,7 +465,6 @@
       "new": {
         "title": "New farm",
         "subtitle": "Register a new farm",
-        "back": "← Back",
         "name": "Farm name *",
         "namePlaceholder": "E.g.: El Paraíso Farm",
         "hectares": "Total hectares *",
@@ -512,10 +491,6 @@
         }
       },
       "detail": {
-        "back": "← My farms",
-        "loading": "Loading...",
-        "newLot": "+ New lot",
-        "lotsTitle": "Lots ({{count}})",
         "empty": "No lots registered. Use the button to add the first one.",
         "noPolygon": "· No polygon",
         "deleteLot": {
@@ -535,7 +510,6 @@
     "new": {
       "title": "New lot",
       "subtitle": "Draw the lot directly on the farm",
-      "back": "← Back",
       "name": "Lot name *",
       "namePlaceholder": "E.g.: Lot A",
       "mapHelp": "Use the polygon icon on the map to draw the lot boundaries. The area will be calculated automatically.",
@@ -556,38 +530,11 @@
       }
     },
     "detail": {
-      "back": "← Back to the farm",
-      "loading": "Loading...",
       "showNdvi": "Show NDVI",
       "hideNdvi": "Hide NDVI",
       "noPolygon": "This lot has no polygon defined",
-      "statusActive": "Active planting",
-      "statusNone": "No planting",
-      "noPlanting": {
-        "title": "No active planting",
-        "desc": "This lot is available to start a new planting.",
-        "start": "+ Start planting"
-      },
-      "planting": {
-        "title": "Active planting",
-        "variety": "Variety",
-        "date": "Planting date",
-        "plants": "Plants",
-        "stage": "Current stage"
-      },
-      "daysLine1": "days",
-      "daysLine2": "in the field",
-      "cycle": {
-        "title": "Crop cycle",
-        "advance": "Advance stage →",
-        "advancing": "Advancing...",
-        "finished": "✅ Finished",
-        "progress": "{{current}} of {{total}} stages"
-      },
-      "viewPlanting": "View planting details →",
       "errors": {
-        "load": "Error loading the lot.",
-        "advance": "Error advancing the stage."
+        "load": "Error loading the lot."
       }
     }
   },
@@ -621,7 +568,6 @@
     "new": {
       "title": "New planting",
       "subtitle": "Register a planting in the lot",
-      "back": "← Back",
       "date": "Planting date *",
       "plants": "Number of plants *",
       "plantsPlaceholder": "E.g.: 500",
@@ -641,13 +587,6 @@
       }
     },
     "detail": {
-      "back": "← Back to the lot",
-      "loading": "Loading...",
-      "title": "{{cultivo}} planting",
-      "cropFallback": "Crop",
-      "varietyLabel": "Variety",
-      "plantsCount": "{{count}} plants",
-      "days": "days",
       "alert": {
         "noSprays": "No sprayings recorded",
         "overdue": "{{days}} days without spraying",
@@ -657,7 +596,8 @@
         "sprays": "Sprayings",
         "activities": "Activities",
         "harvested": "Kg harvested",
-        "harvestsCount": "{{count}} harvest(s)",
+        "harvestsCount": "{{count}} harvests",
+        "harvestsCountOne": "1 harvest",
         "noActivities": "No activities",
         "noSprays": "No sprayings"
       },
@@ -672,8 +612,6 @@
         "filterActivities": "Activities",
         "filterSprays": "Sprayings",
         "filterHarvests": "Harvests",
-        "recordOne": "{{count}} record",
-        "recordMany": "{{count}} records",
         "quality": "Quality",
         "emptyFilter": "No records of this type yet.",
         "emptyAll": "No records yet. Use the buttons above to get started."
@@ -728,14 +666,16 @@
       "subtitle": "Record a spraying performed on the crop",
       "date": "Date",
       "product": "Product",
-      "searchPlaceholder": "Search the catalog... e.g.: fungicide, mancozeb",
-      "searchHint": "Search the catalog or type the name manually",
-      "noResultsManual": "No results. It will be logged as a manual product.",
-      "catalogOpen": "View full catalog",
-      "catalogClose": "Close catalog",
+      "searchPlaceholder": "Search your warehouse... e.g.: fungicide, mancozeb",
+      "searchHint": "Only the inputs recorded in your warehouse are listed. If you type another name, it is logged without deducting stock.",
+      "noResultsManual": "Not in your warehouse. It will be logged as a hand-typed product, without deducting stock.",
+      "catalogOpen": "View the inputs in my warehouse ({{n}})",
+      "stockEmpty": "Your warehouse has no inputs recorded.",
+      "stockGo": "Record a purchase",
+      "noType": "No type",
+      "catalogClose": "Close the list",
       "filterPlaceholder": "Filter by name or type...",
       "noResultsFor": "No results for \"{{filter}}\"",
-      "doseSuggested": "Suggested dose: {{dose}} {{unit}}",
       "doseShort": "Dose: {{dose}} {{unit}}",
       "doseHint": "Suggested: {{dose}} {{unit}} / 200 L of water",
       "reentryShort": "Re-entry: {{hours}} h",
@@ -753,8 +693,7 @@
       "saving": "Saving...",
       "success": "Spraying logged successfully!",
       "errors": {
-        "search": "Error searching the catalog.",
-        "loadCatalog": "Error loading the full catalog.",
+        "loadStock": "Your warehouse inputs could not be loaded.",
         "productRequired": "Please select or type a product.",
         "unitRequired": "Please select a unit of measure.",
         "register": "Error logging the spraying."
@@ -762,7 +701,7 @@
     }
   },
   "workers": {
-    "ui": {"team": "Team", "summary": "Team summary", "ofTotal": "of {{total}} registered", "seeRosters": "See payrolls", "paymentsCount": "{{count}} payments", "people": "People", "filterState": "Filter by status", "col": {"worker": "Worker", "post": "Role", "wage": "Day wage", "state": "Status", "actions": "Actions"}, "idShort": "ID", "data": "Details", "contract": "Contract", "hireDate": "Hired", "phone": "Phone", "address": "Address", "workDays": "Days worked", "searchCrop": "Search crop...", "lastPayment": "Last payment", "paymentHistory": "Payment history", "payroll": "Payroll", "amount": "Amount", "openPayroll": "Open payroll", "summaryShort": "Summary", "rosters": {"toApprove": "To approve", "toPay": "Approved, unpaid", "paid": "Paid", "count": "{{count}} paid payrolls", "all": "All", "flow": "Payroll progress", "step1": "Generated", "step2": "Approved", "step3": "Paid", "cancelledNote": "This payroll is cancelled. Its work days are free to include in another payroll."}},
+    "ui": {"team": "Team", "summary": "Team summary", "ofTotal": "of {{total}} registered", "seeRosters": "See payrolls", "paymentsCount": "{{count}} payments", "paymentsCountOne": "1 payment", "people": "People", "filterState": "Filter by status", "col": {"worker": "Worker", "post": "Role", "wage": "Day wage", "state": "Status", "actions": "Actions"}, "idShort": "ID", "data": "Details", "contract": "Contract", "hireDate": "Hired", "phone": "Phone", "address": "Address", "workDays": "Days worked", "searchCrop": "Search crop...", "lastPayment": "Last payment", "paymentHistory": "Payment history", "payroll": "Payroll", "amount": "Amount", "openPayroll": "Open payroll", "summaryShort": "Summary", "rosters": {"toApprove": "To approve", "toPay": "Approved, unpaid", "paid": "Paid", "count": "{{count}} paid payrolls", "all": "All", "flow": "Payroll progress", "step1": "Generated", "step2": "Approved", "step3": "Paid", "cancelledNote": "This payroll is cancelled. Its work days are free to include in another payroll."}},
     "posts": {
       "title": "Positions",
       "subtitle": "Define roles and the daily wage for each position",
@@ -832,8 +771,7 @@
           "worker": "Worker",
           "period": "Period",
           "wages": "Workdays",
-          "total": "Total",
-          "generated": "Generated"
+          "total": "Total"
         },
         "actions": {
           "viewDetail": "View details",
@@ -877,7 +815,6 @@
         "summary": {
           "totalWages": "Total Workdays",
           "totalValue": "Total Value",
-          "generatedDate": "Generation Date",
           "post": "Position"
         },
         "paymentRegistered": "Payment recorded",
@@ -910,7 +847,6 @@
         },
         "paymentForm": {
           "title": "Record payment",
-          "amount": "Amount to pay:",
           "method": "Payment method *",
           "receipt": "Receipt",
           "receiptPlaceholder": "Transfer or check number (optional)",
@@ -939,7 +875,8 @@
         "notesPlaceholder": "Additional notes (optional)",
         "activitiesTitle": "Tasks performed *",
         "selectAtLeast": "Select at least one task",
-        "selectedCount": "{{count}} task(s) selected",
+        "selectedCount": "{{count}} tasks selected",
+      "selectedCountOne": "1 task selected",
         "submit": "Log Workday",
         "saving": "Saving...",
         "errors": {
@@ -951,16 +888,11 @@
         }
       },
       "list": {
-        "back": "Workers",
         "title": "Workdays",
         "subtitleNoWorker": "Daily field work log",
         "generatePayroll": "Generate Payroll",
         "register": "Log Workday",
-        "perWage": "${{amount}}/workday",
-        "selectWorkerTitle": "Select a worker",
-        "selectWorkerDesc": "Choose whose work days you want to see.",
         "workerLabel": "Worker",
-        "selectWorkerPlaceholder": "Select a worker",
         "noWorkers": "You have no registered workers yet.",
         "goToWorkers": "Go to Workers",
         "stats": {
@@ -971,10 +903,8 @@
         },
         "filters": {
           "search": "Search",
-          "searchPlaceholder": "Crop...",
           "from": "From",
           "to": "To",
-          "filter": "Filter",
           "clear": "Clear"
         },
         "loading": "Loading workdays...",
@@ -982,7 +912,6 @@
         "registerFirst": "Log first workday",
         "table": {
           "date": "Date",
-          "worker": "Worker",
           "crop": "Crop",
           "activities": "Tasks",
           "value": "Value",
@@ -1029,21 +958,17 @@
       "loading": "Loading payments...",
       "empty": "No payments recorded",
       "noName": "No name",
-      "paymentsCount": "{{count}} payment(s)",
-      "total": "Total",
       "viewDetail": "View payment details",
       "panel": {
         "title": "Payment details",
         "payrollNo": "Payroll #{{id}}",
         "close": "Close",
-        "info": "Payment information",
         "worker": "Worker",
         "paymentDate": "Payment date",
         "method": "Method",
         "receipt": "Receipt",
         "notes": "Notes",
         "totalPaid": "Total amount paid",
-        "loadingWages": "Loading workdays...",
         "wagesIncluded": "Included workdays",
         "period": "Period",
         "noWages": "No workdays recorded",
@@ -1083,19 +1008,12 @@
       "activities": "Tasks",
       "posts": "Positions",
       "newWorker": "New Worker",
-      "tabs": {
-        "workers": "Workers",
-        "rosters": "Payroll",
-        "payments": "Payments"
-      },
       "stats": {
         "active": "Active",
         "suspended": "Suspended",
-        "draftRosters": "Draft payrolls",
+        "draftRosters": "Payrolls to approve",
         "totalPaid": "Total paid",
-        "totalRosters": "Total payrolls",
-        "draft": "Draft",
-        "paymentsMade": "Payments made"
+        "totalRosters": "Total payrolls"
       },
       "list": {
         "searchLabel": "Search workers",
@@ -1108,28 +1026,15 @@
         "emptyNone": "No workers registered yet.",
         "emptySearch": "No results found for \"{{query}}\"",
         "registerFirst": "Register first worker",
-        "wageLabel": "Daily wage:",
         "perDay": "/day",
         "registerWage": "Log workday",
         "viewWages": "View workdays",
         "viewRosters": "View payrolls"
       },
-      "rostersTab": {
-        "empty": "No payrolls generated yet.",
-        "rosterOf": "Payroll #{{id}} — {{name}}",
-        "total": "Total:"
-      },
-      "paymentsTab": {
-        "empty": "No payments recorded yet.",
-        "paymentNo": "Payment #{{id}}",
-        "amount": "Amount:"
-      },
       "panel": {
         "close": "Close panel",
         "suspendedNotice": "This worker is suspended. They cannot log new workdays.",
         "currentPost": "Current position",
-        "perWage": "${{amount}}/workday",
-        "quickActions": "Quick actions",
         "registerWage": "Log Workday",
         "viewWages": "View Workdays",
         "viewRosters": "View Payrolls",
@@ -1231,7 +1136,6 @@
       "removePhoto": "Remove photo",
       "photoAlt": "Profile photo",
       "photoHint": "JPG, PNG or WebP. We crop it to a square automatically. You can also drag it here.",
-      "photoUrl": "Profile photo URL",
       "fullName": "Full name",
       "fullNamePlaceholder": "Your full name",
       "nameError": "Name is required (minimum 2 characters)",
@@ -1442,7 +1346,6 @@
       "new": "New input",
       "newTitle": "New input",
       "editTitle": "Edit input",
-      "count": "{{count}} inputs",
       "search": "Search input",
       "empty": "The catalog is empty.",
       "loadError": "Could not load the catalog.",
@@ -1674,7 +1577,9 @@
       "lots": "Lots",
       "lotsPlanted": "Planted lots",
       "lotsCount": "{{count}} lots",
+      "lotsCountOne": "1 lot",
       "plantedCount": "{{count}} planted",
+      "plantedCountOne": "1 planted",
       "noFarmsTitle": "You don't have farms yet",
       "yourFarms": "Your farms",
       "backToFarms": "My farms",
@@ -1686,7 +1591,6 @@
       "readyToPlant": "Ready to plant",
       "resting": "Resting",
       "seasonLength": "Season length",
-      "sprayStatus": "Spraying",
       "weatherToday": "Today's weather",
       "noWeather": "No weather data for this farm.",
       "whereIsFarm": "Where is the farm?",
