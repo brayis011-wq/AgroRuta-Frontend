@@ -7,11 +7,12 @@ import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pip
 import { JornalService, TrabajadorService, NominaService, NominaRequest } from '../../../../core/services/worker.service';
 import { Jornal, Trabajador, Nomina, ResumenJornales } from '../../../../core/models/worker.model';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
+import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
 
 @Component({
   selector: 'app-lista-jornales',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe, FlujoPagoComponent],
   templateUrl: './list-wage.html',
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './list-wage.css']
 })

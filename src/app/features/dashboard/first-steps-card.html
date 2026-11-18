@@ -1,0 +1,47 @@
+@if (visible()) {
+  <section class="pasos" aria-labelledby="pasos-titulo">
+    <header>
+      <div class="cab">
+        <span class="cab-ic" aria-hidden="true"><i class="ti ti-route"></i></span>
+        <div>
+          <h2 id="pasos-titulo">{{ 'firstSteps.title' | translate }}</h2>
+          <p>{{ 'firstSteps.subtitle' | translate }}</p>
+        </div>
+      </div>
+      <div class="avance">
+        <span class="cuenta">{{ 'firstSteps.progress' | translate: { done: hechos(), total: pasos().length } }}</span>
+        <span class="barra" role="progressbar" [attr.aria-valuenow]="hechos()" aria-valuemin="0" [attr.aria-valuemax]="pasos().length"
+              [attr.aria-label]="'firstSteps.title' | translate">
+          <span [style.width.%]="(hechos() / pasos().length) * 100"></span>
+        </span>
+        <button type="button" class="ocultar" (click)="ocultar()" [title]="'firstSteps.hideHint' | translate">
+          {{ 'firstSteps.hide' | translate }}
+        </button>
+      </div>
+    </header>
+
+    <ol>
+      @for (p of pasos(); track p.clave; let i = $index) {
+        @let esSiguiente = siguiente()?.clave === p.clave;
+        <li [class.hecho]="p.hecho" [class.siguiente]="esSiguiente">
+          <span class="num" aria-hidden="true">
+            @if (p.hecho) { <i class="ti ti-check"></i> } @else { {{ i + 1 }} }
+          </span>
+          <div class="txt">
+            <strong>{{ 'firstSteps.steps.' + p.clave + '.title' | translate }}</strong>
+            <small>{{ 'firstSteps.steps.' + p.clave + '.desc' | translate }}</small>
+            @if (p.hecho) {
+              <span class="estado">{{ 'firstSteps.done' | translate }}</span>
+            } @else if (esSiguiente) {
+              <a class="ir principal" [routerLink]="p.ruta" [queryParams]="p.query ?? null">
+                <i class="ti {{ p.icono }}" aria-hidden="true"></i> {{ 'firstSteps.start' | translate }}
+              </a>
+            } @else {
+              <a class="ir" [routerLink]="p.ruta" [queryParams]="p.query ?? null">{{ 'firstSteps.go' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+            }
+          </div>
+        </li>
+      }
+    </ol>
+  </section>
+}

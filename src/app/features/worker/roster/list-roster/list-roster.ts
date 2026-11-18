@@ -12,6 +12,7 @@ import {
 } from '../../../../core/services/worker.service';
 import { Nomina, ResumenNominas, Trabajador } from '../../../../core/models/worker.model';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
+import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
 
 type FiltroEstado = 'TODAS' | 'PENDIENTE' | 'APROBADA' | 'PAGADA' | 'ANULADA';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
@@ -20,7 +21,7 @@ import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 @Component({
   selector: 'app-lista-nominas',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PeriodoPipe],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PeriodoPipe, FlujoPagoComponent],
   templateUrl: './list-roster.html',
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css']
 })
