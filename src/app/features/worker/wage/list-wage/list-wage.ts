@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 import { JornalService, TrabajadorService, NominaService, NominaRequest } from '../../../../core/services/worker.service';
 import { Jornal, Trabajador, Nomina, ResumenJornales } from '../../../../core/models/worker.model';
+import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 
 @Component({
   selector: 'app-lista-jornales',
@@ -163,7 +164,7 @@ export class ListaJornalesComponent implements OnInit {
   }
 
   iniciales(t: Trabajador): string {
-    return ((t.nombre?.[0] ?? '') + (t.apellido?.[0] ?? '')).toUpperCase() || '?';
+    return inicialesDe(t.nombre, t.apellido ?? null);
   }
 
   /** Cambia de trabajador sin salir de la página (queda en la URL) */

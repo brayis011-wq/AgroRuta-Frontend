@@ -7,6 +7,7 @@ import { LanguageService } from '../../../core/services/language.service';
 import { AgricultorAdmin, ResumenAdmin, UsuarioAdmin } from '../../../core/models/admin.model';
 import { catchError, of } from 'rxjs';
 import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/format';
+import { iniciales as inicialesDe } from '../../../shared/iniciales';
 
 @Component({
   selector: 'app-admin-resumen',
@@ -75,8 +76,7 @@ export class AdminResumenComponent implements OnInit {
   }
 
   iniciales(nombre: string): string {
-    const p = (nombre ?? '').trim().split(/\s+/).filter(Boolean);
-    return ((p[0]?.[0] ?? '') + (p[1]?.[0] ?? '')).toUpperCase() || '?';
+    return inicialesDe(nombre);
   }
 
   fecha(valor: string | null): string {

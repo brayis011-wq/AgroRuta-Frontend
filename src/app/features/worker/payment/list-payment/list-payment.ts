@@ -8,6 +8,7 @@ import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pip
 import { PagoService, NominaService } from '../../../../core/services/worker.service';
 import { Pago, Nomina, ResumenPagos } from '../../../../core/models/worker.model';
 import { descargarArchivo, numeroComprobante } from '../../../../shared/download';
+import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 
 @Component({
   selector: 'app-lista-pagos',
@@ -155,27 +156,16 @@ export class ListaPagosComponent implements OnInit {
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
-  metodoPagoIcon(metodo?: string): string {
-    const iconos: Record<string, string> = {
-      EFECTIVO:      '💵',
-      TRANSFERENCIA: '🏦',
-      CHEQUE:        '📄',
-      NEQUI:         '📱',
-      DAVIPLATA:     '📱',
-    };
-    return metodo ? (iconos[metodo] ?? '💳') : '💳';
-  }
-
   /** Ícono (Tabler) del método de pago */
   metodoIcono(metodo?: string): string {
     const iconos: Record<string, string> = {
-      EFECTIVO: 'ti-cash', TRANSFERENCIA: 'ti-building-bank', CHEQUE: 'ti-file-dollar', NEQUI: 'ti-device-mobile', DAVIPLATA: 'ti-device-mobile',
+      EFECTIVO: 'ti-cash', TRANSFERENCIA: 'ti-building-bank', CHEQUE: 'ti-file-dollar',
     };
     return metodo ? (iconos[metodo] ?? 'ti-credit-card') : 'ti-credit-card';
   }
 
-  iniciales(nombre: string): string {
-    if (!nombre) return '?';
-    return nombre.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+  /** Las del backend (nombre y apellido por separado); sin ellas, del nombre completo */
+  iniciales(nombre: string, calculadas?: string | null): string {
+    return calculadas || inicialesDe(nombre);
   }
 }

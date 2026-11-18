@@ -77,7 +77,7 @@
               <tr [class.apagada]="n.estado === 'ANULADA'">
                 <td class="prin">
                   <a class="persona enlace" [routerLink]="['/worker/payrolls', n.id]">
-                    <span class="av" aria-hidden="true">{{ n.trabajador?.nombre?.[0] }}{{ n.trabajador?.apellido?.[0] }}</span>
+                    <span class="av" aria-hidden="true">{{ iniciales(n.trabajador) }}</span>
                     <span>{{ n.trabajador?.nombreCompleto }}<small>#{{ n.id }}</small></span>
                   </a>
                 </td>

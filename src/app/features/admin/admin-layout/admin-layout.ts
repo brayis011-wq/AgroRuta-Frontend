@@ -8,6 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { ProfileService } from '../../../core/services/profile.service';
 import { TemaService } from '../../../core/services/theme.service';
+import { iniciales as inicialesDe } from '../../../shared/iniciales';
 
 interface NavItem {
   ruta: string;
@@ -72,8 +73,7 @@ export class AdminLayoutComponent {
   }
 
   iniciales(): string {
-    const partes = (this.usuario?.nombre ?? '').trim().split(/\s+/).filter(Boolean);
-    return ((partes[0]?.[0] ?? '') + (partes[1]?.[0] ?? '')).toUpperCase() || '?';
+    return inicialesDe(this.usuario?.nombre);
   }
 
   alternarColapsado(): void {
