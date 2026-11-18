@@ -27,6 +27,8 @@ export class CostsReportComponent extends ReportBase implements OnInit {
 
   readonly filasBase = signal<FilaCostos[] | null>(null);
   readonly error = signal(false);
+  readonly downloading = signal(false);
+  readonly downloadError = signal(false);
   readonly orden = signal<OrdenCostos>('reciente');
   readonly filtro = signal('');
   readonly elegida = signal<number | null>(null);
@@ -61,6 +63,15 @@ export class CostsReportComponent extends ReportBase implements OnInit {
     this.elegida.set(this.elegida() === id ? null : id);
     this.router.navigate([], { queryParams: { tab: 'costs', siembra: this.elegida() }, replaceUrl: true });
     if (this.elegida()) setTimeout(() => document.getElementById('detalle-costos')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+
+  descargarPdf(): void {
+    this.downloading.set(true);
+    this.downloadError.set(false);
+    this.reportService.downloadCostsPdf().subscribe({
+      next: (b) => { this.descargar(b, 'reporte-costos.pdf'); this.downloading.set(false); },
+      error: () => { this.downloading.set(false); this.downloadError.set(true); },
+    });
   }
 
   /** El backend ya envía "Cultivo · Variedad" (p. ej. "Café · Castillo"); antes se repetía el cultivo */

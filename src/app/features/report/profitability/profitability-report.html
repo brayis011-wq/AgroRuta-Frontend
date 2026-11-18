@@ -4,7 +4,12 @@
       <h2>{{ 'reports.profit.title' | translate }}</h2>
       <p>{{ 'reports.profit.subtitle' | translate }}</p>
     </div>
+    <button type="button" class="btn-pdf" (click)="descargarPdf()" [disabled]="downloading() || error()">
+      <i class="ti" [class.ti-file-type-pdf]="!downloading()" [class.ti-loader-2]="downloading()" [class.gira]="downloading()" aria-hidden="true"></i>
+      {{ (downloading() ? 'reports.downloading' : 'reports.downloadPdf') | translate }}
+    </button>
   </header>
+  @if (downloadError()) { <div class="aviso error" role="alert">{{ 'reports.downloadError' | translate }}</div> }
 
   @if (error()) {
     <div class="tarjeta vacio">

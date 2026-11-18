@@ -23,6 +23,8 @@ export class ProfitabilityReportComponent extends ReportBase implements OnInit {
 
   readonly filas = signal<FilaCostos[] | null>(null);
   readonly error = signal(false);
+  readonly downloading = signal(false);
+  readonly downloadError = signal(false);
   readonly lotes = computed(() => rentabilidadPorLote(this.filas() ?? []));
   readonly resumen = computed(() => resumenRentabilidad(this.lotes()));
 
@@ -41,6 +43,15 @@ export class ProfitabilityReportComponent extends ReportBase implements OnInit {
           .subscribe((cs) => this.filas.set(siembras.map((s, i) => ({ siembra: s, costos: cs[i] }))));
       },
       error: () => this.error.set(true),
+    });
+  }
+
+  descargarPdf(): void {
+    this.downloading.set(true);
+    this.downloadError.set(false);
+    this.reportService.downloadProfitabilityPdf().subscribe({
+      next: (b) => { this.descargar(b, 'reporte-rentabilidad.pdf'); this.downloading.set(false); },
+      error: () => { this.downloading.set(false); this.downloadError.set(true); },
     });
   }
 

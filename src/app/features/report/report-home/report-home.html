@@ -1,4 +1,5 @@
 <div class="report-home">
+  <div class="barra-sup">
   <div class="tabs-wrap">
     <button class="tab-btn payroll" [class.active]="activeTab === 'payroll'" (click)="setTab('payroll')">
       <div class="tab-icon"><i class="ti ti-report-money"></i></div>
@@ -28,6 +29,33 @@
         <span class="tab-sub">{{ 'reports.tabs.profitability.sub' | translate }}</span>
       </div>
     </button>
+  </div>
+
+  <!-- Todo en un solo PDF: se eligen las partes -->
+  <div class="completo">
+    <button type="button" class="btn-completo" (click)="panelCompleto.set(!panelCompleto())"
+            [attr.aria-expanded]="panelCompleto()" aria-controls="panel-completo">
+      <i class="ti ti-files" aria-hidden="true"></i> {{ 'reports.full.button' | translate }}
+      <i class="ti" [class.ti-chevron-down]="!panelCompleto()" [class.ti-chevron-up]="panelCompleto()" aria-hidden="true"></i>
+    </button>
+    @if (panelCompleto()) {
+      <div class="panel-completo" id="panel-completo" role="group" [attr.aria-label]="'reports.full.title' | translate">
+        <strong>{{ 'reports.full.title' | translate }}</strong>
+        <p>{{ 'reports.full.hint' | translate }}</p>
+        @for (p of partes; track p) {
+          <label class="parte">
+            <input type="checkbox" [checked]="elegidas().has(p)" (change)="alternarParte(p)" />
+            <span>{{ 'reports.tabs.' + p + '.name' | translate }}</span>
+          </label>
+        }
+        @if (errorCompleto()) { <div class="aviso-completo" role="alert">{{ 'reports.downloadError' | translate }}</div> }
+        <button type="button" class="btn-pdf" (click)="descargarCompleto()" [disabled]="descargandoCompleto() || !elegidas().size">
+          <i class="ti" [class.ti-file-type-pdf]="!descargandoCompleto()" [class.ti-loader-2]="descargandoCompleto()" [class.gira]="descargandoCompleto()" aria-hidden="true"></i>
+          {{ (descargandoCompleto() ? 'reports.downloading' : (elegidas().size ? 'reports.full.download' : 'reports.full.needOne')) | translate }}
+        </button>
+      </div>
+    }
+  </div>
   </div>
 
   <div *ngIf="activeTab === 'payroll'">
