@@ -18,18 +18,31 @@
 
 .form-card { position: relative; background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1.5rem 1.6rem 1.6rem; }
 .form-card__accent { display: none; }
-/* Registrar fumigación, actividad y cosecha: centrados y con un ancho cómodo, no estirados por toda la pantalla */
-.page-bg.registro .container { max-width: 820px; margin: 0 auto; }
+/* Registrar fumigación, actividad y cosecha: centrados; anchos para aprovechar la pantalla sin estirarse de borde a borde */
+.page-bg.registro .container { max-width: 1180px; margin: 0 auto; }
 form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.05rem 1.25rem; align-items: start; }
 /* En pantallas anchas los campos cortos van de a dos; lo largo ocupa toda la fila */
 form > fieldset, form > .field-row, form > .alert, form > .btn-submit, form > .form-actions,
 form > .field:has(textarea), form > .field:has(.mapa-container) { grid-column: 1 / -1; }
 
 /* Título de cada grupo de campos, con una línea hasta el borde */
-form > .seccion-form { grid-column: 1 / -1; display: flex; align-items: center; gap: .6rem; margin: .5rem 0 -.3rem; font-family: var(--ar-fuente); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ar-tinta-3); }
-form > .seccion-form::after { content: ""; flex: 1; height: 1px; background: var(--ar-borde); }
-form > .seccion-form:first-child { margin-top: 0; }
+.seccion-form { grid-column: 1 / -1; display: flex; align-items: center; gap: .6rem; margin: .5rem 0 -.3rem; font-family: var(--ar-fuente); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ar-tinta-3); }
+.seccion-form::after { content: ""; flex: 1; height: 1px; background: var(--ar-borde); }
+.seccion-form:first-child { margin-top: 0; }
 form > .ancho { grid-column: 1 / -1; }
+
+/* Secciones del formulario (fumigación): cada una con su propia cuadrícula de dos campos */
+form > .grupos { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
+.grupo-col { display: flex; flex-direction: column; gap: 1.4rem; min-width: 0; }
+.grupo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.05rem 1.25rem; align-content: start; min-width: 0; }
+/* En columnas angostas, "(opcional)" baja entero a la línea siguiente en vez de partir la etiqueta */
+.grupo .field__label { flex-wrap: wrap; row-gap: 0; }
+.grupo > fieldset, .grupo > .field-row, .grupo > .seccion-form, .grupo > .ancho, .grupo > .field:has(textarea) { grid-column: 1 / -1; }
+/* En pantallas anchas las secciones van en dos columnas, con una línea entre ellas: cabe sin bajar */
+@media (min-width: 1360px) {
+  form > .grupos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.2rem; }
+  form > .grupos > .grupo-col + .grupo-col { border-left: 1px solid var(--ar-borde); padding-left: 2.2rem; }
+}
 
 .field { display: flex; flex-direction: column; gap: .4rem; border: 0; padding: 0; margin: 0; min-width: 0; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -68,7 +81,7 @@ form > .btn-submit { justify-self: end; width: auto; min-width: 240px; padding: 
 @media (max-width: 720px) {
   .page-bg { padding: 1rem 1rem 6rem; }
   .form-card { padding: 1.1rem; }
-  .field-row, form { grid-template-columns: 1fr; }
+  .field-row, form, .grupo { grid-template-columns: 1fr; }
   form > .btn-submit { width: 100%; justify-self: stretch; }
 }
 @media (prefers-reduced-motion: reduce) { .container, .spinner { animation: none; } }
