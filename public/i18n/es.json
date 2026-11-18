@@ -687,6 +687,7 @@
       "dose": "Dosis",
       "unit": "Unidad",
       "unitPlaceholder": "Selecciona",
+      "unitHint": "La misma para la dosis y para la cantidad total usada.",
       "area": "Área aplicada (hectáreas)",
       "notes": "Observaciones",
       "notesPlaceholder": "Condiciones climáticas, estado del cultivo...",

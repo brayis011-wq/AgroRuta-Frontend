@@ -193,6 +193,75 @@ describe('RegistrarFumigacion', () => {
     expect(component.form.reentradaHoras).toBeNull();
   });
 
+  // ── Una sola unidad para la dosis y la cantidad ──────────────
+  it('offers every unit without a product, and only those of its kind with one', () => {
+    expect(component.unidadesDisponibles()).toEqual(['LITROS', 'ML', 'GRAMOS', 'KG']);
+    component.seleccionarDeBodega(component.bodega()[1]); // líquido
+    expect(component.unidadesDisponibles()).toEqual(['LITROS', 'ML']);
+    component.seleccionarDeBodega(component.bodega()[0]); // sólido
+    expect(component.unidadesDisponibles()).toEqual(['KG', 'GRAMOS']);
+  });
+
+  it('the total amount always uses the unit of the dose', () => {
+    component.seleccionarDeBodega(component.bodega()[1]);
+    expect(component.form.unidadCantidad).toBe(component.form.unidadMedida);
+    component.form.unidadMedida = 'ML';
+    component.cambiarUnidad();
+    expect(component.form.unidadCantidad).toBe('ML');
+  });
+
+  it('sends the same unit for the dose and the total amount', () => {
+    component.seleccionarDeBodega(component.bodega()[1]);
+    component.form.unidadMedida = 'ML';
+    component.cambiarUnidad();
+    component.form.dosis = 150;
+    component.form.cantidadUsada = 900;
+    component.onSubmit();
+    expect(cultivoServiceMock.registrarFumigacion).toHaveBeenCalledWith(
+      expect.objectContaining({ unidadMedida: 'ML', cantidadUsada: 900, unidadCantidad: 'ML' }));
+  });
+
+  it('shows the unit inside the total amount field instead of a second selector', () => {
+    component.seleccionarDeBodega(component.bodega()[1]);
+    fixture.componentRef.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelectorAll('select#unidadCantidad').length).toBe(0);
+    expect(el.querySelector('.sufijo-unidad')?.textContent?.trim()).toBeTruthy();
+  });
+
+  describe('editing a spraying saved before the units were unified', () => {
+    function editar(guardada: any) {
+      const route = TestBed.inject(ActivatedRoute) as any;
+      route.snapshot.paramMap.get.mockImplementation((k: string) => (k === 'id' ? '1' : k === 'registroId' ? '5' : null));
+      cultivoServiceMock.buscarFumigacion = vi.fn().mockReturnValue(of({
+        fecha: '2026-11-10', producto: 'Herbicida X', agriculturalInputId: 1, areaAplicada: 1, ...guardada,
+      }));
+      inputServiceMock.getById = vi.fn().mockReturnValue(of(mockInsumo));
+      const otro = TestBed.createComponent(RegistrarFumigacion);
+      otro.detectChanges();
+      return otro.componentInstance;
+    }
+
+    it('converts the total amount to the unit of the dose (2 L → 2000 ml)', () => {
+      const c = editar({ dosis: 150, unidadMedida: 'ML', cantidadUsada: 2, unidadCantidad: 'LITROS' });
+      expect(c.form.cantidadUsada).toBe(2000);
+      expect(c.form.unidadCantidad).toBe('ML');
+    });
+
+    it('leaves an inconsistent old record as it was (does not turn kilos into litres)', () => {
+      const c = editar({ dosis: 2, unidadMedida: 'LITROS', cantidadUsada: 3, unidadCantidad: 'KG' });
+      expect(c.form.cantidadUsada).toBe(3);
+      expect(c.form.unidadCantidad).toBe('KG');
+      expect(c.unidadesDisponibles()).toEqual(['LITROS', 'ML']);
+    });
+
+    it('fills the missing unit of the total amount with the one of the dose', () => {
+      const c = editar({ dosis: 2, unidadMedida: 'LITROS', cantidadUsada: null, unidadCantidad: null });
+      expect(c.form.unidadCantidad).toBe('LITROS');
+    });
+  });
+
   it('cantidadDe() shows what is left of the product', () => {
     expect(component.cantidadDe(component.bodega()[1])).toBe('2,5 L');
   });
