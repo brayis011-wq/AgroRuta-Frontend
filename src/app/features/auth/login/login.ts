@@ -65,6 +65,9 @@ export class LoginComponent implements OnInit {
     this.authService.login(datos).subscribe({
       next: (respuesta) => {
         this.cargando = false;
+        // Avisar el cambio: si otra cosa redibuja antes de cambiar de pantalla (p. ej. el aviso de servidor lento)
+        // Angular lo encontraría sin avisar
+        this.cdr.markForCheck();
         this.router.navigate([inicioPorRol(respuesta.rol)]);
       },
       error: (err) => {

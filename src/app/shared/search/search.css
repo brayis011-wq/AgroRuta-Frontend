@@ -17,6 +17,8 @@ kbd { font: 600 11px var(--ar-fuente); border: 1px solid var(--ar-borde); border
 .ic { width: 34px; height: 34px; flex: none; border-radius: 9px; display: grid; place-items: center; font-size: 18px; background: var(--ar-gris-bg); color: var(--ar-tinta-2); }
 .ic.farm { background: var(--ar-verde-100); color: var(--ar-verde-700); }
 .ic.worker { background: var(--ar-azul-bg); color: var(--ar-azul); }
+.ic.plot { background: var(--ar-tierra-bg); color: var(--ar-tierra); }
+.ic.planting { background: var(--ar-verde-50); color: var(--ar-verde-600); }
 .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .txt strong { font-size: 14px; font-weight: 600; color: var(--ar-tinta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .txt small { font-size: 12px; color: var(--ar-tinta-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
