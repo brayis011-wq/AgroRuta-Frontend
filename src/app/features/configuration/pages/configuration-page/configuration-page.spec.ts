@@ -16,15 +16,15 @@ import { AvisosPushService } from '../../../../core/services/push.service';
 describe('ConfigurationPageComponent — correos', () => {
   const notificaciones = { obtener: vi.fn(), guardar: vi.fn() };
 
-  function crear() {
+  function crear(rol = 'Agricultor', fincas: { id: number; nombre: string }[] = []) {
     TestBed.configureTestingModule({
       imports: [ConfigurationPageComponent],
       providers: [
         provideRouter([]),
         { provide: ProfileService, useValue: { getPerfil: () => of({ id: 1, nombre: 'Ana Pérez', email: 'ana@x.com', rol: 'Agricultor' }), olvidarFoto: vi.fn() } },
         { provide: NotificacionesService, useValue: notificaciones },
-        { provide: AuthService, useValue: { logout: vi.fn() } },
-        { provide: FincaActivaService, useValue: { fincas: signal([]), idActiva: signal(null), elegir: vi.fn() } },
+        { provide: AuthService, useValue: { logout: vi.fn(), getUsuario: () => ({ id: 1, rol }) } },
+        { provide: FincaActivaService, useValue: { fincas: signal(fincas), idActiva: signal(null), elegir: vi.fn() } },
         { provide: LanguageService, useValue: { current: signal('es'), set: vi.fn() } },
         { provide: TemaService, useValue: { tema: signal('claro'), elegir: vi.fn() } },
         { provide: SeguridadService, useValue: { estado: () => of({ activo: false, codigosRespaldo: 0 }), sesiones: () => of([]) } },
@@ -75,5 +75,60 @@ describe('ConfigurationPageComponent — correos', () => {
     const c = crear().componentInstance;
     c.cambiarCorreo('alertasCultivo', false);
     expect(notificaciones.guardar).not.toHaveBeenCalled();
+  });
+});
+
+describe('ConfigurationPageComponent — según el rol', () => {
+  const notificaciones = { obtener: vi.fn(() => of({ alertasCultivo: true, avisosTrabajadores: true })), guardar: vi.fn() };
+  const fincas = [{ id: 4, nombre: 'El Mirador' }];
+
+  function crear(rol: string) {
+    TestBed.configureTestingModule({
+      imports: [ConfigurationPageComponent],
+      providers: [
+        provideRouter([]),
+        { provide: ProfileService, useValue: { getPerfil: () => of({ id: 1, nombre: 'Ana', email: 'ana@x.com', rol }), olvidarFoto: vi.fn() } },
+        { provide: NotificacionesService, useValue: notificaciones },
+        { provide: AuthService, useValue: { logout: vi.fn(), getUsuario: () => ({ id: 1, rol }) } },
+        // Fincas que quedaron de otra sesión en la misma pestaña: no deben verse en otro rol
+        { provide: FincaActivaService, useValue: { fincas: signal(fincas), idActiva: signal(null), elegir: vi.fn() } },
+        { provide: LanguageService, useValue: { current: signal('es'), set: vi.fn() } },
+        { provide: TemaService, useValue: { tema: signal('claro'), elegir: vi.fn() } },
+        { provide: SeguridadService, useValue: { estado: () => of({ activo: false, codigosRespaldo: 0 }), sesiones: () => of([]) } },
+        { provide: AvisosPushService, useValue: { estado: () => Promise.resolve('inactivo') } },
+      ],
+    });
+    const f = TestBed.createComponent(ConfigurationPageComponent);
+    f.detectChanges();
+    return f.nativeElement as HTMLElement;
+  }
+
+  afterEach(() => vi.clearAllMocks());
+
+  it('el agricultor ve los correos del cultivo, los avisos y la finca al entrar', () => {
+    const el = crear('Agricultor');
+    expect(el.querySelectorAll('#correos input[role="switch"]').length).toBeGreaterThanOrEqual(2);
+    expect(el.querySelector('#correo-cultivo')).not.toBeNull();
+    expect(el.querySelector('app-push-toggle')).not.toBeNull();
+    expect(el.querySelector('#preferencias select')).not.toBeNull();
+  });
+
+  it('el trabajador no ve nada de fincas ni de cultivo; solo sus avisos de pago', () => {
+    const el = crear('Trabajador');
+    expect(notificaciones.obtener).not.toHaveBeenCalled();
+    expect(el.querySelector('#correo-cultivo')).toBeNull();
+    expect(el.querySelector('#correo-trabajadores')).toBeNull();
+    expect(el.querySelector('#preferencias select')).toBeNull();
+    expect(el.querySelector('#correos')?.textContent).toContain('config.mail.workerHint');
+    expect(el.querySelector('app-push-toggle')?.textContent).toContain('config.push.hintWorker');
+  });
+
+  it('el administrador solo ve la nota de seguridad, sin avisos ni finca', () => {
+    const el = crear('Administrador');
+    expect(notificaciones.obtener).not.toHaveBeenCalled();
+    expect(el.querySelector('#correos input[role="switch"]')).toBeNull();
+    expect(el.querySelector('app-push-toggle')).toBeNull();
+    expect(el.querySelector('#preferencias select')).toBeNull();
+    expect(el.querySelector('#correos .nota')).not.toBeNull();
   });
 });

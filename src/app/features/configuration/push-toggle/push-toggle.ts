@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AvisosPushService, EstadoPush } from '../../../core/services/push.service';
 
@@ -12,6 +12,9 @@ import { AvisosPushService, EstadoPush } from '../../../core/services/push.servi
 })
 export class PushToggleComponent implements OnInit {
   private push = inject(AvisosPushService);
+
+  /** Qué avisos llegan (cambia según el rol: al trabajador solo sus pagos) */
+  readonly pista = input<string>('config.push.hint');
 
   /** null mientras se consulta */
   readonly estado = signal<EstadoPush | null>(null);

@@ -45,8 +45,18 @@ export class ConfigurationPageComponent implements OnInit {
 
   @ViewChild(ChangePasswordFormComponent) private formClave?: ChangePasswordFormComponent;
 
-  /** Las preferencias de finca solo aplican al agricultor (el administrador no tiene fincas) */
-  readonly tieneFincas = computed(() => this.fincaActiva.fincas().length > 0);
+  /**
+   * Qué avisos y preferencias tienen sentido según el rol (lo mismo que envía el servidor):
+   * - Agricultor: resumen del cultivo, solicitudes de trabajadores, avisos push y finca al entrar.
+   * - Trabajador: solo le llegan sus pagos y la respuesta a su solicitud (sin interruptores de correo).
+   * - Administrador: solo los avisos de seguridad de su cuenta.
+   */
+  readonly rol = this.auth.getUsuario()?.rol ?? null;
+  readonly esAgricultor = this.rol === 'Agricultor';
+  readonly esTrabajador = this.rol === 'Trabajador';
+
+  /** La finca al entrar solo es del agricultor; la lista podría traer fincas de otra sesión en esta pestaña */
+  readonly tieneFincas = computed(() => this.esAgricultor && this.fincaActiva.fincas().length > 0);
 
   perfil: Perfil | null = null;
   loadingPage = true;
@@ -56,6 +66,7 @@ export class ConfigurationPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPerfil();
+    if (!this.esAgricultor) return; // los demás roles no tienen correos opcionales
     this.notificaciones.obtener().subscribe({
       next: (p) => this.correos.set(p),
       error: () => this.correos.set(null),
