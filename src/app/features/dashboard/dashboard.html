@@ -93,7 +93,7 @@
     }
   </section>
 
-  <div class="cuerpo">
+  <div class="cuerpo" #cuerpo>
     <div class="col-principal">
       <!-- Cultivos en curso -->
       <section class="tarjeta sec-cultivos">
@@ -148,7 +148,7 @@
             <small>{{ 'dashboard.agenda.emptyHint' | translate }}</small>
           </div>
         } @else {
-          <ul class="agenda">
+          <ul class="agenda" [class.pocos]="agenda()!.length <= 2">
             @for (e of agenda(); track $index) {
               <li [class.atrasado]="e.estado === 'ATRASADO'">
                 <span class="fila-ic" [class]="'fila-ic ' + tonoEvento[e.tipo]"><i class="ti {{ iconoEvento[e.tipo] }}" aria-hidden="true"></i></span>
@@ -162,19 +162,20 @@
           </ul>
         }
       </section>
+
+      <!-- Consejos del clima para lo programado: "Fumiga hoy entre las 7 y las 10, llueve en 12 horas" (solo si hay algo que avisar) -->
+      <app-weather-advice class="consejos-clima" />
     </div>
 
     <div class="col-lateral">
       <!-- Clima de la finca elegida -->
-      <section class="clima">
+      <section class="clima fijo">
         @if (climaFinca(); as f) {
           <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
                               [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" />
         } @else {
           <app-weather-widget city="Bogotá" />
         }
-        <!-- "No fumigues hoy: lluvia en 3 horas" (solo aparece si hay algo que avisar) -->
-        <app-weather-advice />
       </section>
 
       <!-- Pendientes -->

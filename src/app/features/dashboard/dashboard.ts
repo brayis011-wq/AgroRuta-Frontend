@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnInit, afterEveryRender, computed, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -19,6 +19,7 @@ import { formatoPesos, formatoNumero } from '../../shared/format';
 import { municipio } from '../../shared/weather';
 import { ContarDirective } from '../../shared/count-up.directive';
 import { almanaqueDe } from './almanac';
+import { emparejarColumnas } from './dashboard-columns';
 import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
 
 const iso = (d: Date) =>
@@ -101,6 +102,17 @@ export class DashboardComponent implements OnInit {
   /** Coordenadas para el widget de clima (finca elegida en el menú) */
   readonly climaFinca = computed(() => this.fincaActiva.paraClima());
   readonly climaLugar = computed(() => municipio(this.climaFinca()) || null);
+
+  private readonly cuerpo = viewChild<ElementRef<HTMLElement>>('cuerpo');
+
+  constructor() {
+    // Después de cada pintada (datos que llegan, clima, cambio de tamaño de la ventana)
+    afterEveryRender({ write: () => emparejarColumnas(this.cuerpo()?.nativeElement) });
+  }
+
+  /** Al cambiar el tamaño de la ventana se vuelve a pintar, y con eso a decidir si se emparejan las columnas */
+  @HostListener('window:resize')
+  alCambiarTamano(): void { /* basta con que Angular vuelva a pintar */ }
 
   ngOnInit(): void {
     this.cargar();

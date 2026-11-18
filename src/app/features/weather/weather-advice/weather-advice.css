@@ -1,5 +1,8 @@
-:host { display: block; }
-.consejos { background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; padding: .9rem 1rem 1rem; margin-top: .9rem; }
+/* Va como una tarjeta más del Inicio; si el Inicio le da más alto (para emparejar columnas), la tarjeta lo llena */
+:host { display: flex; flex-direction: column; }
+.consejos { flex: 1; display: flex; flex-direction: column; background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: .9rem 1rem 1rem; }
+/* Si la tarjeta recibe más alto, los consejos se reparten en él en vez de dejar un hueco abajo */
+.consejos > ul { flex: 1; justify-content: space-evenly; }
 header { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: .6rem; }
 h2 { margin: 0; font-size: .95rem; display: inline-flex; align-items: center; gap: .4rem; }
 header a { font-size: .8rem; font-weight: 600; color: var(--ar-verde-700); text-decoration: none; white-space: nowrap; }
