@@ -2,6 +2,7 @@ import { HttpContextToken, HttpEvent, HttpInterceptorFn, HttpResponse } from '@a
 import { Observable, filter, finalize, map, of, share, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { esNuestraApi } from './api-url';
+import { SIN_COPIA_EN_MEMORIA, sinCopia } from './rutas-sin-copia';
 
 /** Para una consulta que siempre debe ir al servidor: `context: new HttpContext().set(SIN_CACHE, true)` */
 export const SIN_CACHE = new HttpContextToken<boolean>(() => false);
@@ -10,8 +11,7 @@ export const SIN_CACHE = new HttpContextToken<boolean>(() => false);
 export const VIDA_CACHE_MS = 10_000;
 const MAXIMO = 150;
 
-/** Sesión, seguridad, configuración y administración siempre se consultan de nuevo */
-const SIN_COPIA = ['/api/auth/', '/api/admin', '/api/backups', '/api/configuration', '/api/public/', '/api/push'];
+// Sesión, seguridad, configuración y administración siempre se consultan de nuevo (lista en rutas-sin-copia.ts)
 
 interface Copia { hasta: number; respuesta: HttpResponse<unknown>; }
 
@@ -61,7 +61,7 @@ export const cacheBreveInterceptor: HttpInterceptorFn = (req, next) => {
 
   const ruta = req.url.slice(environment.apiUrl.length);
   const sesion = req.headers.get('Authorization');
-  if (!sesion || req.responseType !== 'json' || req.context.get(SIN_CACHE) || SIN_COPIA.some((p) => ruta.startsWith(p))) {
+  if (!sesion || req.responseType !== 'json' || req.context.get(SIN_CACHE) || sinCopia(ruta, SIN_COPIA_EN_MEMORIA)) {
     return next(req);
   }
 

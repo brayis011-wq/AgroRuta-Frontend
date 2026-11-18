@@ -139,6 +139,18 @@ describe('sinConexionInterceptor', () => {
     expect(error?.status).toBe(0);
   });
 
+  it('tampoco copia las suscripciones a notificaciones (misma lista que la caché de memoria)', async () => {
+    http.get(`${api}/push/subscriptions`).subscribe();
+    httpMock.expectOne(`${api}/push/subscriptions`).flush([{ id: 1 }]);
+    await esperar();
+
+    let error: { status: number } | undefined;
+    http.get(`${api}/push/subscriptions`).subscribe({ error: (e) => (error = e) });
+    httpMock.expectOne(`${api}/push/subscriptions`).error(sinRed());
+    await esperar();
+    expect(error?.status).toBe(0);
+  });
+
   it('un error del servidor en una consulta no se tapa con la copia', async () => {
     http.get(`${api}/farms`).subscribe();
     httpMock.expectOne(`${api}/farms`).flush([{ id: 1 }]);
