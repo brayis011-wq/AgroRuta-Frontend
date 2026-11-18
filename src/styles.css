@@ -2,30 +2,38 @@
 :root {
   /* ── Tokens de diseño de AgroRuta ─────────────────────── */
   --ar-fuente:      'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Títulos: una serif cálida, de almanaque. El texto y los números siguen en Inter, que se lee mejor en pequeño */
+  --ar-fuente-titulo: 'Fraunces Variable', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
   --ar-verde-900:   #123d17;
   --ar-verde-800:   #1b5e20;
   --ar-verde-700:   #236b28;
   --ar-verde-600:   #2e7d32;
   --ar-verde-100:   #e6f2e7;
   --ar-verde-50:    #f3f8f3;
-  --ar-tinta:       #17231c;
-  --ar-tinta-2:     #4b5a51;
-  --ar-tinta-3:     #7d8a82;
-  --ar-borde:       #e3e9e4;
-  --ar-fondo:       #f4f6f2;
-  --ar-superficie:  #ffffff;
+  --ar-tinta:       #1a231c;
+  --ar-tinta-2:     #4c564d;
+  --ar-tinta-3:     #7a8279;
+  /* Fondo de papel: tonos cálidos en vez de grises, para que el verde y la tierra resalten */
+  --ar-borde:       #e6e1d3;
+  --ar-fondo:       #f5f2e9;
+  --ar-superficie:  #fffdf9;
   --ar-ambar:       #b26a00;
   --ar-ambar-bg:    #fff4dc;
   --ar-rojo:        #c62828;
   --ar-rojo-bg:     #fdecec;
   --ar-azul:        #1f5fa8;
   --ar-azul-bg:     #e8f0fb;
+  /* Acentos de la marca: tierra (rótulos y detalles) y maíz (solo decoración, no para texto) */
+  --ar-tierra:      #8a4b23;
+  --ar-tierra-bg:   #f6e8da;
+  --ar-tierra-borde: #e8cdb3;
+  --ar-maiz:        #e0a326;
   /* Tonos de apoyo (también cambian con el modo oscuro) */
-  --ar-superficie-2: #fafbf9;
-  --ar-linea:       #eef2ee;
-  --ar-seg:         #eef3ee;
-  --ar-gris-bg:     #f0f2f0;
-  --ar-pista:       #e3ebe3;
+  --ar-superficie-2: #faf7f0;
+  --ar-linea:       #efebdf;
+  --ar-seg:         #f0ece0;
+  --ar-gris-bg:     #f0ede4;
+  --ar-pista:       #e5e1d3;
   --ar-borde-fuerte: #bcd9be;
   --ar-ambar-borde: #f1dcae;
   --ar-rojo-borde:  #f1c4c0;
@@ -35,17 +43,6 @@
   --ar-sombra-1:    0 1px 2px rgba(18, 40, 24, .06), 0 1px 3px rgba(18, 40, 24, .08);
   --ar-sombra-2:    0 4px 14px rgba(18, 40, 24, .08), 0 1px 3px rgba(18, 40, 24, .06);
 
-  /* Nombres anteriores, apuntando a los tokens (las pantallas viejas los usan) */
-  --verde:        var(--ar-verde-600);
-  --verde-claro:  #a5d6a7;
-  --verde-oscuro: var(--ar-verde-800);
-  --verde-suave:  #c8e6c9;
-  --verde-bg:     var(--ar-fondo);
-  --gris:         #888;
-  --gris-borde:   #ddd;
-  --rojo:         var(--ar-rojo);
-  --rojo-bg:      #ffebee;
-  --sombra:       var(--ar-sombra-2);
   color-scheme: light;
 }
 
@@ -61,14 +58,14 @@
   --ar-tinta:       #e4ebe6;
   --ar-tinta-2:     #b2bfb7;
   --ar-tinta-3:     #869489;
-  --ar-borde:       #2a3630;
-  --ar-fondo:       #0e1411;
-  --ar-superficie:  #161e19;
-  --ar-superficie-2: #1a231d;
-  --ar-linea:       #222c26;
-  --ar-seg:         #212b25;
-  --ar-gris-bg:     #232d27;
-  --ar-pista:       #2b3730;
+  --ar-borde:       #2c342b;
+  --ar-fondo:       #10130f;
+  --ar-superficie:  #181d17;
+  --ar-superficie-2: #1c221b;
+  --ar-linea:       #242b23;
+  --ar-seg:         #232a22;
+  --ar-gris-bg:     #262d25;
+  --ar-pista:       #2e362c;
   --ar-borde-fuerte: #3d6343;
   --ar-ambar:       #f2b55a;
   --ar-ambar-bg:    #33270f;
@@ -79,16 +76,15 @@
   --ar-vidrio:      rgba(255, 255, 255, .05);
   --ar-azul:        #8db8f5;
   --ar-azul-bg:     #182a42;
+  --ar-tierra:      #e2a779;
+  --ar-tierra-bg:   #33251a;
+  --ar-tierra-borde: #5a402c;
+  --ar-maiz:        #f0bd4f;
   --ar-sombra-1:    0 1px 2px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .3);
   --ar-sombra-2:    0 4px 16px rgba(0, 0, 0, .45), 0 1px 3px rgba(0, 0, 0, .35);
-  --verde-claro:  #2f5a34;
-  --verde-suave:  #24402a;
-  --gris:         #8a988f;
-  --gris-borde:   #2a3630;
-  --rojo-bg:      #3a1b1b;
 }
 /* Imágenes de mapa y fotos sin cambiar; solo se oscurece la interfaz */
-:root[data-tema="oscuro"] .leaflet-container { background: #0e1411; }
+:root[data-tema="oscuro"] .leaflet-container { background: #10130f; }
 
 html, body { margin: 0; }
 body {
@@ -97,6 +93,10 @@ body {
   color: var(--ar-tinta);
   -webkit-font-smoothing: antialiased;
 }
+
+/* Títulos de página y de tarjeta con la fuente de la marca. :where() deja que cada pantalla decida tamaño y peso;
+   SOFT redondea los remates de la letra y la hace más amable */
+:where(h1, h2, h3, .ar-titulo) { font-family: var(--ar-fuente-titulo); font-variation-settings: 'SOFT' 100; font-weight: 650; letter-spacing: -.012em; }
 
 /* Los controles de formulario no heredan la fuente por defecto (salían en Arial) */
 button, input, select, textarea, optgroup { font-family: inherit; }

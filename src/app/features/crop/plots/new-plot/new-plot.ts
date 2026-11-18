@@ -85,7 +85,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.cdr.detectChanges();
       },
-      error: () => this.setError('cultivo.lotes.new.errors.loadFarm'),
+      error: () => this.setError('lotes.new.errors.loadFarm'),
     });
   }
 
@@ -241,15 +241,15 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   registrar(): void {
     if (!this.form.nombre) {
-      this.setError('cultivo.lotes.new.errors.nameRequired');
+      this.setError('lotes.new.errors.nameRequired');
       return;
     }
     if (!this.coordenadas || !this.areaCalculada) {
-      this.setError('cultivo.lotes.new.errors.drawRequired');
+      this.setError('lotes.new.errors.drawRequired');
       return;
     }
     if (this.hectareasFinca !== null && this.areaCalculada > this.hectareasFinca) {
-      this.setError('cultivo.lotes.new.errors.exceeds', {
+      this.setError('lotes.new.errors.exceeds', {
         area: this.fmtArea(this.areaCalculada),
         max: this.fmtArea(this.hectareasFinca),
       });
@@ -287,7 +287,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: () => {
         this.guardando = false;
-        this.setError('cultivo.lotes.new.errors.register');
+        this.setError('lotes.new.errors.register');
       },
     });
   }

@@ -9,7 +9,7 @@ import { PagoService, NominaService } from '../../../../core/services/worker.ser
 const mockPagos = [
   { id: 1, trabajadorNombre: 'Juan', monto: 500000, nominaId: 10, metodoPago: 'EFECTIVO' },
   { id: 2, trabajadorNombre: 'Juan', monto: 300000, nominaId: 10, metodoPago: 'TRANSFERENCIA' },
-  { id: 3, trabajadorNombre: 'Maria', monto: 400000, nominaId: 11, metodoPago: 'NEQUI' },
+  { id: 3, trabajadorNombre: 'Maria', monto: 400000, nominaId: 11, metodoPago: 'CHEQUE' },
 ];
 const mockNomina = { id: 10, fecha: '2024-04-01', total: 800000 };
 
@@ -98,10 +98,10 @@ describe('ListaPagosComponent', () => {
     component.cerrarDetalle();
     expect(component.pagoSeleccionado).toBeNull();
   });
-  it('metodoPagoIcon() should return correct icons', () => {
-    expect(component.metodoPagoIcon('EFECTIVO')).toBe('💵');
-    expect(component.metodoPagoIcon('TRANSFERENCIA')).toBe('🏦');
-    expect(component.metodoPagoIcon(undefined)).toBe('💳');
+  it('metodoIcono() should return correct icons', () => {
+    expect(component.metodoIcono('EFECTIVO')).toBe('ti-cash');
+    expect(component.metodoIcono('TRANSFERENCIA')).toBe('ti-building-bank');
+    expect(component.metodoIcono(undefined)).toBe('ti-credit-card');
   });
   it('iniciales() should return uppercase initials', () => {
     expect(component.iniciales('Juan Perez')).toBe('JP');

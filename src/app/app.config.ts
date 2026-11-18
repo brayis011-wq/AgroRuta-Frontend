@@ -12,8 +12,9 @@ import { loggingInterceptor } from './core/interceptors/logging-interceptor';
 import { sinConexionInterceptor } from './core/offline/offline-interceptor';
 import { PrecargaSinConexion } from './core/offline/offline-preload';
 import { GlobalErrorHandler } from './core/handlers/error-handler';
+import { idiomaGuardado } from './core/services/language.service';
 
-const savedLang = localStorage.getItem('lang') ?? 'es';
+const savedLang = idiomaGuardado();
 
 export const appConfig: ApplicationConfig = {
   providers: [

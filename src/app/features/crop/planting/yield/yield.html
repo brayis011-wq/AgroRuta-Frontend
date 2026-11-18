@@ -25,7 +25,7 @@
         <div class="dato">
           <small>{{ 'temporadas.rend.total' | translate }}</small>
           <strong>{{ num(r.totalKg, 1) }} <span>kg</span></strong>
-          <em>{{ 'siembra.detail.cards.harvestsCount' | translate: { count: r.cosechas } }}</em>
+          <em>{{ (r.cosechas === 1 ? 'siembra.detail.cards.harvestsCountOne' : 'siembra.detail.cards.harvestsCount') | translate: { count: r.cosechas } }}</em>
         </div>
         <div class="dato">
           <small>{{ 'temporadas.rend.perPlant' | translate }}</small>
