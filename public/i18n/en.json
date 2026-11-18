@@ -688,6 +688,7 @@
       "unit": "Unit",
       "unitPlaceholder": "Select",
       "unitHint": "Used for both the dose and the total amount used.",
+      "sections": {"application":"Application","product":"Product and dose","stock":"Stock and cost","limits":"Product restrictions"},
       "area": "Applied area (hectares)",
       "notes": "Notes",
       "notesPlaceholder": "Weather conditions, crop condition...",

@@ -1,5 +1,5 @@
 /* Selector del tipo de actividad */
-.tipo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .5rem; }
+.tipo-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
 .tipo-chip {
   display: flex; align-items: center; gap: .5rem; padding: .65rem .75rem; border-radius: 11px; cursor: pointer;
   border: 1px solid var(--ar-borde); background: var(--ar-superficie); font: inherit; font-size: .88rem; font-weight: 600; color: var(--ar-tinta);
@@ -10,5 +10,4 @@
 .tipo-chip--active { border-color: var(--ar-verde-600); background: var(--ar-verde-50); box-shadow: 0 0 0 1px var(--ar-verde-600); }
 .tipo-chip--active .tipo-chip__icon { color: var(--ar-verde-700); }
 .tipo-chip:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
-.form-header__icon { background: var(--ar-fondo); color: var(--ar-tinta-2); }
 @media (max-width: 560px) { .tipo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
