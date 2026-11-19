@@ -1,3 +1,5 @@
+import { AnteriorSiguienteComponent, Vecino } from '../../../../shared/prev-next/prev-next';
+import { ordenar, vecinos } from '../../../../core/services/active-plantings.service';
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal,
 } from '@angular/core';
@@ -5,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
-import { forkJoin, of, catchError, Subscription } from 'rxjs';
+import { defer, forkJoin, of, catchError, Subscription } from 'rxjs';
 import * as L from 'leaflet';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -28,7 +30,7 @@ export interface Temporada {
 @Component({
   selector: 'app-detalle-lote',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent],
+  imports: [FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, AnteriorSiguienteComponent],
   templateUrl: './plot-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-dialog.css', './plot-detail.css', './plot-detail-seasons.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,6 +46,19 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   private fincaActiva = inject(FincaActivaService);
 
   readonly lote = signal<Lote | null>(null);
+  /** Anterior y siguiente entre los lotes de la misma finca */
+  readonly vecinos = signal<{ anterior: Vecino | null; siguiente: Vecino | null; posicion: number; total: number }>({ anterior: null, siguiente: null, posicion: 0, total: 0 });
+
+  private cargarVecinos(lote: Lote): void {
+    if (!lote.fincaId) return;
+    defer(() => this.cultivoService.listarLotesPorFinca(lote.fincaId)).pipe(catchError(() => of([] as Lote[]))).subscribe((todos) => {
+      if (this.lote()?.id !== lote.id) return;
+      const lista = ordenar(todos.filter((l) => l.id != null));
+      const v = vecinos(lista, (l) => l.id === lote.id);
+      const comoVecino = (l: Lote | null): Vecino | null => (l ? { texto: l.nombre, ruta: ['/crops/plot', l.id!] } : null);
+      this.vecinos.set({ anterior: comoVecino(v.anterior), siguiente: comoVecino(v.siguiente), posicion: v.posicion, total: v.posicion < 0 ? 0 : lista.length });
+    });
+  }
   readonly siembra = signal<Siembra | null>(null);
   readonly temporadas = signal<Temporada[]>([]);
   readonly cargando = signal(true);
@@ -87,6 +102,7 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (lote) => {
         this.lote.set(lote);
         this.cargarTemporadas();
+        this.cargarVecinos(lote);
       },
       error: () => {
         this.error.set('lotes.detail.errors.load');

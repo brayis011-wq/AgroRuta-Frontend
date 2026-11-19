@@ -20,6 +20,8 @@
           </p>
         </div>
         <div class="cv-acciones">
+          @let v = vecinos();
+          <app-anterior-siguiente [anterior]="v.anterior" [siguiente]="v.siguiente" [posicion]="v.posicion" [total]="v.total" etiqueta="lotes.detail.siblings" />
           <button type="button" class="btn" (click)="editar()"><i class="ti ti-pencil"></i> {{ 'common.edit' | translate }}</button>
           @if (!siembra()) {
             @if (estado() === 'EN_DESCANSO') {

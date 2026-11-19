@@ -21,6 +21,7 @@
         </p>
       </div>
       <div class="cv-acciones">
+        <app-anterior-siguiente [anterior]="vecinos.anterior" [siguiente]="vecinos.siguiente" [posicion]="vecinos.posicion" [total]="vecinos.total" />
         <a class="btn" routerLink="/reports" [queryParams]="{ tab: 'costs', siembra: siembra.id }"><i class="ti ti-coins"></i> {{ 'reports.costs.seeCosts' | translate }}</a>
         <button type="button" class="btn" (click)="editarSiembra()"><i class="ti ti-pencil"></i> {{ 'common.edit' | translate }}</button>
       </div>

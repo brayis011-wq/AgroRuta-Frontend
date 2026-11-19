@@ -1,7 +1,8 @@
 import { Component, DestroyRef, ElementRef, HostListener, NgZone, afterNextRender, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { DecimalPipe, NgTemplateOutlet, UpperCasePipe } from '@angular/common';
+import { DecimalPipe, Location, NgTemplateOutlet, UpperCasePipe } from '@angular/common';
+import { esDeslizarParaVolver } from './swipe-back';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
@@ -171,6 +172,28 @@ export class LayoutComponent {
     if (this.relojTeclado) clearTimeout(this.relojTeclado);
     this.relojTeclado = null;
     this.escribiendo.set(true);
+  }
+
+  // ── Celular (app instalada): deslizar desde el borde izquierdo vuelve a la pantalla anterior ──
+  private readonly ubicacion = inject(Location);
+  private toqueInicio: { x: number; y: number; t: number } | null = null;
+
+  @HostListener('document:touchstart', ['$event'])
+  alEmpezarToque(e: TouchEvent): void {
+    const p = e.touches[0];
+    // Solo en la app instalada (en el navegador el propio navegador ya vuelve con ese gesto y volvería dos veces),
+    // desde el borde y con el menú cerrado
+    const instalada = window.matchMedia?.('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true;
+    this.toqueInicio = instalada && p && p.clientX <= 24 && !this.cajonAbierto() && window.innerWidth <= 760 ? { x: p.clientX, y: p.clientY, t: Date.now() } : null;
+  }
+
+  @HostListener('document:touchend', ['$event'])
+  alTerminarToque(e: TouchEvent): void {
+    const ini = this.toqueInicio;
+    this.toqueInicio = null;
+    const p = e.changedTouches[0];
+    if (!ini || !p || this.ruta() === '/dashboard') return;
+    if (esDeslizarParaVolver(ini, { x: p.clientX, y: p.clientY, t: Date.now() })) this.ubicacion.back();
   }
 
   @HostListener('document:focusout')

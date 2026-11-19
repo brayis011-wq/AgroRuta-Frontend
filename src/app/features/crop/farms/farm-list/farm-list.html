@@ -109,6 +109,24 @@
       }
     </section>
   }
+
+  <!-- Siembras en curso de todas las fincas: un toque y se está en la siembra, sin pasar por finca y lote -->
+  @if (!cargando && siembrasActivas?.length) {
+    <h2 class="seccion-titulo">{{ 'cultivo.active.title' | translate }} <small>{{ siembrasActivas!.length }}</small></h2>
+    <section class="activas">
+      @for (a of siembrasActivas; track a.siembra.id) {
+        <a class="activa" [routerLink]="['/crops/planting', a.siembra.id]">
+          <span class="ic verde"><i class="ti ti-seedling" aria-hidden="true"></i></span>
+          <span class="activa-txt">
+            <strong>{{ nombreCultivo(a.siembra) || ('temporadas.ui.planting' | translate) }}</strong>
+            <small>{{ a.lote.nombre }} · {{ a.finca.nombre }}</small>
+          </span>
+          <span class="chip chip-EN_CULTIVO">{{ 'enums.etapaCultivo.' + a.siembra.estadoCultivo | translate }}</span>
+          <i class="ti ti-chevron-right flecha" aria-hidden="true"></i>
+        </a>
+      }
+    </section>
+  }
 </div>
 
 @if (fincaAEliminar) {

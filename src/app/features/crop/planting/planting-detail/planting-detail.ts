@@ -1,5 +1,8 @@
 import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import { AnteriorSiguienteComponent, Vecino } from '../../../../shared/prev-next/prev-next';
+import { SiembraActiva, SiembrasActivasService, vecinos } from '../../../../core/services/active-plantings.service';
+import { FincaActivaService } from '../../../../core/services/active-farm.service';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, Injector, inject } from '@angular/core';
 import { Subscription, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +14,7 @@ import { CultivoService } from '../../../../core/services/crop.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import {
   Siembra,
+  Finca,
   ActividadCultivo,
   Fumigacion,
   Cosecha,
@@ -57,7 +61,7 @@ export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: strin
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink, MigasCultivoComponent, AyudaComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink, MigasCultivoComponent, AyudaComponent, AnteriorSiguienteComponent],
   templateUrl: './planting-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css'],
 })
@@ -101,6 +105,27 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   nombreLote: string | null = null;
   timelineCompleto: TimelineItem[] = [];
   filtroActivo: 'todo' | 'actividad' | 'fumigacion' | 'cosecha' = 'todo';
+
+  /** Anterior y siguiente entre las siembras en curso de todas las fincas */
+  vecinos: { anterior: Vecino | null; siguiente: Vecino | null; posicion: number; total: number } = { anterior: null, siguiente: null, posicion: 0, total: 0 };
+  private readonly injector = inject(Injector);
+
+  private cargarVecinos(id: number): void {
+    let fincas: Finca[] = [];
+    try { fincas = this.injector.get(FincaActivaService).fincas?.() ?? []; } catch { return; }
+    if (!fincas.length) return;
+    this.injector.get(SiembrasActivasService).listar(fincas).subscribe({
+      next: (activas) => {
+        if (this.siembraId !== id) return;
+        const comoVecino = (a: SiembraActiva | null): Vecino | null =>
+          a ? { texto: nombreDeCultivo(a.siembra) || a.lote.nombre, ruta: ['/crops/planting', a.siembra.id!] } : null;
+        const v = vecinos(activas, (a) => a.siembra.id === id);
+        this.vecinos = { anterior: comoVecino(v.anterior), siguiente: comoVecino(v.siguiente), posicion: v.posicion, total: v.posicion < 0 ? 0 : activas.length };
+        this.cdr.markForCheck();
+      },
+      error: () => {},
+    });
+  }
 
   /** Pestañas de la ficha: así la página no es una sola columna larguísima */
   readonly pestanas = PESTANAS_SIEMBRA;
@@ -157,6 +182,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.cultivoService.buscarSiembra(id).subscribe({
       next: (siembra) => {
         this.siembra = siembra;
+        this.cargarVecinos(id);
         this.cargarDatos(id);
         this.cargarResumen(id);
         // Cargar coordenadas reales del lote/finca
