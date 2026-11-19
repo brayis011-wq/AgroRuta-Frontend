@@ -39,3 +39,10 @@
 
 /* Botón (?) a la derecha de cada aviso */
 .alerta-cultivo app-ayuda { margin-left: auto; }
+
+/* Celular: el clima en poco espacio (la temperatura y lo que hay que decidir); la humedad, el viento y la sensación quedan para la pantalla grande */
+@media (max-width: 760px) {
+  .hoy-datos { display: none; }
+  .hoy-clima img { width: 44px; height: 44px; border-radius: 12px; }
+  .hoy-temp { font-size: 1.5rem; }
+}

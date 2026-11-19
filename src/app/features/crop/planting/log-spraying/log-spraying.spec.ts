@@ -40,6 +40,8 @@ describe('RegistrarFumigacion', () => {
   beforeEach(async () => {
     cultivoServiceMock = {
       registrarFumigacion: vi.fn().mockReturnValue(of({})),
+      buscarSiembra: vi.fn().mockReturnValue(of({ id: 1, loteId: 3 })),
+      buscarLote: vi.fn().mockReturnValue(of({ id: 3, nombre: "Lote 3", area: 2.5 })),
     };
     inputServiceMock = {
       search: vi.fn().mockReturnValue(of([mockInsumo, fueraDeBodega])),
@@ -85,6 +87,11 @@ describe('RegistrarFumigacion', () => {
     expect(component.siembraId).toBe(1);
     expect(component.form.siembraId).toBe(1);
     expect(component.form.fecha).toBeTruthy();
+  });
+
+  it('una fumigación nueva empieza con el área del lote', () => {
+    expect(cultivoServiceMock.buscarLote).toHaveBeenCalledWith(3);
+    expect(component.form.areaAplicada).toBe(2.5);
   });
 
   // ── seleccionarInsumo ────────────────────────────────────────
@@ -367,7 +374,7 @@ describe('RegistrarFumigacion', () => {
     component.form.unidadMedida = 'LITROS';
     component.onSubmit();
     vi.advanceTimersByTime(1500);
-    expect(router.navigate).toHaveBeenCalledWith(['/crops/planting', 1]);
+    expect(router.navigate).toHaveBeenCalledWith(['/crops/planting', 1], { queryParams: { tab: 'registros' } });
   });
 
   it('onSubmit() should set error on failure', async () => {

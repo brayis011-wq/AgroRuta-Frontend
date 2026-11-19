@@ -85,3 +85,28 @@ form > .btn-submit { justify-self: end; width: auto; min-width: 240px; padding: 
   form > .btn-submit { width: 100%; justify-self: stretch; }
 }
 @media (prefers-reduced-motion: reduce) { .container, .spinner { animation: none; } }
+
+/* Guardar y Cancelar juntos, a la derecha (en el celular, Guardar arriba y a todo lo ancho) */
+form > .form-actions { display: flex; justify-content: flex-end; align-items: center; gap: .75rem; margin-top: .3rem; }
+.form-actions .btn-submit { width: auto; min-width: 240px; padding: .8rem 2rem; margin: 0; }
+.btn-cancelar {
+  display: inline-flex; align-items: center; justify-content: center; padding: .8rem 1.3rem; border-radius: 12px;
+  font-weight: 600; font-size: .95rem; color: var(--ar-tinta-2); text-decoration: none; border: 1px solid var(--ar-borde); background: var(--ar-superficie);
+}
+.btn-cancelar:hover { color: var(--ar-tinta); border-color: var(--ar-borde-fuerte); }
+@media (max-width: 760px) {
+  form > .form-actions { flex-direction: column-reverse; align-items: stretch; }
+  .form-actions .btn-submit { min-width: 0; width: 100%; }
+}
+
+/* Calidad de la cosecha: tres botones en vez de una lista desplegable */
+.opciones { display: flex; gap: .5rem; flex-wrap: wrap; }
+.opcion { position: relative; flex: 1 1 0; min-width: 90px; }
+.opcion input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.opcion span {
+  display: flex; align-items: center; justify-content: center; gap: .35rem; padding: .7rem .6rem; border-radius: 11px;
+  border: 1px solid var(--ar-borde); background: var(--ar-superficie); font-weight: 600; font-size: .9rem; color: var(--ar-tinta-2);
+  transition: border-color .15s, background .15s, color .15s;
+}
+.opcion input:checked + span { border-color: var(--ar-verde-600); background: var(--ar-verde-50); color: var(--ar-verde-700); box-shadow: 0 0 0 1px var(--ar-verde-600) inset; }
+.opcion input:focus-visible + span { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }

@@ -173,17 +173,7 @@
     </div>
 
     <div class="col-lateral">
-      <!-- Clima de la finca elegida -->
-      <section class="clima fijo">
-        @if (climaFinca(); as f) {
-          <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
-                              [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" />
-        } @else {
-          <app-weather-widget city="Bogotá" />
-        }
-      </section>
-
-      <!-- Pendientes -->
+      <!-- Pendientes: lo primero que se ve a la derecha (en el celular, lo primero después del saludo) -->
       <section class="tarjeta pendientes">
         <header><h2><i class="ti ti-bell" aria-hidden="true"></i> {{ 'dashboard.pending.title' | translate }}</h2></header>
         @if (cargando()) {
@@ -205,6 +195,16 @@
               <small>{{ 'dashboard.pending.noneDesc' | translate }}</small>
             </div>
           }
+        }
+      </section>
+
+      <!-- Clima de la finca elegida (en el Inicio el menú lateral no repite el suyo) -->
+      <section class="clima fijo">
+        @if (climaFinca(); as f) {
+          <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
+                              [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" />
+        } @else {
+          <app-weather-widget city="Bogotá" />
         }
       </section>
 

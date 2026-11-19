@@ -44,6 +44,15 @@ interface TimelineItem {
   extra?: string;
 }
 
+export type PestanaSiembra = 'resumen' | 'registros' | 'cosechas' | 'diagnostico';
+
+export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: string }[] = [
+  { id: 'resumen', icono: 'ti-layout-dashboard', clave: 'siembra.detail.tabs.summary' },
+  { id: 'registros', icono: 'ti-history', clave: 'siembra.detail.tabs.records' },
+  { id: 'cosechas', icono: 'ti-basket', clave: 'siembra.detail.tabs.harvests' },
+  { id: 'diagnostico', icono: 'ti-stethoscope', clave: 'siembra.detail.tabs.diagnosis' },
+];
+
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
@@ -92,6 +101,16 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   timelineCompleto: TimelineItem[] = [];
   filtroActivo: 'todo' | 'actividad' | 'fumigacion' | 'cosecha' = 'todo';
 
+  /** Pestañas de la ficha: así la página no es una sola columna larguísima */
+  readonly pestanas = PESTANAS_SIEMBRA;
+  pestana: PestanaSiembra = 'resumen';
+
+  elegirPestana(p: PestanaSiembra): void {
+    this.pestana = p;
+    // En la dirección: al volver atrás desde un registro se abre la misma pestaña
+    this.router.navigate([], { relativeTo: this.route, queryParams: { tab: p === 'resumen' ? null : p }, queryParamsHandling: 'merge', replaceUrl: true });
+  }
+
   get timelineFiltrado(): TimelineItem[] {
     if (this.filtroActivo === 'todo') return this.timelineCompleto;
     return this.timelineCompleto.filter(i => i.tipo === this.filtroActivo);
@@ -112,6 +131,8 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   private rutaSub?: Subscription;
 
   ngOnInit(): void {
+    const tab = this.route.snapshot?.queryParamMap?.get('tab') as PestanaSiembra | null;
+    if (tab && PESTANAS_SIEMBRA.some((p) => p.id === tab)) this.pestana = tab;
     // Se reutiliza al pasar de una siembra a otra: recargar con cada id
     const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
     this.rutaSub = params$.subscribe((p) => this.cargarSiembra(Number(p.get('id'))));

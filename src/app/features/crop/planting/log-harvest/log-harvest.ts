@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { CultivoService } from '../../../../core/services/crop.service';
@@ -13,7 +13,7 @@ import { formatoFecha, formatoPesos } from '../../../../shared/format';
 @Component({
   selector: 'app-registrar-cosecha',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, MigasCultivoComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent],
   templateUrl: './log-harvest.html',
   styleUrls: ['../../crop-form.css', './log-harvest.css']
 })
@@ -98,7 +98,7 @@ export class RegistrarCosecha implements OnInit {
         this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.harvest.success';
         this.cdr.detectChanges();
         this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.harvest');
-        this.router.navigate(['/crops/planting', this.siembraId]);
+        this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros' } });
       },
       error: (err) => {
         this.cargando = false;

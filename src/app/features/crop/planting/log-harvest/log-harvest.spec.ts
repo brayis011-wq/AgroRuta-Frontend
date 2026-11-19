@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { RegistrarCosecha } from './log-harvest';
@@ -17,13 +17,12 @@ describe('RegistrarCosecha', () => {
       registrarCosecha: vi.fn().mockReturnValue(of({})),
     };
 
-    routerMock = { navigate: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [RegistrarCosecha],
       providers: [
         { provide: CultivoService, useValue: cultivoServiceMock },
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: (k: string) => (k === 'id' ? '5' : null) } } },
@@ -33,6 +32,8 @@ describe('RegistrarCosecha', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(RegistrarCosecha);
+    routerMock = TestBed.inject(Router);
+    vi.spyOn(routerMock, 'navigate').mockResolvedValue(true);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -82,7 +83,7 @@ describe('RegistrarCosecha', () => {
   expect(component.exito).toBe('siembra.harvest.success');
   expect(component.cargando).toBe(false);
   expect(navigateCalled).toBe(true);
-  expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 5]);
+  expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 5], { queryParams: { tab: 'registros' } });
   
   globalThis.setTimeout = originalSetTimeout;
 });
@@ -91,7 +92,7 @@ it('onSubmit() should navigate after 1500ms on success', () => {
   vi.useFakeTimers();
   component.onSubmit();
   vi.advanceTimersByTime(1500);
-  expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 5]);
+  expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 5], { queryParams: { tab: 'registros' } });
   vi.useRealTimers();
 });
 

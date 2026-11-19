@@ -92,7 +92,7 @@
     </nav>
 
     <div class="pie">
-      @if (clima(); as c) {
+      @if (!enInicio() && clima(); as c) {
         <div [class]="'clima ' + (consejo() ?? '')">
           <span class="clima-ic" aria-hidden="true"><i [class]="'ti ' + iconoClima()"></i></span>
           <div class="clima-txt">

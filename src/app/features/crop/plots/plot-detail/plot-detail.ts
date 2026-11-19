@@ -17,7 +17,6 @@ import {
 } from '../../../../core/models/crop.model';
 import { environment } from '../../../../../environments/environment';
 import { rangoNdvi } from '../../../../shared/ndvi';
-import { CicloEtapasComponent } from '../../planting/stage-cycle/stage-cycle';
 import { diasEntre, hoyIso } from '../../planting/stage-cycle/stage-cycle.logic';
 
 export interface Temporada {
@@ -29,7 +28,7 @@ export interface Temporada {
 @Component({
   selector: 'app-detalle-lote',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, CicloEtapasComponent, MigasCultivoComponent],
+  imports: [FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent],
   templateUrl: './plot-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-dialog.css', './plot-detail.css', './plot-detail-seasons.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -167,6 +167,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     if (registro) {
       this.registroId = Number(registro);
       this.cargarParaEditar(this.registroId);
+    } else {
+      this.proponerArea();
     }
 
     this.cargarBodega();
@@ -188,6 +190,20 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
         this.estimado.set(e);
         this.cdr.markForCheck();
       });
+  }
+
+  /** Casi siempre se fumiga el lote entero: el área aplicada empieza con el área del lote (se puede cambiar) */
+  private proponerArea(): void {
+    this.cultivoSvc.buscarSiembra(this.siembraId).pipe(
+      switchMap((s) => (s?.loteId ? this.cultivoSvc.buscarLote(s.loteId) : of(null))),
+      catchError(() => of(null)),
+      takeUntil(this.destroy$),
+    ).subscribe((lote) => {
+      if (lote?.area && this.form.areaAplicada == null) {
+        this.form.areaAplicada = lote.area;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   /** Llena el formulario con la fumigación guardada (y su insumo del catálogo, si tenía) */
@@ -450,7 +466,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           this.exito    = this.registroId ? 'temporadas.registro.saved' : 'siembra.spray.success';
           this.cdr.markForCheck();
           this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.spray');
-          this.router.navigate(['/crops/planting', this.siembraId]);
+          this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros' } });
         },
         error: (err: { error?: { message?: string } }) => {
           this.cargando = false;

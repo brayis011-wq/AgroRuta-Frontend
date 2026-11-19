@@ -86,16 +86,19 @@
           <small class="campo-hint">{{ 'temporadas.costos.activityCostHint' | translate }}</small>
         </div>
 
-        <button type="submit" class="btn-submit" [disabled]="cargando || !form.tipo">
-          <span class="btn-submit__text" *ngIf="!cargando">
-            <span>{{ (registroId ? 'common.save' : 'siembra.activity.submit') | translate }}</span>
-            <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
-          </span>
-          <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">
-            <span class="spinner" aria-hidden="true"></span>
-            {{ 'siembra.activity.saving' | translate }}
-          </span>
-        </button>
+        <div class="form-actions">
+          <a class="btn-cancelar" [routerLink]="['/crops/planting', siembraId]" [queryParams]="{ tab: 'registros' }">{{ 'common.cancel' | translate }}</a>
+          <button type="submit" class="btn-submit" [disabled]="cargando || !form.tipo">
+            <span class="btn-submit__text" *ngIf="!cargando">
+              <span>{{ (registroId ? 'common.save' : 'siembra.activity.submit') | translate }}</span>
+              <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
+            </span>
+            <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">
+              <span class="spinner" aria-hidden="true"></span>
+              {{ 'siembra.activity.saving' | translate }}
+            </span>
+          </button>
+        </div>
 
       </form>
     </div>

@@ -76,6 +76,8 @@ export class LayoutComponent {
   readonly lugarClima = computed(() => municipio(this.fincaActiva.paraClima()) || this.clima()?.city || '');
   readonly consejo = computed(() => { const c = this.clima(); return c ? consejoFumigacion(c) : null; });
   readonly iconoClima = computed(() => iconoClima(this.clima()?.iconUrl));
+  /** En el Inicio el clima ya sale en grande: el menú no lo repite */
+  readonly enInicio = signal(false);
   /** Menú completo abierto como cajón (solo celular) */
   readonly cajonAbierto = signal(false);
   /** Celular: la barra inferior se esconde al bajar por la página y mientras se escribe en un campo */
@@ -193,6 +195,7 @@ export class LayoutComponent {
   }
 
   private alNavegar(url: string): void {
+    this.enInicio.set(url.split(/[?#]/)[0] === '/dashboard');
     this.cajonAbierto.set(false);
     this.barraOculta.set(false);
     this.menuFincas.set(false);
