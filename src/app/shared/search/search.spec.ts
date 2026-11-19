@@ -8,6 +8,7 @@ import { FincaActivaService } from '../../core/services/active-farm.service';
 import { TrabajadorService } from '../../core/services/worker.service';
 import { CultivoService } from '../../core/services/crop.service';
 import { TranslateService } from '@ngx-translate/core';
+import { RecientesService } from '../../core/services/recent.service';
 
 describe('normalizar', () => {
   it('ignores accents and case', () => expect(normalizar('  Nómina ')).toBe('nomina'));
@@ -18,6 +19,7 @@ describe('BuscadorComponent', () => {
   let router: { navigate: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
+    localStorage.clear();
     router = { navigate: vi.fn() };
     TestBed.configureTestingModule({
       imports: [BuscadorComponent],
@@ -95,5 +97,32 @@ describe('BuscadorComponent', () => {
     const n = c.resultados().length;
     c.teclas(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
     expect(c.indice()).toBe(n - 1);
+  });
+
+  it('"cosecha café" ofrece registrar la cosecha en esa siembra', () => {
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('es', { search: { actions: { harvest: 'Registrar cosecha', worker: 'Nuevo trabajador' }, keywords: { action: { harvest: 'cosechar, kilos' } } } });
+    translate.use('es');
+    c.escribir('cosecha café');
+    expect(c.resultados()[0]).toMatchObject({ tipo: 'action', ruta: '/crops/planting/34/harvest' });
+  });
+
+  it('el nombre del cultivo solo no ofrece acciones', () => {
+    c.escribir('café');
+    expect(c.resultados().some((r) => r.tipo === 'action')).toBe(false);
+  });
+
+  it('"nuevo trabajador" abre el formulario del equipo', () => {
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('es', { search: { actions: { harvest: 'Registrar cosecha', worker: 'Nuevo trabajador' }, keywords: { action: { harvest: 'cosechar, kilos' } } } });
+    translate.use('es');
+    c.escribir('nuevo trabajador');
+    expect(c.resultados()[0]).toMatchObject({ tipo: 'action', ruta: '/worker', query: { nuevo: '1' } });
+  });
+
+  it('vacío muestra primero lo último que se abrió', () => {
+    TestBed.inject(RecientesService).anotar({ tipo: 'planting', titulo: 'Café · Castillo', detalle: 'Lote Cafetal', ruta: '/crops/planting/34' });
+    c.escribir('');
+    expect(c.resultados()[0]).toMatchObject({ reciente: true, ruta: '/crops/planting/34' });
   });
 });

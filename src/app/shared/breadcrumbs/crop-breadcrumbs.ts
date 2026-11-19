@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Observable, catchError, defer, map, of, startWith, switchMap } from 'rxjs';
 import { CultivoService } from '../../core/services/crop.service';
 import { nombreCultivo } from '../../core/models/crop.model';
 import { Miga, MigasComponent } from './breadcrumbs';
+import { Reciente, RecientesService } from '../../core/services/recent.service';
 
 /** Lo que se sabe del camino Finca › Lote › Siembra (los nombres llegan del servidor) */
 export interface CadenaCultivo {
@@ -56,6 +57,16 @@ export class MigasCultivoComponent {
 
   readonly items = computed<Miga[]>(() => armarMigas(this.ids(), this.cadena(), this.actual()));
 
+  private readonly recientes = inject(RecientesService);
+
+  constructor() {
+    // "Seguir donde iba": la finca, el lote o la siembra que se está viendo (no los formularios)
+    effect(() => {
+      const r = recienteDe(this.ids(), this.cadena(), this.actual());
+      if (r) this.recientes.anotar(r);
+    });
+  }
+
   private resolver(fincaId: number | null, loteId: number | null, siembraId: number | null): Observable<CadenaCultivo> {
     const deFinca = (id: number) => this.cultivo.buscarFinca(id).pipe(map((f) => f.nombre));
     const deLote = (id: number): Observable<CadenaCultivo> =>
@@ -85,6 +96,25 @@ export class MigasCultivoComponent {
   private resolverSeguro(fincaId: number | null, loteId: number | null, siembraId: number | null): Observable<CadenaCultivo> {
     return defer(() => this.resolver(fincaId, loteId, siembraId)).pipe(catchError(() => of({ fallo: true })));
   }
+}
+
+/** Lo que se anota en Recientes cuando ya llegaron los nombres; null en los formularios o si falló */
+export function recienteDe(
+  ids: { finca: number | null; lote: number | null; siembra: number | null },
+  c: CadenaCultivo,
+  actual: string | null,
+): Reciente | null {
+  if (actual || c.fallo) return null;
+  if (ids.siembra && c.siembraId === ids.siembra && c.siembra) {
+    return { tipo: 'planting', titulo: c.siembra, detalle: [c.lote, c.finca].filter(Boolean).join(' · '), ruta: `/crops/planting/${ids.siembra}` };
+  }
+  if (!ids.siembra && ids.lote && c.loteId === ids.lote && c.lote) {
+    return { tipo: 'plot', titulo: c.lote, detalle: c.finca ?? undefined, ruta: `/crops/plot/${ids.lote}` };
+  }
+  if (!ids.siembra && !ids.lote && ids.finca && c.fincaId === ids.finca && c.finca) {
+    return { tipo: 'farm', titulo: c.finca, ruta: `/crops/farm/${ids.finca}` };
+  }
+  return null;
 }
 
 /** Arma los pasos a partir de los ids pedidos y de lo que ya llegó (separado para probarlo sin servidor) */

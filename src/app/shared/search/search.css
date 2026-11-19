@@ -17,6 +17,7 @@ kbd { font: 600 11px var(--ar-fuente); border: 1px solid var(--ar-borde); border
 .ic { width: 34px; height: 34px; flex: none; border-radius: 9px; display: grid; place-items: center; font-size: 18px; background: var(--ar-gris-bg); color: var(--ar-tinta-2); }
 .ic.farm { background: var(--ar-verde-100); color: var(--ar-verde-700); }
 .ic.worker { background: var(--ar-azul-bg); color: var(--ar-azul); }
+.ic.action { background: var(--ar-verde-600); color: #fff; }
 .ic.plot { background: var(--ar-tierra-bg); color: var(--ar-tierra); }
 .ic.planting { background: var(--ar-verde-50); color: var(--ar-verde-600); }
 .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
@@ -37,3 +38,4 @@ kbd { font: 600 11px var(--ar-fuente); border: 1px solid var(--ar-borde); border
   .lista { max-height: min(46vh, 46dvh); }
   .pie, .entrada kbd { display: none; }
 }
+.lista li.grupo { padding: .55rem .9rem .25rem; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ar-tinta-3); cursor: default; background: none !important; animation: none; }

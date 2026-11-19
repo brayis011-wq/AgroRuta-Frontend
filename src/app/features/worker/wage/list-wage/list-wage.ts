@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { RecientesService } from '../../../../core/services/recent.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -33,6 +34,7 @@ export class ListaJornalesComponent implements OnInit {
   nominaGenerada: Nomina | null = null;
 
   trabajadorId: number | null = null;
+  private readonly recientes = inject(RecientesService);
   busqueda    = '';
   fechaInicio = '';
   fechaFin    = '';
@@ -91,7 +93,12 @@ export class ListaJornalesComponent implements OnInit {
   cargarTrabajador(): void {
     if (!this.trabajadorId) return;
     this.trabajadorService.buscarPorId(this.trabajadorId).subscribe({
-      next:  (t) => { this.trabajador = t; this.cdr.detectChanges(); },
+      next:  (t) => {
+        this.trabajador = t;
+        // "Seguir donde iba": los jornales de este trabajador
+        if (t?.id) this.recientes.anotar({ tipo: 'worker', titulo: t.nombreCompleto ?? '', detalle: t.cargo?.nombre, ruta: '/worker/workdays', query: { trabajadorId: t.id } });
+        this.cdr.detectChanges();
+      },
       error: () => {}
     });
   }
