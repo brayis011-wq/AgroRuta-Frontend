@@ -1,3 +1,4 @@
+import { AvisosService, DESHACER_MS } from '../../../../core/services/toast.service';
 import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
 import { AnteriorSiguienteComponent, Vecino } from '../../../../shared/prev-next/prev-next';
 import { SiembraActiva, SiembrasActivasService, vecinos } from '../../../../core/services/active-plantings.service';
@@ -72,6 +73,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   private lang = inject(LanguageService);
   private confirm = inject(ConfirmService);
   private weather = inject(WeatherService);
+  private avisos = inject(AvisosService);
 
   /** Clima actual del lote (o del municipio de la finca) */
   clima: Weather | null = null;
@@ -138,8 +140,9 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   }
 
   get timelineFiltrado(): TimelineItem[] {
-    if (this.filtroActivo === 'todo') return this.timelineCompleto;
-    return this.timelineCompleto.filter(i => i.tipo === this.filtroActivo);
+    const visibles = this.ocultos.size ? this.timelineCompleto.filter((i) => !this.ocultos.has(i.tipo + '-' + i.id)) : this.timelineCompleto;
+    if (this.filtroActivo === 'todo') return visibles;
+    return visibles.filter(i => i.tipo === this.filtroActivo);
   }
 
   /** Palabra que el usuario debe escribir para confirmar (cambia con el idioma) */
@@ -223,6 +226,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.hacerBorradoPendiente();
     document.body.classList.remove('con-panel');
     this.rutaSub?.unsubscribe();
   }
@@ -435,28 +439,53 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.router.navigate(['/crops/planting', this.siembra!.id, ruta, item.id]);
   }
 
-  async eliminarRegistro(item: TimelineItem): Promise<void> {
+  // ── Borrar un registro con "Deshacer" ──────────────────────────────
+  // El registro desaparece al instante y se borra en el servidor a los pocos segundos, salvo que se toque
+  // "Deshacer". Si se sale de la siembra antes, el borrado se hace en ese momento.
+  private ocultos = new Set<string>();
+  private borradoPendiente: { clave: string; ejecutar: () => void; reloj: ReturnType<typeof setTimeout> } | null = null;
+
+  eliminarRegistro(item: TimelineItem): void {
+    if (!this.siembra?.id) return;
+    this.hacerBorradoPendiente(); // si había otro esperando, se hace ya
+    const clave = item.tipo + '-' + item.id;
+    const siembraId = this.siembra.id;
+    this.ocultos.add(clave);
+    const ejecutar = () => {
+      if (this.borradoPendiente?.clave === clave) { clearTimeout(this.borradoPendiente.reloj); this.borradoPendiente = null; }
+      const peticion = item.tipo === 'actividad'
+        ? this.cultivoService.eliminarActividad(item.id)
+        : item.tipo === 'fumigacion'
+          ? this.cultivoService.eliminarFumigacion(item.id)
+          : this.cultivoService.eliminarCosecha(item.id);
+      peticion.subscribe({
+        next: () => {
+          if (this.siembra?.id !== siembraId) return;
+          this.version++; this.cargarDatos(siembraId); this.cargarResumen(siembraId);
+        },
+        error: (e) => {
+          this.ocultos.delete(clave);
+          this.error = e?.error?.message || 'temporadas.registro.errors.delete';
+          this.cdr.detectChanges();
+        },
+      });
+    };
+    this.borradoPendiente = { clave, ejecutar, reloj: setTimeout(ejecutar, DESHACER_MS) };
     const nombre = item.tituloKey ? this.translate.instant(item.tituloKey) : item.titulo;
-    const ok = await this.confirm.preguntar({
-      titulo: this.translate.instant('temporadas.registro.deleteTitle'),
-      mensaje: this.translate.instant('temporadas.registro.deleteMsg', { nombre, fecha: this.fmtFecha(item.fecha) }),
-      confirmar: this.translate.instant('temporadas.registro.delete'),
-      peligro: true,
+    this.avisos.conDeshacer('temporadas.registro.deleted', { nombre }, () => {
+      if (this.borradoPendiente?.clave !== clave) return;
+      clearTimeout(this.borradoPendiente.reloj);
+      this.borradoPendiente = null;
+      this.ocultos.delete(clave);
+      this.cdr.detectChanges();
     });
-    if (!ok || !this.siembra?.id) return;
-    const peticion = item.tipo === 'actividad'
-      ? this.cultivoService.eliminarActividad(item.id)
-      : item.tipo === 'fumigacion'
-        ? this.cultivoService.eliminarFumigacion(item.id)
-        : this.cultivoService.eliminarCosecha(item.id);
-    peticion.subscribe({
-      next: () => { this.version++; this.cargarDatos(this.siembra!.id!); this.cargarResumen(this.siembra!.id!); },
-      error: (e) => {
-        this.error = e?.error?.message || 'temporadas.registro.errors.delete';
-        this.cdr.detectChanges();
-      },
-    });
+    this.cdr.detectChanges();
   }
+
+  private hacerBorradoPendiente(): void {
+    this.borradoPendiente?.ejecutar();
+  }
+
 
   iniciarEliminacion(): void {
     this.mostrarConfirmacion = true;
