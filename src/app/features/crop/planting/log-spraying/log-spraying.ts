@@ -1,3 +1,4 @@
+import { UltimoUsadoService } from '../../../../core/services/last-used.service';
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 // src/app/features/crop/planting/log-spraying/log-spraying.ts
 
@@ -84,6 +85,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   private readonly router     = inject(Router);
   private readonly cdr        = inject(ChangeDetectorRef);
   private readonly cultivoSvc = inject(CultivoService);
+  private readonly ultimo = inject(UltimoUsadoService);
   private readonly inputSvc: AgriculturalInputService = inject(AgriculturalInputService);
   private readonly translate = inject(TranslateService);
   private readonly inventario = inject(InventarioService);
@@ -337,6 +339,10 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.form.diasCarencia        = insumo.diasCarencia ?? null;
     this.form.cantidadUsada       = null;
     this.form.unidadCantidad      = insumo.unidadSugerida;
+    // La dosis que se usó la última vez con este producto, si se había registrado (solo en una fumigación nueva)
+    const antes = !this.registroId && insumo.id ? this.ultimo.leer<Record<string, { dosis?: number; unidad?: string }>>('fumigacion')?.[insumo.id] : null;
+    if (antes?.dosis) this.form.dosis = antes.dosis;
+    if (antes?.unidad) this.form.unidadMedida = antes.unidad as MeasurementUnit;
     this.mostrarCatalogo.set(false);
     this.actualizarEstimado();
   }
@@ -464,6 +470,9 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       .subscribe({
         next: (guardado: { id?: number } | null | void) => {
           this.cargando = false;
+          if (this.form.agriculturalInputId && this.form.dosis) {
+            this.ultimo.mezclar('fumigacion', { [this.form.agriculturalInputId]: { dosis: this.form.dosis, unidad: this.form.unidadMedida } });
+          }
           this.exito    = this.registroId ? 'temporadas.registro.saved' : 'siembra.spray.success';
           this.cdr.markForCheck();
           this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.spray');

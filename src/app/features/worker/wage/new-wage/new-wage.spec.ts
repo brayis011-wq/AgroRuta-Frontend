@@ -53,6 +53,7 @@ describe('NuevoJornalComponent', () => {
   }
 
   beforeEach(() => {
+    localStorage.clear(); // lo recordado del último jornal no debe pasar de una prueba a otra
     jornalSvc = {
       registrar: vi.fn(),
       cultivosDisponibles: vi.fn().mockReturnValue(of([mkCultivo(2, 1), mkCultivo(3, 1), mkCultivo(4, 9)]))

@@ -70,7 +70,7 @@
   } @else if (lote()) {
     @if (siembra(); as s) {
       <section class="actual">
-        <a class="resumen" [routerLink]="['/crops/planting', s.id]">
+        <a class="resumen" [routerLink]="['/crops/planting', s.id]" [arPrecargar]="{ tipo: 'planting', id: s.id }">
           <div class="resumen-cultivo">
             <span class="icono"><i class="ti ti-seedling"></i></span>
             <div>

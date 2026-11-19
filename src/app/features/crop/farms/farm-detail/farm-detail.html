@@ -86,7 +86,7 @@
       <section class="lotes">
         @for (lote of lotes; track lote.id) {
           <article class="lote" [class]="'lote estado-' + lote.estado">
-            <button type="button" class="lote-cuerpo" (click)="entrarLote(lote.id!)">
+            <button type="button" class="lote-cuerpo" (click)="entrarLote(lote.id!)" [arPrecargar]="{ tipo: 'plot', id: lote.id }">
               <header>
                 <strong>{{ lote.nombre }}</strong>
                 <span class="chip" [class]="'chip chip-' + lote.estado">{{ 'enums.loteEstado.' + lote.estado | translate }}</span>

@@ -186,6 +186,13 @@
 
   <app-progreso />
 
+  <!-- App instalada: al tirar hacia abajo desde arriba aparece la flecha de actualizar -->
+  @if (tiron() > 0) {
+    <div class="tiron" [style.transform]="'translate(-50%, ' + tiron() + 'px)'" [class.listo]="tiron() >= distanciaActualizar" aria-hidden="true">
+      <i class="ti ti-refresh" [style.rotate]="(tiron() * 3) + 'deg'"></i>
+    </div>
+  }
+
   <app-aviso />
 
   <main class="main">

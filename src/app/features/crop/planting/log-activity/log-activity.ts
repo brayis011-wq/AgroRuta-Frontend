@@ -1,3 +1,4 @@
+import { UltimoUsadoService } from '../../../../core/services/last-used.service';
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
@@ -53,6 +54,8 @@ export class RegistrarActividad implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  private readonly ultimo = inject(UltimoUsadoService);
+
   ngOnInit(): void {
     this.siembraId = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
@@ -62,6 +65,8 @@ export class RegistrarActividad implements OnInit {
     if (fechaQuery && /^\d{4}-\d{2}-\d{2}$/.test(fechaQuery)) this.form.fecha = fechaQuery;
 
     const registro = this.route.snapshot.paramMap.get('registroId');
+    // Una actividad nueva empieza con el tipo de la anterior (en temporada se repite la misma labor)
+    if (!registro) this.form.tipo = this.ultimo.leer<{ tipo?: string }>('actividad')?.tipo ?? this.form.tipo;
     if (registro) {
       this.registroId = Number(registro);
       this.cultivoService.buscarActividad(this.registroId).subscribe({
@@ -85,6 +90,7 @@ export class RegistrarActividad implements OnInit {
     peticion.subscribe({
       next: (guardado: { id?: number } | null | void) => {
         this.cargando = false;
+        if (this.form.tipo) this.ultimo.guardar('actividad', { tipo: this.form.tipo });
         this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.activity.success';
         this.cdr.detectChanges();
         this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.activity');

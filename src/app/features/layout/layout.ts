@@ -3,6 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DecimalPipe, Location, NgTemplateOutlet, UpperCasePipe } from '@angular/common';
 import { esDeslizarParaVolver } from './swipe-back';
+
+/** Píxeles que hay que tirar hacia abajo (ya con resistencia) para actualizar la pantalla */
+const DISTANCIA_ACTUALIZAR = 70;
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
@@ -178,19 +181,50 @@ export class LayoutComponent {
   private readonly ubicacion = inject(Location);
   private toqueInicio: { x: number; y: number; t: number } | null = null;
 
+  // ── Celular (app instalada): bajar el dedo desde arriba del todo actualiza la pantalla ──
+  /** Cuánto se ha tirado hacia abajo (0 = nada); con más de DISTANCIA_ACTUALIZAR se actualiza al soltar */
+  readonly tiron = signal(0);
+  readonly distanciaActualizar = DISTANCIA_ACTUALIZAR;
+  private tironInicio: number | null = null;
+
+  /** En el navegador ya existen estos gestos (volver, actualizar): solo se agregan en la app instalada */
+  private esAppInstalada(): boolean {
+    return window.matchMedia?.('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true;
+  }
+
   @HostListener('document:touchstart', ['$event'])
   alEmpezarToque(e: TouchEvent): void {
     const p = e.touches[0];
-    // Solo en la app instalada (en el navegador el propio navegador ya vuelve con ese gesto y volvería dos veces),
-    // desde el borde y con el menú cerrado
-    const instalada = window.matchMedia?.('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true;
-    this.toqueInicio = instalada && p && p.clientX <= 24 && !this.cajonAbierto() && window.innerWidth <= 760 ? { x: p.clientX, y: p.clientY, t: Date.now() } : null;
+    const instalada = this.esAppInstalada() && window.innerWidth <= 760 && !this.cajonAbierto() && !document.body.classList.contains('con-panel');
+    // Volver: desde el borde izquierdo
+    this.toqueInicio = instalada && p && p.clientX <= 24 ? { x: p.clientX, y: p.clientY, t: Date.now() } : null;
+    // Actualizar: con la página arriba del todo
+    this.tironInicio = instalada && p && window.scrollY <= 0 ? p.clientY : null;
+    if (this.tironInicio !== null) {
+      this.zonaToques.runOutsideAngular(() => document.addEventListener('touchmove', this.moverToque, { passive: true }));
+    }
+  }
+
+  private readonly zonaToques = inject(NgZone);
+  /** Se escucha el movimiento solo mientras dura el gesto y fuera de Angular (no recalcula la pantalla en cada scroll) */
+  private readonly moverToque = (e: TouchEvent) => this.alMoverToque(e);
+
+  alMoverToque(e: TouchEvent): void {
+    if (this.tironInicio === null) return;
+    const dy = (e.touches[0]?.clientY ?? 0) - this.tironInicio;
+    // Con resistencia: el indicador baja menos que el dedo
+    this.tiron.set(dy > 0 && window.scrollY <= 0 ? Math.min(dy * 0.5, DISTANCIA_ACTUALIZAR * 1.4) : 0);
   }
 
   @HostListener('document:touchend', ['$event'])
   alTerminarToque(e: TouchEvent): void {
     const ini = this.toqueInicio;
     this.toqueInicio = null;
+    const tiro = this.tiron();
+    this.tironInicio = null;
+    document.removeEventListener('touchmove', this.moverToque);
+    this.tiron.set(0);
+    if (tiro >= DISTANCIA_ACTUALIZAR) { window.location.reload(); return; }
     const p = e.changedTouches[0];
     if (!ini || !p || this.ruta() === '/dashboard') return;
     if (esDeslizarParaVolver(ini, { x: p.clientX, y: p.clientY, t: Date.now() })) this.ubicacion.back();

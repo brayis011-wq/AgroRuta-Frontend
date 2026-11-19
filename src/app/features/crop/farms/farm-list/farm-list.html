@@ -115,7 +115,7 @@
     <h2 class="seccion-titulo">{{ 'cultivo.active.title' | translate }} <small>{{ siembrasActivas!.length }}</small></h2>
     <section class="activas">
       @for (a of siembrasActivas; track a.siembra.id) {
-        <a class="activa" [routerLink]="['/crops/planting', a.siembra.id]">
+        <a class="activa" [routerLink]="['/crops/planting', a.siembra.id]" [arPrecargar]="{ tipo: 'planting', id: a.siembra.id }">
           <span class="ic verde"><i class="ti ti-seedling" aria-hidden="true"></i></span>
           <span class="activa-txt">
             <strong>{{ nombreCultivo(a.siembra) || ('temporadas.ui.planting' | translate) }}</strong>

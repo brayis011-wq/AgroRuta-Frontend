@@ -1,3 +1,4 @@
+import { PrecargarDirective } from '../../shared/prefetch.directive';
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnInit, afterEveryRender, computed, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
@@ -51,7 +52,7 @@ export interface Pendiente {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent, WeatherAdviceComponent, ContarDirective, PrimerosPasosComponent],
+  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent, WeatherAdviceComponent, ContarDirective, PrimerosPasosComponent, PrecargarDirective],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css', './dashboard-hero.css', './dashboard-pending.css', './dashboard-body.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

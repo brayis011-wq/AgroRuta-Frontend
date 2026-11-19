@@ -1,3 +1,4 @@
+import { PrecargarDirective } from '../../../../shared/prefetch.directive';
 import { AnteriorSiguienteComponent, Vecino } from '../../../../shared/prev-next/prev-next';
 import { ordenar, vecinos } from '../../../../core/services/active-plantings.service';
 import {
@@ -30,7 +31,7 @@ export interface Temporada {
 @Component({
   selector: 'app-detalle-lote',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, AnteriorSiguienteComponent],
+  imports: [FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, AnteriorSiguienteComponent, PrecargarDirective],
   templateUrl: './plot-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-dialog.css', './plot-detail.css', './plot-detail-seasons.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

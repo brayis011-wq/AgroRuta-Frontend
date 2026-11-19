@@ -111,7 +111,7 @@
         } @else {
           <div class="cultivos">
             @for (c of cultivos(); track c.siembra.id; let i = $index) {
-              <a class="cultivo" [routerLink]="['/crops/planting', c.siembra.id]" [style.animation-delay.ms]="i * 50">
+              <a class="cultivo" [routerLink]="['/crops/planting', c.siembra.id]" [arPrecargar]="{ tipo: 'planting', id: c.siembra.id }" [style.animation-delay.ms]="i * 50">
                 <span class="cul-ic"><i class="ti ti-seedling" aria-hidden="true"></i></span>
                 <span class="cul-txt">
                   <strong>{{ c.siembra.tipoCultivo || ('dashboard.crops.crop' | translate) }}@if (c.siembra.variedad) { · {{ c.siembra.variedad }} }</strong>

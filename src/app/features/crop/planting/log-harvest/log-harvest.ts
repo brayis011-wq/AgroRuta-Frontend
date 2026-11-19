@@ -1,3 +1,4 @@
+import { UltimoUsadoService } from '../../../../core/services/last-used.service';
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
@@ -61,6 +62,8 @@ export class RegistrarCosecha implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  private readonly ultimo = inject(UltimoUsadoService);
+
   ngOnInit(): void {
     this.siembraId = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
@@ -72,6 +75,8 @@ export class RegistrarCosecha implements OnInit {
     });
 
     const registro = this.route.snapshot.paramMap.get('registroId');
+    // Una cosecha nueva empieza con el precio del kilo de la anterior (casi siempre es el mismo)
+    if (!registro) this.form.precioKg = this.ultimo.leer<{ precioKg?: number | null }>('cosecha')?.precioKg ?? this.form.precioKg;
     if (registro) {
       this.registroId = Number(registro);
       this.cultivoService.buscarCosecha(this.registroId).subscribe({
@@ -96,6 +101,7 @@ export class RegistrarCosecha implements OnInit {
     peticion.subscribe({
       next: (guardado: { id?: number } | null | void) => {
         this.cargando = false;
+        if (this.form.precioKg) this.ultimo.guardar('cosecha', { precioKg: this.form.precioKg });
         this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.harvest.success';
         this.cdr.detectChanges();
         this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.harvest');

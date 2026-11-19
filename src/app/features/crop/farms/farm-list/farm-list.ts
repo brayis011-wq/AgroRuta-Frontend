@@ -1,3 +1,4 @@
+import { PrecargarDirective } from '../../../../shared/prefetch.directive';
 import { SiembraActiva, SiembrasActivasService } from '../../../../core/services/active-plantings.service';
 import {
   Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject
@@ -19,7 +20,7 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-lista-fincas',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, RouterLink, ContarDirective],
+  imports: [CommonModule, FormsModule, TranslatePipe, RouterLink, ContarDirective, PrecargarDirective],
   templateUrl: './farm-list.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './farm-list.css'],
 })
