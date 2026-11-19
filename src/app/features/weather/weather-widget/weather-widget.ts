@@ -14,7 +14,9 @@ const CODIGOS_CLIMA = ['01', '02', '03', '04', '09', '10', '11', '13', '50'];
   standalone: true,
   imports: [CommonModule, TranslatePipe],
   templateUrl: './weather-widget.html',
-  styleUrl: './weather-widget.css'
+  styleUrl: './weather-widget.css',
+  // Versión ancha y bajita (una sola fila): la usa el Inicio cuando el clima va abajo a lo ancho
+  host: { '[class.horizontal]': 'horizontal()' },
 })
 export class WeatherWidgetComponent implements OnInit {
   private weatherService: WeatherService = inject(WeatherService);
@@ -24,6 +26,7 @@ export class WeatherWidgetComponent implements OnInit {
   lat          = input<number | null>(null);
   lng          = input<number | null>(null);
   locationName = input<string | null>(null);
+  horizontal   = input(false);
 
   weather = signal<Weather | null>(null);
   loading = signal(true);

@@ -19,7 +19,7 @@ import { formatoPesos, formatoNumero } from '../../shared/format';
 import { municipio } from '../../shared/weather';
 import { ContarDirective } from '../../shared/count-up.directive';
 import { almanaqueDe } from './almanac';
-import { emparejarColumnas } from './dashboard-columns';
+import { ALTO_CLIMA, LugarClima, elegirLugarClima, emparejarColumnas, soltarColumnas } from './dashboard-columns';
 import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
 import { PasoInicial, calcularPrimerosPasos } from './first-steps';
 import { PrimerosPasosComponent } from './first-steps-card';
@@ -109,9 +109,26 @@ export class DashboardComponent implements OnInit {
 
   private readonly cuerpo = viewChild<ElementRef<HTMLElement>>('cuerpo');
 
+  /** El clima va donde las columnas queden parejas (con poca información, abajo a lo ancho) */
+  readonly lugarClima = signal<LugarClima>('derecha');
+  /** Último alto medido del clima dentro de una columna (ya cargado) */
+  private altoClima = ALTO_CLIMA;
+
   constructor() {
     // Después de cada pintada (datos que llegan, clima, cambio de tamaño de la ventana)
-    afterEveryRender({ write: () => emparejarColumnas(this.cuerpo()?.nativeElement) });
+    afterEveryRender({ write: () => this.acomodar() });
+  }
+
+  private acomodar(): void {
+    const cuerpo = this.cuerpo()?.nativeElement;
+    soltarColumnas(cuerpo);
+    const clima = cuerpo?.querySelector<HTMLElement>('.col-principal > .clima, .col-lateral > .clima');
+    const alto = clima?.getBoundingClientRect().height ?? 0;
+    if (alto > 120) this.altoClima = alto; // mientras carga mide menos: no sirve de referencia
+    const lugar = elegirLugarClima(cuerpo, this.altoClima);
+    // Al moverlo se vuelve a pintar y en esa pasada se emparejan las columnas
+    if (lugar !== this.lugarClima()) { this.lugarClima.set(lugar); return; }
+    emparejarColumnas(cuerpo);
   }
 
   /** Al cambiar el tamaño de la ventana se vuelve a pintar, y con eso a decidir si se emparejan las columnas */

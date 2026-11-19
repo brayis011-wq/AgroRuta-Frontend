@@ -170,6 +170,10 @@
 
       <!-- Consejos del clima para lo programado: "Fumiga hoy entre las 7 y las 10, llueve en 12 horas" (solo si hay algo que avisar) -->
       <app-weather-advice class="consejos-clima" />
+
+      @if (lugarClima() === 'izquierda') {
+        <section class="clima fijo"><ng-container *ngTemplateOutlet="climaTpl; context: { ancho: false }" /></section>
+      }
     </div>
 
     <div class="col-lateral">
@@ -198,19 +202,27 @@
         }
       </section>
 
-      <!-- Clima de la finca elegida (en el Inicio el menú lateral no repite el suyo) -->
-      <section class="clima fijo">
-        @if (climaFinca(); as f) {
-          <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
-                              [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" />
-        } @else {
-          <app-weather-widget city="Bogotá" />
-        }
-      </section>
-
+      @if (lugarClima() === 'derecha') {
+        <section class="clima fijo"><ng-container *ngTemplateOutlet="climaTpl; context: { ancho: false }" /></section>
+      }
     </div>
   </div>
+
+  <!-- Con poca información el clima va abajo, a lo ancho y bajito: así ninguna columna queda con un hueco -->
+  @if (lugarClima() === 'abajo') {
+    <section class="clima ancho"><ng-container *ngTemplateOutlet="climaTpl; context: { ancho: true }" /></section>
+  }
 </div>
+
+<!-- Clima de la finca elegida (en el Inicio el menú lateral no repite el suyo) -->
+<ng-template #climaTpl let-ancho="ancho">
+  @if (climaFinca(); as f) {
+    <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
+                        [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" [horizontal]="ancho" />
+  } @else {
+    <app-weather-widget city="Bogotá" [horizontal]="ancho" />
+  }
+</ng-template>
 
 <ng-template #tend let-t="t">
   @if (t.porcentaje === null) {
