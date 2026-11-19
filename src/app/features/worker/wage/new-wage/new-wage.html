@@ -9,7 +9,7 @@
     </div>
   </header>
 
-  <form class="rejilla" [formGroup]="form" (ngSubmit)="guardar()">
+  <form arSiguienteCampo class="rejilla" [formGroup]="form" (ngSubmit)="guardar()">
     <section class="tarjeta formu">
       @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
 

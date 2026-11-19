@@ -85,7 +85,7 @@ describe('RegistrarActividad', () => {
     component.onSubmit();
     expect(component.exito).toBeTruthy();
     expect(component.cargando).toBe(false);
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 7], { queryParams: { tab: 'registros' } });
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 7], { queryParams: expect.objectContaining({ tab: 'registros' }) });
     globalThis.setTimeout = orig;
   });
 

@@ -1,3 +1,4 @@
+import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
@@ -10,7 +11,7 @@ import { CultivoService } from '../../../../core/services/crop.service';
 @Component({
   selector: 'app-registrar-actividad',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
   templateUrl: './log-activity.html',
   styleUrls: ['../../crop-form.css', './log-activity.css']
 })
@@ -82,12 +83,14 @@ export class RegistrarActividad implements OnInit {
       ? this.cultivoService.actualizarActividad(this.registroId, this.form)
       : this.cultivoService.registrarActividad(this.form);
     peticion.subscribe({
-      next: () => {
+      next: (guardado: { id?: number } | null | void) => {
         this.cargando = false;
         this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.activity.success';
         this.cdr.detectChanges();
         this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.activity');
-        this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros' } });
+        // Al volver, la ficha baja hasta el registro y lo marca un momento
+        const id = (guardado && guardado.id) || this.registroId;
+        this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros', nuevo: id ? 'actividad-' + id : null } });
       },
       error: (err) => {
         this.cargando = false;

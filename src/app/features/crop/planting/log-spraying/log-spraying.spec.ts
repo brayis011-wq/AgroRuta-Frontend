@@ -374,7 +374,7 @@ describe('RegistrarFumigacion', () => {
     component.form.unidadMedida = 'LITROS';
     component.onSubmit();
     vi.advanceTimersByTime(1500);
-    expect(router.navigate).toHaveBeenCalledWith(['/crops/planting', 1], { queryParams: { tab: 'registros' } });
+    expect(router.navigate).toHaveBeenCalledWith(['/crops/planting', 1], { queryParams: expect.objectContaining({ tab: 'registros' }) });
   });
 
   it('onSubmit() should set error on failure', async () => {

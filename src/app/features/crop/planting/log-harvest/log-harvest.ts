@@ -1,3 +1,4 @@
+import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
@@ -13,7 +14,7 @@ import { formatoFecha, formatoPesos } from '../../../../shared/format';
 @Component({
   selector: 'app-registrar-cosecha',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
   templateUrl: './log-harvest.html',
   styleUrls: ['../../crop-form.css', './log-harvest.css']
 })
@@ -93,12 +94,14 @@ export class RegistrarCosecha implements OnInit {
       ? this.cultivoService.actualizarCosecha(this.registroId, datos)
       : this.cultivoService.registrarCosecha(datos);
     peticion.subscribe({
-      next: () => {
+      next: (guardado: { id?: number } | null | void) => {
         this.cargando = false;
         this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.harvest.success';
         this.cdr.detectChanges();
         this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.harvest');
-        this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros' } });
+        // Al volver, la ficha baja hasta el registro y lo marca un momento
+        const id = (guardado && guardado.id) || this.registroId;
+        this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros', nuevo: id ? 'cosecha-' + id : null } });
       },
       error: (err) => {
         this.cargando = false;

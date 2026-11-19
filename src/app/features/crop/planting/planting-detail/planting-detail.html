@@ -185,7 +185,7 @@
         } @else {
           <ul class="registros">
             @for (item of timelineFiltrado; track item.tipo + item.id) {
-              <li class="registro">
+              <li class="registro" [id]="'reg-' + item.tipo + '-' + item.id" [class.recien]="resaltar === item.tipo + '-' + item.id">
                 <span class="ic" [class.gris]="item.tipo === 'actividad'" [class.azul]="item.tipo === 'fumigacion'" [class.ambar]="item.tipo === 'cosecha'">
                   <i class="ti" [class]="'ti ' + icono(item.tipo)"></i>
                 </span>
@@ -239,3 +239,12 @@
     </div>
   </dialog>
 }
+
+<!-- Panel de registro: el formulario se abre encima de la ficha (en el celular, desde abajo) -->
+<div class="panel-registro" [class.abierto]="panelAbierto">
+  <div class="panel-velo" (click)="cerrarPanel()" aria-hidden="true"></div>
+  <aside class="panel-hoja" role="dialog" aria-modal="true" [attr.aria-hidden]="!panelAbierto">
+    <button type="button" class="panel-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+    <router-outlet (activate)="alAbrirPanel()" (deactivate)="alCerrarPanel()" />
+  </aside>
+</div>

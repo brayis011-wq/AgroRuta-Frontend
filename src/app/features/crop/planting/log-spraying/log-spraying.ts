@@ -1,3 +1,4 @@
+import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 // src/app/features/crop/planting/log-spraying/log-spraying.ts
 
 import {
@@ -71,7 +72,7 @@ interface FumigacionForm {
 @Component({
   selector: 'app-registrar-fumigacion',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
   templateUrl: './log-spraying.html',
   styleUrls: ['../../crop-form.css', './log-spraying.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -461,12 +462,14 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     peticion
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (guardado: { id?: number } | null | void) => {
           this.cargando = false;
           this.exito    = this.registroId ? 'temporadas.registro.saved' : 'siembra.spray.success';
           this.cdr.markForCheck();
           this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.spray');
-          this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros' } });
+          // Al volver, la ficha baja hasta el registro y lo marca un momento
+          const id = (guardado && guardado.id) || this.registroId;
+          this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros', nuevo: id ? 'fumigacion-' + id : null } });
         },
         error: (err: { error?: { message?: string } }) => {
           this.cargando = false;

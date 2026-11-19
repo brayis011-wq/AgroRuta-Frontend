@@ -40,7 +40,7 @@
           </div>
           <div class="field">
             <label class="field__label" for="cantidadPlantas"><i class="ti ti-plant-2" aria-hidden="true"></i> {{ 'siembra.new.plants' | translate }}</label>
-            <input id="cantidadPlantas" type="number" [(ngModel)]="form.cantidadPlantas" name="cantidadPlantas" [placeholder]="'siembra.new.plantsPlaceholder' | translate" min="1" required />
+            <input id="cantidadPlantas" type="number" inputmode="decimal" [(ngModel)]="form.cantidadPlantas" name="cantidadPlantas" [placeholder]="'siembra.new.plantsPlaceholder' | translate" min="1" required />
           </div>
         </div>
 

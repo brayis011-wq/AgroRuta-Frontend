@@ -83,7 +83,7 @@ describe('RegistrarCosecha', () => {
   expect(component.exito).toBe('siembra.harvest.success');
   expect(component.cargando).toBe(false);
   expect(navigateCalled).toBe(true);
-  expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 5], { queryParams: { tab: 'registros' } });
+  expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 5], { queryParams: expect.objectContaining({ tab: 'registros' }) });
   
   globalThis.setTimeout = originalSetTimeout;
 });
@@ -92,7 +92,7 @@ it('onSubmit() should navigate after 1500ms on success', () => {
   vi.useFakeTimers();
   component.onSubmit();
   vi.advanceTimersByTime(1500);
-  expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 5], { queryParams: { tab: 'registros' } });
+  expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 5], { queryParams: expect.objectContaining({ tab: 'registros' }) });
   vi.useRealTimers();
 });
 

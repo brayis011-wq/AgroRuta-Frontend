@@ -64,3 +64,13 @@ describe('MemoriaScrollService', () => {
     expect(soloRuta('/settings?x=1#correos')).toBe('/settings');
   });
 });
+
+describe('esPanelDeLaMisma', () => {
+  it('abrir o cerrar un formulario del panel no es cambiar de página', async () => {
+    const { esPanelDeLaMisma } = await import('./scroll-memory.service');
+    expect(esPanelDeLaMisma('/crops/planting/32', '/crops/planting/32/harvest')).toBe(true);
+    expect(esPanelDeLaMisma('/crops/planting/32/spraying/7', '/crops/planting/32')).toBe(true);
+    expect(esPanelDeLaMisma('/crops/planting/32', '/crops/planting/33/harvest')).toBe(false);
+    expect(esPanelDeLaMisma('/worker', '/worker/payrolls')).toBe(false);
+  });
+});

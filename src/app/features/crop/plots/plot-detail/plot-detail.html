@@ -39,7 +39,7 @@
           </label>
           <label>
             <span>{{ 'temporadas.lote.area' | translate }}</span>
-            <input name="area" type="number" min="0.01" step="0.01" [(ngModel)]="formArea" required>
+            <input name="area" type="number" inputmode="decimal" min="0.01" step="0.01" [(ngModel)]="formArea" required>
           </label>
           <div class="editar-botones">
             <button type="button" class="btn btn-texto" (click)="editando.set(false)">{{ 'common.cancel' | translate }}</button>

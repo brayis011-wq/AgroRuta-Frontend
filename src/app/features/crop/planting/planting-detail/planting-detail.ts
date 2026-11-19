@@ -2,11 +2,11 @@ import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
 import { AnteriorSiguienteComponent, Vecino } from '../../../../shared/prev-next/prev-next';
 import { SiembraActiva, SiembrasActivasService, vecinos } from '../../../../core/services/active-plantings.service';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, Injector, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, HostListener, Injector, inject } from '@angular/core';
 import { Subscription, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { AyudaComponent } from '../../../../shared/help-tip/help-tip';
@@ -61,7 +61,7 @@ export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: strin
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink, MigasCultivoComponent, AyudaComponent, AnteriorSiguienteComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink, RouterOutlet, MigasCultivoComponent, AyudaComponent, AnteriorSiguienteComponent],
   templateUrl: './planting-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css'],
 })
@@ -164,9 +164,66 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     // Se reutiliza al pasar de una siembra a otra: recargar con cada id
     const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
     this.rutaSub = params$.subscribe((p) => this.cargarSiembra(Number(p.get('id'))));
+    // Al volver de un formulario del panel la ficha no se crea de nuevo: la pestaña sigue a la dirección
+    this.route.queryParamMap?.subscribe((q) => {
+      const t = q.get('tab') as PestanaSiembra | null;
+      this.pestana = t && PESTANAS_SIEMBRA.some((p) => p.id === t) ? t : 'resumen';
+      const nuevo = q.get('nuevo');
+      if (nuevo) this.resaltarCuandoAparezca(nuevo);
+      this.cdr.markForCheck();
+    });
+  }
+
+  /** Registro recién guardado ('cosecha-12'): se lleva a la vista y se marca un momento */
+  resaltar: string | null = null;
+  private relojResaltar: ReturnType<typeof setTimeout> | null = null;
+
+  private resaltarCuandoAparezca(clave: string, intentos = 0): void {
+    const el = document.getElementById('reg-' + clave);
+    // Los registros llegan del servidor después de volver del formulario: se espera un poco
+    if (!el) {
+      if (intentos < 20) setTimeout(() => this.resaltarCuandoAparezca(clave, intentos + 1), 150);
+      return;
+    }
+    this.resaltar = clave;
+    this.cdr.markForCheck();
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (this.relojResaltar) clearTimeout(this.relojResaltar);
+    this.relojResaltar = setTimeout(() => { this.resaltar = null; this.cdr.markForCheck(); }, 2600);
+    // Se quita de la dirección para que recargar no vuelva a marcarlo
+    guardarEnUrl(this.router, this.route, { nuevo: null });
+  }
+
+  // ── Panel de registro (actividad, fumigación o cosecha encima de la ficha) ──
+  panelAbierto = false;
+
+  alAbrirPanel(): void {
+    this.panelAbierto = true;
+    document.body.classList.add('con-panel');
+  }
+
+  /** El formulario se cerró (guardó, canceló o se volvió atrás): se recargan los registros y los totales */
+  alCerrarPanel(): void {
+    this.panelAbierto = false;
+    document.body.classList.remove('con-panel');
+    if (!this.siembra?.id) return;
+    this.version++;
+    this.cargarDatos(this.siembra.id);
+    this.cargarResumen(this.siembra.id);
+  }
+
+  cerrarPanel(): void {
+    if (!this.siembraId) return;
+    this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: this.pestana === 'resumen' ? null : this.pestana } });
+  }
+
+  @HostListener('document:keydown.escape')
+  alEscape(): void {
+    if (this.panelAbierto) this.cerrarPanel();
   }
 
   ngOnDestroy(): void {
+    document.body.classList.remove('con-panel');
     this.rutaSub?.unsubscribe();
   }
 

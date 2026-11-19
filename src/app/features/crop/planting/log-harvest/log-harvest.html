@@ -23,7 +23,7 @@
     <div class="form-card">
       <div class="form-card__accent"></div>
 
-      <form (ngSubmit)="onSubmit()" #cosechaForm="ngForm">
+      <form arSiguienteCampo (ngSubmit)="onSubmit()" #cosechaForm="ngForm">
 
         <!-- Fecha -->
         <div class="field">
@@ -50,7 +50,7 @@
           <div class="field__input-wrap">
             <input
               id="cantidadKg"
-              type="number"
+              type="number" inputmode="decimal"
               [(ngModel)]="form.cantidadKg"
               name="cantidadKg"
               placeholder="0.0"

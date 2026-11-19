@@ -5,6 +5,15 @@ import { filter } from 'rxjs';
 /** Cuánto se espera a que la página vuelva a tener su alto (los datos llegan del servidor) */
 const ESPERA_MAXIMA_MS = 2500;
 
+/** Formularios que se abren en un panel encima de la siembra (rutas hijas de /crops/planting/:id) */
+const PANEL = /^(\/crops\/planting\/\d+)\/(activity|spraying|harvest)(\/\d+)?$/;
+
+/** Abrir o cerrar un panel encima de la misma página no es cambiar de página: no se mueve el scroll */
+export function esPanelDeLaMisma(antes: string, despues: string): boolean {
+  const base = (r: string) => PANEL.exec(r)?.[1] ?? r;
+  return (PANEL.test(antes) || PANEL.test(despues)) && base(antes) === base(despues);
+}
+
 /** Solo la ruta, sin ?parámetros ni #ancla */
 export function soloRuta(url: string): string {
   return url.split(/[?#]/)[0];
@@ -40,7 +49,7 @@ export class MemoriaScrollService {
       const fin = e as NavigationEnd;
       this.actualId = this.volviendoA ?? fin.id;
       const ruta = soloRuta(fin.urlAfterRedirects);
-      const cambioDePagina = ruta !== this.anterior;
+      const cambioDePagina = ruta !== this.anterior && !esPanelDeLaMisma(this.anterior, ruta);
       this.anterior = ruta;
       if (this.volviendoA != null) this.restaurar(this.posiciones.get(this.volviendoA) ?? 0);
       else if (cambioDePagina) this.arriba();

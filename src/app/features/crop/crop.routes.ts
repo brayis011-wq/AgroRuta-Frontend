@@ -52,51 +52,25 @@ export const cultivoRoutes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'planting/:id',
-    title: 'temporadas.ui.planting',
-    loadComponent: () => import('./planting/planting-detail/planting-detail').then(m => m.DetalleSiembraComponent),
-    canActivate: [authGuard]
-  },
-  {
     path: 'planting/:id/edit',
     title: 'temporadas.siembra.editTitle',
     loadComponent: () => import('./planting/new-planting/new-planting').then(m => m.NuevaSiembraComponent),
     canActivate: [authGuard]
   },
   {
-    path: 'planting/:id/activity/:registroId',
-    title: 'temporadas.registro.editActivity',
-    loadComponent: () => import('./planting/log-activity/log-activity').then(m => m.RegistrarActividad),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'planting/:id/spraying/:registroId',
-    title: 'temporadas.registro.editSpray',
-    loadComponent: () => import('./planting/log-spraying/log-spraying').then(m => m.RegistrarFumigacion),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'planting/:id/harvest/:registroId',
-    title: 'temporadas.registro.editHarvest',
-    loadComponent: () => import('./planting/log-harvest/log-harvest').then(m => m.RegistrarCosecha),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'planting/:id/activity',
-    title: 'siembra.activity.title',
-    loadComponent: () => import('./planting/log-activity/log-activity').then(m => m.RegistrarActividad),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'planting/:id/spraying',
-    title: 'siembra.spray.title',
-    loadComponent: () => import('./planting/log-spraying/log-spraying').then(m => m.RegistrarFumigacion),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'planting/:id/harvest',
-    title: 'siembra.harvest.title',
-    loadComponent: () => import('./planting/log-harvest/log-harvest').then(m => m.RegistrarCosecha),
-    canActivate: [authGuard]
+    path: 'planting/:id',
+    title: 'temporadas.ui.planting',
+    loadComponent: () => import('./planting/planting-detail/planting-detail').then(m => m.DetalleSiembraComponent),
+    canActivate: [authGuard],
+    // Registrar o corregir una actividad, fumigación o cosecha se abre en un panel encima de la ficha
+    // (la dirección cambia, así que atrás lo cierra; la ficha no se vuelve a cargar)
+    children: [
+      { path: 'activity', title: 'siembra.activity.title', loadComponent: () => import('./planting/log-activity/log-activity').then(m => m.RegistrarActividad) },
+      { path: 'activity/:registroId', title: 'temporadas.registro.editActivity', loadComponent: () => import('./planting/log-activity/log-activity').then(m => m.RegistrarActividad) },
+      { path: 'spraying', title: 'siembra.spray.title', loadComponent: () => import('./planting/log-spraying/log-spraying').then(m => m.RegistrarFumigacion) },
+      { path: 'spraying/:registroId', title: 'temporadas.registro.editSpray', loadComponent: () => import('./planting/log-spraying/log-spraying').then(m => m.RegistrarFumigacion) },
+      { path: 'harvest', title: 'siembra.harvest.title', loadComponent: () => import('./planting/log-harvest/log-harvest').then(m => m.RegistrarCosecha) },
+      { path: 'harvest/:registroId', title: 'temporadas.registro.editHarvest', loadComponent: () => import('./planting/log-harvest/log-harvest').then(m => m.RegistrarCosecha) },
+    ],
   }
 ];

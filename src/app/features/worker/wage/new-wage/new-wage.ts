@@ -1,3 +1,4 @@
+import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
@@ -17,7 +18,7 @@ import { Trabajador, Labor } from '../../../../core/models/worker.model';
 @Component({
   selector: 'app-nuevo-jornal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe, SiguienteCampoDirective],
   templateUrl: './new-wage.html',
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../worker-ui.css', '../../worker-panel.css', './new-wage.css']
 })

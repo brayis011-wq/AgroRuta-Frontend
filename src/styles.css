@@ -176,3 +176,10 @@ input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1
 body .btn-ic.con-texto { width: auto; min-width: 0; padding: 0 .6rem; gap: .3rem; display: inline-flex; align-items: center; font-size: .78rem; font-weight: 600; white-space: nowrap; }
 body .btn-ic.con-texto .txt-corto { line-height: 1; }
 @media (min-width: 761px) { body .btn-ic.con-texto .txt-corto { display: none; } body .btn-ic.con-texto { padding: 0; width: 34px; justify-content: center; } }
+
+/* Formularios de registro dentro del panel de la siembra: sin migas (la siembra está detrás) ni márgenes de página */
+body .panel-hoja app-migas-cultivo { display: none; }
+body .panel-hoja .page-bg { padding: 0; min-height: 0; background: none; }
+body .panel-hoja .page-bg.registro .container { max-width: none; padding: 0; }
+/* Con el panel de registro abierto, la barra inferior del celular no tapa el final del formulario */
+body.con-panel .barra { display: none !important; }
