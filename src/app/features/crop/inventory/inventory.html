@@ -105,8 +105,10 @@
         <p class="nota pista">{{ 'inventario.hint' | translate }}</p>
       }
     </section>
-  } @else {
-    <p class="suave">{{ 'common.loading' | translate }}</p>
+  } @else if (!error()) {
+    <!-- Mientras llega la bodega: la forma de la pantalla en gris, en vez de un hueco -->
+    <section class="kpis tres" aria-hidden="true">@for (i of [1, 2, 3]; track i) { <div class="esq"></div> }</section>
+    <div class="esq alta" aria-hidden="true"></div>
   }
 </div>
 

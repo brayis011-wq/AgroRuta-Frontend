@@ -21,3 +21,4 @@ tr.sel td { background: var(--ar-verde-50, var(--ar-gris-bg)); }
 
 /* Textos de ayuda del panel: que bajen de línea en vez de salirse */
 .campo small { white-space: normal; font-size: .76rem; color: var(--ar-tinta-3); font-weight: 400; }
+.esq.alta { height: 260px; margin-top: 1rem; }

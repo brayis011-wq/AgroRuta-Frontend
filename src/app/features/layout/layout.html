@@ -182,6 +182,20 @@
 
   <app-buscador #buscador />
 
+  <!-- Atajos de teclado: se ven con "?" -->
+  @if (ayudaAtajos()) {
+    <div class="atajos-velo" (click)="ayudaAtajos.set(false)"></div>
+    <div class="atajos" role="dialog" aria-modal="true" [attr.aria-label]="'shortcuts.title' | translate">
+      <header><strong>{{ 'shortcuts.title' | translate }}</strong>
+        <button type="button" class="ib" (click)="ayudaAtajos.set(false)" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x"></i></button></header>
+      <ul>
+        @for (a of atajos; track a.clave) {
+          <li><span>@for (t of a.teclas; track $index) { <kbd>{{ t }}</kbd> }</span>{{ a.clave | translate }}</li>
+        }
+      </ul>
+    </div>
+  }
+
   <app-offline-status />
 
   <app-progreso />

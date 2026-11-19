@@ -1,4 +1,5 @@
-import { Component, DestroyRef, ElementRef, HostListener, NgZone, afterNextRender, computed, effect, inject, signal } from '@angular/core';
+import { ATAJOS, IR_A, escribiendoEn, nuevoSegun } from './shortcuts';
+import { Component, DestroyRef, ElementRef, HostListener, NgZone, afterNextRender, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DecimalPipe, Location, NgTemplateOutlet, UpperCasePipe } from '@angular/common';
@@ -228,6 +229,34 @@ export class LayoutComponent {
     const p = e.changedTouches[0];
     if (!ini || !p || this.ruta() === '/dashboard') return;
     if (esDeslizarParaVolver(ini, { x: p.clientX, y: p.clientY, t: Date.now() })) this.ubicacion.back();
+  }
+
+  // ── Atajos de teclado (computador) ──────────────────────────────────
+  private readonly buscador = viewChild(BuscadorComponent);
+  readonly ayudaAtajos = signal(false);
+  readonly atajos = ATAJOS;
+  /** Se presionó G: la siguiente letra dice a dónde ir (durante 1,2 s) */
+  private esperandoDestino = 0;
+
+  @HostListener('document:keydown', ['$event'])
+  alTeclear(e: KeyboardEvent): void {
+    if (e.ctrlKey || e.metaKey || e.altKey || escribiendoEn(e.target) || document.querySelector('dialog[open], .caja[role=dialog]')) return;
+    const k = e.key.toLowerCase();
+    if (this.esperandoDestino && Date.now() - this.esperandoDestino < 1200 && IR_A[k]) {
+      e.preventDefault();
+      this.esperandoDestino = 0;
+      this.router.navigate([IR_A[k]]);
+      return;
+    }
+    this.esperandoDestino = 0;
+    if (k === 'g') { this.esperandoDestino = Date.now(); return; }
+    if (e.key === '/') { e.preventDefault(); this.buscador()?.abrir(); return; }
+    if (e.key === '?') { e.preventDefault(); this.ayudaAtajos.set(!this.ayudaAtajos()); return; }
+    if (k === 'n' && !document.body.classList.contains('con-panel')) {
+      e.preventDefault();
+      const destino = nuevoSegun(this.ruta());
+      this.router.navigate(destino.ruta, { queryParams: destino.query });
+    }
   }
 
   @HostListener('document:focusout')

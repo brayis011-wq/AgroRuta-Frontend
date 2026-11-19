@@ -71,3 +71,18 @@
 @media (prefers-reduced-motion: reduce) {
   .sub-wrap, .sub-wrap .sub a, .finca-menu, .finca-menu button, .finca-menu a, .clima, .badge, .sel-ic { transition: none; animation: none; }
 }
+
+/* Lista de atajos de teclado ("?") */
+.atajos-velo { position: fixed; inset: 0; z-index: 1190; background: rgba(15, 25, 19, .35); }
+.atajos {
+  position: fixed; z-index: 1200; top: 50%; left: 50%; translate: -50% -50%; width: min(420px, calc(100vw - 2rem));
+  background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: 0 20px 50px rgba(0, 0, 0, .25); padding: 1rem 1.1rem 1.1rem;
+}
+.atajos header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
+.atajos ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .45rem; }
+.atajos li { display: flex; align-items: center; gap: .8rem; font-size: .9rem; color: var(--ar-tinta-2); }
+.atajos li > span { display: inline-flex; gap: .25rem; min-width: 4.2rem; }
+.atajos kbd {
+  min-width: 1.6rem; padding: .1rem .4rem; text-align: center; border-radius: 6px; font: inherit; font-size: .8rem; font-weight: 700;
+  background: var(--ar-superficie-2); border: 1px solid var(--ar-borde); border-bottom-width: 2px; color: var(--ar-tinta);
+}
