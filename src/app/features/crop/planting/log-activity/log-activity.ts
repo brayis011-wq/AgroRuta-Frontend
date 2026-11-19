@@ -1,6 +1,6 @@
 import { UltimoUsadoService } from '../../../../core/services/last-used.service';
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, HostListener } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -56,6 +56,20 @@ export class RegistrarActividad implements OnInit {
 
   private readonly ultimo = inject(UltimoUsadoService);
 
+  // ── Cambios sin guardar: cuenta solo lo que escribe o elige la persona (no lo que la app rellena sola) ──
+  private tocado = false;
+  private guardado = false;
+
+  @HostListener('input')
+  @HostListener('change')
+  alEditar(): void {
+    this.tocado = true;
+  }
+
+  tieneCambios(): boolean {
+    return this.tocado && !this.guardado;
+  }
+
   ngOnInit(): void {
     this.siembraId = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
@@ -90,6 +104,7 @@ export class RegistrarActividad implements OnInit {
     peticion.subscribe({
       next: (guardado: { id?: number } | null | void) => {
         this.cargando = false;
+        this.guardado = true;
         if (this.form.tipo) this.ultimo.guardar('actividad', { tipo: this.form.tipo });
         this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.activity.success';
         this.cdr.detectChanges();

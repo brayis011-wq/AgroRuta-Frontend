@@ -1,7 +1,7 @@
 import { UltimoUsadoService } from '../../../../core/services/last-used.service';
 
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, HostListener } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -57,6 +57,20 @@ export class NuevoJornalComponent implements OnInit {
   ) {}
 
   private readonly ultimo = inject(UltimoUsadoService);
+
+  // ── Cambios sin guardar: cuenta solo lo que escribe o elige la persona (no lo que la app rellena sola) ──
+  private tocado = false;
+  private guardado = false;
+
+  @HostListener('input')
+  @HostListener('change')
+  alEditar(): void {
+    this.tocado = true;
+  }
+
+  tieneCambios(): boolean {
+    return this.tocado && !this.guardado;
+  }
 
   ngOnInit(): void {
     // ✅ Fix: fb.group estaba como link markdown corrupto
@@ -180,6 +194,7 @@ export class NuevoJornalComponent implements OnInit {
 
     this.jornalService.registrar(req).subscribe({
       next: () => {
+        this.guardado = true;
         this.ultimo.guardar<UltimoJornal>('jornal', { fincaId: v.fincaId, cultivoId: req.cultivoId, actividadIds: req.actividadIds });
         // ✅ Fix: redirigir a la lista de jornales del trabajador
         // Si vino desde un trabajador específico, mostrar sus jornales

@@ -1,3 +1,4 @@
+import { cambiosSinGuardarGuard } from '../../core/guards/unsaved-changes.guard';
 import { Routes } from '@angular/router';
 
 export const workerRoutes: Routes = [
@@ -44,6 +45,7 @@ export const workerRoutes: Routes = [
   {
     path: 'workdays/new',
     title: 'workers.wages.new.title',
+    canDeactivate: [cambiosSinGuardarGuard],
     loadComponent: () =>
       import('./wage/new-wage/new-wage').then((m) => m.NuevoJornalComponent),
   },

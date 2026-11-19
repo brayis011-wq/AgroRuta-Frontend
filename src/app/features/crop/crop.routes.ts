@@ -1,3 +1,4 @@
+import { cambiosSinGuardarGuard } from '../../core/guards/unsaved-changes.guard';
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/guards/auth-guard';
 
@@ -65,12 +66,12 @@ export const cultivoRoutes: Routes = [
     // Registrar o corregir una actividad, fumigación o cosecha se abre en un panel encima de la ficha
     // (la dirección cambia, así que atrás lo cierra; la ficha no se vuelve a cargar)
     children: [
-      { path: 'activity', title: 'siembra.activity.title', loadComponent: () => import('./planting/log-activity/log-activity').then(m => m.RegistrarActividad) },
-      { path: 'activity/:registroId', title: 'temporadas.registro.editActivity', loadComponent: () => import('./planting/log-activity/log-activity').then(m => m.RegistrarActividad) },
-      { path: 'spraying', title: 'siembra.spray.title', loadComponent: () => import('./planting/log-spraying/log-spraying').then(m => m.RegistrarFumigacion) },
-      { path: 'spraying/:registroId', title: 'temporadas.registro.editSpray', loadComponent: () => import('./planting/log-spraying/log-spraying').then(m => m.RegistrarFumigacion) },
-      { path: 'harvest', title: 'siembra.harvest.title', loadComponent: () => import('./planting/log-harvest/log-harvest').then(m => m.RegistrarCosecha) },
-      { path: 'harvest/:registroId', title: 'temporadas.registro.editHarvest', loadComponent: () => import('./planting/log-harvest/log-harvest').then(m => m.RegistrarCosecha) },
+      { path: 'activity', title: 'siembra.activity.title', canDeactivate: [cambiosSinGuardarGuard], loadComponent: () => import('./planting/log-activity/log-activity').then(m => m.RegistrarActividad) },
+      { path: 'activity/:registroId', title: 'temporadas.registro.editActivity', canDeactivate: [cambiosSinGuardarGuard], loadComponent: () => import('./planting/log-activity/log-activity').then(m => m.RegistrarActividad) },
+      { path: 'spraying', title: 'siembra.spray.title', canDeactivate: [cambiosSinGuardarGuard], loadComponent: () => import('./planting/log-spraying/log-spraying').then(m => m.RegistrarFumigacion) },
+      { path: 'spraying/:registroId', title: 'temporadas.registro.editSpray', canDeactivate: [cambiosSinGuardarGuard], loadComponent: () => import('./planting/log-spraying/log-spraying').then(m => m.RegistrarFumigacion) },
+      { path: 'harvest', title: 'siembra.harvest.title', canDeactivate: [cambiosSinGuardarGuard], loadComponent: () => import('./planting/log-harvest/log-harvest').then(m => m.RegistrarCosecha) },
+      { path: 'harvest/:registroId', title: 'temporadas.registro.editHarvest', canDeactivate: [cambiosSinGuardarGuard], loadComponent: () => import('./planting/log-harvest/log-harvest').then(m => m.RegistrarCosecha) },
     ],
   }
 ];

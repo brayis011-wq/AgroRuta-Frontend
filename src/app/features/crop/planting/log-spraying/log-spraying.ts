@@ -10,8 +10,7 @@ import {
   ChangeDetectorRef,
   inject,
   signal,
-  computed,
-} from '@angular/core';
+  computed, HostListener } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule }           from '@angular/common';
 import { FormsModule }            from '@angular/forms';
@@ -161,6 +160,20 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   private readonly destroy$  = new Subject<void>();
 
   // ── Lifecycle ────────────────────────────────────────────────
+  // ── Cambios sin guardar: cuenta solo lo que escribe o elige la persona (no lo que la app rellena sola) ──
+  private tocado = false;
+  private guardado = false;
+
+  @HostListener('input')
+  @HostListener('change')
+  alEditar(): void {
+    this.tocado = true;
+  }
+
+  tieneCambios(): boolean {
+    return this.tocado && !this.guardado;
+  }
+
   ngOnInit(): void {
     this.siembraId      = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
@@ -470,6 +483,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       .subscribe({
         next: (guardado: { id?: number } | null | void) => {
           this.cargando = false;
+          this.guardado = true;
           if (this.form.agriculturalInputId && this.form.dosis) {
             this.ultimo.mezclar('fumigacion', { [this.form.agriculturalInputId]: { dosis: this.form.dosis, unidad: this.form.unidadMedida } });
           }
