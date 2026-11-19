@@ -1,3 +1,4 @@
+import { PedidoReporteCompleto } from '../downloads/report-downloads';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,7 +8,7 @@ import { PayrollReportComponent } from '../payroll/payroll-report';
 import { CropReportComponent } from '../crop/crop-report';
 import { CostsReportComponent } from '../costs/costs-report';
 import { ProfitabilityReportComponent } from '../profitability/profitability-report';
-import { PARTES_REPORTE, ParteReporte, ReportService } from '../../../core/services/report.service';
+import { PARTES_REPORTE, ParteReporte, ReportService, CLAVES_PERIODO, ClavePeriodo } from '../../../core/services/report.service';
 import { ReportBase } from '../report-base';
 
 type Tab = ParteReporte;
@@ -19,6 +20,8 @@ const TABS: Tab[] = PARTES_REPORTE;
   imports: [CommonModule, TranslatePipe, PayrollReportComponent, CropReportComponent, CostsReportComponent, ProfitabilityReportComponent],
   templateUrl: './report-home.html',
   styleUrls: ['./report-home.css', '../report-shared.css'],
+  // Cada reporte abre el panel de "PDF con todo" desde su menú Descargar
+  providers: [PedidoReporteCompleto],
 })
 export class ReportHomeComponent extends ReportBase {
   private readonly route = inject(ActivatedRoute);
@@ -31,7 +34,7 @@ export class ReportHomeComponent extends ReportBase {
 
   // ── PDF completo ──────────────────────────────────────────────
   readonly partes = PARTES_REPORTE;
-  readonly panelCompleto = signal(false);
+  readonly panelCompleto = inject(PedidoReporteCompleto).abierto;
   /** Partes que llevará el PDF; empiezan todas marcadas */
   readonly elegidas = signal(new Set<ParteReporte>(PARTES_REPORTE));
   readonly descargandoCompleto = signal(false);
@@ -48,12 +51,24 @@ export class ReportHomeComponent extends ReportBase {
       }
       this.activeTab = tab;
       this.siembra = Number(q.get('siembra')) || null;
+      const periodo = q.get('periodo') as ClavePeriodo | null;
+      this.reportService.periodo.set(periodo && CLAVES_PERIODO.includes(periodo) ? periodo : 'todo');
     });
+  }
+
+  // ── Periodo ───────────────────────────────────────────────────
+  readonly clavesPeriodo = CLAVES_PERIODO;
+  readonly periodo = this.reportService.periodo;
+
+  /** Va en la URL (?periodo=anio) para que al volver o recargar se vea lo mismo */
+  elegirPeriodo(p: ClavePeriodo): void {
+    this.reportService.periodo.set(p);
+    this.router.navigate([], { relativeTo: this.route, queryParams: { periodo: p === 'todo' ? null : p }, queryParamsHandling: 'merge', replaceUrl: true });
   }
 
   setTab(tab: Tab): void {
     this.activeTab = tab;
-    this.router.navigate([], { relativeTo: this.route, queryParams: { tab }, replaceUrl: true });
+    this.router.navigate([], { relativeTo: this.route, queryParams: { tab, siembra: null }, queryParamsHandling: 'merge', replaceUrl: true });
   }
 
   alternarParte(p: ParteReporte): void {

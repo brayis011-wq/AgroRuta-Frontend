@@ -162,7 +162,8 @@
              [routerLinkActiveOptions]="s.query
                ? { paths: 'exact', queryParams: 'subset', matrixParams: 'ignored', fragment: 'ignored' }
                : { exact: !!s.exacto }"
-             [class.lote]="s.icono === 'ti-point-filled'">
+             [class.lote]="s.icono === 'ti-point-filled'"
+             [class.on-tambien]="!!s.tambien && ruta().startsWith(s.tambien)">
             <span class="sub-txt">
               @if (s.icono) { <i class="ti {{ s.icono }}" aria-hidden="true"></i> }
               {{ s.texto ?? (s.clave | translate) }}

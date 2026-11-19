@@ -8,9 +8,10 @@
 .cuenta-tarj p { margin: 0; font-size: .84rem; color: var(--ar-tinta-2); overflow-wrap: anywhere; }
 .rol { margin-top: .3rem; display: inline-flex; align-items: center; gap: .3rem; font-size: .76rem; font-weight: 600; padding: .22rem .65rem; border-radius: 99px; background: var(--ar-verde-100); color: var(--ar-verde-800); }
 .indice { display: flex; flex-direction: column; gap: .15rem; padding: .5rem; }
-.indice a { display: flex; align-items: center; gap: .6rem; padding: .6rem .7rem; border-radius: 10px; color: var(--ar-tinta-2); text-decoration: none; font-size: .9rem; font-weight: 600; }
-.indice a .ti { font-size: 19px; }
-.indice a:hover { background: var(--ar-verde-50); color: var(--ar-verde-700); }
+.indice a, .indice button { font: inherit; border: 0; background: transparent; cursor: pointer; text-align: left; display: flex; align-items: center; gap: .6rem; padding: .6rem .7rem; border-radius: 10px; color: var(--ar-tinta-2); text-decoration: none; font-size: .9rem; font-weight: 600; }
+.indice a .ti, .indice button .ti { font-size: 19px; }
+.indice a:hover, .indice button:hover { background: var(--ar-verde-50); color: var(--ar-verde-700); }
+.indice button.on { background: var(--ar-verde-600); color: #fff; box-shadow: 0 3px 8px rgba(46, 125, 50, .25); }
 .secciones { display: flex; flex-direction: column; gap: 1rem; }
 .secciones > section { scroll-margin-top: 1rem; }
 .tarjeta > header p { margin: .15rem 0 0; font-size: .84rem; color: var(--ar-tinta-3); }
@@ -28,12 +29,12 @@
 .btn-salir { color: var(--ar-rojo); }
 .btn-salir:hover:not(:disabled) { background: var(--ar-rojo-bg); border-color: var(--ar-rojo-borde); }
 .msj { position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 3500; max-width: min(420px, calc(100% - 2rem)); box-shadow: var(--ar-sombra-2); animation: subir .25s ease-out both; }
-@media (max-width: 960px) { .config { grid-template-columns: minmax(0, 1fr); } .cuenta { position: static; } .indice { flex-direction: row; overflow-x: auto; } .indice a { white-space: nowrap; } }
+@media (max-width: 960px) { .config { grid-template-columns: minmax(0, 1fr); } .cuenta { position: static; } .indice { flex-direction: row; overflow-x: auto; } .indice a, .indice button { white-space: nowrap; flex: none; } }
 @media (max-width: 720px) { .msj { left: 1rem; right: 1rem; bottom: 5.5rem; } .pref select { min-width: 0; width: 100%; } }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .pref > div:first-child { flex: 1 1 280px; min-width: 0; }
 .cuenta, .secciones { min-width: 0; }
-@media (max-width: 720px) { .indice { display: none; } }
+@media (max-width: 720px) { .indice { display: flex; position: sticky; top: 0; z-index: 5; scrollbar-width: none; } }
 
 /* Interruptor de correos */
 .interruptor { position: relative; display: inline-flex; flex: none; cursor: pointer; }
@@ -46,3 +47,7 @@
 .interruptor input:disabled + span { opacity: .55; }
 .nota { display: flex; gap: .45rem; align-items: center; margin: .2rem 0 0; padding-top: .8rem; border-top: 1px solid var(--ar-borde); font-size: .8rem; color: var(--ar-tinta-3); }
 @media (prefers-reduced-motion: reduce) { .interruptor span, .interruptor span::after { transition: none; } }
+
+/* Las secciones de las otras pestañas quedan ocultas (sin perder lo que se estaba escribiendo) */
+.secciones > [hidden] { display: none !important; }
+.indice button.on:hover { background: var(--ar-verde-600); color: #fff; }

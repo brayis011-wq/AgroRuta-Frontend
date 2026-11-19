@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -61,41 +61,68 @@ export interface CropReport {
   cropDetails: CropDetail[];
 }
 
+/** Periodos que se pueden elegir en Reportes */
+export type ClavePeriodo = 'todo' | 'mes' | 'anio' | 'anioPasado' | 'doce';
+export const CLAVES_PERIODO: ClavePeriodo[] = ['todo', 'mes', 'anio', 'anioPasado', 'doce'];
+
+const isoLocal = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+/** Fechas (aaaa-mm-dd, las dos incluidas) de cada periodo; null = sin límite */
+export function rangoPeriodo(clave: ClavePeriodo, hoy = new Date()): { desde: string | null; hasta: string | null } {
+  const y = hoy.getFullYear();
+  switch (clave) {
+    case 'mes': return { desde: isoLocal(new Date(y, hoy.getMonth(), 1)), hasta: isoLocal(new Date(y, hoy.getMonth() + 1, 0)) };
+    case 'anio': return { desde: `${y}-01-01`, hasta: `${y}-12-31` };
+    case 'anioPasado': return { desde: `${y - 1}-01-01`, hasta: `${y - 1}-12-31` };
+    case 'doce': return { desde: isoLocal(new Date(y, hoy.getMonth() - 11, 1)), hasta: isoLocal(hoy) };
+    default: return { desde: null, hasta: null };
+  }
+}
+
 @Injectable({ providedIn: 'root' })
 export class ReportService {
 
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
+  /** Periodo elegido en Reportes: lo usan la vista previa, los PDF y el PDF con todo */
+  readonly periodo = signal<ClavePeriodo>('todo');
+
+  private params(extra: Record<string, string> = {}): Record<string, string> {
+    const { desde, hasta } = rangoPeriodo(this.periodo());
+    return { ...extra, ...(desde ? { desde } : {}), ...(hasta ? { hasta } : {}) };
+  }
+
   getPayrollPreview(): Observable<PayrollReport> {
-    return this.http.get<PayrollReport>(`${this.apiUrl}/api/reports/payroll/preview`);
+    return this.http.get<PayrollReport>(`${this.apiUrl}/api/reports/payroll/preview`, { params: this.params() });
   }
 
   getCropPreview(): Observable<CropReport> {
-    return this.http.get<CropReport>(`${this.apiUrl}/api/reports/crops/preview`);
+    return this.http.get<CropReport>(`${this.apiUrl}/api/reports/crops/preview`, { params: this.params() });
   }
 
   downloadPayrollPdf(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/api/reports/payroll`, { responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/api/reports/payroll`, { responseType: 'blob', params: this.params() });
   }
 
   downloadCropPdf(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/api/reports/crops`, { responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/api/reports/crops`, { responseType: 'blob', params: this.params() });
   }
 
   downloadCostsPdf(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/api/reports/costs`, { responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/api/reports/costs`, { responseType: 'blob', params: this.params() });
   }
 
   downloadProfitabilityPdf(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/api/reports/profitability`, { responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/api/reports/profitability`, { responseType: 'blob', params: this.params() });
   }
 
   /** Las partes elegidas en un solo PDF (sin partes, el backend pone las cuatro) */
   downloadFullPdf(partes: ParteReporte[]): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/api/reports/full`, {
       responseType: 'blob',
-      params: partes.length ? { sections: partes.join(',') } : {},
+      params: this.params(partes.length ? { sections: partes.join(',') } : {}),
     });
   }
 }

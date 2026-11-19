@@ -1,3 +1,4 @@
+import { PestanasCatalogoComponent } from '../catalog-tabs/catalog-tabs';
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -10,7 +11,7 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 @Component({
   selector: 'app-lista-cargos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, PesosPipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PestanasCatalogoComponent],
   templateUrl: './list-post.html',
   styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../worker-ui.css', '../worker-panel.css']
 })

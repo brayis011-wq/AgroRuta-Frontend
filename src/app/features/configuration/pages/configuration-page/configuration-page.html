@@ -27,18 +27,18 @@
           @if (perfil?.rol) { <span class="rol"><i class="ti ti-shield-check" aria-hidden="true"></i> {{ 'enums.rol.' + perfil!.rol | translate }}</span> }
         </section>
 
-        <nav class="tarjeta indice" [attr.aria-label]="'config.sections' | translate">
-          <a href="#perfil" (click)="$event.preventDefault(); ir('perfil')"><i class="ti ti-user" aria-hidden="true"></i> {{ 'config.profileCard.title' | translate }}</a>
-          <a href="#seguridad" (click)="$event.preventDefault(); ir('seguridad')"><i class="ti ti-lock" aria-hidden="true"></i> {{ 'config.passwordCard.title' | translate }}</a>
-          <a href="#dos-pasos" (click)="$event.preventDefault(); ir('dos-pasos')"><i class="ti ti-shield-lock" aria-hidden="true"></i> {{ 'config.twoFactor.title' | translate }}</a>
-          <a href="#sesiones" (click)="$event.preventDefault(); ir('sesiones')"><i class="ti ti-devices" aria-hidden="true"></i> {{ 'config.sessions.title' | translate }}</a>
-          <a href="#correos" (click)="$event.preventDefault(); ir('correos')"><i class="ti ti-mail" aria-hidden="true"></i> {{ 'config.mail.title' | translate }}</a>
-          <a href="#preferencias" (click)="$event.preventDefault(); ir('preferencias')"><i class="ti ti-adjustments" aria-hidden="true"></i> {{ 'config.prefs.title' | translate }}</a>
+        <!-- Pestañas: cada una muestra sus secciones (las demás quedan ocultas, sin perder lo escrito) -->
+        <nav class="tarjeta indice" role="tablist" [attr.aria-label]="'config.sections' | translate">
+          @for (g of grupos; track g.id) {
+            <button type="button" role="tab" [class.on]="grupo() === g.id" [attr.aria-selected]="grupo() === g.id" (click)="elegirGrupo(g.id)">
+              <i class="ti {{ g.icono }}" aria-hidden="true"></i> {{ g.clave | translate }}
+            </button>
+          }
         </nav>
       </aside>
 
       <div class="secciones">
-        <section class="tarjeta" id="perfil">
+        <section class="tarjeta" id="perfil" [hidden]="grupo() !== 'perfil'">
           <header>
             <div class="tit">
               <span class="ic verde" aria-hidden="true"><i class="ti ti-user"></i></span>
@@ -48,7 +48,7 @@
           <app-profile-form [perfil]="perfil" [loading]="loadingProfile" (save)="onSaveProfile($event)" />
         </section>
 
-        <section class="tarjeta" id="seguridad">
+        <section class="tarjeta" id="seguridad" [hidden]="grupo() !== 'seguridad'">
           <header>
             <div class="tit">
               <span class="ic ambar" aria-hidden="true"><i class="ti ti-lock"></i></span>
@@ -58,7 +58,7 @@
           <app-change-password-form [loading]="loadingPassword" (changePassword)="onChangePassword($event)" />
         </section>
 
-        <section class="tarjeta" id="dos-pasos">
+        <section class="tarjeta" id="dos-pasos" [hidden]="grupo() !== 'seguridad'">
           <header>
             <div class="tit">
               <span class="ic verde" aria-hidden="true"><i class="ti ti-shield-lock"></i></span>
@@ -68,7 +68,7 @@
           <app-two-factor />
         </section>
 
-        <section class="tarjeta" id="sesiones">
+        <section class="tarjeta" id="sesiones" [hidden]="grupo() !== 'seguridad'">
           <header>
             <div class="tit">
               <span class="ic azul" aria-hidden="true"><i class="ti ti-devices"></i></span>
@@ -78,7 +78,7 @@
           <app-open-sessions />
         </section>
 
-        <section class="tarjeta" id="correos">
+        <section class="tarjeta" id="correos" [hidden]="grupo() !== 'avisos'">
           <header>
             <div class="tit">
               <span class="ic verde" aria-hidden="true"><i class="ti ti-mail"></i></span>
@@ -119,7 +119,7 @@
           <p class="nota"><i class="ti ti-shield-lock" aria-hidden="true"></i> {{ 'config.mail.security' | translate }}</p>
         </section>
 
-        <section class="tarjeta" id="preferencias">
+        <section class="tarjeta" id="preferencias" [hidden]="grupo() !== 'preferencias'">
           <header>
             <div class="tit">
               <span class="ic azul" aria-hidden="true"><i class="ti ti-adjustments"></i></span>

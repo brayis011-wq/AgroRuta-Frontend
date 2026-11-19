@@ -172,7 +172,7 @@ input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1
   body .main .kpis > * { flex: 0 0 min(64%, 230px); min-width: 0; scroll-snap-align: start; }
 }
 
-/* Botones de fila con icono y una palabra (antes solo icono). "body" gana a los estilos de cada pantalla. */
+/* Botones de fila con icono y una palabra en el celular (en escritorio el nombre sale al pasar el ratón y la fila no cabe con texto). "body" gana a los estilos de cada pantalla. */
 body .btn-ic.con-texto { width: auto; min-width: 0; padding: 0 .6rem; gap: .3rem; display: inline-flex; align-items: center; font-size: .78rem; font-weight: 600; white-space: nowrap; }
 body .btn-ic.con-texto .txt-corto { line-height: 1; }
-@media (min-width: 761px) and (max-width: 1180px) { body .btn-ic.con-texto .txt-corto { display: none; } body .btn-ic.con-texto { padding: 0; width: 34px; justify-content: center; } }
+@media (min-width: 761px) { body .btn-ic.con-texto .txt-corto { display: none; } body .btn-ic.con-texto { padding: 0; width: 34px; justify-content: center; } }

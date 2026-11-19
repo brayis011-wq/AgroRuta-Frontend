@@ -3,18 +3,19 @@ import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { ReportHomeComponent } from './report-home';
-import { ReportService } from '../../../core/services/report.service';
+import { ClavePeriodo, ReportService } from '../../../core/services/report.service';
+import { signal } from '@angular/core';
 
 describe('ReportHomeComponent', () => {
   let query: BehaviorSubject<any>;
   let router: { navigate: ReturnType<typeof vi.fn> };
 
-  let reportes: { downloadFullPdf: ReturnType<typeof vi.fn> };
+  let reportes: { downloadFullPdf: ReturnType<typeof vi.fn>; periodo: ReturnType<typeof signal<ClavePeriodo>> };
 
   function crear(tab?: string) {
     query = new BehaviorSubject(convertToParamMap(tab ? { tab } : {}));
     router = { navigate: vi.fn() };
-    reportes = { downloadFullPdf: vi.fn().mockReturnValue(of(new Blob(['%PDF']))) };
+    reportes = { downloadFullPdf: vi.fn().mockReturnValue(of(new Blob(['%PDF']))), periodo: signal<ClavePeriodo>('todo') };
     TestBed.overrideComponent(ReportHomeComponent, { set: { imports: [], template: '' } });
     TestBed.configureTestingModule({
       imports: [ReportHomeComponent],
@@ -34,7 +35,7 @@ describe('ReportHomeComponent', () => {
   it('defaults to payroll and writes it in the URL', () => {
     const c = crear();
     expect(c.activeTab).toBe('payroll');
-    expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { tab: 'payroll' }, replaceUrl: true }));
+    expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { tab: 'payroll', siembra: null }, replaceUrl: true }));
   });
 
   it('follows the URL when the side menu changes the tab', () => {
@@ -100,5 +101,14 @@ describe('ReportHomeComponent', () => {
       expect(c.panelCompleto()).toBe(true);
       expect(c.descargandoCompleto()).toBe(false);
     });
+  });
+  it("lee el periodo de la URL y lo guarda al cambiarlo", () => {
+    query = new BehaviorSubject(convertToParamMap({}));
+    const c = crear("costs");
+    query.next(convertToParamMap({ tab: "costs", periodo: "anio" }));
+    expect(reportes.periodo()).toBe("anio");
+    c.elegirPeriodo("todo");
+    expect(reportes.periodo()).toBe("todo");
+    expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { periodo: null }, queryParamsHandling: "merge" }));
   });
 });

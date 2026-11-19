@@ -39,6 +39,8 @@ export interface ItemSubmenu {
   query?: Record<string, string>;
   contador?: boolean;
   icono?: string;
+  /** Otra ruta que también marca esta opción como la actual (Labores, dentro de "Cargos y labores") */
+  tambien?: string;
   /** Subtítulo dentro del submenú (no es un enlace) */
   titulo?: boolean;
 }
@@ -78,6 +80,8 @@ export class LayoutComponent {
   readonly iconoClima = computed(() => iconoClima(this.clima()?.iconUrl));
   /** En el Inicio el clima ya sale en grande: el menú no lo repite */
   readonly enInicio = signal(false);
+  /** Ruta actual sin parámetros (para las opciones del menú que abarcan dos pantallas) */
+  readonly ruta = signal('');
   /** Menú completo abierto como cajón (solo celular) */
   readonly cajonAbierto = signal(false);
   /** Celular: la barra inferior se esconde al bajar por la página y mientras se escribe en un campo */
@@ -93,8 +97,8 @@ export class LayoutComponent {
     { ruta: '/worker/workdays', clave: 'layout.nav.wages' },
     { ruta: '/worker/payrolls', clave: 'layout.nav.payrolls', contador: true },
     { ruta: '/worker/payments', clave: 'layout.nav.payments' },
-    { ruta: '/worker/positions', clave: 'layout.nav.positions' },
-    { ruta: '/worker/labors', clave: 'layout.nav.activities' },
+    // Cargos y Labores van juntos (dos pestañas en la misma pantalla)
+    { ruta: '/worker/positions', clave: 'layout.nav.catalog', tambien: '/worker/labors' },
   ];
 
   readonly subReportes: ItemSubmenu[] = [
@@ -195,7 +199,8 @@ export class LayoutComponent {
   }
 
   private alNavegar(url: string): void {
-    this.enInicio.set(url.split(/[?#]/)[0] === '/dashboard');
+    this.ruta.set(url.split(/[?#]/)[0]);
+    this.enInicio.set(this.ruta() === '/dashboard');
     this.cajonAbierto.set(false);
     this.barraOculta.set(false);
     this.menuFincas.set(false);
