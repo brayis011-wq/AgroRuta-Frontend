@@ -193,6 +193,11 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.map) this.dibujarLotes(true);
         this.cdr.detectChanges();
       });
+    // Siembras en curso de todas las fincas (las mismas consultas: el interceptor de copia breve las comparte)
+    this.siembrasActivasSvc.listar(this.fincas).subscribe({
+      next: (s) => { this.siembrasActivas = s; this.cdr.detectChanges(); },
+      error: () => { this.siembrasActivas = []; this.cdr.detectChanges(); },
+    });
   }
 
   /**
