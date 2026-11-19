@@ -1,8 +1,9 @@
 // src/app/features/worker/roster/list-roster/list-roster.ts
 
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
@@ -43,6 +44,7 @@ export class ListaNominasComponent implements OnInit {
   guardando = false;
   aprobando: number | null = null;
   private _filtroEstado: FiltroEstado = 'TODAS';
+  private readonly router = inject(Router);
   cargando = true;
   error = '';                                   // clave de traducción
   exito = '';                                   // clave de traducción
@@ -65,6 +67,8 @@ export class ListaNominasComponent implements OnInit {
       periodoFin:    ['',   Validators.required]
     });
 
+    // El filtro de estado viene en la dirección (?estado=PENDIENTE) si se volvió desde una nómina
+    this._filtroEstado = (leerDeUrl(this.route, 'estado', ['PENDIENTE', 'APROBADA', 'PAGADA', 'ANULADA']) as FiltroEstado | null) ?? 'TODAS';
     const idParam = this.route.snapshot.queryParamMap.get('trabajadorId');
     if (idParam) {
       this.trabajadorIdFiltro = Number(idParam);
@@ -90,6 +94,7 @@ export class ListaNominasComponent implements OnInit {
   set filtroEstado(valor: FiltroEstado) {
     if (valor === this._filtroEstado) return;
     this._filtroEstado = valor;
+    guardarEnUrl(this.router, this.route, { estado: valor === 'TODAS' ? null : valor });
     this.cargarPagina(0);
   }
 

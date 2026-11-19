@@ -1,3 +1,4 @@
+import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { Subscription, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -133,6 +134,8 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const tab = this.route.snapshot?.queryParamMap?.get('tab') as PestanaSiembra | null;
     if (tab && PESTANAS_SIEMBRA.some((p) => p.id === tab)) this.pestana = tab;
+    const filtro = leerDeUrl(this.route, 'filtro', ['actividad', 'fumigacion', 'cosecha']);
+    if (filtro) this.filtroActivo = filtro as 'actividad' | 'fumigacion' | 'cosecha';
     // Se reutiliza al pasar de una siembra a otra: recargar con cada id
     const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
     this.rutaSub = params$.subscribe((p) => this.cargarSiembra(Number(p.get('id'))));
@@ -279,6 +282,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
 
   setFiltro(filtro: 'todo' | 'actividad' | 'fumigacion' | 'cosecha'): void {
     this.filtroActivo = filtro;
+    guardarEnUrl(this.router, this.route, { filtro: filtro === 'todo' ? null : filtro });
   }
 
   private cargarResumen(id: number): void {

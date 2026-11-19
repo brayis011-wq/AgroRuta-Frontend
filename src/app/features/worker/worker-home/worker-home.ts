@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { guardarEnUrl, leerDeUrl } from '../../../shared/url-state';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -37,9 +38,18 @@ export class WorkerHomeComponent implements OnInit {
   nominasPendientes = 0;
   resumenPagos: ResumenPagos = { cantidad: 0, total: 0, trabajadores: 0 };
 
-  busqueda  = '';
   tabActivo = 'trabajadores';
-  filtroEstado: 'TODOS' | 'ACTIVO' | 'SUSPENDIDO' = 'ACTIVO';
+
+  // Búsqueda y estado van en la dirección (?q=ana&estado=SUSPENDIDO): al volver se ve lo mismo
+  private _busqueda = '';
+  get busqueda(): string { return this._busqueda; }
+  set busqueda(v: string) { this._busqueda = v; guardarEnUrl(this.router, this.route, { q: v.trim() || null }); }
+  private _filtroEstado: 'TODOS' | 'ACTIVO' | 'SUSPENDIDO' = 'ACTIVO';
+  get filtroEstado(): 'TODOS' | 'ACTIVO' | 'SUSPENDIDO' { return this._filtroEstado; }
+  set filtroEstado(v: 'TODOS' | 'ACTIVO' | 'SUSPENDIDO') {
+    this._filtroEstado = v;
+    guardarEnUrl(this.router, this.route, { estado: v === 'ACTIVO' ? null : v });
+  }
   cargando  = true;
   guardando = false;
   error     = '';                                   // clave de traducción
@@ -81,6 +91,8 @@ export class WorkerHomeComponent implements OnInit {
     this.cargarDatos();
     // /worker?nuevo=1 abre el formulario de una vez (lo usa "Primeros pasos" del inicio)
     if (this.route?.snapshot?.queryParamMap?.get('nuevo')) this.abrirNuevo();
+    this._busqueda = leerDeUrl(this.route, 'q') ?? '';
+    this._filtroEstado = (leerDeUrl(this.route, 'estado', ['TODOS', 'SUSPENDIDO']) as 'TODOS' | 'SUSPENDIDO' | null) ?? 'ACTIVO';
   }
 
   iniciarForms(): void {
