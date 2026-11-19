@@ -35,7 +35,10 @@
     <div class="kpis">
       <article class="kpi"><span class="ic" [class.verde]="(r.ganancia ?? 0) >= 0" [class.rojo]="(r.ganancia ?? 0) < 0"><i class="ti ti-trending-up" aria-hidden="true"></i></span>
         <div><small>{{ 'reports.profit.kpi.profit' | translate }}</small><strong [class.pierde]="(r.ganancia ?? 0) < 0">{{ r.ganancia != null ? pesos(r.ganancia) : '—' }}</strong>
-          <em>{{ 'reports.profit.kpi.lots' | translate: { count: r.lotes } }}</em></div></article>
+          <em>{{ (r.lotes === 1 ? 'reports.profit.kpi.lotsOne' : 'reports.profit.kpi.lots') | translate: { count: r.lotes } }}</em>
+          @if (r.ganancia != null && r.sinVentas > 0) {
+            <em class="nota-sv">{{ (r.sinVentas === 1 ? 'reports.profit.kpi.unsoldOne' : 'reports.profit.kpi.unsold') | translate: { count: r.sinVentas, amount: pesos(r.invertidoSinVentas) } }}</em>
+          }</div></article>
       <article class="kpi"><span class="ic azul"><i class="ti ti-percentage" aria-hidden="true"></i></span>
         <div><small>{{ 'reports.profit.kpi.margin' | translate }}</small><strong>{{ porcentaje(r.margen) }}</strong>
           <em>{{ 'reports.profit.kpi.marginHint' | translate }}</em></div></article>
@@ -56,7 +59,7 @@
         <header class="lote-head">
           <div>
             <h3>{{ l.loteNombre }}</h3>
-            <p>@if (l.fincaNombre) { {{ l.fincaNombre }} · }@if (l.areaHa) { {{ numero(l.areaHa, 2) }} ha · }{{ 'reports.costs.kpi.seasons' | translate: { count: l.temporadas.length } }}</p>
+            <p>@if (l.fincaNombre) { {{ l.fincaNombre }} · }@if (l.areaHa) { {{ numero(l.areaHa, 2) }} ha · }{{ (l.temporadas.length === 1 ? 'reports.costs.kpi.seasonsOne' : 'reports.costs.kpi.seasons') | translate: { count: l.temporadas.length } }}</p>
           </div>
           <dl class="lote-totales">
             <div><dt>{{ 'reports.costs.col.profit' | translate }}</dt>

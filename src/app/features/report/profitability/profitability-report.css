@@ -29,3 +29,9 @@
 .cambio.sube { color: var(--ar-verde-700); }
 .cambio.baja { color: var(--ar-rojo); }
 .pista { text-align: left; }
+
+/* La temporada no se aprieta en cuatro renglones y el último encabezado parte en dos líneas en vez de salirse */
+.tabla .temp { min-width: 10.5rem; }
+.tabla th { white-space: normal; line-height: 1.25; vertical-align: bottom; }
+.tabla th:last-child { min-width: 6.5rem; }
+.kpi em.nota-sv { display: block; margin-top: .2rem; }

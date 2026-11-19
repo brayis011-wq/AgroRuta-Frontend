@@ -2,7 +2,8 @@ import { ApplicationConfig, ErrorHandler } from '@angular/core';
 import { TitleStrategy, provideRouter, withPreloading, withViewTransitions } from '@angular/router';
 import { TituloEstrategia } from './core/services/page-title.service';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateCompiler, provideTranslateService } from '@ngx-translate/core';
+import { CompiladorPlurales } from './core/plural-compiler';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 import { jwtInterceptor } from './core/interceptors/jwt-interceptor';
@@ -27,7 +28,8 @@ export const appConfig: ApplicationConfig = {
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     // Título de la pestaña por pantalla ("Nóminas · AgroRuta"), traducido
     { provide: TitleStrategy, useClass: TituloEstrategia },
-    provideTranslateService({ lang: savedLang, fallbackLang: 'es' }),
+    // compiler: "1 lote" / "3 lotes" sin repetir la condición en cada pantalla (ver plural-compiler.ts)
+    provideTranslateService({ lang: savedLang, fallbackLang: 'es', compiler: provideTranslateCompiler(CompiladorPlurales) }),
     ...provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
   ],
 };

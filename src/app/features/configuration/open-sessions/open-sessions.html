@@ -4,7 +4,7 @@
   <p class="cargando"><i class="ti ti-loader-2 gira" aria-hidden="true"></i> {{ 'config.sessions.loading' | translate }}</p>
 } @else {
   <ul class="sesiones">
-    @for (s of sesiones(); track s.id) {
+    @for (s of visibles(); track s.id) {
       <li>
         <span class="disp" [class.esta]="s.actual" aria-hidden="true"><i class="ti" [class.ti-device-mobile]="esMovil(s)" [class.ti-device-desktop]="!esMovil(s)"></i></span>
         <div class="datos">
@@ -22,6 +22,13 @@
       </li>
     }
   </ul>
+
+  @if (ocultas() > 0) {
+    <button type="button" class="btn btn-ver-todas" (click)="verTodas.set(!verTodas())" [attr.aria-expanded]="verTodas()">
+      <i class="ti" [class.ti-chevron-down]="!verTodas()" [class.ti-chevron-up]="verTodas()" aria-hidden="true"></i>
+      {{ verTodas() ? ('config.sessions.showLess' | translate) : ('config.sessions.showAll' | translate: { count: ocultas() }) }}
+    </button>
+  }
 
   @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ 'config.sessions.error' | translate }}</p> }
 

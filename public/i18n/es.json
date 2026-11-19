@@ -58,7 +58,7 @@
     "menu": "Menú principal",
     "closeMenu": "Cerrar menú",
     "pendingPayrolls": "Nóminas por aprobar",
-    "farm": {"all": "Todas las fincas", "choose": "Elegir finca", "count": "{{count}} fincas", "lots": "{{count}} lotes", "lotsOne": "1 lote"},
+    "farm": {"all": "Todas las fincas", "choose": "Elegir finca", "count": "{{count}} fincas", "countOne": "1 finca", "lots": "{{count}} lotes", "lotsOne": "1 lote"},
     "weather": {"good": "Buen día para fumigar", "rain": "Lluvia: mejor no fumigar", "wind": "Mucho viento para fumigar", "hot": "Calor: fumiga temprano o tarde"}
   },
   "backups": {
@@ -313,13 +313,14 @@
     }
   },
   "reports": {
-    "profit": {"title":"Rentabilidad por lote","subtitle":"Cuánto dejó cada lote y cómo le fue a cada temporada frente a la anterior.","kpi":{"profit":"Ganancia total","lots":"{{count}} lotes","margin":"Margen","marginHint":"De cada $100 vendidos, lo que queda","best":"Lote más rentable","worst":"Lote menos rentable"},"col":{"margin":"Margen","perHa":"Ganancia/ha","yield":"Rendimiento","vsPrevious":"Frente a la anterior"},"ongoing":"en curso","bestSeason":"Mejor temporada","noPrices":"Ninguna cosecha tiene precio de venta. Agrega el precio por kilo al registrar las cosechas para ver la ganancia.","hint":"La ganancia es lo vendido menos jornales, insumos y otros gastos. Toca una temporada para ver el detalle de sus costos."},
+    "profit": {"title":"Rentabilidad por lote","subtitle":"Cuánto dejó cada lote y cómo le fue a cada temporada frente a la anterior.","kpi":{"profit":"Ganancia total","lots":"{{count}} lotes","lotsOne":"1 lote","unsold":"Incluye {{amount}} gastados en {{count}} lotes aún sin ventas","unsoldOne":"Incluye {{amount}} gastados en 1 lote aún sin ventas","margin":"Margen","marginHint":"De cada $100 vendidos, lo que queda","best":"Lote más rentable","worst":"Lote menos rentable"},"col":{"margin":"Margen","perHa":"Ganancia/ha","yield":"Rendimiento","vsPrevious":"Frente a la anterior"},"ongoing":"en curso","bestSeason":"Mejor temporada","noPrices":"Ninguna cosecha tiene precio de venta. Agrega el precio por kilo al registrar las cosechas para ver la ganancia.","hint":"La ganancia es lo vendido menos jornales, insumos y otros gastos. Toca una temporada para ver el detalle de sus costos."},
     "costs": {
       "title": "Costos por temporada",
       "subtitle": "Lo que costó y lo que dejó cada siembra: jornales, insumos, otros gastos y ventas.",
       "kpi": {
         "cost": "Costo total",
         "seasons": "{{count}} temporadas",
+        "seasonsOne": "1 temporada",
         "income": "Ingresos",
         "kg": "{{kg}} kg cosechados",
         "profit": "Ganancia",
@@ -410,7 +411,7 @@
         "crops": "{{count}} cultivos",
         "cropsOne": "1 cultivo",
         "active": "Activas",
-        "finished": "{{count}} finalizadas",
+        "finished": "{{count}} finalizadas", "finishedOne": "1 finalizada",
         "kg": "Kg cosechados",
         "kgSub": "en todas las cosechas",
         "harvests": "Cosechas",
@@ -713,7 +714,7 @@
     }
   },
   "workers": {
-    "ui": {"team": "Equipo", "summary": "Resumen del equipo", "ofTotal": "de {{total}} registrados", "seeRosters": "Ver nóminas", "paymentsCount": "{{count}} pagos", "paymentsCountOne": "1 pago", "people": "Personas", "filterState": "Filtrar por estado", "col": {"worker": "Trabajador", "post": "Cargo", "wage": "Jornal", "state": "Estado", "actions": "Acciones"}, "idShort": "C.C.", "data": "Datos", "contract": "Contrato", "hireDate": "Ingreso", "phone": "Teléfono", "address": "Dirección", "workDays": "Días trabajados", "searchCrop": "Buscar cultivo...", "lastPayment": "Último pago", "paymentHistory": "Historial de pagos", "payroll": "Nómina", "amount": "Monto", "openPayroll": "Abrir la nómina", "summaryShort": "Resumen", "rosters": {"toApprove": "Por aprobar", "toPay": "Aprobadas sin pagar", "paid": "Pagado", "count": "{{count}} nóminas pagadas", "all": "Todas", "flow": "Avance de la nómina", "step1": "Generada", "step2": "Aprobada", "step3": "Pagada", "cancelledNote": "Esta nómina está anulada. Sus jornales quedaron libres para incluirlos en otra nómina."}},
+    "ui": {"team": "Equipo", "summary": "Resumen del equipo", "ofTotal": "de {{total}} registrados", "seeRosters": "Ver nóminas", "paymentsCount": "{{count}} pagos", "paymentsCountOne": "1 pago", "people": "Personas", "filterState": "Filtrar por estado", "col": {"worker": "Trabajador", "post": "Cargo", "wage": "Jornal", "state": "Estado", "actions": "Acciones"}, "idShort": "C.C.", "data": "Datos", "contract": "Contrato", "hireDate": "Ingreso", "phone": "Teléfono", "address": "Dirección", "workDays": "Días trabajados", "searchCrop": "Buscar cultivo...", "lastPayment": "Último pago", "paymentHistory": "Historial de pagos", "payroll": "Nómina", "amount": "Monto", "openPayroll": "Abrir la nómina", "summaryShort": "Resumen", "rosters": {"toApprove": "Por aprobar", "toPay": "Aprobadas sin pagar", "paid": "Pagado", "count": "{{count}} nóminas pagadas", "countOne": "1 nómina pagada", "all": "Todas", "flow": "Avance de la nómina", "step1": "Generada", "step2": "Aprobada", "step3": "Pagada", "cancelledNote": "Esta nómina está anulada. Sus jornales quedaron libres para incluirlos en otra nómina."}},
     "posts": {
       "title": "Cargos",
       "subtitle": "Define los roles y el valor de jornal por cargo",
@@ -837,8 +838,8 @@
           "activities": "Labores",
           "value": "Valor"
         },
-        "settled": "Liquidado",
-        "pending": "Pendiente",
+        "settled": "Pagado",
+        "pending": "Por pagar",
         "emptyWages": "Sin jornales en esta nómina",
         "loading": "Cargando nómina...",
         "notFound": "No se encontró la nómina.",
@@ -909,7 +910,7 @@
         "goToWorkers": "Ir a Trabajadores",
         "stats": {
           "total": "Total jornales",
-          "unsettled": "Sin liquidar",
+          "unsettled": "Sin pagar",
           "pendingPay": "Pendiente de pago",
           "accumulated": "Total acumulado"
         },
@@ -929,12 +930,12 @@
           "value": "Valor",
           "total": "Total"
         },
-        "settled": "Liquidado",
-        "pending": "Pendiente",
+        "settled": "Pagado",
+        "pending": "Por pagar",
         "panel": {
           "close": "Cerrar panel",
           "title": "Generar nómina",
-          "unsettledWages": "Jornales sin liquidar",
+          "unsettledWages": "Jornales sin pagar",
           "totalToGenerate": "Total a generar",
           "periodTitle": "Período de la nómina",
           "periodHelp": "El sistema calculará el total de todos los jornales sin liquidar dentro de este período.",
@@ -1118,7 +1119,7 @@
   },
   "config": {
     "push": {"title":"Avisos en este dispositivo","hint":"Notificaciones en el teléfono o el computador aunque AgroRuta esté cerrada: el resumen del día, alertas del clima, insumos por acabarse y pagos.","unsupported":"Este navegador no permite avisos. En iPhone, primero agrega AgroRuta a la pantalla de inicio (Compartir → Agregar a inicio) y ábrela desde ahí.","blocked":"Los avisos están bloqueados para este sitio. Actívalos en los permisos del navegador (el candado junto a la dirección) y vuelve a intentarlo.","enabled":"Avisos activados en este dispositivo.","error":"No se pudieron activar los avisos. Inténtalo de nuevo.","test":"Enviar prueba","testSent":"Aviso de prueba enviado. Debe aparecer en unos segundos.","testFailed":"El aviso de prueba no salió. Apaga y vuelve a encender los avisos.","hintWorker":"Un aviso en tu teléfono o computador cuando te registren un pago, aunque AgroRuta esté cerrada."},
-    "sessions": {"title":"Sesiones abiertas","desc":"Dispositivos donde tu cuenta tiene la sesión iniciada","loading":"Buscando sesiones…","loadError":"No se pudieron consultar las sesiones. Recarga la página.","unknown":"Dispositivo desconocido","current":"Esta sesión","started":"Iniciada el {{fecha}}","lastUse":"último uso el {{fecha}}","close":"Cerrar","closeOthers":"Cerrar las demás sesiones","error":"No se pudo cerrar la sesión. Inténtalo de nuevo.","note":"Si no reconoces un dispositivo, cierra su sesión y cambia tu contraseña. Una sesión cerrada puede tardar hasta 15 minutos en dejar de funcionar."},
+    "sessions": {"title":"Sesiones abiertas","desc":"Dispositivos donde tu cuenta tiene la sesión iniciada","loading":"Buscando sesiones…","loadError":"No se pudieron consultar las sesiones. Recarga la página.","unknown":"Dispositivo desconocido","current":"Esta sesión","started":"Iniciada el {{fecha}}","lastUse":"último uso el {{fecha}}","close":"Cerrar","showAll":"Ver las otras {{count}} sesiones","showAllOne":"Ver la otra sesión","showLess":"Ver menos","closeOthers":"Cerrar las demás sesiones","error":"No se pudo cerrar la sesión. Inténtalo de nuevo.","note":"Si no reconoces un dispositivo, cierra su sesión y cambia tu contraseña. Una sesión cerrada puede tardar hasta 15 minutos en dejar de funcionar."},
     "twoFactor": {"title":"Verificación en dos pasos","desc":"Además de la contraseña, pide un código de tu teléfono al iniciar sesión","loading":"Consultando…","loadError":"No se pudo consultar la verificación en dos pasos. Recarga la página.","on":"Activa","off":"Desactivada","onHint":"Cada vez que inicies sesión te pediremos el código de tu app de autenticación.","offHint":"Si alguien descubre tu contraseña, no podrá entrar sin el código que solo aparece en tu teléfono. Recomendada para administradores.","backupLeft":"Códigos de respaldo sin usar: {{n}}","enable":"Activar","disable":"Desactivar","cancel":"Cancelar","continue":"Continuar","confirm":"Confirmar y activar","passwordStep":"Para empezar, confirma que eres tú escribiendo tu contraseña.","step1":"Instala en tu teléfono una app de autenticación (Google Authenticator, Microsoft Authenticator, Authy o similar).","step2":"En la app elige «agregar cuenta» y escanea este código QR.","step3":"Escribe el código de 6 dígitos que muestra la app:","qrAlt":"Código QR para enlazar la app de autenticación","manual":"¿No puedes escanearlo? Escribe esta clave en la app:","wrongPassword":"La contraseña no es correcta.","wrongCode":"Ese código no es correcto o ya venció. Usa el que aparece ahora en la app.","error":"No se pudo completar. Inténtalo de nuevo.","enabled":"La verificación en dos pasos quedó activa.","backupTitle":"Guarda estos códigos de respaldo.","backupDesc":"Cada uno sirve una sola vez para entrar si pierdes el teléfono. No los volveremos a mostrar.","copy":"Copiar códigos","copied":"Copiados","saved":"Ya los guardé","disableStep":"Para desactivarla escribe tu contraseña y un código de la app (o uno de respaldo).","codeOrBackup":"Código de la app o de respaldo"},
     "mail": {"title": "Correos", "desc": "Avisos que llegan a {{email}}.", "crop": "Resumen diario del cultivo", "cropHint": "Cada mañana, si hay algo para hoy: fumigaciones que tocan o están atrasadas, labores programadas, reentrada, carencia y alertas de helada o lluvia.", "workers": "Solicitudes de tus trabajadores", "workersHint": "Cuando un trabajador pide acceso a su portal.", "security": "Los avisos de seguridad (contraseña cambiada, intentos fallidos, recuperar contraseña) llegan siempre.", "saved": "Preferencias de correo guardadas.", "error": "No se pudieron guardar las preferencias de correo.", "workerTitle": "Correos de tu trabajo", "workerHint": "Te llega un correo cuando tu empleador registra un pago tuyo o responde tu solicitud de acceso."},
     "prefs": {"title": "Preferencias", "desc": "Cómo quieres usar AgroRuta en este dispositivo", "language": "Idioma", "languageHint": "Idioma de los menús, textos y reportes", "farm": "Finca al entrar", "farmHint": "La finca que se muestra al abrir el panel. También puedes cambiarla en el menú lateral.", "farmSaved": "Finca guardada como predeterminada", "session": "Sesión", "sessionHint": "Sal de tu cuenta en este dispositivo"},
@@ -1223,6 +1224,7 @@
       "manageUsers": "Gestionar usuarios",
       "farms": "Fincas",
       "lots": "{{count}} lotes",
+      "lotsOne": "1 lote",
       "activeCrops": "Siembras en curso",
       "notFinished": "Sin finalizar",
       "harvest": "Cosecha registrada",
@@ -1280,7 +1282,7 @@
     "farmers": {
       "title": "Agricultores",
       "subtitle": "Consulta las fincas, trabajadores y nóminas de cada agricultor.",
-      "count": "{{count}} agricultores",
+      "count": "{{count}} agricultores", "countOne": "1 agricultor",
       "search": "Buscar agricultor",
       "sortBy": "Ordenar por",
       "sort": {
@@ -1393,10 +1395,10 @@
       "account": "Mi cuenta"
     },
     "home": {
-      "wagesCount": "{{count}} jornales",
+      "wagesCount": "{{count}} jornales", "wagesCountOne": "1 jornal",
       "allPaid": "Estás al día: no tienes nóminas por cobrar.",
-      "unsettled": "Por liquidar",
-      "settled": "Liquidado",
+      "unsettled": "Por cobrar",
+      "settled": "Pagado",
       "wage": "Jornal",
       "noWages": "Todavía no tienes jornales registrados.",
       "recentWages": "Últimos jornales",
@@ -1436,7 +1438,7 @@
       "title": "Mis jornales",
       "subtitle": "Los días que trabajaste y lo que se registró en cada uno.",
       "empty": "Todavía no tienes jornales registrados.",
-      "monthTotal": "{{count}} jornales · {{amount}}",
+      "monthTotal": "{{count}} jornales · {{amount}}", "monthTotalOne": "1 jornal · {{amount}}",
       "paid": "Liquidado",
       "unpaid": "Por liquidar"
     },
@@ -1444,7 +1446,7 @@
       "title": "Mis nóminas",
       "subtitle": "Cada nómina agrupa los jornales de un período.",
       "empty": "Todavía no tienes nóminas.",
-      "days": "{{count}} jornales",
+      "days": "{{count}} jornales", "daysOne": "1 jornal",
       "help": {
         "pending": "En revisión por tu empleador",
         "approved": "Aprobada, falta el pago",
@@ -1483,7 +1485,7 @@
       "noPrices": "Registra el precio de venta en las cosechas",
       "breakdown": "Reparto del costo",
       "labor": "Mano de obra",
-      "wages": "{{count}} jornales",
+      "wages": "{{count}} jornales", "wagesOne": "1 jornal",
       "inputs": "Insumos",
       "other": "Otros",
       "empty": "Todavía no hay costos: se suman los jornales registrados a este cultivo, el costo de las fumigaciones y el de las actividades.",
@@ -1508,7 +1510,7 @@
       "tomorrow": "Mañana",
       "whichLot": "¿En qué lote? Para el {{date}}",
       "noActive": "No hay siembras en curso en esta finca.",
-      "noFarm": "Elige o crea una finca para ver su calendario.",
+      "noFarm": "Crea tu primera finca para ver su calendario.",
       "error": "No se pudo cargar el calendario.",
       "prev": "Mes anterior",
       "next": "Mes siguiente",
@@ -1520,7 +1522,7 @@
       "otherMonth": "Este día es de otro mes.",
       "dayEmpty": "Nada este día.",
       "next14": "Próximos 14 días",
-      "overdueCount": "{{count}} atrasadas",
+      "overdueCount": "{{count}} atrasadas", "overdueCountOne": "1 atrasada",
       "tipo": {
         "SIEMBRA": "Siembra",
         "ETAPA": "Pasó a {{etapa}}",
@@ -1648,7 +1650,7 @@
       "area": "Área (ha)",
       "current": "Temporada en curso",
       "plantedOn": "Sembrado el {{date}}",
-      "plants": "{{count}} plantas",
+      "plants": "{{count}} plantas", "plantsOne": "1 planta",
       "daysInField": "días en campo",
       "open": "Ver detalle de la siembra",
       "empty": "Este lote todavía no tiene siembras",
@@ -1659,7 +1661,7 @@
       "newSeason": "Nueva temporada",
       "history": "Temporadas anteriores",
       "historyEmpty": "Cuando termines una temporada aparecerá aquí con lo que cosechaste.",
-      "days": "{{count}} días",
+      "days": "{{count}} días", "daysOne": "1 día",
       "errors": {
         "state": "No se pudo cambiar el estado del lote.",
         "save": "No se pudo guardar el lote."

@@ -2,19 +2,19 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { forkJoin, of, catchError } from 'rxjs';
+import { Observable, forkJoin, of, catchError, map, switchMap } from 'rxjs';
 import { CultivoService } from '../../../core/services/crop.service';
 import { FincaActivaService } from '../../../core/services/active-farm.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { formatoNumero, localeDe } from '../../../shared/format';
-import { EventoCalendario, Siembra, nombreCultivo } from '../../../core/models/crop.model';
+import { EventoCalendario, Lote, Siembra, nombreCultivo } from '../../../core/models/crop.model';
 import {
   ICONO_EVENTO, TONO_EVENTO, desdeIso, diasDelMes, diasHasta, esPorVenir, iso, ordenAgenda, textoCorto, textoEvento,
 } from './events';
 
 interface Dia { fecha: string; delMes: boolean; eventos: EventoCalendario[] }
 
-/** Calendario de la finca activa: lo hecho, lo programado y lo estimado, por mes */
+/** Calendario de la finca activa (o de todas juntas): lo hecho, lo programado y lo estimado, por mes */
 @Component({
   selector: 'app-calendario',
   standalone: true,
@@ -41,6 +41,12 @@ export class CalendarioComponent {
   /** null = todos los lotes */
   readonly lote = signal<number | null>(null);
   readonly verHechos = signal(true);
+  /** Fincas que se muestran: la activa, o todas si se eligió "Todas las fincas" */
+  readonly fincasVisibles = computed<number[]>(() => {
+    const activa = this.fincaActiva.idActiva();
+    if (activa != null) return [activa];
+    return this.fincaActiva.fincas().map((f) => f.id).filter((id): id is number => id != null);
+  }, { equal: (a, b) => a.length === b.length && a.every((x, i) => x === b[i]) });
 
   readonly eventosMes = signal<EventoCalendario[] | null>(null);
   readonly proximos = signal<EventoCalendario[] | null>(null);
@@ -72,26 +78,33 @@ export class CalendarioComponent {
 
     // Eventos del mes visible
     effect(() => {
-      const finca = this.fincaActiva.idActiva();
+      const fincas = this.fincasVisibles();
       const dias = diasDelMes(this.anio(), this.mes());
-      if (!finca) { this.eventosMes.set([]); return; }
+      this.siembrasActivas.set(null); // si cambia la finca, "Programar actividad" vuelve a buscar sus lotes
+      if (!fincas.length) { this.eventosMes.set([]); return; }
       this.eventosMes.set(null);
-      this.cultivo.calendarioFinca(finca, dias[0].fecha, dias[dias.length - 1].fecha).subscribe({
+      this.eventosDe(fincas, dias[0].fecha, dias[dias.length - 1].fecha).subscribe({
         next: (ev) => { this.eventosMes.set(ev); this.error.set(false); },
         error: () => { this.eventosMes.set([]); this.error.set(true); },
       });
     });
     // Próximos 14 días (aunque estén en otro mes)
     effect(() => {
-      const finca = this.fincaActiva.idActiva();
-      if (!finca) { this.proximos.set([]); return; }
+      const fincas = this.fincasVisibles();
+      if (!fincas.length) { this.proximos.set([]); return; }
       const hasta = new Date();
       hasta.setDate(hasta.getDate() + 14);
-      this.cultivo.calendarioFinca(finca, this.hoy, iso(hasta)).subscribe({
+      this.eventosDe(fincas, this.hoy, iso(hasta)).subscribe({
         next: (ev) => this.proximos.set(ev),
         error: () => this.proximos.set([]),
       });
     });
+  }
+
+  /** Une los calendarios de varias fincas en una sola lista */
+  private eventosDe(fincas: number[], desde: string, hasta: string): Observable<EventoCalendario[]> {
+    if (fincas.length === 1) return this.cultivo.calendarioFinca(fincas[0], desde, hasta);
+    return forkJoin(fincas.map((f) => this.cultivo.calendarioFinca(f, desde, hasta))).pipe(map((ev) => ev.flat()));
   }
 
   private filtrar(ev: EventoCalendario[]): EventoCalendario[] {
@@ -114,6 +127,13 @@ export class CalendarioComponent {
     this.seleccionado.set(this.hoy);
   }
 
+  /** Con "Todas las fincas" el filtro elige finca: es la misma del menú lateral */
+  elegirFinca(v: string): void {
+    this.lote.set(null);
+    this.siembrasActivas.set(null);
+    this.fincaActiva.elegir(v ? Number(v) : null);
+  }
+
   elegirLote(v: string): void {
     this.lote.set(v ? Number(v) : null);
     this.router.navigate([], { queryParams: { lote: v || null }, replaceUrl: true });
@@ -131,11 +151,22 @@ export class CalendarioComponent {
   programar(): void {
     this.eligiendo.update((v) => !v);
     if (this.siembrasActivas() !== null) return;
-    const lotes = this.fincaActiva.lotes().filter((l) => l.estado === 'EN_CULTIVO');
-    if (!lotes.length) { this.siembrasActivas.set([]); return; }
-    forkJoin(lotes.map((l) => this.cultivo.buscarSiembraPorLote(l.id!).pipe(catchError(() => of(null)))))
-      .subscribe((ss) => this.siembrasActivas.set(
-        ss.map((s, i) => (s ? { siembra: s, lote: lotes[i].nombre } : null)).filter((x): x is { siembra: Siembra; lote: string } => !!x)));
+    this.lotesEnCultivo().pipe(
+      switchMap((lotes) => (lotes.length
+        ? forkJoin(lotes.map((l) => this.cultivo.buscarSiembraPorLote(l.id!).pipe(
+          map((s) => (s ? { siembra: s, lote: l.nombre } : null)), catchError(() => of(null)))))
+        : of([]))),
+    ).subscribe((ss) => this.siembrasActivas.set(ss.filter((x): x is { siembra: Siembra; lote: string } => !!x)));
+  }
+
+  /** Lotes sembrados de la finca activa, o de todas las fincas */
+  private lotesEnCultivo(): Observable<Lote[]> {
+    const enCultivo = (l: Lote[]) => l.filter((x) => x.estado === 'EN_CULTIVO');
+    if (this.fincaActiva.idActiva() != null) return of(enCultivo(this.fincaActiva.lotes()));
+    const fincas = this.fincasVisibles();
+    if (!fincas.length) return of([]);
+    return forkJoin(fincas.map((f) => this.cultivo.listarLotesPorFinca(f).pipe(catchError(() => of([] as Lote[])))))
+      .pipe(map((l) => enCultivo(l.flat())));
   }
 
   programarEn(s: Siembra): void {

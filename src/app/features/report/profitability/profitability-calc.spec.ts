@@ -1,4 +1,4 @@
-import { FilaCostos } from '../costs/costs-calc';
+import { FilaCostos, totalesCostos } from '../costs/costs-calc';
 import { anchoBarra, rentabilidadPorLote, resumenRentabilidad } from './profitability-calc';
 
 const fila = (id: number, loteId: number | null, fecha: string, costo: number, ingresos: number, kg = 100, area: number | null = 2): FilaCostos => ({
@@ -61,7 +61,16 @@ describe('rentabilidad por lote', () => {
     expect(lotes.map((l) => l.loteNombre)).toEqual(['Lote 8', 'Lote 7', 'Lote 9']);
     expect(r.mejorLote?.loteNombre).toBe('Lote 8');
     expect(r.peorLote?.loteNombre).toBe('Lote 7');
-    expect(r.ganancia).toBe(3900);
+    // Lo gastado en el lote 9, que todavía no vende, también se resta (igual que en Costos)
+    expect(r.ganancia).toBe(3890);
+    expect(r.sinVentas).toBe(1);
+    expect(r.invertidoSinVentas).toBe(10);
+  });
+
+  it('la ganancia total es la misma que la de la pestaña Costos', () => {
+    const filas = [fila(1, 7, '2025-09-22', 1_620_000, 3_724_000), fila(2, 8, '2026-04-20', 120_000, 0), fila(3, 9, '2026-09-29', 0, 0)];
+    expect(resumenRentabilidad(rentabilidadPorLote(filas)).ganancia).toBe(totalesCostos(filas).ganancia);
+    expect(resumenRentabilidad(rentabilidadPorLote(filas)).ganancia).toBe(1_984_000);
   });
 
   it('la barra es proporcional a la mayor ganancia del lote', () => {
