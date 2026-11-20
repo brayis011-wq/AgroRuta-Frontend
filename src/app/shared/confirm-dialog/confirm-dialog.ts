@@ -66,8 +66,11 @@ export class ConfirmDialogComponent {
     });
   }
 
-  @HostListener('document:keydown.escape')
-  alPresionarEscape(): void {
+  @HostListener('document:keydown.escape', ['$event'])
+  alPresionarEscape(e?: Event): void {
+    if (!this.servicio.pendiente()) return;
+    // Esc solo cierra este diálogo: que no lo reciba también la pantalla de atrás (cerraría su panel y volvería a preguntar)
+    e?.stopImmediatePropagation();
     this.servicio.responder(false);
   }
 }
