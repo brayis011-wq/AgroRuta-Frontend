@@ -1,8 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { UltimoUsadoService } from '../../../../core/services/last-used.service';
+import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
+import { Component, OnInit, ChangeDetectorRef, inject, HostListener } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { CultivoService } from '../../../../core/services/crop.service';
@@ -13,9 +15,9 @@ import { formatoFecha, formatoPesos } from '../../../../shared/format';
 @Component({
   selector: 'app-registrar-cosecha',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, MigasCultivoComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
   templateUrl: './log-harvest.html',
-  styleUrls: ['../../crop-form.css', './log-harvest.css']
+  styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-harvest.css']
 })
 export class RegistrarCosecha implements OnInit {
   private readonly avisos = inject(AvisosService);
@@ -60,6 +62,22 @@ export class RegistrarCosecha implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  private readonly ultimo = inject(UltimoUsadoService);
+
+  // ── Cambios sin guardar: cuenta solo lo que escribe o elige la persona (no lo que la app rellena sola) ──
+  private tocado = false;
+  private guardado = false;
+
+  @HostListener('input')
+  @HostListener('change')
+  alEditar(): void {
+    this.tocado = true;
+  }
+
+  tieneCambios(): boolean {
+    return this.tocado && !this.guardado;
+  }
+
   ngOnInit(): void {
     this.siembraId = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
@@ -71,6 +89,8 @@ export class RegistrarCosecha implements OnInit {
     });
 
     const registro = this.route.snapshot.paramMap.get('registroId');
+    // Una cosecha nueva empieza con el precio del kilo de la anterior (casi siempre es el mismo)
+    if (!registro) this.form.precioKg = this.ultimo.leer<{ precioKg?: number | null }>('cosecha')?.precioKg ?? this.form.precioKg;
     if (registro) {
       this.registroId = Number(registro);
       this.cultivoService.buscarCosecha(this.registroId).subscribe({
@@ -93,12 +113,16 @@ export class RegistrarCosecha implements OnInit {
       ? this.cultivoService.actualizarCosecha(this.registroId, datos)
       : this.cultivoService.registrarCosecha(datos);
     peticion.subscribe({
-      next: () => {
+      next: (guardado: { id?: number } | null | void) => {
         this.cargando = false;
+        this.guardado = true;
+        if (this.form.precioKg) this.ultimo.guardar('cosecha', { precioKg: this.form.precioKg });
         this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.harvest.success';
         this.cdr.detectChanges();
         this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.harvest');
-        this.router.navigate(['/crops/planting', this.siembraId]);
+        // Al volver, la ficha baja hasta el registro y lo marca un momento
+        const id = (guardado && guardado.id) || this.registroId;
+        this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros', nuevo: id ? 'cosecha-' + id : null } });
       },
       error: (err) => {
         this.cargando = false;

@@ -1,8 +1,13 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import { AvisosService, DESHACER_MS } from '../../../../core/services/toast.service';
+import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
+import { AnteriorSiguienteComponent, Vecino } from '../../../../shared/prev-next/prev-next';
+import { SiembraActiva, SiembrasActivasService, vecinos } from '../../../../core/services/active-plantings.service';
+import { FincaActivaService } from '../../../../core/services/active-farm.service';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, HostListener, Injector, inject } from '@angular/core';
 import { Subscription, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { AyudaComponent } from '../../../../shared/help-tip/help-tip';
@@ -10,6 +15,7 @@ import { CultivoService } from '../../../../core/services/crop.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import {
   Siembra,
+  Finca,
   ActividadCultivo,
   Fumigacion,
   Cosecha,
@@ -44,12 +50,21 @@ interface TimelineItem {
   extra?: string;
 }
 
+export type PestanaSiembra = 'resumen' | 'registros' | 'cosechas' | 'diagnostico';
+
+export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: string }[] = [
+  { id: 'resumen', icono: 'ti-layout-dashboard', clave: 'siembra.detail.tabs.summary' },
+  { id: 'registros', icono: 'ti-history', clave: 'siembra.detail.tabs.records' },
+  { id: 'cosechas', icono: 'ti-basket', clave: 'siembra.detail.tabs.harvests' },
+  { id: 'diagnostico', icono: 'ti-stethoscope', clave: 'siembra.detail.tabs.diagnosis' },
+];
+
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink, MigasCultivoComponent, AyudaComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink, RouterOutlet, MigasCultivoComponent, AyudaComponent, AnteriorSiguienteComponent],
   templateUrl: './planting-detail.html',
-  styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css'],
+  styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css', './planting-panel.css'],
 })
 export class DetalleSiembraComponent implements OnInit, OnDestroy {
   /** \"Café · Castillo\" */
@@ -58,6 +73,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   private lang = inject(LanguageService);
   private confirm = inject(ConfirmService);
   private weather = inject(WeatherService);
+  private avisos = inject(AvisosService);
 
   /** Clima actual del lote (o del municipio de la finca) */
   clima: Weather | null = null;
@@ -92,9 +108,41 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   timelineCompleto: TimelineItem[] = [];
   filtroActivo: 'todo' | 'actividad' | 'fumigacion' | 'cosecha' = 'todo';
 
+  /** Anterior y siguiente entre las siembras en curso de todas las fincas */
+  vecinos: { anterior: Vecino | null; siguiente: Vecino | null; posicion: number; total: number } = { anterior: null, siguiente: null, posicion: 0, total: 0 };
+  private readonly injector = inject(Injector);
+
+  private cargarVecinos(id: number): void {
+    let fincas: Finca[] = [];
+    try { fincas = this.injector.get(FincaActivaService).fincas?.() ?? []; } catch { return; }
+    if (!fincas.length) return;
+    this.injector.get(SiembrasActivasService).listar(fincas).subscribe({
+      next: (activas) => {
+        if (this.siembraId !== id) return;
+        const comoVecino = (a: SiembraActiva | null): Vecino | null =>
+          a ? { texto: nombreDeCultivo(a.siembra) || a.lote.nombre, ruta: ['/crops/planting', a.siembra.id!] } : null;
+        const v = vecinos(activas, (a) => a.siembra.id === id);
+        this.vecinos = { anterior: comoVecino(v.anterior), siguiente: comoVecino(v.siguiente), posicion: v.posicion, total: v.posicion < 0 ? 0 : activas.length };
+        this.cdr.markForCheck();
+      },
+      error: () => {},
+    });
+  }
+
+  /** Pestañas de la ficha: así la página no es una sola columna larguísima */
+  readonly pestanas = PESTANAS_SIEMBRA;
+  pestana: PestanaSiembra = 'resumen';
+
+  elegirPestana(p: PestanaSiembra): void {
+    this.pestana = p;
+    // En la dirección: al volver atrás desde un registro se abre la misma pestaña
+    this.router.navigate([], { relativeTo: this.route, queryParams: { tab: p === 'resumen' ? null : p }, queryParamsHandling: 'merge', replaceUrl: true });
+  }
+
   get timelineFiltrado(): TimelineItem[] {
-    if (this.filtroActivo === 'todo') return this.timelineCompleto;
-    return this.timelineCompleto.filter(i => i.tipo === this.filtroActivo);
+    const visibles = this.ocultos.size ? this.timelineCompleto.filter((i) => !this.ocultos.has(i.tipo + '-' + i.id)) : this.timelineCompleto;
+    if (this.filtroActivo === 'todo') return visibles;
+    return visibles.filter(i => i.tipo === this.filtroActivo);
   }
 
   /** Palabra que el usuario debe escribir para confirmar (cambia con el idioma) */
@@ -112,12 +160,74 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   private rutaSub?: Subscription;
 
   ngOnInit(): void {
+    const tab = this.route.snapshot?.queryParamMap?.get('tab') as PestanaSiembra | null;
+    if (tab && PESTANAS_SIEMBRA.some((p) => p.id === tab)) this.pestana = tab;
+    const filtro = leerDeUrl(this.route, 'filtro', ['actividad', 'fumigacion', 'cosecha']);
+    if (filtro) this.filtroActivo = filtro as 'actividad' | 'fumigacion' | 'cosecha';
     // Se reutiliza al pasar de una siembra a otra: recargar con cada id
     const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
     this.rutaSub = params$.subscribe((p) => this.cargarSiembra(Number(p.get('id'))));
+    // Al volver de un formulario del panel la ficha no se crea de nuevo: la pestaña sigue a la dirección
+    this.route.queryParamMap?.subscribe((q) => {
+      const t = q.get('tab') as PestanaSiembra | null;
+      this.pestana = t && PESTANAS_SIEMBRA.some((p) => p.id === t) ? t : 'resumen';
+      const nuevo = q.get('nuevo');
+      if (nuevo) this.resaltarCuandoAparezca(nuevo);
+      this.cdr.markForCheck();
+    });
+  }
+
+  /** Registro recién guardado ('cosecha-12'): se lleva a la vista y se marca un momento */
+  resaltar: string | null = null;
+  private relojResaltar: ReturnType<typeof setTimeout> | null = null;
+
+  private resaltarCuandoAparezca(clave: string, intentos = 0): void {
+    const el = document.getElementById('reg-' + clave);
+    // Los registros llegan del servidor después de volver del formulario: se espera un poco
+    if (!el) {
+      if (intentos < 20) setTimeout(() => this.resaltarCuandoAparezca(clave, intentos + 1), 150);
+      return;
+    }
+    this.resaltar = clave;
+    this.cdr.markForCheck();
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (this.relojResaltar) clearTimeout(this.relojResaltar);
+    this.relojResaltar = setTimeout(() => { this.resaltar = null; this.cdr.markForCheck(); }, 2600);
+    // Se quita de la dirección para que recargar no vuelva a marcarlo
+    guardarEnUrl(this.router, this.route, { nuevo: null });
+  }
+
+  // ── Panel de registro (actividad, fumigación o cosecha encima de la ficha) ──
+  panelAbierto = false;
+
+  alAbrirPanel(): void {
+    this.panelAbierto = true;
+    document.body.classList.add('con-panel');
+  }
+
+  /** El formulario se cerró (guardó, canceló o se volvió atrás): se recargan los registros y los totales */
+  alCerrarPanel(): void {
+    this.panelAbierto = false;
+    document.body.classList.remove('con-panel');
+    if (!this.siembra?.id) return;
+    this.version++;
+    this.cargarDatos(this.siembra.id);
+    this.cargarResumen(this.siembra.id);
+  }
+
+  cerrarPanel(): void {
+    if (!this.siembraId) return;
+    this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: this.pestana === 'resumen' ? null : this.pestana } });
+  }
+
+  @HostListener('document:keydown.escape')
+  alEscape(): void {
+    if (this.panelAbierto) this.cerrarPanel();
   }
 
   ngOnDestroy(): void {
+    this.hacerBorradoPendiente();
+    document.body.classList.remove('con-panel');
     this.rutaSub?.unsubscribe();
   }
 
@@ -133,6 +243,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.cultivoService.buscarSiembra(id).subscribe({
       next: (siembra) => {
         this.siembra = siembra;
+        this.cargarVecinos(id);
         this.cargarDatos(id);
         this.cargarResumen(id);
         // Cargar coordenadas reales del lote/finca
@@ -258,6 +369,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
 
   setFiltro(filtro: 'todo' | 'actividad' | 'fumigacion' | 'cosecha'): void {
     this.filtroActivo = filtro;
+    guardarEnUrl(this.router, this.route, { filtro: filtro === 'todo' ? null : filtro });
   }
 
   private cargarResumen(id: number): void {
@@ -327,28 +439,53 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.router.navigate(['/crops/planting', this.siembra!.id, ruta, item.id]);
   }
 
-  async eliminarRegistro(item: TimelineItem): Promise<void> {
+  // ── Borrar un registro con "Deshacer" ──────────────────────────────
+  // El registro desaparece al instante y se borra en el servidor a los pocos segundos, salvo que se toque
+  // "Deshacer". Si se sale de la siembra antes, el borrado se hace en ese momento.
+  private ocultos = new Set<string>();
+  private borradoPendiente: { clave: string; ejecutar: () => void; reloj: ReturnType<typeof setTimeout> } | null = null;
+
+  eliminarRegistro(item: TimelineItem): void {
+    if (!this.siembra?.id) return;
+    this.hacerBorradoPendiente(); // si había otro esperando, se hace ya
+    const clave = item.tipo + '-' + item.id;
+    const siembraId = this.siembra.id;
+    this.ocultos.add(clave);
+    const ejecutar = () => {
+      if (this.borradoPendiente?.clave === clave) { clearTimeout(this.borradoPendiente.reloj); this.borradoPendiente = null; }
+      const peticion = item.tipo === 'actividad'
+        ? this.cultivoService.eliminarActividad(item.id)
+        : item.tipo === 'fumigacion'
+          ? this.cultivoService.eliminarFumigacion(item.id)
+          : this.cultivoService.eliminarCosecha(item.id);
+      peticion.subscribe({
+        next: () => {
+          if (this.siembra?.id !== siembraId) return;
+          this.version++; this.cargarDatos(siembraId); this.cargarResumen(siembraId);
+        },
+        error: (e) => {
+          this.ocultos.delete(clave);
+          this.error = e?.error?.message || 'temporadas.registro.errors.delete';
+          this.cdr.detectChanges();
+        },
+      });
+    };
+    this.borradoPendiente = { clave, ejecutar, reloj: setTimeout(ejecutar, DESHACER_MS) };
     const nombre = item.tituloKey ? this.translate.instant(item.tituloKey) : item.titulo;
-    const ok = await this.confirm.preguntar({
-      titulo: this.translate.instant('temporadas.registro.deleteTitle'),
-      mensaje: this.translate.instant('temporadas.registro.deleteMsg', { nombre, fecha: this.fmtFecha(item.fecha) }),
-      confirmar: this.translate.instant('temporadas.registro.delete'),
-      peligro: true,
+    this.avisos.conDeshacer('temporadas.registro.deleted', { nombre }, () => {
+      if (this.borradoPendiente?.clave !== clave) return;
+      clearTimeout(this.borradoPendiente.reloj);
+      this.borradoPendiente = null;
+      this.ocultos.delete(clave);
+      this.cdr.detectChanges();
     });
-    if (!ok || !this.siembra?.id) return;
-    const peticion = item.tipo === 'actividad'
-      ? this.cultivoService.eliminarActividad(item.id)
-      : item.tipo === 'fumigacion'
-        ? this.cultivoService.eliminarFumigacion(item.id)
-        : this.cultivoService.eliminarCosecha(item.id);
-    peticion.subscribe({
-      next: () => { this.version++; this.cargarDatos(this.siembra!.id!); this.cargarResumen(this.siembra!.id!); },
-      error: (e) => {
-        this.error = e?.error?.message || 'temporadas.registro.errors.delete';
-        this.cdr.detectChanges();
-      },
-    });
+    this.cdr.detectChanges();
   }
+
+  private hacerBorradoPendiente(): void {
+    this.borradoPendiente?.ejecutar();
+  }
+
 
   iniciarEliminacion(): void {
     this.mostrarConfirmacion = true;

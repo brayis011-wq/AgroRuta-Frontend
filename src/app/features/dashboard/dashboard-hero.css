@@ -64,3 +64,11 @@
   .campo { width: 62%; opacity: .55; }
   .alm-dicho { padding-left: 0; border-left: 0; }
 }
+
+/* Almanaque más discreto: una sola línea en escritorio y solo la luna en el celular */
+.alm-luna svg { width: 28px; height: 28px; }
+.alm-dicho q { font-size: .95rem; }
+@media (max-width: 760px) {
+  .almanaque { padding-top: .7rem; }
+  .alm-luna small, .alm-dicho { display: none; }
+}

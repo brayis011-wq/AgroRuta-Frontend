@@ -19,7 +19,7 @@
           </div>
           <div class="field">
             <label class="field__label" for="hectareas"><i class="ti ti-ruler-2" aria-hidden="true"></i> {{ 'cultivo.fincas.new.hectares' | translate }}</label>
-            <input id="hectareas" type="number" [(ngModel)]="form.hectareas" name="hectareas" [placeholder]="'cultivo.fincas.new.hectaresPlaceholder' | translate" step="0.1" min="0.1" required />
+            <input id="hectareas" type="number" inputmode="decimal" [(ngModel)]="form.hectareas" name="hectareas" [placeholder]="'cultivo.fincas.new.hectaresPlaceholder' | translate" step="0.1" min="0.1" required />
           </div>
         </div>
 

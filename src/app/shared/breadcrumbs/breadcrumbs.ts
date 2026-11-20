@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener, OnInit, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
@@ -12,6 +12,8 @@ export interface Miga {
   clave?: string;
   /** A dónde lleva. El último paso es la pantalla actual y nunca es enlace */
   ruta?: (string | number)[] | null;
+  /** Otros del mismo nivel (las otras fincas, los otros lotes): se abren desde la miga para saltar sin volver */
+  hermanos?: { texto: string; ruta: (string | number)[]; actual?: boolean }[];
 }
 
 /**
@@ -32,6 +34,23 @@ export class MigasComponent implements OnInit {
   private lang = inject(LanguageService);
 
   readonly items = input.required<Miga[]>();
+  /** Índice de la miga con su lista de hermanos abierta */
+  readonly abierta = signal<number | null>(null);
+  private readonly el = inject(ElementRef<HTMLElement>);
+
+  alternar(i: number): void {
+    this.abierta.set(this.abierta() === i ? null : i);
+  }
+
+  @HostListener('document:click', ['$event.target'])
+  alTocarFuera(destino: EventTarget | null): void {
+    if (this.abierta() !== null && destino instanceof Node && !this.el.nativeElement.contains(destino)) this.abierta.set(null);
+  }
+
+  @HostListener('document:keydown.escape')
+  alEscape(): void {
+    this.abierta.set(null);
+  }
 
   /** El paso anterior al actual que lleva a algún lado (para el botón de volver en el celular) */
   readonly padre = computed(() => {

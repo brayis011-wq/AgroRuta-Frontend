@@ -23,7 +23,7 @@
     <div class="form-card">
       <div class="form-card__accent"></div>
 
-      <form (ngSubmit)="onSubmit()" #cosechaForm="ngForm">
+      <form arSiguienteCampo (ngSubmit)="onSubmit()" #cosechaForm="ngForm">
 
         <!-- Fecha -->
         <div class="field">
@@ -50,7 +50,7 @@
           <div class="field__input-wrap">
             <input
               id="cantidadKg"
-              type="number"
+              type="number" inputmode="decimal"
               [(ngModel)]="form.cantidadKg"
               name="cantidadKg"
               placeholder="0.0"
@@ -61,20 +61,15 @@
         </div>
 
         <!-- Calidad -->
-        <div class="field">
-          <label class="field__label" for="calidad">
+        <div class="field" role="radiogroup" aria-labelledby="calidad-label">
+          <span class="field__label" id="calidad-label">
             <i class="ti ti-award" aria-hidden="true"></i> {{ 'siembra.harvest.quality' | translate }}
-          </label>
-          <div class="field__input-wrap">
-            <select
-              id="calidad"
-              [(ngModel)]="form.calidad"
-              name="calidad"
-              required
-            >
-              <option value="">{{ 'siembra.harvest.qualityPlaceholder' | translate }}</option>
-              <option *ngFor="let calidad of calidades" [value]="calidad">{{ 'enums.calidadCosecha.' + calidad | translate }}</option>
-            </select>
+          </span>
+          <div class="opciones">
+            <label class="opcion" *ngFor="let calidad of calidades">
+              <input type="radio" name="calidad" [value]="calidad" [(ngModel)]="form.calidad" required />
+              <span>{{ 'enums.calidadCosecha.' + calidad | translate }}</span>
+            </label>
           </div>
         </div>
 
@@ -115,16 +110,19 @@
           </div>
         </div>
 
-        <button type="submit" class="btn-submit" [disabled]="cargando || (pideConfirmacion && !confirmarCarencia)">
-          <span class="btn-submit__text" *ngIf="!cargando">
-            <span>{{ (registroId ? 'common.save' : 'siembra.harvest.submit') | translate }}</span>
-            <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
-          </span>
-          <span class="btn-submit__loader" *ngIf="cargando">
-            <span class="spinner"></span>
-            {{ 'siembra.harvest.saving' | translate }}
-          </span>
-        </button>
+        <div class="form-actions">
+          <a class="btn-cancelar" [routerLink]="['/crops/planting', siembraId]" [queryParams]="{ tab: 'registros' }">{{ 'common.cancel' | translate }}</a>
+          <button type="submit" class="btn-submit" [disabled]="cargando || (pideConfirmacion && !confirmarCarencia)">
+            <span class="btn-submit__text" *ngIf="!cargando">
+              <span>{{ (registroId ? 'common.save' : 'siembra.harvest.submit') | translate }}</span>
+              <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
+            </span>
+            <span class="btn-submit__loader" *ngIf="cargando">
+              <span class="spinner"></span>
+              {{ 'siembra.harvest.saving' | translate }}
+            </span>
+          </button>
+        </div>
 
       </form>
     </div>

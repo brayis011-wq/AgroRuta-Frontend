@@ -20,6 +20,8 @@
           </p>
         </div>
         <div class="cv-acciones">
+          @let v = vecinos();
+          <app-anterior-siguiente [anterior]="v.anterior" [siguiente]="v.siguiente" [posicion]="v.posicion" [total]="v.total" etiqueta="lotes.detail.siblings" />
           <button type="button" class="btn" (click)="editar()"><i class="ti ti-pencil"></i> {{ 'common.edit' | translate }}</button>
           @if (!siembra()) {
             @if (estado() === 'EN_DESCANSO') {
@@ -37,7 +39,7 @@
           </label>
           <label>
             <span>{{ 'temporadas.lote.area' | translate }}</span>
-            <input name="area" type="number" min="0.01" step="0.01" [(ngModel)]="formArea" required>
+            <input name="area" type="number" inputmode="decimal" min="0.01" step="0.01" [(ngModel)]="formArea" required>
           </label>
           <div class="editar-botones">
             <button type="button" class="btn btn-texto" (click)="editando.set(false)">{{ 'common.cancel' | translate }}</button>
@@ -68,7 +70,7 @@
   } @else if (lote()) {
     @if (siembra(); as s) {
       <section class="actual">
-        <a class="resumen" [routerLink]="['/crops/planting', s.id]">
+        <a class="resumen" [routerLink]="['/crops/planting', s.id]" [arPrecargar]="{ tipo: 'planting', id: s.id }">
           <div class="resumen-cultivo">
             <span class="icono"><i class="ti ti-seedling"></i></span>
             <div>
@@ -77,6 +79,7 @@
               <p class="resumen-sub">
                 {{ 'temporadas.lote.plantedOn' | translate: { date: fmtFecha(s.fechaSiembra) } }}
                 · {{ 'temporadas.lote.plants' | translate: { count: fmtNum(s.cantidadPlantas) } }}
+                · <b class="etapa">{{ 'enums.etapaCultivo.' + s.estadoCultivo | translate }}</b>
               </p>
             </div>
           </div>
@@ -86,7 +89,6 @@
           </div>
           <span class="resumen-ir"><i class="ti ti-eye" aria-hidden="true"></i> {{ 'temporadas.lote.open' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
         </a>
-        <app-ciclo-etapas [siembra]="s" (cambio)="alCambiarSiembra($event)" />
       </section>
     } @else {
       <section class="vacio">

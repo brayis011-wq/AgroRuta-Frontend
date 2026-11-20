@@ -1,3 +1,4 @@
+import { DescargasReporteComponent } from '../downloads/report-downloads';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CropReport, ReportService } from '../../../core/services/report.service';
@@ -8,7 +9,7 @@ import { ETAPAS, filtrarSiembras, resumenCultivos, ubicacionDe } from '../report
 @Component({
   selector: 'app-crop-report',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, DescargasReporteComponent],
   templateUrl: './crop-report.html',
   styleUrls: ['../report-shared.css', '../report-table.css', './crop-report.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

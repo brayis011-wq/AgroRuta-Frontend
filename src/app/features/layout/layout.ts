@@ -1,7 +1,12 @@
-import { Component, DestroyRef, ElementRef, HostListener, NgZone, afterNextRender, computed, effect, inject, signal } from '@angular/core';
+import { ATAJOS, IR_A, escribiendoEn, nuevoSegun } from './shortcuts';
+import { Component, DestroyRef, ElementRef, HostListener, NgZone, afterNextRender, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { DecimalPipe, NgTemplateOutlet, UpperCasePipe } from '@angular/common';
+import { DecimalPipe, Location, NgTemplateOutlet, UpperCasePipe } from '@angular/common';
+import { esDeslizarParaVolver } from './swipe-back';
+
+/** Píxeles que hay que tirar hacia abajo (ya con resistencia) para actualizar la pantalla */
+const DISTANCIA_ACTUALIZAR = 70;
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
@@ -39,6 +44,8 @@ export interface ItemSubmenu {
   query?: Record<string, string>;
   contador?: boolean;
   icono?: string;
+  /** Otra ruta que también marca esta opción como la actual (Labores, dentro de "Cargos y labores") */
+  tambien?: string;
   /** Subtítulo dentro del submenú (no es un enlace) */
   titulo?: boolean;
 }
@@ -76,6 +83,10 @@ export class LayoutComponent {
   readonly lugarClima = computed(() => municipio(this.fincaActiva.paraClima()) || this.clima()?.city || '');
   readonly consejo = computed(() => { const c = this.clima(); return c ? consejoFumigacion(c) : null; });
   readonly iconoClima = computed(() => iconoClima(this.clima()?.iconUrl));
+  /** En el Inicio el clima ya sale en grande: el menú no lo repite */
+  readonly enInicio = signal(false);
+  /** Ruta actual sin parámetros (para las opciones del menú que abarcan dos pantallas) */
+  readonly ruta = signal('');
   /** Menú completo abierto como cajón (solo celular) */
   readonly cajonAbierto = signal(false);
   /** Celular: la barra inferior se esconde al bajar por la página y mientras se escribe en un campo */
@@ -91,8 +102,8 @@ export class LayoutComponent {
     { ruta: '/worker/workdays', clave: 'layout.nav.wages' },
     { ruta: '/worker/payrolls', clave: 'layout.nav.payrolls', contador: true },
     { ruta: '/worker/payments', clave: 'layout.nav.payments' },
-    { ruta: '/worker/positions', clave: 'layout.nav.positions' },
-    { ruta: '/worker/labors', clave: 'layout.nav.activities' },
+    // Cargos y Labores van juntos (dos pestañas en la misma pantalla)
+    { ruta: '/worker/positions', clave: 'layout.nav.catalog', tambien: '/worker/labors' },
   ];
 
   readonly subReportes: ItemSubmenu[] = [
@@ -167,6 +178,87 @@ export class LayoutComponent {
     this.escribiendo.set(true);
   }
 
+  // ── Celular (app instalada): deslizar desde el borde izquierdo vuelve a la pantalla anterior ──
+  private readonly ubicacion = inject(Location);
+  private toqueInicio: { x: number; y: number; t: number } | null = null;
+
+  // ── Celular (app instalada): bajar el dedo desde arriba del todo actualiza la pantalla ──
+  /** Cuánto se ha tirado hacia abajo (0 = nada); con más de DISTANCIA_ACTUALIZAR se actualiza al soltar */
+  readonly tiron = signal(0);
+  readonly distanciaActualizar = DISTANCIA_ACTUALIZAR;
+  private tironInicio: number | null = null;
+
+  /** En el navegador ya existen estos gestos (volver, actualizar): solo se agregan en la app instalada */
+  private esAppInstalada(): boolean {
+    return window.matchMedia?.('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true;
+  }
+
+  @HostListener('document:touchstart', ['$event'])
+  alEmpezarToque(e: TouchEvent): void {
+    const p = e.touches[0];
+    const instalada = this.esAppInstalada() && window.innerWidth <= 760 && !this.cajonAbierto() && !document.body.classList.contains('con-panel');
+    // Volver: desde el borde izquierdo
+    this.toqueInicio = instalada && p && p.clientX <= 24 ? { x: p.clientX, y: p.clientY, t: Date.now() } : null;
+    // Actualizar: con la página arriba del todo
+    this.tironInicio = instalada && p && window.scrollY <= 0 ? p.clientY : null;
+    if (this.tironInicio !== null) {
+      this.zonaToques.runOutsideAngular(() => document.addEventListener('touchmove', this.moverToque, { passive: true }));
+    }
+  }
+
+  private readonly zonaToques = inject(NgZone);
+  /** Se escucha el movimiento solo mientras dura el gesto y fuera de Angular (no recalcula la pantalla en cada scroll) */
+  private readonly moverToque = (e: TouchEvent) => this.alMoverToque(e);
+
+  alMoverToque(e: TouchEvent): void {
+    if (this.tironInicio === null) return;
+    const dy = (e.touches[0]?.clientY ?? 0) - this.tironInicio;
+    // Con resistencia: el indicador baja menos que el dedo
+    this.tiron.set(dy > 0 && window.scrollY <= 0 ? Math.min(dy * 0.5, DISTANCIA_ACTUALIZAR * 1.4) : 0);
+  }
+
+  @HostListener('document:touchend', ['$event'])
+  alTerminarToque(e: TouchEvent): void {
+    const ini = this.toqueInicio;
+    this.toqueInicio = null;
+    const tiro = this.tiron();
+    this.tironInicio = null;
+    document.removeEventListener('touchmove', this.moverToque);
+    this.tiron.set(0);
+    if (tiro >= DISTANCIA_ACTUALIZAR) { window.location.reload(); return; }
+    const p = e.changedTouches[0];
+    if (!ini || !p || this.ruta() === '/dashboard') return;
+    if (esDeslizarParaVolver(ini, { x: p.clientX, y: p.clientY, t: Date.now() })) this.ubicacion.back();
+  }
+
+  // ── Atajos de teclado (computador) ──────────────────────────────────
+  private readonly buscador = viewChild(BuscadorComponent);
+  readonly ayudaAtajos = signal(false);
+  readonly atajos = ATAJOS;
+  /** Se presionó G: la siguiente letra dice a dónde ir (durante 1,2 s) */
+  private esperandoDestino = 0;
+
+  @HostListener('document:keydown', ['$event'])
+  alTeclear(e: KeyboardEvent): void {
+    if (e.ctrlKey || e.metaKey || e.altKey || escribiendoEn(e.target) || document.querySelector('dialog[open], .caja[role=dialog]')) return;
+    const k = e.key.toLowerCase();
+    if (this.esperandoDestino && Date.now() - this.esperandoDestino < 1200 && IR_A[k]) {
+      e.preventDefault();
+      this.esperandoDestino = 0;
+      this.router.navigate([IR_A[k]]);
+      return;
+    }
+    this.esperandoDestino = 0;
+    if (k === 'g') { this.esperandoDestino = Date.now(); return; }
+    if (e.key === '/') { e.preventDefault(); this.buscador()?.abrir(); return; }
+    if (e.key === '?') { e.preventDefault(); this.ayudaAtajos.set(!this.ayudaAtajos()); return; }
+    if (k === 'n' && !document.body.classList.contains('con-panel')) {
+      e.preventDefault();
+      const destino = nuevoSegun(this.ruta());
+      this.router.navigate(destino.ruta, { queryParams: destino.query });
+    }
+  }
+
   @HostListener('document:focusout')
   alDesenfocar(): void {
     if (!this.escribiendo()) return;
@@ -193,6 +285,8 @@ export class LayoutComponent {
   }
 
   private alNavegar(url: string): void {
+    this.ruta.set(url.split(/[?#]/)[0]);
+    this.enInicio.set(this.ruta() === '/dashboard');
     this.cajonAbierto.set(false);
     this.barraOculta.set(false);
     this.menuFincas.set(false);

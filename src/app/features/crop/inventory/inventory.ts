@@ -10,6 +10,7 @@ import {
   MovimientoInventario, StockInsumo, UnidadBase, enUnidadGrande, formatoCantidad, unidadBaseDe, unidadGrande, unidadesDe,
 } from '../../../core/models/inventory.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
+import { ActivatedRoute } from '@angular/router';
 import { LanguageService } from '../../../core/services/language.service';
 
 type Panel = 'compra' | 'ajuste' | 'minimo';
@@ -32,6 +33,7 @@ export class InventarioComponent implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly fb = inject(FormBuilder);
   private readonly lang = inject(LanguageService);
+  private readonly route = inject(ActivatedRoute, { optional: true });
 
   readonly stock = signal<StockInsumo[] | null>(null);
   readonly catalogo = signal<AgriculturalInput[]>([]);
@@ -71,6 +73,8 @@ export class InventarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
+    // ?compra=1 (desde el buscador): abre de una vez el formulario de compra
+    if (this.route?.snapshot?.queryParamMap?.get('compra')) this.abrirCompra();
     this.insumosService.getAll().subscribe({ next: (l) => this.catalogo.set(l), error: () => this.catalogo.set([]) });
     // La unidad de la compra sigue al insumo elegido (no se mezclan litros con gramos)
     this.compra.controls.insumoId.valueChanges.subscribe((id) => {

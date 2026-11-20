@@ -111,7 +111,7 @@
         } @else {
           <div class="cultivos">
             @for (c of cultivos(); track c.siembra.id; let i = $index) {
-              <a class="cultivo" [routerLink]="['/crops/planting', c.siembra.id]" [style.animation-delay.ms]="i * 50">
+              <a class="cultivo" [routerLink]="['/crops/planting', c.siembra.id]" [arPrecargar]="{ tipo: 'planting', id: c.siembra.id }" [style.animation-delay.ms]="i * 50">
                 <span class="cul-ic"><i class="ti ti-seedling" aria-hidden="true"></i></span>
                 <span class="cul-txt">
                   <strong>{{ c.siembra.tipoCultivo || ('dashboard.crops.crop' | translate) }}@if (c.siembra.variedad) { · {{ c.siembra.variedad }} }</strong>
@@ -170,20 +170,14 @@
 
       <!-- Consejos del clima para lo programado: "Fumiga hoy entre las 7 y las 10, llueve en 12 horas" (solo si hay algo que avisar) -->
       <app-weather-advice class="consejos-clima" />
+
+      @if (lugarClima() === 'izquierda') {
+        <section class="clima fijo"><ng-container *ngTemplateOutlet="climaTpl; context: { ancho: false }" /></section>
+      }
     </div>
 
     <div class="col-lateral">
-      <!-- Clima de la finca elegida -->
-      <section class="clima fijo">
-        @if (climaFinca(); as f) {
-          <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
-                              [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" />
-        } @else {
-          <app-weather-widget city="Bogotá" />
-        }
-      </section>
-
-      <!-- Pendientes -->
+      <!-- Pendientes: lo primero que se ve a la derecha (en el celular, lo primero después del saludo) -->
       <section class="tarjeta pendientes">
         <header><h2><i class="ti ti-bell" aria-hidden="true"></i> {{ 'dashboard.pending.title' | translate }}</h2></header>
         @if (cargando()) {
@@ -208,9 +202,27 @@
         }
       </section>
 
+      @if (lugarClima() === 'derecha') {
+        <section class="clima fijo"><ng-container *ngTemplateOutlet="climaTpl; context: { ancho: false }" /></section>
+      }
     </div>
   </div>
+
+  <!-- Con poca información el clima va abajo, a lo ancho y bajito: así ninguna columna queda con un hueco -->
+  @if (lugarClima() === 'abajo') {
+    <section class="clima ancho"><ng-container *ngTemplateOutlet="climaTpl; context: { ancho: true }" /></section>
+  }
 </div>
+
+<!-- Clima de la finca elegida (en el Inicio el menú lateral no repite el suyo) -->
+<ng-template #climaTpl let-ancho="ancho">
+  @if (climaFinca(); as f) {
+    <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
+                        [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" [horizontal]="ancho" />
+  } @else {
+    <app-weather-widget city="Bogotá" [horizontal]="ancho" />
+  }
+</ng-template>
 
 <ng-template #tend let-t="t">
   @if (t.porcentaje === null) {

@@ -62,3 +62,6 @@
   .cul-fin { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .cultivo { animation: none; } }
+
+/* Clima abajo a lo ancho (cuando hay poca información en las dos columnas) */
+.clima.ancho { animation: entrar .35s ease-out both; }

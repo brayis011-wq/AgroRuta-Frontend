@@ -7,8 +7,7 @@
       <p class="cv-sub">{{ 'workers.home.subtitle' | translate }}</p>
     </div>
     <div class="cv-acciones">
-      <button type="button" class="btn" (click)="irA('cargos')"><i class="ti ti-tags" aria-hidden="true"></i> {{ 'workers.home.posts' | translate }}</button>
-      <button type="button" class="btn" (click)="irA('actividades')"><i class="ti ti-list-check" aria-hidden="true"></i> {{ 'workers.home.activities' | translate }}</button>
+      <button type="button" class="btn" (click)="irA('cargos')"><i class="ti ti-tags" aria-hidden="true"></i> {{ 'workers.catalog.label' | translate }}</button>
       <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-user-plus" aria-hidden="true"></i> {{ 'workers.home.newWorker' | translate }}</button>
     </div>
   </header>
@@ -106,9 +105,9 @@
                 </td>
                 <td class="acc" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
                   <span class="acc-in">
-                    <button type="button" class="btn-ic verde-h" [disabled]="t.estado !== 'ACTIVO'" [title]="'workers.home.list.registerWage' | translate" [attr.aria-label]="'workers.home.list.registerWage' | translate" (click)="registrarJornal(t)"><i class="ti ti-calendar-plus" aria-hidden="true"></i></button>
-                    <button type="button" class="btn-ic" [title]="'workers.home.list.viewWages' | translate" [attr.aria-label]="'workers.home.list.viewWages' | translate" (click)="verJornales(t)"><i class="ti ti-calendar-week" aria-hidden="true"></i></button>
-                    <button type="button" class="btn-ic" [title]="'workers.home.list.viewRosters' | translate" [attr.aria-label]="'workers.home.list.viewRosters' | translate" (click)="verNominas(t)"><i class="ti ti-file-invoice" aria-hidden="true"></i></button>
+                    <button type="button" class="btn-ic con-texto verde-h" [disabled]="t.estado !== 'ACTIVO'" [title]="'workers.home.list.registerWage' | translate" [attr.aria-label]="'workers.home.list.registerWage' | translate" (click)="registrarJornal(t)"><i class="ti ti-calendar-plus" aria-hidden="true"></i><span class="txt-corto">{{ 'workers.home.list.short.wage' | translate }}</span></button>
+                    <button type="button" class="btn-ic con-texto" [title]="'workers.home.list.viewWages' | translate" [attr.aria-label]="'workers.home.list.viewWages' | translate" (click)="verJornales(t)"><i class="ti ti-calendar-week" aria-hidden="true"></i><span class="txt-corto">{{ 'workers.home.list.short.wages' | translate }}</span></button>
+                    <button type="button" class="btn-ic con-texto" [title]="'workers.home.list.viewRosters' | translate" [attr.aria-label]="'workers.home.list.viewRosters' | translate" (click)="verNominas(t)"><i class="ti ti-file-invoice" aria-hidden="true"></i><span class="txt-corto">{{ 'workers.home.list.short.rosters' | translate }}</span></button>
                     <i class="ti ti-chevron-right fin" aria-hidden="true"></i>
                   </span>
                 </td>

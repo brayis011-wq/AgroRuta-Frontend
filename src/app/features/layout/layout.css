@@ -74,7 +74,7 @@
   transition: background .15s, color .15s;
 }
 .sub a:hover { background: var(--ar-superficie); color: var(--ar-tinta); }
-.sub a.on {
+.sub a.on, .sub a.on-tambien {
   background: linear-gradient(90deg, var(--ar-verde-600), #3d9142); color: #fff; font-weight: 600;
   box-shadow: 0 3px 8px rgba(46, 125, 50, .28);
 }

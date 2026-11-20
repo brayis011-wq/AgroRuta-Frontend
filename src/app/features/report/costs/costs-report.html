@@ -5,13 +5,8 @@
       <p>{{ 'reports.costs.subtitle' | translate }}</p>
     </div>
     <div class="rep-acciones">
-      <button type="button" class="btn-csv" (click)="descargarExcel()" [disabled]="error() || !filas().length" [title]="'reports.csv.hint' | translate">
-        <i class="ti ti-file-spreadsheet" aria-hidden="true"></i> {{ 'reports.csv.button' | translate }}
-      </button>
-      <button type="button" class="btn-pdf" (click)="descargarPdf()" [disabled]="downloading() || error()">
-        <i class="ti" [class.ti-file-type-pdf]="!downloading()" [class.ti-loader-2]="downloading()" [class.gira]="downloading()" aria-hidden="true"></i>
-        {{ (downloading() ? 'reports.downloading' : 'reports.downloadPdf') | translate }}
-      </button>
+      <app-descargas [descargando]="downloading()" [deshabilitado]="error()" [hayDatos]="filas().length > 0"
+                     (pdf)="descargarPdf()" (csv)="descargarExcel()" />
     </div>
   </header>
   @if (downloadError()) { <div class="aviso error" role="alert">{{ 'reports.downloadError' | translate }}</div> }
@@ -35,7 +30,7 @@
     <div class="kpis">
       <article class="kpi"><span class="ic azul"><i class="ti ti-receipt" aria-hidden="true"></i></span>
         <div><small>{{ 'reports.costs.kpi.cost' | translate }}</small><strong>{{ pesos(t.costo) }}</strong>
-          <em>{{ 'reports.costs.kpi.seasons' | translate: { count: t.temporadas } }}</em></div></article>
+          <em>{{ (t.temporadas === 1 ? 'reports.costs.kpi.seasonsOne' : 'reports.costs.kpi.seasons') | translate: { count: t.temporadas } }}</em></div></article>
       <article class="kpi"><span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
         <div><small>{{ 'reports.costs.kpi.income' | translate }}</small><strong>{{ pesos(t.ingresos) }}</strong>
           <em>{{ 'reports.costs.kpi.kg' | translate: { kg: numero(t.kg) } }}</em></div></article>

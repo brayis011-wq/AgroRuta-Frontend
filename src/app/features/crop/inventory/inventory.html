@@ -61,10 +61,10 @@
                   <td class="num">{{ pesos(s.valorStock) }}</td>
                   <td class="acc">
                     <span class="acc-in">
-                      <button type="button" class="btn-ic verde-h" (click)="abrirCompra(s)" [title]="'inventario.buy' | translate" [attr.aria-label]="'inventario.buy' | translate"><i class="ti ti-shopping-cart-plus" aria-hidden="true"></i></button>
-                      <button type="button" class="btn-ic" (click)="abrirAjuste(s)" [title]="'inventario.adjust' | translate" [attr.aria-label]="'inventario.adjust' | translate"><i class="ti ti-scale" aria-hidden="true"></i></button>
-                      <button type="button" class="btn-ic" (click)="abrirMinimo(s)" [title]="'inventario.minimum' | translate" [attr.aria-label]="'inventario.minimum' | translate"><i class="ti ti-bell" aria-hidden="true"></i></button>
-                      <button type="button" class="btn-ic" (click)="alternarHistorial(s)" [title]="'inventario.history.title' | translate" [attr.aria-label]="'inventario.history.title' | translate" [attr.aria-expanded]="abierto() === s.insumoId"><i class="ti ti-history" aria-hidden="true"></i></button>
+                      <button type="button" class="btn-ic con-texto verde-h" (click)="abrirCompra(s)" [title]="'inventario.buy' | translate" [attr.aria-label]="'inventario.buy' | translate"><i class="ti ti-shopping-cart-plus" aria-hidden="true"></i><span class="txt-corto">{{ 'inventario.short.buy' | translate }}</span></button>
+                      <button type="button" class="btn-ic con-texto" (click)="abrirAjuste(s)" [title]="'inventario.adjust' | translate" [attr.aria-label]="'inventario.adjust' | translate"><i class="ti ti-scale" aria-hidden="true"></i><span class="txt-corto">{{ 'inventario.short.adjust' | translate }}</span></button>
+                      <button type="button" class="btn-ic con-texto" (click)="abrirMinimo(s)" [title]="'inventario.minimum' | translate" [attr.aria-label]="'inventario.minimum' | translate"><i class="ti ti-bell" aria-hidden="true"></i><span class="txt-corto">{{ 'inventario.short.minimum' | translate }}</span></button>
+                      <button type="button" class="btn-ic con-texto" (click)="alternarHistorial(s)" [title]="'inventario.history.title' | translate" [attr.aria-label]="'inventario.history.title' | translate" [attr.aria-expanded]="abierto() === s.insumoId"><i class="ti ti-history" aria-hidden="true"></i><span class="txt-corto">{{ 'inventario.short.history' | translate }}</span></button>
                     </span>
                   </td>
                 </tr>
@@ -105,8 +105,10 @@
         <p class="nota pista">{{ 'inventario.hint' | translate }}</p>
       }
     </section>
-  } @else {
-    <p class="suave">{{ 'common.loading' | translate }}</p>
+  } @else if (!error()) {
+    <!-- Mientras llega la bodega: la forma de la pantalla en gris, en vez de un hueco -->
+    <section class="kpis tres" aria-hidden="true">@for (i of [1, 2, 3]; track i) { <div class="esq"></div> }</section>
+    <div class="esq alta" aria-hidden="true"></div>
   }
 </div>
 

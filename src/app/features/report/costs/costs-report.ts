@@ -1,3 +1,4 @@
+import { DescargasReporteComponent } from '../downloads/report-downloads';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -13,7 +14,7 @@ import { FilaCostos, OrdenCostos, ordenarCostos, totalesCostos } from './costs-c
 @Component({
   selector: 'app-costs-report',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, CostosSiembraComponent],
+  imports: [RouterLink, TranslatePipe, CostosSiembraComponent, DescargasReporteComponent],
   templateUrl: './costs-report.html',
   styleUrls: ['../report-shared.css', '../report-table.css', './costs-report.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

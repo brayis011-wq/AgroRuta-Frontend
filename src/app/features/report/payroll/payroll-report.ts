@@ -1,3 +1,4 @@
+import { DescargasReporteComponent } from '../downloads/report-downloads';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PayrollReport, ReportService } from '../../../core/services/report.service';
@@ -9,7 +10,7 @@ import { iniciales as inicialesDe } from '../../../shared/iniciales';
 @Component({
   selector: 'app-payroll-report',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, DescargasReporteComponent],
   templateUrl: './payroll-report.html',
   styleUrls: ['../report-shared.css', '../report-table.css', './payroll-report.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

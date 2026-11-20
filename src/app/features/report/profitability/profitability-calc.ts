@@ -44,8 +44,12 @@ export interface RentabilidadLote {
 
 export interface ResumenRentabilidad {
   lotes: number;
+  /** Lo vendido menos lo gastado en todos los lotes (la misma cifra que la pestaña Costos) */
   ganancia: number | null;
   margen: number | null;
+  /** Lotes con gastos pero todavía sin ventas, y cuánto llevan gastado (ya restado de la ganancia) */
+  sinVentas: number;
+  invertidoSinVentas: number;
   mejorLote: RentabilidadLote | null;
   peorLote: RentabilidadLote | null;
 }
@@ -118,12 +122,17 @@ export function rentabilidadPorLote(filas: FilaCostos[]): RentabilidadLote[] {
 
 export function resumenRentabilidad(lotes: RentabilidadLote[]): ResumenRentabilidad {
   const con = lotes.filter((l) => l.ganancia != null);
-  const ingresos = con.reduce((s, l) => s + l.ingresos, 0);
-  const ganancia = con.length ? con.reduce((s, l) => s + l.ganancia!, 0) : null;
+  const sinVentas = lotes.filter((l) => l.ganancia == null && l.costo > 0);
+  // Igual que en Costos: lo gastado en lotes que aún no venden también se resta
+  const ingresos = lotes.reduce((s, l) => s + l.ingresos, 0);
+  const costo = lotes.reduce((s, l) => s + l.costo, 0);
+  const ganancia = con.length ? ingresos - costo : null;
   return {
     lotes: lotes.length,
     ganancia,
     margen: ganancia != null ? pct(ganancia, ingresos) : null,
+    sinVentas: sinVentas.length,
+    invertidoSinVentas: sinVentas.reduce((s, l) => s + l.costo, 0),
     mejorLote: con[0] ?? null,
     peorLote: con.length > 1 ? con[con.length - 1] : null,
   };

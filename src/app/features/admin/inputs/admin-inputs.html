@@ -40,19 +40,19 @@
       </label>
       <label class="field">
         <span>{{ 'admin.inputs.fields.dose' | translate }}</span>
-        <input id="insumo-dosis" class="input" type="number" step="0.01" min="0.01" formControlName="dosisSugerida"
+        <input id="insumo-dosis" class="input" type="number" inputmode="decimal" step="0.01" min="0.01" formControlName="dosisSugerida"
                [class.bad]="invalido('dosisSugerida')" />
         <small class="err" *ngIf="invalido('dosisSugerida')">{{ 'admin.inputs.errors.dose' | translate }}</small>
       </label>
       <label class="field">
         <span>{{ 'admin.inputs.fields.reentry' | translate }}</span>
-        <input id="insumo-reentrada" class="input" type="number" step="1" min="0" formControlName="reentradaHoras"
+        <input id="insumo-reentrada" class="input" type="number" inputmode="decimal" step="1" min="0" formControlName="reentradaHoras"
                [class.bad]="invalido('reentradaHoras')" />
         <small class="err" *ngIf="invalido('reentradaHoras')">{{ 'admin.inputs.errors.reentry' | translate }}</small>
       </label>
       <label class="field">
         <span>{{ 'temporadas.carencia.field' | translate }}</span>
-        <input id="insumo-carencia" class="input" type="number" step="1" min="0" max="365" formControlName="diasCarencia"
+        <input id="insumo-carencia" class="input" type="number" inputmode="decimal" step="1" min="0" max="365" formControlName="diasCarencia"
                [placeholder]="'temporadas.carencia.unknown' | translate" [class.bad]="invalido('diasCarencia')" />
         <small class="hint">{{ 'temporadas.carencia.labelHint' | translate }}</small>
       </label>

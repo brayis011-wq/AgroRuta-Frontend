@@ -10,12 +10,21 @@ import { AvisosService } from '../../../core/services/toast.service';
   template: `
     <div class="zona" role="status" aria-live="polite">
       @for (a of lista(); track a.id) {
+        @if (a.deshacer) {
+          <!-- Con "Deshacer": no es un solo botón, para que tocar el texto no deshaga por accidente -->
+          <div class="aviso con-accion" [class.saliendo]="avisos.saliendo()">
+            <span class="marca gris" aria-hidden="true"><i class="ti ti-trash"></i></span>
+            <span class="texto">{{ a.clave | translate: a.params }}</span>
+            <button type="button" class="deshacer" (click)="avisos.deshacerActual()">{{ 'common.undo' | translate }}</button>
+          </div>
+        } @else {
         <button type="button" class="aviso" [class.saliendo]="avisos.saliendo()" (click)="avisos.cerrar()">
           <span class="marca" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M6.5 12.6l3.6 3.6 7.4-7.8" /></svg>
           </span>
           <span class="texto">{{ a.clave | translate: a.params }}</span>
         </button>
+        }
       }
     </div>
   `,

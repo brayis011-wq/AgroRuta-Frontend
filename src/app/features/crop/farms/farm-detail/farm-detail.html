@@ -25,7 +25,7 @@
       <form class="tarjeta editar" (ngSubmit)="guardarFinca()">
         <label><span>{{ 'temporadas.finca.name' | translate }}</span><input name="nombre" [(ngModel)]="formFinca.nombre" required maxlength="150"></label>
         <label><span>{{ 'temporadas.finca.location' | translate }}</span><input name="ubicacion" [(ngModel)]="formFinca.ubicacion" required maxlength="255"></label>
-        <label><span>{{ 'temporadas.finca.hectares' | translate }}</span><input name="hectareas" type="number" min="0.01" step="0.01" [(ngModel)]="formFinca.hectareas" required></label>
+        <label><span>{{ 'temporadas.finca.hectares' | translate }}</span><input name="hectareas" type="number" inputmode="decimal" min="0.01" step="0.01" [(ngModel)]="formFinca.hectareas" required></label>
         <div class="editar-botones">
           <button type="button" class="btn btn-texto" (click)="editando = false">{{ 'common.cancel' | translate }}</button>
           <button type="submit" class="btn btn-prim" [disabled]="guardando || !formFinca.nombre.trim() || !formFinca.ubicacion.trim() || !formFinca.hectareas">
@@ -86,7 +86,7 @@
       <section class="lotes">
         @for (lote of lotes; track lote.id) {
           <article class="lote" [class]="'lote estado-' + lote.estado">
-            <button type="button" class="lote-cuerpo" (click)="entrarLote(lote.id!)">
+            <button type="button" class="lote-cuerpo" (click)="entrarLote(lote.id!)" [arPrecargar]="{ tipo: 'plot', id: lote.id }">
               <header>
                 <strong>{{ lote.nombre }}</strong>
                 <span class="chip" [class]="'chip chip-' + lote.estado">{{ 'enums.loteEstado.' + lote.estado | translate }}</span>

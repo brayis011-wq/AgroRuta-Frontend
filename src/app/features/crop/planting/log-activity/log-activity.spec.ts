@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { RegistrarActividad } from './log-activity';
@@ -16,13 +16,12 @@ describe('RegistrarActividad', () => {
       registrarActividad: vi.fn().mockReturnValue(of({})),
     };
 
-    routerMock = { navigate: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [RegistrarActividad],
       providers: [
         { provide: CultivoService, useValue: cultivoServiceMock },
-        { provide: Router, useValue: routerMock },
+        provideRouter([]),
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: (k: string) => (k === 'id' ? '7' : null) } } },
@@ -32,6 +31,8 @@ describe('RegistrarActividad', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(RegistrarActividad);
+    routerMock = TestBed.inject(Router);
+    vi.spyOn(routerMock, 'navigate').mockResolvedValue(true);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -84,7 +85,7 @@ describe('RegistrarActividad', () => {
     component.onSubmit();
     expect(component.exito).toBeTruthy();
     expect(component.cargando).toBe(false);
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 7]);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 7], { queryParams: expect.objectContaining({ tab: 'registros' }) });
     globalThis.setTimeout = orig;
   });
 

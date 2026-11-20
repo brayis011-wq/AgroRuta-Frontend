@@ -1,3 +1,4 @@
+import { DescargasReporteComponent } from '../downloads/report-downloads';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -13,7 +14,7 @@ import { RentabilidadLote, TemporadaLote, anchoBarra, rentabilidadPorLote, resum
 @Component({
   selector: 'app-profitability-report',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, TranslatePipe, DescargasReporteComponent],
   templateUrl: './profitability-report.html',
   styleUrls: ['../report-shared.css', '../report-table.css', './profitability-report.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

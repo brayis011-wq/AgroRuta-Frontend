@@ -5,18 +5,21 @@ import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { FincaActivaService } from '../../core/services/active-farm.service';
+import { RecientesService } from '../../core/services/recent.service';
 import { TrabajadorService } from '../../core/services/worker.service';
 import { CultivoService } from '../../core/services/crop.service';
 import { Trabajador } from '../../core/models/worker.model';
 import { Lote, Siembra, nombreCultivo } from '../../core/models/crop.model';
 
 export interface ResultadoBusqueda {
-  tipo: 'page' | 'farm' | 'plot' | 'planting' | 'worker';
+  tipo: 'action' | 'page' | 'farm' | 'plot' | 'planting' | 'worker';
   titulo: string;
   detalle?: string;
   icono: string;
   ruta: string;
   query?: Record<string, string | number>;
+  /** Visitado hace poco (sale arriba cuando el buscador abre vacío) */
+  reciente?: boolean;
 }
 
 interface Pagina {
@@ -50,6 +53,28 @@ const PAGINAS: Pagina[] = [
   { id: 'settings', clave: 'layout.nav.settings', icono: 'ti-settings', ruta: '/settings' },
 ];
 
+/** Lo que se puede registrar en una siembra en curso desde el buscador ("cosecha café") */
+const ACCIONES_SIEMBRA = [
+  { id: 'harvest', icono: 'ti-basket', ruta: 'harvest' },
+  { id: 'spray', icono: 'ti-spray', ruta: 'spraying' },
+  { id: 'activity', icono: 'ti-clipboard-list', ruta: 'activity' },
+] as const;
+
+/** Acciones que no dependen de una siembra: abren el formulario directamente */
+const ACCIONES_GENERALES: { id: string; icono: string; ruta: string; query?: Record<string, string> }[] = [
+  { id: 'wage', icono: 'ti-calendar-plus', ruta: '/worker/workdays/new' },
+  { id: 'worker', icono: 'ti-user-plus', ruta: '/worker', query: { nuevo: '1' } },
+  { id: 'purchase', icono: 'ti-shopping-cart-plus', ruta: '/crops/inventory', query: { compra: '1' } },
+  { id: 'farm', icono: 'ti-map-pin-plus', ruta: '/crops/new-farm' },
+];
+
+/** Cada palabra de la búsqueda debe aparecer en alguno de los textos */
+export function todasLasPalabras(q: string, ...textos: string[]): boolean {
+  const palabras = q.split(/\s+/).filter(Boolean);
+  const todo = textos.map(normalizar).join(' ');
+  return palabras.length > 0 && palabras.every((p) => todo.includes(p));
+}
+
 /** Un lote con el nombre de su finca */
 interface LoteBuscable { lote: Lote; finca: string }
 /** Una siembra en curso con su lote y su finca */
@@ -75,6 +100,7 @@ export class BuscadorComponent {
   private readonly fincas = inject(FincaActivaService);
   private readonly trabajadorService = inject(TrabajadorService);
   private readonly cultivo = inject(CultivoService);
+  private readonly recientes = inject(RecientesService);
 
   readonly abierto = signal(false);
   readonly texto = signal('');
@@ -126,8 +152,41 @@ export class BuscadorComponent {
         icono: 'ti-user', ruta: '/worker/workdays', query: { trabajadorId: t.id! },
       }));
 
+    // Acciones: "cosecha" ofrece registrar una cosecha en cada siembra; "cosecha café", solo en las de café
+    const acciones: ResultadoBusqueda[] = [];
+    if (q) {
+      for (const a of ACCIONES_GENERALES) {
+        const titulo = this.translate.instant(`search.actions.${a.id}`) as string;
+        if (todasLasPalabras(q, titulo, this.palabras(`action.${a.id}`))) {
+          acciones.push({ tipo: 'action', titulo, icono: a.icono, ruta: a.ruta, query: a.query });
+        }
+      }
+      for (const a of ACCIONES_SIEMBRA) {
+        const verbo = this.translate.instant(`search.actions.${a.id}`) as string;
+        const palabrasAccion = `${verbo} ${this.palabras(`action.${a.id}`)}`;
+        for (const { siembra, lote, finca } of this.siembras()) {
+          const nombre = nombreCultivo(siembra) || this.translate.instant('temporadas.ui.planting');
+          const deLaSiembra = `${siembra.tipoCultivo ?? ''} ${siembra.variedad ?? ''} ${lote} ${finca}`;
+          const palabras = q.split(/\s+/).filter(Boolean);
+          // Al menos una palabra tiene que ser de la acción ("café" solo no ofrece registrar nada)
+          if (todasLasPalabras(q, palabrasAccion, deLaSiembra) && palabras.some((p) => normalizar(palabrasAccion).includes(p))) {
+            acciones.push({
+              tipo: 'action', titulo: `${verbo} · ${nombre}`, detalle: `${lote} · ${finca}`,
+              icono: a.icono, ruta: `/crops/planting/${siembra.id}/${a.ruta}`,
+            });
+          }
+        }
+      }
+    }
+
     // Sin texto se muestran solo las páginas, para no llenar la lista
-    return q ? [...fincas, ...siembras, ...lotes, ...trabajadores, ...paginas].slice(0, 12) : paginas;
+    if (q) return [...acciones, ...fincas, ...siembras, ...lotes, ...trabajadores, ...paginas].slice(0, 12);
+    // Sin texto: primero lo último que se abrió ("seguir donde iba") y después las páginas
+    const recientes = this.recientes.lista().map<ResultadoBusqueda>((r) => ({
+      tipo: r.tipo, titulo: r.titulo, detalle: r.detalle, ruta: r.ruta, query: r.query, reciente: true,
+      icono: r.tipo === 'planting' ? 'ti-seedling' : r.tipo === 'plot' ? 'ti-layout-grid' : r.tipo === 'farm' ? 'ti-map-pin' : 'ti-user',
+    }));
+    return [...recientes, ...paginas];
   });
 
   /** Palabras parecidas de una página ('' si no tiene) */

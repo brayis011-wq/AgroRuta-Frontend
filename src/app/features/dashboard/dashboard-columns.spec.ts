@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { DIFERENCIA_MAXIMA, emparejarColumnas } from './dashboard-columns';
+import { DIFERENCIA_MAXIMA, elegirLugarClima, emparejarColumnas } from './dashboard-columns';
 
 /** Arma el cuerpo del Inicio con columnas de las alturas dadas (jsdom no calcula tamaños: se simulan) */
 function armar(izquierda: number[], derecha: number[], display = 'flex') {
@@ -87,5 +87,39 @@ describe('emparejarColumnas', () => {
 
   it('tolerates a missing body', () => {
     expect(() => emparejarColumnas(undefined)).not.toThrow();
+  });
+});
+
+describe('elegirLugarClima', () => {
+  afterEach(() => { document.body.innerHTML = ''; });
+
+  it('lo deja junto a Pendientes cuando así las columnas quedan parejas (mucha información a la izquierda)', () => {
+    const { cuerpo } = armar([250, 270, 145], [370]);
+    expect(elegirLugarClima(cuerpo, 310)).toBe('derecha');
+  });
+
+  it('con poca información lo pone abajo a lo ancho: en cualquier columna dejaría un hueco', () => {
+    // Un cultivo y un evento a la izquierda; tres pendientes a la derecha (la cuenta de la captura del usuario)
+    const { cuerpo } = armar([148, 180], [325]);
+    expect(elegirLugarClima(cuerpo, 310)).toBe('abajo');
+  });
+
+  it('lo pasa a la izquierda si allí es donde falta altura', () => {
+    const { cuerpo } = armar([150], [480]);
+    expect(elegirLugarClima(cuerpo, 310)).toBe('izquierda');
+  });
+
+  it('mide sin el clima, así la decisión no cambia después de moverlo', () => {
+    const { cuerpo, der } = armar([148, 180], [325]);
+    const clima = document.createElement('section');
+    clima.className = 'clima';
+    clima.getBoundingClientRect = () => ({ height: 310 } as DOMRect);
+    der.appendChild(clima);
+    expect(elegirLugarClima(cuerpo, 310)).toBe('abajo');
+  });
+
+  it('en una sola columna (celular) siempre va a la derecha', () => {
+    const { cuerpo } = armar([148, 180], [325], 'contents');
+    expect(elegirLugarClima(cuerpo, 310)).toBe('derecha');
   });
 });

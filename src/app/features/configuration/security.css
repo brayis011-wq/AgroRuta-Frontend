@@ -47,3 +47,7 @@
 .pie-sesiones span .ti { margin-top: 2px; }
 @media (max-width: 560px) { .sesiones .btn, .pie-sesiones .btn, .resumen .btn { width: 100%; } .botones .btn { flex: 1; } }
 @media (prefers-reduced-motion: reduce) { .gira { animation: none; } }
+
+/* "Ver las otras N sesiones": discreto, debajo de la lista */
+.btn-ver-todas { margin: .35rem auto 0; display: flex; background: transparent; border: 1px dashed var(--ar-borde); color: var(--ar-tinta-2); font-size: .84rem; }
+.btn-ver-todas:hover { color: var(--ar-tinta); border-color: var(--ar-tinta-3); }

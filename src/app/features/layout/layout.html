@@ -92,7 +92,7 @@
     </nav>
 
     <div class="pie">
-      @if (clima(); as c) {
+      @if (!enInicio() && clima(); as c) {
         <div [class]="'clima ' + (consejo() ?? '')">
           <span class="clima-ic" aria-hidden="true"><i [class]="'ti ' + iconoClima()"></i></span>
           <div class="clima-txt">
@@ -162,7 +162,8 @@
              [routerLinkActiveOptions]="s.query
                ? { paths: 'exact', queryParams: 'subset', matrixParams: 'ignored', fragment: 'ignored' }
                : { exact: !!s.exacto }"
-             [class.lote]="s.icono === 'ti-point-filled'">
+             [class.lote]="s.icono === 'ti-point-filled'"
+             [class.on-tambien]="!!s.tambien && ruta().startsWith(s.tambien)">
             <span class="sub-txt">
               @if (s.icono) { <i class="ti {{ s.icono }}" aria-hidden="true"></i> }
               {{ s.texto ?? (s.clave | translate) }}
@@ -181,9 +182,30 @@
 
   <app-buscador #buscador />
 
+  <!-- Atajos de teclado: se ven con "?" -->
+  @if (ayudaAtajos()) {
+    <div class="atajos-velo" (click)="ayudaAtajos.set(false)"></div>
+    <div class="atajos" role="dialog" aria-modal="true" [attr.aria-label]="'shortcuts.title' | translate">
+      <header><strong>{{ 'shortcuts.title' | translate }}</strong>
+        <button type="button" class="ib" (click)="ayudaAtajos.set(false)" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x"></i></button></header>
+      <ul>
+        @for (a of atajos; track a.clave) {
+          <li><span>@for (t of a.teclas; track $index) { <kbd>{{ t }}</kbd> }</span>{{ a.clave | translate }}</li>
+        }
+      </ul>
+    </div>
+  }
+
   <app-offline-status />
 
   <app-progreso />
+
+  <!-- App instalada: al tirar hacia abajo desde arriba aparece la flecha de actualizar -->
+  @if (tiron() > 0) {
+    <div class="tiron" [style.transform]="'translate(-50%, ' + tiron() + 'px)'" [class.listo]="tiron() >= distanciaActualizar" aria-hidden="true">
+      <i class="ti ti-refresh" [style.rotate]="(tiron() * 3) + 'deg'"></i>
+    </div>
+  }
 
   <app-aviso />
 

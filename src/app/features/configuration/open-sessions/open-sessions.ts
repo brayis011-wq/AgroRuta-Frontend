@@ -1,9 +1,12 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { SeguridadService, SesionAbierta } from '../../../core/services/security.service';
+
+/** Sesiones que se ven sin tocar "Ver todas" (la de este navegador y las usadas más recientemente) */
+const MAX_VISIBLES = 5;
 
 /** Dispositivos donde la cuenta tiene la sesión iniciada, con la opción de cerrarlos a distancia. */
 @Component({
@@ -25,6 +28,13 @@ export class OpenSessionsComponent implements OnInit {
   /** Id de la sesión que se está cerrando, o 'otras' */
   readonly cerrando = signal<number | 'otras' | null>(null);
   readonly error = signal(false);
+  /** Con muchas sesiones se muestran las más recientes y el resto con "Ver todas" */
+  readonly verTodas = signal(false);
+  readonly visibles = computed(() => {
+    const lista = this.sesiones() ?? [];
+    return this.verTodas() ? lista : lista.slice(0, MAX_VISIBLES);
+  });
+  readonly ocultas = computed(() => Math.max(0, (this.sesiones()?.length ?? 0) - MAX_VISIBLES));
 
   ngOnInit(): void {
     this.cargar();

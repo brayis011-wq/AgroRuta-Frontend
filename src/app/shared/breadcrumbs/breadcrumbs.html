@@ -9,13 +9,29 @@
 
   <!-- Pantallas anchas: el camino completo -->
   <ol>
-    @for (m of items(); track $index; let ultimo = $last) {
-      <li>
+    @for (m of items(); track $index; let ultimo = $last; let i = $index) {
+      <li [class.con-hermanos]="(m.hermanos?.length ?? 0) > 1">
         @if (nombre(m); as n) {
           @if (!ultimo && m.ruta) {
             <a [routerLink]="m.ruta" [title]="n">{{ n }}</a>
           } @else {
             <span [attr.aria-current]="ultimo ? 'page' : null" [title]="n">{{ n }}</span>
+          }
+          <!-- Las otras fincas / los otros lotes: se salta a uno sin volver atrás -->
+          @if ((m.hermanos?.length ?? 0) > 1) {
+            <button type="button" class="hermanos-btn" (click)="alternar(i)" [attr.aria-expanded]="abierta() === i"
+                    aria-haspopup="menu" [attr.aria-label]="'breadcrumbs.siblings' | translate: { name: n }">
+              <i class="ti ti-chevron-down" [class.girada]="abierta() === i" aria-hidden="true"></i>
+            </button>
+            @if (abierta() === i) {
+              <div class="hermanos" role="menu">
+                @for (h of m.hermanos; track h.ruta.join('/')) {
+                  <a role="menuitem" [routerLink]="h.ruta" [class.actual]="h.actual" (click)="abierta.set(null)">
+                    {{ h.texto }} @if (h.actual) { <i class="ti ti-check" aria-hidden="true"></i> }
+                  </a>
+                }
+              </div>
+            }
           }
         } @else {
           <span class="hueco" [attr.aria-label]="'breadcrumbs.loading' | translate"></span>

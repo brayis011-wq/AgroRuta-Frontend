@@ -5,11 +5,15 @@ export interface Aviso {
   /** Clave de traducción del mensaje */
   clave: string;
   params?: Record<string, unknown>;
+  /** Si viene, el aviso muestra "Deshacer" y esto se ejecuta al tocarlo */
+  deshacer?: () => void;
 }
 
 /** Cuánto se queda el aviso en pantalla y cuánto dura su despedida */
 export const AVISO_VISIBLE_MS = 2600;
 export const AVISO_SALIDA_MS = 240;
+/** Cuánto se puede deshacer un borrado */
+export const DESHACER_MS = 6000;
 
 /**
  * Aviso pasajero de "quedó guardado". Vive fuera de las pantallas (lo pinta el panel), así que
@@ -33,6 +37,21 @@ export class AvisosService {
       // sin vibración
     }
     this.reloj = setTimeout(() => this.cerrar(), AVISO_VISIBLE_MS);
+  }
+
+  /** "Registro eliminado · Deshacer": se queda más tiempo y ofrece volver atrás */
+  conDeshacer(clave: string, params: Record<string, unknown> | undefined, deshacer: () => void, ms = DESHACER_MS): void {
+    this.parar();
+    this.saliendo.set(false);
+    this.actual.set({ id: ++this.serie, clave, params, deshacer });
+    this.reloj = setTimeout(() => this.cerrar(), ms);
+  }
+
+  /** Tocar "Deshacer" */
+  deshacerActual(): void {
+    const a = this.actual();
+    a?.deshacer?.();
+    this.cerrar();
   }
 
   cerrar(): void {

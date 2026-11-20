@@ -1,5 +1,6 @@
 // src/app/features/worker/labors/labor-list.ts
 
+import { PestanasCatalogoComponent } from '../catalog-tabs/catalog-tabs';
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -11,7 +12,7 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 @Component({
   selector: 'app-lista-labores',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, PestanasCatalogoComponent],
   templateUrl: './labor-list.html',
   styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../worker-ui.css', '../worker-panel.css']
 })

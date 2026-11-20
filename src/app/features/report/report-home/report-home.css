@@ -124,3 +124,18 @@
   .tab-name { font-size: .85rem; }
   .tab-sub { display: none; }
 }
+
+/* El panel de "PDF con todo" ya no tiene botón propio: se abre desde Descargar y se cierra con la X */
+.completo { min-height: 0; }
+.panel-completo { top: 0; }
+.cerrar-completo { position: absolute; top: .55rem; right: .55rem; width: 30px; height: 30px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: var(--ar-tinta-3); cursor: pointer; font-size: 17px; }
+.cerrar-completo:hover { background: var(--ar-superficie-2); color: var(--ar-tinta); }
+
+/* Periodo del reporte */
+.periodo { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .9rem; margin: -1rem 0 1.4rem; }
+.periodo-titulo { display: inline-flex; align-items: center; gap: .35rem; font-size: .82rem; font-weight: 600; color: var(--ar-tinta-2); }
+.periodo-opciones { display: inline-flex; gap: 3px; padding: 3px; border-radius: 11px; background: var(--ar-superficie-2); border: 1px solid var(--ar-borde); overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+.periodo-opciones button { flex: none; font: inherit; font-size: .83rem; font-weight: 600; padding: .4rem .75rem; border: 0; border-radius: 8px; background: transparent; color: var(--ar-tinta-2); cursor: pointer; white-space: nowrap; }
+.periodo-opciones button.on { background: var(--ar-superficie); color: var(--ar-verde-700); box-shadow: var(--ar-sombra-1); }
+.periodo-nota { flex-basis: 100%; font-size: .78rem; color: var(--ar-tinta-3); }
+@media (max-width: 760px) { .periodo { margin-top: -.4rem; } }

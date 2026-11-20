@@ -41,3 +41,14 @@
   .aviso, .aviso.saliendo, .marca, .marca::after { animation: none; }
   .marca path { animation: none; stroke-dashoffset: 0; }
 }
+
+/* Aviso con "Deshacer" (un borrado que todavía se puede revertir) */
+.aviso.con-accion { cursor: default; padding-right: .4rem; }
+.marca.gris { background: rgba(255, 255, 255, .16); animation: none; }
+.marca.gris::after { display: none; }
+.marca .ti { font-size: 16px; color: inherit; }
+.deshacer {
+  flex: none; margin-left: .35rem; padding: .35rem .8rem; border: 0; border-radius: 999px; cursor: pointer;
+  background: #4cc35a; color: #0f2a14; font: inherit; font-size: .85rem; font-weight: 700;
+}
+.deshacer:hover { filter: brightness(1.08); }

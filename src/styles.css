@@ -159,3 +159,27 @@ input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1
   .main :where([data-asoma]) { animation: asomar .5s cubic-bezier(.2, .8, .3, 1); }
 }
 @keyframes asomar { from { opacity: 0; translate: 0 22px; scale: .975; } }
+
+/* ── Celular: las cifras de arriba de cada pantalla en una tira que se desliza ─────
+   Antes las cuatro tarjetas ocupaban una pantalla entera antes del contenido. La siguiente
+   tarjeta asoma por el borde para que se note que hay más. "body .main" gana a los estilos de cada pantalla. */
+@media (max-width: 760px) {
+  body .main .kpis {
+    display: flex; grid-template-columns: none; gap: .6rem; overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: .2rem;
+  }
+  body .main .kpis::-webkit-scrollbar { display: none; }
+  body .main .kpis > * { flex: 0 0 min(64%, 230px); min-width: 0; scroll-snap-align: start; }
+}
+
+/* Botones de fila con icono y una palabra en el celular (en escritorio el nombre sale al pasar el ratón y la fila no cabe con texto). "body" gana a los estilos de cada pantalla. */
+body .btn-ic.con-texto { width: auto; min-width: 0; padding: 0 .6rem; gap: .3rem; display: inline-flex; align-items: center; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+body .btn-ic.con-texto .txt-corto { line-height: 1; }
+@media (min-width: 761px) { body .btn-ic.con-texto .txt-corto { display: none; } body .btn-ic.con-texto { padding: 0; width: 34px; justify-content: center; } }
+
+/* Formularios de registro dentro del panel de la siembra: sin migas (la siembra está detrás) ni márgenes de página */
+body .panel-hoja app-migas-cultivo { display: none; }
+body .panel-hoja .page-bg { padding: 0; min-height: 0; background: none; }
+body .panel-hoja .page-bg.registro .container { max-width: none; padding: 0; }
+/* Con el panel de registro abierto, la barra inferior del celular no tapa el final del formulario */
+body.con-panel .barra { display: none !important; }

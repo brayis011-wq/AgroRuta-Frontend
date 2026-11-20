@@ -1,4 +1,5 @@
-﻿import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -31,6 +32,7 @@ describe('ListaLaboresComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ListaLaboresComponent, ReactiveFormsModule, CommonModule],
       providers: [
+        provideRouter([]),
         { provide: ConfirmService, useValue: confirmSvc },
         { provide: LaborService, useValue: actividadServiceMock },
         ChangeDetectorRef,

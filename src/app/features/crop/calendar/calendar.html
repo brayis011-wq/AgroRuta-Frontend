@@ -29,7 +29,7 @@
     </div>
   </header>
 
-  @if (!fincaActiva.idActiva()) {
+  @if (!fincaActiva.fincas().length) {
     <section class="tarjeta vacio">
       <i class="ti ti-calendar-off"></i>
       <h3>{{ 'temporadas.cal.noFarm' | translate }}</h3>
@@ -48,10 +48,18 @@
         <button type="button" class="btn btn-hoy" (click)="irAHoy()">{{ 'temporadas.cal.today' | translate }}</button>
       </div>
       <div class="filtros-cal">
-        <select [ngModel]="lote() ?? ''" (ngModelChange)="elegirLote($event)" [attr.aria-label]="'temporadas.ui.lots' | translate">
-          <option value="">{{ 'temporadas.cal.allLots' | translate }}</option>
-          @for (l of fincaActiva.lotes(); track l.id) { <option [value]="l.id">{{ l.nombre }}</option> }
-        </select>
+        @if (fincaActiva.idActiva() == null) {
+          <!-- Con "Todas las fincas" se ven juntas; elegir una aquí es lo mismo que elegirla en el menú -->
+          <select [ngModel]="''" (ngModelChange)="elegirFinca($event)" [attr.aria-label]="'layout.farm.choose' | translate">
+            <option value="">{{ 'layout.farm.all' | translate }}</option>
+            @for (f of fincaActiva.fincas(); track f.id) { <option [value]="f.id">{{ f.nombre }}</option> }
+          </select>
+        } @else {
+          <select [ngModel]="lote() ?? ''" (ngModelChange)="elegirLote($event)" [attr.aria-label]="'temporadas.ui.lots' | translate">
+            <option value="">{{ 'temporadas.cal.allLots' | translate }}</option>
+            @for (l of fincaActiva.lotes(); track l.id) { <option [value]="l.id">{{ l.nombre }}</option> }
+          </select>
+        }
         <label class="check"><input type="checkbox" [ngModel]="verHechos()" (ngModelChange)="verHechos.set($event)"> {{ 'temporadas.cal.showDone' | translate }}</label>
       </div>
     </div>

@@ -1,4 +1,5 @@
-﻿import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AvisosService } from '../../../../core/services/toast.service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
@@ -37,6 +38,7 @@ describe('DetalleSiembraComponent', () => {
       listarCosechas: vi.fn().mockReturnValue(of(mockCosechas)),
       totalKgCosechado: vi.fn().mockReturnValue(of(500)),
       eliminarSiembra: vi.fn().mockReturnValue(of({})),
+      eliminarCosecha: vi.fn().mockReturnValue(of({})),
       buscarFinca: vi.fn().mockReturnValue(of({ id: 1, nombre: 'Finca Test' })),
       etapasSiembra: vi.fn().mockReturnValue(of([])),
       avanzarEtapa: vi.fn().mockReturnValue(of({})),
@@ -205,5 +207,29 @@ describe('DetalleSiembraComponent', () => {
     component.siembra = mockSiembra as any;
     component.registrarCosecha();
     expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 1, 'harvest']);
+  });
+
+  it('borrar un registro lo oculta al instante y lo borra en el servidor a los 6 s', () => {
+    vi.useFakeTimers();
+    const item = { tipo: 'cosecha', id: 9, fecha: '2026-11-10', titulo: 'Cosecha' } as never;
+    component.timelineCompleto = [item];
+    component.eliminarRegistro(item);
+    expect(component.timelineFiltrado).toEqual([]);
+    expect(cultivoServiceMock.eliminarCosecha).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(6000);
+    expect(cultivoServiceMock.eliminarCosecha).toHaveBeenCalledWith(9);
+    vi.useRealTimers();
+  });
+
+  it('"Deshacer" lo devuelve y no se borra', () => {
+    vi.useFakeTimers();
+    const item = { tipo: 'cosecha', id: 9, fecha: '2026-11-10', titulo: 'Cosecha' } as never;
+    component.timelineCompleto = [item];
+    component.eliminarRegistro(item);
+    TestBed.inject(AvisosService).deshacerActual();
+    expect(component.timelineFiltrado).toEqual([item]);
+    vi.advanceTimersByTime(7000);
+    expect(cultivoServiceMock.eliminarCosecha).not.toHaveBeenCalled();
+    vi.useRealTimers();
   });
 });

@@ -1,18 +1,20 @@
 {
+  "shortcuts": {"title":"Keyboard shortcuts","search":"Search","new":"New (depends on the screen)","home":"Go to Home","crops":"Go to Crops","team":"Go to Team","wages":"Go to Workdays","payrolls":"Go to Payrolls","reports":"Go to Reports","help":"Show this list"},
+  "unsaved": {"title":"Leave without saving?","message":"What you typed in this form will be lost.","leave":"Leave without saving"},
   "inbox": {"title":"Notifications","short":"Alerts","open":"Open notifications","openUnread":"Open notifications ({{count}} unread)","close":"Close notifications","markAll":"Mark all as read","unread":"Unread","empty":"No notifications","emptyHint":"Payments, access requests and the morning summary will show up here.","error":"Notifications could not be loaded. Try again in a moment.","settings":"Notification settings","period":"{{from}} to {{to}}","yourEmployer":"Your employer","types":{"PAGO_REGISTRADO":{"title":"A payment was recorded for you","body":"You received {{amount}}"},"ACCESO_SOLICITADO":{"title":"Portal access request","body":"{{worker}} wants to see their workdays and payments. Approve or reject it."},"ACCESO_RESUELTO":{"approved":{"title":"You can now enter your portal","body":"{{employer}} approved your access. You can see your workdays, payrolls and payments."},"rejected":{"title":"Your request was not approved","body":"If you think this is a mistake, talk to {{employer}}."},"removed":{"title":"Your portal access was removed","body":"If you think this is a mistake, talk to {{employer}}."}},"RESUMEN_DIA":{"title":"Your farm today"}},"summary":{"alertas":"Crop alerts: {{count}}","clima":"Weather alerts: {{count}}","insumos":"Supplies running low: {{count}}","generic":"There are things to check today"}},
   "slowServer": {"title":"The server is taking a while to respond","desc":"If it was idle for a while, it can take up to a minute to wake up. Keep this page open."},
   "firstSteps": {"title":"First steps","subtitle":"Five steps to set up your account. They check off on their own.","progress":"{{done}} of {{total}}","hide":"Hide","hideHint":"Don’t show again in this browser","start":"Start","go":"Go","done":"Done","steps":{"farm":{"title":"Create your farm","desc":"Place it on the map to see the local weather."},"plot":{"title":"Draw a plot","desc":"The parts of the farm where you plant."},"planting":{"title":"Record a planting","desc":"What you planted and when. That is where you log sprayings and harvests."},"worker":{"title":"Add a worker","desc":"With their position and daily pay."},"wage":{"title":"Record a workday","desc":"Each day worked. Workdays add up to the payroll."}}},
   "help": {"open":"What is {{term}}?","carenciaTerm":"Pre-harvest interval","carencia":"Days to wait after spraying before harvesting, so the product does not end up in what is sold or eaten. The product label says how many.","reentradaTerm":"Re-entry interval","reentrada":"Hours nobody should enter the plot after spraying, to avoid touching or breathing the product. The label says this too.","portalTerm":"App access","portal":"The worker signs up with their ID number and, if you approve, sees their workdays, payrolls and payments on their phone. They only see their own and cannot change anything."},
   "payFlow": {"label":"How a worker gets paid","wages":{"title":"Workdays","desc":"Log each day worked and what is owed."},"payrolls":{"title":"Payrolls","desc":"Groups the workdays of a period. Review and approve it."},"payments":{"title":"Payments","desc":"Record what you hand over from an approved payroll."}},
   "titles": {"farm":"Farm","payroll":"Payroll","farmer":"Farmer","verify":"Verify email","privacy":"Privacy policy","receipt":"Payment receipt"},
-  "breadcrumbs": {"label":"You are here","backTo":"Back to {{name}}","loading":"Loading…"},
+  "breadcrumbs": {"siblings":"Go to another one at the same level as {{name}}","label":"You are here","backTo":"Back to {{name}}","loading":"Loading…"},
   "almanaque": {"title":"Today's almanac","moonLabel":"Moon phase: {{phase}}","phase":{"nueva":"New moon","creciente":"Waxing moon","llena":"Full moon","menguante":"Waning moon"},"lore":{"nueva":"The old-timers say: the soil rests; a good day to weed and fertilize.","creciente":"The old-timers say: a good time to sow what grows upward.","llena":"The old-timers say: a good time to harvest; leave pruning for later.","menguante":"The old-timers say: a good time to prune and to plant root crops."},"sayingLabel":"Saying of the day","sayings":{"s1":"The early bird catches the worm.","s2":"You reap what you sow.","s3":"Clear accounts make good friends.","s4":"Grain by grain, the hen fills her crop.","s5":"The owner's eye fattens the cattle.","s6":"Don't put off until tomorrow what you can do today.","s7":"Put a good face on bad weather.","s8":"Little by little, one goes far.","s9":"Water you won't drink, let it run.","s10":"The shrimp that falls asleep is carried off by the current.","s11":"Better safe than sorry.","s12":"Sow well and you will harvest well."}},
   "diagnostico": {"title":"Photo diagnosis","hint":"Take a photo of the leaf, stem or fruit that worries you and get guidance on what it may be and what to do. It is saved in this planting.","left":"{{count}} left today","noneLeft":"You used today's analyses","take":"Take photo","choose":"Choose a photo","note":"What are you seeing? (optional)","notePlaceholder":"E.g. yellow spots that showed up this week on the lower leaves","analyze":"Analyze photo","analyzing":"Analyzing…","wait":"This can take up to a minute. Do not close the page.","cancel":"Cancel","off":"Photo diagnosis is not turned on yet.","loadError":"Could not load the diagnoses for this planting.","privacy":"The photo is sent to an artificial intelligence service (Gemini, by Google) only to analyze it, without location data.","disclaimer":"This is guidance based on a photo: it does not replace a visit from an agronomist. Before applying a product, check the label and the pre-harvest interval.","empty":"No diagnoses in this planting yet.","seen":"What is visible","steps":"What to do","others":"It could also be","yourNote":"Your note","photoAlt":"Analyzed photo","previewAlt":"Chosen photo","delete":"Delete","deleteTitle":"Delete diagnosis","deleteMsg":"\"{{nombre}}\" and its photo will be removed from this planting.","errors":{"tipo":"That file is not an image. Use a JPG or PNG photo.","pesada":"The photo is too large (15 MB maximum).","lectura":"Could not open the photo. Try another one or take it again.","offline":"You need an internet connection for this.","generic":"Could not analyze the photo. Try again.","delete":"Could not delete the diagnosis."},"tipo":{"PLAGA":"Pest","ENFERMEDAD":"Disease","DEFICIENCIA":"Nutrient deficiency","DANO_AMBIENTAL":"Environmental damage","SANA":"Healthy plant","INDETERMINADO":"Undetermined"},"confianza":{"ALTA":"high confidence","MEDIA":"medium confidence","BAJA":"low confidence"}},
   "offline": {"title":"Working offline","close":"Close","offline":"Offline","pending":"{{n}} to send","sending":"Sending…","sendNow":"Send now","sent":"Records sent: {{n}}","savedHere":"Saved on this device","onlineHint":"These records were made without signal and are stored on this device. They are sent automatically; you can also send them now.","offlineHint":"You can keep logging workdays, sprayings, harvests and activities: they are stored on this device and sent automatically when the signal comes back.","copyFrom":"You are seeing data saved on {{fecha}}.","savedAt":"Saved {{fecha}}","nothing":"Nothing waiting to be sent.","retry":"Retry","discard":"Discard","discardSure":"Discard?","confirmWithdrawal":"Harvest anyway","rejected":"The server did not accept this record.","tipo":{"jornal":"Workday","fumigacion":"Spraying","cosecha":"Harvest","actividad":"Activity"}},
   "receipt": {"download":"Download receipt","downloadShort":"Receipt","downloadHint":"PDF with a QR code to verify it","downloadError":"The receipt could not be downloaded. Try again.","verify":{"checking":"Checking the receipt…","validTitle":"Authentic receipt","validText":"This payment is recorded in AgroRuta with this information.","amount":"Amount paid","number":"Receipt","worker":"Received by","idNumber":"ID","employer":"Paid by","period":"Period worked","compare":"Compare the amount and date with the paper. If they differ, the receipt was altered.","invalidTitle":"Receipt not valid","invalidText":"This code does not match any payment recorded in AgroRuta. The receipt may have been altered or the link may be incomplete.","offlineTitle":"Could not verify","offlineText":"The server cannot be reached right now. This does not mean the receipt is fake."}},
-  "inventario": {"nav":"Supplies storeroom","eyebrow":"Crops","title":"Supplies storeroom","subtitle":"What you have of each product, what it is worth and what it was used for. Sprayings subtract what they use automatically.","buy":"Record purchase","adjust":"Count","minimum":"Minimum alert","list":"Products in storeroom","empty":"There are no products in your storeroom yet. Record your first purchase to start.","hint":"The average cost comes from your purchases with a price and is used to work out the cost of each spraying.","kpi":{"items":"Products","value":"Storeroom value","valueHint":"at average purchase cost","alerts":"To review","alertsHint":"low, out of stock or negative"},"table":{"item":"Product","stock":"In stock","minimum":"Minimum","avgCost":"Average cost","value":"Value"},"status":{"OK":"Fine","BAJO":"Low","AGOTADO":"Out of stock","NEGATIVO":"Negative"},"history":{"title":"Movements","empty":"No movements.","type":{"COMPRA":"Purchase","USO":"Spraying","AJUSTE":"Count"},"fromSpray":"from the spraying","fromSprayHint":"To correct it, edit or delete the spraying.","confirmDelete":"Delete this movement? Stock will be recalculated."},"form":{"compraTitle":"Record purchase","ajusteTitle":"Storeroom count","minimoTitle":"Minimum alert","item":"Catalog product","itemPlaceholder":"Choose a product","quantity":"Quantity","quantityError":"Enter a quantity greater than 0.","unit":"Unit","totalCost":"Total purchase cost","totalCostHint":"What you paid for the whole purchase. Used to work out the cost of each spraying.","date":"Purchase date","supplier":"Supplier","notes":"Notes","adjustHint":"Enter how much there really is in the storeroom. The difference with the app is recorded.","counted":"Counted quantity","reason":"Reason","reasonPlaceholder":"e.g. spilled, lent, end-of-month count","minimumHint":"We will warn you on the home page and in the daily email when this amount or less is left.","minimum":"Warn when left","removeMinimum":"Remove alert"},"spray":{"used":"Total amount used","usedHint":"All the product you used (not the dose per tank). It is subtracted from your storeroom.","inStock":"In storeroom: {{cantidad}}","notInStock":"This product has no purchases recorded in your storeroom.","estimated":"Cost at your average price: {{costo}}","useEstimated":"Use this cost","noPrice":"Record the cost of your purchases to work out the cost of the spraying."},"errors":{"load":"The storeroom could not be loaded.","save":"Could not save."}},
+  "inventario": {"short":{"buy":"Buy","adjust":"Count","minimum":"Minimum","history":"Movements"},"nav":"Supplies storeroom","eyebrow":"Crops","title":"Supplies storeroom","subtitle":"What you have of each product, what it is worth and what it was used for. Sprayings subtract what they use automatically.","buy":"Record purchase","adjust":"Count","minimum":"Minimum alert","list":"Products in storeroom","empty":"There are no products in your storeroom yet. Record your first purchase to start.","hint":"The average cost comes from your purchases with a price and is used to work out the cost of each spraying.","kpi":{"items":"Products","value":"Storeroom value","valueHint":"at average purchase cost","alerts":"To review","alertsHint":"low, out of stock or negative"},"table":{"item":"Product","stock":"In stock","minimum":"Minimum","avgCost":"Average cost","value":"Value"},"status":{"OK":"Fine","BAJO":"Low","AGOTADO":"Out of stock","NEGATIVO":"Negative"},"history":{"title":"Movements","empty":"No movements.","type":{"COMPRA":"Purchase","USO":"Spraying","AJUSTE":"Count"},"fromSpray":"from the spraying","fromSprayHint":"To correct it, edit or delete the spraying.","confirmDelete":"Delete this movement? Stock will be recalculated."},"form":{"compraTitle":"Record purchase","ajusteTitle":"Storeroom count","minimoTitle":"Minimum alert","item":"Catalog product","itemPlaceholder":"Choose a product","quantity":"Quantity","quantityError":"Enter a quantity greater than 0.","unit":"Unit","totalCost":"Total purchase cost","totalCostHint":"What you paid for the whole purchase. Used to work out the cost of each spraying.","date":"Purchase date","supplier":"Supplier","notes":"Notes","adjustHint":"Enter how much there really is in the storeroom. The difference with the app is recorded.","counted":"Counted quantity","reason":"Reason","reasonPlaceholder":"e.g. spilled, lent, end-of-month count","minimumHint":"We will warn you on the home page and in the daily email when this amount or less is left.","minimum":"Warn when left","removeMinimum":"Remove alert"},"spray":{"used":"Total amount used","usedHint":"All the product you used (not the dose per tank). It is subtracted from your storeroom.","inStock":"In storeroom: {{cantidad}}","notInStock":"This product has no purchases recorded in your storeroom.","estimated":"Cost at your average price: {{costo}}","useEstimated":"Use this cost","noPrice":"Record the cost of your purchases to work out the cost of the spraying."},"errors":{"load":"The storeroom could not be loaded.","save":"Could not save."}},
   "theme": {"title": "Appearance", "hint": "Light, dark or automatic based on your phone or computer", "light": "Light", "dark": "Dark", "system": "Automatic", "toDark": "Switch to dark mode", "toLight": "Switch to light mode"},
-  "common": {
+  "common": {"undo": "Undo", 
     "language": "Language",
     "loading": "Loading...",
     "retry": "Retry",
@@ -28,7 +30,7 @@
     "loadMore": "Load more",
     "showingOf": "Showing {{shown}} of {{total}}"
   },
-  "search": {"title": "Search AgroRuta", "button": "Search…", "placeholder": "Search a farm, plot, crop, worker or page", "empty": "No results", "move": "move", "open": "open", "types": {"page": "Page", "farm": "Farm", "worker": "Worker", "plot": "Plot", "planting": "Planting"}, "keywords": {"farms": "plots, map, land", "calendar": "agenda, schedule, dates, upcoming tasks", "inventory": "supplies, fertilizer, fungicide, herbicide, purchases, stock, storeroom, warehouse", "team": "workers, employees, staff", "wages": "days worked, attendance", "newWage": "log day, attendance", "payrolls": "settle, fortnight, approve", "payments": "pay, receipt, voucher", "positions": "salary, daily wage, pay per day", "labors": "tasks, jobs", "reportPayroll": "report, pdf", "reportCrops": "harvests, kilos, yield, report, pdf", "reportCosts": "expenses, how much it cost, report", "reportProfit": "profit, earnings, sales, price, report", "settings": "profile, password, email, language, notifications, account"}},
+  "search": {"title": "Search AgroRuta", "recent": "Pick up where you left off", "pages": "Pages", "button": "Search…", "placeholder": "Search a farm, plot, crop, worker or page", "empty": "No results", "move": "move", "open": "open", "actions": {"harvest": "Record harvest", "spray": "Record spraying", "activity": "Record activity", "wage": "Log workday", "worker": "New worker", "purchase": "Record supplies purchase", "farm": "New farm"}, "types": {"action": "Action", "page": "Page", "farm": "Farm", "worker": "Worker", "plot": "Plot", "planting": "Planting"}, "keywords": {"action": {"harvest": "harvest, kilos, pick, collect", "spray": "spray, apply, insecticide, fungicide, herbicide", "activity": "pruning, watering, weeding, fertilize, cleaning, task", "wage": "log day, attendance", "worker": "add, employee, hire, person", "purchase": "buy, supply, fertilizer, invoice", "farm": "add, land"}, "farms": "plots, map, land", "calendar": "agenda, schedule, dates, upcoming tasks", "inventory": "supplies, fertilizer, fungicide, herbicide, purchases, stock, storeroom, warehouse", "team": "workers, employees, staff", "wages": "days worked, attendance", "newWage": "log day, attendance", "payrolls": "settle, fortnight, approve", "payments": "pay, receipt, voucher", "positions": "salary, daily wage, pay per day", "labors": "tasks, jobs", "reportPayroll": "report, pdf", "reportCrops": "harvests, kilos, yield, report, pdf", "reportCosts": "expenses, how much it cost, report", "reportProfit": "profit, earnings, sales, price, report", "settings": "profile, password, email, language, notifications, account"}},
   "layout": {
     "subtitle": "Management system",
     "sections": { "management": "Management", "analysis": "Analysis", "system": "System" },
@@ -43,6 +45,7 @@
       "payrolls": "Payrolls",
       "payments": "Payments",
       "positions": "Positions",
+      "catalog": "Positions and tasks",
       "activities": "Tasks",
       "more": "More",
       "myFarms": "My farms",
@@ -58,7 +61,7 @@
     "menu": "Main menu",
     "closeMenu": "Close menu",
     "pendingPayrolls": "Payrolls awaiting approval",
-    "farm": {"all": "All farms", "choose": "Choose farm", "count": "{{count}} farms", "lots": "{{count}} plots", "lotsOne": "1 plot"},
+    "farm": {"all": "All farms", "choose": "Choose farm", "count": "{{count}} farms", "countOne": "1 farm", "lots": "{{count}} plots", "lotsOne": "1 plot"},
     "weather": {"good": "Good day to spray", "rain": "Rain: better not spray", "wind": "Too windy to spray", "hot": "Hot: spray early or late"}
   },
   "backups": {
@@ -313,13 +316,14 @@
     }
   },
   "reports": {
-    "profit": {"title":"Profitability by plot","subtitle":"What each plot earned and how each season did against the previous one.","kpi":{"profit":"Total profit","lots":"{{count}} plots","margin":"Margin","marginHint":"What is left of every $100 sold","best":"Most profitable plot","worst":"Least profitable plot"},"col":{"margin":"Margin","perHa":"Profit/ha","yield":"Yield","vsPrevious":"Vs. previous"},"ongoing":"ongoing","bestSeason":"Best season","noPrices":"No harvest has a sale price. Add the price per kilo when logging harvests to see the profit.","hint":"Profit is sales minus labor, supplies and other expenses. Tap a season to see its cost detail."},
+    "profit": {"title":"Profitability by plot","subtitle":"What each plot earned and how each season did against the previous one.","kpi":{"profit":"Total profit","lots":"{{count}} plots","lotsOne":"1 plot","unsold":"Includes {{amount}} spent on {{count}} plots with no sales yet","unsoldOne":"Includes {{amount}} spent on 1 plot with no sales yet","margin":"Margin","marginHint":"What is left of every $100 sold","best":"Most profitable plot","worst":"Least profitable plot"},"col":{"margin":"Margin","perHa":"Profit/ha","yield":"Yield","vsPrevious":"Vs. previous"},"ongoing":"ongoing","bestSeason":"Best season","noPrices":"No harvest has a sale price. Add the price per kilo when logging harvests to see the profit.","hint":"Profit is sales minus labor, supplies and other expenses. Tap a season to see its cost detail."},
     "costs": {
       "title": "Costs per season",
       "subtitle": "What each planting cost and earned: wages, inputs, other expenses and sales.",
       "kpi": {
         "cost": "Total cost",
         "seasons": "{{count}} seasons",
+        "seasonsOne": "1 season",
         "income": "Income",
         "kg": "{{kg}} kg harvested",
         "profit": "Profit",
@@ -357,6 +361,8 @@
     },
     "generatedAt": "Generated {{date}}",
     "downloadPdf": "Download PDF",
+    "period": {"label":"Period","todo":"All","mes":"This month","anio":"This year","anioPasado":"Last year","doce":"Last 12 months","notePayroll":"Counts the payments made in those dates. What is still to pay is as of today.","noteSeasons":"Shows the seasons that were in the field during those dates, with all their costs and income."},
+    "download": {"button":"Download","pdf":"PDF of this report","pdfHint":"To print or send","fullHint":"Choose which reports go in a single file"},
     "csv": {"button":"Excel (CSV)","hint":"Download what you see in the table (with your filters) to open it in Excel","cols":{"worker":"Worker","from":"From","to":"To","workdays":"Workdays","payments":"Payments","totalPaid":"Total paid","crop":"Crop","variety":"Variety","farm":"Farm","plot":"Plot","stage":"Stage","planted":"Planting date","finished":"End date","days":"Days","harvests":"Harvests","kg":"Kg harvested","labor":"Labor","inputs":"Supplies","other":"Other","totalCost":"Total cost","income":"Income","profit":"Profit","costPerKg":"Cost per kg","areaHa":"Area (ha)","season":"Season","marginPct":"Margin (%)"}},
     "full": {"button": "PDF with everything", "title": "What to include in the PDF", "hint": "Tick the parts you want in a single file.", "download": "Download PDF", "needOne": "Choose at least one part"},
     "downloading": "Preparing PDF…",
@@ -410,7 +416,7 @@
         "crops": "{{count}} crops",
         "cropsOne": "1 crop",
         "active": "Active",
-        "finished": "{{count}} finished",
+        "finished": "{{count}} finished", "finishedOne": "1 finished",
         "kg": "Kg harvested",
         "kgSub": "across all harvests",
         "harvests": "Harvests",
@@ -434,6 +440,7 @@
     }
   },
   "cultivo": {
+    "active": { "title": "Plantings in progress", "prev": "Previous", "next": "Next", "of": "{{pos}} of {{total}}" },
     "units": { "hectares": "hectares" },
     "fincas": {
       "list": {
@@ -539,7 +546,7 @@
         "register": "Error registering the lot. Try again."
       }
     },
-    "detail": {
+    "detail": { "siblings": "Plots of the farm",
       "showNdvi": "Show NDVI",
       "hideNdvi": "Hide NDVI",
       "noPolygon": "This lot has no polygon defined",
@@ -626,6 +633,7 @@
         "emptyFilter": "No records of this type yet.",
         "emptyAll": "No records yet. Use the buttons above to get started."
       },
+      "tabs": { "label": "Planting sections", "summary": "Summary", "records": "Records", "harvests": "Harvests", "diagnosis": "Diagnosis" },
       "danger": {
         "title": "Delete planting",
         "desc": "It will no longer show in the lot. Its costs and income are kept in the reports.",
@@ -713,7 +721,8 @@
     }
   },
   "workers": {
-    "ui": {"team": "Team", "summary": "Team summary", "ofTotal": "of {{total}} registered", "seeRosters": "See payrolls", "paymentsCount": "{{count}} payments", "paymentsCountOne": "1 payment", "people": "People", "filterState": "Filter by status", "col": {"worker": "Worker", "post": "Role", "wage": "Day wage", "state": "Status", "actions": "Actions"}, "idShort": "ID", "data": "Details", "contract": "Contract", "hireDate": "Hired", "phone": "Phone", "address": "Address", "workDays": "Days worked", "searchCrop": "Search crop...", "lastPayment": "Last payment", "paymentHistory": "Payment history", "payroll": "Payroll", "amount": "Amount", "openPayroll": "Open payroll", "summaryShort": "Summary", "rosters": {"toApprove": "To approve", "toPay": "Approved, unpaid", "paid": "Paid", "count": "{{count}} paid payrolls", "all": "All", "flow": "Payroll progress", "step1": "Generated", "step2": "Approved", "step3": "Paid", "cancelledNote": "This payroll is cancelled. Its work days are free to include in another payroll."}},
+    "catalog": { "label": "Positions and tasks" },
+    "ui": {"team": "Team", "summary": "Team summary", "ofTotal": "of {{total}} registered", "seeRosters": "See payrolls", "paymentsCount": "{{count}} payments", "paymentsCountOne": "1 payment", "people": "People", "filterState": "Filter by status", "col": {"worker": "Worker", "post": "Role", "wage": "Day wage", "state": "Status", "actions": "Actions"}, "idShort": "ID", "data": "Details", "contract": "Contract", "hireDate": "Hired", "phone": "Phone", "address": "Address", "workDays": "Days worked", "searchCrop": "Search crop...", "lastPayment": "Last payment", "paymentHistory": "Payment history", "payroll": "Payroll", "amount": "Amount", "openPayroll": "Open payroll", "summaryShort": "Summary", "rosters": {"toApprove": "To approve", "toPay": "Approved, unpaid", "paid": "Paid", "count": "{{count}} paid payrolls", "countOne": "1 paid payroll", "all": "All", "flow": "Payroll progress", "step1": "Generated", "step2": "Approved", "step3": "Paid", "cancelledNote": "This payroll is cancelled. Its work days are free to include in another payroll."}},
     "posts": {
       "title": "Positions",
       "subtitle": "Define roles and the daily wage for each position",
@@ -837,8 +846,8 @@
           "activities": "Tasks",
           "value": "Value"
         },
-        "settled": "Settled",
-        "pending": "Pending",
+        "settled": "Paid",
+        "pending": "To pay",
         "emptyWages": "No workdays in this payroll",
         "loading": "Loading payroll...",
         "notFound": "Payroll not found.",
@@ -909,7 +918,7 @@
         "goToWorkers": "Go to Workers",
         "stats": {
           "total": "Total workdays",
-          "unsettled": "Unsettled",
+          "unsettled": "Unpaid",
           "pendingPay": "Pending payment",
           "accumulated": "Total accumulated"
         },
@@ -929,12 +938,12 @@
           "value": "Value",
           "total": "Total"
         },
-        "settled": "Settled",
-        "pending": "Pending",
+        "settled": "Paid",
+        "pending": "To pay",
         "panel": {
           "close": "Close panel",
           "title": "Generate Payroll",
-          "unsettledWages": "Unsettled workdays",
+          "unsettledWages": "Unpaid workdays",
           "totalToGenerate": "Total to generate",
           "periodTitle": "Payroll period",
           "periodHelp": "The system will calculate the total of all unsettled workdays within this period.",
@@ -1039,6 +1048,7 @@
         "emptySearch": "No results found for \"{{query}}\"",
         "registerFirst": "Register first worker",
         "perDay": "/day",
+        "short": { "wage": "Log", "wages": "Workdays", "rosters": "Payrolls" },
         "registerWage": "Log workday",
         "viewWages": "View workdays",
         "viewRosters": "View payrolls"
@@ -1118,7 +1128,8 @@
   },
   "config": {
     "push": {"title":"Notifications on this device","hint":"Notifications on your phone or computer even when AgroRuta is closed: the daily summary, weather alerts, low stock and payments.","unsupported":"This browser does not allow notifications. On iPhone, first add AgroRuta to the home screen (Share → Add to Home Screen) and open it from there.","blocked":"Notifications are blocked for this site. Allow them in the browser permissions (the padlock next to the address) and try again.","enabled":"Notifications turned on for this device.","error":"Could not turn on notifications. Try again.","test":"Send test","testSent":"Test notification sent. It should show up in a few seconds.","testFailed":"The test notification was not sent. Turn notifications off and on again.","hintWorker":"A notification on your phone or computer when a payment is recorded for you, even if AgroRuta is closed."},
-    "sessions": {"title":"Open sessions","desc":"Devices where your account is signed in","loading":"Looking for sessions…","loadError":"Could not load the sessions. Reload the page.","unknown":"Unknown device","current":"This session","started":"Started {{fecha}}","lastUse":"last used {{fecha}}","close":"Close","closeOthers":"Close all other sessions","error":"Could not close the session. Try again.","note":"If you do not recognise a device, close its session and change your password. A closed session can take up to 15 minutes to stop working."},
+    "tabs": {"profile":"Profile","security":"Security","notices":"Notifications","prefs":"Preferences"},
+    "sessions": {"title":"Open sessions","desc":"Devices where your account is signed in","loading":"Looking for sessions…","loadError":"Could not load the sessions. Reload the page.","unknown":"Unknown device","current":"This session","started":"Started {{fecha}}","lastUse":"last used {{fecha}}","close":"Close","showAll":"Show the other {{count}} sessions","showAllOne":"Show the other session","showLess":"Show less","closeOthers":"Close all other sessions","error":"Could not close the session. Try again.","note":"If you do not recognise a device, close its session and change your password. A closed session can take up to 15 minutes to stop working."},
     "twoFactor": {"title":"Two-step verification","desc":"On top of your password, asks for a code from your phone when you sign in","loading":"Checking…","loadError":"Could not check two-step verification. Reload the page.","on":"On","off":"Off","onHint":"Every time you sign in we will ask for the code from your authenticator app.","offHint":"If someone finds out your password, they cannot get in without the code that only shows on your phone. Recommended for administrators.","backupLeft":"Unused backup codes: {{n}}","enable":"Turn on","disable":"Turn off","cancel":"Cancel","continue":"Continue","confirm":"Confirm and turn on","passwordStep":"To start, confirm it is you by typing your password.","step1":"Install an authenticator app on your phone (Google Authenticator, Microsoft Authenticator, Authy or similar).","step2":"In the app choose “add account” and scan this QR code.","step3":"Type the 6-digit code the app shows:","qrAlt":"QR code to link the authenticator app","manual":"Cannot scan it? Type this key into the app:","wrongPassword":"The password is not correct.","wrongCode":"That code is wrong or has expired. Use the one showing in the app right now.","error":"Could not complete it. Try again.","enabled":"Two-step verification is now on.","backupTitle":"Save these backup codes.","backupDesc":"Each one works once to sign in if you lose your phone. We will not show them again.","copy":"Copy codes","copied":"Copied","saved":"I saved them","disableStep":"To turn it off, type your password and a code from the app (or a backup code).","codeOrBackup":"App code or backup code"},
     "mail": {"title": "Emails", "desc": "Notices sent to {{email}}.", "crop": "Daily crop summary", "cropHint": "Every morning, if there's something for today: sprayings due or overdue, scheduled tasks, re-entry, pre-harvest interval and frost or rain alerts.", "workers": "Requests from your workers", "workersHint": "When a worker asks for access to their portal.", "security": "Security notices (password changed, failed attempts, password recovery) are always sent.", "saved": "Email preferences saved.", "error": "Couldn't save the email preferences.", "workerTitle": "Emails about your work", "workerHint": "You get an email when your employer records a payment for you or answers your access request."},
     "prefs": {"title": "Preferences", "desc": "How you use AgroRuta on this device", "language": "Language", "languageHint": "Language for menus, texts and reports", "farm": "Farm on start", "farmHint": "The farm shown when you open the panel. You can also change it in the side menu.", "farmSaved": "Farm saved as default", "session": "Session", "sessionHint": "Sign out of your account on this device"},
@@ -1223,6 +1234,7 @@
       "manageUsers": "Manage users",
       "farms": "Farms",
       "lots": "{{count}} lots",
+      "lotsOne": "1 lot",
       "activeCrops": "Crops in progress",
       "notFinished": "Not finished",
       "harvest": "Recorded harvest",
@@ -1280,7 +1292,7 @@
     "farmers": {
       "title": "Farmers",
       "subtitle": "See each farmer's farms, workers and payrolls.",
-      "count": "{{count}} farmers",
+      "count": "{{count}} farmers", "countOne": "1 farmer",
       "search": "Search farmer",
       "sortBy": "Sort by",
       "sort": {
@@ -1393,10 +1405,10 @@
       "account": "My account"
     },
     "home": {
-      "wagesCount": "{{count}} wages",
+      "wagesCount": "{{count}} wages", "wagesCountOne": "1 wage",
       "allPaid": "You are up to date: no payrolls to collect.",
-      "unsettled": "Not settled",
-      "settled": "Settled",
+      "unsettled": "To collect",
+      "settled": "Paid",
       "wage": "Wage",
       "noWages": "No wages recorded yet.",
       "recentWages": "Latest wages",
@@ -1436,7 +1448,7 @@
       "title": "My workdays",
       "subtitle": "The days you worked and what was recorded for each.",
       "empty": "You don't have any workdays yet.",
-      "monthTotal": "{{count}} workdays · {{amount}}",
+      "monthTotal": "{{count}} workdays · {{amount}}", "monthTotalOne": "1 workday · {{amount}}",
       "paid": "Settled",
       "unpaid": "Not settled yet"
     },
@@ -1444,7 +1456,7 @@
       "title": "My payrolls",
       "subtitle": "Each payroll groups the workdays of a period.",
       "empty": "You don't have any payrolls yet.",
-      "days": "{{count}} workdays",
+      "days": "{{count}} workdays", "daysOne": "1 workday",
       "help": {
         "pending": "Being reviewed by your employer",
         "approved": "Approved, payment pending",
@@ -1483,7 +1495,7 @@
       "noPrices": "Add the sale price to harvests",
       "breakdown": "Cost breakdown",
       "labor": "Labor",
-      "wages": "{{count}} wages",
+      "wages": "{{count}} wages", "wagesOne": "1 wage",
       "inputs": "Inputs",
       "other": "Other",
       "empty": "No costs yet: it adds the wages registered to this crop, the cost of sprayings and of activities.",
@@ -1508,7 +1520,7 @@
       "tomorrow": "Tomorrow",
       "whichLot": "Which lot? For {{date}}",
       "noActive": "There are no plantings in progress on this farm.",
-      "noFarm": "Choose or create a farm to see its calendar.",
+      "noFarm": "Create your first farm to see its calendar.",
       "error": "The calendar could not be loaded.",
       "prev": "Previous month",
       "next": "Next month",
@@ -1520,7 +1532,7 @@
       "otherMonth": "This day belongs to another month.",
       "dayEmpty": "Nothing on this day.",
       "next14": "Next 14 days",
-      "overdueCount": "{{count}} overdue",
+      "overdueCount": "{{count}} overdue", "overdueCountOne": "1 overdue",
       "tipo": {
         "SIEMBRA": "Planting",
         "ETAPA": "Moved to {{etapa}}",
@@ -1648,7 +1660,7 @@
       "area": "Area (ha)",
       "current": "Current season",
       "plantedOn": "Planted on {{date}}",
-      "plants": "{{count}} plants",
+      "plants": "{{count}} plants", "plantsOne": "1 plant",
       "daysInField": "days in the field",
       "open": "View planting details",
       "empty": "This lot has no plantings yet",
@@ -1659,7 +1671,7 @@
       "newSeason": "New season",
       "history": "Previous seasons",
       "historyEmpty": "When you end a season it will show up here with what you harvested.",
-      "days": "{{count}} days",
+      "days": "{{count}} days", "daysOne": "1 day",
       "errors": {
         "state": "The lot status could not be changed.",
         "save": "The lot could not be saved."
@@ -1670,7 +1682,7 @@
       "editTitle": "Edit planting",
       "editSubtitle": "Fix the date, number of plants or variety."
     },
-    "registro": {
+    "registro": { "deleted": "{{nombre}} deleted",
       "delete": "Delete",
       "deleteTitle": "Delete this record?",
       "deleteMsg": "“{{nombre}}” from {{fecha}} will be deleted. This cannot be undone.",

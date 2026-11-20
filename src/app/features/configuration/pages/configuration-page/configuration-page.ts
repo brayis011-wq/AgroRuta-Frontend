@@ -21,6 +21,16 @@ interface Toast {
   type: 'success' | 'error';
 }
 
+export type GrupoConfig = 'perfil' | 'seguridad' | 'avisos' | 'preferencias';
+
+/** Pestañas de Configuración y las secciones (ids) que van en cada una */
+export const GRUPOS_CONFIG: { id: GrupoConfig; icono: string; clave: string; secciones: string[] }[] = [
+  { id: 'perfil', icono: 'ti-user', clave: 'config.tabs.profile', secciones: ['perfil'] },
+  { id: 'seguridad', icono: 'ti-lock', clave: 'config.tabs.security', secciones: ['seguridad', 'dos-pasos', 'sesiones'] },
+  { id: 'avisos', icono: 'ti-bell', clave: 'config.tabs.notices', secciones: ['correos'] },
+  { id: 'preferencias', icono: 'ti-adjustments', clave: 'config.tabs.prefs', secciones: ['preferencias'] },
+];
+
 @Component({
   selector: 'app-configuration-page',
   standalone: true,
@@ -65,6 +75,8 @@ export class ConfigurationPageComponent implements OnInit {
   toast: Toast | null = null;
 
   ngOnInit(): void {
+    const seccion = this.router.parseUrl(this.router.url).fragment;
+    if (seccion) this.ir(seccion);
     this.loadPerfil();
     if (!this.esAgricultor) return; // los demás roles no tienen correos opcionales
     this.notificaciones.obtener().subscribe({
@@ -147,9 +159,19 @@ export class ConfigurationPageComponent implements OnInit {
     });
   }
 
-  /** Baja hasta una sección sin cambiar la URL */
+  // ── Pestañas ──────────────────────────────────────────────────
+  readonly grupos = GRUPOS_CONFIG;
+  readonly grupo = signal<GrupoConfig>('perfil');
+
+  elegirGrupo(g: GrupoConfig): void {
+    this.grupo.set(g);
+  }
+
+  /** Abre la pestaña de una sección (la campana enlaza a #correos) y baja hasta ella */
   ir(id: string): void {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const g = GRUPOS_CONFIG.find((x) => x.secciones.includes(id));
+    if (g) this.grupo.set(g.id);
+    setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   cambiarIdioma(lang: Lang): void {

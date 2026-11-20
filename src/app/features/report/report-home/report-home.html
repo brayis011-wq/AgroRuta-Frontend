@@ -31,15 +31,11 @@
     </button>
   </div>
 
-  <!-- Todo en un solo PDF: se eligen las partes -->
+  <!-- Todo en un solo PDF: se abre desde el menú Descargar de cada reporte y aquí se eligen las partes -->
   <div class="completo">
-    <button type="button" class="btn-completo" (click)="panelCompleto.set(!panelCompleto())"
-            [attr.aria-expanded]="panelCompleto()" aria-controls="panel-completo">
-      <i class="ti ti-files" aria-hidden="true"></i> {{ 'reports.full.button' | translate }}
-      <i class="ti" [class.ti-chevron-down]="!panelCompleto()" [class.ti-chevron-up]="panelCompleto()" aria-hidden="true"></i>
-    </button>
     @if (panelCompleto()) {
       <div class="panel-completo" id="panel-completo" role="group" [attr.aria-label]="'reports.full.title' | translate">
+        <button type="button" class="cerrar-completo" (click)="panelCompleto.set(false)" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
         <strong>{{ 'reports.full.title' | translate }}</strong>
         <p>{{ 'reports.full.hint' | translate }}</p>
         @for (p of partes; track p) {
@@ -58,16 +54,34 @@
   </div>
   </div>
 
-  <div *ngIf="activeTab === 'payroll'">
-    <app-payroll-report />
+  <!-- Periodo: la nómina cuenta los pagos de esas fechas; lo demás, las temporadas que estuvieron en el campo -->
+  <div class="periodo" role="group" [attr.aria-label]="'reports.period.label' | translate">
+    <span class="periodo-titulo"><i class="ti ti-calendar" aria-hidden="true"></i> {{ 'reports.period.label' | translate }}</span>
+    <div class="periodo-opciones">
+      @for (p of clavesPeriodo; track p) {
+        <button type="button" [class.on]="periodo() === p" [attr.aria-pressed]="periodo() === p" (click)="elegirPeriodo(p)">
+          {{ 'reports.period.' + p | translate }}
+        </button>
+      }
+    </div>
+    @if (periodo() !== 'todo') {
+      <small class="periodo-nota">{{ (activeTab === 'payroll' ? 'reports.period.notePayroll' : 'reports.period.noteSeasons') | translate }}</small>
+    }
   </div>
-  <div *ngIf="activeTab === 'crops'">
-    <app-crop-report />
-  </div>
-  <div *ngIf="activeTab === 'costs'">
-    <app-costs-report [siembraInicial]="siembra" />
-  </div>
-  <div *ngIf="activeTab === 'profitability'">
-    <app-profitability-report />
-  </div>
+
+  <!-- Al cambiar el periodo se vuelve a armar el reporte con las fechas nuevas -->
+  @for (p of [periodo()]; track p) {
+    <div *ngIf="activeTab === 'payroll'">
+      <app-payroll-report />
+    </div>
+    <div *ngIf="activeTab === 'crops'">
+      <app-crop-report />
+    </div>
+    <div *ngIf="activeTab === 'costs'">
+      <app-costs-report [siembraInicial]="siembra" />
+    </div>
+    <div *ngIf="activeTab === 'profitability'">
+      <app-profitability-report />
+    </div>
+  }
 </div>

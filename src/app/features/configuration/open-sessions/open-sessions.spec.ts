@@ -72,6 +72,20 @@ describe('OpenSessionsComponent', () => {
     expect(c.hayOtras).toBe(false);
   });
 
+  it('con muchas sesiones muestra las 5 más recientes y el resto con "Ver todas"', () => {
+    const muchas = Array.from({ length: 8 }, (_, i): SesionAbierta =>
+      ({ id: 100 + i, dispositivo: 'Chrome · Windows', iniciadaEn: '2026-11-01T10:00:00Z', ultimoUso: `2026-11-0${i + 1}T08:00:00Z`, actual: false }));
+    seguridad.sesiones.mockReturnValue(of([...muchas, esta]));
+    const f = crear();
+    const c = f.componentInstance;
+    expect(f.nativeElement.querySelectorAll('.sesiones li').length).toBe(5);
+    expect(c.visibles()[0]).toEqual(esta);
+    expect(c.ocultas()).toBe(4);
+    f.nativeElement.querySelector('.btn-ver-todas').click();
+    f.detectChanges();
+    expect(f.nativeElement.querySelectorAll('.sesiones li').length).toBe(9);
+  });
+
   it('si falla el cierre, conserva la lista y avisa', () => {
     seguridad.sesiones.mockReturnValue(of([otra, esta]));
     seguridad.cerrarSesion.mockReturnValue(throwError(() => ({ status: 500 })));

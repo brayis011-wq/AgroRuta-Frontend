@@ -1,3 +1,5 @@
+import { PrecargarDirective } from '../../../../shared/prefetch.directive';
+import { SiembraActiva, SiembrasActivasService } from '../../../../core/services/active-plantings.service';
 import {
   Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject
 } from '@angular/core';
@@ -10,7 +12,7 @@ import { Subscription, forkJoin, of, catchError } from 'rxjs';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { LanguageService } from '../../../../core/services/language.service';
-import { Finca, Lote } from '../../../../core/models/crop.model';
+import { Finca, Lote, nombreCultivo } from '../../../../core/models/crop.model';
 import { escaparHtml } from '../../../../shared/html';
 import { ESTADOS_LOTE, colorEstadoLote, puntosDelLote } from '../../lot-map';
 import * as L from 'leaflet';
@@ -18,13 +20,17 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-lista-fincas',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, RouterLink, ContarDirective],
+  imports: [CommonModule, FormsModule, TranslatePipe, RouterLink, ContarDirective, PrecargarDirective],
   templateUrl: './farm-list.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './farm-list.css'],
 })
 export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
   private lang = inject(LanguageService);
+  private siembrasActivasSvc = inject(SiembrasActivasService);
+  /** Siembras en curso de todas las fincas: se llega a cualquiera con un toque (null mientras carga) */
+  siembrasActivas: SiembraActiva[] | null = null;
+  readonly nombreCultivo = nombreCultivo;
 
   fincas: Finca[] = [];
   cargando = true;
@@ -188,6 +194,11 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.map) this.dibujarLotes(true);
         this.cdr.detectChanges();
       });
+    // Siembras en curso de todas las fincas (las mismas consultas: el interceptor de copia breve las comparte)
+    this.siembrasActivasSvc.listar(this.fincas).subscribe({
+      next: (s) => { this.siembrasActivas = s; this.cdr.detectChanges(); },
+      error: () => { this.siembrasActivas = []; this.cdr.detectChanges(); },
+    });
   }
 
   /**
