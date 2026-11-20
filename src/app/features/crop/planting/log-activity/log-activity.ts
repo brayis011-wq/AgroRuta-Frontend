@@ -14,7 +14,7 @@ import { CultivoService } from '../../../../core/services/crop.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
   templateUrl: './log-activity.html',
-  styleUrls: ['../../crop-form.css', './log-activity.css']
+  styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-activity.css']
 })
 export class RegistrarActividad implements OnInit {
   private readonly avisos = inject(AvisosService);

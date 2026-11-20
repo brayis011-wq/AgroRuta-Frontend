@@ -74,7 +74,7 @@ interface FumigacionForm {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
   templateUrl: './log-spraying.html',
-  styleUrls: ['../../crop-form.css', './log-spraying.css'],
+  styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-spraying.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegistrarFumigacion implements OnInit, OnDestroy {

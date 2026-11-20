@@ -64,7 +64,7 @@ export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: strin
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink, RouterOutlet, MigasCultivoComponent, AyudaComponent, AnteriorSiguienteComponent],
   templateUrl: './planting-detail.html',
-  styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css'],
+  styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css', './planting-panel.css'],
 })
 export class DetalleSiembraComponent implements OnInit, OnDestroy {
   /** \"Café · Castillo\" */

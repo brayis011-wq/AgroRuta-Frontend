@@ -17,7 +17,7 @@ import { formatoFecha, formatoPesos } from '../../../../shared/format';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
   templateUrl: './log-harvest.html',
-  styleUrls: ['../../crop-form.css', './log-harvest.css']
+  styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-harvest.css']
 })
 export class RegistrarCosecha implements OnInit {
   private readonly avisos = inject(AvisosService);
