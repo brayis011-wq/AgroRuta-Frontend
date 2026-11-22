@@ -213,6 +213,22 @@ export class JornalService {
     if (fin)    params = params.set('fin', fin);
     return this.http.get<Pagina<Jornal>>(`${this.api}/worker/${trabajadorId}/page`, { params });
   }
+  /** Jornales de todo el equipo (o de un trabajador si viene), por páginas, más recientes primero. */
+  paginaEquipo(page: number, filtros: { trabajadorId?: number | null; inicio?: string; fin?: string } = {}, size = TAMANO_PAGINA): Observable<Pagina<Jornal>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (filtros.trabajadorId != null) params = params.set('trabajadorId', filtros.trabajadorId);
+    if (filtros.inicio) params = params.set('inicio', filtros.inicio);
+    if (filtros.fin) params = params.set('fin', filtros.fin);
+    return this.http.get<Pagina<Jornal>>(`${this.api}/page`, { params });
+  }
+  /** Totales con los mismos filtros */
+  resumenEquipo(filtros: { trabajadorId?: number | null; inicio?: string; fin?: string } = {}): Observable<ResumenJornales> {
+    let params = new HttpParams();
+    if (filtros.trabajadorId != null) params = params.set('trabajadorId', filtros.trabajadorId);
+    if (filtros.inicio) params = params.set('inicio', filtros.inicio);
+    if (filtros.fin) params = params.set('fin', filtros.fin);
+    return this.http.get<ResumenJornales>(`${this.api}/summary`, { params });
+  }
   /** Totales de los jornales del trabajador en el mismo rango de fechas. */
   resumenPorTrabajador(trabajadorId: number, inicio?: string, fin?: string): Observable<ResumenJornales> {
     let params = new HttpParams();
@@ -246,14 +262,17 @@ export class PagoService {
   constructor(private http: HttpClient) {}
 
   /** Pagos por páginas, más recientes primero. */
-  pagina(page: number, nominaId?: number | null, size = TAMANO_PAGINA): Observable<Pagina<Pago>> {
+  pagina(page: number, nominaId?: number | null, size = TAMANO_PAGINA, trabajadorId?: number | null): Observable<Pagina<Pago>> {
     let params = new HttpParams().set('page', page).set('size', size);
     if (nominaId != null) params = params.set('nominaId', nominaId);
+    if (trabajadorId != null) params = params.set('trabajadorId', trabajadorId);
     return this.http.get<Pagina<Pago>>(`${this.api}/page`, { params });
   }
   /** Totales de los pagos (con el mismo filtro de nómina), para las tarjetas de la lista. */
-  resumen(nominaId?: number | null): Observable<ResumenPagos> {
-    const params = nominaId != null ? new HttpParams().set('nominaId', nominaId) : undefined;
+  resumen(nominaId?: number | null, trabajadorId?: number | null): Observable<ResumenPagos> {
+    let params = new HttpParams();
+    if (nominaId != null) params = params.set('nominaId', nominaId);
+    if (trabajadorId != null) params = params.set('trabajadorId', trabajadorId);
     return this.http.get<ResumenPagos>(`${this.api}/summary`, { params });
   }
   /** Lo pagado cada mes desde una fecha ("2026-10-01"), para comparar un mes con el anterior. */

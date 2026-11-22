@@ -11,10 +11,13 @@
           @if (s.estado && s.estado !== 'ACTIVO') { <span class="est" [class]="s.estado">{{ 'enums.estadoTrabajador.' + s.estado | translate }}</span> }
         </p>
       } @else {
-        <p class="cv-sub">{{ 'workers.wages.list.subtitleNoWorker' | translate }}</p>
+        <p class="cv-sub"><span><i class="ti ti-users-group" aria-hidden="true"></i> {{ 'workers.wages.list.subtitleAll' | translate }}</span></p>
       }
     </div>
     <div class="cv-acciones">
+      @if (!trabajadorId && pendientes > 0) {
+        <a class="btn" routerLink="/worker/payrolls" [queryParams]="{ team: 1 }"><i class="ti ti-users-group" aria-hidden="true"></i> {{ 'workers.rosters.team.open' | translate }}</a>
+      }
       @if (trabajadorId && pendientes > 0) {
         <button type="button" class="btn" (click)="abrirGenerarNomina()">
           <i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.wages.list.generatePayroll' | translate }}
@@ -36,28 +39,11 @@
         <button type="button" class="btn btn-prim" (click)="volver()">{{ 'workers.wages.list.goToWorkers' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
       </div>
     </section>
-  } @else if (trabajadores.length > 8) {
-    <div class="selector">
-      <label for="selTrabajador">{{ 'workers.wages.list.workerLabel' | translate }}</label>
-      <select id="selTrabajador" [ngModel]="trabajadorId" (ngModelChange)="elegirTrabajador($event)">
-        @for (t of trabajadores; track t.id) {
-          <option [ngValue]="t.id">{{ t.nombreCompleto }}{{ t.cargo ? ' — ' + t.cargo.nombre : '' }}</option>
-        }
-      </select>
-    </div>
   } @else {
-    <div class="personas" role="tablist" [attr.aria-label]="'workers.wages.list.workerLabel' | translate">
-      @for (t of trabajadores; track t.id) {
-        <button type="button" role="tab" class="p-chip" [class.on]="t.id === trabajadorId"
-                [attr.aria-selected]="t.id === trabajadorId" (click)="elegirTrabajador(t.id!)">
-          <span class="av" [class.gris]="t.estado !== 'ACTIVO' && t.id !== trabajadorId" aria-hidden="true">{{ iniciales(t) }}</span>
-          <span><strong>{{ t.nombreCompleto }}</strong><small>{{ t.cargo?.nombre }}</small></span>
-        </button>
-      }
-    </div>
+    <app-filtro-trabajador [trabajadores]="trabajadores" [valor]="trabajadorId" (cambio)="elegirTrabajador($event)" />
   }
 
-  @if (trabajadorId) {
+  @if (trabajadores.length > 0) {
     <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">
       <div class="kpi">
         <span class="ic verde"><i class="ti ti-calendar-week" aria-hidden="true"></i></span>
@@ -86,7 +72,7 @@
           <label class="buscar-t">
             <i class="ti ti-search" aria-hidden="true"></i>
             <span class="sr-only">{{ 'workers.wages.list.filters.search' | translate }}</span>
-            <input type="search" [placeholder]="'workers.ui.searchCrop' | translate" [(ngModel)]="busqueda" />
+            <input type="search" [placeholder]="(trabajadorId ? 'workers.ui.searchCrop' : 'workers.filter.searchWorkerCrop') | translate" [(ngModel)]="busqueda" />
           </label>
           <div class="fechas">
             <label><span class="sr-only">{{ 'workers.wages.list.filters.from' | translate }}</span><input type="date" [(ngModel)]="fechaInicio" (change)="filtrarFechas()" [attr.aria-label]="'workers.wages.list.filters.from' | translate" /></label>
@@ -114,6 +100,7 @@
             <thead>
               <tr>
                 <th>{{ 'workers.wages.list.table.date' | translate }}</th>
+                @if (!trabajadorId) { <th>{{ 'workers.ui.col.worker' | translate }}</th> }
                 <th>{{ 'workers.wages.list.table.crop' | translate }}</th>
                 <th>{{ 'workers.wages.list.table.activities' | translate }}</th>
                 <th class="num">{{ 'workers.wages.list.table.value' | translate }}</th>
@@ -124,7 +111,8 @@
               @for (j of filtrados; track j.id) {
                 <tr [class.apagada]="j.liquidado">
                   <td class="suave">{{ j.fecha | fecha }}</td>
-                  <td class="prin fuerte-n">{{ j.nombreCultivo }}</td>
+                  @if (!trabajadorId) { <td class="prin"><a class="persona enlace" [routerLink]="[]" [queryParams]="{ trabajadorId: j.trabajador?.id }"><span class="av" aria-hidden="true">{{ j.trabajador ? iniciales(j.trabajador) : '?' }}</span><span>{{ j.trabajador?.nombreCompleto }}</span></a></td> }
+                  <td class="fuerte-n">{{ j.nombreCultivo }}</td>
                   <td><span class="etqs">@for (a of j.actividades; track a.id) { <span class="etq">{{ a.nombre }}</span> }</span></td>
                   <td class="num fuerte-n">{{ j.valorJornal | pesos }}@if (j.kilos) { <small class="suave kg-j">{{ j.kilos }} kg</small> }</td>
                   <td><span class="est" [class.si]="j.liquidado" [class.PENDIENTE]="!j.liquidado">{{ (j.liquidado ? 'workers.wages.list.settled' : 'workers.wages.list.pending') | translate }}</span></td>
@@ -133,7 +121,7 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="3">{{ 'workers.wages.list.table.total' | translate }}</td>
+                <td [attr.colspan]="trabajadorId ? 3 : 4">{{ 'workers.wages.list.table.total' | translate }}</td>
                 <td class="num">{{ totalJornales | pesos }}</td>
                 <td class="ocultar-m"></td>
               </tr>

@@ -31,9 +31,9 @@ describe('ListaJornalesComponent', () => {
     queryParamsSubject = new Subject();
 
     jornalSvc = {
-      paginaPorTrabajador: vi.fn().mockReturnValue(of(pag([mkJornal()]))),
+      paginaEquipo: vi.fn().mockReturnValue(of(pag([mkJornal()]))),
       // Sin resumen, los totales se calculan con los jornales cargados (así lo esperan varias pruebas)
-      resumenPorTrabajador: vi.fn().mockReturnValue(of(null))
+      resumenEquipo: vi.fn().mockReturnValue(of(null))
     };
     trabajadorSvc = {
       buscarPorId: vi.fn().mockReturnValue(of(mkTrabajador())),
@@ -68,18 +68,19 @@ describe('ListaJornalesComponent', () => {
   it('should create', () => expect(component).toBeTruthy());
 
   it('ngOnInit() should load jornales when trabajadorId param exists', async () => {
-    jornalSvc.paginaPorTrabajador.mockClear();
+    jornalSvc.paginaEquipo.mockClear();
     trabajadorSvc.buscarPorId.mockClear();
     queryParamsSubject.next({ trabajadorId: '1' });
     await fixture.whenStable();
-    expect(jornalSvc.paginaPorTrabajador).toHaveBeenCalledWith(1, 0, undefined, undefined);
+    expect(jornalSvc.paginaEquipo).toHaveBeenCalledWith(0, { trabajadorId: 1, inicio: undefined, fin: undefined });
     expect(component.jornales.length).toBe(1);
   });
 
-  it('ngOnInit() should not load jornales when no trabajadorId param', () => {
-    jornalSvc.paginaPorTrabajador.mockClear();
+  it('sin trabajador en la URL carga los jornales de todo el equipo', () => {
+    jornalSvc.paginaEquipo.mockClear();
     queryParamsSubject.next({});
-    expect(jornalSvc.paginaPorTrabajador).not.toHaveBeenCalled();
+    expect(component.trabajadorId).toBeNull();
+    expect(jornalSvc.paginaEquipo).toHaveBeenCalledWith(0, { trabajadorId: null, inicio: undefined, fin: undefined });
   });
 
   it('cargarTrabajador() should load trabajador data', () => {
@@ -89,17 +90,19 @@ describe('ListaJornalesComponent', () => {
   });
 
   it('cargarJornales() should set error on failure', () => {
-    jornalSvc.paginaPorTrabajador.mockReturnValue(throwError(() => new Error()));
+    jornalSvc.paginaEquipo.mockReturnValue(throwError(() => new Error()));
     component.trabajadorId = 1;
     component.cargarJornales();
     expect(component.error).toBe('workers.wages.list.errors.load');
   });
 
-  it('cargarJornales() should do nothing without trabajadorId', () => {
-    jornalSvc.paginaPorTrabajador.mockClear();
+  it('cargarJornales() sin trabajador pide los del equipo y su resumen', () => {
+    jornalSvc.paginaEquipo.mockClear();
+    jornalSvc.resumenEquipo.mockClear();
     component.trabajadorId = null;
     component.cargarJornales();
-    expect(jornalSvc.paginaPorTrabajador).not.toHaveBeenCalled();
+    expect(jornalSvc.paginaEquipo).toHaveBeenCalled();
+    expect(jornalSvc.resumenEquipo).toHaveBeenCalledWith({ trabajadorId: null, inicio: undefined, fin: undefined });
   });
 
   it('filtrados should return all when busqueda is empty', () => {
@@ -133,20 +136,20 @@ describe('ListaJornalesComponent', () => {
 
   it('filtrarFechas() should call cargarJornales', () => {
     component.trabajadorId = 1;
-    jornalSvc.paginaPorTrabajador.mockClear();
+    jornalSvc.paginaEquipo.mockClear();
     component.filtrarFechas();
-    expect(jornalSvc.paginaPorTrabajador).toHaveBeenCalled();
+    expect(jornalSvc.paginaEquipo).toHaveBeenCalled();
   });
 
   it('limpiarFiltros() should reset dates and reload', () => {
     component.trabajadorId = 1;
     component.fechaInicio = '2024-01-01';
     component.fechaFin    = '2024-01-31';
-    jornalSvc.paginaPorTrabajador.mockClear();
+    jornalSvc.paginaEquipo.mockClear();
     component.limpiarFiltros();
     expect(component.fechaInicio).toBe('');
     expect(component.fechaFin).toBe('');
-    expect(jornalSvc.paginaPorTrabajador).toHaveBeenCalled();
+    expect(jornalSvc.paginaEquipo).toHaveBeenCalled();
   });
 
   it('abrirGenerarNomina() should open panel and reset form when no pendientes', () => {
@@ -196,7 +199,7 @@ describe('ListaJornalesComponent', () => {
   it('generarNomina() should call generar and set nominaGenerada on success', () => {
     nominaSvc.generar.mockReturnValue(of(mkNomina()));
     component.trabajadorId = 1;
-    jornalSvc.paginaPorTrabajador.mockReturnValue(of(pag([])));
+    jornalSvc.paginaEquipo.mockReturnValue(of(pag([])));
     component.abrirGenerarNomina();
     component.formNomina.setValue({ periodoInicio: '2024-01-01', periodoFin: '2024-01-31' });
     component.generarNomina();
@@ -281,13 +284,13 @@ describe('ListaJornalesComponent', () => {
   it('cargarMas() pide la página siguiente con el mismo rango de fechas', () => {
     component.trabajadorId = 1;
     component.fechaInicio = '2024-01-01';
-    jornalSvc.paginaPorTrabajador
+    jornalSvc.paginaEquipo
       .mockReturnValueOnce(of({ contenido: [mkJornal()], pagina: 0, tamano: 1, total: 2, totalPaginas: 2 }))
       .mockReturnValueOnce(of({ contenido: [{ ...mkJornal(), id: 99 }], pagina: 1, tamano: 1, total: 2, totalPaginas: 2 }));
     component.cargarJornales();
     expect(component.hayMas).toBe(true);
     component.cargarMas();
-    expect(jornalSvc.paginaPorTrabajador).toHaveBeenLastCalledWith(1, 1, '2024-01-01', undefined);
+    expect(jornalSvc.paginaEquipo).toHaveBeenLastCalledWith(1, { trabajadorId: 1, inicio: '2024-01-01', fin: undefined });
     expect(component.jornales.length).toBe(2);
     expect(component.hayMas).toBe(false);
   });
@@ -321,11 +324,18 @@ describe('ListaJornalesComponent', () => {
     expect(nav).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { trabajadorId: 7 } }));
   });
 
-  it('without a worker in the URL it opens the first one', () => {
+  it('sin trabajador en la URL se queda en "Todos" (no salta al primero)', () => {
     const router = TestBed.inject(Router);
     const nav = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     queryParamsSubject.next({});
-    expect(nav).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { trabajadorId: 1 }, replaceUrl: true }));
+    expect(nav).not.toHaveBeenCalled();
+  });
+
+  it('elegir "Todos" quita el trabajador de la URL', () => {
+    const router = TestBed.inject(Router);
+    const nav = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    component.elegirTrabajador(null);
+    expect(nav).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { trabajadorId: null } }));
   });
 
   it('iniciales() uses first and last name', () => {

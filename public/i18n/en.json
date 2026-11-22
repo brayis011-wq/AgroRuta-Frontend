@@ -737,6 +737,7 @@
     }
   },
   "workers": {
+    "filter": {"label":"Show","all":"Everyone","allHint":"{{count}} workers","allOption":"All workers ({{count}})","searchWorkerCrop":"Search worker or crop..."},
     "sheet": {"legendPending": "In a pending payroll (can be corrected)", "removedFromPayroll": "{{name}}'s workday removed; the payroll was recalculated", "title":"Weekly sheet","subtitle":"Tap a cell to log that day's workday; tap it again to remove it.","toPayroll":"Generate the fortnight","withWhat":"What gets logged","crop":"Crop they worked on","labors":"Tasks","howTo":"Whatever you tap is logged with this crop and these tasks. Tap a day's number to log everyone paid per day.","chooseFirst":"Choose the crop and at least one task above.","prevWeek":"Previous week","nextWeek":"Next week","thisWeek":"This week","weekTotal":"Week total:","total":"Week","allDay":"Log everyone paid per day","days":"{{count}} days","daysOne":"1 day","emptyTitle":"No workers yet","empty":"Add your team to log their workdays on the sheet.","addWorker":"Add worker","legendDone":"Workday logged","legendPayroll":"Already in a payroll","legendDay":"Tap the day to log everyone","kilosTitle":"How many kilos were picked?","kilosValue":"This workday is worth {{value}}.","added":"{{count}} workdays logged","removed":"{{name}}'s workday removed","inPayroll":"That workday is already in a payroll: delete the payroll first to remove it.","cellEmpty":"Log workday: {{who}}","cellFilled":"Remove workday: {{who}}","errors":{"load":"Couldn't load the sheet","save":"Couldn't log the workday","remove":"Couldn't remove the workday"}},
     "catalog": { "label": "Positions and tasks" },
     "ui": {"team": "Team", "summary": "Team summary", "ofTotal": "of {{total}} registered", "seeRosters": "See payrolls", "paymentsCount": "{{count}} payments", "paymentsCountOne": "1 payment", "people": "People", "filterState": "Filter by status", "col": {"worker": "Worker", "post": "Role", "wage": "Day wage", "state": "Status", "actions": "Actions"}, "idShort": "ID", "data": "Details", "contract": "Contract", "hireDate": "Hired", "phone": "Phone", "address": "Address", "workDays": "Days worked", "searchCrop": "Search crop...", "lastPayment": "Last payment", "paymentHistory": "Payment history", "payroll": "Payroll", "amount": "Amount", "openPayroll": "Open payroll", "summaryShort": "Summary", "rosters": {"toApprove": "To approve", "toPay": "Approved, unpaid", "paid": "Paid", "count": "{{count}} paid payrolls", "countOne": "1 paid payroll", "all": "All", "flow": "Payroll progress", "step1": "Generated", "step2": "Approved", "step3": "Paid", "cancelledNote": "This payroll is cancelled. Its work days are free to include in another payroll."}},
@@ -949,6 +950,7 @@
         }
       },
       "list": {
+        "subtitleAll": "Whole team",
         "title": "Workdays",
         "subtitleNoWorker": "Daily field work log",
         "generatePayroll": "Generate Payroll",

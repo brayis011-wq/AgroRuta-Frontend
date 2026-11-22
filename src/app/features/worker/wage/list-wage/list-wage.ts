@@ -9,11 +9,12 @@ import { JornalService, TrabajadorService, NominaService, NominaRequest } from '
 import { Jornal, Trabajador, Nomina, ResumenJornales } from '../../../../core/models/worker.model';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
+import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
 
 @Component({
   selector: 'app-lista-jornales',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe, FlujoPagoComponent],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe, FlujoPagoComponent, FiltroTrabajadorComponent],
   templateUrl: './list-wage.html',
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './list-wage.css']
 })
@@ -66,7 +67,6 @@ export class ListaJornalesComponent implements OnInit {
       next: (t) => {
         this.trabajadores = [...t].sort((a, b) => (a.nombreCompleto ?? '').localeCompare(b.nombreCompleto ?? ''));
         this.cargandoTrabajadores = false;
-        this.abrirPrimeroSiNoHay();
         this.cdr.detectChanges();
       },
       error: () => { this.cargandoTrabajadores = false; this.cdr.detectChanges(); }
@@ -79,12 +79,10 @@ export class ListaJornalesComponent implements OnInit {
         this.cargarTrabajador();
         this.cargarJornales();
       } else {
+        // Sin trabajador en la URL: los jornales de todo el equipo
         this.trabajadorId = null;
         this.trabajador = null;
-        this.jornales = [];
-        this.total = 0;
-        this.resumen = null;
-        this.abrirPrimeroSiNoHay();
+        this.cargarJornales();
       }
       this.cdr.detectChanges();
     });
@@ -105,12 +103,11 @@ export class ListaJornalesComponent implements OnInit {
 
   /** Primera página y totales del trabajador en el rango de fechas */
   cargarJornales(): void {
-    if (!this.trabajadorId) return;
     this.error = '';
     this.resumen = null;
     this.cargarPagina(0);
     const id = this.trabajadorId;
-    this.jornalService.resumenPorTrabajador(id, this.fechaInicio || undefined, this.fechaFin || undefined).subscribe({
+    this.jornalService.resumenEquipo({ trabajadorId: id, inicio: this.fechaInicio || undefined, fin: this.fechaFin || undefined }).subscribe({
       next: (r) => {
         if (id === this.trabajadorId) { this.resumen = r; this.cdr.detectChanges(); }
       },
@@ -126,17 +123,15 @@ export class ListaJornalesComponent implements OnInit {
   get hayMas(): boolean { return this.jornales.length < this.total; }
 
   private cargarPagina(pagina: number): void {
-    if (!this.trabajadorId) return;
     if (pagina === 0) this.cargando = true; else this.cargandoMas = true;
     this.cdr.detectChanges();
     const id = this.trabajadorId;
 
-    this.jornalService.paginaPorTrabajador(
-      id,
-      pagina,
-      this.fechaInicio || undefined,
-      this.fechaFin    || undefined
-    ).subscribe({
+    this.jornalService.paginaEquipo(pagina, {
+      trabajadorId: id,
+      inicio: this.fechaInicio || undefined,
+      fin: this.fechaFin || undefined,
+    }).subscribe({
       next: (p) => {
         if (id !== this.trabajadorId) return;   // cambió de trabajador mientras cargaba
         this.jornales = pagina === 0 ? p.contenido : [...this.jornales, ...p.contenido];
@@ -155,16 +150,6 @@ export class ListaJornalesComponent implements OnInit {
     });
   }
 
-  /** Sin trabajador en la URL se abre el primero, para no mostrar una página vacía */
-  private abrirPrimeroSiNoHay(): void {
-    if (this.trabajadorId == null && this.trabajadores.length > 0) {
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { trabajadorId: this.trabajadores[0].id },
-        replaceUrl: true,
-      });
-    }
-  }
 
   /** Trabajador elegido: se toma de la lista ya cargada y, si no está, del detalle pedido aparte */
   get seleccionado(): Trabajador | null {

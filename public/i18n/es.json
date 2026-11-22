@@ -737,6 +737,7 @@
     }
   },
   "workers": {
+    "filter": {"label":"Ver de","all":"Todos","allHint":"{{count}} trabajadores","allOption":"Todos los trabajadores ({{count}})","searchWorkerCrop":"Buscar trabajador o cultivo..."},
     "sheet": {"legendPending": "En una nómina pendiente (se puede corregir)", "removedFromPayroll": "Jornal de {{name}} quitado; su nómina se recalculó", "title":"Planilla semanal","subtitle":"Toca una casilla para anotar el jornal de ese día; tócala otra vez para quitarlo.","toPayroll":"Generar la quincena","withWhat":"Con qué se anota","crop":"Cultivo donde trabajaron","labors":"Labores","howTo":"Lo que toques se anota con este cultivo y estas labores. El número de cada día anota a todos los que se pagan por día.","chooseFirst":"Elige arriba el cultivo y al menos una labor.","prevWeek":"Semana anterior","nextWeek":"Semana siguiente","thisWeek":"Esta semana","weekTotal":"Total de la semana:","total":"Semana","allDay":"Anotar a todos los que se pagan por día","days":"{{count}} días","daysOne":"1 día","emptyTitle":"Todavía no hay trabajadores","empty":"Agrega a tu equipo para anotar sus jornales en la planilla.","addWorker":"Agregar trabajador","legendDone":"Jornal anotado","legendPayroll":"Ya está en una nómina","legendDay":"Toca el día para anotar a todos","kilosTitle":"¿Cuántos kilos recogió?","kilosValue":"Este jornal vale {{value}}.","added":"{{count}} jornales anotados","removed":"Jornal de {{name}} quitado","inPayroll":"Ese jornal ya está en una nómina: para quitarlo, primero elimina la nómina.","cellEmpty":"Anotar jornal: {{who}}","cellFilled":"Quitar jornal: {{who}}","errors":{"load":"No se pudo cargar la planilla","save":"No se pudo anotar el jornal","remove":"No se pudo quitar el jornal"}},
     "catalog": { "label": "Cargos y labores" },
     "ui": {"team": "Equipo", "summary": "Resumen del equipo", "ofTotal": "de {{total}} registrados", "seeRosters": "Ver nóminas", "paymentsCount": "{{count}} pagos", "paymentsCountOne": "1 pago", "people": "Personas", "filterState": "Filtrar por estado", "col": {"worker": "Trabajador", "post": "Cargo", "wage": "Jornal", "state": "Estado", "actions": "Acciones"}, "idShort": "C.C.", "data": "Datos", "contract": "Contrato", "hireDate": "Ingreso", "phone": "Teléfono", "address": "Dirección", "workDays": "Días trabajados", "searchCrop": "Buscar cultivo...", "lastPayment": "Último pago", "paymentHistory": "Historial de pagos", "payroll": "Nómina", "amount": "Monto", "openPayroll": "Abrir la nómina", "summaryShort": "Resumen", "rosters": {"toApprove": "Por aprobar", "toPay": "Aprobadas sin pagar", "paid": "Pagado", "count": "{{count}} nóminas pagadas", "countOne": "1 nómina pagada", "all": "Todas", "flow": "Avance de la nómina", "step1": "Generada", "step2": "Aprobada", "step3": "Pagada", "cancelledNote": "Esta nómina está anulada. Sus jornales quedaron libres para incluirlos en otra nómina."}},
@@ -949,6 +950,7 @@
         }
       },
       "list": {
+        "subtitleAll": "Todo el equipo",
         "title": "Jornales",
         "subtitleNoWorker": "Registro diario de trabajo en campo",
         "generatePayroll": "Generar nómina",

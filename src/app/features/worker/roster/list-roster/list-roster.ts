@@ -17,6 +17,7 @@ import { quincenaAnterior, quincenaActual } from './quincena';
 import { Nomina, ResumenNominas, Trabajador } from '../../../../core/models/worker.model';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
+import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
 
 type FiltroEstado = 'TODAS' | 'PENDIENTE' | 'APROBADA' | 'PAGADA' | 'ANULADA';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
@@ -25,7 +26,7 @@ import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 @Component({
   selector: 'app-lista-nominas',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PeriodoPipe, FlujoPagoComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PeriodoPipe, FlujoPagoComponent, FiltroTrabajadorComponent],
   templateUrl: './list-roster.html',
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', '../../../../shared/styles/opciones.css', './list-roster.css']
 })
@@ -91,7 +92,7 @@ export class ListaNominasComponent implements OnInit {
       this.form.patchValue({ trabajadorId: this.trabajadorIdFiltro });
     }
 
-    this.trabajadorService.listar().subscribe({
+    this.trabajadorService.listarTodos().subscribe({
       next: (t: Trabajador[]) => {
         this.trabajadores = [...t];
         if (this.trabajadorIdFiltro != null) {
@@ -183,9 +184,17 @@ export class ListaNominasComponent implements OnInit {
   }
 
   verTodas(): void {
-    this.trabajadorFiltrado = null;
-    this.trabajadorIdFiltro = null;
-    this.form.patchValue({ trabajadorId: null });
+    this.filtrarTrabajador(null);
+  }
+
+  get trabajadorIdElegido(): number | null { return this.trabajadorIdFiltro; }
+
+  /** Ver las nóminas de un trabajador o de todo el equipo (queda en la dirección) */
+  filtrarTrabajador(id: number | null): void {
+    this.trabajadorIdFiltro = id;
+    this.trabajadorFiltrado = id == null ? null : this.trabajadores.find((t) => t.id === id) ?? null;
+    this.form.patchValue({ trabajadorId: id });
+    guardarEnUrl(this.router, this.route, { trabajadorId: id });
     this.cargar();
   }
 
@@ -323,7 +332,7 @@ export class ListaNominasComponent implements OnInit {
     if (!(await this.confirmar('workers.rosters.list.confirm.cancel', true))) return;
     this.nominaService.anular(id).subscribe({
       next: () => { this.cargar(); },
-      error: () => { this.error = 'workers.rosters.list.errors.cancel'; this.cdr.detectChanges(); }
+      error: (e) => { this.error = e?.error?.message || 'workers.rosters.list.errors.cancel'; this.cdr.detectChanges(); }
     });
   }
 
@@ -353,7 +362,7 @@ export class ListaNominasComponent implements OnInit {
         this.cdr.detectChanges();
         setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
       },
-      error: () => { this.error = 'workers.rosters.list.errors.delete'; this.cdr.detectChanges(); }
+      error: (e) => { this.error = e?.error?.message || 'workers.rosters.list.errors.delete'; this.cdr.detectChanges(); }
     });
   }
 
