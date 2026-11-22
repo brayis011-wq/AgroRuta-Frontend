@@ -52,7 +52,8 @@ export class VentasComponent implements OnInit {
   readonly resumen = signal<ResumenVentas | null>(null);
   readonly compradores = signal<string[]>([]);
   readonly cultivos = signal<CultivoDisponible[]>([]);
-  readonly filtro = signal<Filtro>('debe');
+  /** Al entrar se ven todas las ventas; las fichas de arriba filtran por cobrar o vencidas */
+  readonly filtro = signal<Filtro>('todas');
   readonly comprador = signal<string | null>(null);
   readonly error = signal<string | null>(null);
 
