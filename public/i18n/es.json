@@ -253,6 +253,7 @@
     }
   },
   "dashboard": {
+    "weatherToday": "Clima de hoy",
     "weatherMore": "Ver el clima completo",
     "agenda": {
   "emptyHint": "Programa podas, riegos o fumigaciones desde el calendario y aparecerán aquí.","title": "Lo que viene", "late": "Atrasado", "today": "Hoy", "tomorrow": "Mañana", "inDays": "En {{days}} días"},

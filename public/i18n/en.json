@@ -253,6 +253,7 @@
     }
   },
   "dashboard": {
+    "weatherToday": "Today's weather",
     "weatherMore": "See the full weather",
     "agenda": {
   "emptyHint": "Schedule pruning, watering or spraying from the calendar and it will show up here.","title": "Coming up", "late": "Overdue", "today": "Today", "tomorrow": "Tomorrow", "inDays": "In {{days}} days"},

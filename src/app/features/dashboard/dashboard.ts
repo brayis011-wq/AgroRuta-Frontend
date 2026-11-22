@@ -15,7 +15,6 @@ import { PagosDelMes, ResumenNominas, Trabajador } from '../../core/models/worke
 import { EventoCalendario, Finca, Lote, Siembra } from '../../core/models/crop.model';
 import { ICONO_EVENTO, TONO_EVENTO, diasHasta, esPorVenir, ordenAgenda, textoEvento } from '../crop/calendar/events';
 import { LluviaFincaComponent } from '../weather/rain-card/rain-card';
-import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget';
 import { WeatherAdviceComponent } from '../weather/weather-advice/weather-advice';
 import { formatoPesos, formatoNumero } from '../../shared/format';
 import { consejoFumigacion, iconoClima, municipio } from '../../shared/weather';
@@ -56,7 +55,7 @@ export interface Pendiente {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent, LluviaFincaComponent, WeatherAdviceComponent, ContarDirective, PrimerosPasosComponent, PrecargarDirective],
+  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, LluviaFincaComponent, WeatherAdviceComponent, ContarDirective, PrimerosPasosComponent, PrecargarDirective],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css', './dashboard-hero.css', './dashboard-pending.css', './dashboard-body.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -132,11 +131,6 @@ export class DashboardComponent implements OnInit {
     return d.charAt(0).toUpperCase() + d.slice(1);
   }
 
-  /** Lleva al clima completo (pronóstico, humedad, viento), más abajo en la página */
-  verClima(ev: Event): void {
-    ev.preventDefault();
-    document.querySelector('.inicio .clima')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
 
   private readonly cuerpo = viewChild<ElementRef<HTMLElement>>('cuerpo');
 
