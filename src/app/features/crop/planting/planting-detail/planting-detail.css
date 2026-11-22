@@ -82,3 +82,5 @@ a.reg-btn { text-decoration: none; }
 @media (max-width: 760px) {
   .pestanas-siembra button { flex: none; padding: .55rem .75rem; font-size: .84rem; }
 }
+a.por-vender { display: block; margin-top: .2rem; font-size: .78rem; font-weight: 700; color: var(--ar-verde-700); text-decoration: none; }
+a.por-vender:hover { text-decoration: underline; }

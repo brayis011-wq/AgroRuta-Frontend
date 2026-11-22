@@ -24,6 +24,14 @@
 .deudor.on { border-color: var(--ar-verde-600); box-shadow: inset 0 0 0 1px var(--ar-verde-600); }
 .deudor:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
 
+/* Con la cifra de kilos por vender son cinco: en pantallas anchas van en una fila con el icono arriba,
+   para que las cifras no se partan; en las angostas siguen como las demás */
+@media (min-width: 1001px) {
+  .kpis.cinco { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .kpis.cinco .kpi { flex-direction: column; gap: .55rem; }
+  .kpis.cinco .kpi strong { white-space: nowrap; overflow-wrap: normal; font-size: 1.25rem; }
+}
+
 /* Kilos por vender: lo cosechado menos lo vendido de cada siembra */
 .sub-tarjeta { margin: -.35rem 0 .75rem; font-size: .84rem; white-space: normal; }
 .bodega-cosecha { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: .6rem; }

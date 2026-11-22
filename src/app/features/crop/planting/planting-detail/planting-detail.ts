@@ -33,6 +33,7 @@ import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.servic
 import { ResumenSiembra, siembraActiva } from '../../../../core/models/crop.model';
 import { formatoFecha, formatoNumero } from '../../../../shared/format';
 import { WeatherService } from '../../../../core/services/weather.service';
+import { VentasService } from '../../../../core/services/finance.service';
 import { Weather } from '../../../../core/models/weather.model';
 import { ConsejoClima, consejoFumigacion, municipio } from '../../../../shared/weather';
 
@@ -79,6 +80,9 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   private confirm = inject(ConfirmService);
   private weather = inject(WeatherService);
   private avisos = inject(AvisosService);
+  private ventas = inject(VentasService);
+  /** Kilos cosechados de esta siembra que todavía no se han vendido (null mientras carga o si falla) */
+  kgPorVender: number | null = null;
 
   /** Clima actual del lote (o del municipio de la finca) */
   clima: Weather | null = null;
@@ -382,6 +386,15 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.cultivoService.resumenSiembra(id).subscribe({
       next: (r) => { if (this.siembra?.id === id) { this.resumen = r; this.cdr.detectChanges(); } },
       error: () => { /* la página sigue sin el resumen */ },
+    });
+    // Lo que queda en la bodega de la cosecha (se vende desde Ventas)
+    this.ventas.kilosEnBodega().subscribe({
+      next: (lista) => {
+        if (this.siembra?.id !== id) return;
+        this.kgPorVender = lista.find((k) => k.siembraId === id)?.kgDisponibles ?? 0;
+        this.cdr.detectChanges();
+      },
+      error: () => { this.kgPorVender = null; },
     });
   }
 

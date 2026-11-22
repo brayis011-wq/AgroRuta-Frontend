@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, debounceTime, forkJoin, of, switchMap } from 'rxjs';
 import { PreciosService, VentasService } from '../../../core/services/finance.service';
@@ -36,7 +37,7 @@ const hoyIso = () => new Date().toLocaleDateString('en-CA');
 @Component({
   selector: 'app-ventas',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, PesosPipe, FechaPipe],
+  imports: [FormsModule, TranslatePipe, PesosPipe, FechaPipe, DecimalPipe],
   templateUrl: './sales.html',
   styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../../worker/worker-ui.css',
     '../../worker/worker-panel.css', '../../../shared/styles/opciones.css', '../finance.css'],
@@ -61,6 +62,12 @@ export class VentasComponent implements OnInit {
   readonly bodega = signal<KilosEnBodega[]>([]);
   /** Las siembras que todavía tienen kilos por vender */
   readonly porVender = computed(() => this.bodega().filter((k) => k.kgDisponibles > 0.004));
+  /** Todos los kilos cosechados que faltan por vender */
+  readonly kgPorVender = computed(() => this.porVender().reduce((s, k) => s + k.kgDisponibles, 0));
+
+  irAKilos(): void {
+    document.getElementById('kilos-por-vender')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   /** ?siembra=34 (desde la ficha de la siembra): abre la venta de esos kilos al cargar */

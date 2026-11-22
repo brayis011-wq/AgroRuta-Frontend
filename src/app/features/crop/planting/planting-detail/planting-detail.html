@@ -121,7 +121,10 @@
       <article class="kpi">
         <span class="ic ambar"><i class="ti ti-basket"></i></span>
         <div><small>{{ 'siembra.detail.cards.harvested' | translate }}</small><strong>{{ num(totalKg, 1) }}</strong>
-          <em>{{ (cosechas.length === 1 ? 'siembra.detail.cards.harvestsCountOne' : 'siembra.detail.cards.harvestsCount') | translate: { count: cosechas.length } }}</em></div>
+          <em>{{ (cosechas.length === 1 ? 'siembra.detail.cards.harvestsCountOne' : 'siembra.detail.cards.harvestsCount') | translate: { count: cosechas.length } }}</em>
+          @if (kgPorVender) {
+            <a class="por-vender" routerLink="/finance/sales" [queryParams]="{ siembra: siembra.id }">{{ 'siembra.detail.cards.toSell' | translate: { kg: num(kgPorVender, 1) } }}</a>
+          }</div>
       </article>
       <article class="kpi">
         <span class="ic azul"><i class="ti ti-spray"></i></span>

@@ -13,7 +13,7 @@
   @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error()! | translate }}</p> }
 
   @if (resumen(); as r) {
-    <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">
+    <section class="kpis" [class.cinco]="kgPorVender() > 0" [attr.aria-label]="'workers.ui.summary' | translate">
       <button type="button" class="kpi clic" (click)="filtro.set('debe'); comprador.set(null)">
         <span class="ic ambar"><i class="ti ti-hourglass" aria-hidden="true"></i></span>
         <div><small>{{ 'ventas.kpi.owed' | translate }}</small><strong>{{ r.porCobrar | pesos }}</strong><em>{{ 'ventas.kpi.sales' | translate: { count: r.ventasPendientes + r.ventasVencidas } }}</em></div>
@@ -30,11 +30,19 @@
         <span class="ic azul"><i class="ti ti-cash" aria-hidden="true"></i></span>
         <div><small>{{ 'ventas.kpi.collectedMonth' | translate }}</small><strong>{{ r.cobradoMes | pesos }}</strong></div>
       </div>
+      @if (kgPorVender() > 0) {
+        <!-- Lo cosechado que todavía no se ha vendido: lleva a la tarjeta para venderlo -->
+        <button type="button" class="kpi clic" (click)="irAKilos()">
+          <span class="ic verde"><i class="ti ti-building-warehouse" aria-hidden="true"></i></span>
+          <div><small>{{ 'ventas.kpi.toSell' | translate }}</small><strong>{{ kgPorVender() | number: '1.0-1' }} kg</strong>
+            <em>{{ (porVender().length === 1 ? 'ventas.kpi.toSellOne' : 'ventas.kpi.toSellMany') | translate: { count: porVender().length } }}</em></div>
+        </button>
+      }
     </section>
 
     <!-- La bodega de la cosecha: de aquí se escoge qué vender -->
     @if (bodega().length) {
-      <section class="tarjeta">
+      <section class="tarjeta" id="kilos-por-vender">
         <header>
           <h2><i class="ti ti-building-warehouse" aria-hidden="true"></i> {{ 'ventas.stock.title' | translate }}</h2>
         </header>
