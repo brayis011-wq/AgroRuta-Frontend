@@ -11,10 +11,6 @@
       </div>
     </div>
 
-    <div class="alert alert--error" *ngIf="error" role="alert">
-      <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
-      {{ error | translate }}
-    </div>
     <div class="alert alert--success" *ngIf="exito" role="alert">
       <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>
       {{ exito | translate }}
@@ -87,6 +83,11 @@
         </div>
 
         <div class="form-actions">
+          <!-- El aviso va junto a los botones: se ve al pulsar Registrar aunque el formulario esté abajo -->
+          <div class="alert alert--error" *ngIf="error" role="alert">
+            <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
+            {{ error | translate }}
+          </div>
           <a class="btn-cancelar" [routerLink]="['/crops/planting', siembraId]" [queryParams]="{ tab: 'registros' }">{{ 'common.cancel' | translate }}</a>
           <button type="submit" class="btn-submit" [disabled]="cargando || !form.tipo">
             <span class="btn-submit__text" *ngIf="!cargando">

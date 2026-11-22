@@ -179,7 +179,25 @@ body .btn-ic.con-texto .txt-corto { line-height: 1; }
 
 /* Formularios de registro dentro del panel de la siembra: sin migas (la siembra está detrás) ni márgenes de página */
 body .panel-hoja app-migas-cultivo { display: none; }
-body .panel-hoja .page-bg { padding: 0; min-height: 0; background: none; }
-body .panel-hoja .page-bg.registro .container { max-width: none; padding: 0; }
+/* El formulario llena el panel: encabezado fijo arriba (como los paneles de Trabajadores), sin tarjeta dentro de la hoja */
+body .panel-hoja .page-bg { padding: 0 1.25rem 1.5rem; min-height: 0; background: none; container-type: inline-size; }
+body .panel-hoja .page-bg.registro .container { max-width: none; padding: 0; gap: 1.1rem; animation: none; }
+body .panel-hoja .page-bg .form-header {
+  position: sticky; top: 0; z-index: 5; margin: 0 -1.25rem; padding: 1rem 4.25rem 1rem 1.25rem;
+  background: var(--ar-superficie); border-bottom: 1px solid var(--ar-borde);
+}
+body .panel-hoja .page-bg .form-header__icon { width: 42px; height: 42px; font-size: 21px; border-radius: 12px; }
+body .panel-hoja .page-bg .form-header h2 { font-size: 1.2rem; }
+body .panel-hoja .page-bg .form-card { padding: 0; border: 0; border-radius: 0; box-shadow: none; background: none; }
+/* Cancelar y Registrar quedan fijos al pie del panel, con el aviso de error encima */
+body .panel-hoja .page-bg form > .form-actions {
+  position: sticky; bottom: 0; z-index: 4; margin: .3rem -1.25rem -1.5rem; padding: .85rem 1.25rem;
+  background: var(--ar-superficie); border-top: 1px solid var(--ar-borde);
+}
+@media (max-width: 760px) {
+  body .panel-hoja .page-bg { padding: 0 1rem 1.25rem; }
+  body .panel-hoja .page-bg .form-header { margin: 0 -1rem; padding: .6rem 3.75rem .8rem 1rem; }
+  body .panel-hoja .page-bg form > .form-actions { margin: .3rem -1rem -1.25rem; padding: .75rem 1rem calc(.75rem + env(safe-area-inset-bottom, 0px)); }
+}
 /* Con el panel de registro abierto, la barra inferior del celular no tapa el final del formulario */
 body.con-panel .barra { display: none !important; }

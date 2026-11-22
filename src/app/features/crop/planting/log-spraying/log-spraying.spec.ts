@@ -171,13 +171,46 @@ describe('RegistrarFumigacion', () => {
     expect(component.catalogoFiltrado().map((b) => b.stock.insumoId)).toEqual([9]);
   });
 
-  it('closes the results when the search is emptied', () => {
+  it('shows the whole warehouse when the field is touched or emptied', () => {
     component.busquedaProducto = 'herbi';
     component.onBusquedaChange();
     component.busquedaProducto = '  ';
     component.onBusquedaChange();
+    expect(component.mostrarCatalogo()).toBe(true);
+    expect(component.catalogoFiltrado().map((b) => b.stock.insumoId)).toEqual([9, 1]);
+  });
+
+  it('does not open an empty list when the warehouse is empty and nothing is typed', () => {
+    component.bodega.set([]);
+    component.busquedaProducto = '';
+    component.onBusquedaChange();
     expect(component.mostrarCatalogo()).toBe(false);
-    expect(component.catalogoFiltrado()).toEqual([]);
+  });
+
+  it('moves with the arrow keys and picks the marked product with Enter', () => {
+    component.busquedaProducto = '';
+    component.onBusquedaChange();
+    const tecla = (key: string) => {
+      const e = new KeyboardEvent('keydown', { key, cancelable: true });
+      component.teclaBuscador(e);
+      return e;
+    };
+    tecla('ArrowDown');
+    expect(component.resaltado()).toBe(1);
+    const enter = tecla('Enter');
+    expect(enter.defaultPrevented).toBe(true);
+    expect(component.form.agriculturalInputId).toBe(1);
+    expect(component.insumoSeleccionado()?.id).toBe(1);
+  });
+
+  it('Escape closes only the list, not the panel', () => {
+    component.busquedaProducto = '';
+    component.onBusquedaChange();
+    const e = new KeyboardEvent('keydown', { key: 'Escape' });
+    const parar = vi.spyOn(e, 'stopPropagation');
+    component.teclaBuscador(e);
+    expect(component.mostrarCatalogo()).toBe(false);
+    expect(parar).toHaveBeenCalled();
   });
 
   it('seleccionarDeBodega() fills the form with the catalog sheet of the product', () => {

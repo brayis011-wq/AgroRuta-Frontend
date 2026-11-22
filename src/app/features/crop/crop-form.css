@@ -38,11 +38,7 @@ form > .grupos { grid-column: 1 / -1; display: grid; grid-template-columns: minm
 /* En columnas angostas, "(opcional)" baja entero a la línea siguiente en vez de partir la etiqueta */
 .grupo .field__label { flex-wrap: wrap; row-gap: 0; }
 .grupo > fieldset, .grupo > .field-row, .grupo > .seccion-form, .grupo > .ancho, .grupo > .field:has(textarea) { grid-column: 1 / -1; }
-/* En pantallas anchas las secciones van en dos columnas, con una línea entre ellas: cabe sin bajar */
-@media (min-width: 1360px) {
-  form > .grupos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.2rem; }
-  form > .grupos > .grupo-col + .grupo-col { border-left: 1px solid var(--ar-borde); padding-left: 2.2rem; }
-}
+/* Los registros se abren en el panel de la siembra: las secciones van una debajo de otra y, si el panel es angosto, los campos de a uno */
 
 .field { display: flex; flex-direction: column; gap: .4rem; border: 0; padding: 0; margin: 0; min-width: 0; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -81,6 +77,10 @@ form > .btn-submit { justify-self: end; width: auto; min-width: 240px; padding: 
 @media (max-width: 720px) {
   .page-bg { padding: 1rem 1rem 6rem; }
   .form-card { padding: 1.1rem; }
+  .field-row, form, .grupo { grid-template-columns: 1fr; }
+  form > .btn-submit { width: 100%; justify-self: stretch; }
+}
+@container (max-width: 520px) {
   .field-row, form, .grupo { grid-template-columns: 1fr; }
   form > .btn-submit { width: 100%; justify-self: stretch; }
 }

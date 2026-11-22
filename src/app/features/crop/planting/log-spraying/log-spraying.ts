@@ -110,6 +110,8 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   busquedaProducto = '';
   catalogoFiltrado   = signal<InsumoBodega[]>([]);
   mostrarCatalogo    = signal(false);
+  /** Resultado marcado con las flechas del teclado (Enter lo elige) */
+  resaltado          = signal(0);
   insumoSeleccionado = signal<AgriculturalInput | null>(null);
 
   // ── Lista completa de la bodega ──────────────────────────────
@@ -313,15 +315,36 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   }
 
   // ── Búsqueda rápida ──────────────────────────────────────────
+  /**
+   * Al tocar el campo ya salen los productos de la bodega (sin tener que adivinar qué escribir);
+   * al escribir se filtran. Sin texto y con la bodega vacía no se abre nada.
+   */
   onBusquedaChange(): void {
-    if (!this.busquedaProducto.trim()) {
-      this.catalogoFiltrado.set([]);
+    const texto = this.busquedaProducto.trim();
+    this.catalogoFiltrado.set(this.bodega().filter((b) => this.coincide(b, texto)));
+    this.resaltado.set(0);
+    // Con texto se abre también sin resultados, para avisar que ese producto no está en la bodega
+    this.mostrarCatalogo.set(!!texto || this.bodega().length > 0);
+  }
+
+  /** Flechas para moverse por los resultados, Enter para elegir y Escape para cerrar la lista */
+  teclaBuscador(e: KeyboardEvent): void {
+    const lista = this.catalogoFiltrado();
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (!this.mostrarCatalogo()) { this.onBusquedaChange(); e.preventDefault(); return; }
+      if (!lista.length) return;
+      e.preventDefault();
+      const paso = e.key === 'ArrowDown' ? 1 : -1;
+      this.resaltado.set((this.resaltado() + paso + lista.length) % lista.length);
+    } else if (e.key === 'Enter' && this.mostrarCatalogo() && lista.length) {
+      // Elige el marcado en vez de saltar al campo siguiente
+      e.preventDefault();
+      this.seleccionarDeBodega(lista[Math.min(this.resaltado(), lista.length - 1)]);
+    } else if (e.key === 'Escape' && this.mostrarCatalogo()) {
+      // Cierra solo la lista, no el panel
+      e.stopPropagation();
       this.mostrarCatalogo.set(false);
-      return;
     }
-    this.catalogoFiltrado.set(this.bodega().filter((b) => this.coincide(b, this.busquedaProducto)));
-    // También se abre sin resultados, para avisar que ese producto no está en la bodega
-    this.mostrarCatalogo.set(true);
   }
 
   /** Elige un producto de la bodega; si su ficha del catálogo ya no está activa, se arma con lo que hay */

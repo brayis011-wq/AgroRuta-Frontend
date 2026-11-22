@@ -27,6 +27,8 @@ export class SiguienteCampoDirective {
 
   @HostListener('keydown.enter', ['$event'])
   alEnter(e: Event): void {
+    // El campo ya usó el Enter (p. ej. un buscador que elige el resultado marcado)
+    if (e.defaultPrevented) return;
     const destino = e.target;
     if (!(destino instanceof HTMLInputElement || destino instanceof HTMLSelectElement)) return;
     const campos = this.campos();

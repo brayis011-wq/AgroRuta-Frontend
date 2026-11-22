@@ -30,7 +30,7 @@ import { ConfirmService } from './confirm.service';
   `,
   styles: [`
     .overlay {
-      position: fixed; inset: 0; z-index: 1000;
+      position: fixed; inset: 0; z-index: 3600; /* encima de los paneles laterales (3000) */
       background: rgba(15, 25, 19, 0.45);
       display: grid; place-items: center; padding: 1rem;
     }
