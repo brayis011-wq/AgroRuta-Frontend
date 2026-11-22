@@ -107,6 +107,29 @@ export class DetalleNominaComponent implements OnInit {
   /**
    * Aprueba la nómina (PENDIENTE → APROBADA). El pago se registra después, en otro paso.
    */
+  /** Mientras está pendiente, la nómina se corrige: quitar un jornal que no va */
+  async quitarJornal(jornalId: number | undefined): Promise<void> {
+    if (!this.nomina?.id || jornalId == null) return;
+    if (!(await this.confirmService.preguntar({ mensaje: this.translate.instant('workers.rosters.detail.confirm.removeWage') }))) return;
+    this.guardando = true;
+    this.error = '';
+    this.nominaService.quitarJornal(this.nomina.id, jornalId).subscribe({
+      next: (n) => { this.nomina = n; this.guardando = false; this.mostrarExito('workers.rosters.detail.success.wageRemoved'); },
+      error: (e) => { this.error = e?.error?.message || 'workers.rosters.detail.errors.fix'; this.guardando = false; this.cdr.detectChanges(); },
+    });
+  }
+
+  /** Suma los jornales del periodo que se anotaron después de generarla */
+  traerNuevos(): void {
+    if (!this.nomina?.id) return;
+    this.guardando = true;
+    this.error = '';
+    this.nominaService.traerJornalesNuevos(this.nomina.id).subscribe({
+      next: (n) => { this.nomina = n; this.guardando = false; this.mostrarExito('workers.rosters.detail.success.wagesAdded'); },
+      error: (e) => { this.error = e?.error?.message || 'workers.rosters.detail.errors.fix'; this.guardando = false; this.cdr.detectChanges(); },
+    });
+  }
+
   async aprobar(): Promise<void> {
     if (!this.nomina?.id) return;
     const mensaje = this.translate.instant('workers.rosters.detail.confirm.approve');
@@ -120,7 +143,8 @@ export class DetalleNominaComponent implements OnInit {
       next: (nominaAprobada: Nomina) => {
         this.nomina = nominaAprobada;
         this.guardando = false;
-        this.mostrarFormPago = true;
+        // El pago se registra cuando de verdad se le pague (botón Registrar pago)
+        this.mostrarFormPago = false;
         this.mostrarExito('workers.rosters.detail.success.approved');
       },
       error: () => {

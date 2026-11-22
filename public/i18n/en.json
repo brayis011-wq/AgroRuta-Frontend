@@ -737,10 +737,15 @@
     }
   },
   "workers": {
-    "sheet": {"title":"Weekly sheet","subtitle":"Tap a cell to log that day's workday; tap it again to remove it.","toPayroll":"Generate the fortnight","withWhat":"What gets logged","crop":"Crop they worked on","labors":"Tasks","howTo":"Whatever you tap is logged with this crop and these tasks. Tap a day's number to log everyone paid per day.","chooseFirst":"Choose the crop and at least one task above.","prevWeek":"Previous week","nextWeek":"Next week","thisWeek":"This week","weekTotal":"Week total:","total":"Week","allDay":"Log everyone paid per day","days":"{{count}} days","daysOne":"1 day","emptyTitle":"No workers yet","empty":"Add your team to log their workdays on the sheet.","addWorker":"Add worker","legendDone":"Workday logged","legendPayroll":"Already in a payroll","legendDay":"Tap the day to log everyone","kilosTitle":"How many kilos were picked?","kilosValue":"This workday is worth {{value}}.","added":"{{count}} workdays logged","removed":"{{name}}'s workday removed","inPayroll":"That workday is already in a payroll: delete the payroll first to remove it.","cellEmpty":"Log workday: {{who}}","cellFilled":"Remove workday: {{who}}","errors":{"load":"Couldn't load the sheet","save":"Couldn't log the workday","remove":"Couldn't remove the workday"}},
+    "sheet": {"legendPending": "In a pending payroll (can be corrected)", "removedFromPayroll": "{{name}}'s workday removed; the payroll was recalculated", "title":"Weekly sheet","subtitle":"Tap a cell to log that day's workday; tap it again to remove it.","toPayroll":"Generate the fortnight","withWhat":"What gets logged","crop":"Crop they worked on","labors":"Tasks","howTo":"Whatever you tap is logged with this crop and these tasks. Tap a day's number to log everyone paid per day.","chooseFirst":"Choose the crop and at least one task above.","prevWeek":"Previous week","nextWeek":"Next week","thisWeek":"This week","weekTotal":"Week total:","total":"Week","allDay":"Log everyone paid per day","days":"{{count}} days","daysOne":"1 day","emptyTitle":"No workers yet","empty":"Add your team to log their workdays on the sheet.","addWorker":"Add worker","legendDone":"Workday logged","legendPayroll":"Already in a payroll","legendDay":"Tap the day to log everyone","kilosTitle":"How many kilos were picked?","kilosValue":"This workday is worth {{value}}.","added":"{{count}} workdays logged","removed":"{{name}}'s workday removed","inPayroll":"That workday is already in a payroll: delete the payroll first to remove it.","cellEmpty":"Log workday: {{who}}","cellFilled":"Remove workday: {{who}}","errors":{"load":"Couldn't load the sheet","save":"Couldn't log the workday","remove":"Couldn't remove the workday"}},
     "catalog": { "label": "Positions and tasks" },
     "ui": {"team": "Team", "summary": "Team summary", "ofTotal": "of {{total}} registered", "seeRosters": "See payrolls", "paymentsCount": "{{count}} payments", "paymentsCountOne": "1 payment", "people": "People", "filterState": "Filter by status", "col": {"worker": "Worker", "post": "Role", "wage": "Day wage", "state": "Status", "actions": "Actions"}, "idShort": "ID", "data": "Details", "contract": "Contract", "hireDate": "Hired", "phone": "Phone", "address": "Address", "workDays": "Days worked", "searchCrop": "Search crop...", "lastPayment": "Last payment", "paymentHistory": "Payment history", "payroll": "Payroll", "amount": "Amount", "openPayroll": "Open payroll", "summaryShort": "Summary", "rosters": {"toApprove": "To approve", "toPay": "Approved, unpaid", "paid": "Paid", "count": "{{count}} paid payrolls", "countOne": "1 paid payroll", "all": "All", "flow": "Payroll progress", "step1": "Generated", "step2": "Approved", "step3": "Paid", "cancelledNote": "This payroll is cancelled. Its work days are free to include in another payroll."}},
     "posts": {
+      "addTypical": "Add typical positions",
+      "typicalHelp": "Day laborer, picker paid per kilo, sprayer, brush cutter, processing worker, foreman and cook, with reference pay you can change.",
+      "confirmTypical": "Adds the typical farm positions you don't have yet (day laborer, picker per kilo, sprayer, brush cutter, processing worker, foreman and cook). The pay is a reference: adjust it to what's paid in your area.",
+      "typicalAdded": "{{count}} positions added",
+      "typicalNone": "You already had all the typical positions",
       "perKilo": "/ kg",
       "payMode": "How is it paid?",
       "byDay": "Per day",
@@ -799,7 +804,7 @@
       }
     },
     "rosters": {
-      "team": {"open":"Team fortnight","title":"Whole team's fortnight","help":"One payroll is generated for each worker with workdays not yet in a payroll on those dates.","fortnight":"Fortnight","generate":"Generate payrolls","generated":"{{count}} payrolls generated for {{total}}.","wagesCount":"{{count}} workdays","method":"How will you pay?","later":"Pay later","payNow":"Pay all ({{total}})","bulk":"Actions on several payrolls","approveAll":"Approve the {{count}} pending","payAll":"Pay the {{count}} approved · {{total}}","confirmApprove":"Approve the {{count}} pending payrolls shown in the list?","confirmPay":"Record the payment of the {{count}} approved payrolls by {{method}}? Each one is paid in full.","approved":"{{count}} payrolls approved","paid":"{{count}} payments recorded","errors":{"dates":"Check the fortnight dates","generate":"Couldn't generate the payrolls","pay":"Couldn't record the payments"}},
+      "team": {"review": "Review the payrolls", "step1": "Review.", "step1Help": "Open each payroll: you can remove a workday that doesn't belong or bring in one you logged later.", "step2": "Approve.", "step2Help": "When it's right, approve it (one by one or all at once from the list).", "step3": "Pay.", "step3Help": "On the day you pay each worker, record the payment and their receipt is created.", "open":"Team fortnight","title":"Whole team's fortnight","help":"One payroll is generated for each worker with workdays not yet in a payroll on those dates.","fortnight":"Fortnight","generate":"Generate payrolls","generated":"{{count}} payrolls generated for {{total}}.","wagesCount":"{{count}} workdays","method":"How will you pay?","later":"Pay later","payNow":"Pay all ({{total}})","bulk":"Actions on several payrolls","approveAll":"Approve the {{count}} pending","payAll":"Pay the {{count}} approved · {{total}}","confirmApprove":"Approve the {{count}} pending payrolls shown in the list?","confirmPay":"Record the payment of the {{count}} approved payrolls by {{method}}? Each one is paid in full.","approved":"{{count}} payrolls approved","paid":"{{count}} payments recorded","errors":{"dates":"Check the fortnight dates","generate":"Couldn't generate the payrolls","pay":"Couldn't record the payments"}},
       "list": {
         "title": "Payroll",
         "subtitleOf": "Payroll for",
@@ -851,6 +856,9 @@
         }
       },
       "detail": {
+        "bringNew": "Bring in new workdays",
+        "fixHelp": "This payroll can still be corrected: remove a workday that doesn't belong or bring in the ones you logged later on the sheet. When it's right, approve it; the payment is recorded on the day you pay.",
+        "removeWage": "Remove this workday from the payroll",
         "back": "Payroll",
         "title": "Payroll #{{id}}",
         "approve": "Approve",
@@ -878,14 +886,18 @@
         "notFound": "Payroll not found.",
         "backShort": "Back",
         "confirm": {
+          "removeWage": "Remove this workday from the payroll? The workday stays logged and the total is recalculated.",
           "approve": "Approve this payroll? You can record the payment afterwards.",
           "cancel": "Cancel this payroll? This action cannot be undone."
         },
         "success": {
+          "wageRemoved": "Workday removed; the total was recalculated",
+          "wagesAdded": "The period's new workdays were added",
           "approved": "Payroll approved. Now record the payment.",
           "paid": "Payment of ${{amount}} recorded ({{method}})"
         },
         "errors": {
+          "fix": "Couldn't correct the payroll",
           "load": "Error loading the payroll",
           "approve": "Error approving the payroll",
           "payment": "Error recording the payment",

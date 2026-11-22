@@ -35,6 +35,16 @@ export function sumarDias(iso: string, dias: number): string {
   return isoLocal(d);
 }
 
+/** Se puede quitar si no está pagado y su nómina (si tiene) sigue pendiente: la nómina se recalcula */
+export function sePuedeQuitar(j: CasillaPlanilla): boolean {
+  return !j.liquidado && (!j.enNomina || j.nominaEstado === 'PENDIENTE');
+}
+
+/** Ya no se puede cambiar: su nómina se aprobó o se pagó */
+export function bloqueado(j: CasillaPlanilla): boolean {
+  return !sePuedeQuitar(j);
+}
+
 /** Jornales por trabajador y día: clave "trabajadorId|fecha" */
 export function indexar(jornales: CasillaPlanilla[]): Map<string, CasillaPlanilla[]> {
   const m = new Map<string, CasillaPlanilla[]>();
@@ -73,7 +83,7 @@ export function totalDia(fecha: string, jornales: CasillaPlanilla[]): number {
  * si no el último; nunca uno que ya está en nómina. null si no se puede quitar ninguno.
  */
 export function porQuitar(casilla: CasillaPlanilla[], cultivoId: number | null): CasillaPlanilla | null {
-  const libres = casilla.filter((j) => !j.enNomina && !j.liquidado);
+  const libres = casilla.filter(sePuedeQuitar);
   if (!libres.length) return null;
   return libres.find((j) => j.cultivoId === cultivoId) ?? libres[libres.length - 1];
 }

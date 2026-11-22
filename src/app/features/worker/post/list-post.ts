@@ -7,6 +7,7 @@ import { PesosPipe } from '../../../shared/format.pipe';
 import { CargoService } from '../../../core/services/worker.service';
 import { Cargo } from '../../../core/models/worker.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
+import { AvisosService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-lista-cargos',
@@ -107,6 +108,24 @@ export class ListaCargosComponent implements OnInit {
         this.guardando = false;
         this.cdr.detectChanges();
       }
+    });
+  }
+
+  agregandoTipicos = false;
+  private readonly avisos = inject(AvisosService);
+
+  /** Crea los cargos que tiene casi cualquier finca (los que ya existen con ese nombre no se repiten) */
+  async agregarTipicos(): Promise<void> {
+    const ok = await this.confirmService.preguntar({ mensaje: this.translate.instant('workers.posts.confirmTypical') });
+    if (!ok) return;
+    this.agregandoTipicos = true;
+    this.cargoService.crearTipicos().subscribe({
+      next: (creados) => {
+        this.agregandoTipicos = false;
+        this.avisos.exito(creados.length ? 'workers.posts.typicalAdded' : 'workers.posts.typicalNone', { count: creados.length });
+        this.cargar();
+      },
+      error: () => { this.agregandoTipicos = false; this.error = 'workers.posts.errors.save'; this.cdr.detectChanges(); },
     });
   }
 

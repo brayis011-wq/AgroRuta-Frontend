@@ -6,6 +6,7 @@
       <p class="cv-sub">{{ 'workers.posts.subtitle' | translate }}</p>
     </div>
     <div class="cv-acciones">
+      <button type="button" class="btn" [disabled]="agregandoTipicos" (click)="agregarTipicos()" [title]="'workers.posts.typicalHelp' | translate"><i class="ti ti-sparkles" aria-hidden="true"></i> {{ 'workers.posts.addTypical' | translate }}</button>
       <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'workers.posts.new' | translate }}</button>
     </div>
   </header>
@@ -20,6 +21,8 @@
       <div class="vacio">
         <i class="ti ti-tag-off" aria-hidden="true"></i>
         <p>{{ 'workers.posts.empty' | translate }}</p>
+        <p class="suave">{{ 'workers.posts.typicalHelp' | translate }}</p>
+        <button type="button" class="btn" [disabled]="agregandoTipicos" (click)="agregarTipicos()"><i class="ti ti-sparkles" aria-hidden="true"></i> {{ 'workers.posts.addTypical' | translate }}</button>
         <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'workers.posts.new' | translate }}</button>
       </div>
     } @else {

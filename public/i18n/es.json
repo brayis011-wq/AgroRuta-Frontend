@@ -737,10 +737,15 @@
     }
   },
   "workers": {
-    "sheet": {"title":"Planilla semanal","subtitle":"Toca una casilla para anotar el jornal de ese día; tócala otra vez para quitarlo.","toPayroll":"Generar la quincena","withWhat":"Con qué se anota","crop":"Cultivo donde trabajaron","labors":"Labores","howTo":"Lo que toques se anota con este cultivo y estas labores. El número de cada día anota a todos los que se pagan por día.","chooseFirst":"Elige arriba el cultivo y al menos una labor.","prevWeek":"Semana anterior","nextWeek":"Semana siguiente","thisWeek":"Esta semana","weekTotal":"Total de la semana:","total":"Semana","allDay":"Anotar a todos los que se pagan por día","days":"{{count}} días","daysOne":"1 día","emptyTitle":"Todavía no hay trabajadores","empty":"Agrega a tu equipo para anotar sus jornales en la planilla.","addWorker":"Agregar trabajador","legendDone":"Jornal anotado","legendPayroll":"Ya está en una nómina","legendDay":"Toca el día para anotar a todos","kilosTitle":"¿Cuántos kilos recogió?","kilosValue":"Este jornal vale {{value}}.","added":"{{count}} jornales anotados","removed":"Jornal de {{name}} quitado","inPayroll":"Ese jornal ya está en una nómina: para quitarlo, primero elimina la nómina.","cellEmpty":"Anotar jornal: {{who}}","cellFilled":"Quitar jornal: {{who}}","errors":{"load":"No se pudo cargar la planilla","save":"No se pudo anotar el jornal","remove":"No se pudo quitar el jornal"}},
+    "sheet": {"legendPending": "En una nómina pendiente (se puede corregir)", "removedFromPayroll": "Jornal de {{name}} quitado; su nómina se recalculó", "title":"Planilla semanal","subtitle":"Toca una casilla para anotar el jornal de ese día; tócala otra vez para quitarlo.","toPayroll":"Generar la quincena","withWhat":"Con qué se anota","crop":"Cultivo donde trabajaron","labors":"Labores","howTo":"Lo que toques se anota con este cultivo y estas labores. El número de cada día anota a todos los que se pagan por día.","chooseFirst":"Elige arriba el cultivo y al menos una labor.","prevWeek":"Semana anterior","nextWeek":"Semana siguiente","thisWeek":"Esta semana","weekTotal":"Total de la semana:","total":"Semana","allDay":"Anotar a todos los que se pagan por día","days":"{{count}} días","daysOne":"1 día","emptyTitle":"Todavía no hay trabajadores","empty":"Agrega a tu equipo para anotar sus jornales en la planilla.","addWorker":"Agregar trabajador","legendDone":"Jornal anotado","legendPayroll":"Ya está en una nómina","legendDay":"Toca el día para anotar a todos","kilosTitle":"¿Cuántos kilos recogió?","kilosValue":"Este jornal vale {{value}}.","added":"{{count}} jornales anotados","removed":"Jornal de {{name}} quitado","inPayroll":"Ese jornal ya está en una nómina: para quitarlo, primero elimina la nómina.","cellEmpty":"Anotar jornal: {{who}}","cellFilled":"Quitar jornal: {{who}}","errors":{"load":"No se pudo cargar la planilla","save":"No se pudo anotar el jornal","remove":"No se pudo quitar el jornal"}},
     "catalog": { "label": "Cargos y labores" },
     "ui": {"team": "Equipo", "summary": "Resumen del equipo", "ofTotal": "de {{total}} registrados", "seeRosters": "Ver nóminas", "paymentsCount": "{{count}} pagos", "paymentsCountOne": "1 pago", "people": "Personas", "filterState": "Filtrar por estado", "col": {"worker": "Trabajador", "post": "Cargo", "wage": "Jornal", "state": "Estado", "actions": "Acciones"}, "idShort": "C.C.", "data": "Datos", "contract": "Contrato", "hireDate": "Ingreso", "phone": "Teléfono", "address": "Dirección", "workDays": "Días trabajados", "searchCrop": "Buscar cultivo...", "lastPayment": "Último pago", "paymentHistory": "Historial de pagos", "payroll": "Nómina", "amount": "Monto", "openPayroll": "Abrir la nómina", "summaryShort": "Resumen", "rosters": {"toApprove": "Por aprobar", "toPay": "Aprobadas sin pagar", "paid": "Pagado", "count": "{{count}} nóminas pagadas", "countOne": "1 nómina pagada", "all": "Todas", "flow": "Avance de la nómina", "step1": "Generada", "step2": "Aprobada", "step3": "Pagada", "cancelledNote": "Esta nómina está anulada. Sus jornales quedaron libres para incluirlos en otra nómina."}},
     "posts": {
+      "addTypical": "Agregar cargos típicos",
+      "typicalHelp": "Jornalero, recolector al kilo, fumigador, guadañador, operario de beneficio, mayordomo y cocinera, con valores de referencia que puedes cambiar.",
+      "confirmTypical": "Se agregan los cargos típicos de una finca que todavía no tienes (jornalero, recolector al kilo, fumigador, guadañador, operario de beneficio, mayordomo y cocinera). Los valores son de referencia: ajústalos a lo que se paga en tu zona.",
+      "typicalAdded": "Se agregaron {{count}} cargos",
+      "typicalNone": "Ya tenías todos los cargos típicos",
       "perKilo": "/ kg",
       "payMode": "¿Cómo se paga?",
       "byDay": "Por día",
@@ -799,7 +804,7 @@
       }
     },
     "rosters": {
-      "team": {"open":"Quincena del equipo","title":"Quincena de todo el equipo","help":"Se genera una nómina por cada trabajador que tenga jornales sin nómina en esas fechas.","fortnight":"Quincena","generate":"Generar nóminas","generated":"Se generaron {{count}} nóminas por {{total}}.","wagesCount":"{{count}} jornales","method":"¿Cómo vas a pagar?","later":"Pagar después","payNow":"Pagar todas ({{total}})","bulk":"Acciones con varias nóminas","approveAll":"Aprobar las {{count}} pendientes","payAll":"Pagar las {{count}} aprobadas · {{total}}","confirmApprove":"¿Aprobar las {{count}} nóminas pendientes que se ven en la lista?","confirmPay":"¿Registrar el pago de las {{count}} nóminas aprobadas en {{method}}? Cada una se paga por su total.","approved":"{{count}} nóminas aprobadas","paid":"{{count}} pagos registrados","errors":{"dates":"Revisa las fechas de la quincena","generate":"No se pudieron generar las nóminas","pay":"No se pudieron registrar los pagos"}},
+      "team": {"review": "Revisar las nóminas", "step1": "Revisa.", "step1Help": "Abre cada nómina: puedes quitar un jornal que no va o traer uno que anotaste después.", "step2": "Aprueba.", "step2Help": "Cuando esté bien, apruébala (una por una o todas juntas desde la lista).", "step3": "Paga.", "step3Help": "El día que le pagues a cada trabajador, registra el pago y sale su comprobante.", "open":"Quincena del equipo","title":"Quincena de todo el equipo","help":"Se genera una nómina por cada trabajador que tenga jornales sin nómina en esas fechas.","fortnight":"Quincena","generate":"Generar nóminas","generated":"Se generaron {{count}} nóminas por {{total}}.","wagesCount":"{{count}} jornales","method":"¿Cómo vas a pagar?","later":"Pagar después","payNow":"Pagar todas ({{total}})","bulk":"Acciones con varias nóminas","approveAll":"Aprobar las {{count}} pendientes","payAll":"Pagar las {{count}} aprobadas · {{total}}","confirmApprove":"¿Aprobar las {{count}} nóminas pendientes que se ven en la lista?","confirmPay":"¿Registrar el pago de las {{count}} nóminas aprobadas en {{method}}? Cada una se paga por su total.","approved":"{{count}} nóminas aprobadas","paid":"{{count}} pagos registrados","errors":{"dates":"Revisa las fechas de la quincena","generate":"No se pudieron generar las nóminas","pay":"No se pudieron registrar los pagos"}},
       "list": {
         "title": "Nóminas",
         "subtitleOf": "Nóminas de",
@@ -851,6 +856,9 @@
         }
       },
       "detail": {
+        "bringNew": "Traer jornales nuevos",
+        "fixHelp": "Esta nómina todavía se puede corregir: quita un jornal que no va o trae los que anotaste después en la planilla. Cuando esté bien, apruébala; el pago se registra el día que le pagues.",
+        "removeWage": "Quitar este jornal de la nómina",
         "back": "Nóminas",
         "title": "Nómina #{{id}}",
         "approve": "Aprobar",
@@ -878,14 +886,18 @@
         "notFound": "No se encontró la nómina.",
         "backShort": "Volver",
         "confirm": {
+          "removeWage": "¿Quitar este jornal de la nómina? El jornal sigue anotado y el total se recalcula.",
           "approve": "¿Aprobar esta nómina? Después podrás registrar el pago.",
           "cancel": "¿Anular esta nómina? Esta acción no se puede deshacer."
         },
         "success": {
+          "wageRemoved": "Jornal quitado; el total se recalculó",
+          "wagesAdded": "Se sumaron los jornales nuevos del periodo",
           "approved": "Nómina aprobada. Ahora registra el pago.",
           "paid": "Pago de ${{amount}} registrado ({{method}})"
         },
         "errors": {
+          "fix": "No se pudo corregir la nómina",
           "load": "Error al cargar la nómina",
           "approve": "Error al aprobar la nómina",
           "payment": "Error al registrar el pago",

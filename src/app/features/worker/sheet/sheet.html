@@ -83,13 +83,13 @@
                 @for (d of dias(); track d) {
                   <td class="celda" [class.hoy]="d === hoy">
                     @let hay = casilla(t, d);
-                    <button type="button" class="casilla" [class.llena]="hay.length > 0" [class.nomina]="hay.length > 0 && hay[0].enNomina"
+                    <button type="button" class="casilla" [class.llena]="hay.length > 0" [class.nomina]="hay.length > 0 && bloqueado(hay[0])" [class.pendiente]="hay.length > 0 && hay[0].nominaEstado === 'PENDIENTE'"
                             [class.ocupada]="ocupada(t, d)" [disabled]="futuro(d) || (!t.activo && !hay.length)"
                             [attr.aria-pressed]="hay.length > 0" [attr.aria-label]="etiquetaCasilla(t, d)" (click)="tocar(t, d)">
                       @if (ocupada(t, d)) {
                         <i class="ti ti-loader-2 gira" aria-hidden="true"></i>
                       } @else if (hay.length) {
-                        @if (hay[0].kilos) { <span class="kg">{{ hay[0].kilos }}<small>kg</small></span> } @else { <i class="ti" [class.ti-lock]="hay[0].enNomina" [class.ti-check]="!hay[0].enNomina" aria-hidden="true"></i> }
+                        @if (hay[0].kilos) { <span class="kg">{{ hay[0].kilos }}<small>kg</small></span> } @else { <i class="ti" [class.ti-lock]="bloqueado(hay[0])" [class.ti-check]="!bloqueado(hay[0])" aria-hidden="true"></i> }
                         @if (hay.length > 1) { <em class="mas">×{{ hay.length }}</em> }
                       } @else if (!futuro(d)) {
                         <i class="ti ti-plus vacio-i" aria-hidden="true"></i>
@@ -109,6 +109,7 @@
       </div>
       <p class="leyenda">
         <span><i class="ti ti-check" aria-hidden="true"></i> {{ 'workers.sheet.legendDone' | translate }}</span>
+        <span><i class="ti ti-point-filled punto" aria-hidden="true"></i> {{ 'workers.sheet.legendPending' | translate }}</span>
         <span><i class="ti ti-lock" aria-hidden="true"></i> {{ 'workers.sheet.legendPayroll' | translate }}</span>
         <span><i class="ti ti-calendar-plus" aria-hidden="true"></i> {{ 'workers.sheet.legendDay' | translate }}</span>
       </p>

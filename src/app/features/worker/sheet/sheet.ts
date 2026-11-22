@@ -12,7 +12,7 @@ import { AvisosService } from '../../../core/services/toast.service';
 import { PeriodoPipe, PesosPipe } from '../../../shared/format.pipe';
 import { LanguageService } from '../../../core/services/language.service';
 import { localeDe } from '../../../shared/format';
-import { clave, deIso, diasDeSemana, indexar, isoLocal, lunesDe, porQuitar, sumarDias, totalDia, totalFila } from './sheet.logic';
+import { bloqueado, clave, deIso, diasDeSemana, indexar, isoLocal, lunesDe, porQuitar, sumarDias, totalDia, totalFila } from './sheet.logic';
 
 /** Lo que se recuerda de la planilla: el cultivo y las labores con que se anota */
 interface UltimaPlanilla { cultivoId?: number; actividadIds?: number[] }
@@ -93,6 +93,14 @@ export class PlanillaComponent implements OnInit {
     if (!caja || !hoy || caja.scrollWidth <= caja.clientWidth) return;
     const fija = caja.querySelector<HTMLElement>('th.quien')?.offsetWidth ?? 0;
     caja.scrollLeft = Math.max(0, hoy.offsetLeft - fija - hoy.offsetWidth * 2);
+  }
+
+  readonly bloqueado = bloqueado;
+
+  /** Vuelve a leer la semana sin el efecto de carga (para ver en qué nómina quedó cada jornal) */
+  private refrescar(): void {
+    const dias = this.dias();
+    this.jornales.planilla(dias[0], dias[6]).subscribe({ next: (p) => this.planilla.set(p), error: () => {} });
   }
 
   semana(delta: number): void {
@@ -193,11 +201,13 @@ export class PlanillaComponent implements OnInit {
           const nuevas: CasillaPlanilla[] = creados.map((j) => ({
             id: j.id!, trabajadorId: j.trabajador!.id!, fecha: String(j.fecha), cultivoId: j.cultivoId!,
             nombreCultivo: j.nombreCultivo ?? '', valor: j.valorJornal ?? 0, kilos: j.kilos ?? null,
-            liquidado: !!j.liquidado, enNomina: false,
+            liquidado: !!j.liquidado, enNomina: false, nominaEstado: null,
           }));
           this.planilla.set({ ...p, jornales: [...p.jornales, ...nuevas] });
         }
         if (!silencioso && creados.length > 1) this.avisos.exito('workers.sheet.added', { count: creados.length });
+        // Si el trabajador tenía una nómina pendiente de esas fechas, el jornal entró en ella
+        if (creados.length && (this.planilla()?.jornales ?? []).some((j) => j.nominaEstado === 'PENDIENTE')) this.refrescar();
       },
       error: (e) => {
         this.marcar(entradas.map((x) => clave(x.trabajadorId, x.fecha)), false);
@@ -218,7 +228,7 @@ export class PlanillaComponent implements OnInit {
         if (p) this.planilla.set({ ...p, jornales: p.jornales.filter((x) => x.id !== j.id) });
         // Deshacer: se vuelve a anotar con el mismo cultivo y las labores de ahora
         const antes = this.cultivoId();
-        this.avisos.conDeshacer('workers.sheet.removed', { name: t.nombreCompleto }, () => {
+        this.avisos.conDeshacer(j.nominaEstado === 'PENDIENTE' ? 'workers.sheet.removedFromPayroll' : 'workers.sheet.removed', { name: t.nombreCompleto }, () => {
           this.cultivoId.set(j.cultivoId);
           this.anotar([{ trabajadorId: t.id, fecha, kilos: j.kilos }], true);
           this.cultivoId.set(antes);

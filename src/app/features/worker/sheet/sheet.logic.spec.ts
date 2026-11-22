@@ -4,7 +4,7 @@ import { quincenaActual, quincenaAnterior } from '../roster/list-roster/quincena
 import { consejoLluvia } from '../../weather/rain-card/rain-card';
 
 const casilla = (id: number, trabajadorId: number, fecha: string, extra: Partial<CasillaPlanilla> = {}): CasillaPlanilla => ({
-  id, trabajadorId, fecha, cultivoId: 5, nombreCultivo: 'Lote 1', valor: 60000, kilos: null, liquidado: false, enNomina: false, ...extra,
+  id, trabajadorId, fecha, cultivoId: 5, nombreCultivo: 'Lote 1', valor: 60000, kilos: null, liquidado: false, enNomina: false, nominaEstado: null, ...extra,
 });
 
 const fila = (id: number): FilaPlanilla => ({
@@ -38,8 +38,10 @@ describe('Planilla semanal', () => {
   });
 
   it('al tocar una casilla se quita el jornal del cultivo elegido y nunca uno que ya está en nómina', () => {
-    const enNomina = casilla(1, 7, '2026-11-16', { enNomina: true });
+    const enNomina = casilla(1, 7, '2026-11-16', { enNomina: true, nominaEstado: 'APROBADA' });
     expect(porQuitar([enNomina], 5)).toBeNull();
+    // En una nómina pendiente sí se puede quitar: la nómina se recalcula
+    expect(porQuitar([casilla(9, 7, '2026-11-16', { enNomina: true, nominaEstado: 'PENDIENTE' })], 5)?.id).toBe(9);
     const otro = casilla(2, 7, '2026-11-16', { cultivoId: 9 });
     const elegido = casilla(3, 7, '2026-11-16', { cultivoId: 5 });
     expect(porQuitar([enNomina, otro, elegido], 5)?.id).toBe(3);

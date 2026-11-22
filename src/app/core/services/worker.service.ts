@@ -91,6 +91,8 @@ export interface CasillaPlanilla {
   kilos: number | null;
   liquidado: boolean;
   enNomina: boolean;
+  /** Estado de la nómina en que quedó: PENDIENTE se puede corregir; APROBADA o PAGADA no */
+  nominaEstado: 'PENDIENTE' | 'APROBADA' | 'PAGADA' | 'ANULADA' | null;
 }
 
 /** GET /api/workdays/sheet */
@@ -136,6 +138,8 @@ export class CargoService {
   crear(c: CargoRequest): Observable<Cargo> { return this.http.post<Cargo>(this.api, c); }
   actualizar(id: number, c: CargoRequest): Observable<Cargo> { return this.http.put<Cargo>(`${this.api}/${id}`, c); }
   desactivar(id: number): Observable<void> { return this.http.patch<void>(`${this.api}/${id}/deactivate`, {}); }
+  /** Agrega los cargos típicos de una finca que aún no tiene; devuelve los creados */
+  crearTipicos(): Observable<Cargo[]> { return this.http.post<Cargo[]>(`${this.api}/defaults`, {}); }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -178,6 +182,10 @@ export class NominaService {
   generar(req: NominaRequest): Observable<Nomina> { return this.http.post<Nomina>(`${this.api}/generate`, req); }
   /** La quincena de todo el equipo: una nómina por cada trabajador con jornales en el periodo */
   generarTodas(periodoInicio: string, periodoFin: string): Observable<Nomina[]> { return this.http.post<Nomina[]>(`${this.api}/generate-all`, { periodoInicio, periodoFin }); }
+  /** Corrige una nómina pendiente: le quita un jornal y recalcula */
+  quitarJornal(id: number, jornalId: number): Observable<Nomina> { return this.http.delete<Nomina>(`${this.api}/${id}/workdays/${jornalId}`); }
+  /** Suma los jornales de su periodo anotados después de generarla */
+  traerJornalesNuevos(id: number): Observable<Nomina> { return this.http.post<Nomina>(`${this.api}/${id}/refresh`, {}); }
   aprobarVarias(ids: number[]): Observable<Nomina[]> { return this.http.patch<Nomina[]>(`${this.api}/approve-batch`, { ids }); }
   aprobar(id: number): Observable<Nomina> { return this.http.patch<Nomina>(`${this.api}/${id}/approve`, {}); }
   anular(id: number): Observable<void> { return this.http.patch<void>(`${this.api}/${id}/void`, {}); }

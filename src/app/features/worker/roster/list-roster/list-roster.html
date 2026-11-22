@@ -218,19 +218,16 @@
         <p class="aviso verde"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ 'workers.rosters.team.generated' | translate: { count: generadas.length, total: (totalGeneradas | pesos) } }}</p>
         <ul class="lista-generadas">
           @for (n of generadas; track n.id) {
-            <li><span class="av" aria-hidden="true">{{ iniciales(n.trabajador) }}</span><span class="g-nombre">{{ n.trabajador?.nombreCompleto }}<small>{{ 'workers.rosters.team.wagesCount' | translate: { count: n.totalJornales } }}</small></span><strong>{{ n.valorTotal | pesos }}</strong></li>
+            <li><a class="g-fila" [routerLink]="['/worker/payrolls', n.id]"><span class="av" aria-hidden="true">{{ iniciales(n.trabajador) }}</span><span class="g-nombre">{{ n.trabajador?.nombreCompleto }}<small>{{ 'workers.rosters.team.wagesCount' | translate: { count: n.totalJornales } }}</small></span><strong>{{ n.valorTotal | pesos }}</strong><i class="ti ti-chevron-right" aria-hidden="true"></i></a></li>
           }
         </ul>
-        <div class="campo"><span>{{ 'workers.rosters.team.method' | translate }}</span>
-          <div class="opciones">
-            @for (m of ['EFECTIVO', 'TRANSFERENCIA', 'CHEQUE']; track m) {
-              <button type="button" class="opcion" [class.on]="metodoLote === m" (click)="metodoLote = m">{{ 'enums.metodoPago.' + m | translate }}</button>
-            }
-          </div>
-        </div>
+        <ol class="siguientes">
+          <li><b>{{ 'workers.rosters.team.step1' | translate }}</b> {{ 'workers.rosters.team.step1Help' | translate }}</li>
+          <li><b>{{ 'workers.rosters.team.step2' | translate }}</b> {{ 'workers.rosters.team.step2Help' | translate }}</li>
+          <li><b>{{ 'workers.rosters.team.step3' | translate }}</b> {{ 'workers.rosters.team.step3Help' | translate }}</li>
+        </ol>
         <footer class="lado-pie">
-          <button type="button" class="btn btn-texto" (click)="mostrarEquipo = false">{{ 'workers.rosters.team.later' | translate }}</button>
-          <button type="button" class="btn btn-prim" [disabled]="procesandoLote" (click)="pagarGeneradas()"><i class="ti" [class.ti-cash]="!procesandoLote" [class.ti-loader-2]="procesandoLote" aria-hidden="true"></i> {{ 'workers.rosters.team.payNow' | translate: { total: (totalGeneradas | pesos) } }}</button>
+          <button type="button" class="btn btn-prim" (click)="revisarGeneradas()"><i class="ti ti-list-check" aria-hidden="true"></i> {{ 'workers.rosters.team.review' | translate }}</button>
         </footer>
       }
     </div>

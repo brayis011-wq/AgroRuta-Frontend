@@ -234,10 +234,10 @@ export class ListaNominasComponent implements OnInit {
     return (this.generadas ?? []).reduce((s, n) => s + (n.valorTotal ?? 0), 0);
   }
 
-  /** Paga juntas las nóminas recién generadas (las aprueba antes) */
-  pagarGeneradas(): void {
-    const ids = (this.generadas ?? []).map((n) => n.id!).filter((x) => x != null);
-    this.pagarJuntas(ids, true, () => { this.mostrarEquipo = false; });
+  /** Las nóminas recién generadas quedan pendientes: se cierran el panel y se muestran para revisarlas */
+  revisarGeneradas(): void {
+    this.mostrarEquipo = false;
+    this.filtroEstado = 'PENDIENTE';
   }
 
   /** Pendientes de la lista: aprobarlas todas */

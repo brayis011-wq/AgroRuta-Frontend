@@ -13,3 +13,7 @@
 .form-pago { display: flex; flex-direction: column; gap: .9rem; }
 .form-pago .pie { display: flex; justify-content: flex-end; gap: .5rem; }
 @media (max-width: 720px) { .pasos { grid-template-columns: 1fr; } }
+
+/* Nómina pendiente: se puede corregir */
+.corregir { margin-bottom: .8rem; }
+.btn.chico { padding: .4rem .7rem; font-size: .82rem; }
