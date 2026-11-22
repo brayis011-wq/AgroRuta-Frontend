@@ -33,16 +33,73 @@
         </div>
       </section>
 
+      <!-- Gráficas: kilos al día de cada uno y lo que sale el kilo por día y por kilo (los datos están en la tabla de abajo) -->
       <section class="tarjeta">
-        <header><h2><i class="ti ti-chart-bar" aria-hidden="true"></i> {{ 'workers.yield.byWorker' | translate }}</h2></header>
+        <header><h2><i class="ti ti-chart-bar" aria-hidden="true"></i> {{ 'workers.yield.chart.title' | translate }}</h2></header>
+        <div class="graficas">
+          <figure class="grafica">
+            <figcaption>{{ 'workers.yield.chart.kilos' | translate }}</figcaption>
+            <ul class="barras">
+              @for (r of porKilos(); track r.trabajadorId) {
+                <li>
+                  <span class="quien" [title]="r.nombre">{{ r.nombre }}</span>
+                  <span class="fila-barra">
+                    <span class="barra kilos" tabindex="0" [style.width.%]="ancho(r.kilosAlDia, maxKilos())"
+                          [attr.aria-label]="r.nombre + ': ' + kg(r.kilosAlDia) + ' kg'"
+                          [attr.data-tip]="'workers.yield.chart.tipKilos' | translate: { kg: kg(r.kilosAlDia), count: r.diasPorDia + r.diasPorKilo }"></span>
+                    <span class="valor">{{ kg(r.kilosAlDia) }} kg</span>
+                  </span>
+                </li>
+              }
+            </ul>
+          </figure>
+
+          <figure class="grafica">
+            <figcaption>{{ 'workers.yield.chart.cost' | translate }}</figcaption>
+            <div class="leyenda">
+              <span><i class="sw dia" aria-hidden="true"></i>{{ 'workers.yield.chart.byDay' | translate }}</span>
+              <span><i class="sw kilo" aria-hidden="true"></i>{{ 'workers.yield.chart.byKg' | translate }}</span>
+              @if (kiloEquipo() != null) { <span><i class="sw ref" aria-hidden="true"></i>{{ 'workers.yield.chart.team' | translate: { price: (kiloEquipo()! | pesos) } }}</span> }
+            </div>
+            <ul class="barras">
+              @for (r of conCosto(); track r.trabajadorId) {
+                <li>
+                  <span class="quien" [title]="r.nombre">{{ r.nombre }}</span>
+                  <span class="pares">
+                    @if (kiloEquipo() != null) { <span class="referencia" [style.left.%]="ancho(kiloEquipo(), maxCosto())" aria-hidden="true"></span> }
+                    <span class="fila-barra">
+                      @if (r.costoKiloPorDia != null) {
+                        <span class="barra dia" tabindex="0" [style.width.%]="ancho(r.costoKiloPorDia, maxCosto())"
+                              [attr.aria-label]="r.nombre + ', ' + ('workers.yield.chart.byDay' | translate) + ': ' + (r.costoKiloPorDia | pesos)"
+                              [attr.data-tip]="('workers.yield.chart.byDay' | translate) + ': ' + (r.costoKiloPorDia | pesos) + ' / kg'"></span>
+                        <span class="valor">{{ r.costoKiloPorDia | pesos }}</span>
+                      } @else { <span class="valor suave">{{ 'workers.yield.chart.noDay' | translate }}</span> }
+                    </span>
+                    <span class="fila-barra">
+                      @if (r.costoKiloPorKilo != null) {
+                        <span class="barra kilo" tabindex="0" [style.width.%]="ancho(r.costoKiloPorKilo, maxCosto())"
+                              [attr.aria-label]="r.nombre + ', ' + ('workers.yield.chart.byKg' | translate) + ': ' + (r.costoKiloPorKilo | pesos)"
+                              [attr.data-tip]="('workers.yield.chart.byKg' | translate) + ': ' + (r.costoKiloPorKilo | pesos) + ' / kg'"></span>
+                        <span class="valor">{{ r.costoKiloPorKilo | pesos }}</span>
+                      } @else { <span class="valor suave">{{ 'workers.yield.chart.noKg' | translate }}</span> }
+                    </span>
+                  </span>
+                </li>
+              }
+            </ul>
+          </figure>
+        </div>
+      </section>
+
+      <section class="tarjeta">
+        <header><h2><i class="ti ti-table" aria-hidden="true"></i> {{ 'workers.yield.byWorker' | translate }}</h2></header>
         <div class="tabla-wrap">
           <table class="tabla resp">
             <thead>
               <tr>
                 <th>{{ 'workers.yield.col.worker' | translate }}</th>
                 <th class="num">{{ 'workers.yield.col.perDayKg' | translate }}</th>
-                <th class="num">{{ 'workers.yield.col.byDay' | translate }}</th>
-                <th class="num">{{ 'workers.yield.col.byKg' | translate }}</th>
+                <th class="num">{{ 'workers.yield.col.kiloCost' | translate }}</th>
                 <th>{{ 'workers.yield.col.verdict' | translate }}</th>
               </tr>
             </thead>
@@ -53,8 +110,10 @@
                   <td class="prin">{{ r.nombre }}<small class="suave linea2">{{ r.cargo || '—' }}@if (r.modalidadCargo) { · {{ (r.modalidadCargo === 'KILO' ? 'workers.yield.paysByKg' : 'workers.yield.paysByDay') | translate }} }</small></td>
                   <td class="num fuerte-n">{{ r.kilosAlDia != null ? kg(r.kilosAlDia) + ' kg' : '—' }}
                     <small class="suave linea2">{{ 'workers.yield.daysCount' | translate: { count: r.diasPorDia + r.diasPorKilo } }}</small></td>
-                  <td class="num">@if (r.costoKiloPorDia != null) { {{ r.costoKiloPorDia | pesos }}<small class="suave linea2">{{ 'workers.yield.kgIn' | translate: { kg: kg(r.kilosPorDia), count: r.diasPorDia } }}</small> } @else { <span class="suave">—</span> }</td>
-                  <td class="num">@if (r.costoKiloPorKilo != null) { {{ r.costoKiloPorKilo | pesos }}<small class="suave linea2">{{ 'workers.yield.kgIn' | translate: { kg: kg(r.kilosPorKilo), count: r.diasPorKilo } }}</small> } @else { <span class="suave">—</span> }</td>
+                  <td class="num costos">
+                    <span class="linea2"><span class="suave">{{ 'workers.yield.chart.byDay' | translate }}</span> {{ r.costoKiloPorDia != null ? (r.costoKiloPorDia | pesos) : '—' }}</span>
+                    <span class="linea2"><span class="suave">{{ 'workers.yield.chart.byKg' | translate }}</span> {{ r.costoKiloPorKilo != null ? (r.costoKiloPorKilo | pesos) : '—' }}</span>
+                  </td>
                   <td class="veredicto">
                     @if (c) {
                       <span class="etq" [class.dia]="c.mejor === 'DIA'" [class.kilo]="c.mejor === 'KILO'">
