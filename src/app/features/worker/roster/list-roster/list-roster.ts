@@ -13,7 +13,7 @@ import {
   PagoService
 } from '../../../../core/services/worker.service';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { quincenaAnterior, quincenaActual } from './quincena';
+import { semanaActual, semanaAnterior, semanaParaPagar } from './semana';
 import { Nomina, ResumenNominas, Trabajador } from '../../../../core/models/worker.model';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
@@ -52,7 +52,7 @@ export class ListaNominasComponent implements OnInit {
   private readonly pagos = inject(PagoService);
   private readonly avisos = inject(AvisosService);
 
-  // ── Quincena de todo el equipo ──
+  // ── Nómina semanal de todo el equipo ──
   mostrarEquipo = false;
   equipoInicio = '';
   equipoFin = '';
@@ -61,7 +61,11 @@ export class ListaNominasComponent implements OnInit {
   metodoLote = 'EFECTIVO';
   procesandoLote = false;
   errorLote = '';
-  readonly quincenas = [quincenaAnterior(new Date()), quincenaActual(new Date())];
+  /** Semana pasada y esta semana (lunes a domingo) */
+  readonly semanas = [
+    { ...semanaAnterior(new Date()), clave: 'workers.rosters.team.lastWeek' },
+    { ...semanaActual(new Date()), clave: 'workers.rosters.team.thisWeek' },
+  ];
   cargando = true;
   error = '';                                   // clave de traducción
   exito = '';                                   // clave de traducción
@@ -104,8 +108,9 @@ export class ListaNominasComponent implements OnInit {
     });
 
     this.cargar();
-    // Desde la planilla: abrir directamente la quincena del equipo
-    if (this.route.snapshot.queryParamMap.get('team')) this.abrirEquipo();
+    // Desde la planilla: abrir directamente la nómina del equipo con la semana que se estaba viendo
+    const q = this.route.snapshot.queryParamMap;
+    if (q.get('team')) this.abrirEquipo(q.get('desde'), q.get('hasta'));
   }
 
   /** Filtro rápido por estado de la tabla. Se aplica en el servidor: cambiarlo vuelve a la primera página. */
@@ -213,18 +218,19 @@ export class ListaNominasComponent implements OnInit {
     });
   }
 
-  // ── Quincena del equipo y pagos juntos ──
+  // ── Nómina semanal del equipo y pagos juntos ──
 
-  abrirEquipo(): void {
-    const q = this.quincenas[0];
-    this.equipoInicio = q.inicio;
-    this.equipoFin = q.fin;
+  abrirEquipo(desde?: string | null, hasta?: string | null): void {
+    const fecha = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
+    const s = desde && hasta && fecha.test(desde) && fecha.test(hasta) ? { inicio: desde, fin: hasta } : semanaParaPagar(new Date());
+    this.equipoInicio = s.inicio;
+    this.equipoFin = s.fin;
     this.generadas = null;
     this.errorLote = '';
     this.mostrarEquipo = true;
   }
 
-  elegirQuincena(q: { inicio: string; fin: string }): void {
+  elegirSemana(q: { inicio: string; fin: string }): void {
     this.equipoInicio = q.inicio;
     this.equipoFin = q.fin;
   }

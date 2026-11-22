@@ -180,7 +180,7 @@ export class NominaService {
   listarPorTrabajador(trabajadorId: number): Observable<Nomina[]> { return this.http.get<Nomina[]>(`${this.api}/worker/${trabajadorId}`); }
   obtener(id: number): Observable<Nomina> { return this.http.get<Nomina>(`${this.api}/${id}`); }
   generar(req: NominaRequest): Observable<Nomina> { return this.http.post<Nomina>(`${this.api}/generate`, req); }
-  /** La quincena de todo el equipo: una nómina por cada trabajador con jornales en el periodo */
+  /** La nómina de todo el equipo (una semana): una por cada trabajador con jornales en el periodo */
   generarTodas(periodoInicio: string, periodoFin: string): Observable<Nomina[]> { return this.http.post<Nomina[]>(`${this.api}/generate-all`, { periodoInicio, periodoFin }); }
   /** Corrige una nómina pendiente: le quita un jornal y recalcula */
   quitarJornal(id: number, jornalId: number): Observable<Nomina> { return this.http.delete<Nomina>(`${this.api}/${id}/workdays/${jornalId}`); }

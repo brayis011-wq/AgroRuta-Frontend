@@ -200,10 +200,10 @@
       @if (errorLote) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ errorLote | translate }}</p> }
       @if (!generadas) {
         <div class="campos">
-          <div class="campo ancho"><span>{{ 'workers.rosters.team.fortnight' | translate }}</span>
+          <div class="campo ancho"><span>{{ 'workers.rosters.team.week' | translate }}</span>
             <div class="opciones">
-              @for (q of quincenas; track q.inicio) {
-                <button type="button" class="opcion" [class.on]="equipoInicio === q.inicio && equipoFin === q.fin" (click)="elegirQuincena(q)">{{ q.inicio | periodo: q.fin }}</button>
+              @for (q of semanas; track q.inicio) {
+                <button type="button" class="opcion" [class.on]="equipoInicio === q.inicio && equipoFin === q.fin" (click)="elegirSemana(q)"><span class="sem"><strong>{{ q.clave | translate }}</strong><small>{{ q.inicio | periodo: q.fin }}</small></span></button>
               }
             </div>
           </div>

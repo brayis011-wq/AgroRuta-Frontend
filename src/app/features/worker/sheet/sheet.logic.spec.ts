@@ -1,6 +1,6 @@
 import { CasillaPlanilla, FilaPlanilla } from '../../../core/services/worker.service';
 import { diasDeSemana, indexar, clave, lunesDe, porQuitar, sumarDias, totalDia, totalFila } from './sheet.logic';
-import { quincenaActual, quincenaAnterior } from '../roster/list-roster/quincena';
+import { semanaActual, semanaAnterior, semanaParaPagar } from '../roster/list-roster/semana';
 import { consejoLluvia } from '../../weather/rain-card/rain-card';
 
 const casilla = (id: number, trabajadorId: number, fecha: string, extra: Partial<CasillaPlanilla> = {}): CasillaPlanilla => ({
@@ -49,15 +49,20 @@ describe('Planilla semanal', () => {
   });
 });
 
-describe('Quincenas', () => {
-  it('el día 21 la quincena para pagar es la del 1 al 15', () => {
-    expect(quincenaAnterior(new Date(2026, 10, 21))).toEqual({ inicio: '2026-11-01', fin: '2026-11-15' });
-    expect(quincenaActual(new Date(2026, 10, 21))).toEqual({ inicio: '2026-11-16', fin: '2026-11-30' });
+describe('Semanas de nómina', () => {
+  it('la semana va de lunes a domingo, también si el día es domingo', () => {
+    expect(semanaActual(new Date(2026, 10, 22))).toEqual({ inicio: '2026-11-16', fin: '2026-11-22' });
+    expect(semanaActual(new Date(2026, 10, 16))).toEqual({ inicio: '2026-11-16', fin: '2026-11-22' });
+    expect(semanaAnterior(new Date(2026, 10, 18))).toEqual({ inicio: '2026-11-09', fin: '2026-11-15' });
   });
 
-  it('el día 3 la quincena para pagar es la segunda del mes anterior (febrero tiene 28)', () => {
-    expect(quincenaAnterior(new Date(2026, 2, 3))).toEqual({ inicio: '2026-02-16', fin: '2026-02-28' });
-    expect(quincenaAnterior(new Date(2027, 0, 5))).toEqual({ inicio: '2026-12-16', fin: '2026-12-31' });
+  it('cruza el mes y el año', () => {
+    expect(semanaActual(new Date(2026, 11, 31))).toEqual({ inicio: '2026-12-28', fin: '2027-01-03' });
+  });
+
+  it('el fin de semana se paga la semana que termina; entre semana, la anterior', () => {
+    expect(semanaParaPagar(new Date(2026, 10, 21))).toEqual({ inicio: '2026-11-16', fin: '2026-11-22' }); // sábado
+    expect(semanaParaPagar(new Date(2026, 10, 18))).toEqual({ inicio: '2026-11-09', fin: '2026-11-15' }); // miércoles
   });
 });
 

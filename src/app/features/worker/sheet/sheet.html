@@ -6,7 +6,7 @@
       <p class="cv-sub">{{ 'workers.sheet.subtitle' | translate }}</p>
     </div>
     <div class="cv-acciones">
-      <a class="btn" routerLink="/worker/payrolls" [queryParams]="{ team: 1 }"><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.sheet.toPayroll' | translate }}</a>
+      <a class="btn" routerLink="/worker/payrolls" [queryParams]="{ team: 1, desde: dias()[0], hasta: dias()[6] }"><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.sheet.toPayroll' | translate }}</a>
     </div>
   </header>
 

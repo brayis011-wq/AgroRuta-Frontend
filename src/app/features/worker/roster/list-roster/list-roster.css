@@ -12,3 +12,5 @@
 .lista-generadas .g-fila .ti { color: var(--ar-tinta-3); }
 .siguientes { margin: .4rem 0 1rem; padding-left: 1.2rem; display: grid; gap: .35rem; font-size: .84rem; color: var(--ar-tinta-2); }
 .siguientes b { color: var(--ar-tinta); }
+.opcion .sem { display: flex; flex-direction: column; align-items: center; line-height: 1.25; }
+.opcion .sem small { font-weight: 500; font-size: .76rem; opacity: .8; }
