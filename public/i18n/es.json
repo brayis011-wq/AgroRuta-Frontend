@@ -198,6 +198,7 @@
       "FINALIZADO": "Finalizado"
     },
     "tipoActividad": {
+      "ABONADO": "Abonado",
       "FERTILIZACION": "Fertilización",
       "FUMIGACION": "Fumigación",
       "PODA": "Poda",
@@ -669,6 +670,7 @@
       }
     },
     "activity": {
+      "supply": {"title":"Insumo usado","add":"Usé un insumo de la bodega","remove":"Quitar insumo","product":"Producto","other":"Otro (no está en la bodega)","inStock":"hay {{qty}}","name":"Nombre del producto","namePlaceholder":"Ej: gallinaza, cal dolomita","manualHint":"Escrito a mano no se descuenta de la bodega.","quantity":"Cantidad total usada","unit":"Unidad","chooseUnit":"Elige","unitRequired":"Elige la unidad de la cantidad usada.","discount":"Se descuenta de la bodega.","overStock":"Es más de lo que hay en la bodega: quedará en negativo.","costAt":"A precio promedio de compra cuesta {{cost}}.","costHint":"Si lo dejas vacío, se usa el costo del producto a precio promedio de compra.","defaultDescription":"Abonado con {{product}}"},
       "back": "Volver a la siembra",
       "title": "Registrar actividad",
       "subtitle": "Registra una actividad realizada en el cultivo",
@@ -1680,6 +1682,17 @@
     },
     "saving": "Guardando...",
     "ciclo": {
+      "normalDays": "lo normal son unos {{days}} días",
+      "estimatedTitle": "Fecha estimada según lo normal del cultivo",
+      "suggestStage": "Según lo normal del {{crop}}, ya debería estar en {{etapa}} (desde el {{date}} aprox.).",
+      "suggestFinish": "Según lo normal del {{crop}}, la cosecha ya debería haber terminado (el {{date}} aprox.).",
+      "whereDays": "¿De dónde salen estos días?",
+      "daysOf": "Días de referencia para el {{crop}} en Colombia, contados desde que empieza cada etapa:",
+      "daysGeneral": "No tenemos tiempos propios para el {{crop}}; se usan unos generales:",
+      "aboutDays": "~{{days}} días",
+      "perennial": "Es un cultivo perenne: después de la cosecha vuelve a producir, así que no se sugiere terminar la temporada.",
+      "shortCycle": "Es de ciclo corto: al terminar la cosecha se sugiere cerrar la temporada.",
+      "disclaimer": "Cambian con el clima, la altura y la variedad: son una guía, el cambio de etapa lo decides tú.",
       "title": "Ciclo del cultivo",
       "inStage": "En {{etapa}} hace {{days}} días",
       "finishedOn": "Temporada terminada el {{date}} · duró {{days}} días",

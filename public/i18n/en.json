@@ -198,6 +198,7 @@
       "FINALIZADO": "Finished"
     },
     "tipoActividad": {
+      "ABONADO": "Fertilizing",
       "FERTILIZACION": "Fertilizing",
       "FUMIGACION": "Spraying",
       "PODA": "Pruning",
@@ -669,6 +670,7 @@
       }
     },
     "activity": {
+      "supply": {"title":"Input used","add":"I used an input from the warehouse","remove":"Remove input","product":"Product","other":"Other (not in the warehouse)","inStock":"{{qty}} in stock","name":"Product name","namePlaceholder":"E.g. chicken manure, dolomite lime","manualHint":"Typed by hand it isn't deducted from the warehouse.","quantity":"Total quantity used","unit":"Unit","chooseUnit":"Choose","unitRequired":"Choose the unit of the quantity used.","discount":"It's deducted from the warehouse.","overStock":"That's more than what's in the warehouse: it will go negative.","costAt":"At the average purchase price it costs {{cost}}.","costHint":"Leave it empty to use the product cost at the average purchase price.","defaultDescription":"Fertilized with {{product}}"},
       "back": "Back to the planting",
       "title": "Log activity",
       "subtitle": "Record an activity performed on the crop",
@@ -1680,6 +1682,17 @@
     },
     "saving": "Saving...",
     "ciclo": {
+      "normalDays": "usually about {{days}} days",
+      "estimatedTitle": "Estimated date based on what's normal for this crop",
+      "suggestStage": "Based on what's normal for {{crop}}, it should already be in {{etapa}} (since about {{date}}).",
+      "suggestFinish": "Based on what's normal for {{crop}}, the harvest should already be over (about {{date}}).",
+      "whereDays": "Where do these days come from?",
+      "daysOf": "Reference days for {{crop}} in Colombia, counted from the start of each stage:",
+      "daysGeneral": "We don't have specific times for {{crop}}; general ones are used:",
+      "aboutDays": "~{{days}} days",
+      "perennial": "It's a perennial crop: after the harvest it produces again, so finishing the season isn't suggested.",
+      "shortCycle": "It's a short-cycle crop: when the harvest ends, closing the season is suggested.",
+      "disclaimer": "They vary with climate, altitude and variety: they're a guide, you decide when the stage changes.",
       "title": "Crop cycle",
       "inStage": "In {{etapa}} for {{days}} days",
       "finishedOn": "Season ended on {{date}} · lasted {{days}} days",

@@ -84,12 +84,17 @@ export function nombreCultivo(s: { tipoCultivo?: string | null; variedad?: strin
 
 export interface ActividadCultivo {
   id?: number;
-  tipo: 'PODA' | 'TUTOREO' | 'DESHIERBE' | 'RIEGO' | 'REVISION' | 'OTRO';
+  tipo: 'ABONADO' | 'PODA' | 'TUTOREO' | 'DESHIERBE' | 'RIEGO' | 'REVISION' | 'OTRO';
   descripcion: string;
   fecha: string;
   siembraId: number;
   /** Materiales o servicios (COP), aparte de los jornales */
   costo?: number | null;
+  /** Insumo que se gastó (abonado...): de la bodega y con cantidad, se descuenta de ella */
+  producto?: string | null;
+  agriculturalInputId?: number | null;
+  cantidadUsada?: number | null;
+  unidadCantidad?: 'LITROS' | 'ML' | 'KG' | 'GRAMOS' | null;
 }
 
 export interface Fumigacion {

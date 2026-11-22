@@ -339,6 +339,8 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       tipo: 'actividad',
       tituloKey: 'enums.tipoActividad.' + a.tipo,
       detalle: a.descripcion,
+      // El insumo que gastó (abonado...): "Abono 15-15-15 · 50 kg"
+      extra: a.producto ? a.producto + (a.cantidadUsada ? ` · ${this.fmtNum(a.cantidadUsada)} ${this.translate.instant('enums.unidadMedida.' + a.unidadCantidad)}` : '') : undefined,
     }));
 
     this.fumigaciones.forEach(f => items.push({

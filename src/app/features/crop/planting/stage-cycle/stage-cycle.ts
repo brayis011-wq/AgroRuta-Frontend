@@ -11,6 +11,7 @@ import { EtapaSiembra, Siembra, siembraActiva } from '../../../../core/models/cr
 import {
   diasEnEtapa, diasEntre, fechaMinima, hoyIso, pasosCiclo, progresoCiclo, siguienteEtapa,
 } from './stage-cycle.logic';
+import { estimarCiclo, etapasConDias } from './cycle-estimate';
 
 type Panel = 'avanzar' | 'terminar' | null;
 
@@ -56,6 +57,19 @@ export class CicloEtapasComponent {
   readonly puedeDeshacer = computed(() => this.siembra().estadoCultivo !== 'GERMINACION');
   /** Avance de la línea hasta el punto de la etapa actual */
   readonly progreso = computed(() => progresoCiclo(this.siembra().estadoCultivo));
+  /** Lo normal del cultivo: fechas estimadas de lo que falta y la etapa a la que ya debería haber pasado */
+  readonly estimado = computed(() => estimarCiclo(this.siembra(), this.etapas(), this.hoy));
+  readonly tablaDias = computed(() => etapasConDias(this.estimado().duracion));
+
+  /** Abre el cambio sugerido con la fecha estimada (dentro de lo permitido: desde el último cambio hasta hoy) */
+  aceptarSugerencia(): void {
+    const e = this.estimado();
+    if (!e.sugerida) return;
+    this.abrir(e.sugerida === 'FINALIZADO' ? 'terminar' : 'avanzar');
+    const desde = e.desde ?? this.hoy;
+    const min = this.minimo();
+    this.fecha = desde < min ? min : desde > this.hoy ? this.hoy : desde;
+  }
 
   constructor() {
     let cargada = '';
