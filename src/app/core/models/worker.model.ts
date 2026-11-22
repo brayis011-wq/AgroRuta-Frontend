@@ -28,6 +28,10 @@ export interface Cargo {
   nombre: string;
   descripcion: string;
   valorJornal: number;
+  /** JORNAL (por día) o KILO (por kilo recogido) */
+  modalidadPago?: 'JORNAL' | 'KILO';
+  /** Pesos por kilo; solo en los cargos que se pagan por kilo */
+  valorKilo?: number | null;
   activo: boolean;
 }
 
@@ -73,6 +77,9 @@ export interface Jornal {
   cultivoId?: number;
   valorJornal?: number;
   liquidado?: boolean;
+  /** Solo en los jornales pagados por kilo */
+  kilos?: number | null;
+  valorKilo?: number | null;
   observaciones?: string;
 }
 

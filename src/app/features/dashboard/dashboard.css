@@ -74,3 +74,4 @@
   .accion { flex: none; white-space: nowrap; scroll-snap-align: start; }
   .accion.principal { grid-column: auto; }
 }
+.lluvia-inicio { display: block; margin-top: 1rem; }

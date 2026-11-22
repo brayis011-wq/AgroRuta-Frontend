@@ -1,3 +1,4 @@
+import { LluviaFincaComponent } from '../../../weather/rain-card/rain-card';
 import { PrecargarDirective } from '../../../../shared/prefetch.directive';
 import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -20,7 +21,7 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-detalle-finca',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, ContarDirective, MigasCultivoComponent, PrecargarDirective],
+  imports: [CommonModule, FormsModule, TranslatePipe, ContarDirective, MigasCultivoComponent, PrecargarDirective, LluviaFincaComponent],
   templateUrl: './farm-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './farm-detail.css'],
 })

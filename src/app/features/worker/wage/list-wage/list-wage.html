@@ -7,7 +7,7 @@
       @if (seleccionado; as s) {
         <p class="cv-sub">
           <span><i class="ti ti-user" aria-hidden="true"></i> {{ s.nombreCompleto }}</span>
-          @if (s.cargo) { <span><i class="ti ti-tag" aria-hidden="true"></i> {{ s.cargo.nombre }} · {{ s.cargo.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}</span> }
+          @if (s.cargo) { <span><i class="ti ti-tag" aria-hidden="true"></i> {{ s.cargo.nombre }} · @if (s.cargo.modalidadPago === 'KILO') {{{ s.cargo.valorKilo | pesos }} {{ 'workers.posts.perKilo' | translate }}} @else {{{ s.cargo.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}}</span> }
           @if (s.estado && s.estado !== 'ACTIVO') { <span class="est" [class]="s.estado">{{ 'enums.estadoTrabajador.' + s.estado | translate }}</span> }
         </p>
       } @else {
@@ -126,7 +126,7 @@
                   <td class="suave">{{ j.fecha | fecha }}</td>
                   <td class="prin fuerte-n">{{ j.nombreCultivo }}</td>
                   <td><span class="etqs">@for (a of j.actividades; track a.id) { <span class="etq">{{ a.nombre }}</span> }</span></td>
-                  <td class="num fuerte-n">{{ j.valorJornal | pesos }}</td>
+                  <td class="num fuerte-n">{{ j.valorJornal | pesos }}@if (j.kilos) { <small class="suave kg-j">{{ j.kilos }} kg</small> }</td>
                   <td><span class="est" [class.si]="j.liquidado" [class.PENDIENTE]="!j.liquidado">{{ (j.liquidado ? 'workers.wages.list.settled' : 'workers.wages.list.pending') | translate }}</span></td>
                 </tr>
               }

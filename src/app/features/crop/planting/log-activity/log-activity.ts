@@ -81,6 +81,9 @@ export class RegistrarActividad implements OnInit {
     const registro = this.route.snapshot.paramMap.get('registroId');
     // Una actividad nueva empieza con el tipo de la anterior (en temporada se repite la misma labor)
     if (!registro) this.form.tipo = this.ultimo.leer<{ tipo?: string }>('actividad')?.tipo ?? this.form.tipo;
+    // Desde una labor que se repite: ?tipo=DESHIERBE
+    const tipoQuery = this.route.snapshot.queryParamMap?.get('tipo');
+    if (!registro && tipoQuery && /^[A-Z]+$/.test(tipoQuery)) this.form.tipo = tipoQuery;
     if (registro) {
       this.registroId = Number(registro);
       this.cultivoService.buscarActividad(this.registroId).subscribe({

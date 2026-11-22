@@ -1,0 +1,151 @@
+<div class="cv">
+  <header class="cv-head">
+    <div>
+      <p class="eyebrow">{{ 'layout.nav.finance' | translate }}</p>
+      <h1>{{ 'gastos.title' | translate }}</h1>
+      <p class="cv-sub">{{ 'gastos.subtitle' | translate }}</p>
+    </div>
+    <div class="cv-acciones">
+      <a class="btn" routerLink="/reports" [queryParams]="{ tab: 'profitability' }"><i class="ti ti-chart-arrows" aria-hidden="true"></i> {{ 'gastos.seeProfit' | translate }}</a>
+      <button type="button" class="btn btn-prim" (click)="nuevo()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'gastos.new' | translate }}</button>
+    </div>
+  </header>
+
+  <div class="periodos" role="group" [attr.aria-label]="'reports.period.label' | translate">
+    <div class="seg">
+      @for (p of periodos; track p) {
+        <button type="button" [class.on]="periodo() === p" [attr.aria-pressed]="periodo() === p" (click)="elegirPeriodo(p)">{{ 'reports.period.' + p | translate }}</button>
+      }
+    </div>
+    @if (fincaActiva.fincas().length > 1) {
+      <label><span class="sr-only">{{ 'gastos.farm' | translate }}</span>
+        <select [value]="fincaFiltro() ?? ''" (change)="elegirFinca($any($event.target).value ? +$any($event.target).value : null)">
+          <option value="">{{ 'gastos.allFarms' | translate }}</option>
+          @for (f of fincaActiva.fincas(); track f.id) { <option [value]="f.id">{{ f.nombre }}</option> }
+        </select>
+      </label>
+    }
+  </div>
+
+  @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error()! | translate }}</p> }
+
+  @if (resumen(); as r) {
+    <section class="kpis tres">
+      <div class="kpi">
+        <span class="ic ambar"><i class="ti ti-receipt" aria-hidden="true"></i></span>
+        <div><small>{{ 'gastos.kpi.total' | translate }}</small><strong>{{ r.total | pesos }}</strong><em>{{ 'gastos.kpi.count' | translate: { count: r.cantidad } }}</em></div>
+      </div>
+      <div class="kpi">
+        <span class="ic gris"><i class="ti" [class]="'ti ' + (r.porCategoria.length ? iconoDe(r.porCategoria[0].clave) : 'ti-category')" aria-hidden="true"></i></span>
+        <div><small>{{ 'gastos.kpi.top' | translate }}</small><strong>@if (r.porCategoria.length) { {{ 'enums.categoriaGasto.' + r.porCategoria[0].clave | translate }} } @else { — }</strong>@if (r.porCategoria.length) { <em>{{ r.porCategoria[0].total | pesos }}</em> }</div>
+      </div>
+      <div class="kpi">
+        <span class="ic verde"><i class="ti ti-building-community" aria-hidden="true"></i></span>
+        <div><small>{{ 'gastos.kpi.topFarm' | translate }}</small><strong>@if (r.porFinca.length) { {{ r.porFinca[0].nombre }} } @else { — }</strong>@if (r.porFinca.length) { <em>{{ r.porFinca[0].total | pesos }}</em> }</div>
+      </div>
+    </section>
+
+    @if (r.porCategoria.length) {
+      <section class="tarjeta">
+        <header><h2><i class="ti ti-chart-bar" aria-hidden="true"></i> {{ 'gastos.byCategory' | translate }}</h2></header>
+        <ul class="barras-cat">
+          @for (p of r.porCategoria; track p.clave) {
+            <li>
+              <span><i class="ti" [class]="'ti ' + iconoDe(p.clave)" aria-hidden="true"></i> {{ 'enums.categoriaGasto.' + p.clave | translate }}</span>
+              <span class="pista"><span [style.width.%]="(p.total / maxCategoria()) * 100"></span></span>
+              <strong>{{ p.total | pesos }}</strong>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+
+  <section class="tarjeta">
+    <header><h2><i class="ti ti-list" aria-hidden="true"></i> {{ 'gastos.list' | translate }}</h2></header>
+    @if (lista() === null) {
+      <div class="esq" aria-hidden="true" style="height: 140px"></div>
+    } @else if (!lista()!.length) {
+      <div class="vacio">
+        <i class="ti ti-receipt-off" aria-hidden="true"></i>
+        <h3>{{ 'gastos.emptyTitle' | translate }}</h3>
+        <p>{{ 'gastos.empty' | translate }}</p>
+        <button type="button" class="btn btn-prim" (click)="nuevo()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'gastos.new' | translate }}</button>
+      </div>
+    } @else {
+      <div class="tabla-wrap">
+        <table class="tabla resp">
+          <thead>
+            <tr>
+              <th>{{ 'gastos.col.date' | translate }}</th>
+              <th>{{ 'gastos.col.what' | translate }}</th>
+              <th>{{ 'gastos.col.category' | translate }}</th>
+              <th>{{ 'gastos.col.farm' | translate }}</th>
+              <th class="num">{{ 'gastos.col.amount' | translate }}</th>
+              <th><span class="sr-only">{{ 'common.actions' | translate }}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (g of lista(); track g.id) {
+              <tr>
+                <td class="nowrap suave">{{ g.fecha | fecha }}</td>
+                <td class="prin fuerte-n">{{ g.descripcion }}</td>
+                <td><span class="etq"><i class="ti" [class]="'ti ' + icono[g.categoria]" aria-hidden="true"></i>&nbsp;{{ 'enums.categoriaGasto.' + g.categoria | translate }}</span></td>
+                <td class="suave">{{ g.fincaNombre }}</td>
+                <td class="num fuerte">{{ g.monto | pesos }}</td>
+                <td class="acc">
+                  <span class="acc-in">
+                    <button type="button" class="btn-ic verde-h" (click)="editar(g)" [title]="'common.edit' | translate" [attr.aria-label]="'common.edit' | translate"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+                    <button type="button" class="btn-ic peligro" (click)="eliminar(g)" [title]="'common.delete' | translate" [attr.aria-label]="'common.delete' | translate"><i class="ti ti-trash" aria-hidden="true"></i></button>
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>
+
+@if (form(); as f) {
+  <button type="button" class="overlay-l" (click)="form.set(null)" [attr.aria-label]="'common.cancel' | translate"></button>
+  <dialog class="lado" open (keydown.escape)="form.set(null)">
+    <header class="lado-head">
+      <span class="ic ambar" aria-hidden="true"><i class="ti ti-receipt"></i></span>
+      <div><h2>{{ (f.id ? 'gastos.formEdit' : 'gastos.formNew') | translate }}</h2><p>{{ 'gastos.formHelp' | translate }}</p></div>
+      <button type="button" class="btn-ic" (click)="form.set(null)" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </header>
+    <form class="lado-cuerpo" (ngSubmit)="guardar()">
+      @if (errorPanel()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ errorPanel()! | translate }}</p> }
+      <div class="campos">
+        <div class="campo ancho"><span>{{ 'gastos.category' | translate }}</span>
+          <div class="categorias">
+            @for (c of categorias; track c) {
+              <button type="button" class="opcion" [class.on]="f.categoria === c" (click)="campo('categoria', c)"><i class="ti" [class]="'ti ' + icono[c]" aria-hidden="true"></i> {{ 'enums.categoriaGasto.' + c | translate }}</button>
+            }
+          </div>
+        </div>
+        <label class="campo ancho"><span>{{ 'gastos.what' | translate }}</span>
+          <input name="desc" maxlength="255" [ngModel]="f.descripcion" (ngModelChange)="campo('descripcion', $event)" [placeholder]="'gastos.whatPlaceholder' | translate" required />
+        </label>
+        <label class="campo"><span>{{ 'gastos.amount' | translate }}</span>
+          <input name="monto" type="number" min="1" step="1000" inputmode="numeric" [ngModel]="f.monto" (ngModelChange)="campo('monto', $event)" placeholder="0" required />
+        </label>
+        <label class="campo"><span>{{ 'gastos.date' | translate }}</span>
+          <input name="fecha" type="date" [max]="hoy" [ngModel]="f.fecha" (ngModelChange)="campo('fecha', $event)" required />
+        </label>
+        <label class="campo ancho"><span>{{ 'gastos.farm' | translate }}</span>
+          <select name="finca" [ngModel]="f.fincaId" (ngModelChange)="campo('fincaId', $event)" required>
+            <option [ngValue]="null" disabled>{{ 'gastos.chooseFarm' | translate }}</option>
+            @for (x of fincaActiva.fincas(); track x.id) { <option [ngValue]="x.id">{{ x.nombre }}</option> }
+          </select>
+        </label>
+      </div>
+      <footer class="lado-pie">
+        <button type="button" class="btn btn-texto" (click)="form.set(null)">{{ 'common.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-prim" [disabled]="guardando()"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando() ? 'common.saving' : 'common.save') | translate }}</button>
+      </footer>
+    </form>
+  </dialog>
+}

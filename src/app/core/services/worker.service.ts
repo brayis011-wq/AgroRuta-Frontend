@@ -34,6 +34,8 @@ export interface JornalRequest {
   nombreCultivo?: string;
   fecha:         string;
   actividadIds:  number[];
+  /** Kilos recogidos: obligatorio si el cargo del trabajador se paga por kilo */
+  kilos?:        number | null;
   observaciones?: string;
 }
 
@@ -55,6 +57,54 @@ export interface PagoRequest {
   metodoPago:    string;
   comprobante?:  string;
   observaciones?: string;
+}
+
+/** Lo que necesita un cargo: por día (valorJornal) o por kilo (valorKilo) */
+export interface CargoRequest {
+  nombre: string;
+  descripcion: string;
+  modalidadPago?: 'JORNAL' | 'KILO';
+  valorJornal?: number | null;
+  valorKilo?: number | null;
+}
+
+/** Una fila de la planilla: el trabajador y cómo se le paga */
+export interface FilaPlanilla {
+  id: number;
+  nombreCompleto: string;
+  iniciales: string;
+  activo: boolean;
+  cargo: string | null;
+  modalidadPago: 'JORNAL' | 'KILO';
+  valorJornal: number | null;
+  valorKilo: number | null;
+}
+
+/** Un jornal en la cuadrícula */
+export interface CasillaPlanilla {
+  id: number;
+  trabajadorId: number;
+  fecha: string;
+  cultivoId: number;
+  nombreCultivo: string;
+  valor: number;
+  kilos: number | null;
+  liquidado: boolean;
+  enNomina: boolean;
+}
+
+/** GET /api/workdays/sheet */
+export interface Planilla {
+  inicio: string;
+  fin: string;
+  trabajadores: FilaPlanilla[];
+  jornales: CasillaPlanilla[];
+}
+
+export interface PlanillaRequest {
+  cultivoId: number;
+  actividadIds: number[];
+  entradas: { trabajadorId: number; fecha: string; kilos?: number | null }[];
 }
 
 export interface NominaRequest {
@@ -83,8 +133,8 @@ export class CargoService {
 
   listar(): Observable<Cargo[]> { return this.http.get<Cargo[]>(this.api); }
   buscarPorId(id: number): Observable<Cargo> { return this.http.get<Cargo>(`${this.api}/${id}`); }
-  crear(c: { nombre: string; descripcion: string; valorJornal: number }): Observable<Cargo> { return this.http.post<Cargo>(this.api, c); }
-  actualizar(id: number, c: { nombre: string; descripcion: string; valorJornal: number }): Observable<Cargo> { return this.http.put<Cargo>(`${this.api}/${id}`, c); }
+  crear(c: CargoRequest): Observable<Cargo> { return this.http.post<Cargo>(this.api, c); }
+  actualizar(id: number, c: CargoRequest): Observable<Cargo> { return this.http.put<Cargo>(`${this.api}/${id}`, c); }
   desactivar(id: number): Observable<void> { return this.http.patch<void>(`${this.api}/${id}/deactivate`, {}); }
 }
 
@@ -126,6 +176,9 @@ export class NominaService {
   listarPorTrabajador(trabajadorId: number): Observable<Nomina[]> { return this.http.get<Nomina[]>(`${this.api}/worker/${trabajadorId}`); }
   obtener(id: number): Observable<Nomina> { return this.http.get<Nomina>(`${this.api}/${id}`); }
   generar(req: NominaRequest): Observable<Nomina> { return this.http.post<Nomina>(`${this.api}/generate`, req); }
+  /** La quincena de todo el equipo: una nómina por cada trabajador con jornales en el periodo */
+  generarTodas(periodoInicio: string, periodoFin: string): Observable<Nomina[]> { return this.http.post<Nomina[]>(`${this.api}/generate-all`, { periodoInicio, periodoFin }); }
+  aprobarVarias(ids: number[]): Observable<Nomina[]> { return this.http.patch<Nomina[]>(`${this.api}/approve-batch`, { ids }); }
   aprobar(id: number): Observable<Nomina> { return this.http.patch<Nomina>(`${this.api}/${id}/approve`, {}); }
   anular(id: number): Observable<void> { return this.http.patch<void>(`${this.api}/${id}/void`, {}); }
   reactivar(id: number): Observable<Nomina> { return this.http.patch<Nomina>(`${this.api}/${id}/reactivate`, {}); }
@@ -138,6 +191,11 @@ export class JornalService {
   constructor(private http: HttpClient) {}
 
   registrar(req: JornalRequest): Observable<Jornal> { return this.http.post<Jornal>(this.api, req); }
+  /** La cuadrícula trabajadores × días entre dos fechas ("2026-11-16") */
+  planilla(inicio: string, fin: string): Observable<Planilla> { return this.http.get<Planilla>(`${this.api}/sheet`, { params: new HttpParams().set('inicio', inicio).set('fin', fin) }); }
+  registrarVarios(req: PlanillaRequest): Observable<Jornal[]> { return this.http.post<Jornal[]>(`${this.api}/batch`, req); }
+  /** Quita un jornal que no está en ninguna nómina */
+  eliminar(id: number): Observable<void> { return this.http.delete<void>(`${this.api}/${id}`); }
   cultivosDisponibles(): Observable<CultivoDisponible[]> { return this.http.get<CultivoDisponible[]>(`${this.api}/available-plantings`); }
   buscarPorId(id: number): Observable<Jornal> { return this.http.get<Jornal>(`${this.api}/${id}`); }
   /** Jornales del trabajador por páginas, más recientes primero. */
@@ -197,6 +255,10 @@ export class PagoService {
   buscarPorId(id: number): Observable<Pago> { return this.http.get<Pago>(`${this.api}/${id}`); }
   historialPorTrabajador(trabajadorId: number): Observable<Pago[]> { return this.http.get<Pago[]>(`${this.api}/worker/${trabajadorId}`); }
   registrar(req: PagoRequest): Observable<Pago> { return this.http.post<Pago>(this.api, req); }
+  /** Paga varias nóminas juntas, cada una por su total (aprobarPendientes: aprueba antes las pendientes) */
+  pagarVarias(nominaIds: number[], metodoPago: string, aprobarPendientes = true, observaciones?: string): Observable<Pago[]> {
+    return this.http.post<Pago[]>(`${this.api}/batch`, { nominaIds, metodoPago, aprobarPendientes, observaciones });
+  }
   /** Comprobante del pago en PDF, con un QR para verificarlo */
   comprobante(id: number): Observable<Blob> { return this.http.get(`${this.api}/${id}/receipt`, { responseType: 'blob' }); }
 }

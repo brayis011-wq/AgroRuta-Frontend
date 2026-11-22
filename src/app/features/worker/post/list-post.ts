@@ -13,7 +13,7 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PestanasCatalogoComponent],
   templateUrl: './list-post.html',
-  styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../worker-ui.css', '../worker-panel.css']
+  styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../worker-ui.css', '../worker-panel.css', '../../../shared/styles/opciones.css']
 })
 export class ListaCargosComponent implements OnInit {
   private readonly confirmService = inject(ConfirmService);
@@ -40,8 +40,27 @@ export class ListaCargosComponent implements OnInit {
     this.form = this.fb.group({
       nombre:      [cargo?.nombre ?? '',        Validators.required],
       descripcion: [cargo?.descripcion ?? '',   Validators.required],
-      valorJornal: [cargo?.valorJornal ?? null, [Validators.required, Validators.min(1)]]
+      modalidadPago: [cargo?.modalidadPago ?? 'JORNAL'],
+      valorJornal: [cargo?.modalidadPago === 'KILO' ? null : (cargo?.valorJornal ?? null)],
+      valorKilo:   [cargo?.valorKilo ?? null]
     });
+    this.ajustarValidadores();
+    this.form.get('modalidadPago')!.valueChanges.subscribe(() => this.ajustarValidadores());
+  }
+
+  /** Por día pide el valor del jornal; por kilo, el valor del kilo */
+  private ajustarValidadores(): void {
+    const porKilo = this.form.get('modalidadPago')!.value === 'KILO';
+    const jornal = this.form.get('valorJornal')!;
+    const kilo = this.form.get('valorKilo')!;
+    jornal.setValidators(porKilo ? [] : [Validators.required, Validators.min(1)]);
+    kilo.setValidators(porKilo ? [Validators.required, Validators.min(1)] : []);
+    jornal.updateValueAndValidity({ emitEvent: false });
+    kilo.updateValueAndValidity({ emitEvent: false });
+  }
+
+  get porKilo(): boolean {
+    return this.form?.get('modalidadPago')?.value === 'KILO';
   }
 
   cargar(): void {
@@ -73,7 +92,10 @@ export class ListaCargosComponent implements OnInit {
   guardar(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.guardando = true;
-    const req = this.form.value;
+    const v = this.form.value;
+    const porKilo = v.modalidadPago === 'KILO';
+    const req = { nombre: v.nombre, descripcion: v.descripcion, modalidadPago: v.modalidadPago,
+      valorJornal: porKilo ? null : v.valorJornal, valorKilo: porKilo ? v.valorKilo : null };
     const op = (this.modoEdicion?.id != null)
       ? this.cargoService.actualizar(this.modoEdicion.id, req)
       : this.cargoService.crear(req);

@@ -1,0 +1,85 @@
+<section class="tarjeta presupuesto">
+  <header>
+    <h2><i class="ti ti-target-arrow" aria-hidden="true"></i> {{ 'presupuesto.title' | translate }}</h2>
+    @if (presupuesto() && !editando()) {
+      <span class="acc">
+        <button type="button" class="btn-ic" (click)="editar()" [attr.aria-label]="'common.edit' | translate" [title]="'common.edit' | translate"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+        <button type="button" class="btn-ic peligro" (click)="borrar()" [attr.aria-label]="'common.delete' | translate" [title]="'common.delete' | translate"><i class="ti ti-trash" aria-hidden="true"></i></button>
+      </span>
+    }
+  </header>
+
+  @if (presupuesto() === undefined) {
+    <div class="esq" style="height: 70px; border-radius: 10px"></div>
+  } @else if (editando()) {
+    <form class="form-p" (ngSubmit)="guardar()">
+      @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error()! | translate }}</p> }
+      <p class="ayuda">{{ 'presupuesto.help' | translate }}</p>
+      <label class="campo"><span>{{ 'temporadas.costos.labor' | translate }}</span>
+        <input type="number" name="mo" min="0" step="10000" inputmode="numeric" [(ngModel)]="form.manoObra" placeholder="0" />
+      </label>
+      <label class="campo"><span>{{ 'temporadas.costos.inputs' | translate }}</span>
+        <input type="number" name="in" min="0" step="10000" inputmode="numeric" [(ngModel)]="form.insumos" placeholder="0" />
+      </label>
+      <label class="campo"><span>{{ 'temporadas.costos.other' | translate }}</span>
+        <input type="number" name="ot" min="0" step="10000" inputmode="numeric" [(ngModel)]="form.otros" placeholder="0" />
+      </label>
+      <p class="total-p">{{ 'presupuesto.total' | translate }} <strong>{{ (form.manoObra || 0) + (form.insumos || 0) + (form.otros || 0) | pesos }}</strong></p>
+      <footer>
+        <button type="button" class="btn btn-texto" (click)="editando.set(false)">{{ 'common.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-prim" [disabled]="guardando()"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando() ? 'common.saving' : 'common.save') | translate }}</button>
+      </footer>
+    </form>
+  } @else if (!presupuesto()) {
+    <p class="nada">{{ 'presupuesto.empty' | translate }}</p>
+    @if (activa()) { <button type="button" class="btn" (click)="editar()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'presupuesto.set' | translate }}</button> }
+  } @else {
+    @let p = presupuesto()!;
+    <div class="resumen-p" [class]="'resumen-p ' + p.estado">
+      <div>
+        <small>{{ 'presupuesto.spent' | translate }}</small>
+        <strong>{{ p.gastadoTotal | pesos }}</strong>
+        <em>{{ 'presupuesto.of' | translate: { total: (p.total | pesos) } }}</em>
+      </div>
+      <span class="pct">{{ p.porcentaje ?? 0 }} %</span>
+    </div>
+    <div class="barra" role="progressbar" [attr.aria-valuenow]="p.porcentaje ?? 0" aria-valuemin="0" aria-valuemax="100" [attr.aria-label]="'presupuesto.spent' | translate">
+      <span [class]="p.estado" [style.width.%]="avance(p.gastadoTotal, p.total)"></span>
+    </div>
+    @if (p.estado === 'SUPERADO') {
+      <p class="aviso rojo"><i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ 'presupuesto.over' | translate: { amount: (p.gastadoTotal - p.total | pesos) } }}</p>
+    } @else if (p.estado === 'CERCA') {
+      <p class="aviso ambar"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ 'presupuesto.near' | translate: { amount: (p.total - p.gastadoTotal | pesos) } }}</p>
+    }
+    @if (partes().length > 1) {
+      <ul class="partes">
+        @for (x of partes(); track x.clave) {
+          <li>
+            <span class="p-nombre">{{ x.clave | translate }}@if (x.pasado) { <b class="tarde"> · {{ 'presupuesto.partOver' | translate }}</b> }</span>
+            <span class="p-valor">{{ x.gastado | pesos }} / {{ x.tope | pesos }}</span>
+            <span class="barra fina"><span [class.SUPERADO]="x.pasado" [style.width.%]="avance(x.gastado, x.tope)"></span></span>
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>
+
+@if (estimado(); as e) {
+  <section class="tarjeta estimado">
+    <header><h2><i class="ti ti-chart-line" aria-hidden="true"></i> {{ 'precios.estimateTitle' | translate }}</h2></header>
+    @if (e.valor != null) {
+      <p class="cifra"><strong>{{ e.valor | pesos }}</strong> <span>{{ 'precios.estimateFor' | translate: { kg: e.kg } }}</span></p>
+      <p class="ayuda">
+        @if (referencia()?.fuente === 'PROPIO') { {{ 'precios.sourceOwn' | translate: { price: (referencia()!.precioKg | pesos) } }} }
+        @else { {{ 'precios.sourceSipsa' | translate: { price: (referencia()!.precioKg | pesos), product: referencia()!.producto, markets: referencia()!.mercados } }} }
+        <a routerLink="/finance/prices">{{ 'precios.change' | translate }}</a>
+      </p>
+      @if (e.ganancia != null) {
+        <p class="ganancia" [class.neg]="e.ganancia < 0">{{ 'precios.estimatedProfit' | translate }} <strong>{{ e.ganancia | pesos }}</strong></p>
+      }
+    } @else {
+      <p class="ayuda">{{ 'precios.noPrice' | translate: { kg: e.kg } }} <a routerLink="/finance/prices">{{ 'precios.setPrice' | translate }}</a></p>
+    }
+  </section>
+}

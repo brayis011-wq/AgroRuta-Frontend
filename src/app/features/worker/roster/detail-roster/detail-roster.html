@@ -128,7 +128,7 @@
                   <td class="suave">{{ j.fecha | fecha }}</td>
                   <td class="prin fuerte-n">{{ j.nombreCultivo }}</td>
                   <td><span class="etqs">@for (a of j.actividades; track a.id) { <span class="etq">{{ a.nombre }}</span> }</span></td>
-                  <td class="num fuerte-n">{{ j.valorJornal | pesos }}</td>
+                  <td class="num fuerte-n">{{ j.valorJornal | pesos }}@if (j.kilos) { <small class="suave kg-j">{{ j.kilos }} kg</small> }</td>
                   <td><span class="est" [class.si]="j.liquidado" [class.PENDIENTE]="!j.liquidado">{{ (j.liquidado ? 'workers.rosters.detail.settled' : 'workers.rosters.detail.pending') | translate }}</span></td>
                 </tr>
               }

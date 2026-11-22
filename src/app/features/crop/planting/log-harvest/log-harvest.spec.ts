@@ -4,17 +4,23 @@ import { of, throwError } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { RegistrarCosecha } from './log-harvest';
 import { CultivoService } from '../../../../core/services/crop.service';
+import { PreciosService } from '../../../../core/services/finance.service';
 
 describe('RegistrarCosecha', () => {
   let component: RegistrarCosecha;
   let fixture: ComponentFixture<RegistrarCosecha>;
   let cultivoServiceMock: any;
   let routerMock: any;
+  let preciosMock: any;
 
   beforeEach(async () => {
     cultivoServiceMock = {
       resumenSiembra: vi.fn().mockReturnValue(of(null)),
       registrarCosecha: vi.fn().mockReturnValue(of({})),
+      buscarSiembra: vi.fn().mockReturnValue(of({ id: 5, tipoCultivo: 'Lulo', variedad: 'Castilla' })),
+    };
+    preciosMock = {
+      deCultivo: vi.fn().mockReturnValue(of({ cultivo: 'Lulo', fuente: 'SIPSA', producto: 'Lulo', precioKg: 3500.4, alternativas: [] })),
     };
 
 
@@ -22,6 +28,7 @@ describe('RegistrarCosecha', () => {
       imports: [RegistrarCosecha],
       providers: [
         { provide: CultivoService, useValue: cultivoServiceMock },
+        { provide: PreciosService, useValue: preciosMock },
         provideRouter([]),
         {
           provide: ActivatedRoute,
@@ -53,6 +60,13 @@ describe('RegistrarCosecha', () => {
   it('ngOnInit() should set form.fecha to today', () => {
     const today = new Date().toLocaleDateString('en-CA');
     expect(component.form.fecha).toBe(today);
+  });
+
+  it('pide el precio de referencia del cultivo de la siembra y lo usa al tocar Usar', () => {
+    expect(preciosMock.deCultivo).toHaveBeenCalledWith('Lulo', 'Castilla');
+    expect(component.referencia?.precioKg).toBe(3500.4);
+    component.usarReferencia();
+    expect(component.form.precioKg).toBe(3500);
   });
 
   it('should have calidades list', () => {

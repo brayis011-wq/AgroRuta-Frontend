@@ -50,6 +50,13 @@
               @if (invalido('cultivoId')) { <em class="err">{{ 'common.required' | translate }}</em> }
             </label>
           }
+          @if (porKilo) {
+            <label class="campo ancho"><span>{{ 'workers.wages.new.kilos' | translate }}</span>
+              <input formControlName="kilos" type="number" min="0.1" step="0.5" inputmode="decimal" placeholder="45" [class.invalido]="invalido('kilos')" />
+              <small class="ayuda">{{ 'workers.wages.new.kilosHelp' | translate: { value: (trabajadorElegido?.cargo?.valorKilo | pesos) } }}</small>
+              @if (invalido('kilos')) { <em class="err">{{ 'workers.wages.new.kilosRequired' | translate }}</em> }
+            </label>
+          }
           <label class="campo ancho"><span>{{ 'workers.wages.new.notes' | translate }}</span>
             <input formControlName="observaciones" type="text" [placeholder]="'workers.wages.new.notesPlaceholder' | translate" />
           </label>
@@ -80,7 +87,7 @@
         <div><dt>{{ 'workers.ui.col.worker' | translate }}</dt><dd>{{ trabajadorElegido?.nombreCompleto ?? '—' }}</dd></div>
         <div><dt>{{ 'workers.ui.col.post' | translate }}</dt><dd>{{ trabajadorElegido?.cargo?.nombre ?? '—' }}</dd></div>
         <div><dt>{{ 'workers.wages.list.table.activities' | translate }}</dt><dd>{{ actividadesSeleccionadas.size }}</dd></div>
-        <div class="valor"><dt>{{ 'workers.ui.col.wage' | translate }}</dt><dd>{{ trabajadorElegido?.cargo ? (trabajadorElegido!.cargo!.valorJornal | pesos) : '—' }}</dd></div>
+        <div class="valor"><dt>{{ 'workers.ui.col.wage' | translate }}</dt><dd>{{ trabajadorElegido?.cargo ? (valorEstimado | pesos) : '—' }}</dd></div>
       </dl>
       <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti" [class.ti-check]="!guardando" [class.ti-loader-2]="guardando" aria-hidden="true"></i> {{ (guardando ? 'workers.wages.new.saving' : 'workers.wages.new.submit') | translate }}</button>
       <a routerLink="../" class="btn btn-texto">{{ 'common.cancel' | translate }}</a>

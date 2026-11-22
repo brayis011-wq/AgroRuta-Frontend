@@ -4,3 +4,9 @@
 .carencia-cuerpo { display: flex; flex-direction: column; gap: .5rem; }
 .carencia-confirmar { display: flex; align-items: flex-start; gap: .5rem; font-weight: 600; color: var(--ar-tinta); cursor: pointer; }
 .carencia-confirmar input { margin-top: .15rem; width: 1.05rem; height: 1.05rem; accent-color: var(--ar-ambar); flex: none; }
+
+/* Precio de referencia del cultivo (SIPSA o el propio) */
+.referencia { margin: .45rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; padding: .5rem .65rem; border-radius: 10px; background: var(--ar-azul-bg); color: var(--ar-azul); font-size: .8rem; }
+.referencia span { flex: 1; min-width: 12rem; }
+.usar { border: 1px solid currentColor; background: transparent; color: inherit; font: inherit; font-weight: 700; border-radius: 8px; padding: .25rem .6rem; cursor: pointer; }
+.usar:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }

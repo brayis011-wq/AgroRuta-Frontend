@@ -197,7 +197,7 @@ export interface CostosSiembra {
 
 export type TipoEvento =
   | 'SIEMBRA' | 'ETAPA' | 'ACTIVIDAD' | 'FUMIGACION' | 'COSECHA' | 'FIN_CARENCIA' | 'FIN_REENTRADA'
-  | 'FUMIGACION_SUGERIDA' | 'PROXIMA_ETAPA' | 'COSECHA_ESTIMADA';
+  | 'FUMIGACION_SUGERIDA' | 'PROXIMA_ETAPA' | 'COSECHA_ESTIMADA' | 'PROGRAMADA';
 export type EstadoEvento = 'HECHO' | 'PENDIENTE' | 'ESTIMADO' | 'ATRASADO';
 
 /** Un evento del calendario de cultivo */

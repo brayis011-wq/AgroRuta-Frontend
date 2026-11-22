@@ -1,0 +1,10 @@
+/* Elegir una opción entre pocas (por día / por kilo, de contado / a crédito…) con botones grandes */
+.opciones { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .3rem; }
+.opcion { position: relative; display: inline-flex; align-items: center; gap: .4rem; flex: 1 1 8rem; justify-content: center;
+  min-height: 44px; padding: .5rem .8rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: var(--ar-superficie);
+  color: var(--ar-tinta-2); font-weight: 600; font-size: .88rem; cursor: pointer; transition: border-color .15s, background .15s; }
+.opcion input { position: absolute; opacity: 0; pointer-events: none; }
+.opcion:has(input:focus-visible) { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.opcion.on { border-color: var(--ar-verde-600); background: var(--ar-verde-100); color: var(--ar-verde-800); }
+.ayuda { display: block; margin-top: .25rem; font-size: .76rem; line-height: 1.4; color: var(--ar-tinta-3); }
+@media (prefers-reduced-motion: reduce) { .opcion { transition: none; } }

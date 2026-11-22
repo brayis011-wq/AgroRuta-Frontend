@@ -58,6 +58,10 @@ export const routes: Routes = [
         loadChildren: () => import('./features/worker/worker.routes').then((m) => m.workerRoutes),
       },
       {
+        path: 'finance',
+        loadChildren: () => import('./features/finance/finance.routes').then((m) => m.financeRoutes),
+      },
+      {
         path: 'reports',
         loadChildren: () => import('./features/report/report.routes').then(m => m.REPORT_ROUTES),
         runGuardsAndResolvers: 'always'

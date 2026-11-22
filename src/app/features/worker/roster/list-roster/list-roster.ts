@@ -9,8 +9,11 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   NominaService,
   TrabajadorService,
-  NominaRequest
+  NominaRequest,
+  PagoService
 } from '../../../../core/services/worker.service';
+import { AvisosService } from '../../../../core/services/toast.service';
+import { quincenaAnterior, quincenaActual } from './quincena';
 import { Nomina, ResumenNominas, Trabajador } from '../../../../core/models/worker.model';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
@@ -24,7 +27,7 @@ import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PeriodoPipe, FlujoPagoComponent],
   templateUrl: './list-roster.html',
-  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css']
+  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', '../../../../shared/styles/opciones.css', './list-roster.css']
 })
 export class ListaNominasComponent implements OnInit {
   /** Nóminas cargadas hasta ahora (se van sumando páginas con "Cargar más") */
@@ -45,6 +48,19 @@ export class ListaNominasComponent implements OnInit {
   aprobando: number | null = null;
   private _filtroEstado: FiltroEstado = 'TODAS';
   private readonly router = inject(Router);
+  private readonly pagos = inject(PagoService);
+  private readonly avisos = inject(AvisosService);
+
+  // ── Quincena de todo el equipo ──
+  mostrarEquipo = false;
+  equipoInicio = '';
+  equipoFin = '';
+  /** Las nóminas recién generadas para el equipo (para pagarlas juntas) */
+  generadas: Nomina[] | null = null;
+  metodoLote = 'EFECTIVO';
+  procesandoLote = false;
+  errorLote = '';
+  readonly quincenas = [quincenaAnterior(new Date()), quincenaActual(new Date())];
   cargando = true;
   error = '';                                   // clave de traducción
   exito = '';                                   // clave de traducción
@@ -87,6 +103,8 @@ export class ListaNominasComponent implements OnInit {
     });
 
     this.cargar();
+    // Desde la planilla: abrir directamente la quincena del equipo
+    if (this.route.snapshot.queryParamMap.get('team')) this.abrirEquipo();
   }
 
   /** Filtro rápido por estado de la tabla. Se aplica en el servidor: cambiarlo vuelve a la primera página. */
@@ -183,6 +201,87 @@ export class ListaNominasComponent implements OnInit {
     this.nominaService.generar(req).subscribe({
       next: () => { this.cargar(); this.mostrarForm = false; this.guardando = false; },
       error: () => { this.error = 'workers.rosters.list.errors.generate'; this.guardando = false; this.cdr.detectChanges(); }
+    });
+  }
+
+  // ── Quincena del equipo y pagos juntos ──
+
+  abrirEquipo(): void {
+    const q = this.quincenas[0];
+    this.equipoInicio = q.inicio;
+    this.equipoFin = q.fin;
+    this.generadas = null;
+    this.errorLote = '';
+    this.mostrarEquipo = true;
+  }
+
+  elegirQuincena(q: { inicio: string; fin: string }): void {
+    this.equipoInicio = q.inicio;
+    this.equipoFin = q.fin;
+  }
+
+  generarEquipo(): void {
+    if (!this.equipoInicio || !this.equipoFin || this.equipoFin < this.equipoInicio) { this.errorLote = 'workers.rosters.team.errors.dates'; return; }
+    this.procesandoLote = true;
+    this.errorLote = '';
+    this.nominaService.generarTodas(this.equipoInicio, this.equipoFin).subscribe({
+      next: (n) => { this.generadas = n; this.procesandoLote = false; this.cargar(); this.cdr.detectChanges(); },
+      error: (e) => { this.errorLote = e?.error?.message || 'workers.rosters.team.errors.generate'; this.procesandoLote = false; this.cdr.detectChanges(); }
+    });
+  }
+
+  get totalGeneradas(): number {
+    return (this.generadas ?? []).reduce((s, n) => s + (n.valorTotal ?? 0), 0);
+  }
+
+  /** Paga juntas las nóminas recién generadas (las aprueba antes) */
+  pagarGeneradas(): void {
+    const ids = (this.generadas ?? []).map((n) => n.id!).filter((x) => x != null);
+    this.pagarJuntas(ids, true, () => { this.mostrarEquipo = false; });
+  }
+
+  /** Pendientes de la lista: aprobarlas todas */
+  get pendientesVisibles(): Nomina[] { return this.visibles.filter((n) => n.estado === 'PENDIENTE'); }
+  get aprobadasVisibles(): Nomina[] { return this.visibles.filter((n) => n.estado === 'APROBADA'); }
+  get totalAprobadasVisibles(): number { return this.aprobadasVisibles.reduce((s, n) => s + (n.valorTotal ?? 0), 0); }
+
+  async aprobarVisibles(): Promise<void> {
+    const ids = this.pendientesVisibles.map((n) => n.id!);
+    if (!ids.length) return;
+    const ok = await this.confirmService.preguntar({ mensaje: this.translate.instant('workers.rosters.team.confirmApprove', { count: ids.length }) });
+    if (!ok) return;
+    this.procesandoLote = true;
+    this.nominaService.aprobarVarias(ids).subscribe({
+      next: () => { this.procesandoLote = false; this.avisos.exito('workers.rosters.team.approved', { count: ids.length }); this.cargar(); },
+      error: () => { this.procesandoLote = false; this.error = 'workers.rosters.list.errors.approve'; this.cdr.detectChanges(); }
+    });
+  }
+
+  async pagarVisibles(): Promise<void> {
+    const ids = this.aprobadasVisibles.map((n) => n.id!);
+    if (!ids.length) return;
+    const ok = await this.confirmService.preguntar({ mensaje: this.translate.instant('workers.rosters.team.confirmPay', { count: ids.length, method: this.translate.instant('enums.metodoPago.' + this.metodoLote) }) });
+    if (!ok) return;
+    this.pagarJuntas(ids, false);
+  }
+
+  private pagarJuntas(ids: number[], aprobarPendientes: boolean, alTerminar?: () => void): void {
+    if (!ids.length) return;
+    this.procesandoLote = true;
+    this.errorLote = '';
+    this.pagos.pagarVarias(ids, this.metodoLote, aprobarPendientes).subscribe({
+      next: (p) => {
+        this.procesandoLote = false;
+        this.avisos.exito('workers.rosters.team.paid', { count: p.length });
+        alTerminar?.();
+        this.cargar();
+      },
+      error: (e) => {
+        this.procesandoLote = false;
+        this.errorLote = e?.error?.message || 'workers.rosters.team.errors.pay';
+        this.error = this.errorLote;
+        this.cdr.detectChanges();
+      }
     });
   }
 

@@ -79,6 +79,13 @@
             <input id="precioKg" type="number" min="0" step="any" inputmode="decimal" [(ngModel)]="form.precioKg" name="precioKg" placeholder="0" />
           </div>
           <small class="campo-hint">@if (form.precioKg && form.cantidadKg) { {{ 'temporadas.costos.incomeHint' | translate: { total: pesos(form.precioKg * form.cantidadKg) } }} } @else { {{ 'temporadas.costos.priceHint' | translate }} }</small>
+          @if (referencia) {
+            <p class="referencia">
+              <i class="ti ti-chart-line" aria-hidden="true"></i>
+              <span>{{ (referencia.fuente === 'PROPIO' ? 'precios.hintOwn' : 'precios.hintSipsa') | translate: { price: pesos(referencia.precioKg ?? 0), product: referencia.producto } }}</span>
+              <button type="button" class="usar" (click)="usarReferencia()">{{ 'precios.use' | translate }}</button>
+            </p>
+          }
         </div>
 
         <!-- Observaciones -->

@@ -35,3 +35,14 @@
 .tabla th { white-space: normal; line-height: 1.25; vertical-align: bottom; }
 .tabla th:last-child { min-width: 6.5rem; }
 .kpi em.nota-sv { display: block; margin-top: .2rem; }
+
+/* Gastos generales: lo que no es de ninguna temporada se resta para ver la ganancia real */
+.gastos-generales { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; border-left: 4px solid var(--ar-ambar); }
+.gg-texto h3 { margin: 0 0 .2rem; font-size: 1rem; display: flex; align-items: center; gap: .45rem; }
+.gg-texto p { margin: 0; font-size: .85rem; color: var(--ar-tinta-2); }
+.gg-texto a { color: var(--ar-verde-700); font-weight: 600; }
+.gg-cifras { display: flex; gap: 1.4rem; margin: 0; }
+.gg-cifras dt { font-size: .76rem; color: var(--ar-tinta-3); }
+.gg-cifras dd { margin: 0; font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.gg-cifras .real dd { color: var(--ar-verde-700); }
+.gg-cifras dd.pierde { color: var(--ar-rojo); }

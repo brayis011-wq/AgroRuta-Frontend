@@ -41,6 +41,14 @@ export const workerRoutes: Routes = [
       import('./roster/detail-roster/detail-roster').then((m) => m.DetalleNominaComponent),
   },
 
+  // ── Planilla semanal: trabajadores por días, un toque anota el jornal
+  {
+    path: 'sheet',
+    title: 'workers.sheet.title',
+    loadComponent: () =>
+      import('./sheet/sheet').then((m) => m.PlanillaComponent),
+  },
+
   // ── Jornales
   {
     path: 'workdays/new',

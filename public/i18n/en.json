@@ -1,4 +1,9 @@
 {
+  "presupuesto": {"title":"Season budget","help":"What you expect to spend this season. You can fill in just one part.","total":"Total:","empty":"Give the season a budget to see how much you've spent and get a warning if you go over.","set":"Set a budget","spent":"Spent so far","of":"of {{total}} budgeted","over":"You went over budget by {{amount}}.","near":"You're close to the budget: {{amount}} left.","partOver":"over","saved":"Budget saved","confirmDelete":"Remove this season's budget?","errors":{"empty":"Enter what you expect to spend on at least one part.","save":"Couldn't save the budget"}},
+  "precios": {"title":"Reference prices","subtitle":"What a kilo sells for at wholesale markets, to estimate the value of a harvest with no price recorded.","hintSipsa":"This week a kilo of {{product}} goes for {{price}} at wholesale markets.","hintOwn":"Your reference price is {{price}} per kilo.","use":"Use","estimateTitle":"What the unpriced harvest would be worth","estimateFor":"for {{kg}} kg with no price recorded","sourceSipsa":"Using the wholesale price of {{product}} ({{price}} per kilo, average of {{markets}} markets).","sourceOwn":"Using your reference price ({{price}} per kilo).","change":"Change","estimatedProfit":"Estimated season profit if you sold at that price:","noPrice":"There are {{kg}} kg harvested with no price and this crop has no reference price.","setPrice":"Set a price","yourCrops":"Your crops","noCrops":"Once you have active plantings, you'll see each crop's reference price here.","own":"Your price","sipsa":"SIPSA · DANE","week":"week of {{date}}","range":"Between {{min}} and {{max}} across {{markets}} markets","ownHelp":"You set it: it's used instead of the wholesale price.","noPriceFor":"We couldn't find this crop in the wholesale prices. You can pick another product or set your own price.","source":"Source: SIPSA, the price information system of Colombia's statistics agency (DANE): wholesale prices, published weekly. Parchment coffee and cocoa aren't included: set your own price for those.","searchTitle":"Look up a product","searchPlaceholder":"E.g. potato, tomato, blackberry…","noResults":"No products with that name in the published week.","product":"Product","avg":"Average / kg","min":"Lowest","max":"Highest","markets":"Markets","panelHelp":"Pick the product closest to what you sell, or enter your own price.","suggested":"Suggested","otherProduct":"Another product","ownTitle":"Your own price","ownLabel":"Price per kilo ($)","ownHint":"If you enter it, it's used instead of the wholesale price (handy for coffee, cocoa or a regular buyer).","auto":"Back to automatic","saved":"Reference price saved","errors":{"load":"Couldn't load the prices","choose":"Pick a product or enter your price.","save":"Couldn't save the price"}},
+  "lluvia": {"title":"Rainfall","last7":"last 7 days","last30":"last 30 days","dryDays":"days without rain","chart":"Rainfall over the last 14 days","noData":"no data","adviceNoWater":"It rained plenty these days: you can skip watering.","adviceDry":"{{days}} days without rain: check whether it's time to water.","when":"Day","today":"Today","yesterday":"Yesterday","mm":"Millimeters","none":"No rain","already":"You already logged {{mm}} mm that day; saving replaces it.","saved":"Rainfall logged","errors":{"save":"Couldn't log the rainfall"}},
+  "ventas": {"dueOn": "Due {{date}}", "collect": "Collect", "title":"Sales and receivables","subtitle":"Who you sold to, how much, and what they still owe you.","new":"New sale","kpi":{"owed":"Owed to you","sales":"{{count}} sales","overdue":"Overdue","soldMonth":"Sold this month","collectedMonth":"Collected this month"},"whoOwes":"Who owes you","hasOverdue":"with overdue","list":"Sales","clearBuyer":"Show all buyers","filter":{"debe":"Owed","VENCIDA":"Overdue","PAGADA":"Paid","todas":"All"},"emptyFilter":"No sales match that filter.","empty":"No sales recorded yet. Log what you sell on credit and keep track of what you're owed.","col":{"buyer":"Buyer","product":"Product","total":"Total","balance":"Balance","due":"Due"},"daysLate":"{{days}} days ago","registerPayment":"Record payment","payments":"Payments","formNew":"New sale","formEdit":"Edit sale","formHelp":"If they pay later, it stays as a receivable.","buyer":"Buyer *","buyerPlaceholder":"E.g. Town co-op","planting":"Planting","noPlanting":"None in particular","product":"Product *","productPlaceholder":"E.g. Dry parchment coffee","date":"Date *","kilos":"Kilos","pricePerKilo":"Price per kilo ($)","total":"Total ($) *","howPaid":"How are you paid?","credit":"Later (on credit)","cash":"Already paid","dueDate":"When did they agree to pay?","method":"Payment method","notes":"Notes","paid":"Paid","newPayment":"Record a payment","amount":"Amount ($) *","payAll":"Paid in full","savePayment":"Save payment","fullyPaid":"This sale is paid.","saved":"Sale saved","paymentSaved":"Payment recorded","paidInFull":"Sale fully paid","confirmDelete":"Delete the sale to {{buyer}} and its payments? This can't be undone.","confirmDeletePayment":"Delete this payment?","errors":{"load":"Couldn't load the sales","incomplete":"Enter the buyer, product, date and amount.","save":"Couldn't save the sale","delete":"Couldn't delete the sale","payment":"Couldn't record the payment"}},
+  "gastos": {"title":"Overhead costs","subtitle":"Transport, tools or utilities that don't belong to a specific planting. They're subtracted in profitability to show the real profit.","seeProfit":"See profitability","new":"New expense","farm":"Farm","allFarms":"All farms","kpi":{"total":"Spent in the period","count":"{{count}} expenses","top":"Biggest category","topFarm":"Farm with most costs"},"byCategory":"By category","list":"Expenses","emptyTitle":"No expenses in this period","empty":"Log here what you pay for the farm that isn't for a planting: freight, a brush cutter, the electricity bill…","col":{"date":"Date","what":"What","category":"Category","farm":"Farm","amount":"Amount"},"formNew":"New expense","formEdit":"Edit expense","formHelp":"Costs of a planting go in the planting (activity or spraying).","category":"Category","what":"What was it for? *","whatPlaceholder":"E.g. Fertilizer freight to the farm","amount":"Amount ($) *","date":"Date *","chooseFarm":"Choose the farm","saved":"Expense saved","confirmDelete":"Delete the expense \"{{what}}\"?","errors":{"load":"Couldn't load the expenses","incomplete":"Choose the farm and enter what it was for, the amount and the date.","save":"Couldn't save the expense","delete":"Couldn't delete the expense"}},
   "shortcuts": {"title":"Keyboard shortcuts","search":"Search","new":"New (depends on the screen)","home":"Go to Home","crops":"Go to Crops","team":"Go to Team","wages":"Go to Workdays","payrolls":"Go to Payrolls","reports":"Go to Reports","help":"Show this list"},
   "unsaved": {"title":"Leave without saving?","message":"What you typed in this form will be lost.","leave":"Leave without saving"},
   "inbox": {"title":"Notifications","short":"Alerts","open":"Open notifications","openUnread":"Open notifications ({{count}} unread)","close":"Close notifications","markAll":"Mark all as read","unread":"Unread","empty":"No notifications","emptyHint":"Payments, access requests and the morning summary will show up here.","error":"Notifications could not be loaded. Try again in a moment.","settings":"Notification settings","period":"{{from}} to {{to}}","yourEmployer":"Your employer","types":{"PAGO_REGISTRADO":{"title":"A payment was recorded for you","body":"You received {{amount}}"},"ACCESO_SOLICITADO":{"title":"Portal access request","body":"{{worker}} wants to see their workdays and payments. Approve or reject it."},"ACCESO_RESUELTO":{"approved":{"title":"You can now enter your portal","body":"{{employer}} approved your access. You can see your workdays, payrolls and payments."},"rejected":{"title":"Your request was not approved","body":"If you think this is a mistake, talk to {{employer}}."},"removed":{"title":"Your portal access was removed","body":"If you think this is a mistake, talk to {{employer}}."}},"RESUMEN_DIA":{"title":"Your farm today"}},"summary":{"alertas":"Crop alerts: {{count}}","clima":"Weather alerts: {{count}}","insumos":"Supplies running low: {{count}}","generic":"There are things to check today"}},
@@ -14,7 +19,7 @@
   "receipt": {"download":"Download receipt","downloadShort":"Receipt","downloadHint":"PDF with a QR code to verify it","downloadError":"The receipt could not be downloaded. Try again.","verify":{"checking":"Checking the receipt…","validTitle":"Authentic receipt","validText":"This payment is recorded in AgroRuta with this information.","amount":"Amount paid","number":"Receipt","worker":"Received by","idNumber":"ID","employer":"Paid by","period":"Period worked","compare":"Compare the amount and date with the paper. If they differ, the receipt was altered.","invalidTitle":"Receipt not valid","invalidText":"This code does not match any payment recorded in AgroRuta. The receipt may have been altered or the link may be incomplete.","offlineTitle":"Could not verify","offlineText":"The server cannot be reached right now. This does not mean the receipt is fake."}},
   "inventario": {"short":{"buy":"Buy","adjust":"Count","minimum":"Minimum","history":"Movements"},"nav":"Supplies storeroom","eyebrow":"Crops","title":"Supplies storeroom","subtitle":"What you have of each product, what it is worth and what it was used for. Sprayings subtract what they use automatically.","buy":"Record purchase","adjust":"Count","minimum":"Minimum alert","list":"Products in storeroom","empty":"There are no products in your storeroom yet. Record your first purchase to start.","hint":"The average cost comes from your purchases with a price and is used to work out the cost of each spraying.","kpi":{"items":"Products","value":"Storeroom value","valueHint":"at average purchase cost","alerts":"To review","alertsHint":"low, out of stock or negative"},"table":{"item":"Product","stock":"In stock","minimum":"Minimum","avgCost":"Average cost","value":"Value"},"status":{"OK":"Fine","BAJO":"Low","AGOTADO":"Out of stock","NEGATIVO":"Negative"},"history":{"title":"Movements","empty":"No movements.","type":{"COMPRA":"Purchase","USO":"Spraying","AJUSTE":"Count"},"fromSpray":"from the spraying","fromSprayHint":"To correct it, edit or delete the spraying.","confirmDelete":"Delete this movement? Stock will be recalculated."},"form":{"compraTitle":"Record purchase","ajusteTitle":"Storeroom count","minimoTitle":"Minimum alert","item":"Catalog product","itemPlaceholder":"Choose a product","quantity":"Quantity","quantityError":"Enter a quantity greater than 0.","unit":"Unit","totalCost":"Total purchase cost","totalCostHint":"What you paid for the whole purchase. Used to work out the cost of each spraying.","date":"Purchase date","supplier":"Supplier","notes":"Notes","adjustHint":"Enter how much there really is in the storeroom. The difference with the app is recorded.","counted":"Counted quantity","reason":"Reason","reasonPlaceholder":"e.g. spilled, lent, end-of-month count","minimumHint":"We will warn you on the home page and in the daily email when this amount or less is left.","minimum":"Warn when left","removeMinimum":"Remove alert"},"spray":{"used":"Total amount used","usedHint":"All the product you used (not the dose per tank). It is subtracted from your storeroom.","inStock":"In storeroom: {{cantidad}}","notInStock":"This product has no purchases recorded in your storeroom.","estimated":"Cost at your average price: {{costo}}","useEstimated":"Use this cost","noPrice":"Record the cost of your purchases to work out the cost of the spraying."},"errors":{"load":"The storeroom could not be loaded.","save":"Could not save."}},
   "theme": {"title": "Appearance", "hint": "Light, dark or automatic based on your phone or computer", "light": "Light", "dark": "Dark", "system": "Automatic", "toDark": "Switch to dark mode", "toLight": "Switch to light mode"},
-  "common": {"undo": "Undo", 
+  "common": {"delete": "Delete", "undo": "Undo", 
     "language": "Language",
     "loading": "Loading...",
     "retry": "Retry",
@@ -35,6 +40,11 @@
     "subtitle": "Management system",
     "sections": { "management": "Management", "analysis": "Analysis", "system": "System" },
     "nav": {
+      "finance": "Finance",
+      "sales": "Receivables",
+      "expenses": "Overhead costs",
+      "prices": "Reference prices",
+      "sheet": "Weekly sheet",
       "home": "Home",
       "crops": "Crops",
       "workers": "Workers",
@@ -163,6 +173,8 @@
     }
   },
   "enums": {
+    "categoriaGasto": {"TRANSPORTE":"Transport","HERRAMIENTAS":"Tools","SERVICIOS":"Utilities","MANTENIMIENTO":"Maintenance","ADMINISTRACION":"Administration","IMPUESTOS":"Taxes","OTRO":"Other"},
+    "estadoVenta": {"PENDIENTE":"Owed","VENCIDA":"Overdue","PAGADA":"Paid"},
     "rol": {
       "ADMINISTRADOR": "Administrator",
       "AGRICULTOR": "Farmer",
@@ -185,6 +197,8 @@
       "FINALIZADO": "Finished"
     },
     "tipoActividad": {
+      "FERTILIZACION": "Fertilizing",
+      "FUMIGACION": "Spraying",
       "PODA": "Pruning",
       "TUTOREO": "Staking",
       "DESHIERBE": "Weeding",
@@ -316,7 +330,8 @@
     }
   },
   "reports": {
-    "profit": {"title":"Profitability by plot","subtitle":"What each plot earned and how each season did against the previous one.","kpi":{"profit":"Total profit","lots":"{{count}} plots","lotsOne":"1 plot","unsold":"Includes {{amount}} spent on {{count}} plots with no sales yet","unsoldOne":"Includes {{amount}} spent on 1 plot with no sales yet","margin":"Margin","marginHint":"What is left of every $100 sold","best":"Most profitable plot","worst":"Least profitable plot"},"col":{"margin":"Margin","perHa":"Profit/ha","yield":"Yield","vsPrevious":"Vs. previous"},"ongoing":"ongoing","bestSeason":"Best season","noPrices":"No harvest has a sale price. Add the price per kilo when logging harvests to see the profit.","hint":"Profit is sales minus labor, supplies and other expenses. Tap a season to see its cost detail."},
+    "fieldbook": {"title":"Field book","desc":"A PDF with every product application, as certifications (Rainforest, organic, GAP) and some buyers require.","has1":"Date, farm, plot and crop","has2":"Product and type","has3":"Dose, area and product used","has4":"Pre-harvest and re-entry intervals, with the date harvest is allowed","farm":"Farm","allFarms":"All farms","download":"Download field book (PDF)","note":"Uses the period above. It ends with room for the technical officer's and the grower's signatures."},
+    "profit": {"overhead": {"title":"Farm overhead costs","desc":"{{count}} expenses that don't belong to any season (transport, tools, utilities).","see":"See expenses","total":"Overhead costs","real":"Real profit"}, "title":"Profitability by plot","subtitle":"What each plot earned and how each season did against the previous one.","kpi":{"profit":"Total profit","lots":"{{count}} plots","lotsOne":"1 plot","unsold":"Includes {{amount}} spent on {{count}} plots with no sales yet","unsoldOne":"Includes {{amount}} spent on 1 plot with no sales yet","margin":"Margin","marginHint":"What is left of every $100 sold","best":"Most profitable plot","worst":"Least profitable plot"},"col":{"margin":"Margin","perHa":"Profit/ha","yield":"Yield","vsPrevious":"Vs. previous"},"ongoing":"ongoing","bestSeason":"Best season","noPrices":"No harvest has a sale price. Add the price per kilo when logging harvests to see the profit.","hint":"Profit is sales minus labor, supplies and other expenses. Tap a season to see its cost detail."},
     "costs": {
       "title": "Costs per season",
       "subtitle": "What each planting cost and earned: wages, inputs, other expenses and sales.",
@@ -348,6 +363,7 @@
       "seeCosts": "Costs"
     },
     "tabs": {
+      "fieldbook": {"name":"Field book","sub":"Applications for certification"},
       "profitability": {"name":"Profitability","sub":"Which plot earns more"},
       "costs": {"name": "Costs", "sub": "Cost and profit per season"},
       "payroll": {
@@ -361,7 +377,7 @@
     },
     "generatedAt": "Generated {{date}}",
     "downloadPdf": "Download PDF",
-    "period": {"label":"Period","todo":"All","mes":"This month","anio":"This year","anioPasado":"Last year","doce":"Last 12 months","notePayroll":"Counts the payments made in those dates. What is still to pay is as of today.","noteSeasons":"Shows the seasons that were in the field during those dates, with all their costs and income."},
+    "period": {"noteFieldBook": "Includes the sprayings and fertilizings done on those dates.", "label":"Period","todo":"All","mes":"This month","anio":"This year","anioPasado":"Last year","doce":"Last 12 months","notePayroll":"Counts the payments made in those dates. What is still to pay is as of today.","noteSeasons":"Shows the seasons that were in the field during those dates, with all their costs and income."},
     "download": {"button":"Download","pdf":"PDF of this report","pdfHint":"To print or send","fullHint":"Choose which reports go in a single file"},
     "csv": {"button":"Excel (CSV)","hint":"Download what you see in the table (with your filters) to open it in Excel","cols":{"worker":"Worker","from":"From","to":"To","workdays":"Workdays","payments":"Payments","totalPaid":"Total paid","crop":"Crop","variety":"Variety","farm":"Farm","plot":"Plot","stage":"Stage","planted":"Planting date","finished":"End date","days":"Days","harvests":"Harvests","kg":"Kg harvested","labor":"Labor","inputs":"Supplies","other":"Other","totalCost":"Total cost","income":"Income","profit":"Profit","costPerKg":"Cost per kg","areaHa":"Area (ha)","season":"Season","marginPct":"Margin (%)"}},
     "full": {"button": "PDF with everything", "title": "What to include in the PDF", "hint": "Tick the parts you want in a single file.", "download": "Download PDF", "needOne": "Choose at least one part"},
@@ -633,7 +649,7 @@
         "emptyFilter": "No records of this type yet.",
         "emptyAll": "No records yet. Use the buttons above to get started."
       },
-      "tabs": { "label": "Planting sections", "summary": "Summary", "records": "Records", "harvests": "Harvests", "diagnosis": "Diagnosis" },
+      "tabs": {"money": "Money",  "label": "Planting sections", "summary": "Summary", "records": "Records", "harvests": "Harvests", "diagnosis": "Diagnosis" },
       "danger": {
         "title": "Delete planting",
         "desc": "It will no longer show in the lot. Its costs and income are kept in the reports.",
@@ -721,9 +737,16 @@
     }
   },
   "workers": {
+    "sheet": {"title":"Weekly sheet","subtitle":"Tap a cell to log that day's workday; tap it again to remove it.","toPayroll":"Generate the fortnight","withWhat":"What gets logged","crop":"Crop they worked on","labors":"Tasks","howTo":"Whatever you tap is logged with this crop and these tasks. Tap a day's number to log everyone paid per day.","chooseFirst":"Choose the crop and at least one task above.","prevWeek":"Previous week","nextWeek":"Next week","thisWeek":"This week","weekTotal":"Week total:","total":"Week","allDay":"Log everyone paid per day","days":"{{count}} days","daysOne":"1 day","emptyTitle":"No workers yet","empty":"Add your team to log their workdays on the sheet.","addWorker":"Add worker","legendDone":"Workday logged","legendPayroll":"Already in a payroll","legendDay":"Tap the day to log everyone","kilosTitle":"How many kilos were picked?","kilosValue":"This workday is worth {{value}}.","added":"{{count}} workdays logged","removed":"{{name}}'s workday removed","inPayroll":"That workday is already in a payroll: delete the payroll first to remove it.","cellEmpty":"Log workday: {{who}}","cellFilled":"Remove workday: {{who}}","errors":{"load":"Couldn't load the sheet","save":"Couldn't log the workday","remove":"Couldn't remove the workday"}},
     "catalog": { "label": "Positions and tasks" },
     "ui": {"team": "Team", "summary": "Team summary", "ofTotal": "of {{total}} registered", "seeRosters": "See payrolls", "paymentsCount": "{{count}} payments", "paymentsCountOne": "1 payment", "people": "People", "filterState": "Filter by status", "col": {"worker": "Worker", "post": "Role", "wage": "Day wage", "state": "Status", "actions": "Actions"}, "idShort": "ID", "data": "Details", "contract": "Contract", "hireDate": "Hired", "phone": "Phone", "address": "Address", "workDays": "Days worked", "searchCrop": "Search crop...", "lastPayment": "Last payment", "paymentHistory": "Payment history", "payroll": "Payroll", "amount": "Amount", "openPayroll": "Open payroll", "summaryShort": "Summary", "rosters": {"toApprove": "To approve", "toPay": "Approved, unpaid", "paid": "Paid", "count": "{{count}} paid payrolls", "countOne": "1 paid payroll", "all": "All", "flow": "Payroll progress", "step1": "Generated", "step2": "Approved", "step3": "Paid", "cancelledNote": "This payroll is cancelled. Its work days are free to include in another payroll."}},
     "posts": {
+      "perKilo": "/ kg",
+      "payMode": "How is it paid?",
+      "byDay": "Per day",
+      "byKilo": "Per kilo",
+      "kiloValue": "Price per kilo ($) *",
+      "kiloHelp": "When logging the workday you enter the kilos picked; they are multiplied by this price.",
       "title": "Positions",
       "subtitle": "Define roles and the daily wage for each position",
       "new": "New Position",
@@ -736,6 +759,7 @@
       "dailyWage": "Daily wage ($) *",
       "invalidValue": "Enter a valid value",
       "table": {
+        "pay": "Pay",
         "post": "Position",
         "description": "Description",
         "dailyWage": "Daily wage"
@@ -775,6 +799,7 @@
       }
     },
     "rosters": {
+      "team": {"open":"Team fortnight","title":"Whole team's fortnight","help":"One payroll is generated for each worker with workdays not yet in a payroll on those dates.","fortnight":"Fortnight","generate":"Generate payrolls","generated":"{{count}} payrolls generated for {{total}}.","wagesCount":"{{count}} workdays","method":"How will you pay?","later":"Pay later","payNow":"Pay all ({{total}})","bulk":"Actions on several payrolls","approveAll":"Approve the {{count}} pending","payAll":"Pay the {{count}} approved · {{total}}","confirmApprove":"Approve the {{count}} pending payrolls shown in the list?","confirmPay":"Record the payment of the {{count}} approved payrolls by {{method}}? Each one is paid in full.","approved":"{{count}} payrolls approved","paid":"{{count}} payments recorded","errors":{"dates":"Check the fortnight dates","generate":"Couldn't generate the payrolls","pay":"Couldn't record the payments"}},
       "list": {
         "title": "Payroll",
         "subtitleOf": "Payroll for",
@@ -878,6 +903,9 @@
     },
     "wages": {
       "new": {
+        "kilos": "Kilos picked *",
+        "kilosHelp": "Paid at {{value}} per kilo.",
+        "kilosRequired": "Enter how many kilos were picked",
         "back": "Workdays",
         "title": "Log Workday",
         "subtitle": "Record a worker's daily work",
@@ -1477,6 +1505,7 @@
     "confirm": "Confirm"
   },
   "temporadas": {
+    "repetir": {"title":"Recurring tasks","add":"Schedule","empty":"Schedule what you do every so often (fertilize every 30 days, weed every 45) and we'll remind you when it's due.","every":"every {{days}} days","overdue":"{{days}} days overdue","next":"Next:","ended":"Finished","last":"last time","doNow":"Do it now","what":"Which task?","howOften":"Every how many days?","days":"days","from":"First time","until":"Until (optional)","note":"Note (optional)","notePlaceholder":"E.g. 15-15-15, 50 g per plant","help":"When you log this task (or the spraying or fertilizing), the next date moves on its own. It shows on the calendar and in each morning's summary.","saved":"Task scheduled","confirmDelete":"Stop scheduling \"{{labor}}\"? What you already logged is kept.","errors":{"incomplete":"Choose the task, how often, and the first date.","save":"Couldn't save the recurring task"}},
     "costos": {
       "priceKg": "Sale price per kg",
       "priceHint": "With the price we work out what the season earned.",
@@ -1534,6 +1563,8 @@
       "next14": "Next 14 days",
       "overdueCount": "{{count}} overdue", "overdueCountOne": "1 overdue",
       "tipo": {
+        "programada": "repeats",
+        "programadaAtrasada": "overdue",
         "SIEMBRA": "Planting",
         "ETAPA": "Moved to {{etapa}}",
         "scheduled": "scheduled",

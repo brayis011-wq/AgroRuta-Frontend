@@ -152,6 +152,12 @@
     @if (pestana === 'resumen') {
       <app-ciclo-etapas [siembra]="siembra" (cambio)="alCambiarSiembra($event)" />
       <app-agenda-siembra [siembraId]="siembra.id!" [loteId]="siembra.loteId" [activa]="activa" [version]="version" />
+      <app-labores-repetidas [siembraId]="siembra.id!" [activa]="activa" [version]="version" />
+    }
+
+    @if (pestana === 'dinero') {
+      <app-presupuesto-siembra [siembraId]="siembra.id!" [cultivo]="siembra.tipoCultivo" [variedad]="siembra.variedad" [activa]="activa" [version]="version" />
+      <app-costos-siembra [siembraId]="siembra.id!" [version]="version" />
     }
 
     @if (pestana === 'cosechas') {

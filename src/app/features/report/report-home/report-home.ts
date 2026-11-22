@@ -8,16 +8,17 @@ import { PayrollReportComponent } from '../payroll/payroll-report';
 import { CropReportComponent } from '../crop/crop-report';
 import { CostsReportComponent } from '../costs/costs-report';
 import { ProfitabilityReportComponent } from '../profitability/profitability-report';
+import { CuadernoCampoComponent } from '../field-book/field-book';
 import { PARTES_REPORTE, ParteReporte, ReportService, CLAVES_PERIODO, ClavePeriodo } from '../../../core/services/report.service';
 import { ReportBase } from '../report-base';
 
-type Tab = ParteReporte;
-const TABS: Tab[] = PARTES_REPORTE;
+type Tab = ParteReporte | 'fieldbook';
+const TABS: Tab[] = [...PARTES_REPORTE, 'fieldbook'];
 
 @Component({
   selector: 'app-report-home',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, PayrollReportComponent, CropReportComponent, CostsReportComponent, ProfitabilityReportComponent],
+  imports: [CommonModule, TranslatePipe, PayrollReportComponent, CropReportComponent, CostsReportComponent, ProfitabilityReportComponent, CuadernoCampoComponent],
   templateUrl: './report-home.html',
   styleUrls: ['./report-home.css', '../report-shared.css'],
   // Cada reporte abre el panel de "PDF con todo" desde su menú Descargar

@@ -25,6 +25,9 @@ import { CicloEtapasComponent } from '../stage-cycle/stage-cycle';
 import { RendimientoSiembraComponent } from '../yield/yield';
 import { AgendaSiembraComponent } from '../agenda/agenda';
 import { DiagnosticoSiembraComponent } from '../diagnosis/diagnosis';
+import { LaboresRepetidasComponent } from '../recurring/recurring';
+import { PresupuestoSiembraComponent } from '../budget/budget';
+import { CostosSiembraComponent } from '../costs/costs';
 import { diasEntre, hoyIso } from '../stage-cycle/stage-cycle.logic';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { ResumenSiembra, siembraActiva } from '../../../../core/models/crop.model';
@@ -50,19 +53,20 @@ interface TimelineItem {
   extra?: string;
 }
 
-export type PestanaSiembra = 'resumen' | 'registros' | 'cosechas' | 'diagnostico';
+export type PestanaSiembra = 'resumen' | 'registros' | 'cosechas' | 'dinero' | 'diagnostico';
 
 export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: string }[] = [
   { id: 'resumen', icono: 'ti-layout-dashboard', clave: 'siembra.detail.tabs.summary' },
   { id: 'registros', icono: 'ti-history', clave: 'siembra.detail.tabs.records' },
   { id: 'cosechas', icono: 'ti-basket', clave: 'siembra.detail.tabs.harvests' },
+  { id: 'dinero', icono: 'ti-coins', clave: 'siembra.detail.tabs.money' },
   { id: 'diagnostico', icono: 'ti-stethoscope', clave: 'siembra.detail.tabs.diagnosis' },
 ];
 
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink, RouterOutlet, MigasCultivoComponent, AyudaComponent, AnteriorSiguienteComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, LaboresRepetidasComponent, PresupuestoSiembraComponent, CostosSiembraComponent, RouterLink, RouterOutlet, MigasCultivoComponent, AyudaComponent, AnteriorSiguienteComponent],
   templateUrl: './planting-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css', './planting-panel.css'],
 })

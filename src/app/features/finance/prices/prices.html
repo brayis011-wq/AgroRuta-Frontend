@@ -1,0 +1,111 @@
+<div class="cv">
+  <header class="cv-head">
+    <div>
+      <p class="eyebrow">{{ 'layout.nav.finance' | translate }}</p>
+      <h1>{{ 'precios.title' | translate }}</h1>
+      <p class="cv-sub">{{ 'precios.subtitle' | translate }}</p>
+    </div>
+  </header>
+
+  @if (error() && !editando()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error()! | translate }}</p> }
+
+  <section class="tarjeta">
+    <header><h2><i class="ti ti-plant-2" aria-hidden="true"></i> {{ 'precios.yourCrops' | translate }}</h2></header>
+    @if (cultivos() === null) {
+      <div class="esq" aria-hidden="true" style="height: 120px"></div>
+    } @else if (!cultivos()!.length) {
+      <p class="fuente-nota">{{ 'precios.noCrops' | translate }}</p>
+    } @else {
+      <div class="cultivos-precio">
+        @for (c of cultivos(); track c.cultivo + c.variedad) {
+          <article class="precio-card">
+            <h3>{{ c.cultivo }}@if (c.variedad) { <span class="suave"> · {{ c.variedad }}</span> }</h3>
+            @if (c.precio?.precioKg) {
+              <span class="fuente" [class.propio]="c.precio!.fuente === 'PROPIO'">{{ (c.precio!.fuente === 'PROPIO' ? 'precios.own' : 'precios.sipsa') | translate }}</span>
+              <span class="valor">{{ c.precio!.precioKg | pesos }} <small>/ kg</small></span>
+              @if (c.precio!.fuente === 'SIPSA') {
+                <p>{{ c.precio!.producto }} · {{ 'precios.week' | translate: { date: (c.precio!.semana | fecha) } }}</p>
+                @if (c.precio!.minimoKg && c.precio!.maximoKg) {
+                  <p class="suave">{{ 'precios.range' | translate: { min: (c.precio!.minimoKg | pesos), max: (c.precio!.maximoKg | pesos), markets: c.precio!.mercados } }}</p>
+                }
+              } @else {
+                <p class="suave">{{ 'precios.ownHelp' | translate }}</p>
+              }
+            } @else {
+              <span class="valor suave">—</span>
+              <p>{{ 'precios.noPriceFor' | translate }}</p>
+            }
+            <div class="acc-p">
+              <button type="button" class="btn chico" (click)="cambiar(c)"><i class="ti ti-adjustments" aria-hidden="true"></i> {{ (c.precio?.precioKg ? 'precios.change' : 'precios.setPrice') | translate }}</button>
+            </div>
+          </article>
+        }
+      </div>
+    }
+    <p class="fuente-nota">{{ 'precios.source' | translate }}</p>
+  </section>
+
+  <section class="tarjeta">
+    <header><h2><i class="ti ti-search" aria-hidden="true"></i> {{ 'precios.searchTitle' | translate }}</h2></header>
+    <label class="campo"><span class="sr-only">{{ 'precios.searchTitle' | translate }}</span>
+      <input type="search" [(ngModel)]="texto" (ngModelChange)="buscar($event, 'pagina')" [placeholder]="'precios.searchPlaceholder' | translate" />
+    </label>
+    @if (resultados(); as rs) {
+      @if (!rs.length && texto.trim().length >= 2) { <p class="fuente-nota">{{ 'precios.noResults' | translate }}</p> }
+      @if (rs.length) {
+        <div class="tabla-wrap">
+          <table class="tabla resp">
+            <thead><tr><th>{{ 'precios.product' | translate }}</th><th class="num">{{ 'precios.avg' | translate }}</th><th class="num">{{ 'precios.min' | translate }}</th><th class="num">{{ 'precios.max' | translate }}</th><th class="num">{{ 'precios.markets' | translate }}</th></tr></thead>
+            <tbody>
+              @for (p of rs; track p.producto) {
+                <tr><td class="prin">{{ p.producto }}</td><td class="num fuerte">{{ p.precioKg | pesos }}</td><td class="num">{{ p.minimoKg | pesos }}</td><td class="num">{{ p.maximoKg | pesos }}</td><td class="num">{{ p.mercados }}</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </section>
+</div>
+
+@if (editando(); as c) {
+  <button type="button" class="overlay-l" (click)="editando.set(null)" [attr.aria-label]="'common.cancel' | translate"></button>
+  <dialog class="lado" open (keydown.escape)="editando.set(null)">
+    <header class="lado-head">
+      <span class="ic azul" aria-hidden="true"><i class="ti ti-chart-line"></i></span>
+      <div><h2>{{ c.cultivo }}@if (c.variedad) { · {{ c.variedad }} }</h2><p>{{ 'precios.panelHelp' | translate }}</p></div>
+      <button type="button" class="btn-ic" (click)="editando.set(null)" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </header>
+    <div class="lado-cuerpo">
+      @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error()! | translate }}</p> }
+      @if (c.precio?.alternativas?.length) {
+        <h3 class="sub">{{ 'precios.suggested' | translate }}</h3>
+        <ul class="alternativas">
+          @for (a of c.precio!.alternativas; track a.producto) {
+            <li><button type="button" [class.on]="elegido() === a.producto && !propio()" (click)="elegirProducto(a.producto)" [attr.aria-pressed]="elegido() === a.producto && !propio()"><span>{{ a.producto }}</span><strong>{{ a.precioKg | pesos }}</strong></button></li>
+          }
+        </ul>
+      }
+      <h3 class="sub">{{ 'precios.otherProduct' | translate }}</h3>
+      <label class="campo"><span class="sr-only">{{ 'precios.otherProduct' | translate }}</span>
+        <input type="search" [(ngModel)]="textoPanel" (ngModelChange)="buscar($event, 'panel')" [placeholder]="'precios.searchPlaceholder' | translate" />
+      </label>
+      @if (buscados().length) {
+        <ul class="alternativas">
+          @for (a of buscados(); track a.producto) {
+            <li><button type="button" [class.on]="elegido() === a.producto && !propio()" (click)="elegirProducto(a.producto)"><span>{{ a.producto }}</span><strong>{{ a.precioKg | pesos }}</strong></button></li>
+          }
+        </ul>
+      }
+      <h3 class="sub">{{ 'precios.ownTitle' | translate }}</h3>
+      <label class="campo"><span>{{ 'precios.ownLabel' | translate }}</span>
+        <input type="number" min="1" step="50" inputmode="numeric" [ngModel]="propio()" (ngModelChange)="propio.set($event || null)" placeholder="0" />
+        <small class="ayuda">{{ 'precios.ownHint' | translate }}</small>
+      </label>
+      <footer class="lado-pie">
+        @if (c.precio?.elegido) { <button type="button" class="btn btn-texto" (click)="automatico()">{{ 'precios.auto' | translate }}</button> }
+        <button type="button" class="btn btn-prim" [disabled]="guardando()" (click)="guardar()"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando() ? 'common.saving' : 'common.save') | translate }}</button>
+      </footer>
+    </div>
+  </dialog>
+}

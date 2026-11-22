@@ -11,6 +11,8 @@ import { CultivoService } from '../../../../core/services/crop.service';
 import { RestriccionVigente } from '../../../../core/models/crop.model';
 import { LanguageService } from '../../../../core/services/language.service';
 import { formatoFecha, formatoPesos } from '../../../../shared/format';
+import { PreciosService } from '../../../../core/services/finance.service';
+import { PrecioCultivo } from '../../../../core/models/finance.model';
 
 @Component({
   selector: 'app-registrar-cosecha',
@@ -63,6 +65,13 @@ export class RegistrarCosecha implements OnInit {
   ) {}
 
   private readonly ultimo = inject(UltimoUsadoService);
+  private readonly precios = inject(PreciosService);
+  /** Precio de referencia del cultivo (SIPSA o el propio), para sugerir el precio del kilo */
+  referencia: PrecioCultivo | null = null;
+
+  usarReferencia(): void {
+    if (this.referencia?.precioKg) this.form.precioKg = Math.round(this.referencia.precioKg);
+  }
 
   // ── Cambios sin guardar: cuenta solo lo que escribe o elige la persona (no lo que la app rellena sola) ──
   private tocado = false;
@@ -82,6 +91,17 @@ export class RegistrarCosecha implements OnInit {
     this.siembraId = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
     this.form.fecha = new Date().toLocaleDateString('en-CA');
+
+    this.cultivoService.buscarSiembra(this.siembraId).subscribe({
+      next: (s) => {
+        if (!s?.tipoCultivo) return;
+        this.precios.deCultivo(s.tipoCultivo, s.variedad).subscribe({
+          next: (p) => { this.referencia = p.precioKg ? p : null; this.cdr.detectChanges(); },
+          error: () => { /* sin precio de referencia */ },
+        });
+      },
+      error: () => { /* sin precio de referencia */ },
+    });
 
     this.cultivoService.resumenSiembra(this.siembraId).subscribe({
       next: (r) => { this.carencia = r?.carencia ?? null; this.cdr.detectChanges(); },

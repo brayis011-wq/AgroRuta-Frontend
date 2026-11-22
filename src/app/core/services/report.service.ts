@@ -114,6 +114,11 @@ export class ReportService {
     return this.http.get(`${this.apiUrl}/api/reports/costs`, { responseType: 'blob', params: this.params() });
   }
 
+  /** Cuaderno de campo: las aplicaciones de producto del periodo (de una finca o de todas) */
+  downloadFieldBookPdf(fincaId?: number | null): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/api/reports/field-book`, { responseType: 'blob', params: this.params(fincaId ? { farmId: String(fincaId) } : {}) });
+  }
+
   downloadProfitabilityPdf(): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/api/reports/profitability`, { responseType: 'blob', params: this.params() });
   }

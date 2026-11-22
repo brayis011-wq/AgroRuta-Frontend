@@ -219,6 +219,7 @@
   @if (climaFinca(); as f) {
     <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
                         [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" [horizontal]="ancho" />
+    @if (f.id) { <app-lluvia-finca class="lluvia-inicio" [fincaId]="f.id" /> }
   } @else {
     <app-weather-widget city="Bogotá" [horizontal]="ancho" />
   }

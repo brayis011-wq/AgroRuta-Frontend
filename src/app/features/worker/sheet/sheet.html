@@ -1,0 +1,135 @@
+<div class="cv">
+  <header class="cv-head">
+    <div>
+      <p class="eyebrow">{{ 'workers.home.title' | translate }}</p>
+      <h1>{{ 'workers.sheet.title' | translate }}</h1>
+      <p class="cv-sub">{{ 'workers.sheet.subtitle' | translate }}</p>
+    </div>
+    <div class="cv-acciones">
+      <a class="btn" routerLink="/worker/payrolls" [queryParams]="{ team: 1 }"><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.sheet.toPayroll' | translate }}</a>
+    </div>
+  </header>
+
+  <section class="tarjeta anotar" [attr.aria-label]="'workers.sheet.withWhat' | translate">
+    <div class="anotar-fila">
+      <label class="campo"><span>{{ 'workers.sheet.crop' | translate }}</span>
+        <select [ngModel]="cultivoId()" (ngModelChange)="elegirCultivo($event)">
+          <option [ngValue]="null" disabled>{{ 'workers.wages.new.selectCrop' | translate }}</option>
+          @for (c of cultivos(); track c.id) {
+            <option [ngValue]="c.id">{{ c.fincaNombre }} · {{ c.loteNombre }}{{ c.variedad ? ' — ' + (c.tipoCultivo ? c.tipoCultivo + ' ' : '') + c.variedad : '' }}</option>
+          }
+        </select>
+      </label>
+      <div class="campo labores">
+        <span>{{ 'workers.sheet.labors' | translate }}</span>
+        <div class="chips-labor">
+          @for (a of actividades(); track a.id) {
+            <button type="button" class="chip-labor" [class.on]="elegidas().has(a.id!)" [attr.aria-pressed]="elegidas().has(a.id!)" (click)="alternarLabor(a.id)">
+              <i class="ti" [class.ti-check]="elegidas().has(a.id!)" [class.ti-plus]="!elegidas().has(a.id!)" aria-hidden="true"></i>{{ a.nombre }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+    <p class="ayuda-planilla"><i class="ti ti-hand-finger" aria-hidden="true"></i> {{ 'workers.sheet.howTo' | translate }}</p>
+  </section>
+
+  @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error()! | translate }}</p> }
+
+  <section class="tarjeta">
+    <header class="semana">
+      <button type="button" class="btn-ic" (click)="semana(-1)" [attr.aria-label]="'workers.sheet.prevWeek' | translate" [title]="'workers.sheet.prevWeek' | translate"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+      <h2><i class="ti ti-calendar-week" aria-hidden="true"></i> {{ dias()[0] | periodo: dias()[6] }}</h2>
+      <button type="button" class="btn-ic" (click)="semana(1)" [disabled]="esEstaSemana()" [attr.aria-label]="'workers.sheet.nextWeek' | translate" [title]="'workers.sheet.nextWeek' | translate"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+      @if (!esEstaSemana()) { <button type="button" class="btn btn-texto" (click)="estaSemana()">{{ 'workers.sheet.thisWeek' | translate }}</button> }
+      <span class="total-semana">{{ 'workers.sheet.weekTotal' | translate }} <strong>{{ totalSemana() | pesos }}</strong></span>
+    </header>
+
+    @if (cargando() && !planilla()) {
+      <div class="esq" style="height: 220px; border-radius: 12px"></div>
+    } @else if (!(planilla()?.trabajadores?.length)) {
+      <div class="vacio">
+        <i class="ti ti-users" aria-hidden="true"></i>
+        <h3>{{ 'workers.sheet.emptyTitle' | translate }}</h3>
+        <p>{{ 'workers.sheet.empty' | translate }}</p>
+        <a class="btn btn-prim" routerLink="/worker"><i class="ti ti-user-plus" aria-hidden="true"></i> {{ 'workers.sheet.addWorker' | translate }}</a>
+      </div>
+    } @else {
+      <div class="rejilla-wrap" #rejilla [class.cargando]="cargando()">
+        <table class="rejilla">
+          <thead>
+            <tr>
+              <th scope="col" class="quien">{{ 'workers.ui.col.worker' | translate }}</th>
+              @for (d of dias(); track d) {
+                <th scope="col" class="dia" [class.hoy]="d === hoy">
+                  <button type="button" class="cabeza-dia" (click)="todosElDia(d)" [disabled]="futuro(d)" [title]="'workers.sheet.allDay' | translate">
+                    <span>{{ nombreDia(d).corto }}</span><strong>{{ nombreDia(d).num }}</strong>
+                    <em>{{ cuantosDia(d) }}</em>
+                  </button>
+                </th>
+              }
+              <th scope="col" class="num">{{ 'workers.sheet.total' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of planilla()!.trabajadores; track t.id) {
+              <tr [class.apagada]="!t.activo">
+                <th scope="row" class="quien"><div class="quien-in">
+                  <span class="av-s" aria-hidden="true">{{ t.iniciales }}</span>
+                  <span class="nombre"><strong>{{ t.nombreCompleto }}</strong>
+                    <small>{{ t.cargo }} · @if (t.modalidadPago === 'KILO') {{{ t.valorKilo | pesos }} {{ 'workers.posts.perKilo' | translate }}} @else {{{ t.valorJornal | pesos }}}</small>
+                  </span>
+                </div></th>
+                @for (d of dias(); track d) {
+                  <td class="celda" [class.hoy]="d === hoy">
+                    @let hay = casilla(t, d);
+                    <button type="button" class="casilla" [class.llena]="hay.length > 0" [class.nomina]="hay.length > 0 && hay[0].enNomina"
+                            [class.ocupada]="ocupada(t, d)" [disabled]="futuro(d) || (!t.activo && !hay.length)"
+                            [attr.aria-pressed]="hay.length > 0" [attr.aria-label]="etiquetaCasilla(t, d)" (click)="tocar(t, d)">
+                      @if (ocupada(t, d)) {
+                        <i class="ti ti-loader-2 gira" aria-hidden="true"></i>
+                      } @else if (hay.length) {
+                        @if (hay[0].kilos) { <span class="kg">{{ hay[0].kilos }}<small>kg</small></span> } @else { <i class="ti" [class.ti-lock]="hay[0].enNomina" [class.ti-check]="!hay[0].enNomina" aria-hidden="true"></i> }
+                        @if (hay.length > 1) { <em class="mas">×{{ hay.length }}</em> }
+                      } @else if (!futuro(d)) {
+                        <i class="ti ti-plus vacio-i" aria-hidden="true"></i>
+                      }
+                    </button>
+                  </td>
+                }
+                <td class="num tot">
+                  @let tf = total(t);
+                  <strong>{{ tf.valor | pesos }}</strong>
+                  <small>{{ (tf.jornales === 1 ? 'workers.sheet.daysOne' : 'workers.sheet.days') | translate: { count: tf.jornales } }}@if (tf.kilos) { · {{ tf.kilos }} kg }</small>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="leyenda">
+        <span><i class="ti ti-check" aria-hidden="true"></i> {{ 'workers.sheet.legendDone' | translate }}</span>
+        <span><i class="ti ti-lock" aria-hidden="true"></i> {{ 'workers.sheet.legendPayroll' | translate }}</span>
+        <span><i class="ti ti-calendar-plus" aria-hidden="true"></i> {{ 'workers.sheet.legendDay' | translate }}</span>
+      </p>
+    }
+  </section>
+</div>
+
+@if (pidiendo(); as p) {
+  <button type="button" class="overlay-l" (click)="pidiendo.set(null)" [attr.aria-label]="'common.cancel' | translate"></button>
+  <dialog class="kilos-d" open (keydown.escape)="pidiendo.set(null)" aria-labelledby="kilos-titulo">
+    <form (ngSubmit)="confirmarKilos()">
+      <h2 id="kilos-titulo"><i class="ti ti-scale" aria-hidden="true"></i> {{ 'workers.sheet.kilosTitle' | translate }}</h2>
+      <p>{{ p.trabajador.nombreCompleto }} · {{ nombreDia(p.fecha).corto }} {{ nombreDia(p.fecha).num }}</p>
+      <label class="campo"><span>{{ 'workers.wages.new.kilos' | translate }}</span>
+        <input type="number" name="kilos" min="0.1" step="0.5" inputmode="decimal" [(ngModel)]="p.kilos" autofocus required />
+      </label>
+      <p class="ayuda-planilla">{{ 'workers.sheet.kilosValue' | translate: { value: ((p.kilos || 0) * (p.trabajador.valorKilo || 0) | pesos) } }}</p>
+      <footer>
+        <button type="button" class="btn btn-texto" (click)="pidiendo.set(null)">{{ 'common.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-prim" [disabled]="!p.kilos || p.kilos <= 0"><i class="ti ti-check" aria-hidden="true"></i> {{ 'common.save' | translate }}</button>
+      </footer>
+    </form>
+  </dialog>
+}
