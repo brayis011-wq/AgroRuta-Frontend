@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  RendimientoTrabajador,
   Labor, Pago, Cargo, Trabajador, Nomina, Jornal, ResumenNominas, ResumenJornales, ResumenJornalesInicio, ResumenPagos, PagosDelMes
 } from '../models/worker.model';
 import { Pagina, TAMANO_PAGINA } from '../models/pagina.model';
@@ -199,6 +200,13 @@ export class JornalService {
   constructor(private http: HttpClient) {}
 
   registrar(req: JornalRequest): Observable<Jornal> { return this.http.post<Jornal>(this.api, req); }
+  /** Kilos y costo del kilo por trabajador entre dos fechas ("2026-11-16"); sin fechas, los últimos 90 días */
+  rendimiento(inicio?: string, fin?: string): Observable<RendimientoTrabajador[]> {
+    let p = new HttpParams();
+    if (inicio) p = p.set('inicio', inicio);
+    if (fin) p = p.set('fin', fin);
+    return this.http.get<RendimientoTrabajador[]>(`${this.api}/yield`, { params: p });
+  }
   /** La cuadrícula trabajadores × días entre dos fechas ("2026-11-16") */
   planilla(inicio: string, fin: string): Observable<Planilla> { return this.http.get<Planilla>(`${this.api}/sheet`, { params: new HttpParams().set('inicio', inicio).set('fin', fin) }); }
   registrarVarios(req: PlanillaRequest): Observable<Jornal[]> { return this.http.post<Jornal[]>(`${this.api}/batch`, req); }

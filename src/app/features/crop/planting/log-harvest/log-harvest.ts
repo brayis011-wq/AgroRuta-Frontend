@@ -136,8 +136,9 @@ export class RegistrarCosecha implements OnInit {
     return f.valorDia || null;
   }
 
+  /** Los kilos de todos: los pagados por kilo y los que anotaron los de día */
   get kilosRecolectores(): number {
-    return this.recolectores.reduce((s, r) => s + (r.modalidad === 'KILO' && r.kilos ? Number(r.kilos) : 0), 0);
+    return this.recolectores.reduce((s, r) => s + (r.kilos ? Number(r.kilos) : 0), 0);
   }
 
   get manoObra(): number {
@@ -175,7 +176,8 @@ export class RegistrarCosecha implements OnInit {
   private paraEnviar(): Recolector[] {
     return this.recolectores.map((r) => ({
       trabajadorId: r.trabajadorId!, modalidad: r.modalidad,
-      kilos: r.modalidad === 'KILO' ? Number(r.kilos) : null,
+      // Por día los kilos son opcionales (no cambian el pago)
+      kilos: r.kilos ? Number(r.kilos) : null,
       valorKilo: r.modalidad === 'KILO' && r.valorKilo ? Number(r.valorKilo) : null,
       valorDia: r.modalidad === 'DIA' && r.valorDia ? Number(r.valorDia) : null,
     }));

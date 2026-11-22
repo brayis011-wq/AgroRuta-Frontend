@@ -91,6 +91,23 @@ export interface ResumenNominas {
 }
 
 /** GET /api/workdays/worker/{id}/summary: totales de los jornales del trabajador en el rango pedido. */
+/** Cuánto recoge un trabajador y cuánto sale el kilo pagándole por día o por kilo */
+export interface RendimientoTrabajador {
+  trabajadorId: number;
+  nombre: string;
+  cargo: string | null;
+  modalidadCargo: 'JORNAL' | 'KILO' | null;
+  diasPorDia: number;
+  kilosPorDia: number;
+  pagadoPorDia: number;
+  diasPorKilo: number;
+  kilosPorKilo: number;
+  pagadoPorKilo: number;
+  kilosAlDia: number | null;
+  costoKiloPorDia: number | null;
+  costoKiloPorKilo: number | null;
+}
+
 export interface ResumenJornales {
   cantidad: number;
   valorTotal: number;

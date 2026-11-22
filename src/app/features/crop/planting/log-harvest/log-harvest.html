@@ -65,7 +65,7 @@
                 <span class="recolector-nombre">{{ r.nombre }}</span>
                 <span class="recolector-detalle">
                   @if (r.modalidad === 'KILO') { {{ 'siembra.harvest.pickers.kgAt' | translate: { kg: r.kilos, price: pesos(r.valorKilo ?? 0) } }} }
-                  @else { {{ 'siembra.harvest.pickers.perDay' | translate }} }
+                  @else { {{ 'siembra.harvest.pickers.perDay' | translate }}@if (r.kilos) { · {{ r.kilos }} kg } }
                   · {{ pesos(valorDe(r) ?? 0) }}
                 </span>
                 <span class="recolector-nomina"><i class="ti ti-lock" aria-hidden="true"></i>
@@ -101,6 +101,10 @@
                     <label class="mini">
                       <span>{{ 'siembra.harvest.pickers.dayValue' | translate }}</span>
                       <input type="number" inputmode="numeric" min="0" step="any" [name]="'rec-d-' + i" [(ngModel)]="r.valorDia" placeholder="0" />
+                    </label>
+                    <label class="mini">
+                      <span>{{ 'siembra.harvest.pickers.kgOptional' | translate }}</span>
+                      <input type="number" inputmode="decimal" min="0" step="0.1" [name]="'rec-kd-' + i" [(ngModel)]="r.kilos" (ngModelChange)="sumarKilos()" placeholder="0" />
                     </label>
                   }
                   <span class="recolector-total">{{ valorDe(r) ? pesos(valorDe(r)!) : '—' }}</span>

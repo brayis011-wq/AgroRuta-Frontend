@@ -40,6 +40,7 @@
     "subtitle": "Sistema de gestión",
     "sections": { "management": "Gestión", "analysis": "Análisis", "system": "Sistema" },
     "nav": {
+      "yield": "Rendimiento",
       "finance": "Finanzas",
       "sales": "Ventas por cobrar",
       "expenses": "Gastos generales",
@@ -684,11 +685,11 @@
       "sold": "Vendida",
       "soldHint": "Lo vendido de la siembra ya cubre esta cosecha",
       "leftToSell": "quedan {{kg}} kg por vender",
-      "kgHint": "Si anotas a los recolectores por kilo, se llena solo con la suma.",
+      "kgHint": "Se llena solo con la suma de los kilos de los recolectores (por kilo y por día).",
       "oldPrice": "Esta cosecha tiene un valor estimado de {{price}}/kg de antes. Ahora lo que dejó la siembra sale de lo que vendas en Ventas.",
       "sell": "Vender",
       "pickersCount": "{{n}} recolectores",
-      "pickers": {"title":"¿Quién la recogió?","hint":"A cada uno se le crea su jornal de ese día y entra a la nómina de la semana. Puedes corregirlo antes de pagar.","who":"Recolector","choose":"Elige quién","how":"Cómo se le paga","byKg":"Por kilo","byDay":"Por día","kg":"Kilos que recogió","pricePerKg":"Valor del kilo","dayValue":"Valor del día","kgAt":"{{kg}} kg a {{price}}","perDay":"Por día","locked":"En nómina {{estado}}: no se cambia aquí","add":"Agregar recolector","summary":"{{n}} recolectores · mano de obra {{total}}","noTeam":"No tienes trabajadores activos para anotar quién recogió.","goTeam":"Ir a Trabajadores","sumHint":"Los recolectores por kilo suman {{kg}} kg.","useSum":"Usar la suma","incomplete":"En cada recolector falta elegir quién o cuánto se le paga.","tooMany":"Los kilos de los recolectores suman más que la cantidad de la cosecha."},
+      "pickers": {"kgOptional": "Kilos que recogió (opcional)", "title":"¿Quién la recogió?","hint":"A cada uno se le crea su jornal de ese día y entra a la nómina de la semana. Puedes corregirlo antes de pagar.","who":"Recolector","choose":"Elige quién","how":"Cómo se le paga","byKg":"Por kilo","byDay":"Por día","kg":"Kilos que recogió","pricePerKg":"Valor del kilo","dayValue":"Valor del día","kgAt":"{{kg}} kg a {{price}}","perDay":"Por día","locked":"En nómina {{estado}}: no se cambia aquí","add":"Agregar recolector","summary":"{{n}} recolectores · mano de obra {{total}}","noTeam":"No tienes trabajadores activos para anotar quién recogió.","goTeam":"Ir a Trabajadores","sumHint":"Los recolectores suman {{kg}} kg.","useSum":"Usar la suma","incomplete":"En cada recolector falta elegir quién o cuánto se le paga.","tooMany":"Los kilos de los recolectores suman más que la cantidad de la cosecha."},
       "back": "Volver a la siembra",
       "title": "Registrar cosecha",
       "subtitle": "Registra una cosecha realizada en el cultivo",
@@ -746,6 +747,7 @@
     }
   },
   "workers": {
+    "yield": {"title":"Rendimiento","subtitle":"Cuántos kilos recoge cada trabajador y cuánto te sale el kilo pagándole por día o por kilo.","period":"Periodo","days":{"30":"30 días","90":"90 días","365":"Un año"},"error":"No se pudo cargar el rendimiento","kpi":{"workersOne": "1 trabajador", "kilos":"Kilos recogidos","workers":"{{count}} trabajadores","paid":"Pagado por esos días","costKg":"Te sale el kilo","teamKg":"Por kilo pagas {{price}}"},"byWorker":"Por trabajador","col":{"worker":"Trabajador","perDayKg":"Kilos al día","byDay":"Kilo pagando por día","byKg":"Kilo pagando por kilo","verdict":"¿Qué conviene?"},"paysByKg":"cobra por kilo","paysByDay":"cobra por día","daysCount":"{{count}} días con kilos","kgIn":"{{kg}} kg en {{count}} días","verdict":{"day":"Por día: {{diff}} menos el kilo","kg":"Por kilo: {{diff}} menos el kilo","same":"Sale casi igual","vsTeam":"Comparado con lo que pagas el kilo al equipo","none":"Faltan datos para comparar"},"note":"Solo cuentan los días con kilos anotados. Para los que cobran por día, anota en la cosecha los kilos que recogió cada uno.","empty":"Todavía no hay kilos anotados. Al registrar una cosecha, anota quién la recogió y sus kilos, también de los que cobran por día.","goCrops":"Ir a Cultivos"},
     "filter": {"label":"Ver de","all":"Todos","allHint":"{{count}} trabajadores","allOption":"Todos los trabajadores ({{count}})","searchWorkerCrop":"Buscar trabajador o cultivo..."},
     "sheet": {"legendPending": "En una nómina pendiente (se puede corregir)", "removedFromPayroll": "Jornal de {{name}} quitado; su nómina se recalculó", "title":"Planilla semanal","subtitle":"Toca una casilla para anotar el jornal de ese día; tócala otra vez para quitarlo.","toPayroll":"Generar la nómina de la semana","withWhat":"Con qué se anota","crop":"Cultivo donde trabajaron","labors":"Labores","howTo":"Lo que toques se anota con este cultivo y estas labores. El número de cada día anota a todos los que se pagan por día.","chooseFirst":"Elige arriba el cultivo y al menos una labor.","prevWeek":"Semana anterior","nextWeek":"Semana siguiente","thisWeek":"Esta semana","weekTotal":"Total de la semana:","total":"Semana","allDay":"Anotar a todos los que se pagan por día","days":"{{count}} días","daysOne":"1 día","emptyTitle":"Todavía no hay trabajadores","empty":"Agrega a tu equipo para anotar sus jornales en la planilla.","addWorker":"Agregar trabajador","legendDone":"Jornal anotado","legendPayroll":"Ya está en una nómina","legendDay":"Toca el día para anotar a todos","kilosTitle":"¿Cuántos kilos recogió?","kilosValue":"Este jornal vale {{value}}.","added":"{{count}} jornales anotados","removed":"Jornal de {{name}} quitado","inPayroll":"Ese jornal ya está en una nómina: para quitarlo, primero elimina la nómina.","cellEmpty":"Anotar jornal: {{who}}","cellFilled":"Quitar jornal: {{who}}","errors":{"load":"No se pudo cargar la planilla","save":"No se pudo anotar el jornal","remove":"No se pudo quitar el jornal"}},
     "catalog": { "label": "Cargos y labores" },

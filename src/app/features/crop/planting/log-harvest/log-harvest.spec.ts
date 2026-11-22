@@ -91,6 +91,25 @@ describe('RegistrarCosecha', () => {
     expect(component.disponiblesPara(null)).toEqual([]);
   });
 
+  it('el de día puede anotar los kilos que recogió: suman al total y van con la cosecha', () => {
+    component.agregarRecolector();
+    component.agregarRecolector();
+    const [a, b] = component.recolectores;
+    component.elegirTrabajador(a, 1);
+    component.elegirTrabajador(b, 2);
+    a.kilos = 40;
+    b.kilos = 25;
+    component.sumarKilos();
+    expect(component.form.cantidadKg).toBe(65);
+    expect(component.valorDe(b)).toBe(60000);
+    component.form = { ...component.form, fecha: '2024-04-01', calidad: 'PRIMERA' };
+    component.onSubmit();
+    expect(cultivoServiceMock.registrarCosecha).toHaveBeenCalledWith(expect.objectContaining({ recolectores: [
+      { trabajadorId: 1, modalidad: 'KILO', kilos: 40, valorKilo: 900, valorDia: null },
+      { trabajadorId: 2, modalidad: 'DIA', kilos: 25, valorKilo: null, valorDia: 60000 },
+    ] }));
+  });
+
   it('envía los recolectores con la cosecha', () => {
     component.form = { ...component.form, fecha: '2024-04-01', calidad: 'PRIMERA' };
     component.agregarRecolector();

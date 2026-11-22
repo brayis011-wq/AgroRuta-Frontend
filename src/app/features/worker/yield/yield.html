@@ -1,0 +1,91 @@
+<div class="cv">
+  <header class="cv-head">
+    <div>
+      <p class="eyebrow">{{ 'workers.home.title' | translate }}</p>
+      <h1>{{ 'workers.yield.title' | translate }}</h1>
+      <p class="cv-sub">{{ 'workers.yield.subtitle' | translate }}</p>
+    </div>
+    <div class="seg" role="group" [attr.aria-label]="'workers.yield.period' | translate">
+      @for (p of periodos; track p) {
+        <button type="button" [class.on]="periodo() === p" [attr.aria-pressed]="periodo() === p" (click)="elegir(p)">{{ 'workers.yield.days.' + p | translate }}</button>
+      }
+    </div>
+  </header>
+
+  @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ 'workers.yield.error' | translate }}</p> }
+
+  @if (lista(); as l) {
+    @if (l.length) {
+      <section class="kpis tres" [attr.aria-label]="'workers.ui.summary' | translate">
+        <div class="kpi">
+          <span class="ic ambar"><i class="ti ti-basket" aria-hidden="true"></i></span>
+          <div><small>{{ 'workers.yield.kpi.kilos' | translate }}</small><strong>{{ kg(totalKilos()) }} kg</strong>
+            <em>{{ (l.length === 1 ? 'workers.yield.kpi.workersOne' : 'workers.yield.kpi.workers') | translate: { count: l.length } }}</em></div>
+        </div>
+        <div class="kpi">
+          <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
+          <div><small>{{ 'workers.yield.kpi.paid' | translate }}</small><strong>{{ totalPagado() | pesos }}</strong></div>
+        </div>
+        <div class="kpi">
+          <span class="ic azul"><i class="ti ti-scale" aria-hidden="true"></i></span>
+          <div><small>{{ 'workers.yield.kpi.costKg' | translate }}</small><strong>{{ costoKilo() != null ? (costoKilo()! | pesos) : '—' }}</strong>
+            @if (kiloEquipo() != null) { <em>{{ 'workers.yield.kpi.teamKg' | translate: { price: (kiloEquipo()! | pesos) } }}</em> }</div>
+        </div>
+      </section>
+
+      <section class="tarjeta">
+        <header><h2><i class="ti ti-chart-bar" aria-hidden="true"></i> {{ 'workers.yield.byWorker' | translate }}</h2></header>
+        <div class="tabla-wrap">
+          <table class="tabla resp">
+            <thead>
+              <tr>
+                <th>{{ 'workers.yield.col.worker' | translate }}</th>
+                <th class="num">{{ 'workers.yield.col.perDayKg' | translate }}</th>
+                <th class="num">{{ 'workers.yield.col.byDay' | translate }}</th>
+                <th class="num">{{ 'workers.yield.col.byKg' | translate }}</th>
+                <th>{{ 'workers.yield.col.verdict' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of l; track r.trabajadorId) {
+                @let c = comparacion(r);
+                <tr>
+                  <td class="prin">{{ r.nombre }}<small class="suave linea2">{{ r.cargo || '—' }}@if (r.modalidadCargo) { · {{ (r.modalidadCargo === 'KILO' ? 'workers.yield.paysByKg' : 'workers.yield.paysByDay') | translate }} }</small></td>
+                  <td class="num fuerte-n">{{ r.kilosAlDia != null ? kg(r.kilosAlDia) + ' kg' : '—' }}
+                    <small class="suave linea2">{{ 'workers.yield.daysCount' | translate: { count: r.diasPorDia + r.diasPorKilo } }}</small></td>
+                  <td class="num">@if (r.costoKiloPorDia != null) { {{ r.costoKiloPorDia | pesos }}<small class="suave linea2">{{ 'workers.yield.kgIn' | translate: { kg: kg(r.kilosPorDia), count: r.diasPorDia } }}</small> } @else { <span class="suave">—</span> }</td>
+                  <td class="num">@if (r.costoKiloPorKilo != null) { {{ r.costoKiloPorKilo | pesos }}<small class="suave linea2">{{ 'workers.yield.kgIn' | translate: { kg: kg(r.kilosPorKilo), count: r.diasPorKilo } }}</small> } @else { <span class="suave">—</span> }</td>
+                  <td class="veredicto">
+                    @if (c) {
+                      <span class="etq" [class.dia]="c.mejor === 'DIA'" [class.kilo]="c.mejor === 'KILO'">
+                        @switch (c.mejor) {
+                          @case ('DIA') { {{ 'workers.yield.verdict.day' | translate: { diff: (c.diferencia | pesos) } }} }
+                          @case ('KILO') { {{ 'workers.yield.verdict.kg' | translate: { diff: (c.diferencia | pesos) } }} }
+                          @default { {{ 'workers.yield.verdict.same' | translate }} }
+                        }
+                      </span>
+                      @if (c.delEquipo) { <small class="suave linea2">{{ 'workers.yield.verdict.vsTeam' | translate }}</small> }
+                    } @else {
+                      <span class="suave">{{ 'workers.yield.verdict.none' | translate }}</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="suave nota">{{ 'workers.yield.note' | translate }}</p>
+      </section>
+    } @else if (!error()) {
+      <section class="tarjeta">
+        <div class="vacio">
+          <i class="ti ti-chart-bar-off" aria-hidden="true"></i>
+          <p>{{ 'workers.yield.empty' | translate }}</p>
+          <a class="btn" routerLink="/crops">{{ 'workers.yield.goCrops' | translate }}</a>
+        </div>
+      </section>
+    }
+  } @else {
+    <div class="esq" aria-hidden="true"></div>
+  }
+</div>

@@ -41,6 +41,14 @@ export const workerRoutes: Routes = [
       import('./roster/detail-roster/detail-roster').then((m) => m.DetalleNominaComponent),
   },
 
+  // ── Rendimiento: kilos por trabajador y cuánto sale el kilo por día o por kilo
+  {
+    path: 'yield',
+    title: 'workers.yield.title',
+    loadComponent: () =>
+      import('./yield/yield').then((m) => m.RendimientoComponent),
+  },
+
   // ── Planilla semanal: trabajadores por días, un toque anota el jornal
   {
     path: 'sheet',

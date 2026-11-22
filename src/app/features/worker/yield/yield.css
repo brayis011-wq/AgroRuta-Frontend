@@ -1,0 +1,13 @@
+/* Rendimiento por trabajador */
+.cv-head .seg { align-self: flex-end; }
+.veredicto .etq { display: inline-block; padding: .2rem .55rem; border-radius: 99px; font-size: .78rem; font-weight: 600; background: var(--ar-fondo); color: var(--ar-tinta-2); white-space: normal; }
+.veredicto .etq.dia, .veredicto .etq.kilo { background: var(--ar-verde-50); color: var(--ar-verde-700); }
+.nota { margin: .75rem 0 0; font-size: .8rem; white-space: normal; }
+.vacio .btn { margin-top: .5rem; }
+@media (max-width: 760px) { .cv-head .seg { align-self: stretch; } .cv-head .seg button { flex: 1; } }
+.linea2 { display: block; font-size: .76rem; font-weight: 400; }
+/* Encabezados cortos que pueden partirse: la tabla cabe sin moverse de lado */
+.tabla th { white-space: normal; }
+.tabla th, .tabla td { padding-left: .9rem; padding-right: .9rem; }
+.veredicto { min-width: 10rem; }
+.nota { padding: 0; }

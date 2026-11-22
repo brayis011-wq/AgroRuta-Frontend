@@ -103,6 +103,7 @@ export class LayoutComponent {
     { ruta: '/worker/workdays', clave: 'layout.nav.wages' },
     { ruta: '/worker/payrolls', clave: 'layout.nav.payrolls', contador: true },
     { ruta: '/worker/payments', clave: 'layout.nav.payments' },
+    { ruta: '/worker/yield', clave: 'layout.nav.yield' },
     // Cargos y Labores van juntos (dos pestañas en la misma pantalla)
     { ruta: '/worker/positions', clave: 'layout.nav.catalog', tambien: '/worker/labors' },
   ];
