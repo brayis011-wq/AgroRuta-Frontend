@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Subject, catchError, debounceTime, distinctUntilChanged, forkJoin, of, switchMap } from 'rxjs';
+import { Subject, catchError, debounceTime, forkJoin, of, switchMap } from 'rxjs';
 import { PreciosService, VentasService } from '../../../core/services/finance.service';
 import { PrecioCultivo } from '../../../core/models/finance.model';
 import { CultivoDisponible, JornalService } from '../../../core/services/worker.service';
@@ -104,7 +104,6 @@ export class VentasComponent implements OnInit {
   private readonly pedirReferencia = new Subject<{ cultivo: string; variedad: string | null }>();
   private readonly suscripcionReferencia = this.pedirReferencia.pipe(
     debounceTime(350),
-    distinctUntilChanged((a, b) => a.cultivo === b.cultivo && a.variedad === b.variedad),
     switchMap((q) => (q.cultivo ? this.precios.deCultivo(q.cultivo, q.variedad).pipe(catchError(() => of(null))) : of(null))),
     takeUntilDestroyed(),
   ).subscribe((p) => this.referencia.set(p?.precioKg ? p : null));
