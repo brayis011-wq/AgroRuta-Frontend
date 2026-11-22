@@ -77,13 +77,26 @@ export class VentasComponent implements OnInit {
    * Siembras para elegir en la venta: las activas y, además, las terminadas que todavía tienen kilos
    * (se puede vender lo cosechado aunque la temporada ya se cerró).
    */
+  /**
+   * De qué siembra sale la venta: solo las que tienen kilos cosechados por vender (lo que no se cosechó no se
+   * vende). Al editar, también la siembra que ya tenía la venta.
+   */
   readonly opcionesSiembra = computed(() => {
-    const activas = this.cultivos();
-    const ids = new Set(activas.map((c) => c.id));
-    const extra = this.bodega().filter((k) => !ids.has(k.siembraId) && k.kgDisponibles > 0.004)
-      .map((k) => ({ id: k.siembraId, fincaNombre: k.finca, loteNombre: k.lote, tipoCultivo: k.cultivo, variedad: k.variedad }) as CultivoDisponible);
-    return [...activas, ...extra];
+    const actual = this.form()?.siembraId ?? null;
+    const lista = this.bodega().filter((k) => k.kgDisponibles > 0.004 || k.siembraId === actual)
+      .map((k) => ({ id: k.siembraId, etiqueta: `${k.finca} · ${k.lote} — ${this.nombreBodega(k)}` }));
+    if (actual != null && !lista.some((o) => o.id === actual)) {
+      const v = (this.lista() ?? []).find((x) => x.id === this.form()?.id);
+      lista.push({ id: actual, etiqueta: v?.siembraNombre ?? '—' });
+    }
+    return lista;
   });
+
+  /** Siembras que vendieron más de lo cosechado (ventas anotadas antes de registrar la cosecha) */
+  readonly sobrevendidas = computed(() => this.bodega().filter((k) => (k.kgSinCosecha ?? 0) > 0.004));
+
+  /** Lo que se llenó solo al elegir la siembra: si la persona no lo cambió, se reemplaza al elegir otra */
+  private auto = { producto: '', kg: null as number | null };
 
   readonly form = signal<FormVenta | null>(null);
   readonly cobrando = signal<Venta | null>(null);
@@ -142,13 +155,20 @@ export class VentasComponent implements OnInit {
     debounceTime(350),
     switchMap((q) => (q.cultivo ? this.precios.deCultivo(q.cultivo, q.variedad).pipe(catchError(() => of(null))) : of(null))),
     takeUntilDestroyed(),
-  ).subscribe((p) => this.referencia.set(p?.precioKg ? p : null));
+  ).subscribe((p) => {
+    this.referencia.set(p?.precioKg ? p : null);
+    // En una venta nueva sin precio, se pone el de referencia (se puede cambiar)
+    const f = this.form();
+    if (p?.precioKg && f && f.id == null && f.precioKg == null) this.form.set({ ...f, precioKg: Math.round(p.precioKg) });
+  });
 
   /**
    * De qué cultivo es la venta: el de la siembra elegida o, si no hay, el producto escrito
    * ("Mora de Castilla" → cultivo Mora, variedad "de Castilla").
    */
   private buscarReferencia(f: FormVenta): void {
+    const k = f.siembraId != null ? this.bodega().find((x) => x.siembraId === f.siembraId) : null;
+    if (k?.cultivo) { this.pedirReferencia.next({ cultivo: k.cultivo, variedad: k.variedad }); return; }
     const c = f.siembraId != null ? this.cultivos().find((x) => x.id === f.siembraId) : null;
     if (c?.tipoCultivo) { this.pedirReferencia.next({ cultivo: c.tipoCultivo, variedad: c.variedad }); return; }
     const palabras = f.producto.trim().split(' ').filter(Boolean);
@@ -169,11 +189,7 @@ export class VentasComponent implements OnInit {
   /** Vender kilos de la bodega: la venta sale con la siembra, el producto, los kilos que quedan y el precio sugerido */
   vender(k: KilosEnBodega): void {
     this.nueva();
-    const f = this.form()!;
-    const producto = [k.cultivo, k.variedad].filter(Boolean).join(' ');
-    const nuevo: FormVenta = { ...f, siembraId: k.siembraId, producto, cantidadKg: Math.round(k.kgDisponibles * 100) / 100 };
-    this.form.set(nuevo);
-    this.buscarReferencia(nuevo);
+    this.campo('siembraId', k.siembraId);
   }
 
   private abrirSiembraPedida(): void {
@@ -198,7 +214,20 @@ export class VentasComponent implements OnInit {
     if (!k) return null;
     const original = f.id == null ? null : (this.lista() ?? []).find((v) => v.id === f.id);
     const propios = original && original.siembraId === f.siembraId ? Number(original.cantidadKg ?? 0) : 0;
-    return Math.round((k.kgDisponibles + propios) * 100) / 100;
+    // Igual que el backend: lo cosechado menos lo vendido, más lo que ya tenía esta venta
+    return Math.max(0, Math.round((k.kgCosechados - k.kgVendidos + propios) * 100) / 100);
+  }
+
+  /**
+   * Los kilos escritos pasan de lo que queda de la siembra. Al editar una venta de antes que ya pasaba,
+   * bajar o dejar igual los kilos sí se puede (como en el backend).
+   */
+  pasaDeLoQueQueda(f: FormVenta): boolean {
+    const quedan = this.quedanDe(f);
+    if (f.siembraId == null || !f.cantidadKg) return false;
+    const original = f.id == null ? null : (this.lista() ?? []).find((v) => v.id === f.id);
+    if (original && original.siembraId === f.siembraId && original.cantidadKg && f.cantidadKg <= original.cantidadKg) return false;
+    return quedan == null || f.cantidadKg > quedan + 0.004;
   }
 
   nombreBodega(k: KilosEnBodega): string {
@@ -208,8 +237,16 @@ export class VentasComponent implements OnInit {
   nueva(): void {
     this.errorPanel.set(null);
     this.referencia.set(null);
+    this.auto = { producto: '', kg: null };
     this.form.set({ id: null, comprador: this.comprador() ?? '', producto: '', siembraId: null, fecha: this.hoy, cantidadKg: null,
       precioKg: null, total: null, credito: true, vence: '', metodo: 'EFECTIVO', observaciones: '' });
+  }
+
+  /** Nueva venta desde el botón: si hay una sola siembra con kilos, ya sale elegida y llena */
+  nuevaVenta(): void {
+    const conKilos = this.porVender();
+    if (conKilos.length === 1) this.vender(conKilos[0]);
+    else this.nueva();
   }
 
   editar(v: Venta): void {
@@ -225,10 +262,17 @@ export class VentasComponent implements OnInit {
     const f = this.form();
     if (!f) return;
     const nuevo = { ...f, [k]: valor };
-    // Al elegir la siembra, el producto se llena con el cultivo (si está vacío)
-    if (k === 'siembraId' && !f.producto) {
-      const c = this.cultivos().find((x) => x.id === valor);
-      if (c?.tipoCultivo) nuevo.producto = c.tipoCultivo + (c.variedad ? ' ' + c.variedad : '');
+    // Al elegir la siembra se llenan el producto y los kilos que quedan (lo que la persona escribió no se toca)
+    if (k === 'siembraId') {
+      const b = this.bodega().find((x) => x.siembraId === valor);
+      const producto = b ? this.nombreBodega(b) : '';
+      if (producto && (!f.producto || f.producto === this.auto.producto)) nuevo.producto = producto;
+      this.auto.producto = producto;
+      if (f.id == null) {
+        const quedan = this.quedanDe(nuevo);
+        if (f.cantidadKg == null || f.cantidadKg === this.auto.kg) nuevo.cantidadKg = quedan;
+        this.auto.kg = quedan;
+      }
     }
     this.form.set(nuevo);
     if (k === 'siembraId' || k === 'producto') this.buscarReferencia(nuevo);
@@ -245,6 +289,11 @@ export class VentasComponent implements OnInit {
     if (!f) return;
     const total = this.totalDe(f);
     if (!f.comprador.trim() || !f.producto.trim() || !f.fecha || !total || total <= 0) { this.errorPanel.set('ventas.errors.incomplete'); return; }
+    // De una siembra solo se vende lo que hay en su bodega de cosecha
+    if (f.siembraId != null) {
+      if (!f.cantidadKg || f.cantidadKg <= 0) { this.errorPanel.set('ventas.stock.needKg'); return; }
+      if (this.pasaDeLoQueQueda(f)) { this.errorPanel.set('ventas.stock.tooMuch'); return; }
+    }
     const req: VentaRequest = {
       siembraId: f.siembraId, comprador: f.comprador.trim(), producto: f.producto.trim(), fecha: f.fecha,
       cantidadKg: f.cantidadKg || null, precioKg: f.precioKg || null, total,

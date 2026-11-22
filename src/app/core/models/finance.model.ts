@@ -93,6 +93,8 @@ export interface KilosEnBodega {
   kgCosechados: number;
   kgVendidos: number;
   kgDisponibles: number;
+  /** Se vendió más de lo cosechado (ventas de antes de anotar la cosecha) */
+  kgSinCosecha?: number;
   ultimaCosecha: string;
   finalizada: boolean;
 }

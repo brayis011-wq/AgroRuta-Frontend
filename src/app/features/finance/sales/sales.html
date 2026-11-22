@@ -6,7 +6,7 @@
       <p class="cv-sub">{{ 'ventas.subtitle' | translate }}</p>
     </div>
     <div class="cv-acciones">
-      <button type="button" class="btn btn-prim" (click)="nueva()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'ventas.new' | translate }}</button>
+      <button type="button" class="btn btn-prim" (click)="nuevaVenta()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'ventas.new' | translate }}</button>
     </div>
   </header>
 
@@ -65,6 +65,10 @@
           </div>
         } @else {
           <p class="suave">{{ 'ventas.stock.allSold' | translate }}</p>
+        }
+        @for (k of sobrevendidas(); track k.siembraId) {
+          <p class="kilos-aviso bloque-aviso"><i class="ti ti-alert-triangle" aria-hidden="true"></i>
+            {{ 'ventas.stock.oversold' | translate: { name: nombreBodega(k), lote: k.lote, sold: k.kgVendidos, harvested: k.kgCosechados } }}</p>
         }
       </section>
     }
@@ -163,7 +167,7 @@
         <label class="campo ancho"><span>{{ 'ventas.planting' | translate }} <small class="suave">({{ 'common.optional' | translate }})</small></span>
           <select name="siembra" [ngModel]="f.siembraId" (ngModelChange)="campo('siembraId', $event)">
             <option [ngValue]="null">{{ 'ventas.noPlanting' | translate }}</option>
-            @for (c of opcionesSiembra(); track c.id) { <option [ngValue]="c.id">{{ c.fincaNombre }} · {{ c.loteNombre }}{{ c.variedad ? ' — ' + (c.tipoCultivo ? c.tipoCultivo + ' ' : '') + c.variedad : '' }}</option> }
+            @for (o of opcionesSiembra(); track o.id) { <option [ngValue]="o.id">{{ o.etiqueta }}</option> }
           </select>
         </label>
         <label class="campo ancho"><span>{{ 'ventas.product' | translate }}</span>
@@ -173,9 +177,10 @@
           <input name="fecha" type="date" [max]="hoy" [ngModel]="f.fecha" (ngModelChange)="campo('fecha', $event)" required />
         </label>
         <label class="campo"><span>{{ 'ventas.kilos' | translate }}</span>
-          <input name="kg" type="number" min="0" step="any" inputmode="decimal" [ngModel]="f.cantidadKg" (ngModelChange)="campo('cantidadKg', $event)" placeholder="0" />
+          <input name="kg" type="number" min="0" step="any" inputmode="decimal" [attr.max]="quedanDe(f)" [class.invalido]="pasaDeLoQueQueda(f)"
+                 [required]="f.siembraId != null" [ngModel]="f.cantidadKg" (ngModelChange)="campo('cantidadKg', $event)" placeholder="0" />
           @if (quedanDe(f); as quedan) {
-            @if (f.cantidadKg && f.cantidadKg > quedan + 0.004) {
+            @if (pasaDeLoQueQueda(f)) {
               <small class="kilos-aviso">{{ 'ventas.stock.over' | translate: { kg: quedan } }}</small>
             } @else {
               <small class="suave">{{ 'ventas.stock.remaining' | translate: { kg: quedan } }}</small>
