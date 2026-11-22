@@ -139,6 +139,7 @@ export class VentasComponent implements OnInit {
   private readonly router = inject(Router);
   /** ?siembra=34 (desde la ficha de la siembra): abre la venta de esos kilos al cargar */
   private siembraPedida: number | null = null;
+  private ventaPedida = false;
 
   /**
    * Siembras para elegir en la venta: las activas y, además, las terminadas que todavía tienen kilos
@@ -183,6 +184,8 @@ export class VentasComponent implements OnInit {
   ngOnInit(): void {
     const pedida = Number(this.route.snapshot.queryParamMap.get('siembra'));
     this.siembraPedida = pedida > 0 ? pedida : null;
+    // Desde el buscador ("Nueva venta"): ?nueva=1 abre el formulario al cargar
+    this.ventaPedida = this.route.snapshot.queryParamMap.get('nueva') === '1';
     this.cargar();
     this.jornales.cultivosDisponibles().subscribe({ next: (c) => this.cultivos.set(c), error: () => {} });
   }
@@ -260,6 +263,12 @@ export class VentasComponent implements OnInit {
   }
 
   private abrirSiembraPedida(): void {
+    if (this.ventaPedida) {
+      this.ventaPedida = false;
+      this.router.navigate([], { relativeTo: this.route, queryParams: { nueva: null }, queryParamsHandling: 'merge', replaceUrl: true });
+      this.nuevaVenta();
+      return;
+    }
     const id = this.siembraPedida;
     if (id == null) return;
     this.siembraPedida = null;

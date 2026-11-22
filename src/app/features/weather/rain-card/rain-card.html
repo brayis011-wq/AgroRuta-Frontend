@@ -1,4 +1,4 @@
-<section class="lluvia" [attr.aria-label]="'lluvia.title' | translate">
+<section class="lluvia" [class.compacta]="compacta()" [attr.aria-label]="'lluvia.title' | translate">
   <header>
     <h3><i class="ti ti-cloud-rain" aria-hidden="true"></i> {{ 'lluvia.title' | translate }}@if (nombre()) { <small>· {{ nombre() }}</small> }</h3>
   </header>

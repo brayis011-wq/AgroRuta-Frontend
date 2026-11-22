@@ -40,16 +40,23 @@ const PAGINAS: Pagina[] = [
   { id: 'calendar', clave: 'temporadas.cal.menu', icono: 'ti-calendar-month', ruta: '/crops/calendar' },
   { id: 'inventory', clave: 'inventario.nav', icono: 'ti-building-warehouse', ruta: '/crops/inventory' },
   { id: 'team', clave: 'layout.nav.team', icono: 'ti-users-group', ruta: '/worker' },
+  { id: 'sheet', clave: 'layout.nav.sheet', icono: 'ti-table', ruta: '/worker/sheet' },
   { id: 'wages', clave: 'layout.nav.wages', icono: 'ti-calendar-event', ruta: '/worker/workdays' },
   { id: 'newWage', clave: 'workers.wages.list.register', icono: 'ti-calendar-plus', ruta: '/worker/workdays/new' },
   { id: 'payrolls', clave: 'layout.nav.payrolls', icono: 'ti-file-invoice', ruta: '/worker/payrolls' },
   { id: 'payments', clave: 'layout.nav.payments', icono: 'ti-cash', ruta: '/worker/payments' },
+  { id: 'yield', clave: 'layout.nav.yield', icono: 'ti-chart-bar', ruta: '/worker/yield' },
+  { id: 'sales', clave: 'layout.nav.sales', icono: 'ti-receipt-2', ruta: '/finance/sales' },
+  { id: 'toSell', clave: 'ventas.stock.title', icono: 'ti-building-warehouse', ruta: '/finance/sales', seccion: 'layout.nav.sales' },
+  { id: 'expenses', clave: 'layout.nav.expenses', icono: 'ti-receipt', ruta: '/finance/expenses' },
+  { id: 'prices', clave: 'layout.nav.prices', icono: 'ti-chart-line', ruta: '/finance/prices' },
   { id: 'positions', clave: 'layout.nav.positions', icono: 'ti-id-badge-2', ruta: '/worker/positions' },
   { id: 'labors', clave: 'layout.nav.activities', icono: 'ti-checklist', ruta: '/worker/labors' },
   { id: 'reportPayroll', clave: 'layout.nav.reportPayroll', icono: 'ti-report-money', ruta: '/reports', query: { tab: 'payroll' }, seccion: 'layout.nav.reports' },
   { id: 'reportCrops', clave: 'layout.nav.reportCrops', icono: 'ti-chart-bar', ruta: '/reports', query: { tab: 'crops' }, seccion: 'layout.nav.reports' },
   { id: 'reportCosts', clave: 'reports.tabs.costs.name', icono: 'ti-coins', ruta: '/reports', query: { tab: 'costs' }, seccion: 'layout.nav.reports' },
   { id: 'reportProfit', clave: 'reports.tabs.profitability.name', icono: 'ti-trending-up', ruta: '/reports', query: { tab: 'profitability' }, seccion: 'layout.nav.reports' },
+  { id: 'reportFieldbook', clave: 'reports.tabs.fieldbook.name', icono: 'ti-notebook', ruta: '/reports', query: { tab: 'fieldbook' }, seccion: 'layout.nav.reports' },
   { id: 'settings', clave: 'layout.nav.settings', icono: 'ti-settings', ruta: '/settings' },
 ];
 
@@ -66,6 +73,9 @@ const ACCIONES_GENERALES: { id: string; icono: string; ruta: string; query?: Rec
   { id: 'worker', icono: 'ti-user-plus', ruta: '/worker', query: { nuevo: '1' } },
   { id: 'purchase', icono: 'ti-shopping-cart-plus', ruta: '/crops/inventory', query: { compra: '1' } },
   { id: 'farm', icono: 'ti-map-pin-plus', ruta: '/crops/new-farm' },
+  { id: 'sale', icono: 'ti-shopping-cart', ruta: '/finance/sales', query: { nueva: '1' } },
+  { id: 'expense', icono: 'ti-receipt', ruta: '/finance/expenses', query: { nuevo: '1' } },
+  { id: 'sheet', icono: 'ti-table', ruta: '/worker/sheet' },
 ];
 
 /** Cada palabra de la búsqueda debe aparecer en alguno de los textos */

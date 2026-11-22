@@ -33,6 +33,16 @@
         </svg>
         <p><strong>{{ 'almanaque.phase.' + almanaque.fase | translate }}</strong><small>{{ 'almanaque.lore.' + almanaque.fase | translate }}</small></p>
       </div>
+      <!-- Clima de hoy, resumido: el detalle está más abajo -->
+      @if (climaHoy(); as c) {
+        <a class="alm-clima" href="#" (click)="verClima($event)" [attr.data-consejo]="consejoHoy()" [title]="'dashboard.weatherMore' | translate">
+          <i [class]="'ti ' + iconoHoy()" aria-hidden="true"></i>
+          <p>
+            <strong>{{ grados(c) }}°C · {{ cielo(c) }}</strong>
+            <small>@if (consejoHoy(); as k) { {{ 'layout.weather.' + k | translate }} · }{{ climaLugar() || c.city }}</small>
+          </p>
+        </a>
+      }
       <p class="alm-dicho"><small>{{ 'almanaque.sayingLabel' | translate }}</small><q>{{ 'almanaque.sayings.s' + almanaque.dicho | translate }}</q></p>
     </div>
     <!-- Paisaje de la marca: loma con curvas de nivel y un campo arado con sus primeros brotes -->
@@ -219,7 +229,7 @@
   @if (climaFinca(); as f) {
     <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
                         [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" [horizontal]="ancho" />
-    @if (f.id) { <app-lluvia-finca class="lluvia-inicio" [fincaId]="f.id" /> }
+    @if (f.id) { <app-lluvia-finca class="lluvia-inicio" [fincaId]="f.id" [compacta]="true" /> }
   } @else {
     <app-weather-widget city="Bogotá" [horizontal]="ancho" />
   }

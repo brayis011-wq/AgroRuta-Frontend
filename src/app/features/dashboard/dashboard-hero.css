@@ -72,3 +72,29 @@
   .almanaque { padding-top: .7rem; }
   .alm-luna small, .alm-dicho { display: none; }
 }
+
+/* Clima de hoy, resumido junto a la luna (el detalle sigue más abajo en la página) */
+.alm-clima {
+  display: flex; align-items: center; gap: .55rem; min-width: 0; padding: .3rem .65rem .3rem .45rem; border-radius: 12px;
+  text-decoration: none; color: inherit; background: color-mix(in srgb, var(--ar-superficie) 70%, transparent); border: 1px solid var(--ar-borde);
+  transition: border-color .15s, background .15s;
+}
+.alm-clima:hover { border-color: var(--ar-azul); background: var(--ar-superficie); }
+.alm-clima:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.alm-clima > .ti { font-size: 24px; color: var(--ar-azul); flex: none; }
+.alm-clima strong { display: block; font-size: .86rem; color: var(--ar-tinta); white-space: nowrap; }
+.alm-clima small { font-size: .76rem; color: var(--ar-tinta-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.alm-clima[data-consejo="rain"] small, .alm-clima[data-consejo="wind"] small, .alm-clima[data-consejo="hot"] small { color: var(--ar-ambar); }
+.alm-clima[data-consejo="good"] small { color: var(--ar-verde-700); }
+/* En el celular se ven la luna y el clima (sin el dicho) */
+@media (max-width: 760px) {
+  .alm-clima small { display: block; }
+}
+/* En pantallas anchas, luna, clima y dicho van en una sola fila: el texto de la luna ocupa hasta dos líneas */
+@media (min-width: 1000px) {
+  .almanaque { max-width: 100%; flex-wrap: nowrap; }
+  .alm-luna { flex: 0 1 21rem; }
+  .alm-luna small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .alm-clima { flex: none; max-width: 17rem; }
+  .alm-dicho { flex: 1 1 12rem; }
+}

@@ -18,7 +18,10 @@ import { LluviaFincaComponent } from '../weather/rain-card/rain-card';
 import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget';
 import { WeatherAdviceComponent } from '../weather/weather-advice/weather-advice';
 import { formatoPesos, formatoNumero } from '../../shared/format';
-import { municipio } from '../../shared/weather';
+import { consejoFumigacion, iconoClima, municipio } from '../../shared/weather';
+import { WeatherService } from '../../core/services/weather.service';
+import { Weather } from '../../core/models/weather.model';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ContarDirective } from '../../shared/count-up.directive';
 import { almanaqueDe } from './almanac';
 import { ALTO_CLIMA, LugarClima, elegirLugarClima, emparejarColumnas, soltarColumnas } from './dashboard-columns';
@@ -108,6 +111,32 @@ export class DashboardComponent implements OnInit {
   /** Coordenadas para el widget de clima (finca elegida en el menú) */
   readonly climaFinca = computed(() => this.fincaActiva.paraClima());
   readonly climaLugar = computed(() => municipio(this.climaFinca()) || null);
+
+  // ── Clima de hoy resumido arriba, en el panel del almanaque (el detalle sigue más abajo) ──
+  private readonly weather = inject(WeatherService);
+  /** Cambia con la finca elegida en el menú; si llegan dos respuestas, vale la de la última finca */
+  readonly climaHoy = toSignal(toObservable(this.climaFinca).pipe(
+    switchMap((f) => (f?.centroideLat != null && f?.centroideLng != null
+      ? this.weather.getByCoordinates(f.centroideLat, f.centroideLng)
+      : this.weather.getByCity(municipio(f) || 'Bogotá')).pipe(catchError(() => of(null as Weather | null)))),
+  ), { initialValue: null as Weather | null });
+  readonly consejoHoy = computed(() => { const c = this.climaHoy(); return c ? consejoFumigacion(c) : null; });
+  readonly iconoHoy = computed(() => iconoClima(this.climaHoy()?.iconUrl));
+  grados(c: Weather): number {
+    return Math.round(c.temperature);
+  }
+
+  /** "lluvia moderada" → "Lluvia moderada" */
+  cielo(c: Weather): string {
+    const d = c.description ?? '';
+    return d.charAt(0).toUpperCase() + d.slice(1);
+  }
+
+  /** Lleva al clima completo (pronóstico, humedad, viento), más abajo en la página */
+  verClima(ev: Event): void {
+    ev.preventDefault();
+    document.querySelector('.inicio .clima')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 
   private readonly cuerpo = viewChild<ElementRef<HTMLElement>>('cuerpo');
 

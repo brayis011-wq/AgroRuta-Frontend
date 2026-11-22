@@ -44,6 +44,8 @@ export class LluviaFincaComponent {
   private readonly avisos = inject(AvisosService);
 
   readonly fincaId = input.required<number>();
+  /** Versión pequeña (en el Inicio): cifras en una línea, barras bajitas y el formulario más chico */
+  readonly compacta = input(false);
   readonly nombre = input<string | null>(null);
 
   readonly resumen = signal<ResumenLluvia | null>(null);

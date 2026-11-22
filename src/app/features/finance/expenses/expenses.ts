@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { GastosService } from '../../../core/services/finance.service';
@@ -33,6 +33,8 @@ const hoyIso = () => new Date().toLocaleDateString('en-CA');
 })
 export class GastosComponent implements OnInit {
   private readonly gastos = inject(GastosService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly confirm = inject(ConfirmService);
   private readonly avisos = inject(AvisosService);
   private readonly translate = inject(TranslateService);
@@ -56,6 +58,11 @@ export class GastosComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
+    // Desde el buscador ("Registrar gasto"): ?nuevo=1 abre el formulario
+    if (this.route.snapshot.queryParamMap?.get('nuevo') === '1') {
+      this.router.navigate([], { relativeTo: this.route, queryParams: { nuevo: null }, queryParamsHandling: 'merge', replaceUrl: true });
+      this.nuevo();
+    }
   }
 
   cargar(): void {
