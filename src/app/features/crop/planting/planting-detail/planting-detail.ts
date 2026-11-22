@@ -34,6 +34,7 @@ import { ResumenSiembra, siembraActiva } from '../../../../core/models/crop.mode
 import { formatoFecha, formatoNumero } from '../../../../shared/format';
 import { WeatherService } from '../../../../core/services/weather.service';
 import { VentasService } from '../../../../core/services/finance.service';
+import { quedanPorCosecha } from '../../../../shared/harvest-stock';
 import { Weather } from '../../../../core/models/weather.model';
 import { ConsejoClima, consejoFumigacion, municipio } from '../../../../shared/weather';
 
@@ -50,6 +51,7 @@ interface TimelineItem {
   calidad?: string;        // cosecha
   enCarencia?: boolean;    // cosecha registrada dentro de la carencia de una fumigación
   recolectores?: number;   // cosecha: cuántos la recogieron
+  kg?: number;             // cosecha: kilos
   carencia?: number | null;  // fumigación: días sin cosechar
   reentrada?: number | null; // fumigación: horas sin entrar
   extra?: string;
@@ -83,6 +85,21 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   private ventas = inject(VentasService);
   /** Kilos cosechados de esta siembra que todavía no se han vendido (null mientras carga o si falla) */
   kgPorVender: number | null = null;
+  /** Kilos vendidos de esta siembra (null mientras carga o si falla) */
+  private kgVendidos: number | null = null;
+  /** Cuánto queda por vender de cada cosecha (las vendidas, en 0) */
+  quedanCosecha = new Map<number, number>();
+
+  /** Lo vendido se descuenta de las cosechas más viejas primero */
+  private repartirVendido(): void {
+    this.quedanCosecha = this.kgVendidos == null ? new Map()
+      : quedanPorCosecha(this.cosechas.map((c) => ({ id: c.id, fecha: c.fecha, cantidadKg: c.cantidadKg })), this.kgVendidos);
+  }
+
+  /** null: no se sabe todavía (se muestra Vender); 0: vendida; otro: los kilos que quedan */
+  quedanDe(item: TimelineItem): number | null {
+    return item.tipo === 'cosecha' && this.quedanCosecha.has(item.id) ? this.quedanCosecha.get(item.id)! : null;
+  }
 
   /** Clima actual del lote (o del municipio de la finca) */
   clima: Weather | null = null;
@@ -305,7 +322,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       error: () => verificar(),
     });
     this.cultivoService.listarCosechas(siembraId).subscribe({
-      next: (c) => { this.cosechas = c; verificar(); },
+      next: (c) => { this.cosechas = c; this.repartirVendido(); verificar(); },
       error: () => verificar(),
     });
     this.cultivoService.totalKgCosechado(siembraId).subscribe({
@@ -345,6 +362,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       calidad: c.calidad,
       enCarencia: !!c.enCarencia,
       recolectores: c.recolectores?.length ?? 0,
+      kg: c.cantidadKg,
       extra: c.observaciones,
     }));
 
@@ -391,7 +409,10 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.ventas.kilosEnBodega().subscribe({
       next: (lista) => {
         if (this.siembra?.id !== id) return;
-        this.kgPorVender = lista.find((k) => k.siembraId === id)?.kgDisponibles ?? 0;
+        const k = lista.find((x) => x.siembraId === id);
+        this.kgPorVender = k?.kgDisponibles ?? 0;
+        this.kgVendidos = k?.kgVendidos ?? 0;
+        this.repartirVendido();
         this.cdr.detectChanges();
       },
       error: () => { this.kgPorVender = null; },

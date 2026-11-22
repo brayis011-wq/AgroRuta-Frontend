@@ -6,6 +6,13 @@ import { PreciosService, VentasService } from '../../../core/services/finance.se
 import { JornalService } from '../../../core/services/worker.service';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { KilosEnBodega, Venta } from '../../../core/models/finance.model';
+import { CultivoService } from '../../../core/services/crop.service';
+
+/** Cosechas de la siembra 34: 380 kg vendidos 120 → de la vieja quedan 260; la de segunda está entera */
+const cosechasCafe = { listarCosechas: vi.fn().mockReturnValue(of([
+  { id: 1, fecha: '2026-11-12', cantidadKg: 300, calidad: 'PRIMERA', siembraId: 34, recolectores: [{ trabajadorId: 1, modalidad: 'KILO', nombre: 'Marta Salazar' }] },
+  { id: 2, fecha: '2026-11-15', cantidadKg: 80, calidad: 'SEGUNDA', siembraId: 34, recolectores: [] },
+])) };
 
 const bodega: KilosEnBodega[] = [
   { siembraId: 10, cultivo: 'Aguacate', variedad: 'Choquette', lote: 'Lote A', finca: 'La Loma', kgCosechados: 75,
@@ -41,6 +48,7 @@ describe('VentasComponent: vender desde la bodega de la cosecha', () => {
         { provide: PreciosService, useValue: { deCultivo: vi.fn().mockReturnValue(of(null)) } },
         { provide: JornalService, useValue: { cultivosDisponibles: vi.fn().mockReturnValue(of([])) } },
         { provide: ConfirmService, useValue: { preguntar: vi.fn() } },
+        { provide: CultivoService, useValue: cosechasCafe },
       ],
     });
     component = TestBed.runInInjectionContext(() => new VentasComponent());
@@ -89,7 +97,21 @@ describe('VentasComponent: vender desde la bodega de la cosecha', () => {
     component.campo('cantidadKg', 101);
     expect(component.pasaDeLoQueQueda(component.form()!)).toBe(true);
   });
+  it('muestra de qué cosechas salen los kilos y deja vender todo, solo una calidad o lo marcado', () => {
+    component.nuevaVenta();
+    expect(component.origen().map((o) => [o.id, o.quedan])).toEqual([[2, 80], [1, 180]]);
+    expect(component.origen().find((o) => o.id === 1)!.recolectores).toEqual(['Marta Salazar']);
+    component.elegirCalidad('SEGUNDA');
+    expect(component.form()!.cantidadKg).toBe(80);
+    component.alternarCosecha(1);
+    expect(component.form()!.cantidadKg).toBe(260);
+    component.alternarCosecha(2);
+    expect(component.form()!.cantidadKg).toBe(180);
+    component.elegirCalidad(null);
+    expect(component.form()!.cantidadKg).toBe(260);
+  });
 });
+
 
 describe('VentasComponent: precio de referencia', () => {
   it('en una venta nueva pone solo el precio de referencia del cultivo', async () => {
@@ -106,6 +128,7 @@ describe('VentasComponent: precio de referencia', () => {
         { provide: PreciosService, useValue: { deCultivo: vi.fn().mockReturnValue(of({ cultivo: 'Café', fuente: 'PROPIO', producto: null, precioKg: 17800.4, alternativas: [] })) } },
         { provide: JornalService, useValue: { cultivosDisponibles: vi.fn().mockReturnValue(of([])) } },
         { provide: ConfirmService, useValue: { preguntar: vi.fn() } },
+        { provide: CultivoService, useValue: cosechasCafe },
       ],
     });
     const c = TestBed.runInInjectionContext(() => new VentasComponent());

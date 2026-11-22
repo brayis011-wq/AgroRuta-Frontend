@@ -204,7 +204,7 @@
                     @switch (item.tipo) {
                       @case ('actividad') { {{ item.detalle }} }
                       @case ('fumigacion') { {{ num(item.dosis, 2) }} {{ 'enums.unidadMedida.' + item.unidad | translate }} · {{ num(item.area, 2) }} ha@if (item.carencia) { · {{ 'temporadas.carencia.daysShort' | translate: { days: item.carencia } }} }@if (item.reentrada) { · {{ 'temporadas.carencia.reentryShort' | translate: { hours: item.reentrada } }} } }
-                      @case ('cosecha') { {{ 'siembra.detail.history.quality' | translate }}: {{ 'enums.calidadCosecha.' + item.calidad | translate }}@if (item.recolectores) { · {{ 'siembra.harvest.pickersCount' | translate: { n: item.recolectores } }} }@if (item.enCarencia) { · <b class="en-carencia">{{ 'temporadas.carencia.harvestedInside' | translate }}</b> } }
+                      @case ('cosecha') { {{ 'siembra.detail.history.quality' | translate }}: {{ 'enums.calidadCosecha.' + item.calidad | translate }}@if (item.recolectores) { · {{ 'siembra.harvest.pickersCount' | translate: { n: item.recolectores } }} }@if (item.enCarencia) { · <b class="en-carencia">{{ 'temporadas.carencia.harvestedInside' | translate }}</b> }@if (quedanDe(item); as q) { @if (q < (item.kg ?? 0)) { · <b class="parcial">{{ 'siembra.harvest.leftToSell' | translate: { kg: num(q, 1) } }}</b> } } }
                     }
                   </small>
                   @if (item.extra) { <small class="extra">{{ item.extra }}</small> }
@@ -212,8 +212,12 @@
                 <time>{{ fmtFecha(item.fecha) }}</time>
                 <span class="reg-btns">
                   @if (item.tipo === 'cosecha') {
-                    <!-- Lo cosechado queda en la bodega de Ventas: de ahí se vende poniéndole precio -->
-                    <a class="reg-btn" routerLink="/finance/sales" [queryParams]="{ siembra: siembra.id }" [title]="'siembra.harvest.sell' | translate"><i class="ti ti-shopping-cart"></i><span>{{ 'siembra.harvest.sell' | translate }}</span></a>
+                    <!-- Lo cosechado queda en la bodega de Ventas: de ahí se vende poniéndole precio; la ya vendida lo dice -->
+                    @if (quedanDe(item) === 0) {
+                      <span class="vendida" [title]="'siembra.harvest.soldHint' | translate"><i class="ti ti-circle-check"></i><span>{{ 'siembra.harvest.sold' | translate }}</span></span>
+                    } @else {
+                      <a class="reg-btn" routerLink="/finance/sales" [queryParams]="{ siembra: siembra.id }" [title]="'siembra.harvest.sell' | translate"><i class="ti ti-shopping-cart"></i><span>{{ 'siembra.harvest.sell' | translate }}</span></a>
+                    }
                   }
                   <button type="button" class="reg-btn" (click)="editarRegistro(item)" [title]="'common.edit' | translate"><i class="ti ti-pencil"></i><span>{{ 'common.edit' | translate }}</span></button>
                   <button type="button" class="reg-btn peligro" (click)="eliminarRegistro(item)" [title]="'temporadas.registro.delete' | translate" [attr.aria-label]="'temporadas.registro.delete' | translate"><i class="ti ti-trash"></i></button>

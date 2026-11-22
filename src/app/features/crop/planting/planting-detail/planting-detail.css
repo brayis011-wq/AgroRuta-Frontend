@@ -84,3 +84,7 @@ a.reg-btn { text-decoration: none; }
 }
 a.por-vender { display: block; margin-top: .2rem; font-size: .78rem; font-weight: 700; color: var(--ar-verde-700); text-decoration: none; }
 a.por-vender:hover { text-decoration: underline; }
+/* Cosecha ya vendida (lo vendido se descuenta de las más viejas primero) */
+.vendida { display: inline-flex; align-items: center; gap: .3rem; height: 32px; padding: 0 .65rem; border-radius: 9px; font-size: .8rem; font-weight: 600; color: var(--ar-verde-700); background: var(--ar-verde-50); }
+.reg-txt .parcial { color: var(--ar-verde-700); font-weight: 600; }
+@media (max-width: 760px) { .vendida > span { display: none; } .vendida { width: 32px; padding: 0; justify-content: center; } }

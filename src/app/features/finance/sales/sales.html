@@ -170,6 +170,35 @@
             @for (o of opcionesSiembra(); track o.id) { <option [ngValue]="o.id">{{ o.etiqueta }}</option> }
           </select>
         </label>
+        <!-- Una venta junta los kilos de todas las cosechas y de todos los recolectores; aquí se decide cuánto vender -->
+        @if (f.id == null && origen().length) {
+          <div class="origen ancho">
+            <span class="origen-titulo">{{ 'ventas.origin.title' | translate }}</span>
+            <div class="origen-atajos" role="group" [attr.aria-label]="'ventas.origin.howMuch' | translate">
+              <button type="button" class="chip" (click)="elegirCalidad(null)">{{ 'ventas.origin.all' | translate: { kg: (quedanDe(f) ?? 0) } }}</button>
+              @if (porCalidad().length > 1) {
+                @for (c of porCalidad(); track c.calidad) {
+                  <button type="button" class="chip" (click)="elegirCalidad(c.calidad)">{{ 'ventas.origin.onlyQuality' | translate: { quality: ('enums.calidadCosecha.' + c.calidad | translate), kg: c.kg } }}</button>
+                }
+              }
+            </div>
+            <ul class="origen-lista">
+              @for (o of origen(); track o.id) {
+                <li>
+                  <label>
+                    <input type="checkbox" [checked]="elegidas().has(o.id)" (change)="alternarCosecha(o.id)" />
+                    <span class="origen-dato">
+                      <strong>{{ o.fecha | fecha }} · {{ 'enums.calidadCosecha.' + o.calidad | translate }} · {{ o.quedan }} kg</strong>
+                      @if (o.quedan < o.kg) { <small>{{ 'ventas.origin.partOf' | translate: { kg: o.kg } }}</small> }
+                      @if (o.recolectores.length) { <small>{{ o.recolectores.join(', ') }}</small> }
+                    </span>
+                  </label>
+                </li>
+              }
+            </ul>
+            <small class="suave">{{ 'ventas.origin.hint' | translate }}</small>
+          </div>
+        }
         <label class="campo ancho"><span>{{ 'ventas.product' | translate }}</span>
           <input name="producto" maxlength="120" [ngModel]="f.producto" (ngModelChange)="campo('producto', $event)" [placeholder]="'ventas.productPlaceholder' | translate" required />
         </label>

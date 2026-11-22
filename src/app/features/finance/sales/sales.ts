@@ -9,6 +9,18 @@ import { PreciosService, VentasService } from '../../../core/services/finance.se
 import { KilosEnBodega, PrecioCultivo } from '../../../core/models/finance.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CultivoDisponible, JornalService } from '../../../core/services/worker.service';
+import { CultivoService } from '../../../core/services/crop.service';
+import { quedanPorCosecha } from '../../../shared/harvest-stock';
+
+/** Una cosecha de la siembra elegida con lo que queda de ella, para armar la venta */
+interface OrigenKilos {
+  id: number;
+  fecha: string;
+  calidad: string;
+  kg: number;
+  quedan: number;
+  recolectores: string[];
+}
 import { EstadoVenta, MetodoCobro, ResumenVentas, Venta, VentaRequest } from '../../../core/models/finance.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { AvisosService } from '../../../core/services/toast.service';
@@ -46,6 +58,61 @@ const hoyIso = () => new Date().toLocaleDateString('en-CA');
 export class VentasComponent implements OnInit {
   private readonly ventas = inject(VentasService);
   private readonly jornales = inject(JornalService);
+  private readonly cultivoSvc = inject(CultivoService);
+
+  // ── De dónde salen los kilos: las cosechas de la siembra con lo que queda de cada una ──
+  readonly origen = signal<OrigenKilos[]>([]);
+  /** Las cosechas que entran en esta venta (todas al empezar) */
+  readonly elegidas = signal<Set<number>>(new Set());
+  /** Lo que queda, sumado por calidad (para "Solo primera"...) */
+  readonly porCalidad = computed(() => {
+    const suma = new Map<string, number>();
+    for (const o of this.origen()) suma.set(o.calidad, (suma.get(o.calidad) ?? 0) + o.quedan);
+    return [...suma.entries()].map(([calidad, kg]) => ({ calidad, kg: Math.round(kg * 100) / 100 }));
+  });
+
+  private cargarOrigen(siembraId: number | null): void {
+    this.origen.set([]);
+    this.elegidas.set(new Set());
+    const k = siembraId == null ? null : this.bodega().find((x) => x.siembraId === siembraId);
+    if (!k) return;
+    this.cultivoSvc.listarCosechas(k.siembraId).subscribe({
+      next: (lista) => {
+        if (this.form()?.siembraId !== k.siembraId) return;
+        const quedan = quedanPorCosecha(lista.map((c) => ({ id: c.id, fecha: c.fecha, cantidadKg: c.cantidadKg })), k.kgVendidos);
+        const filas = lista.filter((c) => (quedan.get(c.id!) ?? 0) > 0.004)
+          .sort((a, b) => b.fecha.localeCompare(a.fecha))
+          .map((c) => ({ id: c.id!, fecha: c.fecha, calidad: c.calidad, kg: c.cantidadKg, quedan: quedan.get(c.id!)!,
+            recolectores: (c.recolectores ?? []).map((r) => r.nombre ?? '').filter(Boolean) }));
+        this.origen.set(filas);
+        this.elegidas.set(new Set(filas.map((f) => f.id)));
+      },
+      error: () => { /* sin el detalle: la venta se arma con el total de la siembra */ },
+    });
+  }
+
+  /** Marcar o quitar una cosecha: los kilos de la venta son la suma de lo que queda de las marcadas */
+  alternarCosecha(id: number): void {
+    const s = new Set(this.elegidas());
+    if (s.has(id)) s.delete(id); else s.add(id);
+    this.elegidas.set(s);
+    this.usarKilos(this.origen().filter((o) => s.has(o.id)).reduce((t, o) => t + o.quedan, 0));
+  }
+
+  /** Atajo: vender todo, o solo lo de una calidad */
+  elegirCalidad(calidad: string | null): void {
+    const filas = this.origen().filter((o) => calidad == null || o.calidad === calidad);
+    this.elegidas.set(new Set(filas.map((o) => o.id)));
+    this.usarKilos(filas.reduce((t, o) => t + o.quedan, 0));
+  }
+
+  private usarKilos(kg: number): void {
+    const f = this.form();
+    if (!f) return;
+    const redondo = Math.round(kg * 100) / 100;
+    this.auto.kg = redondo;
+    this.form.set({ ...f, cantidadKg: redondo || null });
+  }
   private readonly confirm = inject(ConfirmService);
   private readonly avisos = inject(AvisosService);
   private readonly translate = inject(TranslateService);
@@ -238,6 +305,7 @@ export class VentasComponent implements OnInit {
     this.errorPanel.set(null);
     this.referencia.set(null);
     this.auto = { producto: '', kg: null };
+    this.origen.set([]);
     this.form.set({ id: null, comprador: this.comprador() ?? '', producto: '', siembraId: null, fecha: this.hoy, cantidadKg: null,
       precioKg: null, total: null, credito: true, vence: '', metodo: 'EFECTIVO', observaciones: '' });
   }
@@ -275,6 +343,7 @@ export class VentasComponent implements OnInit {
       }
     }
     this.form.set(nuevo);
+    if (k === 'siembraId' && nuevo.id == null) this.cargarOrigen(nuevo.siembraId);
     if (k === 'siembraId' || k === 'producto') this.buscarReferencia(nuevo);
   }
 

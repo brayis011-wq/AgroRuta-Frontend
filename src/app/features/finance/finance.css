@@ -100,3 +100,16 @@
 .usar:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
 .bloque-aviso { margin: .6rem 0 0; display: flex; gap: .4rem; align-items: flex-start; padding: .55rem .75rem; border-radius: 10px; background: var(--ar-ambar-bg); font-size: .82rem; }
 input.invalido { border-color: var(--ar-ambar); box-shadow: 0 0 0 3px var(--ar-ambar-bg); }
+/* De dónde salen los kilos de la venta: las cosechas de la siembra y quién las recogió */
+.origen { display: flex; flex-direction: column; gap: .5rem; padding: .7rem .8rem; border: 1px solid var(--ar-borde); border-radius: 12px; background: var(--ar-fondo); }
+.origen-titulo { font-size: .82rem; font-weight: 600; color: var(--ar-tinta); }
+.origen-atajos { display: flex; flex-wrap: wrap; gap: .4rem; }
+.origen-atajos .chip { border: 1px solid var(--ar-borde); background: var(--ar-superficie); border-radius: 99px; padding: .3rem .7rem; font: inherit; font-size: .78rem; font-weight: 600; color: var(--ar-verde-700); cursor: pointer; }
+.origen-atajos .chip:hover { background: var(--ar-verde-50); }
+.origen-atajos .chip:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.origen-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .35rem; max-height: 220px; overflow-y: auto; }
+.origen-lista label { display: flex; align-items: flex-start; gap: .55rem; padding: .45rem .55rem; border-radius: 9px; background: var(--ar-superficie); cursor: pointer; }
+.origen-lista input { width: 1.05rem; height: 1.05rem; margin-top: .15rem; accent-color: var(--ar-verde-600); flex: none; }
+.origen-dato { display: flex; flex-direction: column; min-width: 0; }
+.origen-dato strong { font-size: .85rem; }
+.origen-dato small { font-size: .74rem; color: var(--ar-tinta-3); white-space: normal; }
