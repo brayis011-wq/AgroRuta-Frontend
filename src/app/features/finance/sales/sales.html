@@ -139,8 +139,15 @@
           <input name="kg" type="number" min="0" step="any" inputmode="decimal" [ngModel]="f.cantidadKg" (ngModelChange)="campo('cantidadKg', $event)" placeholder="0" />
         </label>
         <label class="campo"><span>{{ 'ventas.pricePerKilo' | translate }}</span>
-          <input name="precio" type="number" min="0" step="any" inputmode="decimal" [ngModel]="f.precioKg" (ngModelChange)="campo('precioKg', $event)" placeholder="0" />
+          <input name="precio" type="number" min="0" step="any" inputmode="decimal" [ngModel]="f.precioKg" (ngModelChange)="campo('precioKg', $event)" [placeholder]="ejemploPrecio()" />
         </label>
+        @if (referencia(); as r) {
+          <p class="referencia ancho">
+            <i class="ti ti-chart-line" aria-hidden="true"></i>
+            <span>{{ (r.fuente === 'PROPIO' ? 'precios.hintOwn' : 'precios.hintSipsa') | translate: { price: (r.precioKg | pesos), product: r.producto } }}</span>
+            @if (f.precioKg !== r.precioKg) { <button type="button" class="usar" (click)="usarReferencia()">{{ 'precios.use' | translate }}</button> }
+          </p>
+        }
         <label class="campo"><span>{{ 'ventas.total' | translate }}</span>
           @if (f.cantidadKg && f.precioKg) {
             <output class="total-calc">{{ totalDe(f) | pesos }}</output>

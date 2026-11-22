@@ -72,3 +72,10 @@
 .peligro-t { color: var(--ar-rojo); margin-right: auto; }
 .prod { max-width: 15rem; }
 .tabla td.acc { padding-right: .9rem; }
+
+/* Precio de referencia del cultivo sugerido en la venta */
+.referencia { margin: -.2rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; padding: .5rem .65rem; border-radius: 10px;
+  background: var(--ar-azul-bg); color: var(--ar-azul); font-size: .8rem; }
+.referencia span { flex: 1; min-width: 12rem; }
+.usar { border: 1px solid currentColor; background: transparent; color: inherit; font: inherit; font-weight: 700; border-radius: 8px; padding: .25rem .6rem; cursor: pointer; }
+.usar:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }

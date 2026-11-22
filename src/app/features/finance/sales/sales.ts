@@ -1,8 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { forkJoin } from 'rxjs';
-import { VentasService } from '../../../core/services/finance.service';
+import { Subject, catchError, debounceTime, distinctUntilChanged, forkJoin, of, switchMap } from 'rxjs';
+import { PreciosService, VentasService } from '../../../core/services/finance.service';
+import { PrecioCultivo } from '../../../core/models/finance.model';
 import { CultivoDisponible, JornalService } from '../../../core/services/worker.service';
 import { EstadoVenta, MetodoCobro, ResumenVentas, Venta, VentaRequest } from '../../../core/models/finance.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
@@ -94,8 +97,43 @@ export class VentasComponent implements OnInit {
 
   // ── Venta ──
 
+  // ── Precio de referencia del cultivo (SIPSA o el propio) para sugerir el precio por kilo ──
+
+  private readonly precios = inject(PreciosService);
+  readonly referencia = signal<PrecioCultivo | null>(null);
+  private readonly pedirReferencia = new Subject<{ cultivo: string; variedad: string | null }>();
+  private readonly suscripcionReferencia = this.pedirReferencia.pipe(
+    debounceTime(350),
+    distinctUntilChanged((a, b) => a.cultivo === b.cultivo && a.variedad === b.variedad),
+    switchMap((q) => (q.cultivo ? this.precios.deCultivo(q.cultivo, q.variedad).pipe(catchError(() => of(null))) : of(null))),
+    takeUntilDestroyed(),
+  ).subscribe((p) => this.referencia.set(p?.precioKg ? p : null));
+
+  /**
+   * De qué cultivo es la venta: el de la siembra elegida o, si no hay, el producto escrito
+   * ("Mora de Castilla" → cultivo Mora, variedad "de Castilla").
+   */
+  private buscarReferencia(f: FormVenta): void {
+    const c = f.siembraId != null ? this.cultivos().find((x) => x.id === f.siembraId) : null;
+    if (c?.tipoCultivo) { this.pedirReferencia.next({ cultivo: c.tipoCultivo, variedad: c.variedad }); return; }
+    const palabras = f.producto.trim().split(' ').filter(Boolean);
+    this.pedirReferencia.next({ cultivo: palabras[0] ?? '', variedad: palabras.slice(1).join(' ') || null });
+  }
+
+  /** Lo que se ve en gris en el campo vacío: el precio de referencia redondeado */
+  ejemploPrecio(): string {
+    const p = this.referencia()?.precioKg;
+    return p ? String(Math.round(p)) : '0';
+  }
+
+  usarReferencia(): void {
+    const p = this.referencia();
+    if (p?.precioKg) this.campo('precioKg', Math.round(p.precioKg));
+  }
+
   nueva(): void {
     this.errorPanel.set(null);
+    this.referencia.set(null);
     this.form.set({ id: null, comprador: this.comprador() ?? '', producto: '', siembraId: null, fecha: this.hoy, cantidadKg: null,
       precioKg: null, total: null, credito: true, vence: '', metodo: 'EFECTIVO', observaciones: '' });
   }
@@ -105,6 +143,8 @@ export class VentasComponent implements OnInit {
     this.form.set({ id: v.id, comprador: v.comprador, producto: v.producto, siembraId: v.siembraId, fecha: v.fecha,
       cantidadKg: v.cantidadKg, precioKg: v.precioKg, total: v.total, credito: true, vence: v.vence ?? '',
       metodo: 'EFECTIVO', observaciones: v.observaciones ?? '' });
+    this.referencia.set(null);
+    this.buscarReferencia(this.form()!);
   }
 
   campo<K extends keyof FormVenta>(k: K, valor: FormVenta[K]): void {
@@ -117,6 +157,7 @@ export class VentasComponent implements OnInit {
       if (c?.tipoCultivo) nuevo.producto = c.tipoCultivo + (c.variedad ? ' ' + c.variedad : '');
     }
     this.form.set(nuevo);
+    if (k === 'siembraId' || k === 'producto') this.buscarReferencia(nuevo);
   }
 
   /** Kilos × precio cuando están los dos; si no, el total escrito */
