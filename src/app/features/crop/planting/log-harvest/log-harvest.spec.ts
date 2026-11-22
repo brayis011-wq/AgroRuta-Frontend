@@ -4,14 +4,14 @@ import { of, throwError } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { RegistrarCosecha } from './log-harvest';
 import { CultivoService } from '../../../../core/services/crop.service';
-import { PreciosService } from '../../../../core/services/finance.service';
+import { TrabajadorService } from '../../../../core/services/worker.service';
 
 describe('RegistrarCosecha', () => {
   let component: RegistrarCosecha;
   let fixture: ComponentFixture<RegistrarCosecha>;
   let cultivoServiceMock: any;
   let routerMock: any;
-  let preciosMock: any;
+  let trabajadoresMock: any;
 
   beforeEach(async () => {
     cultivoServiceMock = {
@@ -19,8 +19,14 @@ describe('RegistrarCosecha', () => {
       registrarCosecha: vi.fn().mockReturnValue(of({})),
       buscarSiembra: vi.fn().mockReturnValue(of({ id: 5, tipoCultivo: 'Lulo', variedad: 'Castilla' })),
     };
-    preciosMock = {
-      deCultivo: vi.fn().mockReturnValue(of({ cultivo: 'Lulo', fuente: 'SIPSA', producto: 'Lulo', precioKg: 3500.4, alternativas: [] })),
+    trabajadoresMock = {
+      listar: vi.fn().mockReturnValue(of([
+        { id: 1, nombre: 'Leo', apellido: 'Paz', cedula: '1', nombreCompleto: 'Leo Paz', estado: 'ACTIVO',
+          cargo: { nombre: 'Recolector', descripcion: '', valorJornal: 0, modalidadPago: 'KILO', valorKilo: 900, activo: true } },
+        { id: 2, nombre: 'Eva', apellido: 'Ruiz', cedula: '2', nombreCompleto: 'Eva Ruiz', estado: 'ACTIVO',
+          cargo: { nombre: 'Jornalero', descripcion: '', valorJornal: 60000, modalidadPago: 'JORNAL', activo: true } },
+        { id: 3, nombre: 'Ana', apellido: 'Gil', cedula: '3', nombreCompleto: 'Ana Gil', estado: 'INACTIVO' },
+      ])),
     };
 
 
@@ -28,7 +34,7 @@ describe('RegistrarCosecha', () => {
       imports: [RegistrarCosecha],
       providers: [
         { provide: CultivoService, useValue: cultivoServiceMock },
-        { provide: PreciosService, useValue: preciosMock },
+        { provide: TrabajadorService, useValue: trabajadoresMock },
         provideRouter([]),
         {
           provide: ActivatedRoute,
@@ -62,11 +68,59 @@ describe('RegistrarCosecha', () => {
     expect(component.form.fecha).toBe(today);
   });
 
-  it('pide el precio de referencia del cultivo de la siembra y lo usa al tocar Usar', () => {
-    expect(preciosMock.deCultivo).toHaveBeenCalledWith('Lulo', 'Castilla');
-    expect(component.referencia?.precioKg).toBe(3500.4);
-    component.usarReferencia();
-    expect(component.form.precioKg).toBe(3500);
+  it('trae solo el equipo activo para anotar quién recogió', () => {
+    expect(component.equipo.map((t) => t.id)).toEqual([2, 1]);
+  });
+
+  it('cada recolector toma la forma de pago de su cargo y los kilos suman el total', () => {
+    component.agregarRecolector();
+    component.agregarRecolector();
+    const [a, b] = component.recolectores;
+    component.elegirTrabajador(a, 1);
+    component.elegirTrabajador(b, 2);
+    expect(a.modalidad).toBe('KILO');
+    expect(a.valorKilo).toBe(900);
+    expect(b.modalidad).toBe('DIA');
+    expect(b.valorDia).toBe(60000);
+    a.kilos = 70;
+    component.sumarKilos();
+    expect(component.form.cantidadKg).toBe(70);
+    expect(component.valorDe(a)).toBe(63000);
+    expect(component.manoObra).toBe(123000);
+    // Ya elegidos, no se ofrecen en otra fila
+    expect(component.disponiblesPara(null)).toEqual([]);
+  });
+
+  it('envía los recolectores con la cosecha', () => {
+    component.form = { ...component.form, fecha: '2024-04-01', calidad: 'PRIMERA' };
+    component.agregarRecolector();
+    const fila = component.recolectores[0];
+    component.elegirTrabajador(fila, 1);
+    fila.kilos = 40;
+    component.sumarKilos();
+    component.onSubmit();
+    expect(cultivoServiceMock.registrarCosecha).toHaveBeenCalledWith(expect.objectContaining({
+      cantidadKg: 40,
+      recolectores: [{ trabajadorId: 1, modalidad: 'KILO', kilos: 40, valorKilo: 900, valorDia: null }],
+    }));
+  });
+
+  it('no envía si a un recolector le falta algo o si suman más kilos que la cosecha', () => {
+    component.agregarRecolector();
+    component.onSubmit();
+    expect(component.error).toBe('siembra.harvest.pickers.incomplete');
+
+    const fila = component.recolectores[0];
+    component.elegirTrabajador(fila, 1);
+    fila.kilos = 90;
+    component.form.cantidadKg = 50;
+    component.alEscribirTotal();
+    component.onSubmit();
+    expect(component.error).toBe('siembra.harvest.pickers.tooMany');
+    expect(cultivoServiceMock.registrarCosecha).not.toHaveBeenCalled();
+    expect(component.totalDistinto).toBe(true);
+    component.usarSuma();
+    expect(component.form.cantidadKg).toBe(90);
   });
 
   it('should have calidades list', () => {
@@ -82,7 +136,7 @@ describe('RegistrarCosecha', () => {
       siembraId: 5,
     };
     component.onSubmit();
-    expect(cultivoServiceMock.registrarCosecha).toHaveBeenCalledWith({ ...component.form, confirmarCarencia: false });
+    expect(cultivoServiceMock.registrarCosecha).toHaveBeenCalledWith({ ...component.form, confirmarCarencia: false, recolectores: [] });
   });
 
   it('onSubmit() should set exito and navigate on success', () => {

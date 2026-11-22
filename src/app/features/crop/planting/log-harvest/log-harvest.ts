@@ -11,8 +11,22 @@ import { CultivoService } from '../../../../core/services/crop.service';
 import { RestriccionVigente } from '../../../../core/models/crop.model';
 import { LanguageService } from '../../../../core/services/language.service';
 import { formatoFecha, formatoPesos } from '../../../../shared/format';
-import { PreciosService } from '../../../../core/services/finance.service';
-import { PrecioCultivo } from '../../../../core/models/finance.model';
+import { TrabajadorService } from '../../../../core/services/worker.service';
+import { Trabajador } from '../../../../core/models/worker.model';
+import { Recolector } from '../../../../core/models/crop.model';
+
+/** Una fila de "¿Quién la recogió?" mientras se llena el formulario */
+interface FilaRecolector {
+  trabajadorId: number | null;
+  modalidad: 'KILO' | 'DIA';
+  kilos: number | null;
+  valorKilo: number | null;
+  valorDia: number | null;
+  /** Ya está en una nómina aprobada o pagada: se muestra pero no se cambia */
+  fija: boolean;
+  nombre?: string;
+  estadoNomina?: string | null;
+}
 
 @Component({
   selector: 'app-registrar-cosecha',
@@ -55,6 +69,15 @@ export class RegistrarCosecha implements OnInit {
     precioKg: null as number | null,
   };
 
+  // ── Quién la recogió ──
+  private readonly trabajadorSvc = inject(TrabajadorService);
+  /** El equipo activo (con su cargo: por kilo o por día y cuánto) */
+  equipo: Trabajador[] = [];
+  equipoCargado = false;
+  recolectores: FilaRecolector[] = [];
+  /** La persona escribió el total a mano: ya no se llena con la suma de los recolectores */
+  private kgManual = false;
+
   calidades = ['PRIMERA', 'SEGUNDA', 'TERCERA'];
 
   constructor(
@@ -65,12 +88,101 @@ export class RegistrarCosecha implements OnInit {
   ) {}
 
   private readonly ultimo = inject(UltimoUsadoService);
-  private readonly precios = inject(PreciosService);
-  /** Precio de referencia del cultivo (SIPSA o el propio), para sugerir el precio del kilo */
-  referencia: PrecioCultivo | null = null;
 
-  usarReferencia(): void {
-    if (this.referencia?.precioKg) this.form.precioKg = Math.round(this.referencia.precioKg);
+  private cargo(id: number | null): Trabajador['cargo'] | undefined {
+    return this.equipo.find((t) => t.id === id)?.cargo;
+  }
+
+  /** Los del equipo que todavía no están en otra fila */
+  disponiblesPara(fila: FilaRecolector | null): Trabajador[] {
+    const usados = new Set(this.recolectores.filter((r) => r !== fila).map((r) => r.trabajadorId));
+    return this.equipo.filter((t) => !usados.has(t.id ?? null));
+  }
+
+  agregarRecolector(): void {
+    const fila: FilaRecolector = { trabajadorId: null, modalidad: 'KILO', kilos: null, valorKilo: null, valorDia: null, fija: false };
+    const libres = this.disponiblesPara(null);
+    this.recolectores = [...this.recolectores, fila];
+    // Con una sola persona libre, ya queda elegida
+    if (libres.length === 1) this.elegirTrabajador(fila, libres[0].id!);
+    this.tocado = true;
+  }
+
+  quitarRecolector(fila: FilaRecolector): void {
+    this.recolectores = this.recolectores.filter((r) => r !== fila);
+    this.sumarKilos();
+    this.tocado = true;
+  }
+
+  /** Al elegir a alguien, la forma de pago y los valores salen de su cargo (se pueden cambiar) */
+  elegirTrabajador(fila: FilaRecolector, id: number | string | null): void {
+    fila.trabajadorId = id == null || id === '' ? null : Number(id);
+    const c = this.cargo(fila.trabajadorId);
+    fila.modalidad = c?.modalidadPago === 'KILO' ? 'KILO' : c ? 'DIA' : 'KILO';
+    fila.valorKilo = c?.valorKilo ?? null;
+    fila.valorDia = c?.valorJornal || null;
+    this.sumarKilos();
+  }
+
+  cambiarModalidad(fila: FilaRecolector, m: 'KILO' | 'DIA'): void {
+    fila.modalidad = m;
+    this.sumarKilos();
+    this.tocado = true;
+  }
+
+  /** Lo que se le paga a esa persona por esta cosecha */
+  valorDe(f: FilaRecolector): number | null {
+    if (f.modalidad === 'KILO') return f.kilos && f.valorKilo ? Math.round(f.kilos * f.valorKilo) : null;
+    return f.valorDia || null;
+  }
+
+  get kilosRecolectores(): number {
+    return this.recolectores.reduce((s, r) => s + (r.modalidad === 'KILO' && r.kilos ? Number(r.kilos) : 0), 0);
+  }
+
+  get manoObra(): number {
+    return this.recolectores.reduce((s, r) => s + (this.valorDe(r) ?? 0), 0);
+  }
+
+  /** El total de la cosecha es la suma de los kilos de los recolectores, mientras no se escriba a mano */
+  sumarKilos(): void {
+    if (this.kgManual) return;
+    const suma = this.kilosRecolectores;
+    if (suma > 0) this.form.cantidadKg = Math.round(suma * 100) / 100;
+  }
+
+  alEscribirTotal(): void {
+    this.kgManual = true;
+  }
+
+  /** El total escrito no coincide con lo que suman los recolectores al kilo */
+  get totalDistinto(): boolean {
+    const suma = this.kilosRecolectores;
+    return suma > 0 && Math.abs(suma - Number(this.form.cantidadKg || 0)) > 0.01;
+  }
+
+  usarSuma(): void {
+    this.kgManual = false;
+    this.sumarKilos();
+  }
+
+  /** Falta algo en una fila: quién, los kilos o cuánto se le paga */
+  private filaIncompleta(): boolean {
+    return this.recolectores.some((r) => !r.fija && (!r.trabajadorId
+      || (r.modalidad === 'KILO' ? !r.kilos || !r.valorKilo : !r.valorDia)));
+  }
+
+  private paraEnviar(): Recolector[] {
+    return this.recolectores.map((r) => ({
+      trabajadorId: r.trabajadorId!, modalidad: r.modalidad,
+      kilos: r.modalidad === 'KILO' ? Number(r.kilos) : null,
+      valorKilo: r.modalidad === 'KILO' && r.valorKilo ? Number(r.valorKilo) : null,
+      valorDia: r.modalidad === 'DIA' && r.valorDia ? Number(r.valorDia) : null,
+    }));
+  }
+
+  nombreDe(id: number | null): string {
+    return this.equipo.find((t) => t.id === id)?.nombreCompleto ?? '';
   }
 
   // ── Cambios sin guardar: cuenta solo lo que escribe o elige la persona (no lo que la app rellena sola) ──
@@ -92,15 +204,14 @@ export class RegistrarCosecha implements OnInit {
     this.form.siembraId = this.siembraId;
     this.form.fecha = new Date().toLocaleDateString('en-CA');
 
-    this.cultivoService.buscarSiembra(this.siembraId).subscribe({
-      next: (s) => {
-        if (!s?.tipoCultivo) return;
-        this.precios.deCultivo(s.tipoCultivo, s.variedad).subscribe({
-          next: (p) => { this.referencia = p.precioKg ? p : null; this.cdr.detectChanges(); },
-          error: () => { /* sin precio de referencia */ },
-        });
+    this.trabajadorSvc.listar().subscribe({
+      next: (lista) => {
+        this.equipo = (lista ?? []).filter((t) => !t.estado || t.estado === 'ACTIVO')
+          .sort((a, b) => (a.nombreCompleto ?? '').localeCompare(b.nombreCompleto ?? ''));
+        this.equipoCargado = true;
+        this.cdr.detectChanges();
       },
-      error: () => { /* sin precio de referencia */ },
+      error: () => { this.equipoCargado = true; this.cdr.detectChanges(); },
     });
 
     this.cultivoService.resumenSiembra(this.siembraId).subscribe({
@@ -109,13 +220,18 @@ export class RegistrarCosecha implements OnInit {
     });
 
     const registro = this.route.snapshot.paramMap.get('registroId');
-    // Una cosecha nueva empieza con el precio del kilo de la anterior (casi siempre es el mismo)
-    if (!registro) this.form.precioKg = this.ultimo.leer<{ precioKg?: number | null }>('cosecha')?.precioKg ?? this.form.precioKg;
     if (registro) {
       this.registroId = Number(registro);
       this.cultivoService.buscarCosecha(this.registroId).subscribe({
         next: (c) => {
           this.form = { ...this.form, fecha: c.fecha, cantidadKg: c.cantidadKg, calidad: c.calidad, observaciones: c.observaciones ?? '', precioKg: c.precioKg ?? null };
+          this.recolectores = (c.recolectores ?? []).map((r) => ({
+            trabajadorId: r.trabajadorId, modalidad: r.modalidad, kilos: r.kilos ?? null, valorKilo: r.valorKilo ?? null,
+            valorDia: r.modalidad === 'DIA' ? r.valor ?? null : null, fija: r.editable === false, nombre: r.nombre,
+            estadoNomina: r.estadoNomina ?? null,
+          }));
+          // Al editar, el total es el que se guardó: no se recalcula solo
+          this.kgManual = true;
           this.cdr.detectChanges();
         },
         error: () => { this.error = 'temporadas.registro.errors.load'; this.cdr.detectChanges(); },
@@ -126,9 +242,11 @@ export class RegistrarCosecha implements OnInit {
   onSubmit(): void {
     this.error = '';
     this.exito = '';
+    if (this.filaIncompleta()) { this.error = 'siembra.harvest.pickers.incomplete'; return; }
+    if (this.kilosRecolectores > Number(this.form.cantidadKg || 0) + 0.01) { this.error = 'siembra.harvest.pickers.tooMany'; return; }
     this.cargando = true;
 
-    const datos = { ...this.form, confirmarCarencia: this.confirmarCarencia };
+    const datos = { ...this.form, confirmarCarencia: this.confirmarCarencia, recolectores: this.paraEnviar() };
     const peticion = this.registroId
       ? this.cultivoService.actualizarCosecha(this.registroId, datos)
       : this.cultivoService.registrarCosecha(datos);
@@ -136,7 +254,6 @@ export class RegistrarCosecha implements OnInit {
       next: (guardado: { id?: number } | null | void) => {
         this.cargando = false;
         this.guardado = true;
-        if (this.form.precioKg) this.ultimo.guardar('cosecha', { precioKg: this.form.precioKg });
         this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.harvest.success';
         this.cdr.detectChanges();
         this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.harvest');

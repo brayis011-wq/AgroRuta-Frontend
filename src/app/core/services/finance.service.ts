@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  KilosEnBodega,
   Abono, GastoFinca, LaborProgramada, LaborProgramadaRequest, MetodoCobro, PrecioCultivo, PrecioReferencia,
   PreferenciaPrecio, Presupuesto, ResumenGastos, ResumenLluvia, ResumenVentas, Venta, VentaRequest, EstadoVenta,
 } from '../models/finance.model';
@@ -70,6 +71,8 @@ export class VentasService {
   }
   resumen(): Observable<ResumenVentas> { return this.http.get<ResumenVentas>(`${this.api}/summary`); }
   compradores(): Observable<string[]> { return this.http.get<string[]>(`${this.api}/buyers`); }
+  /** Lo cosechado menos lo vendido de cada siembra */
+  kilosEnBodega(): Observable<KilosEnBodega[]> { return this.http.get<KilosEnBodega[]>(`${this.api}/harvest-stock`); }
   obtener(id: number): Observable<Venta> { return this.http.get<Venta>(`${this.api}/${id}`); }
   crear(v: VentaRequest): Observable<Venta> { return this.http.post<Venta>(this.api, v); }
   actualizar(id: number, v: VentaRequest): Observable<Venta> { return this.http.put<Venta>(`${this.api}/${id}`, v); }

@@ -37,6 +37,7 @@
 .registro time { font-size: .78rem; color: var(--ar-tinta-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .reg-btns { display: inline-flex; gap: .35rem; }
 .reg-btn { font: inherit; font-size: .8rem; font-weight: 600; display: inline-flex; align-items: center; gap: .3rem; height: 32px; padding: 0 .65rem; border-radius: 9px; cursor: pointer; border: 1px solid var(--ar-borde); background: var(--ar-superficie); color: var(--ar-tinta); }
+a.reg-btn { text-decoration: none; }
 .reg-btn .ti { font-size: 16px; }
 .reg-btn:hover { border-color: var(--ar-verde-600); color: var(--ar-verde-700); }
 .reg-btn.peligro { padding: 0; width: 32px; justify-content: center; color: var(--ar-tinta-2); }

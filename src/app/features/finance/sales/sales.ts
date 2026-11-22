@@ -5,7 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, debounceTime, forkJoin, of, switchMap } from 'rxjs';
 import { PreciosService, VentasService } from '../../../core/services/finance.service';
-import { PrecioCultivo } from '../../../core/models/finance.model';
+import { KilosEnBodega, PrecioCultivo } from '../../../core/models/finance.model';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CultivoDisponible, JornalService } from '../../../core/services/worker.service';
 import { EstadoVenta, MetodoCobro, ResumenVentas, Venta, VentaRequest } from '../../../core/models/finance.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
@@ -56,6 +57,26 @@ export class VentasComponent implements OnInit {
   readonly filtro = signal<Filtro>('todas');
   readonly comprador = signal<string | null>(null);
   readonly error = signal<string | null>(null);
+  /** Lo cosechado menos lo vendido de cada siembra */
+  readonly bodega = signal<KilosEnBodega[]>([]);
+  /** Las siembras que todavía tienen kilos por vender */
+  readonly porVender = computed(() => this.bodega().filter((k) => k.kgDisponibles > 0.004));
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  /** ?siembra=34 (desde la ficha de la siembra): abre la venta de esos kilos al cargar */
+  private siembraPedida: number | null = null;
+
+  /**
+   * Siembras para elegir en la venta: las activas y, además, las terminadas que todavía tienen kilos
+   * (se puede vender lo cosechado aunque la temporada ya se cerró).
+   */
+  readonly opcionesSiembra = computed(() => {
+    const activas = this.cultivos();
+    const ids = new Set(activas.map((c) => c.id));
+    const extra = this.bodega().filter((k) => !ids.has(k.siembraId) && k.kgDisponibles > 0.004)
+      .map((k) => ({ id: k.siembraId, fincaNombre: k.finca, loteNombre: k.lote, tipoCultivo: k.cultivo, variedad: k.variedad }) as CultivoDisponible);
+    return [...activas, ...extra];
+  });
 
   readonly form = signal<FormVenta | null>(null);
   readonly cobrando = signal<Venta | null>(null);
@@ -73,17 +94,24 @@ export class VentasComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    const pedida = Number(this.route.snapshot.queryParamMap.get('siembra'));
+    this.siembraPedida = pedida > 0 ? pedida : null;
     this.cargar();
     this.jornales.cultivosDisponibles().subscribe({ next: (c) => this.cultivos.set(c), error: () => {} });
   }
 
   cargar(): void {
-    forkJoin({ lista: this.ventas.listar(), resumen: this.ventas.resumen(), compradores: this.ventas.compradores() }).subscribe({
-      next: ({ lista, resumen, compradores }) => {
+    forkJoin({
+      lista: this.ventas.listar(), resumen: this.ventas.resumen(), compradores: this.ventas.compradores(),
+      bodega: this.ventas.kilosEnBodega().pipe(catchError(() => of([] as KilosEnBodega[]))),
+    }).subscribe({
+      next: ({ lista, resumen, compradores, bodega }) => {
         this.lista.set(lista);
         this.resumen.set(resumen);
         this.compradores.set(compradores);
+        this.bodega.set(bodega);
         this.error.set(null);
+        this.abrirSiembraPedida();
         const abierta = this.cobrando();
         if (abierta) this.cobrando.set(lista.find((v) => v.id === abierta.id) ?? null);
       },
@@ -129,6 +157,45 @@ export class VentasComponent implements OnInit {
   usarReferencia(): void {
     const p = this.referencia();
     if (p?.precioKg) this.campo('precioKg', Math.round(p.precioKg));
+  }
+
+  /** Vender kilos de la bodega: la venta sale con la siembra, el producto, los kilos que quedan y el precio sugerido */
+  vender(k: KilosEnBodega): void {
+    this.nueva();
+    const f = this.form()!;
+    const producto = [k.cultivo, k.variedad].filter(Boolean).join(' ');
+    const nuevo: FormVenta = { ...f, siembraId: k.siembraId, producto, cantidadKg: Math.round(k.kgDisponibles * 100) / 100 };
+    this.form.set(nuevo);
+    this.buscarReferencia(nuevo);
+  }
+
+  private abrirSiembraPedida(): void {
+    const id = this.siembraPedida;
+    if (id == null) return;
+    this.siembraPedida = null;
+    // Se quita de la dirección para que recargar no vuelva a abrir la venta
+    this.router.navigate([], { relativeTo: this.route, queryParams: { siembra: null }, queryParamsHandling: 'merge', replaceUrl: true });
+    const k = this.bodega().find((x) => x.siembraId === id);
+    if (k && k.kgDisponibles > 0.004) { this.vender(k); return; }
+    this.nueva();
+    this.campo('siembraId', id);
+  }
+
+  /**
+   * Cuántos kilos quedan de la siembra elegida para esta venta (si se está editando, cuentan también los
+   * kilos que ya tenía la venta). null si no hay siembra o no tiene cosechas.
+   */
+  quedanDe(f: FormVenta): number | null {
+    if (f.siembraId == null) return null;
+    const k = this.bodega().find((x) => x.siembraId === f.siembraId);
+    if (!k) return null;
+    const original = f.id == null ? null : (this.lista() ?? []).find((v) => v.id === f.id);
+    const propios = original && original.siembraId === f.siembraId ? Number(original.cantidadKg ?? 0) : 0;
+    return Math.round((k.kgDisponibles + propios) * 100) / 100;
+  }
+
+  nombreBodega(k: KilosEnBodega): string {
+    return [k.cultivo, k.variedad].filter(Boolean).join(' ') || k.lote;
   }
 
   nueva(): void {

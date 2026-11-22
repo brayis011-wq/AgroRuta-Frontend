@@ -48,6 +48,7 @@ interface TimelineItem {
   area?: number;
   calidad?: string;        // cosecha
   enCarencia?: boolean;    // cosecha registrada dentro de la carencia de una fumigación
+  recolectores?: number;   // cosecha: cuántos la recogieron
   carencia?: number | null;  // fumigación: días sin cosechar
   reentrada?: number | null; // fumigación: horas sin entrar
   extra?: string;
@@ -339,6 +340,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       titulo: `${this.fmtNum(c.cantidadKg)} kg`,
       calidad: c.calidad,
       enCarencia: !!c.enCarencia,
+      recolectores: c.recolectores?.length ?? 0,
       extra: c.observaciones,
     }));
 

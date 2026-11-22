@@ -83,6 +83,20 @@ export interface VentaRequest {
 }
 
 export interface Deudor { comprador: string; saldo: number; ventas: number; conVencidas: boolean }
+/** La bodega de la cosecha de una siembra: lo recogido menos lo vendido */
+export interface KilosEnBodega {
+  siembraId: number;
+  cultivo: string | null;
+  variedad: string | null;
+  lote: string;
+  finca: string;
+  kgCosechados: number;
+  kgVendidos: number;
+  kgDisponibles: number;
+  ultimaCosecha: string;
+  finalizada: boolean;
+}
+
 export interface ResumenVentas {
   porCobrar: number;
   vencido: number;

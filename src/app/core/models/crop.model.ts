@@ -113,6 +113,25 @@ export interface Fumigacion {
   siembraId: number;
 }
 
+/**
+ * Quien recogió una cosecha. Al enviar: trabajadorId, modalidad, kilos y valorKilo o valorDia (null = el del cargo).
+ * Al leer: además el jornal, el nombre, el valor del día y si todavía se puede cambiar.
+ */
+export interface Recolector {
+  trabajadorId: number;
+  modalidad: 'KILO' | 'DIA';
+  kilos?: number | null;
+  valorKilo?: number | null;
+  valorDia?: number | null;
+  jornalId?: number;
+  nombre?: string;
+  valor?: number | null;
+  /** null (sin nómina), PENDIENTE, APROBADA o PAGADA */
+  estadoNomina?: string | null;
+  /** false si su jornal ya está en una nómina aprobada o pagada */
+  editable?: boolean;
+}
+
 export interface Cosecha {
   id?: number;
   fecha: string;
@@ -120,8 +139,10 @@ export interface Cosecha {
   calidad: 'PRIMERA' | 'SEGUNDA' | 'TERCERA';
   observaciones?: string;
   siembraId: number;
-  /** Precio de venta por kilo (COP) */
+  /** Valor estimado por kilo de antes (las cosechas nuevas no lo piden: el precio va en Ventas) */
   precioKg?: number | null;
+  /** Quién la recogió: cada uno tiene su jornal */
+  recolectores?: Recolector[];
   /** Se registró dentro de la carencia de una fumigación (la persona lo confirmó) */
   enCarencia?: boolean;
   /** Solo al enviar: confirma que se cosecha aunque no haya terminado la carencia */
@@ -193,6 +214,10 @@ export interface CostosSiembra {
   meses: { mes: string; manoObra: number; insumos: number; otros: number; ingresos: number }[];
   fumigacionesSinCosto: number;
   cosechasSinPrecio: number;
+  /** De dónde salen los ingresos: VENTAS, COSECHAS (valor estimado anotado en la cosecha) o null */
+  fuenteIngresos?: 'VENTAS' | 'COSECHAS' | null;
+  /** Kilos vendidos de la siembra */
+  kgVendidos?: number;
 }
 
 export type TipoEvento =
