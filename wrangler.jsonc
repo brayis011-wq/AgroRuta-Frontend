@@ -13,9 +13,8 @@
   "assets": {
     "directory": "./dist/agroruta-frontend/browser",
     "binding": "ASSETS",
-    // Solo /api/* y /sipsa/semanas (precios del DANE, ver worker/index.js) ejecutan el Worker;
-    // lo demás se sirve directo como archivo estático
-    "run_worker_first": ["/api/*", "/sipsa/semanas"],
+    // Solo /api/* ejecuta el Worker; lo demás se sirve directo como archivo estático
+    "run_worker_first": ["/api/*"],
     // Rutas como /auth/verify o /crops/calendar las resuelve Angular: se sirve index.html
     "not_found_handling": "single-page-application"
   }
