@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Subject, debounceTime, distinctUntilChanged, switchMap, of, forkJoin, catchError } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, switchMap, of, forkJoin, catchError, timer, takeWhile } from 'rxjs';
+import { DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PreciosService } from '../../../core/services/finance.service';
 import { JornalService } from '../../../core/services/worker.service';
-import { PrecioCultivo, PrecioReferencia } from '../../../core/models/finance.model';
+import { EstadoPrecios, PrecioCultivo, PrecioReferencia } from '../../../core/models/finance.model';
 import { AvisosService } from '../../../core/services/toast.service';
 import { FechaPipe, PesosPipe } from '../../../shared/format.pipe';
 
@@ -40,10 +42,39 @@ export class PreciosComponent implements OnInit {
   texto = '';
   textoPanel = '';
   readonly resultados = signal<PrecioReferencia[] | null>(null);
+
+  // ── Estado de los precios de SIPSA: mientras se traen (o si falló) la pantalla lo dice ──
+  private readonly destruir = inject(DestroyRef);
+  readonly estado = signal<EstadoPrecios | null>(null);
+  /** Vueltas que lleva esperando (cada 8 s, hasta unos 5 minutos) */
+  private vueltas = 0;
+  static readonly MAX_VUELTAS = 40;
+
+  /** Todavía no hay precios de SIPSA y no se sabe de un error: se están trayendo */
+  trayendo(): boolean {
+    const e = this.estado();
+    return !!e && !e.hayPrecios && (e.actualizando || !e.ultimoError) && this.vueltas < PreciosComponent.MAX_VUELTAS;
+  }
+
+  private vigilarEstado(): void {
+    timer(0, 8000).pipe(
+      switchMap(() => this.precios.estado().pipe(catchError(() => of(null)))),
+      takeUntilDestroyed(this.destruir),
+      takeWhile((e) => {
+        this.vueltas++;
+        const antes = this.estado();
+        if (e) this.estado.set(e);
+        // Llegaron los precios: se vuelven a pedir los de cada cultivo
+        if (e?.hayPrecios && antes && !antes.hayPrecios) this.cargar();
+        return !!e && !e.hayPrecios && (e.actualizando || !e.ultimoError) && this.vueltas < PreciosComponent.MAX_VUELTAS;
+      }, true),
+    ).subscribe();
+  }
   private readonly busqueda = new Subject<{ q: string; donde: 'pagina' | 'panel' }>();
 
   ngOnInit(): void {
     this.cargar();
+    this.vigilarEstado();
     this.busqueda.pipe(
       debounceTime(300),
       distinctUntilChanged((a, b) => a.q === b.q && a.donde === b.donde),
