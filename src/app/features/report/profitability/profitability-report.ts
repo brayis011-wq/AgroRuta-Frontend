@@ -11,12 +11,13 @@ import { ReportBase } from '../report-base';
 import { tablaRentabilidad } from '../report-csv';
 import { FilaCostos } from '../costs/costs-calc';
 import { RentabilidadLote, TemporadaLote, anchoBarra, rentabilidadPorLote, resumenRentabilidad } from './profitability-calc';
+import { EtiquetasTablaDirective } from '../../../shared/table-labels.directive';
 
 /** Reportes → Rentabilidad: cuánto dejó cada lote y cómo le fue a cada temporada frente a la anterior */
 @Component({
   selector: 'app-profitability-report',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, DescargasReporteComponent],
+  imports: [RouterLink, TranslatePipe, DescargasReporteComponent, EtiquetasTablaDirective],
   templateUrl: './profitability-report.html',
   styleUrls: ['../report-shared.css', '../report-table.css', './profitability-report.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -64,14 +64,10 @@
 @media (prefers-reduced-motion: reduce) { .hero, .kpi, .esqueleto, .accion, .astro, .astro i, .hero::after { animation: none; transition: none; } }
 
 
-/* Celular: los accesos rápidos en una fila que se desliza, en vez de tres filas de botones */
+/* Celular: los accesos rápidos en dos columnas, todos a la vista (el principal ocupa la fila entera) */
 @media (max-width: 760px) {
-  .acciones {
-    display: flex; flex-wrap: nowrap; overflow-x: auto; gap: .45rem; margin: 0 -1.25rem; padding: 0 1.25rem .2rem;
-    scrollbar-width: none; scroll-snap-type: x proximity;
-  }
-  .acciones::-webkit-scrollbar { display: none; }
-  .accion { flex: none; white-space: nowrap; scroll-snap-align: start; }
-  .accion.principal { grid-column: auto; }
+  .acciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45rem; margin: 0; padding: 0; overflow: visible; }
+  .accion { justify-content: center; padding: .6rem .5rem; font-size: .84rem; white-space: normal; text-align: center; line-height: 1.2; }
+  .accion.principal { grid-column: 1 / -1; }
 }
 .lluvia-inicio { display: block; margin-top: 1rem; }

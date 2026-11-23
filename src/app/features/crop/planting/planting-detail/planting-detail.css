@@ -91,3 +91,12 @@ a.por-vender:hover { text-decoration: underline; }
 .vendida { display: inline-flex; align-items: center; gap: .3rem; height: 32px; padding: 0 .65rem; border-radius: 9px; font-size: .8rem; font-weight: 600; color: var(--ar-verde-700); background: var(--ar-verde-50); }
 .reg-txt .parcial { color: var(--ar-verde-700); font-weight: 600; }
 @media (max-width: 760px) { .vendida > span { display: none; } .vendida { width: 32px; padding: 0; justify-content: center; } }
+
+/* Celular: las pestañas en dos filas (3 + 2) y los filtros del historial que bajan de línea: todo a la vista */
+@media (max-width: 760px) {
+  .pestanas-siembra { flex-wrap: wrap; overflow: visible; gap: .4rem; }
+  .pestanas-siembra button { flex: 1 1 calc(33.33% - .4rem); min-width: 0; padding: .55rem .4rem; font-size: .8rem; gap: .3rem; }
+  .pestanas-siembra button .ti { font-size: 16px; }
+  .filtros { display: flex; flex-wrap: wrap; overflow: visible; }
+  .filtros .filtro { flex: 1 1 auto; }
+}

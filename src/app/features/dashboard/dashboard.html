@@ -182,9 +182,6 @@
       <!-- Consejos del clima para lo programado: "Fumiga hoy entre las 7 y las 10, llueve en 12 horas" (solo si hay algo que avisar) -->
       <app-weather-advice class="consejos-clima" />
 
-      @if (lugarClima() === 'izquierda' && climaFinca()?.id) {
-        <section class="clima fijo"><ng-container *ngTemplateOutlet="climaTpl" /></section>
-      }
     </div>
 
     <div class="col-lateral">
@@ -213,24 +210,11 @@
         }
       </section>
 
-      @if (lugarClima() === 'derecha' && climaFinca()?.id) {
-        <section class="clima fijo"><ng-container *ngTemplateOutlet="climaTpl" /></section>
-      }
     </div>
   </div>
 
-  <!-- Con poca información el clima va abajo, a lo ancho y bajito: así ninguna columna queda con un hueco -->
-  @if (lugarClima() === 'abajo' && climaFinca()?.id) {
-    <section class="clima ancho"><ng-container *ngTemplateOutlet="climaTpl" /></section>
-  }
 </div>
 
-<!-- Lluvia de la finca elegida, en una línea (el clima de hoy va arriba, en el saludo) -->
-<ng-template #climaTpl>
-  @if (climaFinca(); as f) {
-    @if (f.id) { <app-lluvia-finca class="lluvia-inicio" [fincaId]="f.id" [compacta]="true" /> }
-  }
-</ng-template>
 
 <ng-template #tend let-t="t">
   @if (t.porcentaje === null) {

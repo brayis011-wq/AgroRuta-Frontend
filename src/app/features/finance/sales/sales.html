@@ -125,8 +125,8 @@
               <tr>
                 <td class="prin">{{ v.comprador }}<small class="suave linea2">{{ v.fecha | fecha }}</small></td>
                 <td class="prod">{{ v.producto }}@if (v.cantidadKg || v.siembraNombre) { <small class="suave linea2">@if (v.cantidadKg) {{{ v.cantidadKg }} kg@if (v.precioKg) { × {{ v.precioKg | pesos }}}}@if (v.cantidadKg && v.siembraNombre) { · }{{ v.siembraNombre }}</small> }</td>
-                <td class="num">{{ v.total | pesos }}</td>
-                <td class="num fuerte-n">{{ v.saldo | pesos }}</td>
+                <td class="num" [attr.data-l]="'ventas.col.total' | translate">{{ v.total | pesos }}</td>
+                <td class="num fuerte-n" [attr.data-l]="'ventas.col.balance' | translate">{{ v.saldo | pesos }}</td>
                 <td><span class="est" [class]="estadoClase(v.estado)">{{ 'enums.estadoVenta.' + v.estado | translate }}</span>
                   @if (v.vence && v.estado !== 'PAGADA') { <small class="linea2" [class.tarde]="v.estado === 'VENCIDA'" [class.suave]="v.estado !== 'VENCIDA'">{{ 'ventas.dueOn' | translate: { date: (v.vence | fecha) } }}@if (v.estado === 'VENCIDA') { · {{ 'ventas.daysLate' | translate: { days: diasVencida(v) } }} }</small> }
                 </td>

@@ -160,16 +160,28 @@ input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1
 }
 @keyframes asomar { from { opacity: 0; translate: 0 22px; scale: .975; } }
 
-/* ── Celular: las cifras de arriba de cada pantalla en una tira que se desliza ─────
-   Antes las cuatro tarjetas ocupaban una pantalla entera antes del contenido. La siguiente
-   tarjeta asoma por el borde para que se note que hay más. "body .main" gana a los estilos de cada pantalla. */
+/* ── Celular: las cifras de arriba de cada pantalla, todas a la vista en una cuadrícula de dos ─────
+   (antes iban en una tira que se deslizaba y no se veían todas). Tarjetas compactas: el icono arriba
+   y la cifra debajo, para que los valores en pesos quepan. "body .main" gana a los estilos de cada pantalla. */
 @media (max-width: 760px) {
-  body .main .kpis {
-    display: flex; grid-template-columns: none; gap: .6rem; overflow-x: auto; overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: .2rem;
-  }
-  body .main .kpis::-webkit-scrollbar { display: none; }
-  body .main .kpis > * { flex: 0 0 min(64%, 230px); min-width: 0; scroll-snap-align: start; }
+  body .main .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; overflow: visible; }
+  body .main .kpis > * { min-width: 0; padding: .7rem .75rem; gap: .45rem; flex-direction: column; align-items: flex-start; position: relative; }
+  /* Si quedan impares, la última ocupa la fila entera */
+  body .main .kpis > *:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  body .main .kpis > * strong { font-size: 1.1rem; overflow-wrap: normal; white-space: nowrap; }
+  body .main .kpis > * small, body .main .kpis > * em { font-size: .72rem; }
+  body .main .kpis .ic, body .main .kpis .kpi-ic { width: 30px; height: 30px; font-size: 16px; border-radius: 9px; position: static; }
+  body .main .kpis .kpi small { padding-right: 0; }
+
+  /* Filtros y opciones de una línea (Todas / Pendientes...): pasan a la línea siguiente en vez de esconderse */
+  body .main .seg { flex-wrap: wrap; overflow: visible; max-width: 100%; }
+  body .main .seg button { flex: 1 1 auto; }
+
+  /* Tablas que pasan a tarjetas: los botones de cada fila bajan a su propia línea y se acomodan */
+  body .main .tabla.resp td.acc { flex: 1 1 100%; margin-left: 0; white-space: normal; text-align: right; }
+  body .main .tabla.resp td.acc .acc-in { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: .35rem; }
+  /* Y cada cifra dice qué es (en la tabla lo decía el encabezado, que en el celular no se ve) */
+  body .main .tabla.resp td[data-l]::before { content: attr(data-l); display: block; font-size: .66rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ar-tinta-3); }
 }
 
 /* Botones de fila con icono y una palabra en el celular (en escritorio el nombre sale al pasar el ratón y la fila no cabe con texto). "body" gana a los estilos de cada pantalla. */

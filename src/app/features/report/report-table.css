@@ -23,3 +23,18 @@
 .persona { display: inline-flex; align-items: center; gap: .6rem; font-weight: 600; }
 .av { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--ar-verde-100); color: var(--ar-verde-700); font-size: .8rem; font-weight: 700; }
 
+
+/* Celular: cada fila de la tabla pasa a una tarjeta (el nombre arriba y las cifras con su etiqueta debajo),
+   en vez de una tabla que se desliza de lado y esconde columnas. Las etiquetas las pone arEtiquetas. */
+@media (max-width: 760px) {
+  .tabla-wrap:has(> .tarjetas-m) { overflow: visible; }
+  .tabla.tarjetas-m thead { display: none; }
+  .tabla.tarjetas-m, .tabla.tarjetas-m tbody, .tabla.tarjetas-m tfoot { display: block; width: 100%; }
+  .tabla.tarjetas-m tr { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .45rem 1.1rem; padding: .8rem 1.2rem; border-bottom: 1px solid var(--ar-borde); }
+  .tabla.tarjetas-m td { display: block; padding: 0; border: 0; text-align: left !important; white-space: normal; }
+  .tabla.tarjetas-m td:first-child { flex: 1 1 100%; }
+  .tabla.tarjetas-m td[data-l]::before { content: attr(data-l); display: block; font-size: .66rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ar-tinta-3); }
+  /* La columna sin título (la flecha para abrir) va al final de la tarjeta */
+  .tabla.tarjetas-m td:last-child:not([data-l]):not(:first-child) { margin-left: auto; }
+  .tabla.tarjetas-m td[colspan] { flex: 1 1 100%; }
+}
