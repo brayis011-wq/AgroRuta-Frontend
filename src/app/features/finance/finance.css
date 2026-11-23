@@ -113,3 +113,9 @@ input.invalido { border-color: var(--ar-ambar); box-shadow: 0 0 0 3px var(--ar-a
 .origen-dato { display: flex; flex-direction: column; min-width: 0; }
 .origen-dato strong { font-size: .85rem; }
 .origen-dato small { font-size: .74rem; color: var(--ar-tinta-3); white-space: normal; }
+/* Precios de SIPSA: aviso mientras se traen (con un círculo que gira) o cuando no se pudieron traer */
+.aviso.info { background: var(--ar-azul-bg); color: var(--ar-azul); }
+.aviso:not(.info):not(.error) { background: var(--ar-fondo); color: var(--ar-tinta-2); border-color: var(--ar-borde); }
+.girando { width: 16px; height: 16px; flex: none; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: girar .8s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .girando { animation: none; } }

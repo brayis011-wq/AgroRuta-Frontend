@@ -9,6 +9,19 @@
 
   @if (error() && !editando()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error()! | translate }}</p> }
 
+  <!-- Precios de SIPSA: mientras se traen o si falló la última vez -->
+  @if (estado(); as e) {
+    @if (!e.hayPrecios) {
+      @if (trayendo()) {
+        <p class="aviso info" role="status"><span class="girando" aria-hidden="true"></span> {{ 'precios.loadingSipsa' | translate }}</p>
+      } @else if (e.ultimoError) {
+        <p class="aviso error" role="alert"><i class="ti ti-cloud-off" aria-hidden="true"></i> {{ 'precios.sipsaFailed' | translate: { error: e.ultimoError } }}</p>
+      } @else {
+        <p class="aviso" role="status"><i class="ti ti-clock" aria-hidden="true"></i> {{ 'precios.sipsaLater' | translate }}</p>
+      }
+    }
+  }
+
   <section class="tarjeta">
     <header><h2><i class="ti ti-plant-2" aria-hidden="true"></i> {{ 'precios.yourCrops' | translate }}</h2></header>
     @if (cultivos() === null) {
@@ -33,7 +46,8 @@
               }
             } @else {
               <span class="valor suave">—</span>
-              <p>{{ 'precios.noPriceFor' | translate }}</p>
+              <!-- Sin los precios de SIPSA todavía no se sabe si el cultivo está: no se dice que no -->
+              <p>{{ (estado() && !estado()!.hayPrecios ? 'precios.waitingSipsa' : 'precios.noPriceFor') | translate }}</p>
             }
             <div class="acc-p">
               <button type="button" class="btn chico" (click)="cambiar(c)"><i class="ti ti-adjustments" aria-hidden="true"></i> {{ (c.precio?.precioKg ? 'precios.change' : 'precios.setPrice') | translate }}</button>

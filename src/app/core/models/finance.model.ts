@@ -83,6 +83,16 @@ export interface VentaRequest {
 }
 
 export interface Deudor { comprador: string; saldo: number; ventas: number; conVencidas: boolean }
+/** Cómo van los precios de SIPSA */
+export interface EstadoPrecios {
+  hayPrecios: boolean;
+  ultimaSemana: string | null;
+  actualizadoEn: string | null;
+  actualizando: boolean;
+  ultimoIntento: string | null;
+  ultimoError: string | null;
+}
+
 /** La bodega de la cosecha de una siembra: lo recogido menos lo vendido */
 export interface KilosEnBodega {
   siembraId: number;

@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  EstadoPrecios,
   KilosEnBodega,
   Abono, GastoFinca, LaborProgramada, LaborProgramadaRequest, MetodoCobro, PrecioCultivo, PrecioReferencia,
   PreferenciaPrecio, Presupuesto, ResumenGastos, ResumenLluvia, ResumenVentas, Venta, VentaRequest, EstadoVenta,
@@ -31,6 +32,8 @@ export class PreciosService {
   buscar(q: string): Observable<PrecioReferencia[]> {
     return this.http.get<PrecioReferencia[]>(this.api, { params: new HttpParams().set('q', q) });
   }
+  /** Si ya hay precios de SIPSA, si se están trayendo y por qué falló la última vez */
+  estado(): Observable<EstadoPrecios> { return this.http.get<EstadoPrecios>(`${this.api}/status`); }
   mias(): Observable<PreferenciaPrecio[]> { return this.http.get<PreferenciaPrecio[]>(`${this.api}/mine`); }
   elegir(cultivo: string, producto: string | null, precioKg: number | null): Observable<PreferenciaPrecio> {
     return this.http.put<PreferenciaPrecio>(`${this.api}/mine`, { cultivo, producto, precioKg });
