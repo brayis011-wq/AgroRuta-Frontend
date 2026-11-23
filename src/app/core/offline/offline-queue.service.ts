@@ -2,6 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient, HttpContext, HttpContextToken, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { AvisosService } from '../services/toast.service';
 import { AlmacenSinConexion, Lectura, Pendiente, TipoPendiente } from './offline-store';
 
 /** Cabecera con la clave del envío: el servidor rechaza la segunda vez que llega la misma (409 AGR-036) */
@@ -14,6 +15,16 @@ const YA_RECIBIDO = 'AGR-036';
 const MAX_CARACTERES = 400_000;
 const CADA_MS = 60_000;
 
+/** Respuesta que da la app cuando un registro quedó guardado en el dispositivo en vez de llegar al servidor */
+export interface RespuestaPendiente {
+  pendiente: true;
+}
+
+/** true si el registro quedó en el dispositivo (sin señal) y la respuesta no trae lo guardado */
+export function esPendiente(r: unknown): r is RespuestaPendiente {
+  return !!r && typeof r === 'object' && (r as { pendiente?: unknown }).pendiente === true;
+}
+
 /**
  * Trabajo sin conexión: guarda en el dispositivo lo que se registra sin señal y lo envía al volver,
  * y conserva una copia de las consultas para poder llenar los formularios sin internet.
@@ -23,6 +34,7 @@ export class ColaSinConexionService {
   private almacen = inject(AlmacenSinConexion);
   private auth = inject(AuthService);
   private http = inject(HttpClient);
+  private avisos = inject(AvisosService);
 
   /** navigator.onLine en false es confiable; en true solo dice que hay red, no que haya internet */
   readonly enLinea = signal(typeof navigator === 'undefined' || navigator.onLine !== false);
@@ -50,15 +62,26 @@ export class ColaSinConexionService {
       void this.sincronizar();
     });
     window.addEventListener('offline', () => this.enLinea.set(false));
-    // "online" no siempre avisa (redes con portal, servidor dormido): se reintenta cada minuto
+    // "online" no siempre avisa (redes con portal, señal que va y viene): se reintenta cada minuto
+    // mientras el teléfono diga que tiene red, aunque la última petición no haya llegado
     setInterval(() => {
-      if (this.porEnviar() > 0 && this.enLinea()) void this.sincronizar();
+      if (this.porEnviar() > 0 && navigator.onLine !== false) void this.sincronizar();
     }, CADA_MS);
     void this.refrescar().then(() => this.sincronizar());
   }
 
   private usuarioId(): number | null {
     return this.auth.getUsuario()?.id ?? null;
+  }
+
+  /**
+   * Lo que pasó con la última petición a nuestra API: si llegó respuesta hay conexión; si no llegó
+   * nada (status 0) no la hay, aunque el teléfono diga que tiene red (datos sin saldo, wifi sin internet).
+   */
+  marcarRed(hay: boolean): void {
+    if (hay === this.enLinea()) return;
+    this.enLinea.set(hay);
+    if (hay && this.porEnviar() > 0) void this.sincronizar();
   }
 
   async refrescar(): Promise<void> {
@@ -101,12 +124,23 @@ export class ColaSinConexionService {
   // ───────────── Registros por enviar ─────────────
 
   /** Guarda un registro en el dispositivo. Falla si no hay sesión o el navegador no deja guardar. */
-  async encolar(tipo: TipoPendiente, url: string, cuerpo: unknown, id: string): Promise<void> {
+  async encolar(tipo: TipoPendiente, url: string, cuerpo: unknown, id: string, metodo: 'POST' | 'PUT' = 'POST'): Promise<void> {
     const uid = this.usuarioId();
     if (uid == null) throw new Error('sin sesión');
-    await this.almacen.guardarPendiente({ id, usuarioId: uid, tipo, url, cuerpo, creadoEn: new Date().toISOString() });
+    await this.almacen.guardarPendiente({
+      id, usuarioId: uid, tipo, url, cuerpo, creadoEn: new Date().toISOString(), ...(metodo === 'PUT' ? { metodo } : {}),
+    });
     await this.refrescar();
     this.guardados.update((n) => n + 1);
+    this.avisos.marcarGuardadoSinSenal();
+  }
+
+  /** Los registros por enviar de una siembra (para mostrarlos en su historial) */
+  pendientesDeSiembra(siembraId: number): Pendiente[] {
+    return this.pendientes().filter((p) => {
+      const c = p.cuerpo as { siembraId?: unknown } | null;
+      return !!c && typeof c === 'object' && Number(c.siembraId) === siembraId;
+    });
   }
 
   async descartar(id: string): Promise<void> {
@@ -145,12 +179,8 @@ export class ColaSinConexionService {
       const cola = (await this.almacen.pendientes(uid)).filter((p) => !p.error);
       for (const p of cola) {
         try {
-          await firstValueFrom(
-            this.http.post(p.url, p.cuerpo, {
-              headers: { [CABECERA_ENVIO]: p.id },
-              context: new HttpContext().set(SIN_COLA, true),
-            }),
-          );
+          const opciones = { headers: { [CABECERA_ENVIO]: p.id }, context: new HttpContext().set(SIN_COLA, true) };
+          await firstValueFrom(p.metodo === 'PUT' ? this.http.put(p.url, p.cuerpo, opciones) : this.http.post(p.url, p.cuerpo, opciones));
           await this.almacen.quitarPendiente(p.id);
           enviados++;
         } catch (e) {

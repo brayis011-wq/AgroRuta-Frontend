@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 
 /** Qué clase de registro quedó guardado en el dispositivo */
-export type TipoPendiente = 'jornal' | 'fumigacion' | 'cosecha' | 'actividad';
+export type TipoPendiente =
+  | 'jornal' | 'planilla' | 'fumigacion' | 'cosecha' | 'actividad'
+  | 'venta' | 'abono' | 'gasto' | 'compra' | 'lluvia';
 
 /** Un registro hecho sin conexión que todavía no llega al servidor */
 export interface Pendiente {
@@ -10,6 +12,8 @@ export interface Pendiente {
   usuarioId: number;
   tipo: TipoPendiente;
   url: string;
+  /** POST si no se dice; la lluvia del día se anota con PUT */
+  metodo?: 'POST' | 'PUT';
   cuerpo: unknown;
   /** ISO */
   creadoEn: string;

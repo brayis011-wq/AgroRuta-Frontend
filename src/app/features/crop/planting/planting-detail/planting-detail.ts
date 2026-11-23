@@ -3,7 +3,7 @@ import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
 import { AnteriorSiguienteComponent, Vecino } from '../../../../shared/prev-next/prev-next';
 import { SiembraActiva, SiembrasActivasService, vecinos } from '../../../../core/services/active-plantings.service';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, HostListener, Injector, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, HostListener, Injector, effect, inject, untracked } from '@angular/core';
 import { Subscription, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -35,6 +35,8 @@ import { formatoFecha, formatoNumero } from '../../../../shared/format';
 import { WeatherService } from '../../../../core/services/weather.service';
 import { VentasService } from '../../../../core/services/finance.service';
 import { quedanPorCosecha } from '../../../../shared/harvest-stock';
+import { ColaSinConexionService } from '../../../../core/offline/offline-queue.service';
+import { Pendiente } from '../../../../core/offline/offline-store';
 import { Weather } from '../../../../core/models/weather.model';
 import { ConsejoClima, consejoFumigacion, municipio } from '../../../../shared/weather';
 
@@ -137,6 +139,22 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   /** Anterior y siguiente entre las siembras en curso de todas las fincas */
   vecinos: { anterior: Vecino | null; siguiente: Vecino | null; posicion: number; total: number } = { anterior: null, siguiente: null, posicion: 0, total: 0 };
   private readonly injector = inject(Injector);
+
+  // ── Registros hechos sin señal en esta siembra, que aún no llegan al servidor ──
+  private readonly cola = inject(ColaSinConexionService);
+  porEnviar(): Pendiente[] {
+    if (this.siembraId == null) return [];
+    return this.cola.pendientesDeSiembra(this.siembraId)
+      .filter((p) => p.tipo === 'actividad' || p.tipo === 'fumigacion' || p.tipo === 'cosecha');
+  }
+  fechaPendiente(p: Pendiente): string {
+    const f = (p.cuerpo as { fecha?: unknown } | null)?.fecha;
+    return typeof f === 'string' ? f : p.creadoEn.slice(0, 10);
+  }
+  /** Cuando la cola envía lo pendiente, el historial se vuelve a pedir para mostrarlo ya guardado */
+  private readonly alEnviarPendientes = effect(() => {
+    if (this.cola.enviados() > 0) untracked(() => { if (this.siembraId != null && this.siembra) this.cargarDatos(this.siembraId); });
+  });
 
   private cargarVecinos(id: number): void {
     let fincas: Finca[] = [];

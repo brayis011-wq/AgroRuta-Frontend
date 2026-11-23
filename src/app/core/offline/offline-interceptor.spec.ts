@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClient, HttpResponse, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { sinConexionInterceptor } from './offline-interceptor';
+import { vi } from 'vitest';
+import { ESPERA_REGISTRO_MS, sinConexionInterceptor, tipoEnCola } from './offline-interceptor';
 import { CABECERA_ENVIO, ColaSinConexionService } from './offline-queue.service';
 import { AlmacenEnMemoria, AlmacenSinConexion } from './offline-store';
 import { AuthService } from '../services/auth.service';
@@ -161,6 +162,82 @@ describe('sinConexionInterceptor', () => {
     httpMock.expectOne(`${api}/farms`).flush('x', { status: 500, statusText: 'x' });
     await esperar();
     expect(error?.status).toBe(500);
+  });
+
+  it('reconoce qué se puede guardar sin señal, también lo nuevo de dinero y la planilla', () => {
+    expect(tipoEnCola('POST', '/api/workdays/batch')).toBe('planilla');
+    expect(tipoEnCola('POST', '/api/sales')).toBe('venta');
+    expect(tipoEnCola('POST', '/api/sales/12/payments')).toBe('abono');
+    expect(tipoEnCola('POST', '/api/farm-expenses')).toBe('gasto');
+    expect(tipoEnCola('POST', '/api/inventory/purchases')).toBe('compra');
+    expect(tipoEnCola('PUT', '/api/farms/3/rain/2026-11-22')).toBe('lluvia');
+    // Editar o borrar sí necesita conexión
+    expect(tipoEnCola('PUT', '/api/sales/12')).toBeNull();
+    expect(tipoEnCola('POST', '/api/inventory/adjustments')).toBeNull();
+    expect(tipoEnCola('POST', '/api/payments')).toBeNull();
+  });
+
+  it('la lluvia del día sin señal se guarda y se reenvía con PUT', async () => {
+    cola.enLinea.set(false);
+    let respuesta: unknown;
+    http.put(`${api}/farms/3/rain/2026-11-22`, { milimetros: 12 }).subscribe((r) => (respuesta = r));
+    await esperar();
+    httpMock.expectNone(`${api}/farms/3/rain/2026-11-22`);
+    expect(respuesta).toEqual({ pendiente: true });
+    expect(cola.pendientes()[0]).toMatchObject({ tipo: 'lluvia', metodo: 'PUT', cuerpo: { milimetros: 12 } });
+
+    cola.enLinea.set(true);
+    const fin = cola.sincronizar();
+    await esperar();
+    const req = httpMock.expectOne(`${api}/farms/3/rain/2026-11-22`);
+    expect(req.request.method).toBe('PUT');
+    req.flush({});
+    await fin;
+    expect(cola.pendientes()).toEqual([]);
+  });
+
+  it('si el servidor no contesta en 20 s, el registro queda en el dispositivo con la misma clave', async () => {
+    vi.useFakeTimers();
+    try {
+      let respuesta: unknown;
+      http.post(`${api}/sales`, { comprador: 'Cooperativa' }).subscribe((r) => (respuesta = r));
+      const req = httpMock.expectOne(`${api}/sales`);
+      const clave = req.request.headers.get(CABECERA_ENVIO);
+      await vi.advanceTimersByTimeAsync(ESPERA_REGISTRO_MS + 50);
+      expect(respuesta).toEqual({ pendiente: true });
+      expect(req.cancelled).toBe(true);
+      expect(cola.pendientes()[0]).toMatchObject({ id: clave, tipo: 'venta' });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('sin respuesta del servidor queda "sin conexión" aunque el teléfono diga que hay red, y vuelve con la primera respuesta', async () => {
+    http.get(`${api}/farms`).subscribe({ error: () => undefined });
+    httpMock.expectOne(`${api}/farms`).error(sinRed());
+    await esperar();
+    expect(cola.enLinea()).toBe(false);
+
+    // Sin conexión un registro ya no espera la red: va directo al dispositivo
+    http.post(`${api}/harvests`, { cantidad: 4 }).subscribe();
+    await esperar();
+    httpMock.expectNone(`${api}/harvests`);
+    expect(cola.pendientes().length).toBe(1);
+
+    http.get(`${api}/workers`).subscribe();
+    httpMock.expectOne(`${api}/workers`).flush([]);
+    await esperar();
+    expect(cola.enLinea()).toBe(true);
+    // Al volver la conexión se envía lo pendiente
+    httpMock.expectOne(`${api}/harvests`).flush({ id: 9 });
+    await esperar();
+  });
+
+  it('un error con respuesta del servidor (500) no cuenta como falta de señal', async () => {
+    http.get(`${api}/farms`).subscribe({ error: () => undefined });
+    httpMock.expectOne(`${api}/farms`).flush('x', { status: 500, statusText: 'x' });
+    await esperar();
+    expect(cola.enLinea()).toBe(true);
   });
 
   it('las peticiones a otros servicios no se tocan', () => {

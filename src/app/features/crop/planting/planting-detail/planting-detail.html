@@ -184,7 +184,28 @@
           </div>
         </header>
 
-        @if (!timelineCompleto.length) {
+        <!-- Registrado sin señal en esta siembra: se envía solo cuando vuelva la conexión -->
+        @if (porEnviar().length) {
+          <ul class="registros por-enviar" [attr.aria-label]="'offline.inHistory' | translate">
+            @for (p of porEnviar(); track p.id) {
+              <li class="registro">
+                <span class="ic" [class.gris]="p.tipo === 'actividad'" [class.azul]="p.tipo === 'fumigacion'" [class.ambar]="p.tipo === 'cosecha'">
+                  <i class="ti" [class]="'ti ' + icono($any(p.tipo))"></i>
+                </span>
+                <div class="reg-txt">
+                  <strong>{{ 'offline.tipo.' + p.tipo | translate }}</strong>
+                  <small>{{ 'offline.inHistoryHint' | translate }}</small>
+                </div>
+                <time>{{ fmtFecha(fechaPendiente(p)) }}</time>
+                <span class="reg-btns">
+                  <span class="vendida por-enviar-chip"><i class="ti ti-cloud-upload"></i><span>{{ 'offline.inHistory' | translate }}</span></span>
+                </span>
+              </li>
+            }
+          </ul>
+        }
+
+        @if (!timelineCompleto.length && !porEnviar().length) {
           <div class="vacio">
             <i class="ti ti-notebook"></i>
             <p>{{ 'siembra.detail.history.emptyAll' | translate }}</p>

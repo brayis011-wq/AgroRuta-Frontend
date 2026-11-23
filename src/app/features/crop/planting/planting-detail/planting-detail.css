@@ -100,3 +100,8 @@ a.por-vender:hover { text-decoration: underline; }
   .filtros { display: flex; flex-wrap: wrap; overflow: visible; }
   .filtros .filtro { flex: 1 1 auto; }
 }
+
+/* Registros hechos sin señal que aún no llegan al servidor */
+.registros.por-enviar { margin-bottom: .4rem; padding-bottom: .4rem; border-bottom: 1px dashed var(--ar-borde); }
+.registros.por-enviar .registro { opacity: .92; }
+.por-enviar-chip { color: var(--ar-ambar); background: var(--ar-ambar-bg); }

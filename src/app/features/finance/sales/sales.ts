@@ -25,6 +25,7 @@ import { EstadoVenta, MetodoCobro, ResumenVentas, Venta, VentaRequest } from '..
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { AvisosService } from '../../../core/services/toast.service';
 import { FechaPipe, PesosPipe } from '../../../shared/format.pipe';
+import { esPendiente } from '../../../core/offline/offline-queue.service';
 
 type Filtro = 'debe' | 'VENCIDA' | 'PAGADA' | 'todas';
 
@@ -414,6 +415,8 @@ export class VentasComponent implements OnInit {
     this.ventas.abonar(v.id, { ...this.abono, monto: Number(this.abono.monto), observaciones: this.abono.observaciones || null }).subscribe({
       next: (act) => {
         this.guardando.set(false);
+        // Sin señal el abono quedó en el teléfono: no hay saldo nuevo que mostrar todavía
+        if (esPendiente(act)) { this.cobrando.set(null); this.avisos.exito('ventas.paymentSaved'); return; }
         this.cobrando.set(act);
         this.abono = { fecha: this.hoy, monto: act.saldo || null, metodo: this.abono.metodo, observaciones: '' };
         this.avisos.exito(act.saldo > 0 ? 'ventas.paymentSaved' : 'ventas.paidInFull');

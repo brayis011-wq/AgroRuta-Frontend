@@ -13,6 +13,7 @@ import { PeriodoPipe, PesosPipe } from '../../../shared/format.pipe';
 import { LanguageService } from '../../../core/services/language.service';
 import { localeDe } from '../../../shared/format';
 import { bloqueado, clave, deIso, diasDeSemana, indexar, isoLocal, lunesDe, porQuitar, sumarDias, totalDia, totalFila } from './sheet.logic';
+import { esPendiente } from '../../../core/offline/offline-queue.service';
 
 /** Lo que se recuerda de la planilla: el cultivo y las labores con que se anota */
 interface UltimaPlanilla { cultivoId?: number; actividadIds?: number[] }
@@ -194,8 +195,11 @@ export class PlanillaComponent implements OnInit {
     this.marcar(entradas.map((e) => clave(e.trabajadorId, e.fecha)), true);
     this.error.set(null);
     this.jornales.registrarVarios({ cultivoId, actividadIds: [...this.elegidas()], entradas }).subscribe({
-      next: (creados) => {
+      next: (respuesta) => {
         this.marcar(entradas.map((e) => clave(e.trabajadorId, e.fecha)), false);
+        // Sin señal la planilla quedó en el teléfono: se envía sola y el aviso lo dice
+        if (esPendiente(respuesta)) { this.avisos.exito('workers.sheet.added', { count: entradas.length }); return; }
+        const creados = respuesta;
         const p = this.planilla();
         if (p) {
           const nuevas: CasillaPlanilla[] = creados.map((j) => ({

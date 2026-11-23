@@ -12,6 +12,19 @@
           @if (!cola.enLinea() && cola.copiaDesde()) { <strong>{{ 'offline.copyFrom' | translate: { fecha: fecha(cola.copiaDesde()) } }}</strong> }
         </p>
 
+        <!-- Lo que quedó guardado para llenar los formularios sin señal -->
+        <div class="datos">
+          <i class="ti ti-database" aria-hidden="true"></i>
+          <span>
+            @if (precarga.descargando()) { {{ 'offline.downloading' | translate }} }
+            @else if (precarga.ultima()) { {{ 'offline.dataFrom' | translate: { fecha: fecha(precarga.ultima()) } }} }
+            @else { {{ 'offline.noData' | translate }} }
+          </span>
+          @if (cola.enLinea()) {
+            <button type="button" class="b" (click)="descargarDatos()" [disabled]="precarga.descargando()">{{ 'offline.downloadNow' | translate }}</button>
+          }
+        </div>
+
         @if (cola.pendientes().length) {
           <ul class="lista">
             @for (p of cola.pendientes(); track p.id) {
