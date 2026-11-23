@@ -47,3 +47,9 @@
   .sc, :host-context(.mini) .sc { left: 1rem; bottom: calc(4.9rem + env(safe-area-inset-bottom, 0px)); }
 }
 @media (prefers-reduced-motion: reduce) { .gira { animation: none; } }
+
+/* Datos guardados para llenar los formularios sin señal */
+.datos { display: flex; align-items: center; gap: .5rem; margin: 0 0 .8rem; padding: .55rem .7rem; border-radius: 11px; background: var(--ar-fondo); font-size: .8rem; line-height: 1.35; color: var(--ar-tinta-2); }
+.datos > .ti { font-size: 17px; color: var(--ar-verde-700); flex: none; }
+.datos > span { flex: 1; min-width: 0; }
+.datos .b:disabled { opacity: .55; cursor: not-allowed; }

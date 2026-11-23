@@ -2,13 +2,20 @@ import { Component, OnInit, computed, effect, inject, signal, untracked } from '
 import { TranslatePipe } from '@ngx-translate/core';
 import { ColaSinConexionService } from '../../../core/offline/offline-queue.service';
 import { Pendiente } from '../../../core/offline/offline-store';
+import { PrecargaDatosService } from '../../../core/offline/offline-data-preload';
 import { LanguageService } from '../../../core/services/language.service';
 
 const ICONOS: Record<string, string> = {
   jornal: 'ti-clock-hour-4',
+  planilla: 'ti-table',
   fumigacion: 'ti-spray',
   cosecha: 'ti-basket',
   actividad: 'ti-shovel',
+  venta: 'ti-cash',
+  abono: 'ti-coin',
+  gasto: 'ti-receipt',
+  compra: 'ti-building-warehouse',
+  lluvia: 'ti-cloud-rain',
 };
 /** La cosecha cae dentro de la carencia de una fumigación: se puede enviar confirmándolo */
 const EN_CARENCIA = 'AGR-012';
@@ -27,6 +34,7 @@ const AVISO_MS = 6000;
 })
 export class OfflineStatusComponent implements OnInit {
   readonly cola = inject(ColaSinConexionService);
+  readonly precarga = inject(PrecargaDatosService);
   private idioma = inject(LanguageService);
 
   readonly abierto = signal(false);
@@ -54,6 +62,11 @@ export class OfflineStatusComponent implements OnInit {
 
   ngOnInit(): void {
     this.cola.iniciar();
+    this.precarga.iniciar();
+  }
+
+  descargarDatos(): void {
+    void this.precarga.descargar();
   }
 
   private avisar(tipo: 'guardado' | 'enviados'): void {

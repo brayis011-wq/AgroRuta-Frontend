@@ -25,8 +25,21 @@ export class AvisosService {
   readonly saliendo = signal(false);
   private serie = 0;
   private reloj: ReturnType<typeof setTimeout> | null = null;
+  /** Cuándo quedó algo guardado en el dispositivo por falta de señal (ms) */
+  private guardadoSinSenal = 0;
+
+  /** La cola sin conexión avisa que acaba de guardar un registro en el dispositivo */
+  marcarGuardadoSinSenal(): void {
+    this.guardadoSinSenal = Date.now();
+  }
 
   exito(clave: string, params?: Record<string, unknown>): void {
+    // El formulario cree que guardó, pero quedó en el teléfono: se dice tal cual
+    if (Date.now() - this.guardadoSinSenal < 3000) {
+      this.guardadoSinSenal = 0;
+      clave = 'offline.savedToast';
+      params = undefined;
+    }
     this.parar();
     this.saliendo.set(false);
     this.actual.set({ id: ++this.serie, clave, params });
