@@ -52,13 +52,13 @@
                     <span class="fuerte-n">{{ s.nombre }}</span>
                     @if (s.tipo) { <small class="suave bloque">{{ 'enums.tipoInsumo.' + s.tipo | translate }}</small> }
                   </td>
-                  <td class="num">
+                  <td class="num" [attr.data-l]="'inventario.table.stock' | translate">
                     <span class="fuerte-n">{{ cantidad(s.cantidad, s.unidadBase) }}</span>
                     @if (s.estado !== 'OK') { <span class="est-stock" [class]="'est-stock ' + s.estado">{{ 'inventario.status.' + s.estado | translate }}</span> }
                   </td>
-                  <td class="num suave">{{ s.stockMinimo == null ? '—' : cantidad(s.stockMinimo, s.unidadBase) }}</td>
-                  <td class="num suave">{{ costoGrande(s) }}</td>
-                  <td class="num">{{ pesos(s.valorStock) }}</td>
+                  <td class="num suave" [attr.data-l]="'inventario.table.minimum' | translate">{{ s.stockMinimo == null ? '—' : cantidad(s.stockMinimo, s.unidadBase) }}</td>
+                  <td class="num suave" [attr.data-l]="'inventario.table.avgCost' | translate">{{ costoGrande(s) }}</td>
+                  <td class="num" [attr.data-l]="'inventario.table.value' | translate">{{ pesos(s.valorStock) }}</td>
                   <td class="acc">
                     <span class="acc-in">
                       <button type="button" class="btn-ic con-texto verde-h" (click)="abrirCompra(s)" [title]="'inventario.buy' | translate" [attr.aria-label]="'inventario.buy' | translate"><i class="ti ti-shopping-cart-plus" aria-hidden="true"></i><span class="txt-corto">{{ 'inventario.short.buy' | translate }}</span></button>

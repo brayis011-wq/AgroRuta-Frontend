@@ -56,7 +56,7 @@ describe('RegistrarActividad', () => {
 
   it('should have correct tiposActividad list', () => {
     expect(component.tiposActividad).toEqual([
-      'PODA', 'TUTOREO', 'DESHIERBE', 'RIEGO', 'REVISION', 'OTRO'
+      'ABONADO', 'PODA', 'TUTOREO', 'DESHIERBE', 'RIEGO', 'REVISION', 'OTRO'
     ]);
   });
 
@@ -77,7 +77,23 @@ describe('RegistrarActividad', () => {
       siembraId: 7,
     };
     component.onSubmit();
-    expect(cultivoServiceMock.registrarActividad).toHaveBeenCalledWith(component.form);
+    expect(cultivoServiceMock.registrarActividad).toHaveBeenCalledWith(
+      { ...component.form, producto: null, agriculturalInputId: null, cantidadUsada: null, unidadCantidad: null });
+  });
+
+  it('el abonado abre el insumo y manda el producto de la bodega con su cantidad', () => {
+    component.bodega = [{ insumoId: 9, nombre: 'Abono 15-15-15', tipo: 'FERTILIZANTE_SUELO', unidadBase: 'GRAMOS', cantidad: 100000,
+      stockMinimo: null, costoPromedio: 3, valorStock: 300000, estado: 'OK', ultimoMovimiento: null } as any];
+    component.form = { ...component.form, descripcion: '', fecha: '2024-04-01', siembraId: 7 };
+    component.elegirTipo('ABONADO');
+    expect(component.conInsumo).toBe(true);
+    component.elegirInsumo(9);
+    expect(component.form.unidadCantidad).toBe('KG');
+    expect(component.unidades).toEqual(['KG', 'GRAMOS']);
+    component.form.cantidadUsada = 50;
+    component.onSubmit();
+    expect(cultivoServiceMock.registrarActividad).toHaveBeenCalledWith(expect.objectContaining({
+      tipo: 'ABONADO', producto: 'Abono 15-15-15', agriculturalInputId: 9, cantidadUsada: 50, unidadCantidad: 'KG' }));
   });
   it('onSubmit() should set exito and navigate on success', () => {
     const orig = globalThis.setTimeout;

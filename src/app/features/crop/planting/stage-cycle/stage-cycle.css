@@ -110,3 +110,21 @@
 @media (prefers-reduced-motion: reduce) {
   .pasos::after, .punto, .panel { transition: none; animation: none; }
 }
+
+/* Fecha estimada de una etapa que todavía no llega (según lo normal del cultivo) */
+.fecha.estimada { font-style: italic; color: var(--ar-tinta-3); opacity: .85; }
+
+/* Sugerencia: según lo normal, ya debería haber cambiado de etapa */
+.sugerencia { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .8rem; margin-top: .9rem; padding: .7rem .85rem; border-radius: 12px; background: var(--ar-azul-bg); color: var(--ar-azul); }
+.sugerencia > .ti { font-size: 20px; flex: none; }
+.sugerencia p { margin: 0; flex: 1 1 16rem; font-size: .86rem; color: var(--ar-tinta); }
+.sugerencia .btn { flex: none; }
+
+/* De dónde salen los días */
+.dias-normales { margin-top: .7rem; font-size: .82rem; color: var(--ar-tinta-2); }
+.dias-normales summary { cursor: pointer; font-weight: 600; color: var(--ar-verde-700); width: fit-content; }
+.dias-normales summary:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; border-radius: 4px; }
+.dias-normales p { margin: .45rem 0; }
+.dias-normales ul { list-style: none; margin: .3rem 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .3rem .9rem; }
+.dias-normales li { display: flex; justify-content: space-between; gap: .5rem; padding: .3rem .5rem; border-radius: 8px; background: var(--ar-fondo); }
+.dias-normales .suave { color: var(--ar-tinta-3); font-size: .78rem; }

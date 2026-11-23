@@ -1,4 +1,9 @@
 {
+  "presupuesto": {"title":"Presupuesto de la temporada","help":"Lo que esperas gastar en esta temporada. Puedes llenar solo una parte.","total":"Total:","empty":"Ponle un presupuesto a la temporada para ver cuánto llevas gastado y recibir un aviso si te pasas.","set":"Poner presupuesto","spent":"Llevas gastado","of":"de {{total}} presupuestados","over":"Te pasaste del presupuesto por {{amount}}.","near":"Ya casi llegas al presupuesto: quedan {{amount}}.","partOver":"se pasó","saved":"Presupuesto guardado","confirmDelete":"¿Quitar el presupuesto de esta temporada?","errors":{"empty":"Escribe cuánto esperas gastar en al menos una parte.","save":"No se pudo guardar el presupuesto"}},
+  "precios": {"title":"Precios de referencia","subtitle":"Lo que vale el kilo en las centrales mayoristas, para estimar lo que vale una cosecha sin precio anotado.","hintSipsa":"Esta semana el kilo de {{product}} va a {{price}} en las centrales mayoristas.","hintOwn":"Tu precio de referencia es {{price}} el kilo.","use":"Usar","estimateTitle":"Lo que valdría lo cosechado sin precio","estimateFor":"por {{kg}} kg que no tienen precio anotado","sourceSipsa":"Con el precio mayorista de {{product}} ({{price}} el kilo, promedio de {{markets}} mercados).","sourceOwn":"Con tu precio de referencia ({{price}} el kilo).","change":"Cambiar","estimatedProfit":"Ganancia estimada de la temporada si vendieras a ese precio:","noPrice":"Hay {{kg}} kg cosechados sin precio y este cultivo no tiene precio de referencia.","setPrice":"Poner precio","yourCrops":"Tus cultivos","noCrops":"Cuando tengas siembras activas, aquí verás el precio de referencia de cada cultivo.","own":"Tu precio","sipsa":"SIPSA · DANE","week":"semana del {{date}}","range":"Entre {{min}} y {{max}} en {{markets}} mercados","ownHelp":"Lo pusiste tú: se usa en lugar del precio mayorista.","noPriceFor":"No encontramos este cultivo en los precios mayoristas. Puedes elegir otro producto o poner tu propio precio.","source":"Fuente: SIPSA, Sistema de Información de Precios del DANE (precios mayoristas, se publican cada semana). El café pergamino y el cacao no están: para esos pon tu propio precio.","searchTitle":"Buscar un producto","searchPlaceholder":"Ej: papa, tomate, mora…","noResults":"No hay productos con ese nombre en la semana publicada.","product":"Producto","avg":"Promedio / kg","min":"Mínimo","max":"Máximo","markets":"Mercados","panelHelp":"Elige el producto que más se parece a lo que vendes, o escribe tu propio precio.","suggested":"Sugeridos","otherProduct":"Otro producto","ownTitle":"Tu propio precio","ownLabel":"Precio por kilo ($)","ownHint":"Si lo escribes, se usa este en lugar del precio mayorista (útil para café, cacao o lo que vendes a un comprador fijo).","auto":"Volver al automático","saved":"Precio de referencia guardado","errors":{"load":"No se pudieron cargar los precios","choose":"Elige un producto o escribe tu precio.","save":"No se pudo guardar el precio"}},
+  "lluvia": {"title":"Lluvia","last7":"últimos 7 días","last30":"últimos 30 días","dryDays":"días sin llover","chart":"Lluvia de los últimos 14 días","noData":"sin dato","adviceNoWater":"Llovió bastante estos días: puedes saltarte el riego.","adviceDry":"Llevas {{days}} días sin lluvia: revisa si toca regar.","when":"Día","today":"Hoy","yesterday":"Ayer","mm":"Milímetros","none":"No llovió","already":"Ya anotaste {{mm}} mm ese día; si guardas, se reemplaza.","saved":"Lluvia anotada","errors":{"save":"No se pudo anotar la lluvia"}},
+  "ventas": {"origin": {"title":"¿Qué kilos vendes?","howMuch":"Cuánto vender","all":"Todo lo que queda ({{kg}} kg)","onlyQuality":"Solo {{quality}} ({{kg}} kg)","partOf":"Lo que queda de {{kg}} kg","hint":"Una venta junta los kilos de todos los recolectores. Desmarca las cosechas que no vendes, o escribe los kilos."}, "stock": {"needKg": "Escribe cuántos kilos vendes de esa siembra.", "tooMuch": "No puedes vender más kilos de los que quedan de esa siembra.", "oversold": "{{name}} ({{lote}}): hay {{sold}} kg vendidos y solo {{harvested}} kg cosechados. Son ventas de antes de anotar la cosecha: registra las cosechas que faltan o corrige esas ventas.", "title":"Kilos por vender","hint":"Lo cosechado menos lo vendido de cada siembra. Elige de aquí y solo pones a quién y a qué precio.","available":"{{kg}} kg por vender","of":"de {{kg}} kg cosechados","lastHarvest":"última cosecha {{date}}","finished":"Terminada","sell":"Vender","allSold":"Todo lo cosechado ya está vendido.","remaining":"De esta siembra quedan {{kg}} kg por vender.","over":"Es más de lo que queda de esta siembra ({{kg}} kg). Revisa los kilos o registra la cosecha que falta."}, "dueOn": "Paga el {{date}}", "collect": "Cobrar", "title":"Ventas y cuentas por cobrar","subtitle":"A quién le vendiste, cuánto y cuánto te debe todavía.","new":"Nueva venta","kpi":{"toSell": "Kilos por vender", "toSellOne": "de 1 siembra", "toSellMany": "de {{count}} siembras", "owed":"Te deben","sales":"{{count}} ventas","overdue":"Ya vencido","soldMonth":"Vendido este mes","collectedMonth":"Cobrado este mes"},"whoOwes":"Quién te debe","hasOverdue":"con vencidas","list":"Ventas","clearBuyer":"Ver todos los compradores","filter":{"debe":"Por cobrar","VENCIDA":"Vencidas","PAGADA":"Pagadas","todas":"Todas"},"emptyFilter":"No hay ventas con ese filtro.","empty":"Todavía no has registrado ventas. Anota lo que vendes a crédito y lleva la cuenta de lo que te deben.","col":{"buyer":"Comprador","product":"Producto","total":"Total","balance":"Saldo","due":"Pago acordado"},"daysLate":"hace {{days}} días","registerPayment":"Registrar pago","payments":"Pagos","formNew":"Nueva venta","formEdit":"Editar venta","formHelp":"Si te pagan después, queda como cuenta por cobrar.","buyer":"Comprador *","buyerPlaceholder":"Ej: Cooperativa del pueblo","planting":"Siembra","noPlanting":"Otro producto (no sale de una cosecha)","product":"Producto *","productPlaceholder":"Ej: Café pergamino seco","date":"Fecha *","kilos":"Kilos","pricePerKilo":"Precio por kilo ($)","total":"Total ($) *","howPaid":"¿Cómo te pagan?","credit":"Después (a crédito)","cash":"Ya me pagaron","dueDate":"¿Cuándo quedó de pagar?","method":"Forma de pago","notes":"Notas","paid":"Abonado","newPayment":"Registrar un pago","amount":"Valor ($) *","payAll":"Pagó todo","savePayment":"Guardar pago","fullyPaid":"Esta venta ya está pagada.","saved":"Venta guardada","paymentSaved":"Pago registrado","paidInFull":"Venta pagada por completo","confirmDelete":"¿Eliminar la venta a {{buyer}} y sus pagos? No se puede deshacer.","confirmDeletePayment":"¿Eliminar este pago?","errors":{"load":"No se pudieron cargar las ventas","incomplete":"Escribe el comprador, el producto, la fecha y el valor.","save":"No se pudo guardar la venta","delete":"No se pudo eliminar la venta","payment":"No se pudo registrar el pago"}},
+  "gastos": {"title":"Gastos generales","subtitle":"Transporte, herramientas o servicios que no son de una siembra en particular. Se restan en la rentabilidad para ver la ganancia real.","seeProfit":"Ver rentabilidad","new":"Nuevo gasto","farm":"Finca","allFarms":"Todas las fincas","kpi":{"total":"Gastado en el periodo","count":"{{count}} gastos","top":"En lo que más se gasta","topFarm":"Finca con más gastos"},"byCategory":"Por categoría","list":"Gastos","emptyTitle":"Sin gastos en este periodo","empty":"Anota aquí lo que pagas para la finca y no es de una siembra: el flete, una guadaña, la luz del beneficiadero…","col":{"date":"Fecha","what":"En qué","category":"Categoría","farm":"Finca","amount":"Valor"},"formNew":"Nuevo gasto","formEdit":"Editar gasto","formHelp":"Lo que es de una siembra se anota en la siembra (actividad o fumigación).","category":"Categoría","what":"¿En qué se gastó? *","whatPlaceholder":"Ej: Flete de abono a la finca","amount":"Valor ($) *","date":"Fecha *","chooseFarm":"Elige la finca","saved":"Gasto guardado","confirmDelete":"¿Eliminar el gasto \"{{what}}\"?","errors":{"load":"No se pudieron cargar los gastos","incomplete":"Elige la finca y escribe en qué se gastó, el valor y la fecha.","save":"No se pudo guardar el gasto","delete":"No se pudo eliminar el gasto"}},
   "shortcuts": {"title":"Atajos de teclado","search":"Buscar","new":"Nuevo (según la pantalla)","home":"Ir al Inicio","crops":"Ir a Cultivos","team":"Ir a Equipo","wages":"Ir a Jornales","payrolls":"Ir a Nóminas","reports":"Ir a Reportes","help":"Ver esta lista"},
   "unsaved": {"title":"¿Salir sin guardar?","message":"Lo que escribiste en este formulario se va a perder.","leave":"Salir sin guardar"},
   "inbox": {"title":"Avisos","short":"Avisos","open":"Abrir avisos","openUnread":"Abrir avisos ({{count}} sin leer)","close":"Cerrar avisos","markAll":"Marcar todo como leído","unread":"Sin leer","empty":"No tienes avisos","emptyHint":"Aquí verás los pagos, las solicitudes de acceso y el resumen de cada mañana.","error":"No se pudieron cargar los avisos. Intenta de nuevo en un momento.","settings":"Configurar avisos","period":"del {{from}} al {{to}}","yourEmployer":"Tu empleador","types":{"PAGO_REGISTRADO":{"title":"Te registraron un pago","body":"Recibiste {{amount}}"},"ACCESO_SOLICITADO":{"title":"Solicitud de acceso al portal","body":"{{worker}} quiere ver sus jornales y pagos. Apruébalo o recházalo."},"ACCESO_RESUELTO":{"approved":{"title":"Ya puedes entrar a tu portal","body":"{{employer}} aprobó tu acceso. Ya ves tus jornales, nóminas y pagos."},"rejected":{"title":"Tu solicitud no fue aprobada","body":"Si crees que es un error, habla con {{employer}}."},"removed":{"title":"Tu acceso al portal fue retirado","body":"Si crees que es un error, habla con {{employer}}."}},"RESUMEN_DIA":{"title":"Tu finca hoy"}},"summary":{"alertas":"Avisos del cultivo: {{count}}","clima":"Alertas de clima: {{count}}","insumos":"Insumos por acabarse: {{count}}","generic":"Hay cosas para revisar hoy"}},
@@ -14,7 +19,7 @@
   "receipt": {"download":"Descargar comprobante","downloadShort":"Comprobante","downloadHint":"PDF con código QR para verificarlo","downloadError":"No se pudo descargar el comprobante. Intenta de nuevo.","verify":{"checking":"Verificando el comprobante…","validTitle":"Comprobante auténtico","validText":"Este pago está registrado en AgroRuta con estos datos.","amount":"Valor pagado","number":"Comprobante","worker":"Recibió","idNumber":"Cédula","employer":"Pagó","period":"Período trabajado","compare":"Compara el valor y la fecha con el papel. Si son distintos, el comprobante fue alterado.","invalidTitle":"Comprobante no válido","invalidText":"Este código no corresponde a ningún pago registrado en AgroRuta. Puede que el comprobante esté alterado o que el enlace esté incompleto.","offlineTitle":"No se pudo verificar","offlineText":"No hay conexión con el servidor en este momento. Esto no significa que el comprobante sea falso."}},
   "inventario": {"short":{"buy":"Comprar","adjust":"Contar","minimum":"Mínimo","history":"Movimientos"},"nav":"Bodega de insumos","eyebrow":"Cultivos","title":"Bodega de insumos","subtitle":"Lo que tienes de cada producto, cuánto vale y en qué se ha gastado. Las fumigaciones descuentan solas lo que usan.","buy":"Registrar compra","adjust":"Conteo","minimum":"Aviso de mínimo","list":"Productos en bodega","empty":"Todavía no hay productos en tu bodega. Registra tu primera compra para empezar.","hint":"El costo promedio sale de tus compras con precio y es el que se usa para calcular el costo de cada fumigación.","kpi":{"items":"Productos","value":"Valor en bodega","valueHint":"a costo promedio de compra","alerts":"Por revisar","alertsHint":"bajos, agotados o en negativo"},"table":{"item":"Producto","stock":"Hay","minimum":"Mínimo","avgCost":"Costo promedio","value":"Valor"},"status":{"OK":"Bien","BAJO":"Bajo","AGOTADO":"Agotado","NEGATIVO":"En negativo"},"history":{"title":"Movimientos","empty":"Sin movimientos.","type":{"COMPRA":"Compra","USO":"Fumigación","AJUSTE":"Conteo"},"fromSpray":"desde la fumigación","fromSprayHint":"Para corregirlo, edita o elimina la fumigación.","confirmDelete":"¿Eliminar este movimiento? El stock se recalcula."},"form":{"compraTitle":"Registrar compra","ajusteTitle":"Conteo de bodega","minimoTitle":"Aviso de mínimo","item":"Producto del catálogo","itemPlaceholder":"Elige un producto","quantity":"Cantidad","quantityError":"Escribe una cantidad mayor a 0.","unit":"Unidad","totalCost":"Costo total de la compra","totalCostHint":"Lo que pagaste por toda la compra. Sirve para calcular el costo de cada fumigación.","date":"Fecha de compra","supplier":"Proveedor","notes":"Observaciones","adjustHint":"Escribe cuánto hay de verdad en la bodega. Se registra la diferencia con lo que dice la app.","counted":"Cantidad contada","reason":"Motivo","reasonPlaceholder":"p. ej. se derramó, préstamo, conteo de fin de mes","minimumHint":"Te avisamos en el inicio y en el correo diario cuando quede esta cantidad o menos.","minimum":"Avisar cuando queden","removeMinimum":"Quitar aviso"},"spray":{"used":"Cantidad total usada","usedHint":"Todo el producto que gastaste (no la dosis por tanque). Se descuenta de tu bodega.","inStock":"En bodega: {{cantidad}}","notInStock":"Este producto no tiene compras registradas en tu bodega.","estimated":"Costo calculado con tu precio promedio: {{costo}}","useEstimated":"Usar este costo","noPrice":"Registra el costo de tus compras para calcular el costo de la fumigación."},"errors":{"load":"No se pudo cargar la bodega.","save":"No se pudo guardar."}},
   "theme": {"title": "Apariencia", "hint": "Modo claro, oscuro o automático según tu celular o computador", "light": "Claro", "dark": "Oscuro", "system": "Automático", "toDark": "Cambiar a modo oscuro", "toLight": "Cambiar a modo claro"},
-  "common": {"undo": "Deshacer", 
+  "common": {"delete": "Eliminar", "undo": "Deshacer", 
     "language": "Idioma",
     "loading": "Cargando...",
     "retry": "Reintentar",
@@ -30,11 +35,17 @@
     "loadMore": "Cargar más",
     "showingOf": "Mostrando {{shown}} de {{total}}"
   },
-  "search": {"title": "Buscar en AgroRuta", "recent": "Seguir donde ibas", "pages": "Páginas", "button": "Buscar…", "placeholder": "Busca una finca, un lote, un cultivo, un trabajador o una página", "empty": "Sin resultados", "move": "moverse", "open": "abrir", "actions": {"harvest": "Registrar cosecha", "spray": "Registrar fumigación", "activity": "Registrar actividad", "wage": "Registrar jornal", "worker": "Nuevo trabajador", "purchase": "Registrar compra de insumos", "farm": "Nueva finca"}, "types": {"action": "Acción", "page": "Página", "farm": "Finca", "worker": "Trabajador", "plot": "Lote", "planting": "Siembra"}, "keywords": {"action": {"harvest": "cosechar, kilos, recoger, recolectar", "spray": "fumigar, aplicar, veneno, insecticida, fungicida, herbicida", "activity": "poda, riego, deshierbe, abonar, fertilizar, limpieza, labor", "wage": "anotar día, asistencia", "worker": "agregar, empleado, contratar, persona", "purchase": "comprar, insumo, abono, factura", "farm": "agregar, terreno"}, "farms": "lotes, mapa, terreno", "calendar": "agenda, programar, fechas, próximas labores", "inventory": "insumos, abono, fertilizante, fungicida, herbicida, compras, existencias, stock, bodega", "team": "trabajadores, empleados, personal, obreros", "wages": "días trabajados, asistencia", "newWage": "anotar día, asistencia", "payrolls": "liquidar, quincena, aprobar", "payments": "pagar, comprobante, recibo", "positions": "salario, valor del jornal, pago por día", "labors": "tareas, oficios", "reportPayroll": "reporte, pdf", "reportCrops": "cosechas, kilos, rendimiento, reporte, pdf", "reportCosts": "gastos, cuánto costó, reporte", "reportProfit": "ganancia, utilidad, ventas, precio, reporte", "settings": "perfil, contraseña, correo, idioma, avisos, cuenta"}},
+  "search": {"title": "Buscar en AgroRuta", "recent": "Seguir donde ibas", "pages": "Páginas", "button": "Buscar…", "placeholder": "Busca una finca, un lote, un cultivo, un trabajador o una página", "empty": "Sin resultados", "move": "moverse", "open": "abrir", "actions": {"sale": "Nueva venta", "expense": "Registrar gasto general", "sheet": "Anotar jornales de la semana", "harvest": "Registrar cosecha", "spray": "Registrar fumigación", "activity": "Registrar actividad", "wage": "Registrar jornal", "worker": "Nuevo trabajador", "purchase": "Registrar compra de insumos", "farm": "Nueva finca"}, "types": {"action": "Acción", "page": "Página", "farm": "Finca", "worker": "Trabajador", "plot": "Lote", "planting": "Siembra"}, "keywords": {"sheet": "planilla, semana, jornales, asistencia, días, lunes", "yield": "rendimiento, kilos por día, productividad, comparar, por kilo, por día, recolectores", "sales": "ventas, cuentas por cobrar, deben, fiado, compradores, clientes, cobrar", "toSell": "kilos por vender, bodega de cosecha, inventario, cosechado, existencias, vender", "expenses": "gastos, transporte, flete, herramientas, servicios, arriendo", "prices": "precio, sipsa, dane, mercado, valor del kilo, cotización", "reportFieldbook": "cuaderno de campo, certificación, aplicaciones, trazabilidad, bpa, ica, pdf", "action": {"sale": "vender, venta, cliente, comprador, cobrar, fiar, kilos, cosecha", "expense": "gasto, transporte, flete, herramienta, servicio, luz, agua", "sheet": "planilla, semana, jornales, asistencia, días", "harvest": "cosechar, kilos, recoger, recolectar", "spray": "fumigar, aplicar, veneno, insecticida, fungicida, herbicida", "activity": "poda, riego, deshierbe, abonar, abonado, fertilizar, limpieza, labor, insumo", "wage": "anotar día, asistencia", "worker": "agregar, empleado, contratar, persona", "purchase": "comprar, insumo, abono, factura, bodega", "farm": "agregar, terreno"}, "farms": "lotes, mapa, terreno", "calendar": "agenda, programar, fechas, próximas labores", "inventory": "insumos, abono, fertilizante, fungicida, herbicida, compras, existencias, stock, bodega", "team": "trabajadores, empleados, personal, obreros", "wages": "días trabajados, asistencia", "newWage": "anotar día, asistencia", "payrolls": "liquidar, semana, quincena, aprobar", "payments": "pagar, comprobante, recibo", "positions": "salario, valor del jornal, pago por día", "labors": "tareas, oficios", "reportPayroll": "reporte, pdf", "reportCrops": "cosechas, kilos, rendimiento, reporte, pdf", "reportCosts": "gastos, cuánto costó, reporte", "reportProfit": "ganancia, utilidad, ventas, precio, reporte", "settings": "perfil, contraseña, correo, idioma, avisos, cuenta"}},
   "layout": {
     "subtitle": "Sistema de gestión",
     "sections": { "management": "Gestión", "analysis": "Análisis", "system": "Sistema" },
     "nav": {
+      "yield": "Rendimiento",
+      "finance": "Finanzas",
+      "sales": "Ventas por cobrar",
+      "expenses": "Gastos generales",
+      "prices": "Precios de referencia",
+      "sheet": "Planilla semanal",
       "home": "Inicio",
       "crops": "Cultivos",
       "workers": "Trabajadores",
@@ -163,6 +174,8 @@
     }
   },
   "enums": {
+    "categoriaGasto": {"TRANSPORTE":"Transporte","HERRAMIENTAS":"Herramientas","SERVICIOS":"Servicios","MANTENIMIENTO":"Mantenimiento","ADMINISTRACION":"Administración","IMPUESTOS":"Impuestos","OTRO":"Otro"},
+    "estadoVenta": {"PENDIENTE":"Por cobrar","VENCIDA":"Vencida","PAGADA":"Pagada"},
     "rol": {
       "ADMINISTRADOR": "Administrador",
       "AGRICULTOR": "Agricultor",
@@ -185,6 +198,9 @@
       "FINALIZADO": "Finalizado"
     },
     "tipoActividad": {
+      "ABONADO": "Abonado",
+      "FERTILIZACION": "Fertilización",
+      "FUMIGACION": "Fumigación",
       "PODA": "Poda",
       "TUTOREO": "Tutoreo",
       "DESHIERBE": "Deshierbe",
@@ -237,6 +253,8 @@
     }
   },
   "dashboard": {
+    "weatherToday": "Clima de hoy",
+    "weatherMore": "Ver el clima completo",
     "agenda": {
   "emptyHint": "Programa podas, riegos o fumigaciones desde el calendario y aparecerán aquí.","title": "Lo que viene", "late": "Atrasado", "today": "Hoy", "tomorrow": "Mañana", "inDays": "En {{days}} días"},
     "crops": {"title": "Cultivos en curso", "all": "Ver cultivos", "crop": "Cultivo", "days": "días", "none": "No tienes cultivos sembrados ahora mismo."},
@@ -316,7 +334,8 @@
     }
   },
   "reports": {
-    "profit": {"title":"Rentabilidad por lote","subtitle":"Cuánto dejó cada lote y cómo le fue a cada temporada frente a la anterior.","kpi":{"profit":"Ganancia total","lots":"{{count}} lotes","lotsOne":"1 lote","unsold":"Incluye {{amount}} gastados en {{count}} lotes aún sin ventas","unsoldOne":"Incluye {{amount}} gastados en 1 lote aún sin ventas","margin":"Margen","marginHint":"De cada $100 vendidos, lo que queda","best":"Lote más rentable","worst":"Lote menos rentable"},"col":{"margin":"Margen","perHa":"Ganancia/ha","yield":"Rendimiento","vsPrevious":"Frente a la anterior"},"ongoing":"en curso","bestSeason":"Mejor temporada","noPrices":"Ninguna cosecha tiene precio de venta. Agrega el precio por kilo al registrar las cosechas para ver la ganancia.","hint":"La ganancia es lo vendido menos jornales, insumos y otros gastos. Toca una temporada para ver el detalle de sus costos."},
+    "fieldbook": {"title":"Cuaderno de campo","desc":"Un PDF con todas las aplicaciones de producto, como lo piden las certificaciones (Rainforest, orgánico, BPA) y algunos compradores.","has1":"Fecha, finca, lote y cultivo","has2":"Producto y tipo","has3":"Dosis, área y producto gastado","has4":"Carencia y reentrada, con la fecha en que se puede cosechar","farm":"Finca","allFarms":"Todas las fincas","download":"Descargar cuaderno en PDF","note":"Usa el periodo de arriba. Al final trae espacio para la firma del responsable técnico y del productor."},
+    "profit": {"overhead": {"title":"Gastos generales de las fincas","desc":"{{count}} gastos que no son de ninguna temporada (transporte, herramientas, servicios).","see":"Ver gastos","total":"Gastos generales","real":"Ganancia real"}, "title":"Rentabilidad por lote","subtitle":"Cuánto dejó cada lote y cómo le fue a cada temporada frente a la anterior.","kpi":{"profit":"Ganancia total","lots":"{{count}} lotes","lotsOne":"1 lote","unsold":"Incluye {{amount}} gastados en {{count}} lotes aún sin ventas","unsoldOne":"Incluye {{amount}} gastados en 1 lote aún sin ventas","margin":"Margen","marginHint":"De cada $100 vendidos, lo que queda","best":"Lote más rentable","worst":"Lote menos rentable"},"col":{"margin":"Margen","perHa":"Ganancia/ha","yield":"Rendimiento","vsPrevious":"Frente a la anterior"},"ongoing":"en curso","bestSeason":"Mejor temporada","noPrices":"Ninguna cosecha tiene precio de venta. Agrega el precio por kilo al registrar las cosechas para ver la ganancia.","hint":"La ganancia es lo vendido menos jornales, insumos y otros gastos. Toca una temporada para ver el detalle de sus costos."},
     "costs": {
       "title": "Costos por temporada",
       "subtitle": "Lo que costó y lo que dejó cada siembra: jornales, insumos, otros gastos y ventas.",
@@ -348,6 +367,7 @@
       "seeCosts": "Costos"
     },
     "tabs": {
+      "fieldbook": {"name":"Cuaderno de campo","sub":"Aplicaciones para certificar"},
       "profitability": {"name":"Rentabilidad","sub":"Qué lote deja más"},
       "costs": {"name": "Costos", "sub": "Costo y ganancia por temporada"},
       "payroll": {
@@ -361,7 +381,7 @@
     },
     "generatedAt": "Generado el {{date}}",
     "downloadPdf": "Descargar PDF",
-    "period": {"label":"Periodo","todo":"Todo","mes":"Este mes","anio":"Este año","anioPasado":"Año pasado","doce":"Últimos 12 meses","notePayroll":"Cuenta los pagos hechos en esas fechas. Lo pendiente por pagar es el de hoy.","noteSeasons":"Muestra las temporadas que estuvieron en el campo en esas fechas, con todos sus gastos e ingresos."},
+    "period": {"noteFieldBook": "Incluye las fumigaciones y fertilizaciones hechas en esas fechas.", "label":"Periodo","todo":"Todo","mes":"Este mes","anio":"Este año","anioPasado":"Año pasado","doce":"Últimos 12 meses","notePayroll":"Cuenta los pagos hechos en esas fechas. Lo pendiente por pagar es el de hoy.","noteSeasons":"Muestra las temporadas que estuvieron en el campo en esas fechas, con todos sus gastos e ingresos."},
     "download": {"button":"Descargar","pdf":"PDF de este reporte","pdfHint":"Para imprimir o enviar","fullHint":"Elige qué reportes van en un solo archivo"},
     "csv": {"button":"Excel (CSV)","hint":"Descarga lo que ves en la tabla (con los filtros que elegiste) para abrirlo en Excel","cols":{"worker":"Trabajador","from":"Desde","to":"Hasta","workdays":"Jornales","payments":"Pagos","totalPaid":"Total pagado","crop":"Cultivo","variety":"Variedad","farm":"Finca","plot":"Lote","stage":"Etapa","planted":"Fecha de siembra","finished":"Fecha de fin","days":"Días","harvests":"Cosechas","kg":"Kg cosechados","labor":"Mano de obra","inputs":"Insumos","other":"Otros","totalCost":"Costo total","income":"Ingresos","profit":"Ganancia","costPerKg":"Costo por kg","areaHa":"Área (ha)","season":"Temporada","marginPct":"Margen (%)"}},
     "full": {"button": "PDF con todo", "title": "Qué incluir en el PDF", "hint": "Marca las partes que quieres en un solo archivo.", "download": "Descargar PDF", "needOne": "Elige al menos una parte"},
@@ -610,6 +630,7 @@
         "upToDate": "Cultivo al día"
       },
       "cards": {
+        "toSell": "{{kg}} kg por vender · Vender",
         "sprays": "Fumigaciones",
         "activities": "Actividades",
         "harvested": "Kg cosechados",
@@ -633,7 +654,7 @@
         "emptyFilter": "No hay registros de este tipo aún.",
         "emptyAll": "Aún no hay registros. Usa los botones de arriba para comenzar."
       },
-      "tabs": { "label": "Secciones de la siembra", "summary": "Resumen", "records": "Registros", "harvests": "Cosechas", "diagnosis": "Diagnóstico" },
+      "tabs": {"money": "Dinero",  "label": "Secciones de la siembra", "summary": "Resumen", "records": "Registros", "harvests": "Cosechas", "diagnosis": "Diagnóstico" },
       "danger": {
         "title": "Eliminar siembra",
         "desc": "Dejará de verse en el lote. Sus gastos e ingresos se conservan en los reportes.",
@@ -651,6 +672,7 @@
       }
     },
     "activity": {
+      "supply": {"title":"Insumo usado","add":"Usé un insumo de la bodega","remove":"Quitar insumo","product":"Producto","other":"Otro (no está en la bodega)","inStock":"hay {{qty}}","name":"Nombre del producto","namePlaceholder":"Ej: gallinaza, cal dolomita","manualHint":"Escrito a mano no se descuenta de la bodega.","quantity":"Cantidad total usada","unit":"Unidad","chooseUnit":"Elige","unitRequired":"Elige la unidad de la cantidad usada.","discount":"Se descuenta de la bodega.","overStock":"Es más de lo que hay en la bodega: quedará en negativo.","costAt":"A precio promedio de compra cuesta {{cost}}.","costHint":"Si lo dejas vacío, se usa el costo del producto a precio promedio de compra.","defaultDescription":"Abonado con {{product}}"},
       "back": "Volver a la siembra",
       "title": "Registrar actividad",
       "subtitle": "Registra una actividad realizada en el cultivo",
@@ -664,6 +686,14 @@
       "errors": { "register": "Error al registrar la actividad." }
     },
     "harvest": {
+      "sold": "Vendida",
+      "soldHint": "Lo vendido de la siembra ya cubre esta cosecha",
+      "leftToSell": "quedan {{kg}} kg por vender",
+      "kgHint": "Se llena solo con la suma de los kilos de los recolectores (por kilo y por día).",
+      "oldPrice": "Esta cosecha tiene un valor estimado de {{price}}/kg de antes. Ahora lo que dejó la siembra sale de lo que vendas en Ventas.",
+      "sell": "Vender",
+      "pickersCount": "{{n}} recolectores",
+      "pickers": {"kgOptional": "Kilos que recogió (opcional)", "title":"¿Quién la recogió?","hint":"A cada uno se le crea su jornal de ese día y entra a la nómina de la semana. Puedes corregirlo antes de pagar.","who":"Recolector","choose":"Elige quién","how":"Cómo se le paga","byKg":"Por kilo","byDay":"Por día","kg":"Kilos que recogió","pricePerKg":"Valor del kilo","dayValue":"Valor del día","kgAt":"{{kg}} kg a {{price}}","perDay":"Por día","locked":"En nómina {{estado}}: no se cambia aquí","add":"Agregar recolector","summary":"{{n}} recolectores · mano de obra {{total}}","noTeam":"No tienes trabajadores activos para anotar quién recogió.","goTeam":"Ir a Trabajadores","sumHint":"Los recolectores suman {{kg}} kg.","useSum":"Usar la suma","incomplete":"En cada recolector falta elegir quién o cuánto se le paga.","tooMany":"Los kilos de los recolectores suman más que la cantidad de la cosecha."},
       "back": "Volver a la siembra",
       "title": "Registrar cosecha",
       "subtitle": "Registra una cosecha realizada en el cultivo",
@@ -721,9 +751,23 @@
     }
   },
   "workers": {
+    "yield": {"chart": {"title":"Comparación del equipo","kilos":"Kilos que recoge al día","cost":"Lo que te sale el kilo","byDay":"Por día","byKg":"Por kilo","team":"Lo que pagas el kilo al equipo ({{price}})","noDay":"sin días pagados por día","noKg":"sin días pagados por kilo","tipKilos":"{{kg}} kg al día · {{count}} días"}, "title":"Rendimiento","subtitle":"Cuántos kilos recoge cada trabajador y cuánto te sale el kilo pagándole por día o por kilo.","period":"Periodo","days":{"30":"30 días","90":"90 días","365":"Un año"},"error":"No se pudo cargar el rendimiento","kpi":{"workersOne": "1 trabajador", "kilos":"Kilos recogidos","workers":"{{count}} trabajadores","paid":"Pagado por esos días","costKg":"Te sale el kilo","teamKg":"Por kilo pagas {{price}}"},"byWorker":"Por trabajador","col":{"kiloCost": "Te sale el kilo", "worker":"Trabajador","perDayKg":"Kilos al día","byDay":"Kilo pagando por día","byKg":"Kilo pagando por kilo","verdict":"¿Qué conviene?"},"paysByKg":"cobra por kilo","paysByDay":"cobra por día","daysCount":"{{count}} días con kilos","kgIn":"{{kg}} kg en {{count}} días","verdict":{"day":"Por día: {{diff}} menos el kilo","kg":"Por kilo: {{diff}} menos el kilo","same":"Sale casi igual","vsTeam":"Comparado con lo que pagas el kilo al equipo","none":"Faltan datos para comparar"},"note":"Solo cuentan los días con kilos anotados. Para los que cobran por día, anota en la cosecha los kilos que recogió cada uno.","empty":"Todavía no hay kilos anotados. Al registrar una cosecha, anota quién la recogió y sus kilos, también de los que cobran por día.","goCrops":"Ir a Cultivos"},
+    "filter": {"label":"Ver de","all":"Todos","allHint":"{{count}} trabajadores","allOption":"Todos los trabajadores ({{count}})","searchWorkerCrop":"Buscar trabajador o cultivo..."},
+    "sheet": {"legendPending": "En una nómina pendiente (se puede corregir)", "removedFromPayroll": "Jornal de {{name}} quitado; su nómina se recalculó", "title":"Planilla semanal","subtitle":"Toca una casilla para anotar el jornal de ese día; tócala otra vez para quitarlo.","toPayroll":"Generar la nómina de la semana","withWhat":"Con qué se anota","crop":"Cultivo donde trabajaron","labors":"Labores","howTo":"Lo que toques se anota con este cultivo y estas labores. El número de cada día anota a todos los que se pagan por día.","chooseFirst":"Elige arriba el cultivo y al menos una labor.","prevWeek":"Semana anterior","nextWeek":"Semana siguiente","thisWeek":"Esta semana","weekTotal":"Total de la semana:","total":"Semana","allDay":"Anotar a todos los que se pagan por día","days":"{{count}} días","daysOne":"1 día","emptyTitle":"Todavía no hay trabajadores","empty":"Agrega a tu equipo para anotar sus jornales en la planilla.","addWorker":"Agregar trabajador","legendDone":"Jornal anotado","legendPayroll":"Ya está en una nómina","legendDay":"Toca el día para anotar a todos","kilosTitle":"¿Cuántos kilos recogió?","kilosValue":"Este jornal vale {{value}}.","added":"{{count}} jornales anotados","removed":"Jornal de {{name}} quitado","inPayroll":"Ese jornal ya está en una nómina: para quitarlo, primero elimina la nómina.","cellEmpty":"Anotar jornal: {{who}}","cellFilled":"Quitar jornal: {{who}}","errors":{"load":"No se pudo cargar la planilla","save":"No se pudo anotar el jornal","remove":"No se pudo quitar el jornal"}},
     "catalog": { "label": "Cargos y labores" },
     "ui": {"team": "Equipo", "summary": "Resumen del equipo", "ofTotal": "de {{total}} registrados", "seeRosters": "Ver nóminas", "paymentsCount": "{{count}} pagos", "paymentsCountOne": "1 pago", "people": "Personas", "filterState": "Filtrar por estado", "col": {"worker": "Trabajador", "post": "Cargo", "wage": "Jornal", "state": "Estado", "actions": "Acciones"}, "idShort": "C.C.", "data": "Datos", "contract": "Contrato", "hireDate": "Ingreso", "phone": "Teléfono", "address": "Dirección", "workDays": "Días trabajados", "searchCrop": "Buscar cultivo...", "lastPayment": "Último pago", "paymentHistory": "Historial de pagos", "payroll": "Nómina", "amount": "Monto", "openPayroll": "Abrir la nómina", "summaryShort": "Resumen", "rosters": {"toApprove": "Por aprobar", "toPay": "Aprobadas sin pagar", "paid": "Pagado", "count": "{{count}} nóminas pagadas", "countOne": "1 nómina pagada", "all": "Todas", "flow": "Avance de la nómina", "step1": "Generada", "step2": "Aprobada", "step3": "Pagada", "cancelledNote": "Esta nómina está anulada. Sus jornales quedaron libres para incluirlos en otra nómina."}},
     "posts": {
+      "addTypical": "Agregar cargos típicos",
+      "typicalHelp": "Jornalero, recolector al kilo, fumigador, guadañador, operario de beneficio, mayordomo y cocinera, con valores de referencia que puedes cambiar.",
+      "confirmTypical": "Se agregan los cargos típicos de una finca que todavía no tienes (jornalero, recolector al kilo, fumigador, guadañador, operario de beneficio, mayordomo y cocinera). Los valores son de referencia: ajústalos a lo que se paga en tu zona.",
+      "typicalAdded": "Se agregaron {{count}} cargos",
+      "typicalNone": "Ya tenías todos los cargos típicos",
+      "perKilo": "/ kg",
+      "payMode": "¿Cómo se paga?",
+      "byDay": "Por día",
+      "byKilo": "Por kilo",
+      "kiloValue": "Valor del kilo ($) *",
+      "kiloHelp": "Al anotar el jornal se escriben los kilos recogidos y se multiplica por este valor.",
       "title": "Cargos",
       "subtitle": "Define los roles y el valor de jornal por cargo",
       "new": "Nuevo cargo",
@@ -736,6 +780,7 @@
       "dailyWage": "Valor Jornal ($) *",
       "invalidValue": "Ingresa un valor válido",
       "table": {
+        "pay": "Pago",
         "post": "Cargo",
         "description": "Descripción",
         "dailyWage": "Valor del jornal"
@@ -775,6 +820,7 @@
       }
     },
     "rosters": {
+      "team": {"review": "Revisar las nóminas", "step1": "Revisa.", "step1Help": "Abre cada nómina: puedes quitar un jornal que no va o traer uno que anotaste después.", "step2": "Aprueba.", "step2Help": "Cuando esté bien, apruébala (una por una o todas juntas desde la lista).", "step3": "Paga.", "step3Help": "El día que le pagues a cada trabajador, registra el pago y sale su comprobante.", "open":"Nómina semanal del equipo","title":"Nómina semanal del equipo","help":"Se genera una nómina por cada trabajador que tenga jornales sin nómina en esas fechas.","week":"Semana","lastWeek":"Semana pasada","thisWeek":"Esta semana","generate":"Generar nóminas","generated":"Se generaron {{count}} nóminas por {{total}}.","wagesCount":"{{count}} jornales","method":"¿Cómo vas a pagar?","later":"Pagar después","payNow":"Pagar todas ({{total}})","bulk":"Acciones con varias nóminas","approveAll":"Aprobar las {{count}} pendientes","payAll":"Pagar las {{count}} aprobadas · {{total}}","confirmApprove":"¿Aprobar las {{count}} nóminas pendientes que se ven en la lista?","confirmPay":"¿Registrar el pago de las {{count}} nóminas aprobadas en {{method}}? Cada una se paga por su total.","approved":"{{count}} nóminas aprobadas","paid":"{{count}} pagos registrados","errors":{"dates":"Revisa las fechas de la semana","generate":"No se pudieron generar las nóminas","pay":"No se pudieron registrar los pagos"}},
       "list": {
         "title": "Nóminas",
         "subtitleOf": "Nóminas de",
@@ -826,6 +872,9 @@
         }
       },
       "detail": {
+        "bringNew": "Traer jornales nuevos",
+        "fixHelp": "Esta nómina todavía se puede corregir: quita un jornal que no va o trae los que anotaste después en la planilla. Cuando esté bien, apruébala; el pago se registra el día que le pagues.",
+        "removeWage": "Quitar este jornal de la nómina",
         "back": "Nóminas",
         "title": "Nómina #{{id}}",
         "approve": "Aprobar",
@@ -853,14 +902,18 @@
         "notFound": "No se encontró la nómina.",
         "backShort": "Volver",
         "confirm": {
+          "removeWage": "¿Quitar este jornal de la nómina? El jornal sigue anotado y el total se recalcula.",
           "approve": "¿Aprobar esta nómina? Después podrás registrar el pago.",
           "cancel": "¿Anular esta nómina? Esta acción no se puede deshacer."
         },
         "success": {
+          "wageRemoved": "Jornal quitado; el total se recalculó",
+          "wagesAdded": "Se sumaron los jornales nuevos del periodo",
           "approved": "Nómina aprobada. Ahora registra el pago.",
           "paid": "Pago de ${{amount}} registrado ({{method}})"
         },
         "errors": {
+          "fix": "No se pudo corregir la nómina",
           "load": "Error al cargar la nómina",
           "approve": "Error al aprobar la nómina",
           "payment": "Error al registrar el pago",
@@ -878,6 +931,9 @@
     },
     "wages": {
       "new": {
+        "kilos": "Kilos recogidos *",
+        "kilosHelp": "Se pagan a {{value}} el kilo.",
+        "kilosRequired": "Escribe cuántos kilos recogió",
         "back": "Jornales",
         "title": "Registrar jornal",
         "subtitle": "Registra el trabajo diario de un trabajador",
@@ -909,6 +965,7 @@
         }
       },
       "list": {
+        "subtitleAll": "Todo el equipo",
         "title": "Jornales",
         "subtitleNoWorker": "Registro diario de trabajo en campo",
         "generatePayroll": "Generar nómina",
@@ -1477,7 +1534,10 @@
     "confirm": "Confirmar"
   },
   "temporadas": {
+    "repetir": {"title":"Labores que se repiten","add":"Programar","empty":"Programa lo que haces cada cierto tiempo (fertilizar cada 30 días, deshierbar cada 45) y te avisamos cuando toque.","every":"cada {{days}} días","overdue":"Atrasada {{days}} días","next":"Próxima:","ended":"Ya terminó","last":"última vez","doNow":"Hacer ahora","what":"¿Qué labor?","howOften":"¿Cada cuántos días?","days":"días","from":"Primera vez","until":"Hasta (opcional)","note":"Nota (opcional)","notePlaceholder":"Ej: Triple 15, 50 g por planta","help":"Cuando registres esta labor (o la fumigación o fertilización), la próxima fecha se corre sola. Sale en el calendario y en el resumen de cada mañana.","saved":"Labor programada","confirmDelete":"¿Dejar de programar \"{{labor}}\"? Lo que ya registraste no se borra.","errors":{"incomplete":"Elige la labor, cada cuántos días y la primera fecha.","save":"No se pudo guardar la labor programada"}},
     "costos": {
+      "fromSales": "De lo vendido: {{kg}} kg",
+      "fromHarvests": "Valor estimado de las cosechas",
       "priceKg": "Precio de venta por kg",
       "priceHint": "Con el precio se calcula cuánto dejó la temporada.",
       "incomeHint": "Ingreso de esta cosecha: {{total}}",
@@ -1492,7 +1552,7 @@
       "income": "Ingresos",
       "avgPrice": "Precio promedio {{valor}}/kg",
       "profit": "Ganancia",
-      "noPrices": "Registra el precio de venta en las cosechas",
+      "noPrices": "Registra las ventas de esta siembra en Ventas para ver la ganancia",
       "breakdown": "Reparto del costo",
       "labor": "Mano de obra",
       "wages": "{{count}} jornales", "wagesOne": "1 jornal",
@@ -1502,7 +1562,7 @@
       "byMonth": "Costo e ingreso por mes",
       "cost": "Costo",
       "whoWorked": "Quién trabajó ({{count}})",
-      "missing": "Faltan datos: {{sprays}} fumigaciones sin costo y {{harvests}} cosechas sin precio. Complétalos para que el cálculo sea exacto."
+      "missing": "Faltan datos: {{sprays}} fumigaciones sin costo y {{harvests}} cosechas sin precio. Complétalos, o registra las ventas, para que el cálculo sea exacto."
     },
     "cal": {
       "corto": {"SIEMBRA": "Siembra", "FUMIGACION": "Fumigación", "FIN_CARENCIA": "Fin carencia", "FIN_REENTRADA": "Reentrada", "FUMIGACION_SUGERIDA": "Fumigar", "COSECHA_ESTIMADA": "Cosecha"},
@@ -1534,6 +1594,8 @@
       "next14": "Próximos 14 días",
       "overdueCount": "{{count}} atrasadas", "overdueCountOne": "1 atrasada",
       "tipo": {
+        "programada": "se repite",
+        "programadaAtrasada": "atrasada",
         "SIEMBRA": "Siembra",
         "ETAPA": "Pasó a {{etapa}}",
         "scheduled": "programada",
@@ -1622,6 +1684,17 @@
     },
     "saving": "Guardando...",
     "ciclo": {
+      "normalDays": "lo normal son unos {{days}} días",
+      "estimatedTitle": "Fecha estimada según lo normal del cultivo",
+      "suggestStage": "Según lo normal del {{crop}}, ya debería estar en {{etapa}} (desde el {{date}} aprox.).",
+      "suggestFinish": "Según lo normal del {{crop}}, la cosecha ya debería haber terminado (el {{date}} aprox.).",
+      "whereDays": "¿De dónde salen estos días?",
+      "daysOf": "Días de referencia para el {{crop}} en Colombia, contados desde que empieza cada etapa:",
+      "daysGeneral": "No tenemos tiempos propios para el {{crop}}; se usan unos generales:",
+      "aboutDays": "~{{days}} días",
+      "perennial": "Es un cultivo perenne: después de la cosecha vuelve a producir, así que no se sugiere terminar la temporada.",
+      "shortCycle": "Es de ciclo corto: al terminar la cosecha se sugiere cerrar la temporada.",
+      "disclaimer": "Cambian con el clima, la altura y la variedad: son una guía, el cambio de etapa lo decides tú.",
       "title": "Ciclo del cultivo",
       "inStage": "En {{etapa}} hace {{days}} días",
       "finishedOn": "Temporada terminada el {{date}} · duró {{days}} días",

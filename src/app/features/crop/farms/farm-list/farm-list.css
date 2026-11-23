@@ -58,3 +58,8 @@
 .activa-txt strong { font-size: .95rem; }
 .activa-txt small { font-size: .8rem; color: var(--ar-tinta-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .activa .flecha { color: var(--ar-tinta-3); }
+
+/* Celular: la ubicación de la finca y el lote de cada siembra, completos */
+@media (max-width: 760px) {
+  .finca-txt small, .activa-txt small { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+}

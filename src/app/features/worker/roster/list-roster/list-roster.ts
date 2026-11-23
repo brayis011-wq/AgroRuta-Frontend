@@ -9,11 +9,15 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   NominaService,
   TrabajadorService,
-  NominaRequest
+  NominaRequest,
+  PagoService
 } from '../../../../core/services/worker.service';
+import { AvisosService } from '../../../../core/services/toast.service';
+import { semanaActual, semanaAnterior, semanaParaPagar } from './semana';
 import { Nomina, ResumenNominas, Trabajador } from '../../../../core/models/worker.model';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
+import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
 
 type FiltroEstado = 'TODAS' | 'PENDIENTE' | 'APROBADA' | 'PAGADA' | 'ANULADA';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
@@ -22,9 +26,9 @@ import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 @Component({
   selector: 'app-lista-nominas',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PeriodoPipe, FlujoPagoComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PeriodoPipe, FlujoPagoComponent, FiltroTrabajadorComponent],
   templateUrl: './list-roster.html',
-  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css']
+  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', '../../../../shared/styles/opciones.css', './list-roster.css']
 })
 export class ListaNominasComponent implements OnInit {
   /** Nóminas cargadas hasta ahora (se van sumando páginas con "Cargar más") */
@@ -45,6 +49,23 @@ export class ListaNominasComponent implements OnInit {
   aprobando: number | null = null;
   private _filtroEstado: FiltroEstado = 'TODAS';
   private readonly router = inject(Router);
+  private readonly pagos = inject(PagoService);
+  private readonly avisos = inject(AvisosService);
+
+  // ── Nómina semanal de todo el equipo ──
+  mostrarEquipo = false;
+  equipoInicio = '';
+  equipoFin = '';
+  /** Las nóminas recién generadas para el equipo (para pagarlas juntas) */
+  generadas: Nomina[] | null = null;
+  metodoLote = 'EFECTIVO';
+  procesandoLote = false;
+  errorLote = '';
+  /** Semana pasada y esta semana (lunes a domingo) */
+  readonly semanas = [
+    { ...semanaAnterior(new Date()), clave: 'workers.rosters.team.lastWeek' },
+    { ...semanaActual(new Date()), clave: 'workers.rosters.team.thisWeek' },
+  ];
   cargando = true;
   error = '';                                   // clave de traducción
   exito = '';                                   // clave de traducción
@@ -75,7 +96,7 @@ export class ListaNominasComponent implements OnInit {
       this.form.patchValue({ trabajadorId: this.trabajadorIdFiltro });
     }
 
-    this.trabajadorService.listar().subscribe({
+    this.trabajadorService.listarTodos().subscribe({
       next: (t: Trabajador[]) => {
         this.trabajadores = [...t];
         if (this.trabajadorIdFiltro != null) {
@@ -87,6 +108,9 @@ export class ListaNominasComponent implements OnInit {
     });
 
     this.cargar();
+    // Desde la planilla: abrir directamente la nómina del equipo con la semana que se estaba viendo
+    const q = this.route.snapshot.queryParamMap;
+    if (q.get('team')) this.abrirEquipo(q.get('desde'), q.get('hasta'));
   }
 
   /** Filtro rápido por estado de la tabla. Se aplica en el servidor: cambiarlo vuelve a la primera página. */
@@ -165,9 +189,17 @@ export class ListaNominasComponent implements OnInit {
   }
 
   verTodas(): void {
-    this.trabajadorFiltrado = null;
-    this.trabajadorIdFiltro = null;
-    this.form.patchValue({ trabajadorId: null });
+    this.filtrarTrabajador(null);
+  }
+
+  get trabajadorIdElegido(): number | null { return this.trabajadorIdFiltro; }
+
+  /** Ver las nóminas de un trabajador o de todo el equipo (queda en la dirección) */
+  filtrarTrabajador(id: number | null): void {
+    this.trabajadorIdFiltro = id;
+    this.trabajadorFiltrado = id == null ? null : this.trabajadores.find((t) => t.id === id) ?? null;
+    this.form.patchValue({ trabajadorId: id });
+    guardarEnUrl(this.router, this.route, { trabajadorId: id });
     this.cargar();
   }
 
@@ -183,6 +215,88 @@ export class ListaNominasComponent implements OnInit {
     this.nominaService.generar(req).subscribe({
       next: () => { this.cargar(); this.mostrarForm = false; this.guardando = false; },
       error: () => { this.error = 'workers.rosters.list.errors.generate'; this.guardando = false; this.cdr.detectChanges(); }
+    });
+  }
+
+  // ── Nómina semanal del equipo y pagos juntos ──
+
+  abrirEquipo(desde?: string | null, hasta?: string | null): void {
+    const fecha = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
+    const s = desde && hasta && fecha.test(desde) && fecha.test(hasta) ? { inicio: desde, fin: hasta } : semanaParaPagar(new Date());
+    this.equipoInicio = s.inicio;
+    this.equipoFin = s.fin;
+    this.generadas = null;
+    this.errorLote = '';
+    this.mostrarEquipo = true;
+  }
+
+  elegirSemana(q: { inicio: string; fin: string }): void {
+    this.equipoInicio = q.inicio;
+    this.equipoFin = q.fin;
+  }
+
+  generarEquipo(): void {
+    if (!this.equipoInicio || !this.equipoFin || this.equipoFin < this.equipoInicio) { this.errorLote = 'workers.rosters.team.errors.dates'; return; }
+    this.procesandoLote = true;
+    this.errorLote = '';
+    this.nominaService.generarTodas(this.equipoInicio, this.equipoFin).subscribe({
+      next: (n) => { this.generadas = n; this.procesandoLote = false; this.cargar(); this.cdr.detectChanges(); },
+      error: (e) => { this.errorLote = e?.error?.message || 'workers.rosters.team.errors.generate'; this.procesandoLote = false; this.cdr.detectChanges(); }
+    });
+  }
+
+  get totalGeneradas(): number {
+    return (this.generadas ?? []).reduce((s, n) => s + (n.valorTotal ?? 0), 0);
+  }
+
+  /** Las nóminas recién generadas quedan pendientes: se cierran el panel y se muestran para revisarlas */
+  revisarGeneradas(): void {
+    this.mostrarEquipo = false;
+    this.filtroEstado = 'PENDIENTE';
+  }
+
+  /** Pendientes de la lista: aprobarlas todas */
+  get pendientesVisibles(): Nomina[] { return this.visibles.filter((n) => n.estado === 'PENDIENTE'); }
+  get aprobadasVisibles(): Nomina[] { return this.visibles.filter((n) => n.estado === 'APROBADA'); }
+  get totalAprobadasVisibles(): number { return this.aprobadasVisibles.reduce((s, n) => s + (n.valorTotal ?? 0), 0); }
+
+  async aprobarVisibles(): Promise<void> {
+    const ids = this.pendientesVisibles.map((n) => n.id!);
+    if (!ids.length) return;
+    const ok = await this.confirmService.preguntar({ mensaje: this.translate.instant('workers.rosters.team.confirmApprove', { count: ids.length }) });
+    if (!ok) return;
+    this.procesandoLote = true;
+    this.nominaService.aprobarVarias(ids).subscribe({
+      next: () => { this.procesandoLote = false; this.avisos.exito('workers.rosters.team.approved', { count: ids.length }); this.cargar(); },
+      error: () => { this.procesandoLote = false; this.error = 'workers.rosters.list.errors.approve'; this.cdr.detectChanges(); }
+    });
+  }
+
+  async pagarVisibles(): Promise<void> {
+    const ids = this.aprobadasVisibles.map((n) => n.id!);
+    if (!ids.length) return;
+    const ok = await this.confirmService.preguntar({ mensaje: this.translate.instant('workers.rosters.team.confirmPay', { count: ids.length, method: this.translate.instant('enums.metodoPago.' + this.metodoLote) }) });
+    if (!ok) return;
+    this.pagarJuntas(ids, false);
+  }
+
+  private pagarJuntas(ids: number[], aprobarPendientes: boolean, alTerminar?: () => void): void {
+    if (!ids.length) return;
+    this.procesandoLote = true;
+    this.errorLote = '';
+    this.pagos.pagarVarias(ids, this.metodoLote, aprobarPendientes).subscribe({
+      next: (p) => {
+        this.procesandoLote = false;
+        this.avisos.exito('workers.rosters.team.paid', { count: p.length });
+        alTerminar?.();
+        this.cargar();
+      },
+      error: (e) => {
+        this.procesandoLote = false;
+        this.errorLote = e?.error?.message || 'workers.rosters.team.errors.pay';
+        this.error = this.errorLote;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -224,7 +338,7 @@ export class ListaNominasComponent implements OnInit {
     if (!(await this.confirmar('workers.rosters.list.confirm.cancel', true))) return;
     this.nominaService.anular(id).subscribe({
       next: () => { this.cargar(); },
-      error: () => { this.error = 'workers.rosters.list.errors.cancel'; this.cdr.detectChanges(); }
+      error: (e) => { this.error = e?.error?.message || 'workers.rosters.list.errors.cancel'; this.cdr.detectChanges(); }
     });
   }
 
@@ -254,7 +368,7 @@ export class ListaNominasComponent implements OnInit {
         this.cdr.detectChanges();
         setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
       },
-      error: () => { this.error = 'workers.rosters.list.errors.delete'; this.cdr.detectChanges(); }
+      error: (e) => { this.error = e?.error?.message || 'workers.rosters.list.errors.delete'; this.cdr.detectChanges(); }
     });
   }
 

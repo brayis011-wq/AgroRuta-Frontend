@@ -79,6 +79,7 @@
 
       <ng-container *ngTemplateOutlet="grupo; context: { id: 'cultivos', icono: 'ti-plant', clave: 'layout.nav.crops', items: subCultivos() }" />
       <ng-container *ngTemplateOutlet="grupo; context: { id: 'trabajadores', icono: 'ti-users-group', clave: 'layout.nav.workers', items: subTrabajadores }" />
+      <ng-container *ngTemplateOutlet="grupo; context: { id: 'finanzas', icono: 'ti-cash', clave: 'layout.nav.finance', items: subFinanzas }" />
 
       <span class="sec">{{ 'layout.sections.analysis' | translate }}</span>
       <ng-container *ngTemplateOutlet="grupo; context: { id: 'reportes', icono: 'ti-chart-bar', clave: 'layout.nav.reports', items: subReportes }" />

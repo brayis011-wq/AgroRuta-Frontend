@@ -1,0 +1,24 @@
+@if (fichas()) {
+  <div class="personas" role="radiogroup" [attr.aria-label]="'workers.filter.label' | translate">
+    <button type="button" role="radio" class="p-chip todos" [class.on]="valor() === null" [attr.aria-checked]="valor() === null" (click)="elegir(null)">
+      <span class="av" aria-hidden="true"><i class="ti ti-users-group"></i></span>
+      <span><strong>{{ 'workers.filter.all' | translate }}</strong><small>{{ 'workers.filter.allHint' | translate: { count: trabajadores().length } }}</small></span>
+    </button>
+    @for (t of ordenados(); track t.id) {
+      <button type="button" role="radio" class="p-chip" [class.on]="t.id === valor()" [attr.aria-checked]="t.id === valor()" (click)="elegir(t.id!)">
+        <span class="av" [class.gris]="t.estado !== 'ACTIVO' && t.id !== valor()" aria-hidden="true">{{ iniciales(t) }}</span>
+        <span><strong>{{ t.nombreCompleto }}</strong><small>{{ t.cargo?.nombre }}</small></span>
+      </button>
+    }
+  </div>
+} @else {
+  <label class="selector">
+    <span><i class="ti ti-filter" aria-hidden="true"></i> {{ 'workers.filter.label' | translate }}</span>
+    <select [ngModel]="valor()" (ngModelChange)="elegir($event)">
+      <option [ngValue]="null">{{ 'workers.filter.allOption' | translate: { count: trabajadores().length } }}</option>
+      @for (t of ordenados(); track t.id) {
+        <option [ngValue]="t.id">{{ t.nombreCompleto }}{{ t.cargo ? ' — ' + t.cargo.nombre : '' }}{{ t.estado !== 'ACTIVO' ? ' (' + ('enums.estadoTrabajador.' + t.estado | translate) + ')' : '' }}</option>
+      }
+    </select>
+  </label>
+}

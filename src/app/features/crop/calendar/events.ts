@@ -12,6 +12,7 @@ export const ICONO_EVENTO: Record<TipoEvento, string> = {
   FUMIGACION_SUGERIDA: 'ti-spray',
   PROXIMA_ETAPA: 'ti-flag-2',
   COSECHA_ESTIMADA: 'ti-basket',
+  PROGRAMADA: 'ti-repeat',
 };
 
 /** Color de cada tipo (mismos tonos que el resto de Cultivos) */
@@ -26,6 +27,7 @@ export const TONO_EVENTO: Record<TipoEvento, 'verde' | 'azul' | 'ambar' | 'gris'
   FUMIGACION_SUGERIDA: 'azul',
   PROXIMA_ETAPA: 'verde',
   COSECHA_ESTIMADA: 'ambar',
+  PROGRAMADA: 'verde',
 };
 
 /** Lo que falta por hacer o vigilar (no lo ya hecho) */
@@ -63,6 +65,10 @@ export function textoEvento(e: EventoCalendario, t: TranslateService, num: (v: n
     };
     case 'PROXIMA_ETAPA': return { titulo: k('PROXIMA_ETAPA', { etapa: etapa(e.titulo) }), sub: k('estimado') };
     case 'COSECHA_ESTIMADA': return { titulo: k('COSECHA_ESTIMADA'), sub: k('estimadoDias', { days: e.detalle }) };
+    case 'PROGRAMADA': return {
+      titulo: (t.instant('enums.tipoActividad.' + (e.titulo ?? 'OTRO')) as string) + ' · ' + k(e.estado === 'ATRASADO' ? 'programadaAtrasada' : 'programada'),
+      sub: e.detalle ?? '',
+    };
   }
 }
 
@@ -102,7 +108,8 @@ export function textoCorto(e: EventoCalendario, t: TranslateService, num: (v: nu
   switch (e.tipo) {
     case 'ETAPA':
     case 'PROXIMA_ETAPA': return t.instant('enums.etapaCultivo.' + (e.titulo ?? '')) as string;
-    case 'ACTIVIDAD': return t.instant('enums.tipoActividad.' + (e.titulo ?? 'OTRO')) as string;
+    case 'ACTIVIDAD':
+    case 'PROGRAMADA': return t.instant('enums.tipoActividad.' + (e.titulo ?? 'OTRO')) as string;
     case 'FUMIGACION': return e.titulo ?? k('FUMIGACION');
     case 'COSECHA': return num(Number(e.titulo) || 0, 0) + ' kg';
     default: return k(e.tipo);

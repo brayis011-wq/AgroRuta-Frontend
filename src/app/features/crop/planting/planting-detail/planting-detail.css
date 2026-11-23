@@ -37,6 +37,7 @@
 .registro time { font-size: .78rem; color: var(--ar-tinta-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .reg-btns { display: inline-flex; gap: .35rem; }
 .reg-btn { font: inherit; font-size: .8rem; font-weight: 600; display: inline-flex; align-items: center; gap: .3rem; height: 32px; padding: 0 .65rem; border-radius: 9px; cursor: pointer; border: 1px solid var(--ar-borde); background: var(--ar-superficie); color: var(--ar-tinta); }
+a.reg-btn { text-decoration: none; }
 .reg-btn .ti { font-size: 16px; }
 .reg-btn:hover { border-color: var(--ar-verde-600); color: var(--ar-verde-700); }
 .reg-btn.peligro { padding: 0; width: 32px; justify-content: center; color: var(--ar-tinta-2); }
@@ -61,23 +62,41 @@
   .reg-btns { grid-column: 3; grid-row: 1 / span 2; }
 }
 
-/* Pestañas de la ficha de la siembra */
+/* Pestañas de la ficha de la siembra: cada una se ve como un botón (superficie, borde y sombra); la elegida, verde */
 .pestanas-siembra {
-  display: flex; gap: 4px; padding: 4px; margin: .25rem 0 1rem; border-radius: 14px;
-  background: var(--ar-superficie-2); border: 1px solid var(--ar-borde); overflow-x: auto; scrollbar-width: none;
+  display: flex; gap: .5rem; padding: 2px 2px 6px; margin: .25rem 0 .75rem; overflow-x: auto; scrollbar-width: none;
 }
 .pestanas-siembra::-webkit-scrollbar { display: none; }
 .pestanas-siembra button {
   flex: 1 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
-  font: inherit; font-size: .88rem; font-weight: 600; padding: .6rem .9rem; border: 0; border-radius: 10px;
-  background: transparent; color: var(--ar-tinta-2); cursor: pointer; white-space: nowrap; transition: background .15s, color .15s;
+  font: inherit; font-size: .88rem; font-weight: 600; padding: .6rem .95rem; border: 1px solid var(--ar-borde); border-radius: 12px;
+  background: var(--ar-superficie); color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); cursor: pointer; white-space: nowrap;
+  transition: background .15s, color .15s, border-color .15s, box-shadow .15s, transform .15s;
 }
-.pestanas-siembra button:hover { color: var(--ar-tinta); }
-.pestanas-siembra button.on { background: var(--ar-superficie); color: var(--ar-verde-700); box-shadow: var(--ar-sombra-1); }
+.pestanas-siembra button .ti { font-size: 18px; color: var(--ar-verde-600); }
+.pestanas-siembra button:hover { border-color: var(--ar-verde-600); background: var(--ar-verde-50); color: var(--ar-verde-700); transform: translateY(-1px); }
+.pestanas-siembra button:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.pestanas-siembra button.on { background: var(--ar-verde-600); border-color: var(--ar-verde-600); color: #fff; box-shadow: 0 3px 10px rgba(46, 125, 50, .28); transform: none; }
+.pestanas-siembra button.on .ti { color: #fff; }
 .pestanas-siembra .cuenta { font-size: .72rem; min-width: 20px; padding: 0 6px; border-radius: 99px; background: var(--ar-fondo); color: var(--ar-tinta-2); line-height: 20px; }
-.pestanas-siembra button.on .cuenta { background: var(--ar-verde-100); color: var(--ar-verde-700); }
+.pestanas-siembra button.on .cuenta { background: rgba(255, 255, 255, .22); color: #fff; }
 .panel-siembra { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
 .panel-siembra > * { margin: 0; }
 @media (max-width: 760px) {
   .pestanas-siembra button { flex: none; padding: .55rem .75rem; font-size: .84rem; }
+}
+a.por-vender { display: block; margin-top: .2rem; font-size: .78rem; font-weight: 700; color: var(--ar-verde-700); text-decoration: none; }
+a.por-vender:hover { text-decoration: underline; }
+/* Cosecha ya vendida (lo vendido se descuenta de las más viejas primero) */
+.vendida { display: inline-flex; align-items: center; gap: .3rem; height: 32px; padding: 0 .65rem; border-radius: 9px; font-size: .8rem; font-weight: 600; color: var(--ar-verde-700); background: var(--ar-verde-50); }
+.reg-txt .parcial { color: var(--ar-verde-700); font-weight: 600; }
+@media (max-width: 760px) { .vendida > span { display: none; } .vendida { width: 32px; padding: 0; justify-content: center; } }
+
+/* Celular: las pestañas en dos filas (3 + 2) y los filtros del historial que bajan de línea: todo a la vista */
+@media (max-width: 760px) {
+  .pestanas-siembra { flex-wrap: wrap; overflow: visible; gap: .4rem; }
+  .pestanas-siembra button { flex: 1 1 calc(33.33% - .4rem); min-width: 0; padding: .55rem .4rem; font-size: .8rem; gap: .3rem; }
+  .pestanas-siembra button .ti { font-size: 16px; }
+  .filtros { display: flex; flex-wrap: wrap; overflow: visible; }
+  .filtros .filtro { flex: 1 1 auto; }
 }

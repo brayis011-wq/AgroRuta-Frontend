@@ -1,12 +1,14 @@
 // src/app/features/worker/payment/list-payment/list-payment.ts
 
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { guardarEnUrl } from '../../../../shared/url-state';
+import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
-import { PagoService, NominaService } from '../../../../core/services/worker.service';
-import { Pago, Nomina, ResumenPagos } from '../../../../core/models/worker.model';
+import { PagoService, NominaService, TrabajadorService } from '../../../../core/services/worker.service';
+import { Pago, Nomina, ResumenPagos, Trabajador } from '../../../../core/models/worker.model';
 import { descargarArchivo, numeroComprobante } from '../../../../shared/download';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
@@ -14,7 +16,7 @@ import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
 @Component({
   selector: 'app-lista-pagos',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe, FlujoPagoComponent],
+  imports: [CommonModule, RouterModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe, FlujoPagoComponent, FiltroTrabajadorComponent],
   templateUrl: './list-payment.html',
   styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './list-payment.css']
 })
@@ -32,6 +34,11 @@ export class ListaPagosComponent implements OnInit {
 
   // Filtro por nominaId desde query param
   nominaIdFiltro: number | null = null;
+  /** Trabajador elegido en el filtro; null = todo el equipo */
+  trabajadorIdFiltro: number | null = null;
+  trabajadores: Trabajador[] = [];
+  private readonly trabajadorService = inject(TrabajadorService);
+  private readonly router = inject(Router);
 
   // Panel de detalle
   pagoSeleccionado: Pago | null = null;
@@ -64,6 +71,12 @@ export class ListaPagosComponent implements OnInit {
   ngOnInit(): void {
     const nominaParam = this.route.snapshot.queryParamMap.get('nominaId');
     this.nominaIdFiltro = nominaParam ? Number(nominaParam) : null;
+    const trabajadorParam = this.route.snapshot.queryParamMap.get('trabajadorId');
+    this.trabajadorIdFiltro = trabajadorParam ? Number(trabajadorParam) : null;
+    this.trabajadorService.listarTodos().subscribe({
+      next: (t) => { this.trabajadores = t; this.cdr.detectChanges(); },
+      error: () => {},
+    });
 
     this.cargar();
   }
@@ -71,7 +84,7 @@ export class ListaPagosComponent implements OnInit {
   /** Primera página y totales con el filtro actual */
   cargar(): void {
     this.cargarPagina(0);
-    this.pagoService.resumen(this.nominaIdFiltro).subscribe({
+    this.pagoService.resumen(this.nominaIdFiltro, this.trabajadorIdFiltro).subscribe({
       next: (r) => { this.resumen = r; this.cdr.detectChanges(); },
       error: () => {}
     });
@@ -84,7 +97,7 @@ export class ListaPagosComponent implements OnInit {
 
   private cargarPagina(pagina: number): void {
     if (pagina === 0) this.cargando = true; else this.cargandoMas = true;
-    this.pagoService.pagina(pagina, this.nominaIdFiltro).subscribe({
+    this.pagoService.pagina(pagina, this.nominaIdFiltro, undefined, this.trabajadorIdFiltro).subscribe({
       next: (p) => {
         this.pagos = pagina === 0 ? p.contenido : [...this.pagos, ...p.contenido];
         this.total = p.total;
@@ -104,6 +117,15 @@ export class ListaPagosComponent implements OnInit {
 
   verTodos(): void {
     this.nominaIdFiltro = null;
+    guardarEnUrl(this.router, this.route, { nominaId: null });
+    this.cargar();
+  }
+
+  /** Ver los pagos de un trabajador o de todo el equipo (queda en la dirección) */
+  filtrarTrabajador(id: number | null): void {
+    this.trabajadorIdFiltro = id;
+    this.nominaIdFiltro = null;
+    guardarEnUrl(this.router, this.route, { trabajadorId: id, nominaId: null });
     this.cargar();
   }
 

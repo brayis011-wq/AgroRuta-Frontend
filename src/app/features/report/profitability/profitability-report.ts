@@ -3,18 +3,21 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { forkJoin, of, catchError } from 'rxjs';
-import { ReportService } from '../../../core/services/report.service';
+import { ReportService, rangoPeriodo } from '../../../core/services/report.service';
+import { GastosService } from '../../../core/services/finance.service';
+import { ResumenGastos } from '../../../core/models/finance.model';
 import { CultivoService } from '../../../core/services/crop.service';
 import { ReportBase } from '../report-base';
 import { tablaRentabilidad } from '../report-csv';
 import { FilaCostos } from '../costs/costs-calc';
 import { RentabilidadLote, TemporadaLote, anchoBarra, rentabilidadPorLote, resumenRentabilidad } from './profitability-calc';
+import { EtiquetasTablaDirective } from '../../../shared/table-labels.directive';
 
 /** Reportes → Rentabilidad: cuánto dejó cada lote y cómo le fue a cada temporada frente a la anterior */
 @Component({
   selector: 'app-profitability-report',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, DescargasReporteComponent],
+  imports: [RouterLink, TranslatePipe, DescargasReporteComponent, EtiquetasTablaDirective],
   templateUrl: './profitability-report.html',
   styleUrls: ['../report-shared.css', '../report-table.css', './profitability-report.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +25,15 @@ import { RentabilidadLote, TemporadaLote, anchoBarra, rentabilidadPorLote, resum
 export class ProfitabilityReportComponent extends ReportBase implements OnInit {
   private readonly reportService = inject(ReportService);
   private readonly cultivo = inject(CultivoService);
+  private readonly gastosService = inject(GastosService);
+  /** Gastos generales de las fincas en el mismo periodo (no son de ninguna temporada) */
+  readonly gastos = signal<ResumenGastos | null>(null);
+  /** Ganancia de los lotes menos los gastos generales */
+  readonly gananciaReal = computed(() => {
+    const g = this.gastos()?.total ?? 0;
+    const r = this.resumen().ganancia;
+    return g > 0 && r != null ? r - g : null;
+  });
 
   readonly filas = signal<FilaCostos[] | null>(null);
   readonly error = signal(false);
@@ -37,6 +49,8 @@ export class ProfitabilityReportComponent extends ReportBase implements OnInit {
   cargar(): void {
     this.filas.set(null);
     this.error.set(false);
+    const { desde, hasta } = rangoPeriodo(this.reportService.periodo());
+    this.gastosService.resumen(desde, hasta).subscribe({ next: (g) => this.gastos.set(g), error: () => this.gastos.set(null) });
     this.reportService.getCropPreview().subscribe({
       next: (r) => {
         const siembras = r.cropDetails ?? [];

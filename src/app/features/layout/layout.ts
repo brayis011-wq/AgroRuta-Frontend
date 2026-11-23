@@ -33,7 +33,7 @@ const CLAVE_COLAPSADO = 'sidebarColapsado';
 /** Lotes de la finca activa que se muestran en el submenú de Cultivos */
 const MAX_LOTES_MENU = 8;
 
-type IdGrupo = 'cultivos' | 'trabajadores' | 'reportes';
+type IdGrupo = 'cultivos' | 'trabajadores' | 'finanzas' | 'reportes';
 
 export interface ItemSubmenu {
   ruta: string;
@@ -99,11 +99,19 @@ export class LayoutComponent {
 
   readonly subTrabajadores: ItemSubmenu[] = [
     { ruta: '/worker', clave: 'layout.nav.team', exacto: true },
+    { ruta: '/worker/sheet', clave: 'layout.nav.sheet' },
     { ruta: '/worker/workdays', clave: 'layout.nav.wages' },
     { ruta: '/worker/payrolls', clave: 'layout.nav.payrolls', contador: true },
     { ruta: '/worker/payments', clave: 'layout.nav.payments' },
+    { ruta: '/worker/yield', clave: 'layout.nav.yield' },
     // Cargos y Labores van juntos (dos pestañas en la misma pantalla)
     { ruta: '/worker/positions', clave: 'layout.nav.catalog', tambien: '/worker/labors' },
+  ];
+
+  readonly subFinanzas: ItemSubmenu[] = [
+    { ruta: '/finance/sales', clave: 'layout.nav.sales' },
+    { ruta: '/finance/expenses', clave: 'layout.nav.expenses' },
+    { ruta: '/finance/prices', clave: 'layout.nav.prices' },
   ];
 
   readonly subReportes: ItemSubmenu[] = [
@@ -379,11 +387,12 @@ export class LayoutComponent {
   }
 }
 
-const RUTA_GRUPO: Record<IdGrupo, string> = { cultivos: '/crops', trabajadores: '/worker', reportes: '/reports' };
+const RUTA_GRUPO: Record<IdGrupo, string> = { cultivos: '/crops', trabajadores: '/worker', finanzas: '/finance', reportes: '/reports' };
 
 function grupoDeUrl(url: string): IdGrupo | null {
   if (url.startsWith('/crops')) return 'cultivos';
   if (url.startsWith('/worker')) return 'trabajadores';
+  if (url.startsWith('/finance')) return 'finanzas';
   if (url.startsWith('/reports')) return 'reportes';
   return null;
 }

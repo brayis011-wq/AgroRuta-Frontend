@@ -9,12 +9,13 @@ import { CostosSiembraComponent } from '../../crop/planting/costs/costs';
 import { ReportBase } from '../report-base';
 import { tablaCostos } from '../report-csv';
 import { FilaCostos, OrdenCostos, ordenarCostos, totalesCostos } from './costs-calc';
+import { EtiquetasTablaDirective } from '../../../shared/table-labels.directive';
 
 /** Reportes → Costos: costo, ingresos y ganancia de cada temporada, con el detalle de la elegida */
 @Component({
   selector: 'app-costs-report',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, CostosSiembraComponent, DescargasReporteComponent],
+  imports: [RouterLink, TranslatePipe, CostosSiembraComponent, DescargasReporteComponent, EtiquetasTablaDirective],
   templateUrl: './costs-report.html',
   styleUrls: ['../report-shared.css', '../report-table.css', './costs-report.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

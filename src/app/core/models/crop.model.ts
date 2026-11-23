@@ -84,12 +84,17 @@ export function nombreCultivo(s: { tipoCultivo?: string | null; variedad?: strin
 
 export interface ActividadCultivo {
   id?: number;
-  tipo: 'PODA' | 'TUTOREO' | 'DESHIERBE' | 'RIEGO' | 'REVISION' | 'OTRO';
+  tipo: 'ABONADO' | 'PODA' | 'TUTOREO' | 'DESHIERBE' | 'RIEGO' | 'REVISION' | 'OTRO';
   descripcion: string;
   fecha: string;
   siembraId: number;
   /** Materiales o servicios (COP), aparte de los jornales */
   costo?: number | null;
+  /** Insumo que se gastó (abonado...): de la bodega y con cantidad, se descuenta de ella */
+  producto?: string | null;
+  agriculturalInputId?: number | null;
+  cantidadUsada?: number | null;
+  unidadCantidad?: 'LITROS' | 'ML' | 'KG' | 'GRAMOS' | null;
 }
 
 export interface Fumigacion {
@@ -113,6 +118,25 @@ export interface Fumigacion {
   siembraId: number;
 }
 
+/**
+ * Quien recogió una cosecha. Al enviar: trabajadorId, modalidad, kilos y valorKilo o valorDia (null = el del cargo).
+ * Al leer: además el jornal, el nombre, el valor del día y si todavía se puede cambiar.
+ */
+export interface Recolector {
+  trabajadorId: number;
+  modalidad: 'KILO' | 'DIA';
+  kilos?: number | null;
+  valorKilo?: number | null;
+  valorDia?: number | null;
+  jornalId?: number;
+  nombre?: string;
+  valor?: number | null;
+  /** null (sin nómina), PENDIENTE, APROBADA o PAGADA */
+  estadoNomina?: string | null;
+  /** false si su jornal ya está en una nómina aprobada o pagada */
+  editable?: boolean;
+}
+
 export interface Cosecha {
   id?: number;
   fecha: string;
@@ -120,8 +144,10 @@ export interface Cosecha {
   calidad: 'PRIMERA' | 'SEGUNDA' | 'TERCERA';
   observaciones?: string;
   siembraId: number;
-  /** Precio de venta por kilo (COP) */
+  /** Valor estimado por kilo de antes (las cosechas nuevas no lo piden: el precio va en Ventas) */
   precioKg?: number | null;
+  /** Quién la recogió: cada uno tiene su jornal */
+  recolectores?: Recolector[];
   /** Se registró dentro de la carencia de una fumigación (la persona lo confirmó) */
   enCarencia?: boolean;
   /** Solo al enviar: confirma que se cosecha aunque no haya terminado la carencia */
@@ -193,11 +219,15 @@ export interface CostosSiembra {
   meses: { mes: string; manoObra: number; insumos: number; otros: number; ingresos: number }[];
   fumigacionesSinCosto: number;
   cosechasSinPrecio: number;
+  /** De dónde salen los ingresos: VENTAS, COSECHAS (valor estimado anotado en la cosecha) o null */
+  fuenteIngresos?: 'VENTAS' | 'COSECHAS' | null;
+  /** Kilos vendidos de la siembra */
+  kgVendidos?: number;
 }
 
 export type TipoEvento =
   | 'SIEMBRA' | 'ETAPA' | 'ACTIVIDAD' | 'FUMIGACION' | 'COSECHA' | 'FIN_CARENCIA' | 'FIN_REENTRADA'
-  | 'FUMIGACION_SUGERIDA' | 'PROXIMA_ETAPA' | 'COSECHA_ESTIMADA';
+  | 'FUMIGACION_SUGERIDA' | 'PROXIMA_ETAPA' | 'COSECHA_ESTIMADA' | 'PROGRAMADA';
 export type EstadoEvento = 'HECHO' | 'PENDIENTE' | 'ESTIMADO' | 'ATRASADO';
 
 /** Un evento del calendario de cultivo */

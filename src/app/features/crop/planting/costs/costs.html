@@ -17,8 +17,12 @@
       </div>
       <div class="cifra">
         <small>{{ 'temporadas.costos.income' | translate }}</small>
-        <strong>{{ c.kgConPrecio ? pesos(c.ingresos) : '—' }}</strong>
-        @if (c.precioPromedioKg != null) { <em>{{ 'temporadas.costos.avgPrice' | translate: { valor: pesos(c.precioPromedioKg) } }}</em> }
+        <strong>{{ c.fuenteIngresos ? pesos(c.ingresos) : '—' }}</strong>
+        @if (c.fuenteIngresos === 'VENTAS') {
+          <em>{{ 'temporadas.costos.fromSales' | translate: { kg: c.kgVendidos } }}@if (c.precioPromedioKg != null) { · {{ 'temporadas.costos.avgPrice' | translate: { valor: pesos(c.precioPromedioKg) } }} }</em>
+        } @else if (c.fuenteIngresos === 'COSECHAS') {
+          <em>{{ 'temporadas.costos.fromHarvests' | translate }}</em>
+        }
       </div>
       <div class="cifra resultado" [class.gana]="(c.ganancia ?? 0) >= 0 && c.ganancia != null" [class.pierde]="(c.ganancia ?? 0) < 0">
         <small>{{ 'temporadas.costos.profit' | translate }}</small>

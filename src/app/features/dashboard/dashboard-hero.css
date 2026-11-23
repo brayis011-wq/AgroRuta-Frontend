@@ -72,3 +72,29 @@
   .almanaque { padding-top: .7rem; }
   .alm-luna small, .alm-dicho { display: none; }
 }
+
+/* Clima de hoy en la esquina del saludo, a la izquierda del sol (o la luna) */
+.hero-clima {
+  position: absolute; top: 1.15rem; right: calc(1.25rem + 58px + .35rem); z-index: 3; display: flex; align-items: center; gap: .55rem;
+  max-width: 17.5rem; padding: .45rem .75rem .45rem .55rem; border-radius: 14px;
+  background: color-mix(in srgb, var(--ar-superficie) 92%, transparent); border: 1px solid var(--ar-borde); box-shadow: var(--ar-sombra-1);
+  animation: aparecer-astro .7s .25s cubic-bezier(.2, .8, .2, 1) both;
+}
+.hero-clima > .ti { font-size: 28px; color: var(--ar-azul); flex: none; }
+.hero-clima p { margin: 0; min-width: 0; }
+.hero-clima strong { display: block; font-size: 1.05rem; color: var(--ar-tinta); white-space: nowrap; }
+.hero-clima strong span { font-size: .8rem; font-weight: 600; color: var(--ar-tinta-2); margin-left: .2rem; }
+.hero-clima small { display: block; font-size: .74rem; color: var(--ar-tinta-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hero-clima small.detalle { color: var(--ar-tinta-3); }
+.hero-clima small .ti { font-size: 12px; }
+.hero-clima[data-consejo="rain"] small:not(.detalle), .hero-clima[data-consejo="wind"] small:not(.detalle), .hero-clima[data-consejo="hot"] small:not(.detalle) { color: var(--ar-ambar); }
+.hero-clima[data-consejo="good"] small:not(.detalle) { color: var(--ar-verde-700); }
+/* El saludo no se mete debajo del clima */
+@media (min-width: 761px) { .hero-txt { padding-right: 20rem; } }
+@media (max-width: 1100px) and (min-width: 761px) { .hero-clima small.detalle { display: none; } .hero-txt { padding-right: 17rem; } }
+/* Celular: el clima va debajo del saludo, a lo ancho */
+@media (max-width: 760px) {
+  .hero-clima { position: static; order: 1; max-width: none; align-self: stretch; animation: none; }
+  .hero .acciones, .hero .almanaque { order: 2; }
+  .hero-clima small.detalle { display: none; }
+}

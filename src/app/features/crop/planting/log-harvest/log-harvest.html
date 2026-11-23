@@ -11,10 +11,6 @@
       </div>
     </div>
 
-    <div class="alert alert--error" *ngIf="error">
-      <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
-      {{ error | translate }}
-    </div>
     <div class="alert alert--success" *ngIf="exito">
       <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>
       {{ exito | translate }}
@@ -42,24 +38,6 @@
           </div>
         </div>
 
-        <!-- Cantidad -->
-        <div class="field">
-          <label class="field__label" for="cantidadKg">
-            <i class="ti ti-scale" aria-hidden="true"></i> {{ 'siembra.harvest.kg' | translate }}
-          </label>
-          <div class="field__input-wrap">
-            <input
-              id="cantidadKg"
-              type="number" inputmode="decimal"
-              [(ngModel)]="form.cantidadKg"
-              name="cantidadKg"
-              placeholder="0.0"
-              step="0.1"
-              required
-            />
-          </div>
-        </div>
-
         <!-- Calidad -->
         <div class="field" role="radiogroup" aria-labelledby="calidad-label">
           <span class="field__label" id="calidad-label">
@@ -73,13 +51,120 @@
           </div>
         </div>
 
+        <!-- Quién la recogió: a cada uno se le crea su jornal (por kilo o por día) -->
+        <fieldset class="field recolectores">
+          <legend class="field__label">
+            <i class="ti ti-users" aria-hidden="true"></i> {{ 'siembra.harvest.pickers.title' | translate }}
+            <span class="label-optional">({{ 'common.optional' | translate }})</span>
+          </legend>
+          <small class="campo-hint">{{ 'siembra.harvest.pickers.hint' | translate }}</small>
+
+          @for (r of recolectores; track $index; let i = $index) {
+            @if (r.fija) {
+              <div class="recolector fijo">
+                <span class="recolector-nombre">{{ r.nombre }}</span>
+                <span class="recolector-detalle">
+                  @if (r.modalidad === 'KILO') { {{ 'siembra.harvest.pickers.kgAt' | translate: { kg: r.kilos, price: pesos(r.valorKilo ?? 0) } }} }
+                  @else { {{ 'siembra.harvest.pickers.perDay' | translate }}@if (r.kilos) { · {{ r.kilos }} kg } }
+                  · {{ pesos(valorDe(r) ?? 0) }}
+                </span>
+                <span class="recolector-nomina"><i class="ti ti-lock" aria-hidden="true"></i>
+                  {{ 'siembra.harvest.pickers.locked' | translate: { estado: ('enums.estadoNomina.' + r.estadoNomina | translate) } }}</span>
+              </div>
+            } @else {
+              <div class="recolector">
+                <div class="recolector-fila">
+                  <select [attr.aria-label]="'siembra.harvest.pickers.who' | translate" [name]="'rec-t-' + i"
+                          [ngModel]="r.trabajadorId" (ngModelChange)="elegirTrabajador(r, $event)">
+                    <option [ngValue]="null" disabled>{{ 'siembra.harvest.pickers.choose' | translate }}</option>
+                    @for (t of disponiblesPara(r); track t.id) {
+                      <option [ngValue]="t.id">{{ t.nombreCompleto }}</option>
+                    }
+                  </select>
+                  <div class="modo" role="radiogroup" [attr.aria-label]="'siembra.harvest.pickers.how' | translate">
+                    <button type="button" [class.on]="r.modalidad === 'KILO'" [attr.aria-pressed]="r.modalidad === 'KILO'" (click)="cambiarModalidad(r, 'KILO')">{{ 'siembra.harvest.pickers.byKg' | translate }}</button>
+                    <button type="button" [class.on]="r.modalidad === 'DIA'" [attr.aria-pressed]="r.modalidad === 'DIA'" (click)="cambiarModalidad(r, 'DIA')">{{ 'siembra.harvest.pickers.byDay' | translate }}</button>
+                  </div>
+                  <button type="button" class="quitar" (click)="quitarRecolector(r)" [attr.aria-label]="'common.delete' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+                </div>
+                <div class="recolector-fila valores">
+                  @if (r.modalidad === 'KILO') {
+                    <label class="mini">
+                      <span>{{ 'siembra.harvest.pickers.kg' | translate }}</span>
+                      <input type="number" inputmode="decimal" min="0" step="0.1" [name]="'rec-k-' + i" [(ngModel)]="r.kilos" (ngModelChange)="sumarKilos()" placeholder="0" />
+                    </label>
+                    <label class="mini">
+                      <span>{{ 'siembra.harvest.pickers.pricePerKg' | translate }}</span>
+                      <input type="number" inputmode="numeric" min="0" step="any" [name]="'rec-v-' + i" [(ngModel)]="r.valorKilo" placeholder="0" />
+                    </label>
+                  } @else {
+                    <label class="mini">
+                      <span>{{ 'siembra.harvest.pickers.dayValue' | translate }}</span>
+                      <input type="number" inputmode="numeric" min="0" step="any" [name]="'rec-d-' + i" [(ngModel)]="r.valorDia" placeholder="0" />
+                    </label>
+                    <label class="mini">
+                      <span>{{ 'siembra.harvest.pickers.kgOptional' | translate }}</span>
+                      <input type="number" inputmode="decimal" min="0" step="0.1" [name]="'rec-kd-' + i" [(ngModel)]="r.kilos" (ngModelChange)="sumarKilos()" placeholder="0" />
+                    </label>
+                  }
+                  <span class="recolector-total">{{ valorDe(r) ? pesos(valorDe(r)!) : '—' }}</span>
+                </div>
+              </div>
+            }
+          }
+
+          @if (equipoCargado && equipo.length === 0) {
+            <p class="sin-equipo">
+              <i class="ti ti-user-plus" aria-hidden="true"></i>
+              <span>{{ 'siembra.harvest.pickers.noTeam' | translate }}</span>
+              <a routerLink="/workers">{{ 'siembra.harvest.pickers.goTeam' | translate }}</a>
+            </p>
+          } @else if (disponiblesPara(null).length > 0) {
+            <button type="button" class="btn-agregar" (click)="agregarRecolector()">
+              <i class="ti ti-plus" aria-hidden="true"></i> {{ 'siembra.harvest.pickers.add' | translate }}
+            </button>
+          }
+          @if (recolectores.length > 0 && manoObra > 0) {
+            <p class="recolectores-resumen">
+              {{ 'siembra.harvest.pickers.summary' | translate: { n: recolectores.length, total: pesos(manoObra) } }}
+            </p>
+          }
+        </fieldset>
+
+        <!-- Cantidad: la suma de los kilos de los recolectores, o la que se escriba -->
         <div class="field">
-          <label class="field__label" for="precioKg"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'temporadas.costos.priceKg' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
+          <label class="field__label" for="cantidadKg">
+            <i class="ti ti-scale" aria-hidden="true"></i> {{ 'siembra.harvest.kg' | translate }}
+          </label>
           <div class="field__input-wrap">
-            <input id="precioKg" type="number" min="0" step="any" inputmode="decimal" [(ngModel)]="form.precioKg" name="precioKg" placeholder="0" />
+            <input
+              id="cantidadKg"
+              type="number" inputmode="decimal"
+              [(ngModel)]="form.cantidadKg"
+              (input)="alEscribirTotal()"
+              name="cantidadKg"
+              placeholder="0.0"
+              step="0.1"
+              required
+            />
           </div>
-          <small class="campo-hint">@if (form.precioKg && form.cantidadKg) { {{ 'temporadas.costos.incomeHint' | translate: { total: pesos(form.precioKg * form.cantidadKg) } }} } @else { {{ 'temporadas.costos.priceHint' | translate }} }</small>
+          @if (totalDistinto) {
+            <small class="campo-hint">
+              {{ 'siembra.harvest.pickers.sumHint' | translate: { kg: kilosRecolectores } }}
+              <button type="button" class="btn-link" (click)="usarSuma()">{{ 'siembra.harvest.pickers.useSum' | translate }}</button>
+            </small>
+          } @else {
+            <small class="campo-hint">{{ 'siembra.harvest.kgHint' | translate }}</small>
+          }
         </div>
+
+        <!-- Cosechas de antes que tenían precio: se conserva como valor estimado; el precio de venta ahora va en Ventas -->
+        @if (registroId && form.precioKg) {
+          <p class="estimado">
+            <i class="ti ti-info-circle" aria-hidden="true"></i>
+            <span>{{ 'siembra.harvest.oldPrice' | translate: { price: pesos(form.precioKg) } }}</span>
+          </p>
+        }
 
         <!-- Observaciones -->
         <div class="field">
@@ -111,6 +196,11 @@
         </div>
 
         <div class="form-actions">
+          <!-- El aviso va junto a los botones: se ve al pulsar Registrar aunque el formulario esté abajo -->
+          <div class="alert alert--error" *ngIf="error" role="alert">
+            <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
+            {{ error | translate }}
+          </div>
           <a class="btn-cancelar" [routerLink]="['/crops/planting', siembraId]" [queryParams]="{ tab: 'registros' }">{{ 'common.cancel' | translate }}</a>
           <button type="submit" class="btn-submit" [disabled]="cargando || (pideConfirmacion && !confirmarCarencia)">
             <span class="btn-submit__text" *ngIf="!cargando">

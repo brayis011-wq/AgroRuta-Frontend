@@ -55,7 +55,7 @@
         </div>
       </header>
       <div class="tabla-wrap">
-        <table class="tabla">
+        <table class="tabla tarjetas-m" arEtiquetas>
           <thead><tr>
             <th>{{ 'reports.costs.col.season' | translate }}</th>
             <th class="num">{{ 'reports.costs.col.cost' | translate }}</th>
@@ -78,7 +78,7 @@
                 </td>
                 @if (f.costos; as c) {
                   <td class="num">{{ c.costoTotal ? pesos(c.costoTotal) : '—' }}</td>
-                  <td class="num">{{ c.kgConPrecio ? pesos(c.ingresos) : '—' }}</td>
+                  <td class="num">{{ (c.kgConPrecio || c.ingresos) ? pesos(c.ingresos) : '—' }}</td>
                   <td class="num" [class.gana]="(c.ganancia ?? 0) > 0" [class.pierde]="(c.ganancia ?? 0) < 0">{{ c.ganancia != null ? pesos(c.ganancia) : '—' }}</td>
                   <td class="num suave">{{ c.costoPorKg != null && c.costoTotal ? pesos(c.costoPorKg) : '—' }}</td>
                 } @else {

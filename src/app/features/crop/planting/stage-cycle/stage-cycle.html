@@ -3,7 +3,7 @@
     <div>
       <h3>{{ 'temporadas.ciclo.title' | translate }}</h3>
       @if (activa()) {
-        <p>{{ 'temporadas.ciclo.inStage' | translate: { etapa: ('enums.etapaCultivo.' + siembra().estadoCultivo | translate), days: diasEtapa() } }}</p>
+        <p>{{ 'temporadas.ciclo.inStage' | translate: { etapa: ('enums.etapaCultivo.' + siembra().estadoCultivo | translate), days: diasEtapa() } }}@if (estimado().diasNormales; as n) { · {{ 'temporadas.ciclo.normalDays' | translate: { days: n } }} }</p>
       } @else {
         <p>{{ 'temporadas.ciclo.finishedOn' | translate: { date: fmt(siembra().fechaFin ?? null), days: duracion() } }}</p>
       }
@@ -18,10 +18,47 @@
           @if (p.estado === 'hecho') { <i class="ti ti-check"></i> }
         </span>
         <span class="nombre">{{ 'enums.etapaCultivo.' + p.etapa | translate }}</span>
-        <span class="fecha">{{ p.fecha ? fmt(p.fecha) : (p.estado === 'pendiente' ? '' : ('temporadas.ciclo.noDate' | translate)) }}</span>
+        @if (p.fecha) {
+          <span class="fecha">{{ fmt(p.fecha) }}</span>
+        } @else if (p.estado === 'pendiente' && estimado().fechas[p.etapa]; as f) {
+          <!-- Fecha estimada según lo normal del cultivo -->
+          <span class="fecha estimada" [title]="'temporadas.ciclo.estimatedTitle' | translate">≈ {{ fmt(f) }}</span>
+        } @else {
+          <span class="fecha">{{ p.estado === 'pendiente' ? '' : ('temporadas.ciclo.noDate' | translate) }}</span>
+        }
       </li>
     }
   </ol>
+
+  <!-- Según lo normal del cultivo ya debería haber cambiado de etapa: se sugiere con un toque -->
+  @if (!soloLectura() && activa() && estimado().sugerida; as sug) {
+    <div class="sugerencia" role="status">
+      <i class="ti ti-calendar-time" aria-hidden="true"></i>
+      <p>
+        @if (sug === 'FINALIZADO') {
+          {{ 'temporadas.ciclo.suggestFinish' | translate: { crop: (siembra().tipoCultivo || '').toLowerCase(), date: fmt(estimado().desde) } }}
+        } @else {
+          {{ 'temporadas.ciclo.suggestStage' | translate: { crop: (siembra().tipoCultivo || '').toLowerCase(), etapa: ('enums.etapaCultivo.' + sug | translate), date: fmt(estimado().desde) } }}
+        }
+      </p>
+      <button type="button" class="btn btn-primario" (click)="aceptarSugerencia()">
+        {{ (sug === 'FINALIZADO' ? 'temporadas.ciclo.finish' : 'temporadas.ciclo.advanceTo') | translate: { etapa: ('enums.etapaCultivo.' + sug | translate) } }}
+      </button>
+    </div>
+  }
+
+  @if (activa()) {
+    <details class="dias-normales">
+      <summary>{{ 'temporadas.ciclo.whereDays' | translate }}</summary>
+      <p>{{ (estimado().duracion.conocido ? 'temporadas.ciclo.daysOf' : 'temporadas.ciclo.daysGeneral') | translate: { crop: (siembra().tipoCultivo || '').toLowerCase() } }}</p>
+      <ul>
+        @for (d of tablaDias(); track d.etapa) {
+          <li><span>{{ 'enums.etapaCultivo.' + d.etapa | translate }}</span><b>{{ 'temporadas.ciclo.aboutDays' | translate: { days: d.dias } }}</b></li>
+        }
+      </ul>
+      <p class="suave">{{ (estimado().duracion.perenne ? 'temporadas.ciclo.perennial' : 'temporadas.ciclo.shortCycle') | translate }} {{ 'temporadas.ciclo.disclaimer' | translate }}</p>
+    </details>
+  }
 
   @if (!soloLectura()) {
     <div class="acciones">

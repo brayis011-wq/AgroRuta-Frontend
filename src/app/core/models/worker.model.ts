@@ -28,6 +28,10 @@ export interface Cargo {
   nombre: string;
   descripcion: string;
   valorJornal: number;
+  /** JORNAL (por día) o KILO (por kilo recogido) */
+  modalidadPago?: 'JORNAL' | 'KILO';
+  /** Pesos por kilo; solo en los cargos que se pagan por kilo */
+  valorKilo?: number | null;
   activo: boolean;
 }
 
@@ -73,6 +77,9 @@ export interface Jornal {
   cultivoId?: number;
   valorJornal?: number;
   liquidado?: boolean;
+  /** Solo en los jornales pagados por kilo */
+  kilos?: number | null;
+  valorKilo?: number | null;
   observaciones?: string;
 }
 
@@ -84,6 +91,23 @@ export interface ResumenNominas {
 }
 
 /** GET /api/workdays/worker/{id}/summary: totales de los jornales del trabajador en el rango pedido. */
+/** Cuánto recoge un trabajador y cuánto sale el kilo pagándole por día o por kilo */
+export interface RendimientoTrabajador {
+  trabajadorId: number;
+  nombre: string;
+  cargo: string | null;
+  modalidadCargo: 'JORNAL' | 'KILO' | null;
+  diasPorDia: number;
+  kilosPorDia: number;
+  pagadoPorDia: number;
+  diasPorKilo: number;
+  kilosPorKilo: number;
+  pagadoPorKilo: number;
+  kilosAlDia: number | null;
+  costoKiloPorDia: number | null;
+  costoKiloPorKilo: number | null;
+}
+
 export interface ResumenJornales {
   cantidad: number;
   valorTotal: number;

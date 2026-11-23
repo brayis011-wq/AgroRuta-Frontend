@@ -11,10 +11,6 @@
       </div>
     </div>
 
-    <div class="alert alert--error" *ngIf="error" role="alert">
-      <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
-      {{ error | translate }}
-    </div>
     <div class="alert alert--success" *ngIf="exito" role="alert">
       <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>
       {{ exito | translate }}
@@ -36,7 +32,7 @@
               class="tipo-chip"
               [class.tipo-chip--active]="form.tipo === tipo"
               [attr.aria-pressed]="form.tipo === tipo"
-              (click)="form.tipo = tipo"
+              (click)="elegirTipo(tipo)"
             >
               <i class="ti tipo-chip__icon" [class]="'ti tipo-chip__icon ' + tipoIconos[tipo]" aria-hidden="true"></i>
               <span class="tipo-chip__label">{{ 'enums.tipoActividad.' + tipo | translate }}</span>
@@ -78,15 +74,73 @@
           </div>
         </div>
 
+        <!-- Insumo de la bodega (abonado, fertilización al suelo...): se descuenta de ella y da el costo -->
+        @if (conInsumo) {
+          <fieldset class="field insumo">
+            <legend class="field__label">
+              <i class="ti ti-building-warehouse" aria-hidden="true"></i> {{ 'siembra.activity.supply.title' | translate }}
+              <button type="button" class="btn-link quitar-insumo" (click)="quitarInsumo()">{{ 'siembra.activity.supply.remove' | translate }}</button>
+            </legend>
+            <div class="insumo-campos">
+              <label class="ancho">
+                <span>{{ 'siembra.activity.supply.product' | translate }}</span>
+                <select name="insumo" [ngModel]="form.agriculturalInputId" (ngModelChange)="elegirInsumo($event)">
+                  <option [ngValue]="null">{{ 'siembra.activity.supply.other' | translate }}</option>
+                  @for (b of bodega; track b.insumoId) {
+                    <option [ngValue]="b.insumoId">{{ b.nombre }} · {{ 'siembra.activity.supply.inStock' | translate: { qty: disponible(b) } }}</option>
+                  }
+                </select>
+              </label>
+              @if (!form.agriculturalInputId) {
+                <label class="ancho">
+                  <span>{{ 'siembra.activity.supply.name' | translate }}</span>
+                  <input name="producto" maxlength="150" [(ngModel)]="form.producto" [placeholder]="'siembra.activity.supply.namePlaceholder' | translate" />
+                  <small class="campo-hint">{{ 'siembra.activity.supply.manualHint' | translate }}</small>
+                </label>
+              }
+              <label>
+                <span>{{ 'siembra.activity.supply.quantity' | translate }}</span>
+                <input name="cantidadUsada" type="number" inputmode="decimal" min="0" step="any" [(ngModel)]="form.cantidadUsada" (ngModelChange)="estimar()" placeholder="0" />
+              </label>
+              <label>
+                <span>{{ 'siembra.activity.supply.unit' | translate }}</span>
+                <select name="unidadCantidad" [(ngModel)]="form.unidadCantidad" (ngModelChange)="estimar()">
+                  <option [ngValue]="null" disabled>{{ 'siembra.activity.supply.chooseUnit' | translate }}</option>
+                  @for (u of unidades; track u) { <option [ngValue]="u">{{ 'enums.unidadMedida.' + u | translate }}</option> }
+                </select>
+              </label>
+            </div>
+            @if (form.agriculturalInputId && estimado) {
+              <p class="estimado-insumo" [class.aviso]="pasaDeLaBodega">
+                <i class="ti" [class.ti-packages]="!pasaDeLaBodega" [class.ti-alert-triangle]="pasaDeLaBodega" aria-hidden="true"></i>
+                <span>
+                  @if (pasaDeLaBodega) { {{ 'siembra.activity.supply.overStock' | translate }} }
+                  @else { {{ 'siembra.activity.supply.discount' | translate }} }
+                  @if (estimado.costo != null) { {{ 'siembra.activity.supply.costAt' | translate: { cost: pesos(estimado.costo) } }} }
+                </span>
+              </p>
+            }
+          </fieldset>
+        } @else {
+          <button type="button" class="btn-agregar-insumo" (click)="conInsumo = true">
+            <i class="ti ti-plus" aria-hidden="true"></i> {{ 'siembra.activity.supply.add' | translate }}
+          </button>
+        }
+
         <div class="field">
           <label class="field__label" for="costo"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'temporadas.costos.activityCost' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
           <div class="field__input-wrap">
             <input id="costo" type="number" min="0" step="any" inputmode="decimal" [(ngModel)]="form.costo" name="costo" placeholder="0" />
           </div>
-          <small class="campo-hint">{{ 'temporadas.costos.activityCostHint' | translate }}</small>
+          <small class="campo-hint">@if (conInsumo && form.agriculturalInputId && form.cantidadUsada) { {{ 'siembra.activity.supply.costHint' | translate }} } @else { {{ 'temporadas.costos.activityCostHint' | translate }} }</small>
         </div>
 
         <div class="form-actions">
+          <!-- El aviso va junto a los botones: se ve al pulsar Registrar aunque el formulario esté abajo -->
+          <div class="alert alert--error" *ngIf="error" role="alert">
+            <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
+            {{ error | translate }}
+          </div>
           <a class="btn-cancelar" [routerLink]="['/crops/planting', siembraId]" [queryParams]="{ tab: 'registros' }">{{ 'common.cancel' | translate }}</a>
           <button type="submit" class="btn-submit" [disabled]="cargando || !form.tipo">
             <span class="btn-submit__text" *ngIf="!cargando">

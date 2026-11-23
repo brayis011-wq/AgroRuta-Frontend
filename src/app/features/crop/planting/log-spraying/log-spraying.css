@@ -13,7 +13,7 @@
 .catalogo-filtro { padding: .5rem .7rem; font-size: .88rem; }
 .catalogo-item { display: flex; justify-content: space-between; align-items: center; gap: .6rem; width: 100%; padding: .6rem .8rem; border: 0; border-bottom: 1px solid var(--ar-borde); background: var(--ar-superficie); cursor: pointer; text-align: left; font: inherit; color: inherit; }
 .catalogo-item:last-child { border-bottom: 0; }
-.catalogo-item:hover { background: var(--ar-verde-50); }
+.catalogo-item:hover, .catalogo-item.resaltado { background: var(--ar-verde-50); }
 .catalogo-item-info { display: flex; flex-direction: column; min-width: 0; }
 .catalogo-nombre { font-size: .9rem; font-weight: 600; }
 .catalogo-dosis { font-size: .76rem; color: var(--ar-tinta-3); }

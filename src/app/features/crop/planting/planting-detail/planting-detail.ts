@@ -25,11 +25,16 @@ import { CicloEtapasComponent } from '../stage-cycle/stage-cycle';
 import { RendimientoSiembraComponent } from '../yield/yield';
 import { AgendaSiembraComponent } from '../agenda/agenda';
 import { DiagnosticoSiembraComponent } from '../diagnosis/diagnosis';
+import { LaboresRepetidasComponent } from '../recurring/recurring';
+import { PresupuestoSiembraComponent } from '../budget/budget';
+import { CostosSiembraComponent } from '../costs/costs';
 import { diasEntre, hoyIso } from '../stage-cycle/stage-cycle.logic';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { ResumenSiembra, siembraActiva } from '../../../../core/models/crop.model';
 import { formatoFecha, formatoNumero } from '../../../../shared/format';
 import { WeatherService } from '../../../../core/services/weather.service';
+import { VentasService } from '../../../../core/services/finance.service';
+import { quedanPorCosecha } from '../../../../shared/harvest-stock';
 import { Weather } from '../../../../core/models/weather.model';
 import { ConsejoClima, consejoFumigacion, municipio } from '../../../../shared/weather';
 
@@ -45,24 +50,27 @@ interface TimelineItem {
   area?: number;
   calidad?: string;        // cosecha
   enCarencia?: boolean;    // cosecha registrada dentro de la carencia de una fumigación
+  recolectores?: number;   // cosecha: cuántos la recogieron
+  kg?: number;             // cosecha: kilos
   carencia?: number | null;  // fumigación: días sin cosechar
   reentrada?: number | null; // fumigación: horas sin entrar
   extra?: string;
 }
 
-export type PestanaSiembra = 'resumen' | 'registros' | 'cosechas' | 'diagnostico';
+export type PestanaSiembra = 'resumen' | 'registros' | 'cosechas' | 'dinero' | 'diagnostico';
 
 export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: string }[] = [
   { id: 'resumen', icono: 'ti-layout-dashboard', clave: 'siembra.detail.tabs.summary' },
   { id: 'registros', icono: 'ti-history', clave: 'siembra.detail.tabs.records' },
   { id: 'cosechas', icono: 'ti-basket', clave: 'siembra.detail.tabs.harvests' },
+  { id: 'dinero', icono: 'ti-coins', clave: 'siembra.detail.tabs.money' },
   { id: 'diagnostico', icono: 'ti-stethoscope', clave: 'siembra.detail.tabs.diagnosis' },
 ];
 
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, RouterLink, RouterOutlet, MigasCultivoComponent, AyudaComponent, AnteriorSiguienteComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, LaboresRepetidasComponent, PresupuestoSiembraComponent, CostosSiembraComponent, RouterLink, RouterOutlet, MigasCultivoComponent, AyudaComponent, AnteriorSiguienteComponent],
   templateUrl: './planting-detail.html',
   styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css', './planting-panel.css'],
 })
@@ -74,6 +82,24 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   private confirm = inject(ConfirmService);
   private weather = inject(WeatherService);
   private avisos = inject(AvisosService);
+  private ventas = inject(VentasService);
+  /** Kilos cosechados de esta siembra que todavía no se han vendido (null mientras carga o si falla) */
+  kgPorVender: number | null = null;
+  /** Kilos vendidos de esta siembra (null mientras carga o si falla) */
+  private kgVendidos: number | null = null;
+  /** Cuánto queda por vender de cada cosecha (las vendidas, en 0) */
+  quedanCosecha = new Map<number, number>();
+
+  /** Lo vendido se descuenta de las cosechas más viejas primero */
+  private repartirVendido(): void {
+    this.quedanCosecha = this.kgVendidos == null ? new Map()
+      : quedanPorCosecha(this.cosechas.map((c) => ({ id: c.id, fecha: c.fecha, cantidadKg: c.cantidadKg })), this.kgVendidos);
+  }
+
+  /** null: no se sabe todavía (se muestra Vender); 0: vendida; otro: los kilos que quedan */
+  quedanDe(item: TimelineItem): number | null {
+    return item.tipo === 'cosecha' && this.quedanCosecha.has(item.id) ? this.quedanCosecha.get(item.id)! : null;
+  }
 
   /** Clima actual del lote (o del municipio de la finca) */
   clima: Weather | null = null;
@@ -296,7 +322,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       error: () => verificar(),
     });
     this.cultivoService.listarCosechas(siembraId).subscribe({
-      next: (c) => { this.cosechas = c; verificar(); },
+      next: (c) => { this.cosechas = c; this.repartirVendido(); verificar(); },
       error: () => verificar(),
     });
     this.cultivoService.totalKgCosechado(siembraId).subscribe({
@@ -313,6 +339,8 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       tipo: 'actividad',
       tituloKey: 'enums.tipoActividad.' + a.tipo,
       detalle: a.descripcion,
+      // El insumo que gastó (abonado...): "Abono 15-15-15 · 50 kg"
+      extra: a.producto ? a.producto + (a.cantidadUsada ? ` · ${this.fmtNum(a.cantidadUsada)} ${this.translate.instant('enums.unidadMedida.' + a.unidadCantidad)}` : '') : undefined,
     }));
 
     this.fumigaciones.forEach(f => items.push({
@@ -335,6 +363,8 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       titulo: `${this.fmtNum(c.cantidadKg)} kg`,
       calidad: c.calidad,
       enCarencia: !!c.enCarencia,
+      recolectores: c.recolectores?.length ?? 0,
+      kg: c.cantidadKg,
       extra: c.observaciones,
     }));
 
@@ -376,6 +406,18 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.cultivoService.resumenSiembra(id).subscribe({
       next: (r) => { if (this.siembra?.id === id) { this.resumen = r; this.cdr.detectChanges(); } },
       error: () => { /* la página sigue sin el resumen */ },
+    });
+    // Lo que queda en la bodega de la cosecha (se vende desde Ventas)
+    this.ventas.kilosEnBodega().subscribe({
+      next: (lista) => {
+        if (this.siembra?.id !== id) return;
+        const k = lista.find((x) => x.siembraId === id);
+        this.kgPorVender = k?.kgDisponibles ?? 0;
+        this.kgVendidos = k?.kgVendidos ?? 0;
+        this.repartirVendido();
+        this.cdr.detectChanges();
+      },
+      error: () => { this.kgPorVender = null; },
     });
   }
 

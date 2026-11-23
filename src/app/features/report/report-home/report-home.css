@@ -139,3 +139,12 @@
 .periodo-opciones button.on { background: var(--ar-superficie); color: var(--ar-verde-700); box-shadow: var(--ar-sombra-1); }
 .periodo-nota { flex-basis: 100%; font-size: .78rem; color: var(--ar-tinta-3); }
 @media (max-width: 760px) { .periodo { margin-top: -.4rem; } }
+
+/* Cuaderno de campo: quinta pestaña (las pestañas bajan de fila si no caben) */
+.tabs-wrap { flex-wrap: wrap; }
+.tab-btn.fieldbook .tab-icon { background-color: var(--ar-ambar-bg); color: var(--ar-tierra, #8a5a2b); }
+
+@media (max-width: 760px) {
+  .periodo-opciones { display: flex; flex-wrap: wrap; overflow: visible; }
+  .periodo-opciones > * { flex: 1 1 auto; }
+}

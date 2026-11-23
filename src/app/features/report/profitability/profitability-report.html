@@ -49,6 +49,23 @@
       <p class="aviso-precio"><i class="ti ti-info-circle" aria-hidden="true"></i> {{ 'reports.profit.noPrices' | translate }}</p>
     }
 
+    @if (gastos(); as g) {
+      @if (g.total > 0) {
+        <article class="tarjeta gastos-generales">
+          <div class="gg-texto">
+            <h3><i class="ti ti-receipt" aria-hidden="true"></i> {{ 'reports.profit.overhead.title' | translate }}</h3>
+            <p>{{ 'reports.profit.overhead.desc' | translate: { count: g.cantidad } }} <a routerLink="/finance/expenses">{{ 'reports.profit.overhead.see' | translate }}</a></p>
+          </div>
+          <dl class="gg-cifras">
+            <div><dt>{{ 'reports.profit.overhead.total' | translate }}</dt><dd>{{ pesos(g.total) }}</dd></div>
+            @if (gananciaReal() != null) {
+              <div class="real"><dt>{{ 'reports.profit.overhead.real' | translate }}</dt><dd [class.pierde]="gananciaReal()! < 0">{{ pesos(gananciaReal()) }}</dd></div>
+            }
+          </dl>
+        </article>
+      }
+    }
+
     @for (l of lotes(); track l.clave) {
       <article class="tarjeta lote">
         <header class="lote-head">
@@ -65,7 +82,7 @@
         </header>
 
         <div class="tabla-wrap">
-          <table class="tabla">
+          <table class="tabla tarjetas-m" arEtiquetas>
             <thead><tr>
               <th>{{ 'reports.costs.col.season' | translate }}</th>
               <th class="num">{{ 'reports.costs.col.cost' | translate }}</th>

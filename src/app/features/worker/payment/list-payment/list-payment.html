@@ -17,6 +17,10 @@
   <!-- Jornales → Nóminas → Pagos: en qué paso está esta pantalla -->
   <app-flujo-pago actual="payments" />
 
+  @if (trabajadores.length > 0 && !nominaIdFiltro) {
+    <app-filtro-trabajador [trabajadores]="trabajadores" [valor]="trabajadorIdFiltro" (cambio)="filtrarTrabajador($event)" />
+  }
+
   @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
 
   <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">

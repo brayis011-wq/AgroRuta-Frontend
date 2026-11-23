@@ -13,9 +13,6 @@
     </div>
 
     <!-- Alertas -->
-    <div class="alert alert--error" *ngIf="error" role="alert">
-      <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>{{ error | translate }}
-    </div>
     <div class="alert alert--success" *ngIf="exito" role="alert">
       <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>{{ exito | translate }}
     </div>
@@ -75,8 +72,14 @@
                         name="busquedaProducto"
                         [placeholder]="'siembra.spray.searchPlaceholder' | translate"
                         (input)="onBusquedaChange()"
+                        (focus)="onBusquedaChange()"
+                        (click)="onBusquedaChange()"
+                        (keydown)="teclaBuscador($event)"
                         (blur)="usarProductoManual()"
                         autocomplete="off"
+                        role="combobox"
+                        aria-autocomplete="list"
+                        [attr.aria-expanded]="mostrarCatalogo()"
                       />
                       <i class="ti ti-search search-icon" aria-hidden="true" *ngIf="!cargandoBodega()"></i>
                       <span class="spinner search-icon" aria-hidden="true" *ngIf="cargandoBodega()"></span>
@@ -87,8 +90,10 @@
                       <button
                         type="button"
                         class="catalogo-item"
-                        *ngFor="let b of catalogoFiltrado()"
-                        (mousedown)="seleccionarDeBodega(b)"
+                        *ngFor="let b of catalogoFiltrado(); let i = index"
+                        [class.resaltado]="i === resaltado()"
+                        (mouseenter)="resaltado.set(i)"
+                        (mousedown)="$event.preventDefault(); seleccionarDeBodega(b)"
                       >
                         <ng-container *ngTemplateOutlet="filaBodega; context: { $implicit: b }"></ng-container>
                       </button>
@@ -311,6 +316,10 @@
         </div>
 
         <div class="form-actions">
+          <!-- El aviso va junto a los botones: se ve al pulsar Registrar aunque el formulario esté abajo -->
+          <div class="alert alert--error" *ngIf="error" role="alert">
+            <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>{{ error | translate }}
+          </div>
           <a class="btn-cancelar" [routerLink]="['/crops/planting', siembraId]" [queryParams]="{ tab: 'registros' }">{{ 'common.cancel' | translate }}</a>
           <button type="submit" class="btn-submit" [disabled]="cargando">
             <span class="btn-submit__text" *ngIf="!cargando">

@@ -23,7 +23,7 @@ export function totalesCostos(filas: FilaCostos[]): TotalesCostos {
   const con = filas.filter((f) => f.costos);
   const costo = con.reduce((s, f) => s + f.costos!.costoTotal, 0);
   const ingresos = con.reduce((s, f) => s + f.costos!.ingresos, 0);
-  const conPrecio = con.some((f) => f.costos!.kgConPrecio > 0);
+  const conPrecio = con.some((f) => f.costos!.kgConPrecio > 0 || f.costos!.ingresos > 0);
   const kg = con.reduce((s, f) => s + f.costos!.kgTotal, 0);
   return {
     temporadas: filas.length,

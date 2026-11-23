@@ -6,11 +6,12 @@ import { ReportBase } from '../report-base';
 import { tablaNomina } from '../report-csv';
 import { OrdenNomina, barrasMensuales, ordenarTrabajadores, participacion, resumenNomina, variacionUltimoMes } from '../report-calc';
 import { iniciales as inicialesDe } from '../../../shared/iniciales';
+import { EtiquetasTablaDirective } from '../../../shared/table-labels.directive';
 
 @Component({
   selector: 'app-payroll-report',
   standalone: true,
-  imports: [TranslatePipe, DescargasReporteComponent],
+  imports: [TranslatePipe, DescargasReporteComponent, EtiquetasTablaDirective],
   templateUrl: './payroll-report.html',
   styleUrls: ['../report-shared.css', '../report-table.css', './payroll-report.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

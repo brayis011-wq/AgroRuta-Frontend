@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
-import { nivel, sentido, tramos } from './nav-direction';
+import { esPanelDeSiembra, nivel, sentido, tramos } from './nav-direction';
 
 /** Una cadena de rutas como la que arma el router: cada nivel aporta sus tramos */
 function ruta(...niveles: string[][]): ActivatedRouteSnapshot {
@@ -39,5 +39,15 @@ describe('sentido de la navegación', () => {
     expect(sentido(['dashboard'], ['crops', 'farm', '30'])).toBe('lado');
     expect(sentido(['crops', 'farm', '30'], ['crops', 'farm', '31'])).toBe('lado');
     expect(sentido(['reports'], ['reports'])).toBe('lado');
+  });
+  it('abrir, cambiar o cerrar el panel de registro de una siembra no anima la página', () => {
+    expect(esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '16', 'spraying'])).toBe(true);
+    expect(esPanelDeSiembra(['crops', 'planting', '16', 'harvest', '4'], ['crops', 'planting', '16'])).toBe(true);
+    expect(esPanelDeSiembra(['crops', 'planting', '16', 'activity'], ['crops', 'planting', '16', 'spraying'])).toBe(true);
+    // Editar la siembra, otra siembra u otra página sí se animan
+    expect(esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '16', 'edit'])).toBe(false);
+    expect(esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '17', 'spraying'])).toBe(false);
+    expect(esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '17'])).toBe(false);
+    expect(esPanelDeSiembra(['crops', 'plot', '28'], ['crops', 'planting', '16', 'spraying'])).toBe(false);
   });
 });

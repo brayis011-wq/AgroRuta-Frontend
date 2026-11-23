@@ -1,6 +1,6 @@
 /* Aviso de guardado: arriba y centrado sobre el contenido (no tapa la barra inferior ni el aviso sin conexión) */
 .zona {
-  position: fixed; z-index: 1300; top: calc(14px + env(safe-area-inset-top, 0px));
+  position: fixed; z-index: 3400; top: calc(14px + env(safe-area-inset-top, 0px));
   left: calc(50% + var(--ancho, 0px) / 2); translate: -50% 0;
   display: grid; justify-items: center; pointer-events: none; max-width: calc(100vw - 24px);
 }

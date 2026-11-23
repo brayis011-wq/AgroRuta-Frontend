@@ -58,6 +58,7 @@
         <div><small>{{ 'enums.loteEstado.EN_DESCANSO' | translate }}</small><strong [arContar]="contar('EN_DESCANSO')"></strong></div>
       </article>
     </section>
+    <app-lluvia-finca [fincaId]="finca.id!" />
   }
 
   <!-- El mapa siempre está en el DOM para que Leaflet tenga dónde dibujar -->

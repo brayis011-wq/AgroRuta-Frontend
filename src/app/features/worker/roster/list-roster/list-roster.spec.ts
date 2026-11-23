@@ -71,7 +71,8 @@ describe('ListaNominasComponent', () => {
       eliminar:    vi.fn()
     };
     trabajadorSvc = {
-      listar: vi.fn().mockReturnValue(of([mkTrabajador()]))
+      listar: vi.fn().mockReturnValue(of([mkTrabajador()])),
+      listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()]))
     };
     pagoSvc = {
       registrar: vi.fn()

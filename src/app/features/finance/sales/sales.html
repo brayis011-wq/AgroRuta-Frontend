@@ -1,0 +1,322 @@
+<div class="cv">
+  <header class="cv-head">
+    <div>
+      <p class="eyebrow">{{ 'layout.nav.finance' | translate }}</p>
+      <h1>{{ 'ventas.title' | translate }}</h1>
+      <p class="cv-sub">{{ 'ventas.subtitle' | translate }}</p>
+    </div>
+    <div class="cv-acciones">
+      <button type="button" class="btn btn-prim" (click)="nuevaVenta()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'ventas.new' | translate }}</button>
+    </div>
+  </header>
+
+  @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error()! | translate }}</p> }
+
+  @if (resumen(); as r) {
+    <section class="kpis" [class.cinco]="kgPorVender() > 0" [attr.aria-label]="'workers.ui.summary' | translate">
+      <button type="button" class="kpi clic" (click)="filtro.set('debe'); comprador.set(null)">
+        <span class="ic ambar"><i class="ti ti-hourglass" aria-hidden="true"></i></span>
+        <div><small>{{ 'ventas.kpi.owed' | translate }}</small><strong>{{ r.porCobrar | pesos }}</strong><em>{{ 'ventas.kpi.sales' | translate: { count: r.ventasPendientes + r.ventasVencidas } }}</em></div>
+      </button>
+      <button type="button" class="kpi clic" (click)="filtro.set('VENCIDA'); comprador.set(null)">
+        <span class="ic rojo-ic"><i class="ti ti-alarm" aria-hidden="true"></i></span>
+        <div><small>{{ 'ventas.kpi.overdue' | translate }}</small><strong>{{ r.vencido | pesos }}</strong><em>{{ 'ventas.kpi.sales' | translate: { count: r.ventasVencidas } }}</em></div>
+      </button>
+      <div class="kpi">
+        <span class="ic verde"><i class="ti ti-shopping-cart" aria-hidden="true"></i></span>
+        <div><small>{{ 'ventas.kpi.soldMonth' | translate }}</small><strong>{{ r.vendidoMes | pesos }}</strong></div>
+      </div>
+      <div class="kpi">
+        <span class="ic azul"><i class="ti ti-cash" aria-hidden="true"></i></span>
+        <div><small>{{ 'ventas.kpi.collectedMonth' | translate }}</small><strong>{{ r.cobradoMes | pesos }}</strong></div>
+      </div>
+      @if (kgPorVender() > 0) {
+        <!-- Lo cosechado que todavía no se ha vendido: lleva a la tarjeta para venderlo -->
+        <button type="button" class="kpi clic" (click)="irAKilos()">
+          <span class="ic verde"><i class="ti ti-building-warehouse" aria-hidden="true"></i></span>
+          <div><small>{{ 'ventas.kpi.toSell' | translate }}</small><strong>{{ kgPorVender() | number: '1.0-1' }} kg</strong>
+            <em>{{ (porVender().length === 1 ? 'ventas.kpi.toSellOne' : 'ventas.kpi.toSellMany') | translate: { count: porVender().length } }}</em></div>
+        </button>
+      }
+    </section>
+
+    <!-- La bodega de la cosecha: de aquí se escoge qué vender -->
+    @if (bodega().length) {
+      <section class="tarjeta" id="kilos-por-vender">
+        <header>
+          <h2><i class="ti ti-building-warehouse" aria-hidden="true"></i> {{ 'ventas.stock.title' | translate }}</h2>
+        </header>
+        <p class="suave sub-tarjeta">{{ 'ventas.stock.hint' | translate }}</p>
+        @if (porVender().length) {
+          <div class="bodega-cosecha">
+            @for (k of porVender(); track k.siembraId) {
+              <div class="kilos">
+                <div class="kilos-info">
+                  <strong>{{ nombreBodega(k) }}</strong>
+                  <small>{{ k.finca }} · {{ k.lote }}@if (k.finalizada) { · {{ 'ventas.stock.finished' | translate }} }</small>
+                  <span class="kilos-cifra">{{ 'ventas.stock.available' | translate: { kg: k.kgDisponibles } }}</span>
+                  <small>{{ 'ventas.stock.of' | translate: { kg: k.kgCosechados } }} · {{ 'ventas.stock.lastHarvest' | translate: { date: (k.ultimaCosecha | fecha) } }}</small>
+                </div>
+                <button type="button" class="btn btn-prim btn-sm" (click)="vender(k)">
+                  <i class="ti ti-shopping-cart" aria-hidden="true"></i> {{ 'ventas.stock.sell' | translate }}
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="suave">{{ 'ventas.stock.allSold' | translate }}</p>
+        }
+        @for (k of sobrevendidas(); track k.siembraId) {
+          <p class="kilos-aviso bloque-aviso"><i class="ti ti-alert-triangle" aria-hidden="true"></i>
+            {{ 'ventas.stock.oversold' | translate: { name: nombreBodega(k), lote: k.lote, sold: k.kgVendidos, harvested: k.kgCosechados } }}</p>
+        }
+      </section>
+    }
+
+    @if (r.compradores.length) {
+      <section class="tarjeta">
+        <header><h2><i class="ti ti-users" aria-hidden="true"></i> {{ 'ventas.whoOwes' | translate }}</h2></header>
+        <div class="deudores">
+          @for (d of r.compradores; track d.comprador) {
+            <button type="button" class="deudor" [class.on]="comprador() === d.comprador" [class.vencida]="d.conVencidas" (click)="verComprador(d.comprador)" [attr.aria-pressed]="comprador() === d.comprador">
+              <strong>{{ d.comprador }}</strong>
+              <span>{{ d.saldo | pesos }}</span>
+              <small>{{ 'ventas.kpi.sales' | translate: { count: d.ventas } }}@if (d.conVencidas) { · {{ 'ventas.hasOverdue' | translate }} }</small>
+            </button>
+          }
+        </div>
+      </section>
+    }
+  }
+
+  <section class="tarjeta">
+    <header class="tabla-head">
+      <h2><i class="ti ti-receipt-2" aria-hidden="true"></i> {{ 'ventas.list' | translate }}@if (comprador()) { <span class="filtro-quien">· {{ comprador() }} <button type="button" class="btn-ic mini" (click)="comprador.set(null)" [attr.aria-label]="'ventas.clearBuyer' | translate"><i class="ti ti-x" aria-hidden="true"></i></button></span> }</h2>
+      <div class="seg" role="group" [attr.aria-label]="'workers.ui.filterState' | translate">
+        @for (f of ['debe', 'VENCIDA', 'PAGADA', 'todas']; track f) {
+          <button type="button" [class.on]="filtro() === f" [attr.aria-pressed]="filtro() === f" (click)="filtro.set($any(f))">{{ 'ventas.filter.' + f | translate }}</button>
+        }
+      </div>
+    </header>
+
+    @if (lista() === null) {
+      <div class="esq" aria-hidden="true" style="height: 160px"></div>
+    } @else if (!visibles().length) {
+      <div class="vacio">
+        <i class="ti ti-receipt-off" aria-hidden="true"></i>
+        <p>{{ (lista()!.length ? 'ventas.emptyFilter' : 'ventas.empty') | translate }}</p>
+        @if (!lista()!.length) { <button type="button" class="btn btn-prim" (click)="nueva()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'ventas.new' | translate }}</button> }
+      </div>
+    } @else {
+      <div class="tabla-wrap">
+        <table class="tabla resp">
+          <thead>
+            <tr>
+              <th>{{ 'ventas.col.buyer' | translate }}</th>
+              <th>{{ 'ventas.col.product' | translate }}</th>
+              <th class="num">{{ 'ventas.col.total' | translate }}</th>
+              <th class="num">{{ 'ventas.col.balance' | translate }}</th>
+              <th>{{ 'common.status' | translate }}</th>
+              <th><span class="sr-only">{{ 'common.actions' | translate }}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of visibles(); track v.id) {
+              <tr>
+                <td class="prin">{{ v.comprador }}<small class="suave linea2">{{ v.fecha | fecha }}</small></td>
+                <td class="prod">{{ v.producto }}@if (v.cantidadKg || v.siembraNombre) { <small class="suave linea2">@if (v.cantidadKg) {{{ v.cantidadKg }} kg@if (v.precioKg) { × {{ v.precioKg | pesos }}}}@if (v.cantidadKg && v.siembraNombre) { · }{{ v.siembraNombre }}</small> }</td>
+                <td class="num" [attr.data-l]="'ventas.col.total' | translate">{{ v.total | pesos }}</td>
+                <td class="num fuerte-n" [attr.data-l]="'ventas.col.balance' | translate">{{ v.saldo | pesos }}</td>
+                <td><span class="est" [class]="estadoClase(v.estado)">{{ 'enums.estadoVenta.' + v.estado | translate }}</span>
+                  @if (v.vence && v.estado !== 'PAGADA') { <small class="linea2" [class.tarde]="v.estado === 'VENCIDA'" [class.suave]="v.estado !== 'VENCIDA'">{{ 'ventas.dueOn' | translate: { date: (v.vence | fecha) } }}@if (v.estado === 'VENCIDA') { · {{ 'ventas.daysLate' | translate: { days: diasVencida(v) } }} }</small> }
+                </td>
+                <td class="acc">
+                  <span class="acc-in">
+                    @if (v.estado !== 'PAGADA') {
+                      <button type="button" class="btn btn-prim chico" (click)="cobrar(v)" [title]="'ventas.registerPayment' | translate"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'ventas.collect' | translate }}</button>
+                    } @else {
+                      <button type="button" class="btn-ic" (click)="cobrar(v)" [title]="'ventas.payments' | translate" [attr.aria-label]="'ventas.payments' | translate"><i class="ti ti-list-details" aria-hidden="true"></i></button>
+                    }
+                    <button type="button" class="btn-ic verde-h" (click)="editar(v)" [title]="'common.edit' | translate" [attr.aria-label]="'common.edit' | translate"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>
+
+@if (form(); as f) {
+  <button type="button" class="overlay-l" (click)="form.set(null)" [attr.aria-label]="'common.cancel' | translate"></button>
+  <dialog class="lado" open (keydown.escape)="form.set(null)">
+    <header class="lado-head">
+      <span class="ic verde" aria-hidden="true"><i class="ti ti-shopping-cart"></i></span>
+      <div><h2>{{ (f.id ? 'ventas.formEdit' : 'ventas.formNew') | translate }}</h2><p>{{ 'ventas.formHelp' | translate }}</p></div>
+      <button type="button" class="btn-ic" (click)="form.set(null)" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </header>
+    <form class="lado-cuerpo" (ngSubmit)="guardar()">
+      @if (errorPanel()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ errorPanel()! | translate }}</p> }
+      <div class="campos">
+        <label class="campo ancho"><span>{{ 'ventas.buyer' | translate }}</span>
+          <input name="comprador" list="lista-compradores" maxlength="120" [ngModel]="f.comprador" (ngModelChange)="campo('comprador', $event)" [placeholder]="'ventas.buyerPlaceholder' | translate" required />
+          <datalist id="lista-compradores">@for (c of compradores(); track c) { <option [value]="c"></option> }</datalist>
+        </label>
+        <label class="campo ancho"><span>{{ 'ventas.planting' | translate }} <small class="suave">({{ 'common.optional' | translate }})</small></span>
+          <select name="siembra" [ngModel]="f.siembraId" (ngModelChange)="campo('siembraId', $event)">
+            <option [ngValue]="null">{{ 'ventas.noPlanting' | translate }}</option>
+            @for (o of opcionesSiembra(); track o.id) { <option [ngValue]="o.id">{{ o.etiqueta }}</option> }
+          </select>
+        </label>
+        <!-- Una venta junta los kilos de todas las cosechas y de todos los recolectores; aquí se decide cuánto vender -->
+        @if (f.id == null && origen().length) {
+          <div class="origen ancho">
+            <span class="origen-titulo">{{ 'ventas.origin.title' | translate }}</span>
+            <div class="origen-atajos" role="group" [attr.aria-label]="'ventas.origin.howMuch' | translate">
+              <button type="button" class="chip" (click)="elegirCalidad(null)">{{ 'ventas.origin.all' | translate: { kg: (quedanDe(f) ?? 0) } }}</button>
+              @if (porCalidad().length > 1) {
+                @for (c of porCalidad(); track c.calidad) {
+                  <button type="button" class="chip" (click)="elegirCalidad(c.calidad)">{{ 'ventas.origin.onlyQuality' | translate: { quality: ('enums.calidadCosecha.' + c.calidad | translate), kg: c.kg } }}</button>
+                }
+              }
+            </div>
+            <ul class="origen-lista">
+              @for (o of origen(); track o.id) {
+                <li>
+                  <label>
+                    <input type="checkbox" [checked]="elegidas().has(o.id)" (change)="alternarCosecha(o.id)" />
+                    <span class="origen-dato">
+                      <strong>{{ o.fecha | fecha }} · {{ 'enums.calidadCosecha.' + o.calidad | translate }} · {{ o.quedan }} kg</strong>
+                      @if (o.quedan < o.kg) { <small>{{ 'ventas.origin.partOf' | translate: { kg: o.kg } }}</small> }
+                      @if (o.recolectores.length) { <small>{{ o.recolectores.join(', ') }}</small> }
+                    </span>
+                  </label>
+                </li>
+              }
+            </ul>
+            <small class="suave">{{ 'ventas.origin.hint' | translate }}</small>
+          </div>
+        }
+        <label class="campo ancho"><span>{{ 'ventas.product' | translate }}</span>
+          <input name="producto" maxlength="120" [ngModel]="f.producto" (ngModelChange)="campo('producto', $event)" [placeholder]="'ventas.productPlaceholder' | translate" required />
+        </label>
+        <label class="campo"><span>{{ 'ventas.date' | translate }}</span>
+          <input name="fecha" type="date" [max]="hoy" [ngModel]="f.fecha" (ngModelChange)="campo('fecha', $event)" required />
+        </label>
+        <label class="campo"><span>{{ 'ventas.kilos' | translate }}</span>
+          <input name="kg" type="number" min="0" step="any" inputmode="decimal" [attr.max]="quedanDe(f)" [class.invalido]="pasaDeLoQueQueda(f)"
+                 [required]="f.siembraId != null" [ngModel]="f.cantidadKg" (ngModelChange)="campo('cantidadKg', $event)" placeholder="0" />
+          @if (quedanDe(f); as quedan) {
+            @if (pasaDeLoQueQueda(f)) {
+              <small class="kilos-aviso">{{ 'ventas.stock.over' | translate: { kg: quedan } }}</small>
+            } @else {
+              <small class="suave">{{ 'ventas.stock.remaining' | translate: { kg: quedan } }}</small>
+            }
+          }
+        </label>
+        <label class="campo"><span>{{ 'ventas.pricePerKilo' | translate }}</span>
+          <input name="precio" type="number" min="0" step="any" inputmode="decimal" [ngModel]="f.precioKg" (ngModelChange)="campo('precioKg', $event)" [placeholder]="ejemploPrecio()" />
+        </label>
+        @if (referencia(); as r) {
+          <p class="referencia ancho">
+            <i class="ti ti-chart-line" aria-hidden="true"></i>
+            <span>{{ (r.fuente === 'PROPIO' ? 'precios.hintOwn' : 'precios.hintSipsa') | translate: { price: (r.precioKg | pesos), product: r.producto } }}</span>
+            @if (f.precioKg !== r.precioKg) { <button type="button" class="usar" (click)="usarReferencia()">{{ 'precios.use' | translate }}</button> }
+          </p>
+        }
+        <label class="campo"><span>{{ 'ventas.total' | translate }}</span>
+          @if (f.cantidadKg && f.precioKg) {
+            <output class="total-calc">{{ totalDe(f) | pesos }}</output>
+          } @else {
+            <input name="total" type="number" min="0" step="1000" inputmode="numeric" [ngModel]="f.total" (ngModelChange)="campo('total', $event)" placeholder="0" />
+          }
+        </label>
+        @if (!f.id) {
+          <div class="campo ancho"><span>{{ 'ventas.howPaid' | translate }}</span>
+            <div class="opciones">
+              <button type="button" class="opcion" [class.on]="f.credito" (click)="campo('credito', true)"><i class="ti ti-clock" aria-hidden="true"></i> {{ 'ventas.credit' | translate }}</button>
+              <button type="button" class="opcion" [class.on]="!f.credito" (click)="campo('credito', false)"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'ventas.cash' | translate }}</button>
+            </div>
+          </div>
+        }
+        @if (f.credito || f.id) {
+          <label class="campo ancho"><span>{{ 'ventas.dueDate' | translate }} <small class="suave">({{ 'common.optional' | translate }})</small></span>
+            <input name="vence" type="date" [min]="f.fecha" [ngModel]="f.vence" (ngModelChange)="campo('vence', $event)" />
+          </label>
+        } @else {
+          <label class="campo ancho"><span>{{ 'ventas.method' | translate }}</span>
+            <select name="metodo" [ngModel]="f.metodo" (ngModelChange)="campo('metodo', $event)">
+              @for (m of metodos; track m) { <option [value]="m">{{ 'enums.metodoPago.' + m | translate }}</option> }
+            </select>
+          </label>
+        }
+        <label class="campo ancho"><span>{{ 'ventas.notes' | translate }}</span>
+          <input name="obs" maxlength="255" [ngModel]="f.observaciones" (ngModelChange)="campo('observaciones', $event)" />
+        </label>
+      </div>
+      <footer class="lado-pie">
+        @if (f.id) { <button type="button" class="btn btn-texto peligro-t" (click)="eliminarDesdeForm()"><i class="ti ti-trash" aria-hidden="true"></i> {{ 'common.delete' | translate }}</button> }
+        <button type="button" class="btn btn-texto" (click)="form.set(null)">{{ 'common.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-prim" [disabled]="guardando()"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando() ? 'common.saving' : 'common.save') | translate }}</button>
+      </footer>
+    </form>
+  </dialog>
+}
+
+@if (cobrando(); as v) {
+  <button type="button" class="overlay-l" (click)="cobrando.set(null)" [attr.aria-label]="'common.cancel' | translate"></button>
+  <dialog class="lado" open (keydown.escape)="cobrando.set(null)">
+    <header class="lado-head">
+      <span class="ic azul" aria-hidden="true"><i class="ti ti-cash"></i></span>
+      <div><h2>{{ v.comprador }}</h2><p>{{ v.producto }} · {{ v.fecha | fecha }}</p></div>
+      <button type="button" class="btn-ic" (click)="cobrando.set(null)" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </header>
+    <div class="lado-cuerpo">
+      @if (errorPanel()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ errorPanel()! | translate }}</p> }
+      <dl class="cuentas">
+        <div><dt>{{ 'ventas.col.total' | translate }}</dt><dd>{{ v.total | pesos }}</dd></div>
+        <div><dt>{{ 'ventas.paid' | translate }}</dt><dd>{{ v.abonado | pesos }}</dd></div>
+        <div class="saldo"><dt>{{ 'ventas.col.balance' | translate }}</dt><dd>{{ v.saldo | pesos }}</dd></div>
+      </dl>
+      @if (v.abonos.length) {
+        <h3 class="sub">{{ 'ventas.payments' | translate }}</h3>
+        <ul class="abonos">
+          @for (a of v.abonos; track a.id) {
+            <li>
+              <span>{{ a.fecha | fecha }} · {{ 'enums.metodoPago.' + a.metodo | translate }}@if (a.observaciones) { <small>{{ a.observaciones }}</small> }</span>
+              <strong>{{ a.monto | pesos }}</strong>
+              <button type="button" class="btn-ic peligro" (click)="quitarAbono(v, a)" [attr.aria-label]="'common.delete' | translate"><i class="ti ti-trash" aria-hidden="true"></i></button>
+            </li>
+          }
+        </ul>
+      }
+      @if (v.saldo > 0) {
+        <form class="campos" (ngSubmit)="registrarAbono()">
+          <h3 class="sub ancho">{{ 'ventas.newPayment' | translate }}</h3>
+          <label class="campo"><span>{{ 'ventas.amount' | translate }}</span>
+            <input name="monto" type="number" min="1" [max]="v.saldo" step="any" inputmode="numeric" [(ngModel)]="abono.monto" required />
+          </label>
+          <label class="campo"><span>{{ 'ventas.date' | translate }}</span>
+            <input name="fechaAbono" type="date" [min]="v.fecha" [max]="hoy" [(ngModel)]="abono.fecha" required />
+          </label>
+          <label class="campo ancho"><span>{{ 'ventas.method' | translate }}</span>
+            <select name="metodoAbono" [(ngModel)]="abono.metodo">
+              @for (m of metodos; track m) { <option [value]="m">{{ 'enums.metodoPago.' + m | translate }}</option> }
+            </select>
+          </label>
+          <label class="campo ancho"><span>{{ 'ventas.notes' | translate }}</span>
+            <input name="obsAbono" maxlength="255" [(ngModel)]="abono.observaciones" />
+          </label>
+          <footer class="lado-pie ancho">
+            <button type="button" class="btn btn-texto" (click)="abono.monto = v.saldo">{{ 'ventas.payAll' | translate }}</button>
+            <button type="submit" class="btn btn-prim" [disabled]="guardando() || !abono.monto"><i class="ti ti-check" aria-hidden="true"></i> {{ 'ventas.savePayment' | translate }}</button>
+          </footer>
+        </form>
+      } @else {
+        <p class="aviso verde"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ 'ventas.fullyPaid' | translate }}</p>
+      }
+    </div>
+  </dialog>
+}

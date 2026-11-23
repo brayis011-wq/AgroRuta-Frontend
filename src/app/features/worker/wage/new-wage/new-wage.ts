@@ -25,7 +25,7 @@ interface UltimoJornal { fincaId?: number; cultivoId?: number; actividadIds?: nu
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe, SiguienteCampoDirective],
   templateUrl: './new-wage.html',
-  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../worker-ui.css', '../../worker-panel.css', './new-wage.css']
+  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../worker-ui.css', '../../worker-panel.css', '../../../../shared/styles/opciones.css', './new-wage.css']
 })
 export class NuevoJornalComponent implements OnInit {
   private readonly avisos = inject(AvisosService);
@@ -79,8 +79,11 @@ export class NuevoJornalComponent implements OnInit {
       fincaId:       [null, Validators.required],
       cultivoId:     [{ value: null, disabled: true }, Validators.required],
       fecha:         [this.hoy, Validators.required],
+      kilos:         [null],
       observaciones: ['']
     });
+    // Si el cargo se paga por kilo, los kilos son obligatorios
+    this.form.get('trabajadorId')!.valueChanges.subscribe(() => this.ajustarKilos());
 
     // ✅ Fix: usar listarTodos() igual que en worker-home
     this.trabajadorService.listarTodos().subscribe({
@@ -92,6 +95,7 @@ export class NuevoJornalComponent implements OnInit {
         if (idParam) {
           this.trabajadorIdOrigen = Number(idParam);
           this.form.patchValue({ trabajadorId: this.trabajadorIdOrigen });
+          this.ajustarKilos();
         }
         this.cdr.markForCheck();
       },
@@ -142,6 +146,26 @@ export class NuevoJornalComponent implements OnInit {
     return this.trabajadores.find(t => t.id === id) ?? null;
   }
 
+  /** El cargo del trabajador elegido se paga por kilo */
+  get porKilo(): boolean {
+    return this.trabajadorElegido?.cargo?.modalidadPago === 'KILO';
+  }
+
+  /** Lo que valdrá el jornal: el valor del día, o kilos × valor del kilo */
+  get valorEstimado(): number {
+    const c = this.trabajadorElegido?.cargo;
+    if (!c) return 0;
+    if (c.modalidadPago !== 'KILO') return c.valorJornal;
+    return Math.round((Number(this.form.get('kilos')?.value) || 0) * (c.valorKilo ?? 0));
+  }
+
+  private ajustarKilos(): void {
+    const kilos = this.form.get('kilos')!;
+    kilos.setValidators(this.porKilo ? [Validators.required, Validators.min(0.1)] : []);
+    if (!this.porKilo) kilos.setValue(null, { emitEvent: false });
+    kilos.updateValueAndValidity({ emitEvent: false });
+  }
+
   get cultivosDeFinca(): CultivoDisponible[] {
     const fincaId = this.form?.get('fincaId')?.value;
     return this.cultivos.filter(c => c.fincaId === fincaId);
@@ -189,6 +213,7 @@ export class NuevoJornalComponent implements OnInit {
       cultivoId:     Number(v.cultivoId),
       fecha:         v.fecha,
       actividadIds:  [...this.actividadesSeleccionadas],
+      kilos:         this.porKilo ? Number(v.kilos) : null,
       observaciones: v.observaciones || undefined
     };
 

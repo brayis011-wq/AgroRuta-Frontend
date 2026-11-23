@@ -1,0 +1,70 @@
+/* Rendimiento por trabajador */
+.cv-head .seg { align-self: flex-end; }
+.veredicto .etq { display: inline-block; padding: .2rem .55rem; border-radius: 99px; font-size: .78rem; font-weight: 600; background: var(--ar-fondo); color: var(--ar-tinta-2); white-space: normal; }
+.veredicto .etq.dia, .veredicto .etq.kilo { background: var(--ar-verde-50); color: var(--ar-verde-700); }
+.nota { margin: .75rem 0 0; font-size: .8rem; white-space: normal; }
+.vacio .btn { margin-top: .5rem; }
+@media (max-width: 760px) { .cv-head .seg { align-self: stretch; } .cv-head .seg button { flex: 1; } }
+.linea2 { display: block; font-size: .76rem; font-weight: 400; }
+/* Encabezados cortos que pueden partirse: la tabla cabe sin moverse de lado */
+.tabla th { white-space: normal; }
+.tabla th, .tabla td { padding-left: .9rem; padding-right: .9rem; }
+.veredicto { min-width: 10rem; }
+.nota { padding: 0; }
+
+/* ── Gráficas: barras horizontales finas, cifra al final de cada una ──
+   Colores validados (daltonismo y contraste): por día azul, por kilo verde; en modo oscuro, sus pasos propios */
+:host { --kilos: #2e7d32; --dia: #1f5fa8; --kilo: #2e7d32; }
+:host-context([data-tema="oscuro"]) { --kilos: #3f9a45; --dia: #4f8fe0; --kilo: #3f9a45; }
+.graficas { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+@media (min-width: 1100px) { .graficas { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; } }
+.grafica { margin: 0; min-width: 0; display: flex; flex-direction: column; gap: .6rem; }
+.grafica figcaption { font-size: .84rem; font-weight: 600; color: var(--ar-tinta); }
+.leyenda { display: flex; flex-wrap: wrap; gap: .3rem .9rem; font-size: .76rem; color: var(--ar-tinta-2); }
+.leyenda span { display: inline-flex; align-items: center; gap: .35rem; }
+.sw { width: 12px; height: 8px; border-radius: 2px; display: inline-block; }
+.sw.dia { background: var(--dia); } .sw.kilo { background: var(--kilo); }
+.sw.ref { width: 0; height: 12px; border-left: 2px dashed var(--ar-tinta-3); border-radius: 0; }
+.barras { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .65rem; }
+.barras li { display: grid; grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr); align-items: center; gap: .75rem; }
+.quien { font-size: .82rem; color: var(--ar-tinta-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pares { position: relative; display: flex; flex-direction: column; gap: 2px; }
+.fila-barra { display: flex; align-items: center; gap: .45rem; min-height: 12px; }
+.barra { position: relative; height: 10px; border-radius: 0 4px 4px 0; flex: none; outline: none; cursor: default; }
+.barra.kilos { background: var(--kilos); } .barra.dia { background: var(--dia); } .barra.kilo { background: var(--kilo); }
+.barra:focus-visible { box-shadow: 0 0 0 2px var(--ar-superficie), 0 0 0 4px var(--ar-verde-600); }
+.valor { font-size: .76rem; font-weight: 600; color: var(--ar-tinta); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.valor.suave { font-weight: 400; color: var(--ar-tinta-3); }
+/* Lo que se paga el kilo al equipo: línea punteada de referencia */
+.referencia { position: absolute; top: -3px; bottom: -3px; width: 0; border-left: 2px dashed var(--ar-tinta-3); pointer-events: none; z-index: 1; }
+/* Al pasar el ratón (o con el teclado) cada barra dice su dato */
+.barra[data-tip]:hover::after, .barra[data-tip]:focus-visible::after {
+  content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 5; white-space: nowrap;
+  padding: .3rem .5rem; border-radius: 7px; background: var(--ar-tinta); color: var(--ar-superficie); font-size: .74rem; font-weight: 600;
+  box-shadow: var(--ar-sombra-2); pointer-events: none;
+}
+@media (max-width: 560px) {
+  .barras li { grid-template-columns: minmax(0, 1fr); gap: .25rem; }
+}
+/* La tabla: el costo del kilo por día y por kilo en una sola columna, para que quepa */
+.costos .linea2 { font-size: .86rem; }
+.costos .linea2 .suave { font-size: .74rem; margin-right: .25rem; }
+
+/* Hasta 1150 px la tabla no cabe con sus cuatro columnas: cada trabajador pasa a una tarjeta,
+   con el nombre arriba y debajo los kilos, el costo del kilo y qué conviene, uno al lado del otro */
+@media (max-width: 1150px) {
+  .tabla.resp thead { display: none; }
+  .tabla.resp, .tabla.resp tbody { display: block; }
+  .tabla.resp tr { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .5rem 1rem; padding: .8rem 1rem; border-bottom: 1px solid var(--ar-linea); }
+  .tabla.resp td { display: block; padding: 0; border: 0; }
+  .tabla.resp td.prin { flex: 1 1 100%; }
+  .tabla.resp td:not(.prin) { flex: 1 1 9rem; min-width: 0; }
+  .tabla.resp td.num { text-align: left !important; }
+  .veredicto { min-width: 0; }
+}
+/* La línea de referencia pasa por detrás de los textos de "sin días..." */
+.valor.suave { position: relative; z-index: 2; background: var(--ar-superficie); padding-right: .3rem; }
+.barras li { grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); }
+@media (max-width: 560px) { .barras li { grid-template-columns: minmax(0, 1fr); } }
+/* Las notas de la tabla parten línea (en las tablas, .suave no la parte) */
+.veredicto .linea2, .tabla td .linea2 { white-space: normal; }

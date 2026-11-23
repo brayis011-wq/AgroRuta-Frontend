@@ -1,0 +1,49 @@
+:host { display: block; }
+.lluvia { background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1); padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: .7rem; }
+h3 { margin: 0; font-size: .98rem; display: flex; align-items: center; gap: .45rem; }
+h3 small { font-weight: 400; color: var(--ar-tinta-3); font-size: .84rem; }
+.cifras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+.cifras strong { display: block; font-size: 1.15rem; font-variant-numeric: tabular-nums; color: var(--ar-azul); }
+.cifras small { display: block; font-size: .72rem; color: var(--ar-tinta-3); }
+.barras { display: grid; grid-template-columns: repeat(14, 1fr); gap: 3px; height: 54px; align-items: end; }
+.col { height: 100%; display: flex; align-items: flex-end; border-radius: 4px; background: var(--ar-fondo); }
+.col.sin { background: repeating-linear-gradient(135deg, var(--ar-fondo), var(--ar-fondo) 3px, transparent 3px, transparent 6px); }
+.barra { display: block; width: 100%; border-radius: 4px; background: var(--ar-azul); }
+.consejo { margin: 0; display: flex; align-items: center; gap: .45rem; padding: .5rem .7rem; border-radius: 10px; font-size: .82rem; }
+.consejo.verde { background: var(--ar-verde-50); color: var(--ar-verde-800); }
+.consejo.ambar { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
+.anotar { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+.cuando { display: inline-flex; padding: 3px; border-radius: 10px; background: var(--ar-fondo); }
+.cuando button { border: 0; background: transparent; padding: .4rem .65rem; border-radius: 8px; font: inherit; font-size: .82rem; font-weight: 600; color: var(--ar-tinta-3); cursor: pointer; min-height: 36px; }
+.cuando button.on { background: var(--ar-superficie); color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); }
+.mm { display: inline-flex; align-items: center; gap: .3rem; }
+.mm input { width: 5.5rem; font: inherit; font-size: .95rem; padding: .45rem .6rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: var(--ar-superficie-2, var(--ar-superficie)); color: var(--ar-tinta); }
+.mm span { font-size: .82rem; color: var(--ar-tinta-3); }
+.btn-prim, .btn-texto { min-height: 38px; border-radius: 10px; padding: .4rem .8rem; font: inherit; font-size: .84rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.btn-prim { background: var(--ar-verde-600); color: #fff; }
+.btn-texto { background: transparent; color: var(--ar-tinta-2); }
+.btn-prim:disabled, .btn-texto:disabled { opacity: .5; cursor: not-allowed; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.nota { margin: 0; font-size: .76rem; color: var(--ar-tinta-3); }
+.nota.error { color: var(--ar-rojo); }
+.esq { background: var(--ar-fondo); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Versión compacta (Inicio): todo en una línea — título, cifras y anotar la lluvia; sin barras */
+.lluvia.compacta { flex-direction: row; flex-wrap: wrap; align-items: center; gap: .35rem 1rem; padding: .55rem .85rem; border-radius: 14px; }
+.compacta header { flex: none; }
+.compacta h3 { font-size: .86rem; }
+.compacta h3 small { display: none; }
+.compacta .cifras { display: flex; flex-wrap: wrap; gap: .1rem .9rem; flex: 1 1 auto; }
+.compacta .cifras div { display: inline-flex; align-items: baseline; gap: .25rem; }
+.compacta .cifras strong { display: inline; font-size: .86rem; }
+.compacta .cifras small { display: inline; font-size: .72rem; }
+.compacta .barras, .compacta .esq { display: none; }
+.compacta .consejo { flex: 1 1 100%; order: 3; padding: .25rem .5rem; font-size: .74rem; }
+.compacta .anotar { flex: none; gap: .25rem; margin-left: auto; }
+.compacta .cuando { padding: 2px; }
+.compacta .cuando button { min-height: 28px; padding: .2rem .5rem; font-size: .76rem; }
+.compacta .mm input { width: 3.8rem; padding: .25rem .45rem; font-size: .82rem; }
+.compacta .mm span { font-size: .74rem; }
+.compacta .btn-prim, .compacta .btn-texto { min-height: 28px; padding: .2rem .55rem; font-size: .76rem; }
+.compacta .nota { flex: 1 1 100%; order: 4; }

@@ -1,0 +1,115 @@
+/* Piezas de las pantallas de Finanzas (se suman a crop-ui, crop-blocks, report-table y worker-ui) */
+.rojo-ic { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
+.tabla-head { display: flex; justify-content: space-between; align-items: center; gap: .75rem; flex-wrap: wrap; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: 10px; background: var(--ar-fondo); }
+.seg button { border: 0; background: transparent; padding: .4rem .7rem; border-radius: 8px; font: inherit; font-size: .82rem; font-weight: 600; color: var(--ar-tinta-3); cursor: pointer; min-height: 34px; }
+.seg button.on { background: var(--ar-superficie); color: var(--ar-tinta); box-shadow: var(--ar-sombra-1); }
+.seg button:focus-visible { outline: 2px solid var(--ar-verde-600); }
+.linea2 { display: block; font-size: .76rem; }
+.campos > .ancho { grid-column: 1 / -1; }
+.suave { color: var(--ar-tinta-3); }
+.tarde { color: var(--ar-rojo); font-weight: 600; }
+.nowrap { white-space: nowrap; }
+.btn.chico { padding: .35rem .65rem; font-size: .8rem; }
+.btn-ic.mini { width: 26px; height: 26px; font-size: 14px; display: inline-grid; vertical-align: middle; }
+.filtro-quien { font-weight: 500; color: var(--ar-tinta-2); display: inline-flex; align-items: center; gap: .2rem; }
+
+.deudores { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .5rem; }
+.deudor { display: flex; flex-direction: column; align-items: flex-start; gap: .05rem; padding: .65rem .8rem; border-radius: 12px; border: 1px solid var(--ar-borde);
+  background: var(--ar-superficie); color: var(--ar-tinta); font: inherit; text-align: left; cursor: pointer; }
+.deudor strong { font-size: .88rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.deudor span { font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ar-ambar); }
+.deudor small { font-size: .74rem; color: var(--ar-tinta-3); }
+.deudor.vencida span { color: var(--ar-rojo); }
+.deudor.on { border-color: var(--ar-verde-600); box-shadow: inset 0 0 0 1px var(--ar-verde-600); }
+.deudor:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+
+/* Con la cifra de kilos por vender son cinco: en pantallas anchas van en una fila con el icono arriba,
+   para que las cifras no se partan; en las angostas siguen como las demás */
+@media (min-width: 1001px) {
+  .kpis.cinco { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .kpis.cinco .kpi { flex-direction: column; gap: .55rem; }
+  .kpis.cinco .kpi strong { white-space: nowrap; overflow-wrap: normal; font-size: 1.25rem; }
+}
+
+/* Kilos por vender: lo cosechado menos lo vendido de cada siembra */
+.sub-tarjeta { margin: -.35rem 0 .75rem; font-size: .84rem; white-space: normal; }
+.bodega-cosecha { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: .6rem; }
+.kilos { display: flex; align-items: flex-end; justify-content: space-between; gap: .6rem; padding: .75rem .85rem; border: 1px solid var(--ar-borde); border-radius: 12px; background: var(--ar-superficie); }
+.kilos-info { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
+.kilos-info strong { font-size: .92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kilos-info small { font-size: .74rem; color: var(--ar-tinta-3); }
+.kilos-cifra { margin-top: .25rem; font-size: 1.1rem; font-weight: 700; color: var(--ar-verde-700); font-variant-numeric: tabular-nums; }
+.kilos .btn-sm { flex: none; padding: .45rem .75rem; font-size: .82rem; border-radius: 9px; }
+.kilos-aviso { font-size: .76rem; color: var(--ar-ambar); white-space: normal; }
+
+.total-calc { display: block; padding: .6rem .75rem; border-radius: 10px; background: var(--ar-fondo); font-weight: 700; font-variant-numeric: tabular-nums; }
+.cuentas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; margin: 0 0 1rem; }
+.cuentas div { padding: .6rem .7rem; border-radius: 10px; background: var(--ar-fondo); }
+.cuentas dt { font-size: .74rem; color: var(--ar-tinta-3); }
+.cuentas dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+.cuentas .saldo { background: var(--ar-ambar-bg); }
+.cuentas .saldo dd { color: var(--ar-ambar); }
+.sub { margin: .4rem 0 .5rem; font-size: .9rem; }
+.abonos { list-style: none; margin: 0 0 1rem; padding: 0; }
+.abonos li { display: flex; align-items: center; gap: .5rem; padding: .45rem 0; border-bottom: 1px solid var(--ar-borde); font-size: .86rem; }
+.abonos li span { flex: 1; min-width: 0; }
+.abonos small { display: block; font-size: .74rem; color: var(--ar-tinta-3); }
+
+/* Barras por categoría (gastos) */
+.barras-cat { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+.barras-cat li { display: grid; grid-template-columns: minmax(110px, 160px) 1fr auto; gap: .6rem; align-items: center; font-size: .86rem; }
+.barras-cat .pista { height: 10px; border-radius: 999px; background: var(--ar-fondo); overflow: hidden; }
+.barras-cat .pista span { display: block; height: 100%; border-radius: inherit; background: var(--ar-ambar); }
+.barras-cat strong { font-variant-numeric: tabular-nums; }
+.periodos { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.periodos select { font: inherit; font-size: .86rem; padding: .45rem .7rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: var(--ar-superficie); color: var(--ar-tinta); }
+.categorias { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: .4rem; margin-top: .3rem; }
+
+/* Precios */
+.cultivos-precio { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .8rem; }
+.precio-card { border: 1px solid var(--ar-borde); border-radius: 14px; padding: .85rem 1rem; display: flex; flex-direction: column; gap: .3rem; background: var(--ar-superficie); }
+.precio-card h3 { margin: 0; font-size: .95rem; }
+.precio-card .valor { font-size: 1.4rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.precio-card .valor small { font-size: .8rem; font-weight: 400; color: var(--ar-tinta-3); }
+.precio-card p { margin: 0; font-size: .8rem; color: var(--ar-tinta-2); }
+.precio-card .acc-p { display: flex; gap: .4rem; margin-top: .3rem; flex-wrap: wrap; }
+.fuente { display: inline-flex; align-items: center; gap: .25rem; font-size: .72rem; font-weight: 700; border-radius: 999px; padding: .15rem .55rem; background: var(--ar-azul-bg); color: var(--ar-azul); align-self: flex-start; }
+.fuente.propio { background: var(--ar-verde-100); color: var(--ar-verde-800); }
+.alternativas { list-style: none; margin: .3rem 0; padding: 0; display: grid; gap: .3rem; max-height: 40vh; overflow-y: auto; }
+.alternativas button { width: 100%; display: flex; justify-content: space-between; gap: .5rem; padding: .55rem .7rem; border-radius: 10px; border: 1px solid var(--ar-borde); background: var(--ar-superficie); color: var(--ar-tinta); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; }
+.alternativas button.on { border-color: var(--ar-verde-600); background: var(--ar-verde-50); }
+.alternativas strong { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fuente-nota { margin: 0; font-size: .78rem; color: var(--ar-tinta-3); }
+.fuente-nota a { color: var(--ar-verde-700); }
+
+@media (max-width: 720px) {
+  .cuentas { grid-template-columns: 1fr 1fr; }
+  .barras-cat li { grid-template-columns: 1fr auto; }
+  .barras-cat .pista { grid-column: 1 / -1; grid-row: 2; }
+}
+.peligro-t { color: var(--ar-rojo); margin-right: auto; }
+.prod { max-width: 15rem; }
+.tabla td.acc { padding-right: .9rem; }
+
+/* Precio de referencia del cultivo sugerido en la venta */
+.referencia { margin: -.2rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; padding: .5rem .65rem; border-radius: 10px;
+  background: var(--ar-azul-bg); color: var(--ar-azul); font-size: .8rem; }
+.referencia span { flex: 1; min-width: 12rem; }
+.usar { border: 1px solid currentColor; background: transparent; color: inherit; font: inherit; font-weight: 700; border-radius: 8px; padding: .25rem .6rem; cursor: pointer; }
+.usar:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.bloque-aviso { margin: .6rem 0 0; display: flex; gap: .4rem; align-items: flex-start; padding: .55rem .75rem; border-radius: 10px; background: var(--ar-ambar-bg); font-size: .82rem; }
+input.invalido { border-color: var(--ar-ambar); box-shadow: 0 0 0 3px var(--ar-ambar-bg); }
+/* De dónde salen los kilos de la venta: las cosechas de la siembra y quién las recogió */
+.origen { display: flex; flex-direction: column; gap: .5rem; padding: .7rem .8rem; border: 1px solid var(--ar-borde); border-radius: 12px; background: var(--ar-fondo); }
+.origen-titulo { font-size: .82rem; font-weight: 600; color: var(--ar-tinta); }
+.origen-atajos { display: flex; flex-wrap: wrap; gap: .4rem; }
+.origen-atajos .chip { border: 1px solid var(--ar-borde); background: var(--ar-superficie); border-radius: 99px; padding: .3rem .7rem; font: inherit; font-size: .78rem; font-weight: 600; color: var(--ar-verde-700); cursor: pointer; }
+.origen-atajos .chip:hover { background: var(--ar-verde-50); }
+.origen-atajos .chip:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
+.origen-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .35rem; max-height: 220px; overflow-y: auto; }
+.origen-lista label { display: flex; align-items: flex-start; gap: .55rem; padding: .45rem .55rem; border-radius: 9px; background: var(--ar-superficie); cursor: pointer; }
+.origen-lista input { width: 1.05rem; height: 1.05rem; margin-top: .15rem; accent-color: var(--ar-verde-600); flex: none; }
+.origen-dato { display: flex; flex-direction: column; min-width: 0; }
+.origen-dato strong { font-size: .85rem; }
+.origen-dato small { font-size: .74rem; color: var(--ar-tinta-3); white-space: normal; }

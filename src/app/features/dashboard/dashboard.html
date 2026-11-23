@@ -5,6 +5,17 @@
     <span class="astro" aria-hidden="true">
       <i class="ti" [class.ti-sun]="saludo === 'morning'" [class.ti-sunset-2]="saludo === 'afternoon'" [class.ti-moon-stars]="saludo === 'evening'"></i>
     </span>
+    <!-- Clima de hoy, en la esquina junto al sol (o la luna): temperatura, cielo, si conviene fumigar y dónde -->
+    @if (climaHoy(); as c) {
+      <div class="hero-clima" [attr.data-consejo]="consejoHoy()" role="group" [attr.aria-label]="'dashboard.weatherToday' | translate">
+        <i [class]="'ti ' + iconoHoy()" aria-hidden="true"></i>
+        <p>
+          <strong>{{ grados(c) }}°C <span>{{ cielo(c) }}</span></strong>
+          <small>@if (consejoHoy(); as k) { {{ 'layout.weather.' + k | translate }} · }{{ climaLugar() || c.city }}</small>
+          <small class="detalle"><i class="ti ti-droplet" aria-hidden="true"></i> {{ c.humidity }}% · <i class="ti ti-wind" aria-hidden="true"></i> {{ c.windSpeed }} m/s</small>
+        </p>
+      </div>
+    }
     <div class="hero-txt">
       <p class="fecha">{{ fechaHoy() }}</p>
       <h1>{{ 'dashboard.greeting.' + saludo | translate: { name: nombreCorto() } }}</h1>
@@ -171,9 +182,6 @@
       <!-- Consejos del clima para lo programado: "Fumiga hoy entre las 7 y las 10, llueve en 12 horas" (solo si hay algo que avisar) -->
       <app-weather-advice class="consejos-clima" />
 
-      @if (lugarClima() === 'izquierda') {
-        <section class="clima fijo"><ng-container *ngTemplateOutlet="climaTpl; context: { ancho: false }" /></section>
-      }
     </div>
 
     <div class="col-lateral">
@@ -202,27 +210,11 @@
         }
       </section>
 
-      @if (lugarClima() === 'derecha') {
-        <section class="clima fijo"><ng-container *ngTemplateOutlet="climaTpl; context: { ancho: false }" /></section>
-      }
     </div>
   </div>
 
-  <!-- Con poca información el clima va abajo, a lo ancho y bajito: así ninguna columna queda con un hueco -->
-  @if (lugarClima() === 'abajo') {
-    <section class="clima ancho"><ng-container *ngTemplateOutlet="climaTpl; context: { ancho: true }" /></section>
-  }
 </div>
 
-<!-- Clima de la finca elegida (en el Inicio el menú lateral no repite el suyo) -->
-<ng-template #climaTpl let-ancho="ancho">
-  @if (climaFinca(); as f) {
-    <app-weather-widget [lat]="f.centroideLat ?? null" [lng]="f.centroideLng ?? null"
-                        [city]="climaLugar() || 'Bogotá'" [locationName]="f.nombre" [horizontal]="ancho" />
-  } @else {
-    <app-weather-widget city="Bogotá" [horizontal]="ancho" />
-  }
-</ng-template>
 
 <ng-template #tend let-t="t">
   @if (t.porcentaje === null) {

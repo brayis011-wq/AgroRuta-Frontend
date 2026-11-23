@@ -107,7 +107,7 @@ describe('DetalleNominaComponent', () => {
     expect(nominaSvc.aprobar).not.toHaveBeenCalled();
   });
 
-  it('aprobar() should only approve and open the payment form', async () => {
+  it('aprobar() solo aprueba: el pago se registra después, cuando se le pague', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina()));
     nominaSvc.aprobar.mockReturnValue(of(mkNomina('APROBADA')));
     respuesta = true;
@@ -116,7 +116,7 @@ describe('DetalleNominaComponent', () => {
     await component.aprobar();
     expect(pagoSvc.registrar).not.toHaveBeenCalled();
     expect(component.nomina!.estado).toBe('APROBADA');
-    expect(component.mostrarFormPago).toBe(true);
+    expect(component.mostrarFormPago).toBe(false);
     expect(component.exito).toBe('workers.rosters.detail.success.approved');
     vi.advanceTimersByTime(4000);
     expect(component.exito).toBe('');

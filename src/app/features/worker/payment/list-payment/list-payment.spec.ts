@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { ListaPagosComponent } from './list-payment';
-import { PagoService, NominaService } from '../../../../core/services/worker.service';
+import { PagoService, NominaService, TrabajadorService } from '../../../../core/services/worker.service';
 
 const mockPagos = [
   { id: 1, trabajadorNombre: 'Juan', monto: 500000, nominaId: 10, metodoPago: 'EFECTIVO' },
@@ -30,6 +30,7 @@ describe('ListaPagosComponent', () => {
       providers: [
         { provide: PagoService, useValue: pagoServiceMock },
         { provide: NominaService, useValue: nominaServiceMock },
+        { provide: TrabajadorService, useValue: { listarTodos: vi.fn().mockReturnValue(of([])) } },
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: { get: () => null } } } },
         ChangeDetectorRef,
       ],
@@ -41,7 +42,7 @@ describe('ListaPagosComponent', () => {
 
   it('should create', () => { expect(component).toBeTruthy(); });
   it('ngOnInit() carga la primera página y el resumen', () => {
-    expect(pagoServiceMock.pagina).toHaveBeenCalledWith(0, null);
+    expect(pagoServiceMock.pagina).toHaveBeenCalledWith(0, null, undefined, null);
     expect(component.pagos).toEqual(mockPagos);
     expect(component.totalTrabajadores).toBe(2);
     expect(component.hayMas).toBe(false);
@@ -66,14 +67,14 @@ describe('ListaPagosComponent', () => {
     component.ngOnInit();
     expect(component.hayMas).toBe(true);
     component.cargarMas();
-    expect(pagoServiceMock.pagina).toHaveBeenLastCalledWith(1, null);
+    expect(pagoServiceMock.pagina).toHaveBeenLastCalledWith(1, null, undefined, null);
     expect(component.pagos.map(p => p.id)).toEqual([1, 2, 4]);
   });
   it('verTodos() quita el filtro de nómina y recarga', () => {
     component.nominaIdFiltro = 10;
     component.verTodos();
     expect(component.nominaIdFiltro).toBeNull();
-    expect(pagoServiceMock.resumen).toHaveBeenLastCalledWith(null);
+    expect(pagoServiceMock.resumen).toHaveBeenLastCalledWith(null, null);
   });
   it('abrirDetalle() should set pagoSeleccionado', () => {
     component.abrirDetalle(mockPagos[0] as any);
@@ -105,5 +106,13 @@ describe('ListaPagosComponent', () => {
   });
   it('iniciales() should return uppercase initials', () => {
     expect(component.iniciales('Juan Perez')).toBe('JP');
+  });
+
+  it('filtrarTrabajador() pide los pagos y el resumen de ese trabajador', () => {
+    component.filtrarTrabajador(7);
+    expect(pagoServiceMock.pagina).toHaveBeenLastCalledWith(0, null, undefined, 7);
+    expect(pagoServiceMock.resumen).toHaveBeenLastCalledWith(null, 7);
+    component.filtrarTrabajador(null);
+    expect(pagoServiceMock.resumen).toHaveBeenLastCalledWith(null, null);
   });
 });

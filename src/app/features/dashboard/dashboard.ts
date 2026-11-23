@@ -14,13 +14,15 @@ import { InventarioService } from '../../core/services/inventory.service';
 import { PagosDelMes, ResumenNominas, Trabajador } from '../../core/models/worker.model';
 import { EventoCalendario, Finca, Lote, Siembra } from '../../core/models/crop.model';
 import { ICONO_EVENTO, TONO_EVENTO, diasHasta, esPorVenir, ordenAgenda, textoEvento } from '../crop/calendar/events';
-import { WeatherWidgetComponent } from '../weather/weather-widget/weather-widget';
 import { WeatherAdviceComponent } from '../weather/weather-advice/weather-advice';
 import { formatoPesos, formatoNumero } from '../../shared/format';
-import { municipio } from '../../shared/weather';
+import { consejoFumigacion, iconoClima, municipio } from '../../shared/weather';
+import { WeatherService } from '../../core/services/weather.service';
+import { Weather } from '../../core/models/weather.model';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ContarDirective } from '../../shared/count-up.directive';
 import { almanaqueDe } from './almanac';
-import { ALTO_CLIMA, LugarClima, elegirLugarClima, emparejarColumnas, soltarColumnas } from './dashboard-columns';
+import { emparejarColumnas, soltarColumnas } from './dashboard-columns';
 import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
 import { PasoInicial, calcularPrimerosPasos } from './first-steps';
 import { PrimerosPasosComponent } from './first-steps-card';
@@ -52,7 +54,7 @@ export interface Pendiente {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherWidgetComponent, WeatherAdviceComponent, ContarDirective, PrimerosPasosComponent, PrecargarDirective],
+  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherAdviceComponent, ContarDirective, PrimerosPasosComponent, PrecargarDirective],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css', './dashboard-hero.css', './dashboard-pending.css', './dashboard-body.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -108,27 +110,37 @@ export class DashboardComponent implements OnInit {
   readonly climaFinca = computed(() => this.fincaActiva.paraClima());
   readonly climaLugar = computed(() => municipio(this.climaFinca()) || null);
 
+  // ── Clima de hoy resumido arriba, en el panel del almanaque (el detalle sigue más abajo) ──
+  private readonly weather = inject(WeatherService);
+  /** Cambia con la finca elegida en el menú; si llegan dos respuestas, vale la de la última finca */
+  readonly climaHoy = toSignal(toObservable(this.climaFinca).pipe(
+    switchMap((f) => (f?.centroideLat != null && f?.centroideLng != null
+      ? this.weather.getByCoordinates(f.centroideLat, f.centroideLng)
+      : this.weather.getByCity(municipio(f) || 'Bogotá')).pipe(catchError(() => of(null as Weather | null)))),
+  ), { initialValue: null as Weather | null });
+  readonly consejoHoy = computed(() => { const c = this.climaHoy(); return c ? consejoFumigacion(c) : null; });
+  readonly iconoHoy = computed(() => iconoClima(this.climaHoy()?.iconUrl));
+  grados(c: Weather): number {
+    return Math.round(c.temperature);
+  }
+
+  /** "lluvia moderada" → "Lluvia moderada" */
+  cielo(c: Weather): string {
+    const d = c.description ?? '';
+    return d.charAt(0).toUpperCase() + d.slice(1);
+  }
+
+
   private readonly cuerpo = viewChild<ElementRef<HTMLElement>>('cuerpo');
 
-  /** El clima va donde las columnas queden parejas (con poca información, abajo a lo ancho) */
-  readonly lugarClima = signal<LugarClima>('derecha');
-  /** Último alto medido del clima dentro de una columna (ya cargado) */
-  private altoClima = ALTO_CLIMA;
-
   constructor() {
-    // Después de cada pintada (datos que llegan, clima, cambio de tamaño de la ventana)
+    // Después de cada pintada (datos que llegan, cambio de tamaño de la ventana) se emparejan las columnas
     afterEveryRender({ write: () => this.acomodar() });
   }
 
   private acomodar(): void {
     const cuerpo = this.cuerpo()?.nativeElement;
     soltarColumnas(cuerpo);
-    const clima = cuerpo?.querySelector<HTMLElement>('.col-principal > .clima, .col-lateral > .clima');
-    const alto = clima?.getBoundingClientRect().height ?? 0;
-    if (alto > 120) this.altoClima = alto; // mientras carga mide menos: no sirve de referencia
-    const lugar = elegirLugarClima(cuerpo, this.altoClima);
-    // Al moverlo se vuelve a pintar y en esa pasada se emparejan las columnas
-    if (lugar !== this.lugarClima()) { this.lugarClima.set(lugar); return; }
     emparejarColumnas(cuerpo);
   }
 

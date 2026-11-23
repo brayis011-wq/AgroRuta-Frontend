@@ -64,3 +64,4 @@ a.btn-ic { text-decoration: none; }
 /* "Cargar más" debajo de las listas paginadas (jornales, nóminas, pagos) */
 .cargar-mas { display: flex; flex-direction: column; align-items: center; gap: .4rem; padding: 1rem 0 .25rem; }
 .cargar-mas small { color: var(--ar-tinta-2); }
+.kg-j { display: block; font-weight: 400; font-size: .74rem; }

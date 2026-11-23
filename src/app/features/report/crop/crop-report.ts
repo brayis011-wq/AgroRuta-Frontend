@@ -5,11 +5,12 @@ import { CropReport, ReportService } from '../../../core/services/report.service
 import { ReportBase } from '../report-base';
 import { tablaCultivos } from '../report-csv';
 import { ETAPAS, filtrarSiembras, resumenCultivos, ubicacionDe } from '../report-calc';
+import { EtiquetasTablaDirective } from '../../../shared/table-labels.directive';
 
 @Component({
   selector: 'app-crop-report',
   standalone: true,
-  imports: [TranslatePipe, DescargasReporteComponent],
+  imports: [TranslatePipe, DescargasReporteComponent, EtiquetasTablaDirective],
   templateUrl: './crop-report.html',
   styleUrls: ['../report-shared.css', '../report-table.css', './crop-report.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

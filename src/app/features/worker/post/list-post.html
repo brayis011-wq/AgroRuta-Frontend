@@ -6,6 +6,7 @@
       <p class="cv-sub">{{ 'workers.posts.subtitle' | translate }}</p>
     </div>
     <div class="cv-acciones">
+      <button type="button" class="btn" [disabled]="agregandoTipicos" (click)="agregarTipicos()" [title]="'workers.posts.typicalHelp' | translate"><i class="ti ti-sparkles" aria-hidden="true"></i> {{ 'workers.posts.addTypical' | translate }}</button>
       <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'workers.posts.new' | translate }}</button>
     </div>
   </header>
@@ -20,6 +21,8 @@
       <div class="vacio">
         <i class="ti ti-tag-off" aria-hidden="true"></i>
         <p>{{ 'workers.posts.empty' | translate }}</p>
+        <p class="suave">{{ 'workers.posts.typicalHelp' | translate }}</p>
+        <button type="button" class="btn" [disabled]="agregandoTipicos" (click)="agregarTipicos()"><i class="ti ti-sparkles" aria-hidden="true"></i> {{ 'workers.posts.addTypical' | translate }}</button>
         <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'workers.posts.new' | translate }}</button>
       </div>
     } @else {
@@ -29,7 +32,7 @@
             <tr>
               <th>{{ 'workers.posts.table.post' | translate }}</th>
               <th>{{ 'workers.posts.table.description' | translate }}</th>
-              <th class="num">{{ 'workers.posts.table.dailyWage' | translate }}</th>
+              <th class="num">{{ 'workers.posts.table.pay' | translate }}</th>
               <th>{{ 'common.status' | translate }}</th>
               <th><span class="sr-only">{{ 'common.actions' | translate }}</span></th>
             </tr>
@@ -39,7 +42,7 @@
               <tr [class.apagada]="!c.activo">
                 <td class="prin fuerte-n">{{ c.nombre }}</td>
                 <td class="suave">{{ c.descripcion }}</td>
-                <td class="num fuerte">{{ c.valorJornal | pesos }}</td>
+                <td class="num fuerte">@if (c.modalidadPago === 'KILO') { {{ c.valorKilo | pesos }} <small class="suave">{{ 'workers.posts.perKilo' | translate }}</small> } @else { {{ c.valorJornal | pesos }} }</td>
                 <td><span class="est" [class.si]="c.activo" [class.INACTIVO]="!c.activo">{{ (c.activo ? 'workers.posts.active' : 'workers.posts.inactive') | translate }}</span></td>
                 <td class="acc">
                   <span class="acc-in">
@@ -77,10 +80,25 @@
           <input formControlName="descripcion" type="text" [placeholder]="'workers.posts.descriptionPlaceholder' | translate" [class.invalido]="invalido('descripcion')" />
           @if (invalido('descripcion')) { <em class="err">{{ 'common.required' | translate }}</em> }
         </label>
-        <label class="campo ancho"><span>{{ 'workers.posts.dailyWage' | translate }}</span>
-          <input formControlName="valorJornal" type="number" min="1" step="1000" inputmode="numeric" placeholder="60000" [class.invalido]="invalido('valorJornal')" />
-          @if (invalido('valorJornal')) { <em class="err">{{ 'workers.posts.invalidValue' | translate }}</em> }
-        </label>
+        <div class="campo ancho" role="radiogroup" [attr.aria-label]="'workers.posts.payMode' | translate">
+          <span>{{ 'workers.posts.payMode' | translate }}</span>
+          <div class="opciones">
+            <label class="opcion" [class.on]="!porKilo"><input type="radio" formControlName="modalidadPago" value="JORNAL" /> <i class="ti ti-calendar-event" aria-hidden="true"></i> {{ 'workers.posts.byDay' | translate }}</label>
+            <label class="opcion" [class.on]="porKilo"><input type="radio" formControlName="modalidadPago" value="KILO" /> <i class="ti ti-scale" aria-hidden="true"></i> {{ 'workers.posts.byKilo' | translate }}</label>
+          </div>
+        </div>
+        @if (porKilo) {
+          <label class="campo ancho"><span>{{ 'workers.posts.kiloValue' | translate }}</span>
+            <input formControlName="valorKilo" type="number" min="1" step="50" inputmode="numeric" placeholder="900" [class.invalido]="invalido('valorKilo')" />
+            <small class="ayuda">{{ 'workers.posts.kiloHelp' | translate }}</small>
+            @if (invalido('valorKilo')) { <em class="err">{{ 'workers.posts.invalidValue' | translate }}</em> }
+          </label>
+        } @else {
+          <label class="campo ancho"><span>{{ 'workers.posts.dailyWage' | translate }}</span>
+            <input formControlName="valorJornal" type="number" min="1" step="1000" inputmode="numeric" placeholder="60000" [class.invalido]="invalido('valorJornal')" />
+            @if (invalido('valorJornal')) { <em class="err">{{ 'workers.posts.invalidValue' | translate }}</em> }
+          </label>
+        }
       </div>
       <footer class="lado-pie">
         <button type="button" class="btn btn-texto" (click)="mostrarForm = false">{{ 'common.cancel' | translate }}</button>

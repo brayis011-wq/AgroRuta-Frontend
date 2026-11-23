@@ -121,7 +121,10 @@
       <article class="kpi">
         <span class="ic ambar"><i class="ti ti-basket"></i></span>
         <div><small>{{ 'siembra.detail.cards.harvested' | translate }}</small><strong>{{ num(totalKg, 1) }}</strong>
-          <em>{{ (cosechas.length === 1 ? 'siembra.detail.cards.harvestsCountOne' : 'siembra.detail.cards.harvestsCount') | translate: { count: cosechas.length } }}</em></div>
+          <em>{{ (cosechas.length === 1 ? 'siembra.detail.cards.harvestsCountOne' : 'siembra.detail.cards.harvestsCount') | translate: { count: cosechas.length } }}</em>
+          @if (kgPorVender) {
+            <a class="por-vender" routerLink="/finance/sales" [queryParams]="{ siembra: siembra.id }">{{ 'siembra.detail.cards.toSell' | translate: { kg: num(kgPorVender, 1) } }}</a>
+          }</div>
       </article>
       <article class="kpi">
         <span class="ic azul"><i class="ti ti-spray"></i></span>
@@ -152,6 +155,12 @@
     @if (pestana === 'resumen') {
       <app-ciclo-etapas [siembra]="siembra" (cambio)="alCambiarSiembra($event)" />
       <app-agenda-siembra [siembraId]="siembra.id!" [loteId]="siembra.loteId" [activa]="activa" [version]="version" />
+      <app-labores-repetidas [siembraId]="siembra.id!" [activa]="activa" [version]="version" />
+    }
+
+    @if (pestana === 'dinero') {
+      <app-presupuesto-siembra [siembraId]="siembra.id!" [cultivo]="siembra.tipoCultivo" [variedad]="siembra.variedad" [activa]="activa" [version]="version" />
+      <app-costos-siembra [siembraId]="siembra.id!" [version]="version" />
     }
 
     @if (pestana === 'cosechas') {
@@ -195,13 +204,21 @@
                     @switch (item.tipo) {
                       @case ('actividad') { {{ item.detalle }} }
                       @case ('fumigacion') { {{ num(item.dosis, 2) }} {{ 'enums.unidadMedida.' + item.unidad | translate }} · {{ num(item.area, 2) }} ha@if (item.carencia) { · {{ 'temporadas.carencia.daysShort' | translate: { days: item.carencia } }} }@if (item.reentrada) { · {{ 'temporadas.carencia.reentryShort' | translate: { hours: item.reentrada } }} } }
-                      @case ('cosecha') { {{ 'siembra.detail.history.quality' | translate }}: {{ 'enums.calidadCosecha.' + item.calidad | translate }}@if (item.enCarencia) { · <b class="en-carencia">{{ 'temporadas.carencia.harvestedInside' | translate }}</b> } }
+                      @case ('cosecha') { {{ 'siembra.detail.history.quality' | translate }}: {{ 'enums.calidadCosecha.' + item.calidad | translate }}@if (item.recolectores) { · {{ 'siembra.harvest.pickersCount' | translate: { n: item.recolectores } }} }@if (item.enCarencia) { · <b class="en-carencia">{{ 'temporadas.carencia.harvestedInside' | translate }}</b> }@if (quedanDe(item); as q) { @if (q < (item.kg ?? 0)) { · <b class="parcial">{{ 'siembra.harvest.leftToSell' | translate: { kg: num(q, 1) } }}</b> } } }
                     }
                   </small>
                   @if (item.extra) { <small class="extra">{{ item.extra }}</small> }
                 </div>
                 <time>{{ fmtFecha(item.fecha) }}</time>
                 <span class="reg-btns">
+                  @if (item.tipo === 'cosecha') {
+                    <!-- Lo cosechado queda en la bodega de Ventas: de ahí se vende poniéndole precio; la ya vendida lo dice -->
+                    @if (quedanDe(item) === 0) {
+                      <span class="vendida" [title]="'siembra.harvest.soldHint' | translate"><i class="ti ti-circle-check"></i><span>{{ 'siembra.harvest.sold' | translate }}</span></span>
+                    } @else {
+                      <a class="reg-btn" routerLink="/finance/sales" [queryParams]="{ siembra: siembra.id }" [title]="'siembra.harvest.sell' | translate"><i class="ti ti-shopping-cart"></i><span>{{ 'siembra.harvest.sell' | translate }}</span></a>
+                    }
+                  }
                   <button type="button" class="reg-btn" (click)="editarRegistro(item)" [title]="'common.edit' | translate"><i class="ti ti-pencil"></i><span>{{ 'common.edit' | translate }}</span></button>
                   <button type="button" class="reg-btn peligro" (click)="eliminarRegistro(item)" [title]="'temporadas.registro.delete' | translate" [attr.aria-label]="'temporadas.registro.delete' | translate"><i class="ti ti-trash"></i></button>
                 </span>
@@ -245,6 +262,9 @@
   <div class="panel-velo" (click)="cerrarPanel()" aria-hidden="true"></div>
   <aside class="panel-hoja" role="dialog" aria-modal="true" [attr.aria-hidden]="!panelAbierto">
     <button type="button" class="panel-cerrar" (click)="cerrarPanel()" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
-    <router-outlet (activate)="alAbrirPanel()" (deactivate)="alCerrarPanel()" />
+    <!-- Solo el contenido baja; la X se queda fija arriba -->
+    <div class="panel-cuerpo">
+      <router-outlet (activate)="alAbrirPanel()" (deactivate)="alCerrarPanel()" />
+    </div>
   </aside>
 </div>
