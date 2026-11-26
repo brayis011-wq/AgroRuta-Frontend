@@ -217,9 +217,7 @@
         <div>
           <strong>{{ 'workers.rosters.detail.paymentRegistered' | translate }}</strong>
           <p>
-            {{
-              pagos[0].metodoPago ? ('enums.metodoPago.' + pagos[0].metodoPago | translate) : ''
-            }}
+            {{ pagos[0].metodoPago ? ('enums.metodoPago.' + pagos[0].metodoPago | translate) : '' }}
             · {{ pagos[0].fechaPago | fecha }}
             @if (pagos[0].comprobante) {
               · {{ pagos[0].comprobante }}

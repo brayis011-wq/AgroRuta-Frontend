@@ -50,9 +50,7 @@ describe('DetalleFincaComponent', () => {
         { provide: ChangeDetectorRef, useValue: cdrMock },
       ],
     });
-    component = TestBed.runInInjectionContext(
-      () => new DetalleFincaComponent(),
-    );
+    component = TestBed.runInInjectionContext(() => new DetalleFincaComponent());
   });
 
   it('should create', () => {

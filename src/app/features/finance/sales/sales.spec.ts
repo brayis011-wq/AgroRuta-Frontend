@@ -86,19 +86,17 @@ describe('VentasComponent: vender desde la bodega de la cosecha', () => {
   beforeEach(() => {
     ventas = {
       listar: vi.fn().mockReturnValue(of([ventaVieja])),
-      resumen: vi
-        .fn()
-        .mockReturnValue(
-          of({
-            porCobrar: 0,
-            vencido: 0,
-            vendidoMes: 0,
-            cobradoMes: 0,
-            ventasPendientes: 0,
-            ventasVencidas: 0,
-            compradores: [],
-          }),
-        ),
+      resumen: vi.fn().mockReturnValue(
+        of({
+          porCobrar: 0,
+          vencido: 0,
+          vendidoMes: 0,
+          cobradoMes: 0,
+          ventasPendientes: 0,
+          ventasVencidas: 0,
+          compradores: [],
+        }),
+      ),
       compradores: vi.fn().mockReturnValue(of([])),
       kilosEnBodega: vi.fn().mockReturnValue(of(bodega)),
       crear: vi.fn().mockReturnValue(of({})),
@@ -197,36 +195,32 @@ describe('VentasComponent: precio de referencia', () => {
           useValue: {
             listar: vi.fn().mockReturnValue(of([])),
             compradores: vi.fn().mockReturnValue(of([])),
-            resumen: vi
-              .fn()
-              .mockReturnValue(
-                of({
-                  porCobrar: 0,
-                  vencido: 0,
-                  vendidoMes: 0,
-                  cobradoMes: 0,
-                  ventasPendientes: 0,
-                  ventasVencidas: 0,
-                  compradores: [],
-                }),
-              ),
+            resumen: vi.fn().mockReturnValue(
+              of({
+                porCobrar: 0,
+                vencido: 0,
+                vendidoMes: 0,
+                cobradoMes: 0,
+                ventasPendientes: 0,
+                ventasVencidas: 0,
+                compradores: [],
+              }),
+            ),
             kilosEnBodega: vi.fn().mockReturnValue(of(bodega)),
           },
         },
         {
           provide: PreciosService,
           useValue: {
-            deCultivo: vi
-              .fn()
-              .mockReturnValue(
-                of({
-                  cultivo: 'Café',
-                  fuente: 'PROPIO',
-                  producto: null,
-                  precioKg: 17800.4,
-                  alternativas: [],
-                }),
-              ),
+            deCultivo: vi.fn().mockReturnValue(
+              of({
+                cultivo: 'Café',
+                fuente: 'PROPIO',
+                producto: null,
+                precioKg: 17800.4,
+                alternativas: [],
+              }),
+            ),
           },
         },
         {
