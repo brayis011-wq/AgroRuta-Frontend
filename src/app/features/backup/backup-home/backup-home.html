@@ -22,16 +22,18 @@
     </button>
   </header>
 
-  <div class="banner" *ngIf="message" [class.error]="message.type === 'error'" role="status">
-    <span>{{ message.text }}</span>
-    <button
-      type="button"
-      (click)="message = null"
-      [attr.aria-label]="'admin.common.close' | translate"
-    >
-      ×
-    </button>
-  </div>
+  @if (message) {
+    <div class="banner" [class.error]="message.type === 'error'" role="status">
+      <span>{{ message.text }}</span>
+      <button
+        type="button"
+        (click)="message = null"
+        [attr.aria-label]="'admin.common.close' | translate"
+      >
+        ×
+      </button>
+    </div>
+  }
 
   <div class="card">
     <div class="card-head">
@@ -42,139 +44,150 @@
       </h2>
     </div>
 
-    <div class="estado" *ngIf="loading">{{ 'backups.loading' | translate }}</div>
-    <div class="estado" *ngIf="loadError">
-      <span class="txt-error">{{ 'backups.errors.load' | translate }}</span>
-      <button type="button" class="btn btn-sm btn-ghost" (click)="load()">
-        {{ 'common.retry' | translate }}
-      </button>
-    </div>
-    <div class="estado" *ngIf="!loading && !loadError && backups.length === 0">
-      <i class="ti ti-database-off vacio-ic" aria-hidden="true"></i>
-      {{ 'backups.empty' | translate }}
-    </div>
+    @if (loading) {
+      <div class="estado">{{ 'backups.loading' | translate }}</div>
+    }
+    @if (loadError) {
+      <div class="estado">
+        <span class="txt-error">{{ 'backups.errors.load' | translate }}</span>
+        <button type="button" class="btn btn-sm btn-ghost" (click)="load()">
+          {{ 'common.retry' | translate }}
+        </button>
+      </div>
+    }
+    @if (!loading && !loadError && backups.length === 0) {
+      <div class="estado">
+        <i class="ti ti-database-off vacio-ic" aria-hidden="true"></i>
+        {{ 'backups.empty' | translate }}
+      </div>
+    }
 
-    <div class="table-wrap" *ngIf="!loading && !loadError && backups.length > 0">
-      <table class="resp">
-        <thead>
-          <tr>
-            <th>{{ 'backups.table.name' | translate }}</th>
-            <th>{{ 'backups.table.type' | translate }}</th>
-            <th>{{ 'backups.table.date' | translate }}</th>
-            <th class="num">{{ 'backups.table.size' | translate }}</th>
-            <th class="num">{{ 'backups.table.actions' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let b of backups">
-            <td class="prin file-name">{{ b.name }}</td>
-            <td [attr.data-label]="'backups.table.type' | translate">
-              <span
-                class="pill"
-                [class.ok]="b.type === 'MANUAL'"
-                [class.info]="b.type === 'AUTOMATIC'"
-                [class.warn]="b.type === 'PRE_RESTORE'"
-              >
-                {{ 'backups.types.' + b.type | translate }}
-              </span>
-            </td>
-            <td [attr.data-label]="'backups.table.date' | translate">
-              {{ fmtDateTime(b.createdAt) }}
-            </td>
-            <td class="num" [attr.data-label]="'backups.table.size' | translate">
-              {{ fmtSize(b.sizeBytes) }}
-            </td>
-            <td class="num acc">
-              <div class="acciones">
-                <button
-                  type="button"
-                  class="icon-btn"
-                  (click)="descargar(b)"
-                  [disabled]="busyName === b.name"
-                  [title]="'backups.actions.download' | translate"
-                  [attr.aria-label]="'backups.actions.download' | translate"
-                >
-                  <i class="ti ti-download" aria-hidden="true"></i>
-                </button>
-                <button
-                  type="button"
-                  class="icon-btn warn"
-                  (click)="abrirModal('restore', b)"
-                  [disabled]="busyName !== null || creating"
-                  [title]="'backups.actions.restore' | translate"
-                  [attr.aria-label]="'backups.actions.restore' | translate"
-                >
-                  <i class="ti ti-history" aria-hidden="true"></i>
-                </button>
-                <button
-                  type="button"
-                  class="icon-btn danger"
-                  (click)="abrirModal('delete', b)"
-                  [disabled]="busyName !== null || creating"
-                  [title]="'backups.actions.delete' | translate"
-                  [attr.aria-label]="'backups.actions.delete' | translate"
-                >
-                  <i class="ti ti-trash" aria-hidden="true"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    @if (!loading && !loadError && backups.length > 0) {
+      <div class="table-wrap">
+        <table class="resp">
+          <thead>
+            <tr>
+              <th>{{ 'backups.table.name' | translate }}</th>
+              <th>{{ 'backups.table.type' | translate }}</th>
+              <th>{{ 'backups.table.date' | translate }}</th>
+              <th class="num">{{ 'backups.table.size' | translate }}</th>
+              <th class="num">{{ 'backups.table.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (b of backups; track b) {
+              <tr>
+                <td class="prin file-name">{{ b.name }}</td>
+                <td [attr.data-label]="'backups.table.type' | translate">
+                  <span
+                    class="pill"
+                    [class.ok]="b.type === 'MANUAL'"
+                    [class.info]="b.type === 'AUTOMATIC'"
+                    [class.warn]="b.type === 'PRE_RESTORE'"
+                  >
+                    {{ 'backups.types.' + b.type | translate }}
+                  </span>
+                </td>
+                <td [attr.data-label]="'backups.table.date' | translate">
+                  {{ fmtDateTime(b.createdAt) }}
+                </td>
+                <td class="num" [attr.data-label]="'backups.table.size' | translate">
+                  {{ fmtSize(b.sizeBytes) }}
+                </td>
+                <td class="num acc">
+                  <div class="acciones">
+                    <button
+                      type="button"
+                      class="icon-btn"
+                      (click)="descargar(b)"
+                      [disabled]="busyName === b.name"
+                      [title]="'backups.actions.download' | translate"
+                      [attr.aria-label]="'backups.actions.download' | translate"
+                    >
+                      <i class="ti ti-download" aria-hidden="true"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-btn warn"
+                      (click)="abrirModal('restore', b)"
+                      [disabled]="busyName !== null || creating"
+                      [title]="'backups.actions.restore' | translate"
+                      [attr.aria-label]="'backups.actions.restore' | translate"
+                    >
+                      <i class="ti ti-history" aria-hidden="true"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-btn danger"
+                      (click)="abrirModal('delete', b)"
+                      [disabled]="busyName !== null || creating"
+                      [title]="'backups.actions.delete' | translate"
+                      [attr.aria-label]="'backups.actions.delete' | translate"
+                    >
+                      <i class="ti ti-trash" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </div>
 </section>
 
 <!-- Confirmación -->
-<div class="overlay" *ngIf="modal" (click)="cerrarModal()">
-  <div
-    class="dialog"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="backup-titulo"
-    (click)="$event.stopPropagation()"
-  >
-    <h3 id="backup-titulo">
-      {{
-        (modal.mode === 'restore' ? 'backups.restoreModal.title' : 'backups.deleteModal.title')
-          | translate
-      }}
-    </h3>
-    <p class="modal-file">{{ modal.backup.name }}</p>
-
-    <ng-container *ngIf="modal.mode === 'restore'">
-      <p class="modal-warn">{{ 'backups.restoreModal.warning' | translate }}</p>
-      <label class="confirmar" for="confirmText">
-        {{ 'backups.restoreModal.typeToConfirm' | translate: { word: confirmWord } }}
-        <input
-          id="confirmText"
-          class="input"
-          type="text"
-          [(ngModel)]="confirmText"
-          autocomplete="off"
-        />
-      </label>
-    </ng-container>
-
-    <p class="modal-warn" *ngIf="modal.mode === 'delete'">
-      {{ 'backups.deleteModal.warning' | translate }}
-    </p>
-
-    <div class="dialog-actions">
-      <button type="button" class="btn btn-ghost" (click)="cerrarModal()">
-        {{ 'common.cancel' | translate }}
-      </button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        (click)="confirmarModal()"
-        [disabled]="!canConfirm"
-      >
+@if (modal) {
+  <div class="overlay" (click)="cerrarModal()">
+    <div
+      class="dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="backup-titulo"
+      (click)="$event.stopPropagation()"
+    >
+      <h3 id="backup-titulo">
         {{
-          (modal.mode === 'restore' ? 'backups.actions.restore' : 'backups.actions.delete')
+          (modal.mode === 'restore' ? 'backups.restoreModal.title' : 'backups.deleteModal.title')
             | translate
         }}
-      </button>
+      </h3>
+      <p class="modal-file">{{ modal.backup.name }}</p>
+      @if (modal.mode === 'restore') {
+        <p class="modal-warn">{{ 'backups.restoreModal.warning' | translate }}</p>
+        <label class="confirmar" for="confirmText">
+          {{ 'backups.restoreModal.typeToConfirm' | translate: { word: confirmWord } }}
+          <input
+            id="confirmText"
+            class="input"
+            type="text"
+            [(ngModel)]="confirmText"
+            autocomplete="off"
+          />
+        </label>
+      }
+      @if (modal.mode === 'delete') {
+        <p class="modal-warn">
+          {{ 'backups.deleteModal.warning' | translate }}
+        </p>
+      }
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" (click)="cerrarModal()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmarModal()"
+          [disabled]="!canConfirm"
+        >
+          {{
+            (modal.mode === 'restore' ? 'backups.actions.restore' : 'backups.actions.delete')
+              | translate
+          }}
+        </button>
+      </div>
     </div>
   </div>
-</div>
+}

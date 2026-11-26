@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BackupService, Backup } from '../../../core/services/backup.service';
@@ -10,7 +10,7 @@ type ModalMode = 'restore' | 'delete';
 @Component({
   selector: 'app-backup-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [FormsModule, TranslatePipe],
   templateUrl: './backup-home.html',
   styleUrls: [
     '../../../shared/styles/panel-page.css',

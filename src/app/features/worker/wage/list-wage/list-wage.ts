@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { RecientesService } from '../../../../core/services/recent.service';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import {
   FormsModule,
@@ -26,7 +26,6 @@ import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
   selector: 'app-lista-jornales',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,

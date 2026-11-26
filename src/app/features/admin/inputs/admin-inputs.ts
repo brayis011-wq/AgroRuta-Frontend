@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AgriculturalInputService } from '../../../core/services/agricultural-input.service';
@@ -15,7 +15,7 @@ import { formatoNumero } from '../../../shared/format';
 @Component({
   selector: 'app-admin-insumos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './admin-inputs.html',
   styleUrls: [
     '../../../shared/styles/panel-page.css',

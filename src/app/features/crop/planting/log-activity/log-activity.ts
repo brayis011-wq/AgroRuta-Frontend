@@ -2,7 +2,7 @@ import { UltimoUsadoService } from '../../../../core/services/last-used.service'
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import { Component, OnInit, ChangeDetectorRef, inject, HostListener } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -26,14 +26,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-registrar-actividad',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterLink,
-    TranslatePipe,
-    MigasCultivoComponent,
-    SiguienteCampoDirective,
-  ],
+  imports: [FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
   templateUrl: './log-activity.html',
   styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-activity.css'],
 })

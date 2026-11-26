@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, input, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { WeatherService } from '../../../core/services/weather.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -12,7 +12,7 @@ const CODIGOS_CLIMA = ['01', '02', '03', '04', '09', '10', '11', '13', '50'];
 @Component({
   selector: 'app-weather-widget',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [DecimalPipe, TitleCasePipe, TranslatePipe],
   templateUrl: './weather-widget.html',
   styleUrl: './weather-widget.css',
   // Versión ancha y bajita (una sola fila): la usa el Inicio cuando el clima va abajo a lo ancho

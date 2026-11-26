@@ -1,7 +1,7 @@
 // src/app/features/worker/payment/list-payment/list-payment.ts
 
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { guardarEnUrl } from '../../../../shared/url-state';
 import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
@@ -21,7 +21,6 @@ import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
   selector: 'app-lista-pagos',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     TranslatePipe,
     PesosPipe,

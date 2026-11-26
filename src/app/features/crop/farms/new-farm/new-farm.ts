@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -16,7 +16,7 @@ import { GeocodingService } from '../../../../core/services/geocoding.service';
 @Component({
   selector: 'app-nueva-finca',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, MigasCultivoComponent],
+  imports: [FormsModule, TranslatePipe, MigasCultivoComponent],
   templateUrl: './new-farm.html',
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-farm.css'],
 })

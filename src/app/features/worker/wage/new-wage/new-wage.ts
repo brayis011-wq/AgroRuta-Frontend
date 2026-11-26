@@ -3,7 +3,7 @@ import { UltimoUsadoService } from '../../../../core/services/last-used.service'
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import { ChangeDetectorRef, Component, OnInit, inject, HostListener } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -27,14 +27,7 @@ interface UltimoJornal {
 @Component({
   selector: 'app-nuevo-jornal',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    TranslatePipe,
-    PesosPipe,
-    SiguienteCampoDirective,
-  ],
+  imports: [ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe, SiguienteCampoDirective],
   templateUrl: './new-wage.html',
   styleUrls: [
     '../../../crop/crop-ui.css',

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
@@ -12,7 +12,7 @@ import { iniciales as inicialesDe } from '../../../shared/iniciales';
 @Component({
   selector: 'app-admin-resumen',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [RouterModule, TranslatePipe],
   templateUrl: './admin-summary.html',
   styleUrls: [
     '../../../shared/styles/panel-page.css',

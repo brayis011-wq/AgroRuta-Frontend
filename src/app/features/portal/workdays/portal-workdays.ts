@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PortalService } from '../../../core/services/portal.service';
@@ -17,7 +17,7 @@ interface GrupoMes {
 @Component({
   selector: 'app-portal-jornales',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [RouterModule, TranslatePipe],
   templateUrl: './portal-workdays.html',
   styleUrls: [
     '../../../shared/styles/panel-page.css',

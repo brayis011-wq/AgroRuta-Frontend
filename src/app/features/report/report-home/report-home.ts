@@ -2,7 +2,7 @@ import { PedidoReporteCompleto } from '../downloads/report-downloads';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { TranslatePipe } from '@ngx-translate/core';
 import { PayrollReportComponent } from '../payroll/payroll-report';
 import { CropReportComponent } from '../crop/crop-report';
@@ -25,7 +25,6 @@ const TABS: Tab[] = [...PARTES_REPORTE, 'fieldbook'];
   selector: 'app-report-home',
   standalone: true,
   imports: [
-    CommonModule,
     TranslatePipe,
     PayrollReportComponent,
     CropReportComponent,

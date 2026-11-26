@@ -17,10 +17,12 @@
       </div>
     </div>
 
-    <div class="alert alert--success" *ngIf="exito" role="alert">
-      <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>
-      {{ exito | translate }}
-    </div>
+    @if (exito) {
+      <div class="alert alert--success" role="alert">
+        <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>
+        {{ exito | translate }}
+      </div>
+    }
 
     <div class="form-card">
       <div class="form-card__accent"></div>
@@ -30,21 +32,24 @@
         <fieldset class="field">
           <legend class="field__label">{{ 'siembra.activity.type' | translate }}</legend>
           <div class="tipo-grid">
-            <button
-              type="button"
-              *ngFor="let tipo of tiposActividad"
-              class="tipo-chip"
-              [class.tipo-chip--active]="form.tipo === tipo"
-              [attr.aria-pressed]="form.tipo === tipo"
-              (click)="elegirTipo(tipo)"
-            >
-              <i
-                class="ti tipo-chip__icon"
-                [class]="'ti tipo-chip__icon ' + tipoIconos[tipo]"
-                aria-hidden="true"
-              ></i>
-              <span class="tipo-chip__label">{{ 'enums.tipoActividad.' + tipo | translate }}</span>
-            </button>
+            @for (tipo of tiposActividad; track tipo) {
+              <button
+                type="button"
+                class="tipo-chip"
+                [class.tipo-chip--active]="form.tipo === tipo"
+                [attr.aria-pressed]="form.tipo === tipo"
+                (click)="elegirTipo(tipo)"
+              >
+                <i
+                  class="ti tipo-chip__icon"
+                  [class]="'ti tipo-chip__icon ' + tipoIconos[tipo]"
+                  aria-hidden="true"
+                ></i>
+                <span class="tipo-chip__label">{{
+                  'enums.tipoActividad.' + tipo | translate
+                }}</span>
+              </button>
+            }
           </div>
           <input type="hidden" [(ngModel)]="form.tipo" name="tipo" required />
         </fieldset>
@@ -210,10 +215,12 @@
 
         <div class="form-actions">
           <!-- El aviso va junto a los botones: se ve al pulsar Registrar aunque el formulario esté abajo -->
-          <div class="alert alert--error" *ngIf="error" role="alert">
-            <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
-            {{ error | translate }}
-          </div>
+          @if (error) {
+            <div class="alert alert--error" role="alert">
+              <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
+              {{ error | translate }}
+            </div>
+          }
           <a
             class="btn-cancelar"
             [routerLink]="['/crops/planting', siembraId]"
@@ -221,16 +228,20 @@
             >{{ 'common.cancel' | translate }}</a
           >
           <button type="submit" class="btn-submit" [disabled]="cargando || !form.tipo">
-            <span class="btn-submit__text" *ngIf="!cargando">
-              <span>{{
-                (registroId ? 'common.save' : 'siembra.activity.submit') | translate
-              }}</span>
-              <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
-            </span>
-            <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">
-              <span class="spinner" aria-hidden="true"></span>
-              {{ 'siembra.activity.saving' | translate }}
-            </span>
+            @if (!cargando) {
+              <span class="btn-submit__text">
+                <span>{{
+                  (registroId ? 'common.save' : 'siembra.activity.submit') | translate
+                }}</span>
+                <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
+              </span>
+            }
+            @if (cargando) {
+              <span class="btn-submit__loader" aria-live="polite">
+                <span class="spinner" aria-hidden="true"></span>
+                {{ 'siembra.activity.saving' | translate }}
+              </span>
+            }
           </button>
         </div>
       </form>

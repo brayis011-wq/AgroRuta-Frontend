@@ -10,38 +10,47 @@
     </button>
   </header>
 
-  <div class="card estado" *ngIf="cargando && !resumen">{{ 'common.loading' | translate }}</div>
+  @if (cargando && !resumen) {
+    <div class="card estado">{{ 'common.loading' | translate }}</div>
+  }
 
-  <div class="banner error" *ngIf="error">
-    <span>{{ 'admin.summary.loadError' | translate }}</span>
-    <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">
-      {{ 'common.retry' | translate }}
-    </button>
-  </div>
-
-  <ng-container *ngIf="resumen as r">
-    <!-- Pendientes que requieren atención -->
-    <div class="attention" *ngIf="r.nominasPorPagar > 0 || r.usuariosInactivos > 0">
-      <a class="attention-item warn" *ngIf="r.nominasPorPagar > 0" routerLink="../farmers">
-        <i class="ti ti-receipt-2" aria-hidden="true"></i>
-        {{
-          (r.nominasPorPagar === 1
-            ? 'admin.summary.pendingPayrollsOne'
-            : 'admin.summary.pendingPayrolls'
-          ) | translate: { count: r.nominasPorPagar }
-        }}
-      </a>
-      <a class="attention-item" *ngIf="r.usuariosInactivos > 0" routerLink="../users">
-        <i class="ti ti-user-off" aria-hidden="true"></i>
-        {{
-          (r.usuariosInactivos === 1
-            ? 'admin.summary.inactiveUsersOne'
-            : 'admin.summary.inactiveUsers'
-          ) | translate: { count: r.usuariosInactivos }
-        }}
-      </a>
+  @if (error) {
+    <div class="banner error">
+      <span>{{ 'admin.summary.loadError' | translate }}</span>
+      <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">
+        {{ 'common.retry' | translate }}
+      </button>
     </div>
+  }
 
+  @if (resumen; as r) {
+    <!-- Pendientes que requieren atención -->
+    @if (r.nominasPorPagar > 0 || r.usuariosInactivos > 0) {
+      <div class="attention">
+        @if (r.nominasPorPagar > 0) {
+          <a class="attention-item warn" routerLink="../farmers">
+            <i class="ti ti-receipt-2" aria-hidden="true"></i>
+            {{
+              (r.nominasPorPagar === 1
+                ? 'admin.summary.pendingPayrollsOne'
+                : 'admin.summary.pendingPayrolls'
+              ) | translate: { count: r.nominasPorPagar }
+            }}
+          </a>
+        }
+        @if (r.usuariosInactivos > 0) {
+          <a class="attention-item" routerLink="../users">
+            <i class="ti ti-user-off" aria-hidden="true"></i>
+            {{
+              (r.usuariosInactivos === 1
+                ? 'admin.summary.inactiveUsersOne'
+                : 'admin.summary.inactiveUsers'
+              ) | translate: { count: r.usuariosInactivos }
+            }}
+          </a>
+        }
+      </div>
+    }
     <!-- Usuarios -->
     <div class="card users-card">
       <div class="users-total">
@@ -91,7 +100,6 @@
         >{{ 'admin.summary.manageUsers' | translate }} →</a
       >
     </div>
-
     <!-- Producción y nómina -->
     <div class="kpis">
       <div class="card kpi">
@@ -136,7 +144,6 @@
         <span class="kpi-note">{{ 'admin.summary.totalPaidNote' | translate }}</span>
       </div>
     </div>
-
     <!-- Actividad -->
     <div class="cuerpo">
       <div class="card">
@@ -183,7 +190,6 @@
           </ul>
         }
       </div>
-
       <div class="lateral">
         <div class="card">
           <div class="card-head">
@@ -219,7 +225,6 @@
             </ul>
           }
         </div>
-
         <div class="card atajos">
           <a routerLink="../inputs"
             ><span class="kpi-icon azul"><i class="ti ti-flask"></i></span
@@ -236,5 +241,5 @@
         </div>
       </div>
     </div>
-  </ng-container>
+  }
 </section>

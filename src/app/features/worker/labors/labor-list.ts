@@ -2,7 +2,7 @@
 
 import { PestanasCatalogoComponent } from '../catalog-tabs/catalog-tabs';
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LaborService } from '../../../core/services/worker.service';
@@ -12,7 +12,7 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 @Component({
   selector: 'app-lista-labores',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, PestanasCatalogoComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, PestanasCatalogoComponent],
   templateUrl: './labor-list.html',
   styleUrls: [
     '../../crop/crop-ui.css',

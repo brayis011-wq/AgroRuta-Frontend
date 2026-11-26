@@ -8,7 +8,7 @@ import {
   ChangeDetectorRef,
   inject,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -35,7 +35,6 @@ import * as L from 'leaflet';
   selector: 'app-detalle-finca',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     TranslatePipe,
     ContarDirective,

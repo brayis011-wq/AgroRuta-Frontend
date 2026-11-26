@@ -2,7 +2,7 @@ import { UltimoUsadoService } from '../../../../core/services/last-used.service'
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import { Component, OnInit, ChangeDetectorRef, inject, HostListener } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -31,14 +31,7 @@ interface FilaRecolector {
 @Component({
   selector: 'app-registrar-cosecha',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterLink,
-    TranslatePipe,
-    MigasCultivoComponent,
-    SiguienteCampoDirective,
-  ],
+  imports: [FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
   templateUrl: './log-harvest.html',
   styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-harvest.css'],
 })

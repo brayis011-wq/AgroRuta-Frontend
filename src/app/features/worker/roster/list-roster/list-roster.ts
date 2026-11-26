@@ -1,7 +1,7 @@
 // src/app/features/worker/roster/list-roster/list-roster.ts
 
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -27,7 +27,6 @@ import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
   selector: 'app-lista-nominas',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     ReactiveFormsModule,
     TranslatePipe,

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -12,7 +12,7 @@ import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/forma
 @Component({
   selector: 'app-portal-inicio',
   standalone: true,
-  imports: [CommonModule, AsyncPipe, FormsModule, RouterModule, TranslatePipe],
+  imports: [AsyncPipe, FormsModule, RouterModule, TranslatePipe],
   templateUrl: './portal-home.html',
   styleUrls: [
     '../../../shared/styles/panel-page.css',

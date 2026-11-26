@@ -145,20 +145,30 @@
 
   <!-- Al cambiar el periodo se vuelve a armar el reporte con las fechas nuevas -->
   @for (p of [periodo()]; track p) {
-    <div *ngIf="activeTab === 'payroll'">
-      <app-payroll-report />
-    </div>
-    <div *ngIf="activeTab === 'crops'">
-      <app-crop-report />
-    </div>
-    <div *ngIf="activeTab === 'costs'">
-      <app-costs-report [siembraInicial]="siembra" />
-    </div>
-    <div *ngIf="activeTab === 'profitability'">
-      <app-profitability-report />
-    </div>
-    <div *ngIf="activeTab === 'fieldbook'">
-      <app-cuaderno-campo />
-    </div>
+    @if (activeTab === 'payroll') {
+      <div>
+        <app-payroll-report />
+      </div>
+    }
+    @if (activeTab === 'crops') {
+      <div>
+        <app-crop-report />
+      </div>
+    }
+    @if (activeTab === 'costs') {
+      <div>
+        <app-costs-report [siembraInicial]="siembra" />
+      </div>
+    }
+    @if (activeTab === 'profitability') {
+      <div>
+        <app-profitability-report />
+      </div>
+    }
+    @if (activeTab === 'fieldbook') {
+      <div>
+        <app-cuaderno-campo />
+      </div>
+    }
   }
 </div>

@@ -7,16 +7,18 @@
     </div>
   </header>
 
-  <div class="banner" *ngIf="mensaje" [class.error]="mensaje.tipo === 'error'" role="status">
-    <span>{{ mensaje.texto }}</span>
-    <button
-      type="button"
-      (click)="mensaje = null"
-      [attr.aria-label]="'admin.common.close' | translate"
-    >
-      ×
-    </button>
-  </div>
+  @if (mensaje) {
+    <div class="banner" [class.error]="mensaje.tipo === 'error'" role="status">
+      <span>{{ mensaje.texto }}</span>
+      <button
+        type="button"
+        (click)="mensaje = null"
+        [attr.aria-label]="'admin.common.close' | translate"
+      >
+        ×
+      </button>
+    </div>
+  }
 
   <div class="card">
     <div class="card-head">
@@ -42,7 +44,9 @@
           [attr.aria-label]="'admin.users.filterRole' | translate"
         >
           <option value="">{{ 'admin.users.allRoles' | translate }}</option>
-          <option *ngFor="let r of roles" [value]="r">{{ 'enums.rol.' + r | translate }}</option>
+          @for (r of roles; track r) {
+            <option [value]="r">{{ 'enums.rol.' + r | translate }}</option>
+          }
         </select>
         <select
           id="admin-filtro-estado"
@@ -57,132 +61,150 @@
       </div>
     </div>
 
-    <div class="estado" *ngIf="cargando">{{ 'common.loading' | translate }}</div>
-    <div class="estado" *ngIf="errorCarga">
-      {{ 'admin.users.errors.load' | translate }}
-      <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">
-        {{ 'common.retry' | translate }}
-      </button>
-    </div>
-    <div class="estado" *ngIf="!cargando && !errorCarga && filtrados.length === 0">
-      {{ 'admin.users.empty' | translate }}
-    </div>
+    @if (cargando) {
+      <div class="estado">{{ 'common.loading' | translate }}</div>
+    }
+    @if (errorCarga) {
+      <div class="estado">
+        {{ 'admin.users.errors.load' | translate }}
+        <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">
+          {{ 'common.retry' | translate }}
+        </button>
+      </div>
+    }
+    @if (!cargando && !errorCarga && filtrados.length === 0) {
+      <div class="estado">
+        {{ 'admin.users.empty' | translate }}
+      </div>
+    }
 
-    <div class="table-wrap" *ngIf="!cargando && !errorCarga && filtrados.length > 0">
-      <table class="resp">
-        <thead>
-          <tr>
-            <th>{{ 'admin.users.table.user' | translate }}</th>
-            <th>{{ 'admin.users.table.role' | translate }}</th>
-            <th>{{ 'admin.users.table.status' | translate }}</th>
-            <th>{{ 'admin.users.table.since' | translate }}</th>
-            <th class="num">{{ 'admin.users.table.actions' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let u of filtrados" [class.inactive]="!u.activo">
-            <td class="prin">
-              <span class="cell-main">{{ u.nombre }}</span>
-              <span class="me" *ngIf="esYo(u)">{{ 'admin.users.you' | translate }}</span>
-              <span class="cell-sub">{{ u.email }}</span>
-            </td>
-            <td [attr.data-label]="'admin.users.table.role' | translate">
-              <select
-                #rolSelect
-                class="select select-rol"
-                [id]="'rol-' + u.id"
-                [value]="u.rol"
-                [disabled]="esYo(u)"
-                [attr.aria-label]="'admin.users.changeRoleOf' | translate: { name: u.nombre }"
-                (change)="pedirCambioRol(u, $any(rolSelect.value), rolSelect)"
-              >
-                <option *ngFor="let r of roles" [value]="r" [selected]="r === u.rol">
-                  {{ 'enums.rol.' + r | translate }}
-                </option>
-              </select>
-            </td>
-            <td [attr.data-label]="'admin.users.table.status' | translate">
-              <span class="pill" [class.ok]="u.activo" [class.off]="!u.activo">
-                {{ (u.activo ? 'admin.common.active' : 'admin.common.inactive') | translate }}
-              </span>
-            </td>
-            <td class="muted" [attr.data-label]="'admin.users.table.since' | translate">
-              {{ fecha(u.fechaCreacion) }}
-            </td>
-            <td class="num acc">
-              <button
-                type="button"
-                class="btn btn-sm"
-                [class.btn-ghost]="u.activo"
-                [class.btn-primary]="!u.activo"
-                [disabled]="esYo(u)"
-                [title]="esYo(u) ? ('admin.users.selfHint' | translate) : ''"
-                (click)="pedirCambioEstado(u)"
-              >
-                {{ (u.activo ? 'admin.users.deactivate' : 'admin.users.activate') | translate }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    @if (!cargando && !errorCarga && filtrados.length > 0) {
+      <div class="table-wrap">
+        <table class="resp">
+          <thead>
+            <tr>
+              <th>{{ 'admin.users.table.user' | translate }}</th>
+              <th>{{ 'admin.users.table.role' | translate }}</th>
+              <th>{{ 'admin.users.table.status' | translate }}</th>
+              <th>{{ 'admin.users.table.since' | translate }}</th>
+              <th class="num">{{ 'admin.users.table.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of filtrados; track u) {
+              <tr [class.inactive]="!u.activo">
+                <td class="prin">
+                  <span class="cell-main">{{ u.nombre }}</span>
+                  @if (esYo(u)) {
+                    <span class="me">{{ 'admin.users.you' | translate }}</span>
+                  }
+                  <span class="cell-sub">{{ u.email }}</span>
+                </td>
+                <td [attr.data-label]="'admin.users.table.role' | translate">
+                  <select
+                    #rolSelect
+                    class="select select-rol"
+                    [id]="'rol-' + u.id"
+                    [value]="u.rol"
+                    [disabled]="esYo(u)"
+                    [attr.aria-label]="'admin.users.changeRoleOf' | translate: { name: u.nombre }"
+                    (change)="pedirCambioRol(u, $any(rolSelect.value), rolSelect)"
+                  >
+                    @for (r of roles; track r) {
+                      <option [value]="r" [selected]="r === u.rol">
+                        {{ 'enums.rol.' + r | translate }}
+                      </option>
+                    }
+                  </select>
+                </td>
+                <td [attr.data-label]="'admin.users.table.status' | translate">
+                  <span class="pill" [class.ok]="u.activo" [class.off]="!u.activo">
+                    {{ (u.activo ? 'admin.common.active' : 'admin.common.inactive') | translate }}
+                  </span>
+                </td>
+                <td class="muted" [attr.data-label]="'admin.users.table.since' | translate">
+                  {{ fecha(u.fechaCreacion) }}
+                </td>
+                <td class="num acc">
+                  <button
+                    type="button"
+                    class="btn btn-sm"
+                    [class.btn-ghost]="u.activo"
+                    [class.btn-primary]="!u.activo"
+                    [disabled]="esYo(u)"
+                    [title]="esYo(u) ? ('admin.users.selfHint' | translate) : ''"
+                    (click)="pedirCambioEstado(u)"
+                  >
+                    {{ (u.activo ? 'admin.users.deactivate' : 'admin.users.activate') | translate }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </div>
 </section>
 
 <!-- Confirmación -->
-<div class="overlay" *ngIf="pendiente as p" (click)="cancelar()">
-  <div
-    class="dialog"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="confirmar-titulo"
-    (click)="$event.stopPropagation()"
-  >
-    <ng-container *ngIf="p.tipo === 'rol'">
-      <h3 id="confirmar-titulo">{{ 'admin.users.confirm.roleTitle' | translate }}</h3>
-      <p>
-        {{
-          'admin.users.confirm.roleText'
-            | translate
-              : {
-                  name: p.usuario.nombre,
-                  from: ('enums.rol.' + p.usuario.rol | translate),
-                  to: ('enums.rol.' + p.rol | translate),
-                }
-        }}
-      </p>
-      <p class="hint" *ngIf="p.usuario.rol === 'Agricultor'">
-        {{ 'admin.users.confirm.farmerWarning' | translate }}
-      </p>
-    </ng-container>
-    <ng-container *ngIf="p.tipo === 'estado'">
-      <h3 id="confirmar-titulo">
-        {{
-          (p.activo ? 'admin.users.confirm.activateTitle' : 'admin.users.confirm.deactivateTitle')
-            | translate
-        }}
-      </h3>
-      <p>
-        {{
-          (p.activo ? 'admin.users.confirm.activateText' : 'admin.users.confirm.deactivateText')
-            | translate: { name: p.usuario.nombre }
-        }}
-      </p>
-    </ng-container>
-    <div class="dialog-actions">
-      <button type="button" class="btn btn-ghost" (click)="cancelar()" [disabled]="guardando">
-        {{ 'common.cancel' | translate }}
-      </button>
-      <button
-        type="button"
-        class="btn"
-        [class.btn-danger]="p.tipo === 'estado' && !p.activo"
-        [class.btn-primary]="!(p.tipo === 'estado' && !p.activo)"
-        (click)="confirmar()"
-        [disabled]="guardando"
-      >
-        {{ (guardando ? 'common.saving' : 'admin.common.confirm') | translate }}
-      </button>
+@if (pendiente; as p) {
+  <div class="overlay" (click)="cancelar()">
+    <div
+      class="dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirmar-titulo"
+      (click)="$event.stopPropagation()"
+    >
+      @if (p.tipo === 'rol') {
+        <h3 id="confirmar-titulo">{{ 'admin.users.confirm.roleTitle' | translate }}</h3>
+        <p>
+          {{
+            'admin.users.confirm.roleText'
+              | translate
+                : {
+                    name: p.usuario.nombre,
+                    from: ('enums.rol.' + p.usuario.rol | translate),
+                    to: ('enums.rol.' + p.rol | translate),
+                  }
+          }}
+        </p>
+        @if (p.usuario.rol === 'Agricultor') {
+          <p class="hint">
+            {{ 'admin.users.confirm.farmerWarning' | translate }}
+          </p>
+        }
+      }
+      @if (p.tipo === 'estado') {
+        <h3 id="confirmar-titulo">
+          {{
+            (p.activo ? 'admin.users.confirm.activateTitle' : 'admin.users.confirm.deactivateTitle')
+              | translate
+          }}
+        </h3>
+        <p>
+          {{
+            (p.activo ? 'admin.users.confirm.activateText' : 'admin.users.confirm.deactivateText')
+              | translate: { name: p.usuario.nombre }
+          }}
+        </p>
+      }
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" (click)="cancelar()" [disabled]="guardando">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [class.btn-danger]="p.tipo === 'estado' && !p.activo"
+          [class.btn-primary]="!(p.tipo === 'estado' && !p.activo)"
+          (click)="confirmar()"
+          [disabled]="guardando"
+        >
+          {{ (guardando ? 'common.saving' : 'admin.common.confirm') | translate }}
+        </button>
+      </div>
     </div>
   </div>
-</div>
+}

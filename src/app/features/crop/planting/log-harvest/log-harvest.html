@@ -17,10 +17,12 @@
       </div>
     </div>
 
-    <div class="alert alert--success" *ngIf="exito">
-      <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>
-      {{ exito | translate }}
-    </div>
+    @if (exito) {
+      <div class="alert alert--success">
+        <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>
+        {{ exito | translate }}
+      </div>
+    }
 
     <div class="form-card">
       <div class="form-card__accent"></div>
@@ -51,16 +53,18 @@
             {{ 'siembra.harvest.quality' | translate }}
           </span>
           <div class="opciones">
-            <label class="opcion" *ngFor="let calidad of calidades">
-              <input
-                type="radio"
-                name="calidad"
-                [value]="calidad"
-                [(ngModel)]="form.calidad"
-                required
-              />
-              <span>{{ 'enums.calidadCosecha.' + calidad | translate }}</span>
-            </label>
+            @for (calidad of calidades; track calidad) {
+              <label class="opcion">
+                <input
+                  type="radio"
+                  name="calidad"
+                  [value]="calidad"
+                  [(ngModel)]="form.calidad"
+                  required
+                />
+                <span>{{ 'enums.calidadCosecha.' + calidad | translate }}</span>
+              </label>
+            }
           </div>
         </div>
 
@@ -285,27 +289,36 @@
           </div>
         </div>
 
-        <div class="alert alert--carencia" *ngIf="pideConfirmacion" role="alert">
-          <i class="ti ti-basket-off alert__icon" aria-hidden="true"></i>
-          <div class="carencia-cuerpo">
-            <span *ngIf="mensajeCarencia">{{ mensajeCarencia }}</span>
-            <span *ngIf="!mensajeCarencia">{{
-              'temporadas.carencia.harvestWarning'
-                | translate: { producto: carencia!.producto, date: fmtFecha(carencia!.libreDesde) }
-            }}</span>
-            <label class="carencia-confirmar">
-              <input type="checkbox" name="confirmarCarencia" [(ngModel)]="confirmarCarencia" />
-              <span>{{ 'temporadas.carencia.confirmHarvest' | translate }}</span>
-            </label>
+        @if (pideConfirmacion) {
+          <div class="alert alert--carencia" role="alert">
+            <i class="ti ti-basket-off alert__icon" aria-hidden="true"></i>
+            <div class="carencia-cuerpo">
+              @if (mensajeCarencia) {
+                <span>{{ mensajeCarencia }}</span>
+              }
+              @if (!mensajeCarencia) {
+                <span>{{
+                  'temporadas.carencia.harvestWarning'
+                    | translate
+                      : { producto: carencia!.producto, date: fmtFecha(carencia!.libreDesde) }
+                }}</span>
+              }
+              <label class="carencia-confirmar">
+                <input type="checkbox" name="confirmarCarencia" [(ngModel)]="confirmarCarencia" />
+                <span>{{ 'temporadas.carencia.confirmHarvest' | translate }}</span>
+              </label>
+            </div>
           </div>
-        </div>
+        }
 
         <div class="form-actions">
           <!-- El aviso va junto a los botones: se ve al pulsar Registrar aunque el formulario esté abajo -->
-          <div class="alert alert--error" *ngIf="error" role="alert">
-            <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
-            {{ error | translate }}
-          </div>
+          @if (error) {
+            <div class="alert alert--error" role="alert">
+              <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>
+              {{ error | translate }}
+            </div>
+          }
           <a
             class="btn-cancelar"
             [routerLink]="['/crops/planting', siembraId]"
@@ -317,14 +330,20 @@
             class="btn-submit"
             [disabled]="cargando || (pideConfirmacion && !confirmarCarencia)"
           >
-            <span class="btn-submit__text" *ngIf="!cargando">
-              <span>{{ (registroId ? 'common.save' : 'siembra.harvest.submit') | translate }}</span>
-              <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
-            </span>
-            <span class="btn-submit__loader" *ngIf="cargando">
-              <span class="spinner"></span>
-              {{ 'siembra.harvest.saving' | translate }}
-            </span>
+            @if (!cargando) {
+              <span class="btn-submit__text">
+                <span>{{
+                  (registroId ? 'common.save' : 'siembra.harvest.submit') | translate
+                }}</span>
+                <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
+              </span>
+            }
+            @if (cargando) {
+              <span class="btn-submit__loader">
+                <span class="spinner"></span>
+                {{ 'siembra.harvest.saving' | translate }}
+              </span>
+            }
           </button>
         </div>
       </form>

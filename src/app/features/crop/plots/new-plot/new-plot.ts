@@ -7,7 +7,7 @@ import {
   inject,
 } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -23,7 +23,7 @@ import { GeocodingService } from '../../../../core/services/geocoding.service';
 @Component({
   selector: 'app-nuevo-lote',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, MigasCultivoComponent],
+  imports: [FormsModule, TranslatePipe, MigasCultivoComponent],
   templateUrl: './new-plot.html',
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-plot.css'],
 })

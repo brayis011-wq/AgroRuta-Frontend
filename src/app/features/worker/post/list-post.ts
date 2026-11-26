@@ -1,6 +1,6 @@
 import { PestanasCatalogoComponent } from '../catalog-tabs/catalog-tabs';
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PesosPipe } from '../../../shared/format.pipe';
@@ -12,7 +12,7 @@ import { AvisosService } from '../../../core/services/toast.service';
 @Component({
   selector: 'app-lista-cargos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, PesosPipe, PestanasCatalogoComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, PesosPipe, PestanasCatalogoComponent],
   templateUrl: './list-post.html',
   styleUrls: [
     '../../crop/crop-ui.css',

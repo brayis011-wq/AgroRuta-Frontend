@@ -11,7 +11,7 @@ import {
   ChangeDetectorRef,
   inject,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -28,14 +28,7 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-lista-fincas',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TranslatePipe,
-    RouterLink,
-    ContarDirective,
-    PrecargarDirective,
-  ],
+  imports: [FormsModule, TranslatePipe, RouterLink, ContarDirective, PrecargarDirective],
   templateUrl: './farm-list.html',
   styleUrls: [
     '../../crop-ui.css',

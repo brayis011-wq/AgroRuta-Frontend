@@ -17,9 +17,11 @@
     </div>
 
     <!-- Alertas -->
-    <div class="alert alert--success" *ngIf="exito" role="alert">
-      <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>{{ exito | translate }}
-    </div>
+    @if (exito) {
+      <div class="alert alert--success" role="alert">
+        <i class="ti ti-circle-check alert__icon" aria-hidden="true"></i>{{ exito | translate }}
+      </div>
+    }
 
     <div class="form-card">
       <div class="form-card__accent" aria-hidden="true"></div>
@@ -74,7 +76,7 @@
                 </legend>
 
                 <!-- Buscador (visible si no hay insumo seleccionado) -->
-                <ng-container *ngIf="!insumoSeleccionado()">
+                @if (!insumoSeleccionado()) {
                   <div class="producto-buscador">
                     <div class="input-search-wrapper">
                       <input
@@ -92,116 +94,110 @@
                         aria-autocomplete="list"
                         [attr.aria-expanded]="mostrarCatalogo()"
                       />
-                      <i
-                        class="ti ti-search search-icon"
-                        aria-hidden="true"
-                        *ngIf="!cargandoBodega()"
-                      ></i>
-                      <span
-                        class="spinner search-icon"
-                        aria-hidden="true"
-                        *ngIf="cargandoBodega()"
-                      ></span>
+                      @if (!cargandoBodega()) {
+                        <i class="ti ti-search search-icon" aria-hidden="true"></i>
+                      }
+                      @if (cargandoBodega()) {
+                        <span class="spinner search-icon" aria-hidden="true"></span>
+                      }
                     </div>
-
                     <!-- Resultados de la búsqueda dentro de la bodega -->
-                    <div class="catalogo-lista" *ngIf="mostrarCatalogo()">
-                      <button
-                        type="button"
-                        class="catalogo-item"
-                        *ngFor="let b of catalogoFiltrado(); let i = index"
-                        [class.resaltado]="i === resaltado()"
-                        (mouseenter)="resaltado.set(i)"
-                        (mousedown)="$event.preventDefault(); seleccionarDeBodega(b)"
-                      >
-                        <ng-container
-                          *ngTemplateOutlet="filaBodega; context: { $implicit: b }"
-                        ></ng-container>
-                      </button>
-
-                      <div class="catalogo-empty" *ngIf="catalogoFiltrado().length === 0">
-                        <span>{{ 'siembra.spray.noResultsManual' | translate }}</span>
-                      </div>
-                    </div>
-
-                    <small class="campo-hint">
-                      {{ 'siembra.spray.searchHint' | translate }}
-                    </small>
-
-                    <!-- Bodega vacía: no hay nada que ofrecer -->
-                    <div
-                      class="bodega-vacia"
-                      *ngIf="!cargandoBodega() && bodega().length === 0"
-                      role="note"
-                    >
-                      <i class="ti ti-building-warehouse" aria-hidden="true"></i>
-                      <span>{{ 'siembra.spray.stockEmpty' | translate }}</span>
-                      <a routerLink="/crops/inventory">{{ 'siembra.spray.stockGo' | translate }}</a>
-                    </div>
-
-                    <button
-                      type="button"
-                      class="btn-catalogo"
-                      *ngIf="bodega().length > 0"
-                      (click)="verBodega()"
-                    >
-                      {{
-                        (mostrarBodega()
-                          ? 'siembra.spray.catalogClose'
-                          : 'siembra.spray.catalogOpen'
-                        ) | translate: { n: bodega().length }
-                      }}
-                    </button>
-
-                    <!-- Insumos de la bodega agrupados por tipo -->
-                    <div class="catalogo-completo" *ngIf="mostrarBodega()">
-                      <!-- Filtro interno -->
-                      <div class="catalogo-completo__filtro">
-                        <input
-                          type="text"
-                          class="catalogo-filtro"
-                          [(ngModel)]="filtroBodega"
-                          name="filtroBodega"
-                          [placeholder]="'siembra.spray.filterPlaceholder' | translate"
-                        />
-                      </div>
-
-                      <!-- Sin resultados del filtro -->
-                      <div class="catalogo-empty" *ngIf="getBodegaAgrupada().length === 0">
-                        <span>{{
-                          'siembra.spray.noResultsFor' | translate: { filter: filtroBodega }
-                        }}</span>
-                      </div>
-
-                      <!-- Grupos por tipo -->
-                      <ng-container *ngFor="let grupo of getBodegaAgrupada()">
-                        <div class="catalogo-grupo">
-                          <div class="catalogo-grupo__titulo">
-                            <span>{{
-                              (grupo.tipo
-                                ? 'enums.tipoInsumo.' + grupo.tipo
-                                : 'siembra.spray.noType'
-                              ) | translate
-                            }}</span>
-                            <span class="catalogo-grupo__count">{{ grupo.items.length }}</span>
-                          </div>
-
+                    @if (mostrarCatalogo()) {
+                      <div class="catalogo-lista">
+                        @for (b of catalogoFiltrado(); track b; let i = $index) {
                           <button
                             type="button"
                             class="catalogo-item"
-                            *ngFor="let b of grupo.items"
-                            (click)="seleccionarDeBodega(b)"
+                            [class.resaltado]="i === resaltado()"
+                            (mouseenter)="resaltado.set(i)"
+                            (mousedown)="$event.preventDefault(); seleccionarDeBodega(b)"
                           >
                             <ng-container
                               *ngTemplateOutlet="filaBodega; context: { $implicit: b }"
                             ></ng-container>
                           </button>
+                        }
+                        @if (catalogoFiltrado().length === 0) {
+                          <div class="catalogo-empty">
+                            <span>{{ 'siembra.spray.noResultsManual' | translate }}</span>
+                          </div>
+                        }
+                      </div>
+                    }
+                    <small class="campo-hint">
+                      {{ 'siembra.spray.searchHint' | translate }}
+                    </small>
+                    <!-- Bodega vacía: no hay nada que ofrecer -->
+                    @if (!cargandoBodega() && bodega().length === 0) {
+                      <div class="bodega-vacia" role="note">
+                        <i class="ti ti-building-warehouse" aria-hidden="true"></i>
+                        <span>{{ 'siembra.spray.stockEmpty' | translate }}</span>
+                        <a routerLink="/crops/inventory">{{
+                          'siembra.spray.stockGo' | translate
+                        }}</a>
+                      </div>
+                    }
+                    @if (bodega().length > 0) {
+                      <button type="button" class="btn-catalogo" (click)="verBodega()">
+                        {{
+                          (mostrarBodega()
+                            ? 'siembra.spray.catalogClose'
+                            : 'siembra.spray.catalogOpen'
+                          ) | translate: { n: bodega().length }
+                        }}
+                      </button>
+                    }
+                    <!-- Insumos de la bodega agrupados por tipo -->
+                    @if (mostrarBodega()) {
+                      <div class="catalogo-completo">
+                        <!-- Filtro interno -->
+                        <div class="catalogo-completo__filtro">
+                          <input
+                            type="text"
+                            class="catalogo-filtro"
+                            [(ngModel)]="filtroBodega"
+                            name="filtroBodega"
+                            [placeholder]="'siembra.spray.filterPlaceholder' | translate"
+                          />
                         </div>
-                      </ng-container>
-                    </div>
+                        <!-- Sin resultados del filtro -->
+                        @if (getBodegaAgrupada().length === 0) {
+                          <div class="catalogo-empty">
+                            <span>{{
+                              'siembra.spray.noResultsFor' | translate: { filter: filtroBodega }
+                            }}</span>
+                          </div>
+                        }
+                        <!-- Grupos por tipo -->
+                        @for (grupo of getBodegaAgrupada(); track grupo) {
+                          <div class="catalogo-grupo">
+                            <div class="catalogo-grupo__titulo">
+                              <span>{{
+                                (grupo.tipo
+                                  ? 'enums.tipoInsumo.' + grupo.tipo
+                                  : 'siembra.spray.noType'
+                                ) | translate
+                              }}</span>
+                              <span class="catalogo-grupo__count">{{ grupo.items.length }}</span>
+                            </div>
+                            @for (b of grupo.items; track b) {
+                              <button
+                                type="button"
+                                class="catalogo-item"
+                                (click)="seleccionarDeBodega(b)"
+                              >
+                                <ng-container
+                                  *ngTemplateOutlet="filaBodega; context: { $implicit: b }"
+                                ></ng-container>
+                              </button>
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
                     <!-- fin lista de la bodega -->
                   </div>
-                </ng-container>
+                }
 
                 <!-- Un producto de la bodega: nombre, lo que queda y la dosis sugerida de su ficha -->
                 <ng-template #filaBodega let-b>
@@ -209,13 +205,12 @@
                     <span class="catalogo-nombre">{{ b.stock.nombre }}</span>
                     <span class="catalogo-dosis">
                       {{ 'inventario.spray.inStock' | translate: { cantidad: cantidadDe(b) } }}
-                      <span
-                        class="est-stock"
-                        *ngIf="b.stock.estado !== 'OK'"
-                        [ngClass]="b.stock.estado"
-                        >{{ 'inventario.status.' + b.stock.estado | translate }}</span
-                      >
-                      <ng-container *ngIf="b.insumo?.dosisSugerida">
+                      @if (b.stock.estado !== 'OK') {
+                        <span class="est-stock" [ngClass]="b.stock.estado">{{
+                          'inventario.status.' + b.stock.estado | translate
+                        }}</span>
+                      }
+                      @if (b.insumo?.dosisSugerida) {
                         ·
                         {{
                           'siembra.spray.doseShort'
@@ -226,49 +221,52 @@
                                     ('enums.unidadMedida.' + b.insumo.unidadSugerida | translate),
                                 }
                         }}
-                      </ng-container>
-                      <span *ngIf="b.insumo?.reentradaHoras > 0">
-                        · <i class="ti ti-alert-triangle" aria-hidden="true"></i>
-                        {{
-                          'siembra.spray.reentryShort'
-                            | translate: { hours: b.insumo.reentradaHoras }
-                        }}
-                      </span>
+                      }
+                      @if (b.insumo?.reentradaHoras > 0) {
+                        <span>
+                          · <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+                          {{
+                            'siembra.spray.reentryShort'
+                              | translate: { hours: b.insumo.reentradaHoras }
+                          }}
+                        </span>
+                      }
                     </span>
                   </div>
-                  <span
-                    class="badge"
-                    *ngIf="b.stock.tipo"
-                    [ngClass]="getTipoBadgeClass(b.stock.tipo)"
-                  >
-                    {{ 'enums.tipoInsumo.' + b.stock.tipo | translate }}
-                  </span>
+                  @if (b.stock.tipo) {
+                    <span class="badge" [ngClass]="getTipoBadgeClass(b.stock.tipo)">
+                      {{ 'enums.tipoInsumo.' + b.stock.tipo | translate }}
+                    </span>
+                  }
                 </ng-template>
 
                 <!-- Insumo elegido de la bodega -->
-                <ng-container *ngIf="insumoSeleccionado() as insumo">
+                @if (insumoSeleccionado(); as insumo) {
                   <div class="insumo-seleccionado">
                     <div class="insumo-seleccionado-info">
                       <span class="insumo-nombre">{{ insumo.nombre }}</span>
-                      <span class="badge" *ngIf="insumo.tipo" [ngClass]="tipoBadgeClass()">
-                        {{ 'enums.tipoInsumo.' + insumo.tipo | translate }}
-                      </span>
+                      @if (insumo.tipo) {
+                        <span class="badge" [ngClass]="tipoBadgeClass()">
+                          {{ 'enums.tipoInsumo.' + insumo.tipo | translate }}
+                        </span>
+                      }
                     </div>
                     <button type="button" class="btn-cambiar" (click)="limpiarInsumo()">
                       {{ 'siembra.spray.change' | translate }}
                     </button>
                   </div>
-
                   <!-- Alerta período de reentrada -->
-                  <div class="reentrada-aviso" *ngIf="insumo.reentradaHoras > 0" role="note">
-                    <i class="ti ti-alert-triangle" aria-hidden="true"></i>
-                    {{ 'siembra.spray.reentryLabel' | translate }}
-                    <strong>{{
-                      'siembra.spray.reentryHours' | translate: { hours: insumo.reentradaHoras }
-                    }}</strong>
-                    — {{ 'siembra.spray.reentryNote' | translate }}
-                  </div>
-                </ng-container>
+                  @if (insumo.reentradaHoras > 0) {
+                    <div class="reentrada-aviso" role="note">
+                      <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+                      {{ 'siembra.spray.reentryLabel' | translate }}
+                      <strong>{{
+                        'siembra.spray.reentryHours' | translate: { hours: insumo.reentradaHoras }
+                      }}</strong>
+                      — {{ 'siembra.spray.reentryNote' | translate }}
+                    </div>
+                  }
+                }
               </fieldset>
 
               <!-- Dosis y Unidad -->
@@ -290,19 +288,18 @@
                       required
                     />
                   </div>
-                  <small
-                    class="campo-hint"
-                    *ngIf="insumoSeleccionado()?.dosisSugerida && insumoSeleccionado() as insumo"
-                  >
-                    {{
-                      'siembra.spray.doseHint'
-                        | translate
-                          : {
-                              dose: insumo.dosisSugerida,
-                              unit: ('enums.unidadMedida.' + insumo.unidadSugerida | translate),
-                            }
-                    }}
-                  </small>
+                  @if (insumoSeleccionado()?.dosisSugerida && insumoSeleccionado(); as insumo) {
+                    <small class="campo-hint">
+                      {{
+                        'siembra.spray.doseHint'
+                          | translate
+                            : {
+                                dose: insumo.dosisSugerida,
+                                unit: ('enums.unidadMedida.' + insumo.unidadSugerida | translate),
+                              }
+                      }}
+                    </small>
+                  }
                 </div>
 
                 <div class="field">
@@ -319,14 +316,16 @@
                       (ngModelChange)="cambiarUnidad()"
                     >
                       <option value="">{{ 'siembra.spray.unitPlaceholder' | translate }}</option>
-                      <option *ngFor="let u of unidadesDisponibles()" [value]="u">
-                        {{ 'enums.unidadMedida.' + u | translate }}
-                      </option>
+                      @for (u of unidadesDisponibles(); track u) {
+                        <option [value]="u">
+                          {{ 'enums.unidadMedida.' + u | translate }}
+                        </option>
+                      }
                     </select>
                   </div>
-                  <small class="campo-hint" *ngIf="insumoSeleccionado()">{{
-                    'siembra.spray.unitHint' | translate
-                  }}</small>
+                  @if (insumoSeleccionado()) {
+                    <small class="campo-hint">{{ 'siembra.spray.unitHint' | translate }}</small>
+                  }
                 </div>
               </div>
             </section>
@@ -337,31 +336,35 @@
               <h3 class="seccion-form">{{ 'siembra.spray.sections.stock' | translate }}</h3>
 
               <!-- Cantidad total gastada: se descuenta de la bodega; usa la misma unidad que la dosis -->
-              <div class="field" *ngIf="insumoSeleccionado()">
-                <label class="field__label" for="cantidadUsada"
-                  ><i class="ti ti-building-warehouse" aria-hidden="true"></i>
-                  {{ 'inventario.spray.used' | translate }}
-                  <span class="label-optional">({{ 'common.optional' | translate }})</span></label
-                >
-                <div class="field__input-wrap con-unidad">
-                  <input
-                    id="cantidadUsada"
-                    type="number"
-                    min="0"
-                    step="any"
-                    inputmode="decimal"
-                    [(ngModel)]="form.cantidadUsada"
-                    name="cantidadUsada"
-                    placeholder="0"
-                    (ngModelChange)="actualizarEstimado()"
-                    [attr.aria-describedby]="form.unidadCantidad ? 'unidadCantidad' : null"
-                  />
-                  <span class="sufijo-unidad" id="unidadCantidad" *ngIf="form.unidadCantidad">{{
-                    'enums.unidadMedida.' + form.unidadCantidad | translate
-                  }}</span>
+              @if (insumoSeleccionado()) {
+                <div class="field">
+                  <label class="field__label" for="cantidadUsada"
+                    ><i class="ti ti-building-warehouse" aria-hidden="true"></i>
+                    {{ 'inventario.spray.used' | translate }}
+                    <span class="label-optional">({{ 'common.optional' | translate }})</span></label
+                  >
+                  <div class="field__input-wrap con-unidad">
+                    <input
+                      id="cantidadUsada"
+                      type="number"
+                      min="0"
+                      step="any"
+                      inputmode="decimal"
+                      [(ngModel)]="form.cantidadUsada"
+                      name="cantidadUsada"
+                      placeholder="0"
+                      (ngModelChange)="actualizarEstimado()"
+                      [attr.aria-describedby]="form.unidadCantidad ? 'unidadCantidad' : null"
+                    />
+                    @if (form.unidadCantidad) {
+                      <span class="sufijo-unidad" id="unidadCantidad">{{
+                        'enums.unidadMedida.' + form.unidadCantidad | translate
+                      }}</span>
+                    }
+                  </div>
+                  <small class="campo-hint">{{ 'inventario.spray.usedHint' | translate }}</small>
                 </div>
-                <small class="campo-hint">{{ 'inventario.spray.usedHint' | translate }}</small>
-              </div>
+              }
 
               <div class="field" [class.ancho]="!insumoSeleccionado()">
                 <label class="field__label" for="costoProducto"
@@ -386,33 +389,37 @@
                 }}</small>
               </div>
 
-              <div class="bodega-info ancho" *ngIf="insumoSeleccionado() && estimado() as e">
-                <p *ngIf="e.disponible !== 0 || e.costoPorUnidad != null; else sinCompras">
-                  <i class="ti ti-packages" aria-hidden="true"></i>
-                  {{ 'inventario.spray.inStock' | translate: { cantidad: cantidadBodega(e) } }}
-                </p>
-                <ng-template #sinCompras
-                  ><p class="suave">
-                    <i class="ti ti-info-circle" aria-hidden="true"></i>
-                    {{ 'inventario.spray.notInStock' | translate }}
-                  </p></ng-template
-                >
-                <p *ngIf="e.costo != null && form.cantidadUsada">
-                  <i class="ti ti-calculator" aria-hidden="true"></i>
-                  {{ 'inventario.spray.estimated' | translate: { costo: pesos(e.costo) } }}
-                  <button
-                    type="button"
-                    class="btn-link"
-                    *ngIf="form.costo !== e.costo"
-                    (click)="usarCostoEstimado()"
-                  >
-                    {{ 'inventario.spray.useEstimated' | translate }}
-                  </button>
-                </p>
-                <p class="suave" *ngIf="e.costoPorUnidad == null && form.cantidadUsada">
-                  {{ 'inventario.spray.noPrice' | translate }}
-                </p>
-              </div>
+              @if (insumoSeleccionado() && estimado(); as e) {
+                <div class="bodega-info ancho">
+                  @if (e.disponible !== 0 || e.costoPorUnidad != null) {
+                    <p>
+                      <i class="ti ti-packages" aria-hidden="true"></i>
+                      {{ 'inventario.spray.inStock' | translate: { cantidad: cantidadBodega(e) } }}
+                    </p>
+                  } @else {
+                    <p class="suave">
+                      <i class="ti ti-info-circle" aria-hidden="true"></i>
+                      {{ 'inventario.spray.notInStock' | translate }}
+                    </p>
+                  }
+                  @if (e.costo != null && form.cantidadUsada) {
+                    <p>
+                      <i class="ti ti-calculator" aria-hidden="true"></i>
+                      {{ 'inventario.spray.estimated' | translate: { costo: pesos(e.costo) } }}
+                      @if (form.costo !== e.costo) {
+                        <button type="button" class="btn-link" (click)="usarCostoEstimado()">
+                          {{ 'inventario.spray.useEstimated' | translate }}
+                        </button>
+                      }
+                    </p>
+                  }
+                  @if (e.costoPorUnidad == null && form.cantidadUsada) {
+                    <p class="suave">
+                      {{ 'inventario.spray.noPrice' | translate }}
+                    </p>
+                  }
+                </div>
+              }
             </section>
 
             <section class="grupo">
@@ -485,10 +492,12 @@
 
         <div class="form-actions">
           <!-- El aviso va junto a los botones: se ve al pulsar Registrar aunque el formulario esté abajo -->
-          <div class="alert alert--error" *ngIf="error" role="alert">
-            <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i
-            >{{ error | translate }}
-          </div>
+          @if (error) {
+            <div class="alert alert--error" role="alert">
+              <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i
+              >{{ error | translate }}
+            </div>
+          }
           <a
             class="btn-cancelar"
             [routerLink]="['/crops/planting', siembraId]"
@@ -496,14 +505,18 @@
             >{{ 'common.cancel' | translate }}</a
           >
           <button type="submit" class="btn-submit" [disabled]="cargando">
-            <span class="btn-submit__text" *ngIf="!cargando">
-              <span>{{ (registroId ? 'common.save' : 'siembra.spray.submit') | translate }}</span>
-              <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
-            </span>
-            <span class="btn-submit__loader" *ngIf="cargando" aria-live="polite">
-              <span class="spinner" aria-hidden="true"></span>
-              {{ 'siembra.spray.saving' | translate }}
-            </span>
+            @if (!cargando) {
+              <span class="btn-submit__text">
+                <span>{{ (registroId ? 'common.save' : 'siembra.spray.submit') | translate }}</span>
+                <i class="ti ti-arrow-right btn-submit__arrow" aria-hidden="true"></i>
+              </span>
+            }
+            @if (cargando) {
+              <span class="btn-submit__loader" aria-live="polite">
+                <span class="spinner" aria-hidden="true"></span>
+                {{ 'siembra.spray.saving' | translate }}
+              </span>
+            }
           </button>
         </div>
       </form>

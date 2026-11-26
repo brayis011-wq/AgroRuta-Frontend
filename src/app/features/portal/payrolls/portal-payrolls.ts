@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PortalService } from '../../../core/services/portal.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -9,7 +9,7 @@ import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/forma
 @Component({
   selector: 'app-portal-nominas',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [NgClass, TranslatePipe],
   templateUrl: './portal-payrolls.html',
   styleUrls: [
     '../../../shared/styles/panel-page.css',

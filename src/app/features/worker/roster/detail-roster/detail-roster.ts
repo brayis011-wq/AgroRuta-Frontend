@@ -1,7 +1,7 @@
 // src/app/features/worker/roster/detail-roster/detail-roster.ts
 
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -15,7 +15,6 @@ import { Miga, MigasComponent } from '../../../../shared/breadcrumbs/breadcrumbs
   selector: 'app-detalle-nomina',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     ReactiveFormsModule,
     TranslatePipe,

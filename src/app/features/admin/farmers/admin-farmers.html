@@ -38,60 +38,72 @@
       </div>
     </div>
 
-    <div class="estado" *ngIf="cargando">{{ 'common.loading' | translate }}</div>
-    <div class="estado" *ngIf="error">
-      {{ 'admin.farmers.loadError' | translate }}
-      <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">
-        {{ 'common.retry' | translate }}
-      </button>
-    </div>
-    <div class="estado" *ngIf="!cargando && !error && visibles.length === 0">
-      {{ 'admin.farmers.empty' | translate }}
-    </div>
+    @if (cargando) {
+      <div class="estado">{{ 'common.loading' | translate }}</div>
+    }
+    @if (error) {
+      <div class="estado">
+        {{ 'admin.farmers.loadError' | translate }}
+        <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">
+          {{ 'common.retry' | translate }}
+        </button>
+      </div>
+    }
+    @if (!cargando && !error && visibles.length === 0) {
+      <div class="estado">
+        {{ 'admin.farmers.empty' | translate }}
+      </div>
+    }
 
-    <div class="table-wrap" *ngIf="!cargando && !error && visibles.length > 0">
-      <table class="resp">
-        <thead>
-          <tr>
-            <th>{{ 'admin.farmers.table.farmer' | translate }}</th>
-            <th class="num">{{ 'admin.farmers.table.farms' | translate }}</th>
-            <th class="num">{{ 'admin.farmers.table.hectares' | translate }}</th>
-            <th class="num">{{ 'admin.farmers.table.workers' | translate }}</th>
-            <th class="num">{{ 'admin.farmers.table.payrolls' | translate }}</th>
-            <th class="num">{{ 'admin.farmers.table.paid' | translate }}</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let a of visibles">
-            <td class="prin">
-              <span class="cell-main">{{ a.nombre }}</span>
-              <span class="pill off" *ngIf="!a.activo" style="margin-left: 0.4rem">{{
-                'admin.common.inactive' | translate
-              }}</span>
-              <span class="cell-sub">{{ a.email }}</span>
-            </td>
-            <td class="num" [attr.data-label]="'admin.farmers.table.farms' | translate">
-              {{ num(a.fincas) }}
-            </td>
-            <td class="num" [attr.data-label]="'admin.farmers.table.hectares' | translate">
-              {{ num(a.hectareas, 1) }}
-            </td>
-            <td class="num" [attr.data-label]="'admin.farmers.table.workers' | translate">
-              {{ num(a.trabajadoresActivos) }}
-            </td>
-            <td class="num" [attr.data-label]="'admin.farmers.table.payrolls' | translate">
-              {{ num(a.nominas) }}
-            </td>
-            <td class="num" [attr.data-label]="'admin.farmers.table.paid' | translate">
-              {{ pesos(a.totalPagado) }}
-            </td>
-            <td class="num acc">
-              <a class="link" [routerLink]="[a.id]">{{ 'admin.farmers.view' | translate }} →</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    @if (!cargando && !error && visibles.length > 0) {
+      <div class="table-wrap">
+        <table class="resp">
+          <thead>
+            <tr>
+              <th>{{ 'admin.farmers.table.farmer' | translate }}</th>
+              <th class="num">{{ 'admin.farmers.table.farms' | translate }}</th>
+              <th class="num">{{ 'admin.farmers.table.hectares' | translate }}</th>
+              <th class="num">{{ 'admin.farmers.table.workers' | translate }}</th>
+              <th class="num">{{ 'admin.farmers.table.payrolls' | translate }}</th>
+              <th class="num">{{ 'admin.farmers.table.paid' | translate }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of visibles; track a) {
+              <tr>
+                <td class="prin">
+                  <span class="cell-main">{{ a.nombre }}</span>
+                  @if (!a.activo) {
+                    <span class="pill off" style="margin-left: 0.4rem">{{
+                      'admin.common.inactive' | translate
+                    }}</span>
+                  }
+                  <span class="cell-sub">{{ a.email }}</span>
+                </td>
+                <td class="num" [attr.data-label]="'admin.farmers.table.farms' | translate">
+                  {{ num(a.fincas) }}
+                </td>
+                <td class="num" [attr.data-label]="'admin.farmers.table.hectares' | translate">
+                  {{ num(a.hectareas, 1) }}
+                </td>
+                <td class="num" [attr.data-label]="'admin.farmers.table.workers' | translate">
+                  {{ num(a.trabajadoresActivos) }}
+                </td>
+                <td class="num" [attr.data-label]="'admin.farmers.table.payrolls' | translate">
+                  {{ num(a.nominas) }}
+                </td>
+                <td class="num" [attr.data-label]="'admin.farmers.table.paid' | translate">
+                  {{ pesos(a.totalPagado) }}
+                </td>
+                <td class="num acc">
+                  <a class="link" [routerLink]="[a.id]">{{ 'admin.farmers.view' | translate }} →</a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </div>
 </section>

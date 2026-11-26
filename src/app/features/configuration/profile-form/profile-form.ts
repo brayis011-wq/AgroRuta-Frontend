@@ -9,7 +9,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Perfil, UpdateProfileRequest } from '../../../core/models/profile.model';
@@ -18,7 +18,7 @@ import { ErrorFoto, prepararFoto, revisarArchivo } from '../../../shared/photo';
 @Component({
   selector: 'app-profile-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './profile-form.html',
   styleUrls: ['../config-fields.css', './profile-form.scss'],
 })

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
@@ -12,7 +12,7 @@ type Pestana = 'fincas' | 'trabajadores' | 'nominas';
 @Component({
   selector: 'app-admin-agricultor-detalle',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [NgClass, RouterModule, TranslatePipe],
   templateUrl: './admin-farmer-detail.html',
   styleUrls: [
     '../../../shared/styles/panel-page.css',

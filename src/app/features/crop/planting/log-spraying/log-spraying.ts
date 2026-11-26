@@ -14,7 +14,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { CommonModule } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, debounceTime, forkJoin, switchMap, of, takeUntil, catchError } from 'rxjs';
@@ -75,7 +75,8 @@ interface FumigacionForm {
   selector: 'app-registrar-fumigacion',
   standalone: true,
   imports: [
-    CommonModule,
+    NgClass,
+    NgTemplateOutlet,
     FormsModule,
     RouterLink,
     TranslatePipe,

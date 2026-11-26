@@ -7,7 +7,7 @@ import {
   computed,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService, Lang } from '../../../../core/services/language.service';
@@ -65,7 +65,6 @@ export const GRUPOS_CONFIG: {
   selector: 'app-configuration-page',
   standalone: true,
   imports: [
-    CommonModule,
     ProfileFormComponent,
     ChangePasswordFormComponent,
     TwoFactorComponent,

@@ -19,7 +19,7 @@ import {
   untracked,
 } from '@angular/core';
 import { Subscription, of } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -87,7 +87,8 @@ export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: strin
   selector: 'app-detalle-siembra',
   standalone: true,
   imports: [
-    CommonModule,
+    DecimalPipe,
+    TitleCasePipe,
     FormsModule,
     TranslatePipe,
     CicloEtapasComponent,
