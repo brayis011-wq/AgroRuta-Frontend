@@ -38,9 +38,14 @@ import * as L from 'leaflet';
   ],
 })
 export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
-  private translate = inject(TranslateService);
-  private lang = inject(LanguageService);
-  private siembrasActivasSvc = inject(SiembrasActivasService);
+  private readonly cultivoService = inject(CultivoService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  private readonly translate = inject(TranslateService);
+  private readonly lang = inject(LanguageService);
+  private readonly siembrasActivasSvc = inject(SiembrasActivasService);
   /** Siembras en curso de todas las fincas: se llega a cualquiera con un toque (null mientras carga) */
   siembrasActivas: SiembraActiva[] | null = null;
   readonly nombreCultivo = nombreCultivo;
@@ -63,13 +68,6 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   estadosEnMapa: string[] = [];
   readonly colorEstado = colorEstadoLote;
   private langSub?: Subscription;
-
-  constructor(
-    private cultivoService: CultivoService,
-    private authService: AuthService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   /** Palabra que el usuario debe escribir para confirmar (cambia con el idioma) */
   get palabraConfirmacion(): string {

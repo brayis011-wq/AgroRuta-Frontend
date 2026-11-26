@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -14,6 +14,11 @@ import { LoginRequest } from '../../../core/models/auth.model';
   styleUrl: '../auth-form.css',
 })
 export class LoginComponent implements OnInit {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   verPass = false;
 
   form: LoginRequest = {
@@ -33,13 +38,6 @@ export class LoginComponent implements OnInit {
   /** No volver a pedir el código en este navegador por 30 días (se desmarca en un equipo prestado) */
   recordarDispositivo = true;
   cargando: boolean = false;
-
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     // El interceptor redirige aquí con ?sesion=expirada cuando el servidor responde 401

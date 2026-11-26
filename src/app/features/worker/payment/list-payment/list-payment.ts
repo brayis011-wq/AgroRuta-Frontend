@@ -40,6 +40,11 @@ import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
   ],
 })
 export class ListaPagosComponent implements OnInit {
+  private readonly pagoService = inject(PagoService);
+  private readonly nominaService = inject(NominaService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   /** Pagos cargados hasta ahora, del más reciente al más antiguo (se suman páginas con "Cargar más") */
   pagos: Pago[] = [];
   /** Pagos en total con el filtro actual, en todas las páginas */
@@ -91,13 +96,6 @@ export class ListaPagosComponent implements OnInit {
   get hayMas(): boolean {
     return this.pagos.length < this.total;
   }
-
-  constructor(
-    private pagoService: PagoService,
-    private nominaService: NominaService,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     const nominaParam = this.route.snapshot.queryParamMap.get('nominaId');

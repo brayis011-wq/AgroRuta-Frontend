@@ -1,13 +1,13 @@
 import {
   Component,
   Input,
-  Output,
-  EventEmitter,
   OnChanges,
   SimpleChanges,
   ChangeDetectorRef,
   inject,
   signal,
+  input,
+  output,
 } from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -23,9 +23,11 @@ import { ErrorFoto, prepararFoto, revisarArchivo } from '../../../shared/photo';
   styleUrls: ['../config-fields.css', './profile-form.scss'],
 })
 export class ProfileFormComponent implements OnChanges {
+  private readonly fb = inject(FormBuilder);
+
   @Input() perfil: Perfil | null = null;
-  @Input() loading = false;
-  @Output() save = new EventEmitter<UpdateProfileRequest>();
+  readonly loading = input(false);
+  readonly save = output<UpdateProfileRequest>();
 
   private readonly cdr = inject(ChangeDetectorRef);
 
@@ -38,7 +40,7 @@ export class ProfileFormComponent implements OnChanges {
   /** Hay un archivo encima del recuadro de la foto */
   readonly arrastrando = signal(false);
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
     this.form = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(2)]],
       email: [{ value: '', disabled: true }],

@@ -18,6 +18,12 @@ import { forkJoin, of, switchMap, map } from 'rxjs';
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-planting.css'],
 })
 export class NuevaSiembraComponent implements OnInit {
+  private readonly cultivoService = inject(CultivoService);
+  private readonly catalogo = inject(CatalogoCultivoService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   private readonly avisos = inject(AvisosService);
   form = {
     fechaSiembra: '',
@@ -37,14 +43,6 @@ export class NuevaSiembraComponent implements OnInit {
   guardando = false;
   error = ''; // clave de traducción
   exito = false;
-
-  constructor(
-    private cultivoService: CultivoService,
-    private catalogo: CatalogoCultivoService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     // Nueva:  /crops/farm/:fincaId/plot/:loteId/new-planting

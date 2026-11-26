@@ -133,7 +133,7 @@
         ><i class="ti ti-point-filled" aria-hidden="true"></i>
         {{ 'config.unsaved' | translate }}</span
       >
-      <button type="button" class="btn btn-texto" [disabled]="loading" (click)="descartar()">
+      <button type="button" class="btn btn-texto" [disabled]="loading()" (click)="descartar()">
         {{ 'config.discard' | translate }}
       </button>
     } @else {
@@ -141,15 +141,15 @@
         ><i class="ti ti-check" aria-hidden="true"></i> {{ 'config.upToDate' | translate }}</span
       >
     }
-    <button type="submit" class="btn btn-prim" [disabled]="loading || !form.dirty">
+    <button type="submit" class="btn btn-prim" [disabled]="loading() || !form.dirty">
       <i
         class="ti"
-        [class.ti-device-floppy]="!loading"
-        [class.ti-loader-2]="loading"
-        [class.gira]="loading"
+        [class.ti-device-floppy]="!loading()"
+        [class.ti-loader-2]="loading()"
+        [class.gira]="loading()"
         aria-hidden="true"
       ></i>
-      {{ (loading ? 'config.profile.saving' : 'config.profile.save') | translate }}
+      {{ (loading() ? 'config.profile.saving' : 'config.profile.save') | translate }}
     </button>
   </div>
 </form>

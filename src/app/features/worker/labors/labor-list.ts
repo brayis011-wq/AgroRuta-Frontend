@@ -23,20 +23,18 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
   ],
 })
 export class ListaLaboresComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly actividadService = inject(LaborService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
+
   private readonly confirmService = inject(ConfirmService);
   actividades: Labor[] = [];
   form!: FormGroup;
   modoEdicion: Labor | null = null;
   mostrarForm = false;
   guardando = false;
-  error = ''; // clave de traducción
-
-  constructor(
-    private fb: FormBuilder,
-    private actividadService: LaborService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-  ) {}
+  error = '';
 
   ngOnInit(): void {
     this.iniciarForm();

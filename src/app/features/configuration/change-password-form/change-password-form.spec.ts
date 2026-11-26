@@ -65,7 +65,7 @@ describe('ChangePasswordFormComponent', () => {
     expect(spy).toHaveBeenCalledWith({ passwordActual: 'oldpass', nuevaPassword: 'newpass1' });
   });
   it('loading should default to false', () => {
-    expect(component.loading).toBe(false);
+    expect(component.loading()).toBe(false);
   });
   it('onSubmit() keeps what was typed until the server confirms', () => {
     component.form.setValue({

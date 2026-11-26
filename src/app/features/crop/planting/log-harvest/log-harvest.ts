@@ -36,6 +36,11 @@ interface FilaRecolector {
   styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-harvest.css'],
 })
 export class RegistrarCosecha implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly cultivoService = inject(CultivoService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   private readonly avisos = inject(AvisosService);
 
   siembraId!: number;
@@ -47,7 +52,7 @@ export class RegistrarCosecha implements OnInit {
   mensajeCarencia = '';
   /** La persona marcó que cosecha de todos modos */
   confirmarCarencia = false;
-  private lang = inject(LanguageService);
+  private readonly lang = inject(LanguageService);
 
   pesos(v: number): string {
     return formatoPesos(v, this.lang.current());
@@ -79,13 +84,6 @@ export class RegistrarCosecha implements OnInit {
   private kgManual = false;
 
   calidades = ['PRIMERA', 'SEGUNDA', 'TERCERA'];
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private cultivoService: CultivoService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   private readonly ultimo = inject(UltimoUsadoService);
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -130,8 +130,9 @@ export interface NominaRequest {
 
 @Injectable({ providedIn: 'root' })
 export class LaborService {
+  private readonly http = inject(HttpClient);
+
   private api = `${environment.apiUrl}/api/labors`;
-  constructor(private http: HttpClient) {}
 
   listar(): Observable<Labor[]> {
     return this.http.get<Labor[]>(this.api);
@@ -149,8 +150,9 @@ export class LaborService {
 
 @Injectable({ providedIn: 'root' })
 export class CargoService {
+  private readonly http = inject(HttpClient);
+
   private api = `${environment.apiUrl}/api/positions`;
-  constructor(private http: HttpClient) {}
 
   listar(): Observable<Cargo[]> {
     return this.http.get<Cargo[]>(this.api);
@@ -175,8 +177,9 @@ export class CargoService {
 
 @Injectable({ providedIn: 'root' })
 export class TrabajadorService {
+  private readonly http = inject(HttpClient);
+
   private api = `${environment.apiUrl}/api/workers`;
-  constructor(private http: HttpClient) {}
 
   listar(): Observable<Trabajador[]> {
     return this.http.get<Trabajador[]>(this.api);
@@ -215,8 +218,9 @@ export class TrabajadorService {
 
 @Injectable({ providedIn: 'root' })
 export class NominaService {
+  private readonly http = inject(HttpClient);
+
   private api = `${environment.apiUrl}/api/payrolls`;
-  constructor(private http: HttpClient) {}
 
   /** Nóminas por páginas, más recientes primero. */
   pagina(
@@ -275,8 +279,9 @@ export class NominaService {
 
 @Injectable({ providedIn: 'root' })
 export class JornalService {
+  private readonly http = inject(HttpClient);
+
   private api = `${environment.apiUrl}/api/workdays`;
-  constructor(private http: HttpClient) {}
 
   registrar(req: JornalRequest): Observable<Jornal> {
     return this.http.post<Jornal>(this.api, req);
@@ -381,8 +386,9 @@ export class JornalService {
 
 @Injectable({ providedIn: 'root' })
 export class PagoService {
+  private readonly http = inject(HttpClient);
+
   private api = `${environment.apiUrl}/api/payments`;
-  constructor(private http: HttpClient) {}
 
   /** Pagos por páginas, más recientes primero. */
   pagina(

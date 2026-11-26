@@ -31,6 +31,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-activity.css'],
 })
 export class RegistrarActividad implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly cultivoService = inject(CultivoService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   private readonly avisos = inject(AvisosService);
 
   siembraId!: number;
@@ -63,13 +68,6 @@ export class RegistrarActividad implements OnInit {
     REVISION: 'ti-zoom-check',
     OTRO: 'ti-dots',
   };
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private cultivoService: CultivoService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   private readonly ultimo = inject(UltimoUsadoService);
 

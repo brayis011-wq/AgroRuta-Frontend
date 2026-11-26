@@ -34,6 +34,14 @@ import { Miga, MigasComponent } from '../../../../shared/breadcrumbs/breadcrumbs
   ],
 })
 export class DetalleNominaComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly nominaService = inject(NominaService);
+  private readonly pagoService = inject(PagoService);
+  private readonly fb = inject(FormBuilder);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
+
   private readonly confirmService = inject(ConfirmService);
   nomina: Nomina | null = null;
   pagos: Pago[] = [];
@@ -63,15 +71,7 @@ export class DetalleNominaComponent implements OnInit {
   mostrarFormPago = false;
   pagoForm: FormGroup;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private nominaService: NominaService,
-    private pagoService: PagoService,
-    private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     this.pagoForm = this.fb.group({
       metodoPago: ['EFECTIVO', Validators.required],
       comprobante: ['', Validators.maxLength(100)],

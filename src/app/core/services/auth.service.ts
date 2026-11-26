@@ -18,12 +18,14 @@ const CLAVE_USUARIO = 'usuario';
   providedIn: 'root',
 })
 export class AuthService {
+  private readonly http = inject(HttpClient);
+
   private apiUrl = `${environment.apiUrl}/api/auth`;
   private token: string | null = null;
   private renovando$: Observable<string> | null = null;
-  private almacen = inject(AlmacenSinConexion);
+  private readonly almacen = inject(AlmacenSinConexion);
 
-  constructor(private http: HttpClient) {
+  constructor() {
     // Las versiones anteriores guardaban el token en localStorage
     localStorage.removeItem('token');
     // Si otra pestaña cierra la sesión, esta también suelta su token

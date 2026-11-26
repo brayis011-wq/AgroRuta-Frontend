@@ -51,9 +51,14 @@ import * as L from 'leaflet';
   ],
 })
 export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
-  private translate = inject(TranslateService);
-  private fincaActiva = inject(FincaActivaService);
-  private lang = inject(LanguageService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly cultivoService = inject(CultivoService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  private readonly translate = inject(TranslateService);
+  private readonly fincaActiva = inject(FincaActivaService);
+  private readonly lang = inject(LanguageService);
   readonly nombreCultivo = nombreCultivo;
   readonly progreso = progresoCiclo;
   /** Siembra en curso de cada lote (null = sin siembra; ausente = cargando) */
@@ -77,13 +82,6 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   private poligonosLayer: L.FeatureGroup = new L.FeatureGroup();
   private langSub?: Subscription;
   private rutaSub?: Subscription;
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private cultivoService: CultivoService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   /** Palabra que el usuario debe escribir para confirmar (cambia con el idioma) */
   get palabraConfirmacion(): string {

@@ -5,6 +5,9 @@ import { vi } from 'vitest';
 import { DetalleFincaComponent } from './farm-detail';
 import { Finca, Lote } from '../../../../core/models/crop.model';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
+import { ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CultivoService } from '../../../../core/services/crop.service';
 
 describe('DetalleFincaComponent', () => {
   let component: DetalleFincaComponent;
@@ -39,10 +42,16 @@ describe('DetalleFincaComponent', () => {
 
     // La pantalla pide algunos servicios con inject(): se crea dentro del contexto de Angular
     TestBed.configureTestingModule({
-      providers: [{ provide: FincaActivaService, useValue: { cargar: vi.fn() } }],
+      providers: [
+        { provide: FincaActivaService, useValue: { cargar: vi.fn() } },
+        { provide: ActivatedRoute, useValue: routeMock },
+        { provide: Router, useValue: routerMock },
+        { provide: CultivoService, useValue: cultivoServiceMock },
+        { provide: ChangeDetectorRef, useValue: cdrMock },
+      ],
     });
     component = TestBed.runInInjectionContext(
-      () => new DetalleFincaComponent(routeMock, routerMock, cultivoServiceMock, cdrMock),
+      () => new DetalleFincaComponent(),
     );
   });
 

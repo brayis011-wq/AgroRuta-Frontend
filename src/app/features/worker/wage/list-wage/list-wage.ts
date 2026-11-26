@@ -47,6 +47,14 @@ import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
   ],
 })
 export class ListaJornalesComponent implements OnInit {
+  private readonly jornalService = inject(JornalService);
+  private readonly trabajadorService = inject(TrabajadorService);
+  private readonly nominaService = inject(NominaService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   /** Jornales cargados hasta ahora, más recientes primero (se suman páginas con "Cargar más") */
   jornales: Jornal[] = [];
   /** Jornales en total del trabajador en el rango, en todas las páginas */
@@ -73,16 +81,6 @@ export class ListaJornalesComponent implements OnInit {
   panelNomina = false;
   generando = false;
   formNomina!: FormGroup;
-
-  constructor(
-    private jornalService: JornalService,
-    private trabajadorService: TrabajadorService,
-    private nominaService: NominaService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.formNomina = this.fb.group({

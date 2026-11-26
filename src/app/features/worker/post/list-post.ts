@@ -24,20 +24,18 @@ import { AvisosService } from '../../../core/services/toast.service';
   ],
 })
 export class ListaCargosComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly cargoService = inject(CargoService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
+
   private readonly confirmService = inject(ConfirmService);
   cargos: Cargo[] = [];
   form!: FormGroup;
   modoEdicion: Cargo | null = null;
   mostrarForm = false;
   guardando = false;
-  error = ''; // clave de traducción
-
-  constructor(
-    private fb: FormBuilder,
-    private cargoService: CargoService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-  ) {}
+  error = '';
 
   ngOnInit(): void {
     this.iniciarForm();

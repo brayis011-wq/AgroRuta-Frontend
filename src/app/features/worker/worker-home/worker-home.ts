@@ -50,6 +50,15 @@ type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
   ],
 })
 export class WorkerHomeComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
+  private readonly trabajadorService = inject(TrabajadorService);
+  private readonly cargoService = inject(CargoService);
+  private readonly nominaService = inject(NominaService);
+  private readonly pagoService = inject(PagoService);
+
   private readonly confirmService = inject(ConfirmService);
 
   trabajadores: Trabajador[] = [];
@@ -98,17 +107,6 @@ export class WorkerHomeComponent implements OnInit {
   errorNomina = ''; // clave de traducción (o mensaje crudo del backend)
 
   tiposContrato = ['FIJO', 'TEMPORAL', 'JORNAL'];
-
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private trabajadorService: TrabajadorService,
-    private cargoService: CargoService,
-    private nominaService: NominaService,
-    private pagoService: PagoService,
-  ) {}
 
   /** Opcional: algunas pruebas montan la pantalla sin rutas */
   private readonly route = inject(ActivatedRoute, { optional: true });

@@ -28,12 +28,16 @@ import { GeocodingService } from '../../../../core/services/geocoding.service';
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-plot.css'],
 })
 export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
+  private readonly cultivoService = inject(CultivoService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
   private readonly avisos = inject(AvisosService);
 
-  private translate = inject(TranslateService);
-  private lang = inject(LanguageService);
-  private cdr = inject(ChangeDetectorRef);
-  private geocoding = inject(GeocodingService);
+  private readonly translate = inject(TranslateService);
+  private readonly lang = inject(LanguageService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly geocoding = inject(GeocodingService);
 
   form = { nombre: '' };
 
@@ -58,12 +62,6 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   private drawControl: any = null;
   private locateBtnEl: HTMLElement | null = null;
   private langSub?: Subscription;
-
-  constructor(
-    private cultivoService: CultivoService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
 
   private setError(key: string, params: Record<string, unknown> = {}): void {
     this.error = key;

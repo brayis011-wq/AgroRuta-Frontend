@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -27,9 +27,9 @@ const deBase64Url = (texto: string): Uint8Array<ArrayBuffer> => {
 /** Avisos push en este dispositivo: notificaciones que llegan aunque la app esté cerrada. */
 @Injectable({ providedIn: 'root' })
 export class AvisosPushService {
-  private api = `${environment.apiUrl}/api/notifications/push`;
+  private readonly http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  private api = `${environment.apiUrl}/api/notifications/push`;
 
   private get soportado(): boolean {
     return (

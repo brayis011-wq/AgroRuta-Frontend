@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -21,9 +21,9 @@ import {
   providedIn: 'root',
 })
 export class CultivoService {
-  private apiUrl = environment.apiUrl;
+  private readonly http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  private apiUrl = environment.apiUrl;
 
   // Fincas
   registrarFinca(finca: Partial<Finca>): Observable<Finca> {

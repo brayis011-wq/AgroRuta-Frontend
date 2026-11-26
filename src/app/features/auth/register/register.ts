@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -13,6 +13,10 @@ import { RegisterRequest } from '../../../core/models/auth.model';
   styleUrls: ['../auth-form.css', '../auth-recovery.css'],
 })
 export class RegistroComponent {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   verPass = false;
 
   form: RegisterRequest = {
@@ -31,12 +35,6 @@ export class RegistroComponent {
   trabajador = false;
   reenviando = false;
   reenviado = false;
-
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   onSubmit(): void {
     this.error = '';

@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 
 import {
   ReactiveFormsModule,
@@ -25,15 +25,17 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   styleUrls: ['../config-fields.css', './change-password-form.scss'],
 })
 export class ChangePasswordFormComponent {
-  @Input() loading = false;
-  @Output() changePassword = new EventEmitter<ChangePasswordRequest>();
+  private readonly fb = inject(FormBuilder);
+
+  readonly loading = input(false);
+  readonly changePassword = output<ChangePasswordRequest>();
 
   form: FormGroup;
   showActual = false;
   showNueva = false;
   showConfirmar = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
     this.form = this.fb.group(
       {
         passwordActual: ['', [Validators.required]],

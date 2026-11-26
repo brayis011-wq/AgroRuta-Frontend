@@ -21,13 +21,17 @@ import { GeocodingService } from '../../../../core/services/geocoding.service';
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-farm.css'],
 })
 export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
+  private readonly cultivoService = inject(CultivoService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
   private readonly avisos = inject(AvisosService);
   private readonly fincaActiva = inject(FincaActivaService);
 
-  private translate = inject(TranslateService);
-  private lang = inject(LanguageService);
-  private cdr = inject(ChangeDetectorRef);
-  private geocoding = inject(GeocodingService);
+  private readonly translate = inject(TranslateService);
+  private readonly lang = inject(LanguageService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly geocoding = inject(GeocodingService);
 
   form = {
     nombre: '',
@@ -47,12 +51,6 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
   private marcador: L.Marker | null = null;
   private locateBtnEl: HTMLElement | null = null;
   private langSub?: Subscription;
-
-  constructor(
-    private cultivoService: CultivoService,
-    private authService: AuthService,
-    private router: Router,
-  ) {}
 
   ngAfterViewInit(): void {
     this.initMap();

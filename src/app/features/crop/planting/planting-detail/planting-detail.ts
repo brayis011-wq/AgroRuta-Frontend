@@ -115,14 +115,19 @@ export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: strin
   ],
 })
 export class DetalleSiembraComponent implements OnInit, OnDestroy {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly cultivoService = inject(CultivoService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   /** \"Café · Castillo\" */
   readonly nombreCultivo = nombreDeCultivo;
-  private translate = inject(TranslateService);
-  private lang = inject(LanguageService);
-  private confirm = inject(ConfirmService);
-  private weather = inject(WeatherService);
-  private avisos = inject(AvisosService);
-  private ventas = inject(VentasService);
+  private readonly translate = inject(TranslateService);
+  private readonly lang = inject(LanguageService);
+  private readonly confirm = inject(ConfirmService);
+  private readonly weather = inject(WeatherService);
+  private readonly avisos = inject(AvisosService);
+  private readonly ventas = inject(VentasService);
   /** Kilos cosechados de esta siembra que todavía no se han vendido (null mientras carga o si falla) */
   kgPorVender: number | null = null;
   /** Kilos vendidos de esta siembra (null mientras carga o si falla) */
@@ -267,13 +272,6 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   get palabraConfirmacion(): string {
     return this.translate.instant('cultivo.fincas.delete.confirmWord');
   }
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private cultivoService: CultivoService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   private rutaSub?: Subscription;
 

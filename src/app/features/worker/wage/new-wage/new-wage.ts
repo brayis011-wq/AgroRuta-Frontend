@@ -39,6 +39,13 @@ interface UltimoJornal {
   ],
 })
 export class NuevoJornalComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly jornalService = inject(JornalService);
+  private readonly trabajadorService = inject(TrabajadorService);
+  private readonly actividadService = inject(LaborService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
   private readonly avisos = inject(AvisosService);
   form!: FormGroup;
   trabajadores: Trabajador[] = [];
@@ -57,15 +64,6 @@ export class NuevoJornalComponent implements OnInit {
 
   // Guardamos el trabajadorId que vino por queryParam para redirigir de vuelta
   private trabajadorIdOrigen: number | null = null;
-
-  constructor(
-    private fb: FormBuilder,
-    private jornalService: JornalService,
-    private trabajadorService: TrabajadorService,
-    private actividadService: LaborService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
 
   private readonly ultimo = inject(UltimoUsadoService);
 

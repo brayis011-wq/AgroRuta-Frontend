@@ -47,6 +47,14 @@ import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
   ],
 })
 export class ListaNominasComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly nominaService = inject(NominaService);
+  private readonly trabajadorService = inject(TrabajadorService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
+  private readonly confirmService = inject(ConfirmService);
+
   /** Nóminas cargadas hasta ahora (se van sumando páginas con "Cargar más") */
   nominas: Nomina[] = [];
   /** Total de nóminas con los filtros actuales, en todas las páginas */
@@ -85,17 +93,7 @@ export class ListaNominasComponent implements OnInit {
   cargando = true;
   error = ''; // clave de traducción
   exito = ''; // clave de traducción
-  exitoParams: Record<string, unknown> = {}; // parámetros de la clave de éxito
-
-  constructor(
-    private fb: FormBuilder,
-    private nominaService: NominaService,
-    private trabajadorService: TrabajadorService,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private confirmService: ConfirmService,
-  ) {}
+  exitoParams: Record<string, unknown> = {};
 
   ngOnInit(): void {
     this.form = this.fb.group({
