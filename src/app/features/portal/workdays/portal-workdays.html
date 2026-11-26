@@ -10,14 +10,20 @@
   <div class="card estado" *ngIf="cargando">{{ 'common.loading' | translate }}</div>
   <div class="banner error" *ngIf="error">
     <span>{{ 'portal.loadDataError' | translate }}</span>
-    <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">{{ 'common.retry' | translate }}</button>
+    <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">
+      {{ 'common.retry' | translate }}
+    </button>
   </div>
-  <div class="card estado" *ngIf="!cargando && !error && grupos.length === 0">{{ 'portal.wages.empty' | translate }}</div>
+  <div class="card estado" *ngIf="!cargando && !error && grupos.length === 0">
+    {{ 'portal.wages.empty' | translate }}
+  </div>
 
   <div class="card grupo" *ngFor="let g of grupos">
     <div class="card-head">
       <h2 class="card-title">{{ g.titulo }}</h2>
-      <span class="grupo-total">{{ 'portal.wages.monthTotal' | translate: { count: g.jornales.length, amount: pesos(g.total) } }}</span>
+      <span class="grupo-total">{{
+        'portal.wages.monthTotal' | translate: { count: g.jornales.length, amount: pesos(g.total) }
+      }}</span>
     </div>
     <ul class="lista">
       <li *ngFor="let j of g.jornales" class="item">

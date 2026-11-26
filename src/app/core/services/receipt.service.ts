@@ -23,8 +23,11 @@ export class ComprobanteService {
 
   /** Pública: no necesita sesión. Responde 404 si el código no es el de ese pago. */
   verificar(pagoId: number, codigo: string): Observable<ComprobanteVerificado> {
-    return this.http.get<ComprobanteVerificado>(`${environment.apiUrl}/api/public/receipts/${pagoId}`, {
-      params: new HttpParams().set('code', codigo),
-    });
+    return this.http.get<ComprobanteVerificado>(
+      `${environment.apiUrl}/api/public/receipts/${pagoId}`,
+      {
+        params: new HttpParams().set('code', codigo),
+      },
+    );
   }
 }

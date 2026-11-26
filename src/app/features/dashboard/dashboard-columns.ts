@@ -16,7 +16,10 @@ export function emparejarColumnas(cuerpo: HTMLElement | null | undefined): void 
   const derecha = cuerpo.querySelector<HTMLElement>('.col-lateral');
   // Se mide sin estirar: así se ve lo que mide de verdad cada columna
   cuerpo.classList.remove('parejo');
-  cuerpo.querySelectorAll<HTMLElement>('.estira').forEach((e) => { e.classList.remove('estira'); e.style.flexGrow = ''; });
+  cuerpo.querySelectorAll<HTMLElement>('.estira').forEach((e) => {
+    e.classList.remove('estira');
+    e.style.flexGrow = '';
+  });
   if (!izquierda || !derecha || getComputedStyle(izquierda).display === 'contents') return;
 
   const altoIzquierda = izquierda.getBoundingClientRect().height;
@@ -26,8 +29,9 @@ export function emparejarColumnas(cuerpo: HTMLElement | null | undefined): void 
 
   const corta = altoIzquierda < altoDerecha ? izquierda : derecha;
   // Las marcadas con "fijo" (el clima) no crecen: se verían infladas
-  const visibles = Array.from(corta.children)
-    .filter((c) => c.getBoundingClientRect().height > 0 && !c.classList.contains('fijo'));
+  const visibles = Array.from(corta.children).filter(
+    (c) => c.getBoundingClientRect().height > 0 && !c.classList.contains('fijo'),
+  );
   if (!visibles.length) return;
   visibles.forEach((c) => {
     c.classList.add('estira');
@@ -55,11 +59,15 @@ export const ALTO_CLIMA = 310;
  * información y en cualquier columna dejaría un hueco. Se mide sin el clima, así la decisión no
  * cambia al moverlo. En pantallas angostas (una sola columna) siempre va a la derecha.
  */
-export function elegirLugarClima(cuerpo: HTMLElement | null | undefined, altoClima = ALTO_CLIMA): LugarClima {
+export function elegirLugarClima(
+  cuerpo: HTMLElement | null | undefined,
+  altoClima = ALTO_CLIMA,
+): LugarClima {
   if (!cuerpo) return 'derecha';
   const izquierda = cuerpo.querySelector<HTMLElement>('.col-principal');
   const derecha = cuerpo.querySelector<HTMLElement>('.col-lateral');
-  if (!izquierda || !derecha || getComputedStyle(izquierda).display === 'contents') return 'derecha';
+  if (!izquierda || !derecha || getComputedStyle(izquierda).display === 'contents')
+    return 'derecha';
 
   const izq = altoSinClima(izquierda);
   const der = altoSinClima(derecha);
@@ -87,5 +95,8 @@ function altoSinClima(columna: HTMLElement): number {
 export function soltarColumnas(cuerpo: HTMLElement | null | undefined): void {
   if (!cuerpo) return;
   cuerpo.classList.remove('parejo');
-  cuerpo.querySelectorAll<HTMLElement>('.estira').forEach((e) => { e.classList.remove('estira'); e.style.flexGrow = ''; });
+  cuerpo.querySelectorAll<HTMLElement>('.estira').forEach((e) => {
+    e.classList.remove('estira');
+    e.style.flexGrow = '';
+  });
 }

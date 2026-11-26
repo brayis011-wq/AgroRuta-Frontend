@@ -23,7 +23,10 @@ export function puntosDelLote(coordenadas: string | null | undefined): [number, 
     const crudos: unknown = JSON.parse(coordenadas);
     if (!Array.isArray(crudos)) return null;
     const puntos = crudos
-      .filter((p): p is [number, number] => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]))
+      .filter(
+        (p): p is [number, number] =>
+          Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]),
+      )
       .map((p) => [p[0], p[1]] as [number, number]);
     return puntos.length >= 3 ? puntos : null;
   } catch {

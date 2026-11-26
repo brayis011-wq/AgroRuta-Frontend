@@ -45,7 +45,11 @@ export class OpenSessionsComponent implements OnInit {
       next: (lista) => {
         this.sinDatos.set(false);
         // La de este navegador primero; después, la más usada recientemente
-        this.sesiones.set([...lista].sort((a, b) => Number(b.actual) - Number(a.actual) || b.ultimoUso.localeCompare(a.ultimoUso)));
+        this.sesiones.set(
+          [...lista].sort(
+            (a, b) => Number(b.actual) - Number(a.actual) || b.ultimoUso.localeCompare(a.ultimoUso),
+          ),
+        );
       },
       error: () => this.sinDatos.set(true),
     });
@@ -101,7 +105,10 @@ export class OpenSessionsComponent implements OnInit {
     const d = new Date(iso);
     if (isNaN(d.getTime())) return '';
     return d.toLocaleString(this.idioma.current() === 'en' ? 'en-US' : 'es-CO', {
-      day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit',
+      day: 'numeric',
+      month: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
     });
   }
 }

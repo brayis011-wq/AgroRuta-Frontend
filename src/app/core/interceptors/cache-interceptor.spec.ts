@@ -3,7 +3,12 @@ import { HttpClient, HttpContext, provideHttpClient, withInterceptors } from '@a
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { environment } from '../../../environments/environment';
-import { SIN_CACHE, VIDA_CACHE_MS, cacheBreveInterceptor, vaciarCacheBreve } from './cache-interceptor';
+import {
+  SIN_CACHE,
+  VIDA_CACHE_MS,
+  cacheBreveInterceptor,
+  vaciarCacheBreve,
+} from './cache-interceptor';
 
 const API = `${environment.apiUrl}/api`;
 const sesion = (token = 'uno') => ({ headers: { Authorization: `Bearer ${token}` } });
@@ -15,7 +20,10 @@ describe('cacheBreveInterceptor', () => {
   beforeEach(() => {
     vaciarCacheBreve();
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(withInterceptors([cacheBreveInterceptor])), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(withInterceptors([cacheBreveInterceptor])),
+        provideHttpClientTesting(),
+      ],
     });
     http = TestBed.inject(HttpClient);
     servidor = TestBed.inject(HttpTestingController);
@@ -109,7 +117,9 @@ describe('cacheBreveInterceptor', () => {
       http.get(`${API}/workers`, sesion()).subscribe({ error: () => undefined });
       servidor.expectOne(`${API}/workers`).flush('falló', { status: 500, statusText: 'Error' });
 
-      http.get(`${API}/payrolls`, { ...sesion(), context: new HttpContext().set(SIN_CACHE, true) }).subscribe();
+      http
+        .get(`${API}/payrolls`, { ...sesion(), context: new HttpContext().set(SIN_CACHE, true) })
+        .subscribe();
       servidor.expectOne(`${API}/payrolls`).flush([]);
     }
 

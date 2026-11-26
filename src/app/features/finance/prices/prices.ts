@@ -1,7 +1,17 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Subject, debounceTime, distinctUntilChanged, switchMap, of, forkJoin, catchError, timer, takeWhile } from 'rxjs';
+import {
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  of,
+  forkJoin,
+  catchError,
+  timer,
+  takeWhile,
+} from 'rxjs';
 import { DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PreciosService } from '../../../core/services/finance.service';
@@ -11,7 +21,11 @@ import { AvisosService } from '../../../core/services/toast.service';
 import { FechaPipe, PesosPipe } from '../../../shared/format.pipe';
 
 /** Un cultivo del agricultor (nombre y variedad) con su precio de referencia */
-interface CultivoPrecio { cultivo: string; variedad: string | null; precio: PrecioCultivo | null }
+interface CultivoPrecio {
+  cultivo: string;
+  variedad: string | null;
+  precio: PrecioCultivo | null;
+}
 
 /**
  * Precios de referencia: el promedio mayorista semanal de SIPSA (DANE) para cada cultivo, o el
@@ -23,8 +37,15 @@ interface CultivoPrecio { cultivo: string; variedad: string | null; precio: Prec
   standalone: true,
   imports: [FormsModule, TranslatePipe, PesosPipe, FechaPipe],
   templateUrl: './prices.html',
-  styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../../worker/worker-ui.css',
-    '../../worker/worker-panel.css', '../../../shared/styles/opciones.css', '../finance.css'],
+  styleUrls: [
+    '../../crop/crop-ui.css',
+    '../../crop/crop-blocks.css',
+    '../../report/report-table.css',
+    '../../worker/worker-ui.css',
+    '../../worker/worker-panel.css',
+    '../../../shared/styles/opciones.css',
+    '../finance.css',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PreciosComponent implements OnInit {
@@ -53,34 +74,56 @@ export class PreciosComponent implements OnInit {
   /** Todavía no hay precios de SIPSA y no se sabe de un error: se están trayendo */
   trayendo(): boolean {
     const e = this.estado();
-    return !!e && !e.hayPrecios && (e.actualizando || !e.ultimoError) && this.vueltas < PreciosComponent.MAX_VUELTAS;
+    return (
+      !!e &&
+      !e.hayPrecios &&
+      (e.actualizando || !e.ultimoError) &&
+      this.vueltas < PreciosComponent.MAX_VUELTAS
+    );
   }
 
   private vigilarEstado(): void {
-    timer(0, 8000).pipe(
-      switchMap(() => this.precios.estado().pipe(catchError(() => of(null)))),
-      takeUntilDestroyed(this.destruir),
-      takeWhile((e) => {
-        this.vueltas++;
-        const antes = this.estado();
-        if (e) this.estado.set(e);
-        // Llegaron los precios: se vuelven a pedir los de cada cultivo
-        if (e?.hayPrecios && antes && !antes.hayPrecios) this.cargar();
-        return !!e && !e.hayPrecios && (e.actualizando || !e.ultimoError) && this.vueltas < PreciosComponent.MAX_VUELTAS;
-      }, true),
-    ).subscribe();
+    timer(0, 8000)
+      .pipe(
+        switchMap(() => this.precios.estado().pipe(catchError(() => of(null)))),
+        takeUntilDestroyed(this.destruir),
+        takeWhile((e) => {
+          this.vueltas++;
+          const antes = this.estado();
+          if (e) this.estado.set(e);
+          // Llegaron los precios: se vuelven a pedir los de cada cultivo
+          if (e?.hayPrecios && antes && !antes.hayPrecios) this.cargar();
+          return (
+            !!e &&
+            !e.hayPrecios &&
+            (e.actualizando || !e.ultimoError) &&
+            this.vueltas < PreciosComponent.MAX_VUELTAS
+          );
+        }, true),
+      )
+      .subscribe();
   }
   private readonly busqueda = new Subject<{ q: string; donde: 'pagina' | 'panel' }>();
 
   ngOnInit(): void {
     this.cargar();
     this.vigilarEstado();
-    this.busqueda.pipe(
-      debounceTime(300),
-      distinctUntilChanged((a, b) => a.q === b.q && a.donde === b.donde),
-      switchMap(({ q, donde }) => (q.trim().length < 2 ? of({ lista: [] as PrecioReferencia[], donde })
-        : this.precios.buscar(q).pipe(catchError(() => of([] as PrecioReferencia[])), switchMap((lista) => of({ lista, donde }))))),
-    ).subscribe(({ lista, donde }) => (donde === 'pagina' ? this.resultados.set(lista) : this.buscados.set(lista)));
+    this.busqueda
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged((a, b) => a.q === b.q && a.donde === b.donde),
+        switchMap(({ q, donde }) =>
+          q.trim().length < 2
+            ? of({ lista: [] as PrecioReferencia[], donde })
+            : this.precios.buscar(q).pipe(
+                catchError(() => of([] as PrecioReferencia[])),
+                switchMap((lista) => of({ lista, donde })),
+              ),
+        ),
+      )
+      .subscribe(({ lista, donde }) =>
+        donde === 'pagina' ? this.resultados.set(lista) : this.buscados.set(lista),
+      );
   }
 
   /** Los cultivos distintos de las siembras activas, cada uno con su precio */
@@ -88,13 +131,27 @@ export class PreciosComponent implements OnInit {
     this.jornales.cultivosDisponibles().subscribe({
       next: (cs) => {
         const unicos = new Map<string, { cultivo: string; variedad: string | null }>();
-        cs.filter((c) => c.tipoCultivo).forEach((c) => unicos.set(c.tipoCultivo + '|' + (c.variedad ?? ''), { cultivo: c.tipoCultivo!, variedad: c.variedad }));
+        cs.filter((c) => c.tipoCultivo).forEach((c) =>
+          unicos.set(c.tipoCultivo + '|' + (c.variedad ?? ''), {
+            cultivo: c.tipoCultivo!,
+            variedad: c.variedad,
+          }),
+        );
         const lista = [...unicos.values()].sort((a, b) => a.cultivo.localeCompare(b.cultivo));
-        if (!lista.length) { this.cultivos.set([]); return; }
-        forkJoin(lista.map((c) => this.precios.deCultivo(c.cultivo, c.variedad).pipe(catchError(() => of(null))))).subscribe((ps) =>
-          this.cultivos.set(lista.map((c, i) => ({ ...c, precio: ps[i] }))));
+        if (!lista.length) {
+          this.cultivos.set([]);
+          return;
+        }
+        forkJoin(
+          lista.map((c) =>
+            this.precios.deCultivo(c.cultivo, c.variedad).pipe(catchError(() => of(null))),
+          ),
+        ).subscribe((ps) => this.cultivos.set(lista.map((c, i) => ({ ...c, precio: ps[i] }))));
       },
-      error: () => { this.cultivos.set([]); this.error.set('precios.errors.load'); },
+      error: () => {
+        this.cultivos.set([]);
+        this.error.set('precios.errors.load');
+      },
     });
   }
 
@@ -121,17 +178,33 @@ export class PreciosComponent implements OnInit {
     if (!c) return;
     const precio = this.propio();
     const producto = precio ? null : this.elegido();
-    if (!producto && !precio) { this.error.set('precios.errors.choose'); return; }
+    if (!producto && !precio) {
+      this.error.set('precios.errors.choose');
+      return;
+    }
     this.guardando.set(true);
     this.precios.elegir(c.cultivo, producto, precio).subscribe({
-      next: () => { this.guardando.set(false); this.editando.set(null); this.avisos.exito('precios.saved'); this.cargar(); },
-      error: (e) => { this.guardando.set(false); this.error.set(e?.error?.message || 'precios.errors.save'); },
+      next: () => {
+        this.guardando.set(false);
+        this.editando.set(null);
+        this.avisos.exito('precios.saved');
+        this.cargar();
+      },
+      error: (e) => {
+        this.guardando.set(false);
+        this.error.set(e?.error?.message || 'precios.errors.save');
+      },
     });
   }
 
   automatico(): void {
     const c = this.editando();
     if (!c) return;
-    this.precios.quitar(c.cultivo).subscribe({ next: () => { this.editando.set(null); this.cargar(); } });
+    this.precios.quitar(c.cultivo).subscribe({
+      next: () => {
+        this.editando.set(null);
+        this.cargar();
+      },
+    });
   }
 }

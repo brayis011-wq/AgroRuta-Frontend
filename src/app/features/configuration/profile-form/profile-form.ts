@@ -64,7 +64,11 @@ export class ProfileFormComponent implements OnChanges {
   /** Vuelve a los datos guardados */
   descartar(): void {
     if (!this.perfil) return;
-    this.form.patchValue({ nombre: this.perfil.nombre, telefono: this.perfil.telefono, fotoPerfil: this.perfil.fotoPerfil });
+    this.form.patchValue({
+      nombre: this.perfil.nombre,
+      telefono: this.perfil.telefono,
+      fotoPerfil: this.perfil.fotoPerfil,
+    });
     this.imageError = false;
     this.form.markAsPristine();
     this.form.markAsUntouched();
@@ -82,7 +86,10 @@ export class ProfileFormComponent implements OnChanges {
     this.arrastrando.set(false);
     if (!archivo) return;
     const problema = revisarArchivo(archivo);
-    if (problema) { this.errorFoto.set(problema); return; }
+    if (problema) {
+      this.errorFoto.set(problema);
+      return;
+    }
     this.errorFoto.set(null);
     this.procesando.set(true);
     try {

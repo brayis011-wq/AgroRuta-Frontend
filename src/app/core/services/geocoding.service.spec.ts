@@ -8,7 +8,9 @@ describe('GeocodingService', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     service = TestBed.inject(GeocodingService);
     http = TestBed.inject(HttpTestingController);
   });
@@ -41,7 +43,8 @@ describe('GeocodingService', () => {
   it('direccion() joins village, municipality and department', () => {
     let texto: any;
     service.direccion({ lat: 5.36, lng: -73.52 }).subscribe((t) => (texto = t));
-    http.expectOne((r) => r.url.endsWith('/reverse'))
+    http
+      .expectOne((r) => r.url.endsWith('/reverse'))
       .flush({ address: { village: 'El Salitre', county: 'Ventaquemada', state: 'Boyacá' } });
     expect(texto).toBe('El Salitre, Ventaquemada, Boyacá');
   });

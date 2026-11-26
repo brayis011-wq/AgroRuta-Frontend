@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -49,11 +57,16 @@ export class PresupuestoSiembraComponent {
   readonly editando = signal(false);
   readonly guardando = signal(false);
   readonly error = signal<string | null>(null);
-  form = { manoObra: null as number | null, insumos: null as number | null, otros: null as number | null };
+  form = {
+    manoObra: null as number | null,
+    insumos: null as number | null,
+    otros: null as number | null,
+  };
 
   /** Kilos cosechados que no tienen precio y lo que valdrían con el precio de referencia */
   readonly estimado = computed(() => {
-    const c = this.costos(), p = this.referencia();
+    const c = this.costos(),
+      p = this.referencia();
     if (!c) return null;
     const kg = Math.max(0, (c.kgTotal ?? 0) - (c.kgConPrecio ?? 0));
     if (kg <= 0 || !p?.precioKg) return kg > 0 ? { kg, valor: null, ganancia: null } : null;
@@ -65,9 +78,24 @@ export class PresupuestoSiembraComponent {
     const p = this.presupuesto();
     if (!p) return [];
     return [
-      { clave: 'temporadas.costos.labor', gastado: p.gastadoManoObra, tope: p.manoObra, pasado: p.manoObraSuperada },
-      { clave: 'temporadas.costos.inputs', gastado: p.gastadoInsumos, tope: p.insumos, pasado: p.insumosSuperados },
-      { clave: 'temporadas.costos.other', gastado: p.gastadoOtros, tope: p.otros, pasado: p.otrosSuperados },
+      {
+        clave: 'temporadas.costos.labor',
+        gastado: p.gastadoManoObra,
+        tope: p.manoObra,
+        pasado: p.manoObraSuperada,
+      },
+      {
+        clave: 'temporadas.costos.inputs',
+        gastado: p.gastadoInsumos,
+        tope: p.insumos,
+        pasado: p.insumosSuperados,
+      },
+      {
+        clave: 'temporadas.costos.other',
+        gastado: p.gastadoOtros,
+        tope: p.otros,
+        pasado: p.otrosSuperados,
+      },
     ].filter((x) => x.tope != null && x.tope > 0);
   });
 
@@ -77,35 +105,67 @@ export class PresupuestoSiembraComponent {
     effect(() => {
       const id = this.siembraId();
       this.version();
-      this.campo.presupuesto(id).subscribe({ next: (p) => this.presupuesto.set(p ?? null), error: () => this.presupuesto.set(null) });
-      this.cultivos.costosSiembra(id).subscribe({ next: (c) => this.costos.set(c), error: () => this.costos.set(null) });
+      this.campo
+        .presupuesto(id)
+        .subscribe({
+          next: (p) => this.presupuesto.set(p ?? null),
+          error: () => this.presupuesto.set(null),
+        });
+      this.cultivos
+        .costosSiembra(id)
+        .subscribe({ next: (c) => this.costos.set(c), error: () => this.costos.set(null) });
     });
     effect(() => {
       const c = this.cultivo();
       if (!c) return;
-      this.precios.deCultivo(c, this.variedad()).subscribe({ next: (p) => this.referencia.set(p), error: () => this.referencia.set(null) });
+      this.precios
+        .deCultivo(c, this.variedad())
+        .subscribe({ next: (p) => this.referencia.set(p), error: () => this.referencia.set(null) });
     });
   }
 
   editar(): void {
     const p = this.presupuesto();
-    this.form = { manoObra: p?.manoObra ?? null, insumos: p?.insumos ?? null, otros: p?.otros ?? null };
+    this.form = {
+      manoObra: p?.manoObra ?? null,
+      insumos: p?.insumos ?? null,
+      otros: p?.otros ?? null,
+    };
     this.error.set(null);
     this.editando.set(true);
   }
 
   guardar(): void {
     const total = (this.form.manoObra ?? 0) + (this.form.insumos ?? 0) + (this.form.otros ?? 0);
-    if (total <= 0) { this.error.set('presupuesto.errors.empty'); return; }
+    if (total <= 0) {
+      this.error.set('presupuesto.errors.empty');
+      return;
+    }
     this.guardando.set(true);
     this.campo.guardarPresupuesto(this.siembraId(), this.form).subscribe({
-      next: (p) => { this.presupuesto.set(p); this.guardando.set(false); this.editando.set(false); this.avisos.exito('presupuesto.saved'); },
-      error: (e) => { this.guardando.set(false); this.error.set(e?.error?.message || 'presupuesto.errors.save'); },
+      next: (p) => {
+        this.presupuesto.set(p);
+        this.guardando.set(false);
+        this.editando.set(false);
+        this.avisos.exito('presupuesto.saved');
+      },
+      error: (e) => {
+        this.guardando.set(false);
+        this.error.set(e?.error?.message || 'presupuesto.errors.save');
+      },
     });
   }
 
   async borrar(): Promise<void> {
-    if (!(await this.confirm.preguntar({ mensaje: this.translate.instant('presupuesto.confirmDelete'), peligro: true }))) return;
-    this.campo.borrarPresupuesto(this.siembraId()).subscribe({ next: () => this.presupuesto.set(null) });
+    if (
+      !(await this.confirm.preguntar({
+        mensaje: this.translate.instant('presupuesto.confirmDelete'),
+        peligro: true,
+      }))
+    )
+      return;
+    this.campo
+      .borrarPresupuesto(this.siembraId())
+      .subscribe({ next: () => this.presupuesto.set(null) });
   }
 }

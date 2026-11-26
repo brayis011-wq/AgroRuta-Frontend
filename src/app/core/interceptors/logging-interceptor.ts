@@ -17,10 +17,10 @@ export const loggingInterceptor: HttpInterceptorFn = (req, next) => {
 
   const logger = inject(LoggingService);
   const traceId = crypto.randomUUID().substring(0, 8).toUpperCase();
-  const start   = Date.now();
+  const start = Date.now();
 
   const tracedReq = req.clone({
-    setHeaders: { 'X-Trace-Id': traceId }
+    setHeaders: { 'X-Trace-Id': traceId },
   });
 
   logger.debug(`→ [${traceId}] ${req.method} ${req.url}`);
@@ -36,9 +36,9 @@ export const loggingInterceptor: HttpInterceptorFn = (req, next) => {
       const ms = Date.now() - start;
       logger.error(
         `✗ [${traceId}] ${req.method} ${req.url} | status=${error.status} | ${ms}ms`,
-        error.error
+        error.error,
       );
       return throwError(() => error);
-    })
+    }),
   );
 };

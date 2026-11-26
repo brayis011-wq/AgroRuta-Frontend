@@ -6,16 +6,14 @@ export const workerRoutes: Routes = [
   {
     path: '',
     title: 'workers.home.title',
-    loadComponent: () =>
-      import('./worker-home/worker-home').then((m) => m.WorkerHomeComponent),
+    loadComponent: () => import('./worker-home/worker-home').then((m) => m.WorkerHomeComponent),
   },
 
   // ── Labores (catálogo de lo que hacen los trabajadores; no confundir con las actividades de una siembra)
   {
     path: 'labors',
     title: 'workers.activities.title',
-    loadComponent: () =>
-      import('./labors/labor-list').then((m) => m.ListaLaboresComponent),
+    loadComponent: () => import('./labors/labor-list').then((m) => m.ListaLaboresComponent),
   },
   // Ruta anterior: se redirige para no romper enlaces guardados
 
@@ -23,8 +21,7 @@ export const workerRoutes: Routes = [
   {
     path: 'positions',
     title: 'workers.posts.title',
-    loadComponent: () =>
-      import('./post/list-post').then((m) => m.ListaCargosComponent),
+    loadComponent: () => import('./post/list-post').then((m) => m.ListaCargosComponent),
   },
 
   // ── Nóminas global (ver todas, aprobar, eliminar) — SIN generar aquí
@@ -45,16 +42,14 @@ export const workerRoutes: Routes = [
   {
     path: 'yield',
     title: 'workers.yield.title',
-    loadComponent: () =>
-      import('./yield/yield').then((m) => m.RendimientoComponent),
+    loadComponent: () => import('./yield/yield').then((m) => m.RendimientoComponent),
   },
 
   // ── Planilla semanal: trabajadores por días, un toque anota el jornal
   {
     path: 'sheet',
     title: 'workers.sheet.title',
-    loadComponent: () =>
-      import('./sheet/sheet').then((m) => m.PlanillaComponent),
+    loadComponent: () => import('./sheet/sheet').then((m) => m.PlanillaComponent),
   },
 
   // ── Jornales
@@ -62,14 +57,12 @@ export const workerRoutes: Routes = [
     path: 'workdays/new',
     title: 'workers.wages.new.title',
     canDeactivate: [cambiosSinGuardarGuard],
-    loadComponent: () =>
-      import('./wage/new-wage/new-wage').then((m) => m.NuevoJornalComponent),
+    loadComponent: () => import('./wage/new-wage/new-wage').then((m) => m.NuevoJornalComponent),
   },
   {
     path: 'workdays',
     title: 'workers.wages.list.title',
-    loadComponent: () =>
-      import('./wage/list-wage/list-wage').then((m) => m.ListaJornalesComponent),
+    loadComponent: () => import('./wage/list-wage/list-wage').then((m) => m.ListaJornalesComponent),
   },
 
   // ── Pagos

@@ -11,7 +11,11 @@ import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/forma
   standalone: true,
   imports: [CommonModule, TranslatePipe],
   templateUrl: './portal-payrolls.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', '../portal-lists.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    '../portal-lists.css',
+  ],
 })
 export class PortalNominasComponent implements OnInit {
   private readonly portal = inject(PortalService);
@@ -49,9 +53,11 @@ export class PortalNominasComponent implements OnInit {
 
   /** Texto de ayuda según el estado: qué significa para el trabajador. */
   ayuda(estado: MiNomina['estado']): string {
-    return estado === 'PAGADA' ? 'portal.rosters.help.paid'
-      : estado === 'APROBADA' ? 'portal.rosters.help.approved'
-      : 'portal.rosters.help.pending';
+    return estado === 'PAGADA'
+      ? 'portal.rosters.help.paid'
+      : estado === 'APROBADA'
+        ? 'portal.rosters.help.approved'
+        : 'portal.rosters.help.pending';
   }
 
   num(v: number): string {

@@ -46,7 +46,8 @@ export class ReceiptVerifyComponent implements OnInit {
         this.estado.set('valido');
       },
       // 404 = el código no es de ese pago; cualquier otra cosa es que no se pudo preguntar
-      error: (e) => this.estado.set(e?.status === 404 || e?.status === 400 ? 'invalido' : 'sinConexion'),
+      error: (e) =>
+        this.estado.set(e?.status === 404 || e?.status === 400 ? 'invalido' : 'sinConexion'),
     });
   }
 

@@ -8,8 +8,26 @@ import { BandejaAvisosService, CADA_CUANTO_MS } from '../../core/services/inbox.
 import { environment } from '../../../environments/environment';
 
 const base = `${environment.apiUrl}/api/notifications/inbox`;
-const pago = { id: 7, tipo: 'PAGO_REGISTRADO', titulo: 'T', cuerpo: 'C', datos: { monto: '10000' }, ruta: '/portal/payments', creadoEn: new Date().toISOString(), leido: false };
-const viejo = { id: 6, tipo: 'ACCESO_SOLICITADO', titulo: 'T', cuerpo: 'C', datos: { trabajador: 'Ana' }, ruta: '/worker', creadoEn: new Date().toISOString(), leido: true };
+const pago = {
+  id: 7,
+  tipo: 'PAGO_REGISTRADO',
+  titulo: 'T',
+  cuerpo: 'C',
+  datos: { monto: '10000' },
+  ruta: '/portal/payments',
+  creadoEn: new Date().toISOString(),
+  leido: false,
+};
+const viejo = {
+  id: 6,
+  tipo: 'ACCESO_SOLICITADO',
+  titulo: 'T',
+  cuerpo: 'C',
+  datos: { trabajador: 'Ana' },
+  ruta: '/worker',
+  creadoEn: new Date().toISOString(),
+  leido: true,
+};
 
 describe('CampanaComponent', () => {
   let http: HttpTestingController;

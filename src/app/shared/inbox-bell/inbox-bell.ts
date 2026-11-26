@@ -1,6 +1,17 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit,
-  afterNextRender, computed, inject, input, signal, viewChild,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  Injector,
+  OnDestroy,
+  OnInit,
+  afterNextRender,
+  computed,
+  inject,
+  input,
+  signal,
+  viewChild,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -8,8 +19,18 @@ import { AvisoBandeja, BandejaAvisosService } from '../../core/services/inbox.se
 import { LanguageService } from '../../core/services/language.service';
 import { TextoAviso, haceCuanto, textoAviso } from './inbox-text';
 
-interface Fila { aviso: AvisoBandeja; texto: TextoAviso; cuando: string }
-interface Posicion { left: string; right: string; top: string; bottom: string; width: string }
+interface Fila {
+  aviso: AvisoBandeja;
+  texto: TextoAviso;
+  cuando: string;
+}
+interface Posicion {
+  left: string;
+  right: string;
+  top: string;
+  bottom: string;
+  width: string;
+}
 
 /**
  * La campana: el número de avisos sin leer y, al tocarla, la lista de los últimos.
@@ -38,22 +59,37 @@ export class CampanaComponent implements OnInit, OnDestroy {
   readonly rutaAjustes = input<string>('/settings');
 
   readonly abierta = signal(false);
-  readonly estilo = signal<Posicion>({ left: 'auto', right: 'auto', top: 'auto', bottom: 'auto', width: 'auto' });
-  readonly conPopover = typeof HTMLElement !== 'undefined' && typeof HTMLElement.prototype.showPopover === 'function';
+  readonly estilo = signal<Posicion>({
+    left: 'auto',
+    right: 'auto',
+    top: 'auto',
+    bottom: 'auto',
+    width: 'auto',
+  });
+  readonly conPopover =
+    typeof HTMLElement !== 'undefined' && typeof HTMLElement.prototype.showPopover === 'function';
   readonly id = `campana-${Math.random().toString(36).slice(2, 8)}`;
 
   private readonly boton = viewChild.required<ElementRef<HTMLButtonElement>>('boton');
   private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
 
   /** "9+" para no ensanchar el globito */
-  readonly globo = computed(() => { const n = this.bandeja.noLeidos(); return n > 9 ? '9+' : String(n); });
+  readonly globo = computed(() => {
+    const n = this.bandeja.noLeidos();
+    return n > 9 ? '9+' : String(n);
+  });
 
   readonly filas = computed<Fila[] | null>(() => {
     const lista = this.bandeja.avisos();
     const lang = this.lang.current();
     if (!lista) return null;
-    const t = (clave: string, p?: Record<string, unknown>) => this.translate.instant(clave, p) as string;
-    return lista.map((aviso) => ({ aviso, texto: textoAviso(aviso, t, lang), cuando: haceCuanto(aviso.creadoEn, lang) }));
+    const t = (clave: string, p?: Record<string, unknown>) =>
+      this.translate.instant(clave, p) as string;
+    return lista.map((aviso) => ({
+      aviso,
+      texto: textoAviso(aviso, t, lang),
+      cuando: haceCuanto(aviso.creadoEn, lang),
+    }));
   });
 
   ngOnInit(): void {
@@ -66,15 +102,21 @@ export class CampanaComponent implements OnInit, OnDestroy {
 
   alternar(ev: Event): void {
     ev.stopPropagation();
-    if (this.abierta()) { this.cerrar(); return; }
+    if (this.abierta()) {
+      this.cerrar();
+      return;
+    }
     this.estilo.set(this.posicion());
     this.abierta.set(true);
     this.bandeja.cargar();
-    afterNextRender(() => {
-      const el = this.panel()?.nativeElement;
-      if (this.conPopover && el && !el.matches(':popover-open')) el.showPopover();
-      el?.focus();
-    }, { injector: this.injector });
+    afterNextRender(
+      () => {
+        const el = this.panel()?.nativeElement;
+        if (this.conPopover && el && !el.matches(':popover-open')) el.showPopover();
+        el?.focus();
+      },
+      { injector: this.injector },
+    );
   }
 
   cerrar(devolverFoco = false): void {
@@ -107,9 +149,21 @@ export class CampanaComponent implements OnInit, OnDestroy {
   private posicion(): Posicion {
     const r = this.boton().nativeElement.getBoundingClientRect();
     if (this.modo() === 'barra' || window.innerWidth <= 760) {
-      return { left: '8px', right: '8px', top: 'auto', bottom: `${Math.max(8, window.innerHeight - r.top + 8)}px`, width: 'auto' };
+      return {
+        left: '8px',
+        right: '8px',
+        top: 'auto',
+        bottom: `${Math.max(8, window.innerHeight - r.top + 8)}px`,
+        width: 'auto',
+      };
     }
     const ancho = Math.min(380, window.innerWidth - r.right - 24);
-    return { left: `${r.right + 12}px`, right: 'auto', top: `${Math.max(8, r.top - 8)}px`, bottom: 'auto', width: `${Math.max(300, ancho)}px` };
+    return {
+      left: `${r.right + 12}px`,
+      right: 'auto',
+      top: `${Math.max(8, r.top - 8)}px`,
+      bottom: 'auto',
+      width: `${Math.max(300, ancho)}px`,
+    };
   }
 }

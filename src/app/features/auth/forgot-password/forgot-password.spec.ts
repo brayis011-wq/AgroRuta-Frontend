@@ -14,7 +14,10 @@ describe('RecuperarComponent', () => {
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: auth },
-        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap(email ? { email } : {}) } } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParamMap: convertToParamMap(email ? { email } : {}) } },
+        },
       ],
     });
     const f = TestBed.createComponent(RecuperarComponent);

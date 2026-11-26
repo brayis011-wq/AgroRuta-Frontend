@@ -23,7 +23,8 @@ export const routes: Routes = [
   {
     path: 'receipt/:id/:code',
     title: 'titles.receipt',
-    loadComponent: () => import('./features/receipt/receipt-verify').then((m) => m.ReceiptVerifyComponent),
+    loadComponent: () =>
+      import('./features/receipt/receipt-verify').then((m) => m.ReceiptVerifyComponent),
   },
 
   // Panel de administración: layout y menú propios
@@ -47,7 +48,8 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadChildren: () => import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
+        loadChildren: () =>
+          import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
       },
       {
         path: 'crops',
@@ -59,20 +61,23 @@ export const routes: Routes = [
       },
       {
         path: 'finance',
-        loadChildren: () => import('./features/finance/finance.routes').then((m) => m.financeRoutes),
+        loadChildren: () =>
+          import('./features/finance/finance.routes').then((m) => m.financeRoutes),
       },
       {
         path: 'reports',
-        loadChildren: () => import('./features/report/report.routes').then(m => m.REPORT_ROUTES),
-        runGuardsAndResolvers: 'always'
+        loadChildren: () => import('./features/report/report.routes').then((m) => m.REPORT_ROUTES),
+        runGuardsAndResolvers: 'always',
       },
       {
         path: 'settings',
         loadChildren: () =>
-          import('./features/configuration/configuration.routes').then((m) => m.configurationRoutes),
+          import('./features/configuration/configuration.routes').then(
+            (m) => m.configurationRoutes,
+          ),
       },
-    ],                           // ← cierra children[]
-  },                             // ← cierra el objeto de ruta layout
+    ], // ← cierra children[]
+  }, // ← cierra el objeto de ruta layout
 
   // URLs viejas en español (marcadores, correos ya enviados): se traducen; lo demás va al inicio
   { path: '**', canActivate: [rutasAntiguasGuard], children: [] },

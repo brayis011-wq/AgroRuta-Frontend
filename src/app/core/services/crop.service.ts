@@ -5,7 +5,13 @@ import { environment } from '../../../environments/environment';
 import {
   Finca,
   Lote,
-  Siembra, SiembraRequest, EtapaSiembra, EstadoLote, ResumenSiembra, CostosSiembra, EventoCalendario,
+  Siembra,
+  SiembraRequest,
+  EtapaSiembra,
+  EstadoLote,
+  ResumenSiembra,
+  CostosSiembra,
+  EventoCalendario,
   ActividadCultivo,
   Fumigacion,
   Cosecha,
@@ -54,7 +60,10 @@ export class CultivoService {
   }
 
   /** Solo nombre y área */
-  actualizarLote(id: number, lote: { nombre: string; area: number; fincaId: number }): Observable<Lote> {
+  actualizarLote(
+    id: number,
+    lote: { nombre: string; area: number; fincaId: number },
+  ): Observable<Lote> {
     return this.http.put<Lote>(`${this.apiUrl}/api/plots/${id}`, lote);
   }
 
@@ -98,11 +107,15 @@ export class CultivoService {
 
   /** Fechas "yyyy-MM-dd"; sin fechas: 30 días atrás y 60 adelante */
   calendarioSiembra(id: number, desde?: string, hasta?: string): Observable<EventoCalendario[]> {
-    return this.http.get<EventoCalendario[]>(`${this.apiUrl}/api/plantings/${id}/calendar`, { params: this.rango(desde, hasta) });
+    return this.http.get<EventoCalendario[]>(`${this.apiUrl}/api/plantings/${id}/calendar`, {
+      params: this.rango(desde, hasta),
+    });
   }
 
   calendarioFinca(fincaId: number, desde?: string, hasta?: string): Observable<EventoCalendario[]> {
-    return this.http.get<EventoCalendario[]>(`${this.apiUrl}/api/farms/${fincaId}/calendar`, { params: this.rango(desde, hasta) });
+    return this.http.get<EventoCalendario[]>(`${this.apiUrl}/api/farms/${fincaId}/calendar`, {
+      params: this.rango(desde, hasta),
+    });
   }
 
   private rango(desde?: string, hasta?: string): Record<string, string> {
@@ -121,8 +134,15 @@ export class CultivoService {
   }
 
   /** Cierra la temporada; el lote queda disponible o en descanso */
-  finalizarSiembra(id: number, fecha: string | null, dejarEnDescanso: boolean): Observable<Siembra> {
-    return this.http.patch<Siembra>(`${this.apiUrl}/api/plantings/${id}/finish`, { fecha, dejarEnDescanso });
+  finalizarSiembra(
+    id: number,
+    fecha: string | null,
+    dejarEnDescanso: boolean,
+  ): Observable<Siembra> {
+    return this.http.patch<Siembra>(`${this.apiUrl}/api/plantings/${id}/finish`, {
+      fecha,
+      dejarEnDescanso,
+    });
   }
 
   buscarSiembra(id: number): Observable<Siembra> {
@@ -132,7 +152,10 @@ export class CultivoService {
   /** fecha "yyyy-MM-dd" opcional (por defecto hoy) */
   avanzarEtapa(siembraId: number, fecha?: string | null): Observable<Siembra> {
     const q = fecha ? `?fecha=${encodeURIComponent(fecha)}` : '';
-    return this.http.patch<Siembra>(`${this.apiUrl}/api/plantings/${siembraId}/advance-stage${q}`, {});
+    return this.http.patch<Siembra>(
+      `${this.apiUrl}/api/plantings/${siembraId}/advance-stage${q}`,
+      {},
+    );
   }
 
   eliminarSiembra(id: number): Observable<void> {
@@ -152,7 +175,10 @@ export class CultivoService {
     return this.http.get<ActividadCultivo>(`${this.apiUrl}/api/activities/${id}`);
   }
 
-  actualizarActividad(id: number, actividad: Partial<ActividadCultivo>): Observable<ActividadCultivo> {
+  actualizarActividad(
+    id: number,
+    actividad: Partial<ActividadCultivo>,
+  ): Observable<ActividadCultivo> {
     return this.http.put<ActividadCultivo>(`${this.apiUrl}/api/activities/${id}`, actividad);
   }
 
@@ -205,18 +231,24 @@ export class CultivoService {
   totalKgCosechado(siembraId: number): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/api/harvests/planting/${siembraId}/total-kg`);
   }
-  actualizarGeometriaLote(loteId: number, body: {
-    coordenadas: string;
-    area: number;
-    centroideLat: number;
-    centroideLng: number;
-  }): Observable<Lote> {
+  actualizarGeometriaLote(
+    loteId: number,
+    body: {
+      coordenadas: string;
+      area: number;
+      centroideLat: number;
+      centroideLng: number;
+    },
+  ): Observable<Lote> {
     return this.http.patch<Lote>(`${this.apiUrl}/api/plots/${loteId}/geometry`, body);
   }
-actualizarCentroideFinca(fincaId: number, body: {
-  centroideLat: number;
-  centroideLng: number;
-}): Observable<Finca> {
-  return this.http.patch<Finca>(`${this.apiUrl}/api/farms/${fincaId}/centroid`, body);
-}
+  actualizarCentroideFinca(
+    fincaId: number,
+    body: {
+      centroideLat: number;
+      centroideLng: number;
+    },
+  ): Observable<Finca> {
+    return this.http.patch<Finca>(`${this.apiUrl}/api/farms/${fincaId}/centroid`, body);
+  }
 }

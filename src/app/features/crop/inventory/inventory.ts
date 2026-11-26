@@ -7,7 +7,14 @@ import { InventarioService } from '../../../core/services/inventory.service';
 import { AgriculturalInputService } from '../../../core/services/agricultural-input.service';
 import { AgriculturalInput, MeasurementUnit } from '../../../core/models/agricultural-input.model';
 import {
-  MovimientoInventario, StockInsumo, UnidadBase, enUnidadGrande, formatoCantidad, unidadBaseDe, unidadGrande, unidadesDe,
+  MovimientoInventario,
+  StockInsumo,
+  UnidadBase,
+  enUnidadGrande,
+  formatoCantidad,
+  unidadBaseDe,
+  unidadGrande,
+  unidadesDe,
 } from '../../../core/models/inventory.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { ActivatedRoute } from '@angular/router';
@@ -24,7 +31,14 @@ type Panel = 'compra' | 'ajuste' | 'minimo';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './inventory.html',
-  styleUrls: ['../crop-ui.css', '../crop-blocks.css', '../../report/report-table.css', '../../worker/worker-ui.css', '../../worker/worker-panel.css', './inventory.css'],
+  styleUrls: [
+    '../crop-ui.css',
+    '../crop-blocks.css',
+    '../../report/report-table.css',
+    '../../worker/worker-ui.css',
+    '../../worker/worker-panel.css',
+    './inventory.css',
+  ],
 })
 export class InventarioComponent implements OnInit {
   private readonly inventario = inject(InventarioService);
@@ -47,7 +61,9 @@ export class InventarioComponent implements OnInit {
   /** Insumo sobre el que se hace el ajuste o el mínimo */
   readonly sobre = signal<StockInsumo | null>(null);
 
-  readonly valorTotal = computed(() => (this.stock() ?? []).reduce((t, s) => t + (s.valorStock ?? 0), 0));
+  readonly valorTotal = computed(() =>
+    (this.stock() ?? []).reduce((t, s) => t + (s.valorStock ?? 0), 0),
+  );
   readonly conAvisos = computed(() => (this.stock() ?? []).filter((s) => s.estado !== 'OK').length);
 
   readonly compra = this.fb.group({
@@ -75,7 +91,9 @@ export class InventarioComponent implements OnInit {
     this.cargar();
     // ?compra=1 (desde el buscador): abre de una vez el formulario de compra
     if (this.route?.snapshot?.queryParamMap?.get('compra')) this.abrirCompra();
-    this.insumosService.getAll().subscribe({ next: (l) => this.catalogo.set(l), error: () => this.catalogo.set([]) });
+    this.insumosService
+      .getAll()
+      .subscribe({ next: (l) => this.catalogo.set(l), error: () => this.catalogo.set([]) });
     // La unidad de la compra sigue al insumo elegido (no se mezclan litros con gramos)
     this.compra.controls.insumoId.valueChanges.subscribe((id) => {
       const i = this.catalogo().find((x) => x.id === Number(id));
@@ -87,7 +105,10 @@ export class InventarioComponent implements OnInit {
     this.error.set('');
     this.inventario.stock().subscribe({
       next: (s) => this.stock.set(s),
-      error: () => { this.stock.set([]); this.error.set('inventario.errors.load'); },
+      error: () => {
+        this.stock.set([]);
+        this.error.set('inventario.errors.load');
+      },
     });
   }
 
@@ -99,12 +120,18 @@ export class InventarioComponent implements OnInit {
 
   pesos(v: number | null | undefined): string {
     if (v == null) return '—';
-    return new Intl.NumberFormat(this.locale(), { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
+    return new Intl.NumberFormat(this.locale(), {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0,
+    }).format(v);
   }
 
   /** Costo por litro o por kilo */
   costoGrande(s: StockInsumo): string {
-    return s.costoPromedio == null ? '—' : `${this.pesos(s.costoPromedio * 1000)} / ${s.unidadBase === 'ML' ? 'L' : 'kg'}`;
+    return s.costoPromedio == null
+      ? '—'
+      : `${this.pesos(s.costoPromedio * 1000)} / ${s.unidadBase === 'ML' ? 'L' : 'kg'}`;
   }
 
   unidadesDe(base: UnidadBase): MeasurementUnit[] {
@@ -119,7 +146,10 @@ export class InventarioComponent implements OnInit {
   // ── historial ───────────────────────────────────────────────────
 
   alternarHistorial(s: StockInsumo): void {
-    if (this.abierto() === s.insumoId) { this.abierto.set(null); return; }
+    if (this.abierto() === s.insumoId) {
+      this.abierto.set(null);
+      return;
+    }
     this.abierto.set(s.insumoId);
     this.movimientos.set([]);
     this.inventario.movimientos(s.insumoId).subscribe({ next: (m) => this.movimientos.set(m) });
@@ -133,7 +163,11 @@ export class InventarioComponent implements OnInit {
     const mensaje = this.translate.instant('inventario.history.confirmDelete');
     if (!(await this.confirm.preguntar({ mensaje, peligro: true }))) return;
     this.inventario.eliminarMovimiento(m.id).subscribe({
-      next: () => { this.cargar(); this.abierto.set(null); this.alternarHistorial(s); },
+      next: () => {
+        this.cargar();
+        this.abierto.set(null);
+        this.alternarHistorial(s);
+      },
       error: (e) => this.error.set(e?.error?.message || 'inventario.errors.save'),
     });
   }
@@ -142,22 +176,36 @@ export class InventarioComponent implements OnInit {
 
   abrirCompra(s?: StockInsumo): void {
     this.errorForm.set('');
-    this.compra.reset({ insumoId: s?.insumoId ?? null, cantidad: null, costoTotal: null, fecha: this.hoy(),
-      proveedor: '', observaciones: '', unidad: s ? unidadGrande(s.unidadBase) : 'LITROS' });
+    this.compra.reset({
+      insumoId: s?.insumoId ?? null,
+      cantidad: null,
+      costoTotal: null,
+      fecha: this.hoy(),
+      proveedor: '',
+      observaciones: '',
+      unidad: s ? unidadGrande(s.unidadBase) : 'LITROS',
+    });
     this.panel.set('compra');
   }
 
   abrirAjuste(s: StockInsumo): void {
     this.errorForm.set('');
     this.sobre.set(s);
-    this.ajuste.reset({ cantidadReal: enUnidadGrande(Math.max(s.cantidad, 0)), unidad: unidadGrande(s.unidadBase), observaciones: '' });
+    this.ajuste.reset({
+      cantidadReal: enUnidadGrande(Math.max(s.cantidad, 0)),
+      unidad: unidadGrande(s.unidadBase),
+      observaciones: '',
+    });
     this.panel.set('ajuste');
   }
 
   abrirMinimo(s: StockInsumo): void {
     this.errorForm.set('');
     this.sobre.set(s);
-    this.minimo.reset({ minimo: s.stockMinimo == null ? null : enUnidadGrande(s.stockMinimo), unidad: unidadGrande(s.unidadBase) });
+    this.minimo.reset({
+      minimo: s.stockMinimo == null ? null : enUnidadGrande(s.stockMinimo),
+      unidad: unidadGrande(s.unidadBase),
+    });
     this.panel.set('minimo');
   }
 
@@ -167,27 +215,51 @@ export class InventarioComponent implements OnInit {
   }
 
   guardarCompra(): void {
-    if (this.compra.invalid) { this.compra.markAllAsTouched(); return; }
+    if (this.compra.invalid) {
+      this.compra.markAllAsTouched();
+      return;
+    }
     const v = this.compra.getRawValue();
-    this.enviar(this.inventario.registrarCompra({
-      insumoId: Number(v.insumoId), cantidad: Number(v.cantidad), unidad: v.unidad!,
-      costoTotal: v.costoTotal == null || (v.costoTotal as unknown) === '' ? null : Number(v.costoTotal),
-      fecha: v.fecha, proveedor: v.proveedor, observaciones: v.observaciones,
-    }));
+    this.enviar(
+      this.inventario.registrarCompra({
+        insumoId: Number(v.insumoId),
+        cantidad: Number(v.cantidad),
+        unidad: v.unidad!,
+        costoTotal:
+          v.costoTotal == null || (v.costoTotal as unknown) === '' ? null : Number(v.costoTotal),
+        fecha: v.fecha,
+        proveedor: v.proveedor,
+        observaciones: v.observaciones,
+      }),
+    );
   }
 
   guardarAjuste(): void {
     const s = this.sobre();
-    if (!s || this.ajuste.invalid) { this.ajuste.markAllAsTouched(); return; }
+    if (!s || this.ajuste.invalid) {
+      this.ajuste.markAllAsTouched();
+      return;
+    }
     const v = this.ajuste.getRawValue();
-    this.enviar(this.inventario.ajustar({ insumoId: s.insumoId, cantidadReal: Number(v.cantidadReal), unidad: v.unidad!, observaciones: v.observaciones }));
+    this.enviar(
+      this.inventario.ajustar({
+        insumoId: s.insumoId,
+        cantidadReal: Number(v.cantidadReal),
+        unidad: v.unidad!,
+        observaciones: v.observaciones,
+      }),
+    );
   }
 
   guardarMinimo(quitar = false): void {
     const s = this.sobre();
-    if (!s || this.minimo.invalid) { this.minimo.markAllAsTouched(); return; }
+    if (!s || this.minimo.invalid) {
+      this.minimo.markAllAsTouched();
+      return;
+    }
     const v = this.minimo.getRawValue();
-    const valor = quitar || v.minimo == null || (v.minimo as unknown) === '' ? null : Number(v.minimo);
+    const valor =
+      quitar || v.minimo == null || (v.minimo as unknown) === '' ? null : Number(v.minimo);
     this.enviar(this.inventario.definirMinimo(s.insumoId, valor, v.unidad!));
   }
 
@@ -195,13 +267,23 @@ export class InventarioComponent implements OnInit {
     this.guardando.set(true);
     this.errorForm.set('');
     op.subscribe({
-      next: () => { this.guardando.set(false); this.cerrar(); this.abierto.set(null); this.cargar(); },
-      error: (e) => { this.guardando.set(false); this.errorForm.set(e?.error?.message || 'inventario.errors.save'); },
+      next: () => {
+        this.guardando.set(false);
+        this.cerrar();
+        this.abierto.set(null);
+        this.cargar();
+      },
+      error: (e) => {
+        this.guardando.set(false);
+        this.errorForm.set(e?.error?.message || 'inventario.errors.save');
+      },
     });
   }
 
   invalido(form: 'compra' | 'ajuste' | 'minimo', campo: string): boolean {
-    const c = (this[form] as unknown as { get(n: string): { invalid: boolean; touched: boolean } | null }).get(campo);
+    const c = (
+      this[form] as unknown as { get(n: string): { invalid: boolean; touched: boolean } | null }
+    ).get(campo);
     return !!(c?.invalid && c.touched);
   }
 

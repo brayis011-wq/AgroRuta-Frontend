@@ -5,9 +5,12 @@ import { AuthService } from '../services/auth.service';
 /** Pantalla de inicio de cada rol después de iniciar sesión. */
 export function inicioPorRol(rol: string | null | undefined): string {
   switch (rol) {
-    case 'Administrador': return '/admin';
-    case 'Trabajador':    return '/portal';
-    default:              return '/dashboard';
+    case 'Administrador':
+      return '/admin';
+    case 'Trabajador':
+      return '/portal';
+    default:
+      return '/dashboard';
   }
 }
 

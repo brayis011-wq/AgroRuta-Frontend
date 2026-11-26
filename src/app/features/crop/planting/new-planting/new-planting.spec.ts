@@ -5,10 +5,20 @@ import { NuevaSiembraComponent } from './new-planting';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { CatalogoCultivoService } from '../../../../core/services/crop-catalog.service';
 
-const v = (id: number, nombre: string, tipoCultivoId: number, tipo: string) =>
-  ({ id, nombre, activo: true, tipoCultivoId, tipoCultivoNombre: tipo });
+const v = (id: number, nombre: string, tipoCultivoId: number, tipo: string) => ({
+  id,
+  nombre,
+  activo: true,
+  tipoCultivoId,
+  tipoCultivoNombre: tipo,
+});
 const catalogo = [
-  { id: 1, nombre: 'Uchuva', activo: true, variedades: [v(1, 'Colombia', 1, 'Uchuva'), v(2, 'Kenya', 1, 'Uchuva')] },
+  {
+    id: 1,
+    nombre: 'Uchuva',
+    activo: true,
+    variedades: [v(1, 'Colombia', 1, 'Uchuva'), v(2, 'Kenya', 1, 'Uchuva')],
+  },
   { id: 2, nombre: 'Aguacate', activo: true, variedades: [v(5, 'Hass', 2, 'Aguacate')] },
   { id: 3, nombre: 'Vacío', activo: true, variedades: [] },
 ];
@@ -29,7 +39,9 @@ describe('NuevaSiembraComponent', () => {
         { provide: Router, useValue: routerMock },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: (key: string) => key === 'fincaId' ? '3' : '7' } } },
+          useValue: {
+            snapshot: { paramMap: { get: (key: string) => (key === 'fincaId' ? '3' : '7') } },
+          },
         },
       ],
     }).compileComponents();
@@ -86,7 +98,10 @@ describe('NuevaSiembraComponent', () => {
     llenar();
     component.registrar();
     expect(cultivoServiceMock.registrarSiembra).toHaveBeenCalledWith({
-      fechaSiembra: '2024-01-01', cantidadPlantas: 100, variedadId: 2, loteId: 7,
+      fechaSiembra: '2024-01-01',
+      cantidadPlantas: 100,
+      variedadId: 2,
+      loteId: 7,
     });
   });
 
@@ -98,7 +113,9 @@ describe('NuevaSiembraComponent', () => {
   });
 
   it('registrar() shows the backend reason on failure', () => {
-    cultivoServiceMock.registrarSiembra.mockReturnValue(throwError(() => ({ error: { message: 'El lote ya tiene una siembra' } })));
+    cultivoServiceMock.registrarSiembra.mockReturnValue(
+      throwError(() => ({ error: { message: 'El lote ya tiene una siembra' } })),
+    );
     llenar();
     component.registrar();
     expect(component.error).toBe('El lote ya tiene una siembra');

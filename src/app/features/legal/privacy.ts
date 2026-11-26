@@ -16,7 +16,10 @@ import { Lang, LanguageService } from '../../core/services/language.service';
 })
 export class PrivacidadComponent {
   readonly idioma = inject(LanguageService);
-  readonly actualizada: Record<Lang, string> = { es: '5 de noviembre de 2026', en: 'November 5, 2026' };
+  readonly actualizada: Record<Lang, string> = {
+    es: '5 de noviembre de 2026',
+    en: 'November 5, 2026',
+  };
 
   cambiar(lang: Lang): void {
     this.idioma.set(lang);

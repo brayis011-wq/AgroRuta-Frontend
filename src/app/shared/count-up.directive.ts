@@ -11,8 +11,12 @@ export function decimalesDe(valor: number): number {
 
 /** Sin animaciones en el navegador (o si la persona pidió menos movimiento) se muestra el valor de una vez */
 function seAnima(): boolean {
-  return typeof requestAnimationFrame === 'function' && typeof matchMedia === 'function'
-    && !matchMedia('(prefers-reduced-motion: reduce)').matches && !document.hidden;
+  return (
+    typeof requestAnimationFrame === 'function' &&
+    typeof matchMedia === 'function' &&
+    !matchMedia('(prefers-reduced-motion: reduce)').matches &&
+    !document.hidden
+  );
 }
 
 /**
@@ -44,7 +48,8 @@ export class ContarDirective implements OnDestroy {
       const paso = (ahora: number) => {
         if (inicio < 0) inicio = ahora;
         const t = Math.min(1, (ahora - inicio) / DURACION_MS);
-        const valor = t === 1 ? destino : Math.round((desde + (destino - desde) * suave(t)) * factor) / factor;
+        const valor =
+          t === 1 ? destino : Math.round((desde + (destino - desde) * suave(t)) * factor) / factor;
         this.pintar(valor, formato);
         this.cuadro = t < 1 ? requestAnimationFrame(paso) : 0;
       };

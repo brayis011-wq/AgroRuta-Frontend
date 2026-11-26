@@ -31,7 +31,12 @@ export class RendimientoSiembraComponent {
     const r = this.resumen();
     const s = this.siembra();
     if (!r || !s.id) return { filas: [], porPlanta: false };
-    return comparacion(r, { id: s.id, nombre: nombreCultivo(s), desde: s.fechaSiembra, plantas: s.cantidadPlantas });
+    return comparacion(r, {
+      id: s.id,
+      nombre: nombreCultivo(s),
+      desde: s.fechaSiembra,
+      plantas: s.cantidadPlantas,
+    });
   });
   /** Etiqueta cada N semanas para que no se amontonen */
   readonly paso = computed(() => Math.max(1, Math.ceil(this.barras().length / 8)));
@@ -44,13 +49,19 @@ export class RendimientoSiembraComponent {
   dia(iso: string | null): string {
     if (!iso) return '';
     const [y, m, d] = iso.split('-').map(Number);
-    return new Intl.DateTimeFormat(localeDe(this.lang.current()), { day: 'numeric', month: 'short' }).format(new Date(y, m - 1, d));
+    return new Intl.DateTimeFormat(localeDe(this.lang.current()), {
+      day: 'numeric',
+      month: 'short',
+    }).format(new Date(y, m - 1, d));
   }
 
   /** "oct 2025" */
   mes(iso: string | null): string {
     if (!iso) return '';
     const [y, m] = iso.split('-').map(Number);
-    return new Intl.DateTimeFormat(localeDe(this.lang.current()), { month: 'short', year: 'numeric' }).format(new Date(y, m - 1, 1));
+    return new Intl.DateTimeFormat(localeDe(this.lang.current()), {
+      month: 'short',
+      year: 'numeric',
+    }).format(new Date(y, m - 1, 1));
   }
 }

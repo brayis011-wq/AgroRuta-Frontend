@@ -1,5 +1,4 @@
 <div class="cv">
-
   <header class="cv-head">
     <div>
       <p class="eyebrow">{{ 'workers.home.title' | translate }}</p>
@@ -7,52 +6,111 @@
       <p class="cv-sub">{{ 'workers.home.subtitle' | translate }}</p>
     </div>
     <div class="cv-acciones">
-      <button type="button" class="btn" (click)="irA('cargos')"><i class="ti ti-tags" aria-hidden="true"></i> {{ 'workers.catalog.label' | translate }}</button>
-      <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-user-plus" aria-hidden="true"></i> {{ 'workers.home.newWorker' | translate }}</button>
+      <button type="button" class="btn" (click)="irA('cargos')">
+        <i class="ti ti-tags" aria-hidden="true"></i> {{ 'workers.catalog.label' | translate }}
+      </button>
+      <button type="button" class="btn btn-prim" (click)="abrirNuevo()">
+        <i class="ti ti-user-plus" aria-hidden="true"></i>
+        {{ 'workers.home.newWorker' | translate }}
+      </button>
     </div>
   </header>
 
-  @if (error && !modoPanel) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+  @if (error && !modoPanel) {
+    <p class="aviso error" role="alert">
+      <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+    </p>
+  }
 
   <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">
     <div class="kpi">
       <span class="ic verde"><i class="ti ti-users" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.active' | translate }}</small><strong [arContar]="cantidadActivos"></strong><em>{{ 'workers.ui.ofTotal' | translate: { total: trabajadores.length } }}</em></div>
+      <div>
+        <small>{{ 'workers.home.stats.active' | translate }}</small
+        ><strong [arContar]="cantidadActivos"></strong
+        ><em>{{ 'workers.ui.ofTotal' | translate: { total: trabajadores.length } }}</em>
+      </div>
     </div>
     <div class="kpi">
       <span class="ic ambar"><i class="ti ti-player-pause" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.suspended' | translate }}</small><strong [arContar]="cantidadSuspendidos"></strong></div>
+      <div>
+        <small>{{ 'workers.home.stats.suspended' | translate }}</small
+        ><strong [arContar]="cantidadSuspendidos"></strong>
+      </div>
     </div>
     <button type="button" class="kpi clic" (click)="irA('nominas')">
       <span class="ic azul"><i class="ti ti-file-invoice" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.draftRosters' | translate }}</small><strong [arContar]="nominasPendientes"></strong><em>{{ 'workers.ui.seeRosters' | translate }}</em></div>
+      <div>
+        <small>{{ 'workers.home.stats.draftRosters' | translate }}</small
+        ><strong [arContar]="nominasPendientes"></strong
+        ><em>{{ 'workers.ui.seeRosters' | translate }}</em>
+      </div>
     </button>
     <button type="button" class="kpi clic" (click)="irA('pagos')">
       <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.totalPaid' | translate }}</small><strong>{{ totalPagado | pesos }}</strong><em>{{ (resumenPagos.cantidad === 1 ? 'workers.ui.paymentsCountOne' : 'workers.ui.paymentsCount') | translate: { count: resumenPagos.cantidad } }}</em></div>
+      <div>
+        <small>{{ 'workers.home.stats.totalPaid' | translate }}</small
+        ><strong>{{ totalPagado | pesos }}</strong
+        ><em>{{
+          (resumenPagos.cantidad === 1 ? 'workers.ui.paymentsCountOne' : 'workers.ui.paymentsCount')
+            | translate: { count: resumenPagos.cantidad }
+        }}</em>
+      </div>
     </button>
   </section>
 
   @if (solicitudesAcceso.length > 0) {
     <p class="aviso ambar" role="status">
       <i class="ti ti-bell-ringing" aria-hidden="true"></i>
-      {{ (solicitudesAcceso.length === 1 ? 'workers.home.access.bannerOne' : 'workers.home.access.banner') | translate: { count: solicitudesAcceso.length } }}
+      {{
+        (solicitudesAcceso.length === 1
+          ? 'workers.home.access.bannerOne'
+          : 'workers.home.access.banner'
+        ) | translate: { count: solicitudesAcceso.length }
+      }}
     </p>
   }
 
   <section class="tarjeta">
     <header class="tabla-head">
-      <h2><i class="ti ti-users-group" aria-hidden="true"></i> {{ 'workers.ui.people' | translate }}</h2>
+      <h2>
+        <i class="ti ti-users-group" aria-hidden="true"></i> {{ 'workers.ui.people' | translate }}
+      </h2>
       <div class="herramientas">
         <label class="buscar-t">
           <i class="ti ti-search" aria-hidden="true"></i>
           <span class="sr-only">{{ 'workers.home.list.searchLabel' | translate }}</span>
-          <input type="search" [placeholder]="'workers.home.list.searchPlaceholder' | translate" [(ngModel)]="busqueda" />
+          <input
+            type="search"
+            [placeholder]="'workers.home.list.searchPlaceholder' | translate"
+            [(ngModel)]="busqueda"
+          />
         </label>
         <div class="seg" role="group" [attr.aria-label]="'workers.ui.filterState' | translate">
-          <button type="button" [class.on]="filtroEstado === 'ACTIVO'" [attr.aria-pressed]="filtroEstado === 'ACTIVO'" (click)="filtroEstado = 'ACTIVO'">{{ 'workers.home.list.filterActive' | translate }}</button>
-          <button type="button" [class.on]="filtroEstado === 'SUSPENDIDO'" [attr.aria-pressed]="filtroEstado === 'SUSPENDIDO'" (click)="filtroEstado = 'SUSPENDIDO'">{{ 'workers.home.list.filterSuspended' | translate }}</button>
-          <button type="button" [class.on]="filtroEstado === 'TODOS'" [attr.aria-pressed]="filtroEstado === 'TODOS'" (click)="filtroEstado = 'TODOS'">{{ 'workers.home.list.filterAll' | translate }}</button>
+          <button
+            type="button"
+            [class.on]="filtroEstado === 'ACTIVO'"
+            [attr.aria-pressed]="filtroEstado === 'ACTIVO'"
+            (click)="filtroEstado = 'ACTIVO'"
+          >
+            {{ 'workers.home.list.filterActive' | translate }}
+          </button>
+          <button
+            type="button"
+            [class.on]="filtroEstado === 'SUSPENDIDO'"
+            [attr.aria-pressed]="filtroEstado === 'SUSPENDIDO'"
+            (click)="filtroEstado = 'SUSPENDIDO'"
+          >
+            {{ 'workers.home.list.filterSuspended' | translate }}
+          </button>
+          <button
+            type="button"
+            [class.on]="filtroEstado === 'TODOS'"
+            [attr.aria-pressed]="filtroEstado === 'TODOS'"
+            (click)="filtroEstado = 'TODOS'"
+          >
+            {{ 'workers.home.list.filterAll' | translate }}
+          </button>
         </div>
       </div>
     </header>
@@ -69,7 +127,10 @@
           <p>{{ 'workers.home.list.emptySuspended' | translate }}</p>
         } @else {
           <h3>{{ 'workers.home.list.emptyNone' | translate }}</h3>
-          <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-user-plus" aria-hidden="true"></i> {{ 'workers.home.list.registerFirst' | translate }}</button>
+          <button type="button" class="btn btn-prim" (click)="abrirNuevo()">
+            <i class="ti ti-user-plus" aria-hidden="true"></i>
+            {{ 'workers.home.list.registerFirst' | translate }}
+          </button>
         }
       </div>
     } @else {
@@ -81,33 +142,109 @@
               <th>{{ 'workers.ui.col.post' | translate }}</th>
               <th class="num">{{ 'workers.ui.col.wage' | translate }}</th>
               <th>{{ 'workers.ui.col.state' | translate }}</th>
-              <th>{{ 'workers.home.access.title' | translate }} <app-ayuda clave="help.portal" termino="help.portalTerm" /></th>
-              <th><span class="sr-only">{{ 'workers.ui.col.actions' | translate }}</span></th>
+              <th>
+                {{ 'workers.home.access.title' | translate }}
+                <app-ayuda clave="help.portal" termino="help.portalTerm" />
+              </th>
+              <th>
+                <span class="sr-only">{{ 'workers.ui.col.actions' | translate }}</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             @for (t of trabajadoresFiltrados; track t.id) {
-              <tr class="clic" [class.apagada]="t.estado !== 'ACTIVO'" tabindex="0"
-                  (click)="abrirDetalle(t)" (keydown.enter)="abrirDetalle(t)">
+              <tr
+                class="clic"
+                [class.apagada]="t.estado !== 'ACTIVO'"
+                tabindex="0"
+                (click)="abrirDetalle(t)"
+                (keydown.enter)="abrirDetalle(t)"
+              >
                 <td class="prin">
                   <span class="persona">
-                    <span class="av" [class.gris]="t.estado !== 'ACTIVO'" aria-hidden="true">{{ iniciales(t) }}</span>
-                    <span>{{ t.nombreCompleto }}<small>{{ 'workers.ui.idShort' | translate }} {{ t.cedula }}</small></span>
+                    <span class="av" [class.gris]="t.estado !== 'ACTIVO'" aria-hidden="true">{{
+                      iniciales(t)
+                    }}</span>
+                    <span
+                      >{{ t.nombreCompleto
+                      }}<small>{{ 'workers.ui.idShort' | translate }} {{ t.cedula }}</small></span
+                    >
                   </span>
                 </td>
-                <td>@if (t.cargo) { <span class="etq">{{ t.cargo.nombre }}</span> }</td>
-                <td class="num">@if (t.cargo) { {{ t.cargo.valorJornal | pesos }}<span class="suave"> {{ 'workers.home.list.perDay' | translate }}</span> }</td>
-                <td>@if (t.estado) { <span class="est" [class]="t.estado">{{ 'enums.estadoTrabajador.' + t.estado | translate }}</span> }</td>
                 <td>
-                  @if (t.accesoEstado === 'PENDIENTE') { <span class="est PENDIENTE">{{ 'workers.home.access.requestsBadge' | translate }}</span> }
-                  @else if (t.accesoEstado === 'APROBADO') { <span class="est si">{{ 'workers.home.access.hasAccessBadge' | translate }}</span> }
-                  @else { <span class="suave ocultar-m">—</span> }
+                  @if (t.cargo) {
+                    <span class="etq">{{ t.cargo.nombre }}</span>
+                  }
                 </td>
-                <td class="acc" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+                <td class="num">
+                  @if (t.cargo) {
+                    {{ t.cargo.valorJornal | pesos
+                    }}<span class="suave"> {{ 'workers.home.list.perDay' | translate }}</span>
+                  }
+                </td>
+                <td>
+                  @if (t.estado) {
+                    <span class="est" [class]="t.estado">{{
+                      'enums.estadoTrabajador.' + t.estado | translate
+                    }}</span>
+                  }
+                </td>
+                <td>
+                  @if (t.accesoEstado === 'PENDIENTE') {
+                    <span class="est PENDIENTE">{{
+                      'workers.home.access.requestsBadge' | translate
+                    }}</span>
+                  } @else if (t.accesoEstado === 'APROBADO') {
+                    <span class="est si">{{
+                      'workers.home.access.hasAccessBadge' | translate
+                    }}</span>
+                  } @else {
+                    <span class="suave ocultar-m">—</span>
+                  }
+                </td>
+                <td
+                  class="acc"
+                  (click)="$event.stopPropagation()"
+                  (keydown.enter)="$event.stopPropagation()"
+                >
                   <span class="acc-in">
-                    <button type="button" class="btn-ic con-texto verde-h" [disabled]="t.estado !== 'ACTIVO'" [title]="'workers.home.list.registerWage' | translate" [attr.aria-label]="'workers.home.list.registerWage' | translate" (click)="registrarJornal(t)"><i class="ti ti-calendar-plus" aria-hidden="true"></i><span class="txt-corto">{{ 'workers.home.list.short.wage' | translate }}</span></button>
-                    <button type="button" class="btn-ic con-texto" [title]="'workers.home.list.viewWages' | translate" [attr.aria-label]="'workers.home.list.viewWages' | translate" (click)="verJornales(t)"><i class="ti ti-calendar-week" aria-hidden="true"></i><span class="txt-corto">{{ 'workers.home.list.short.wages' | translate }}</span></button>
-                    <button type="button" class="btn-ic con-texto" [title]="'workers.home.list.viewRosters' | translate" [attr.aria-label]="'workers.home.list.viewRosters' | translate" (click)="verNominas(t)"><i class="ti ti-file-invoice" aria-hidden="true"></i><span class="txt-corto">{{ 'workers.home.list.short.rosters' | translate }}</span></button>
+                    <button
+                      type="button"
+                      class="btn-ic con-texto verde-h"
+                      [disabled]="t.estado !== 'ACTIVO'"
+                      [title]="'workers.home.list.registerWage' | translate"
+                      [attr.aria-label]="'workers.home.list.registerWage' | translate"
+                      (click)="registrarJornal(t)"
+                    >
+                      <i class="ti ti-calendar-plus" aria-hidden="true"></i
+                      ><span class="txt-corto">{{
+                        'workers.home.list.short.wage' | translate
+                      }}</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-ic con-texto"
+                      [title]="'workers.home.list.viewWages' | translate"
+                      [attr.aria-label]="'workers.home.list.viewWages' | translate"
+                      (click)="verJornales(t)"
+                    >
+                      <i class="ti ti-calendar-week" aria-hidden="true"></i
+                      ><span class="txt-corto">{{
+                        'workers.home.list.short.wages' | translate
+                      }}</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-ic con-texto"
+                      [title]="'workers.home.list.viewRosters' | translate"
+                      [attr.aria-label]="'workers.home.list.viewRosters' | translate"
+                      (click)="verNominas(t)"
+                    >
+                      <i class="ti ti-file-invoice" aria-hidden="true"></i
+                      ><span class="txt-corto">{{
+                        'workers.home.list.short.rosters' | translate
+                      }}</span>
+                    </button>
                     <i class="ti ti-chevron-right fin" aria-hidden="true"></i>
                   </span>
                 </td>
@@ -119,67 +256,189 @@
     }
   </section>
 
-  @if (exito && !modoPanel) { <p class="aviso verde msj" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}</p> }
+  @if (exito && !modoPanel) {
+    <p class="aviso verde msj" role="status">
+      <i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}
+    </p>
+  }
 </div>
 
 <!-- Panel lateral -->
 @if (modoPanel) {
-  <button type="button" class="overlay-l" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"></button>
+  <button
+    type="button"
+    class="overlay-l"
+    (click)="cerrarPanel()"
+    [attr.aria-label]="'workers.home.panel.close' | translate"
+  ></button>
   <dialog class="lado" open (click)="$event.stopPropagation()" (keydown.escape)="cerrarPanel()">
-
     @if (modoPanel === 'detalle' && trabajadorSeleccionado; as t) {
       <header class="lado-head">
-        <span class="av grande" [class.gris]="t.estado !== 'ACTIVO'" aria-hidden="true">{{ iniciales(t) }}</span>
+        <span class="av grande" [class.gris]="t.estado !== 'ACTIVO'" aria-hidden="true">{{
+          iniciales(t)
+        }}</span>
         <div>
           <h2>{{ t.nombreCompleto }}</h2>
-          <p>{{ 'workers.ui.idShort' | translate }} {{ t.cedula }} @if (t.estado) { <span class="est" [class]="t.estado">{{ 'enums.estadoTrabajador.' + t.estado | translate }}</span> }</p>
+          <p>
+            {{ 'workers.ui.idShort' | translate }} {{ t.cedula }}
+            @if (t.estado) {
+              <span class="est" [class]="t.estado">{{
+                'enums.estadoTrabajador.' + t.estado | translate
+              }}</span>
+            }
+          </p>
         </div>
-        <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+        <button
+          type="button"
+          class="btn-ic"
+          (click)="cerrarPanel()"
+          [attr.aria-label]="'workers.home.panel.close' | translate"
+        >
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
       </header>
 
       <div class="lado-cuerpo">
-        @if (exito) { <p class="aviso verde" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}</p> }
-        @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
-        @if (t.estado === 'SUSPENDIDO') { <p class="aviso ambar" role="note"><i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ 'workers.home.panel.suspendedNotice' | translate }}</p> }
+        @if (exito) {
+          <p class="aviso verde" role="status">
+            <i class="ti ti-circle-check" aria-hidden="true"></i>
+            {{ exito | translate: exitoParams }}
+          </p>
+        }
+        @if (error) {
+          <p class="aviso error" role="alert">
+            <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+          </p>
+        }
+        @if (t.estado === 'SUSPENDIDO') {
+          <p class="aviso ambar" role="note">
+            <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+            {{ 'workers.home.panel.suspendedNotice' | translate }}
+          </p>
+        }
 
         <div class="acciones-r">
-          <button type="button" class="btn btn-prim" [disabled]="t.estado !== 'ACTIVO'" (click)="registrarJornal(t)"><i class="ti ti-calendar-plus" aria-hidden="true"></i> {{ 'workers.home.panel.registerWage' | translate }}</button>
-          <button type="button" class="btn" (click)="verJornales(t)"><i class="ti ti-calendar-week" aria-hidden="true"></i> {{ 'workers.home.panel.viewWages' | translate }}</button>
-          <button type="button" class="btn" (click)="verNominas(t)"><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.home.panel.viewRosters' | translate }}</button>
+          <button
+            type="button"
+            class="btn btn-prim"
+            [disabled]="t.estado !== 'ACTIVO'"
+            (click)="registrarJornal(t)"
+          >
+            <i class="ti ti-calendar-plus" aria-hidden="true"></i>
+            {{ 'workers.home.panel.registerWage' | translate }}
+          </button>
+          <button type="button" class="btn" (click)="verJornales(t)">
+            <i class="ti ti-calendar-week" aria-hidden="true"></i>
+            {{ 'workers.home.panel.viewWages' | translate }}
+          </button>
+          <button type="button" class="btn" (click)="verNominas(t)">
+            <i class="ti ti-file-invoice" aria-hidden="true"></i>
+            {{ 'workers.home.panel.viewRosters' | translate }}
+          </button>
         </div>
 
         <section class="bloque">
           <h3>{{ 'workers.ui.data' | translate }}</h3>
           <dl class="datos">
-            <div><dt>{{ 'workers.home.panel.currentPost' | translate }}</dt><dd>{{ t.cargo?.nombre ?? '—' }} @if (t.cargo) { <span class="suave">· {{ t.cargo.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}</span> }</dd></div>
-            <div><dt>{{ 'workers.ui.contract' | translate }}</dt><dd>{{ t.tipoContrato ? ('enums.tipoContrato.' + t.tipoContrato | translate) : '—' }}</dd></div>
-            <div><dt>{{ 'workers.ui.hireDate' | translate }}</dt><dd>{{ t.fechaIngreso ? (t.fechaIngreso | fecha) : '—' }}</dd></div>
-            <div><dt>{{ 'workers.ui.phone' | translate }}</dt><dd>{{ t.telefono || '—' }}</dd></div>
-            @if (t.direccion) { <div><dt>{{ 'workers.ui.address' | translate }}</dt><dd>{{ t.direccion }}</dd></div> }
+            <div>
+              <dt>{{ 'workers.home.panel.currentPost' | translate }}</dt>
+              <dd>
+                {{ t.cargo?.nombre ?? '—' }}
+                @if (t.cargo) {
+                  <span class="suave"
+                    >· {{ t.cargo.valorJornal | pesos
+                    }}{{ 'workers.home.list.perDay' | translate }}</span
+                  >
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>{{ 'workers.ui.contract' | translate }}</dt>
+              <dd>
+                {{ t.tipoContrato ? ('enums.tipoContrato.' + t.tipoContrato | translate) : '—' }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ 'workers.ui.hireDate' | translate }}</dt>
+              <dd>{{ t.fechaIngreso ? (t.fechaIngreso | fecha) : '—' }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'workers.ui.phone' | translate }}</dt>
+              <dd>{{ t.telefono || '—' }}</dd>
+            </div>
+            @if (t.direccion) {
+              <div>
+                <dt>{{ 'workers.ui.address' | translate }}</dt>
+                <dd>{{ t.direccion }}</dd>
+              </div>
+            }
           </dl>
           <div class="fila-btn">
-            <button type="button" class="btn" (click)="abrirEditar(t)"><i class="ti ti-pencil" aria-hidden="true"></i> {{ 'workers.home.panel.edit' | translate }}</button>
-            <button type="button" class="btn" (click)="abrirCambiarCargo(t)"><i class="ti ti-tag" aria-hidden="true"></i> {{ 'workers.home.panel.changePost' | translate }}</button>
+            <button type="button" class="btn" (click)="abrirEditar(t)">
+              <i class="ti ti-pencil" aria-hidden="true"></i>
+              {{ 'workers.home.panel.edit' | translate }}
+            </button>
+            <button type="button" class="btn" (click)="abrirCambiarCargo(t)">
+              <i class="ti ti-tag" aria-hidden="true"></i>
+              {{ 'workers.home.panel.changePost' | translate }}
+            </button>
           </div>
         </section>
 
         <section class="bloque">
-          <h3>{{ 'workers.home.access.title' | translate }} <app-ayuda clave="help.portal" termino="help.portalTerm" /></h3>
+          <h3>
+            {{ 'workers.home.access.title' | translate }}
+            <app-ayuda clave="help.portal" termino="help.portalTerm" />
+          </h3>
           <div class="acceso" [class]="'acceso-' + (t.accesoEstado || 'NINGUNO')">
             @switch (t.accesoEstado) {
               @case ('PENDIENTE') {
-                <p>{{ 'workers.home.access.pendingText' | translate: { account: t.accesoNombre, email: t.accesoEmail } }}</p>
+                <p>
+                  {{
+                    'workers.home.access.pendingText'
+                      | translate: { account: t.accesoNombre, email: t.accesoEmail }
+                  }}
+                </p>
                 <p class="suave">{{ 'workers.home.access.pendingHint' | translate }}</p>
                 <div class="fila-btn">
-                  <button type="button" class="btn btn-prim" [disabled]="guardando" (click)="aprobarAcceso(t)"><i class="ti ti-check" aria-hidden="true"></i> {{ 'workers.home.access.approve' | translate }}</button>
-                  <button type="button" class="btn" [disabled]="guardando" (click)="rechazarAcceso(t)">{{ 'workers.home.access.reject' | translate }}</button>
+                  <button
+                    type="button"
+                    class="btn btn-prim"
+                    [disabled]="guardando"
+                    (click)="aprobarAcceso(t)"
+                  >
+                    <i class="ti ti-check" aria-hidden="true"></i>
+                    {{ 'workers.home.access.approve' | translate }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn"
+                    [disabled]="guardando"
+                    (click)="rechazarAcceso(t)"
+                  >
+                    {{ 'workers.home.access.reject' | translate }}
+                  </button>
                 </div>
               }
               @case ('APROBADO') {
-                <p>{{ 'workers.home.access.approvedText' | translate: { email: t.accesoEmail } }}</p>
-                <div class="fila-btn"><button type="button" class="btn" [disabled]="guardando" (click)="rechazarAcceso(t)"><i class="ti ti-lock" aria-hidden="true"></i> {{ 'workers.home.access.revoke' | translate }}</button></div>
+                <p>
+                  {{ 'workers.home.access.approvedText' | translate: { email: t.accesoEmail } }}
+                </p>
+                <div class="fila-btn">
+                  <button
+                    type="button"
+                    class="btn"
+                    [disabled]="guardando"
+                    (click)="rechazarAcceso(t)"
+                  >
+                    <i class="ti ti-lock" aria-hidden="true"></i>
+                    {{ 'workers.home.access.revoke' | translate }}
+                  </button>
+                </div>
               }
-              @default { <p>{{ 'workers.home.access.noneText' | translate: { cedula: t.cedula } }}</p> }
+              @default {
+                <p>{{ 'workers.home.access.noneText' | translate: { cedula: t.cedula } }}</p>
+              }
             }
           </div>
         </section>
@@ -188,12 +447,21 @@
           <h3>{{ 'workers.home.panel.stateManagement' | translate }}</h3>
           <div class="fila-btn">
             @if (t.estado === 'SUSPENDIDO') {
-              <button type="button" class="btn" (click)="reactivar(t)"><i class="ti ti-player-play" aria-hidden="true"></i> {{ 'workers.home.panel.reactivate' | translate }}</button>
+              <button type="button" class="btn" (click)="reactivar(t)">
+                <i class="ti ti-player-play" aria-hidden="true"></i>
+                {{ 'workers.home.panel.reactivate' | translate }}
+              </button>
             }
             @if (t.estado === 'ACTIVO') {
-              <button type="button" class="btn" (click)="suspender(t)"><i class="ti ti-player-pause" aria-hidden="true"></i> {{ 'workers.home.panel.suspend' | translate }}</button>
+              <button type="button" class="btn" (click)="suspender(t)">
+                <i class="ti ti-player-pause" aria-hidden="true"></i>
+                {{ 'workers.home.panel.suspend' | translate }}
+              </button>
             }
-            <button type="button" class="btn btn-borrar" (click)="desactivar(t)"><i class="ti ti-user-off" aria-hidden="true"></i> {{ 'workers.home.panel.deactivate' | translate }}</button>
+            <button type="button" class="btn btn-borrar" (click)="desactivar(t)">
+              <i class="ti ti-user-off" aria-hidden="true"></i>
+              {{ 'workers.home.panel.deactivate' | translate }}
+            </button>
           </div>
         </section>
       </div>
@@ -202,58 +470,134 @@
     @if (modoPanel === 'nuevo') {
       <header class="lado-head">
         <span class="ic verde" aria-hidden="true"><i class="ti ti-user-plus"></i></span>
-        <div><h2>{{ 'workers.home.new.title' | translate }}</h2><p>{{ 'workers.home.new.subtitle' | translate }}</p></div>
-        <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+        <div>
+          <h2>{{ 'workers.home.new.title' | translate }}</h2>
+          <p>{{ 'workers.home.new.subtitle' | translate }}</p>
+        </div>
+        <button
+          type="button"
+          class="btn-ic"
+          (click)="cerrarPanel()"
+          [attr.aria-label]="'workers.home.panel.close' | translate"
+        >
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
       </header>
       <form class="lado-cuerpo" [formGroup]="formNuevo" (ngSubmit)="guardarNuevo()">
-        @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+        @if (error) {
+          <p class="aviso error" role="alert">
+            <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+          </p>
+        }
         <fieldset class="grupo">
           <legend>{{ 'workers.home.new.personalInfo' | translate }}</legend>
           <div class="campos">
-            <label class="campo"><span>{{ 'workers.home.new.firstName' | translate }}</span>
-              <input formControlName="nombre" type="text" [placeholder]="'workers.home.new.firstNamePlaceholder' | translate" [class.invalido]="invalido(formNuevo, 'nombre')" />
-              @if (invalido(formNuevo, 'nombre')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            <label class="campo"
+              ><span>{{ 'workers.home.new.firstName' | translate }}</span>
+              <input
+                formControlName="nombre"
+                type="text"
+                [placeholder]="'workers.home.new.firstNamePlaceholder' | translate"
+                [class.invalido]="invalido(formNuevo, 'nombre')"
+              />
+              @if (invalido(formNuevo, 'nombre')) {
+                <em class="err">{{ 'common.required' | translate }}</em>
+              }
             </label>
-            <label class="campo"><span>{{ 'workers.home.new.lastName' | translate }}</span>
-              <input formControlName="apellido" type="text" [placeholder]="'workers.home.new.lastNamePlaceholder' | translate" [class.invalido]="invalido(formNuevo, 'apellido')" />
-              @if (invalido(formNuevo, 'apellido')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            <label class="campo"
+              ><span>{{ 'workers.home.new.lastName' | translate }}</span>
+              <input
+                formControlName="apellido"
+                type="text"
+                [placeholder]="'workers.home.new.lastNamePlaceholder' | translate"
+                [class.invalido]="invalido(formNuevo, 'apellido')"
+              />
+              @if (invalido(formNuevo, 'apellido')) {
+                <em class="err">{{ 'common.required' | translate }}</em>
+              }
             </label>
-            <label class="campo"><span>{{ 'workers.home.new.idNumber' | translate }}</span>
-              <input formControlName="cedula" type="text" inputmode="numeric" [placeholder]="'workers.home.new.idNumberPlaceholder' | translate" [class.invalido]="invalido(formNuevo, 'cedula')" />
-              @if (invalido(formNuevo, 'cedula')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            <label class="campo"
+              ><span>{{ 'workers.home.new.idNumber' | translate }}</span>
+              <input
+                formControlName="cedula"
+                type="text"
+                inputmode="numeric"
+                [placeholder]="'workers.home.new.idNumberPlaceholder' | translate"
+                [class.invalido]="invalido(formNuevo, 'cedula')"
+              />
+              @if (invalido(formNuevo, 'cedula')) {
+                <em class="err">{{ 'common.required' | translate }}</em>
+              }
             </label>
-            <label class="campo"><span>{{ 'workers.home.new.phone' | translate }}</span>
-              <input formControlName="telefono" type="tel" [placeholder]="'workers.home.new.optional' | translate" />
+            <label class="campo"
+              ><span>{{ 'workers.home.new.phone' | translate }}</span>
+              <input
+                formControlName="telefono"
+                type="tel"
+                [placeholder]="'workers.home.new.optional' | translate"
+              />
             </label>
-            <label class="campo ancho"><span>{{ 'workers.home.new.address' | translate }}</span>
-              <input formControlName="direccion" type="text" [placeholder]="'workers.home.new.optional' | translate" />
+            <label class="campo ancho"
+              ><span>{{ 'workers.home.new.address' | translate }}</span>
+              <input
+                formControlName="direccion"
+                type="text"
+                [placeholder]="'workers.home.new.optional' | translate"
+              />
             </label>
           </div>
         </fieldset>
         <fieldset class="grupo">
           <legend>{{ 'workers.home.new.contractAndPost' | translate }}</legend>
           <div class="campos">
-            <label class="campo"><span>{{ 'workers.home.new.hireDate' | translate }}</span>
-              <input formControlName="fechaIngreso" type="date" [class.invalido]="invalido(formNuevo, 'fechaIngreso')" />
-              @if (invalido(formNuevo, 'fechaIngreso')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            <label class="campo"
+              ><span>{{ 'workers.home.new.hireDate' | translate }}</span>
+              <input
+                formControlName="fechaIngreso"
+                type="date"
+                [class.invalido]="invalido(formNuevo, 'fechaIngreso')"
+              />
+              @if (invalido(formNuevo, 'fechaIngreso')) {
+                <em class="err">{{ 'common.required' | translate }}</em>
+              }
             </label>
-            <label class="campo"><span>{{ 'workers.home.new.contractType' | translate }}</span>
+            <label class="campo"
+              ><span>{{ 'workers.home.new.contractType' | translate }}</span>
               <select formControlName="tipoContrato">
-                @for (tc of tiposContrato; track tc) { <option [value]="tc">{{ 'enums.tipoContrato.' + tc | translate }}</option> }
+                @for (tc of tiposContrato; track tc) {
+                  <option [value]="tc">{{ 'enums.tipoContrato.' + tc | translate }}</option>
+                }
               </select>
             </label>
-            <label class="campo ancho"><span>{{ 'workers.home.new.post' | translate }}</span>
+            <label class="campo ancho"
+              ><span>{{ 'workers.home.new.post' | translate }}</span>
               <select formControlName="cargoId" [class.invalido]="invalido(formNuevo, 'cargoId')">
-                <option [ngValue]="null" disabled>{{ 'workers.home.new.selectPost' | translate }}</option>
-                @for (c of cargos; track c.id) { <option [ngValue]="c.id">{{ c.nombre }} — {{ c.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}</option> }
+                <option [ngValue]="null" disabled>
+                  {{ 'workers.home.new.selectPost' | translate }}
+                </option>
+                @for (c of cargos; track c.id) {
+                  <option [ngValue]="c.id">
+                    {{ c.nombre }} — {{ c.valorJornal | pesos
+                    }}{{ 'workers.home.list.perDay' | translate }}
+                  </option>
+                }
               </select>
-              @if (invalido(formNuevo, 'cargoId')) { <em class="err">{{ 'workers.home.new.selectPostError' | translate }}</em> }
+              @if (invalido(formNuevo, 'cargoId')) {
+                <em class="err">{{ 'workers.home.new.selectPostError' | translate }}</em>
+              }
             </label>
           </div>
         </fieldset>
         <footer class="lado-pie">
-          <button type="button" class="btn btn-texto" (click)="cerrarPanel()">{{ 'common.cancel' | translate }}</button>
-          <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando ? 'workers.home.new.registering' : 'workers.home.new.submit') | translate }}</button>
+          <button type="button" class="btn btn-texto" (click)="cerrarPanel()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn btn-prim" [disabled]="guardando">
+            <i class="ti ti-check" aria-hidden="true"></i>
+            {{
+              (guardando ? 'workers.home.new.registering' : 'workers.home.new.submit') | translate
+            }}
+          </button>
         </footer>
       </form>
     }
@@ -261,35 +605,82 @@
     @if (modoPanel === 'editar' && trabajadorSeleccionado; as t) {
       <header class="lado-head">
         <span class="av grande" aria-hidden="true">{{ iniciales(t) }}</span>
-        <div><h2>{{ 'workers.home.edit.title' | translate }}</h2><p>{{ t.nombreCompleto }}</p></div>
-        <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+        <div>
+          <h2>{{ 'workers.home.edit.title' | translate }}</h2>
+          <p>{{ t.nombreCompleto }}</p>
+        </div>
+        <button
+          type="button"
+          class="btn-ic"
+          (click)="cerrarPanel()"
+          [attr.aria-label]="'workers.home.panel.close' | translate"
+        >
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
       </header>
       <form class="lado-cuerpo" [formGroup]="formEditar" (ngSubmit)="guardarEdicion()">
-        @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+        @if (error) {
+          <p class="aviso error" role="alert">
+            <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+          </p>
+        }
         <div class="campos">
-          <label class="campo"><span>{{ 'workers.home.new.firstName' | translate }}</span>
-            <input formControlName="nombre" type="text" [class.invalido]="invalido(formEditar, 'nombre')" />
-            @if (invalido(formEditar, 'nombre')) { <em class="err">{{ 'common.required' | translate }}</em> }
+          <label class="campo"
+            ><span>{{ 'workers.home.new.firstName' | translate }}</span>
+            <input
+              formControlName="nombre"
+              type="text"
+              [class.invalido]="invalido(formEditar, 'nombre')"
+            />
+            @if (invalido(formEditar, 'nombre')) {
+              <em class="err">{{ 'common.required' | translate }}</em>
+            }
           </label>
-          <label class="campo"><span>{{ 'workers.home.new.lastName' | translate }}</span>
-            <input formControlName="apellido" type="text" [class.invalido]="invalido(formEditar, 'apellido')" />
-            @if (invalido(formEditar, 'apellido')) { <em class="err">{{ 'common.required' | translate }}</em> }
+          <label class="campo"
+            ><span>{{ 'workers.home.new.lastName' | translate }}</span>
+            <input
+              formControlName="apellido"
+              type="text"
+              [class.invalido]="invalido(formEditar, 'apellido')"
+            />
+            @if (invalido(formEditar, 'apellido')) {
+              <em class="err">{{ 'common.required' | translate }}</em>
+            }
           </label>
-          <label class="campo"><span>{{ 'workers.home.new.phone' | translate }}</span>
-            <input formControlName="telefono" type="tel" [placeholder]="'workers.home.new.optional' | translate" />
+          <label class="campo"
+            ><span>{{ 'workers.home.new.phone' | translate }}</span>
+            <input
+              formControlName="telefono"
+              type="tel"
+              [placeholder]="'workers.home.new.optional' | translate"
+            />
           </label>
-          <label class="campo"><span>{{ 'workers.home.new.contractType' | translate }}</span>
+          <label class="campo"
+            ><span>{{ 'workers.home.new.contractType' | translate }}</span>
             <select formControlName="tipoContrato">
-              @for (tc of tiposContrato; track tc) { <option [value]="tc">{{ 'enums.tipoContrato.' + tc | translate }}</option> }
+              @for (tc of tiposContrato; track tc) {
+                <option [value]="tc">{{ 'enums.tipoContrato.' + tc | translate }}</option>
+              }
             </select>
           </label>
-          <label class="campo ancho"><span>{{ 'workers.home.new.address' | translate }}</span>
-            <input formControlName="direccion" type="text" [placeholder]="'workers.home.new.optional' | translate" />
+          <label class="campo ancho"
+            ><span>{{ 'workers.home.new.address' | translate }}</span>
+            <input
+              formControlName="direccion"
+              type="text"
+              [placeholder]="'workers.home.new.optional' | translate"
+            />
           </label>
         </div>
         <footer class="lado-pie">
-          <button type="button" class="btn btn-texto" (click)="abrirDetalle(t)"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'workers.home.edit.back' | translate }}</button>
-          <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando ? 'workers.home.edit.saving' : 'workers.home.edit.submit') | translate }}</button>
+          <button type="button" class="btn btn-texto" (click)="abrirDetalle(t)">
+            <i class="ti ti-arrow-left" aria-hidden="true"></i>
+            {{ 'workers.home.edit.back' | translate }}
+          </button>
+          <button type="submit" class="btn btn-prim" [disabled]="guardando">
+            <i class="ti ti-check" aria-hidden="true"></i>
+            {{ (guardando ? 'workers.home.edit.saving' : 'workers.home.edit.submit') | translate }}
+          </button>
         </footer>
       </form>
     }
@@ -297,24 +688,62 @@
     @if (modoPanel === 'cambiarCargo' && trabajadorSeleccionado; as t) {
       <header class="lado-head">
         <span class="av grande" aria-hidden="true">{{ iniciales(t) }}</span>
-        <div><h2>{{ 'workers.home.changePost.title' | translate }}</h2><p>{{ t.nombreCompleto }}</p></div>
-        <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+        <div>
+          <h2>{{ 'workers.home.changePost.title' | translate }}</h2>
+          <p>{{ t.nombreCompleto }}</p>
+        </div>
+        <button
+          type="button"
+          class="btn-ic"
+          (click)="cerrarPanel()"
+          [attr.aria-label]="'workers.home.panel.close' | translate"
+        >
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
       </header>
       <form class="lado-cuerpo" [formGroup]="formCargo" (ngSubmit)="guardarCargo()">
-        @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
-        @if (t.cargo) {
-          <p class="aviso gris"><i class="ti ti-tag" aria-hidden="true"></i> {{ 'workers.home.panel.currentPost' | translate }}: <strong>{{ t.cargo.nombre }}</strong> · {{ t.cargo.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}</p>
+        @if (error) {
+          <p class="aviso error" role="alert">
+            <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+          </p>
         }
-        <label class="campo"><span>{{ 'workers.home.changePost.newPost' | translate }}</span>
+        @if (t.cargo) {
+          <p class="aviso gris">
+            <i class="ti ti-tag" aria-hidden="true"></i>
+            {{ 'workers.home.panel.currentPost' | translate }}:
+            <strong>{{ t.cargo.nombre }}</strong> · {{ t.cargo.valorJornal | pesos
+            }}{{ 'workers.home.list.perDay' | translate }}
+          </p>
+        }
+        <label class="campo"
+          ><span>{{ 'workers.home.changePost.newPost' | translate }}</span>
           <select formControlName="cargoId" [class.invalido]="invalido(formCargo, 'cargoId')">
-            <option [ngValue]="null" disabled>{{ 'workers.home.new.selectPost' | translate }}</option>
-            @for (c of cargos; track c.id) { <option [ngValue]="c.id">{{ c.nombre }} — {{ c.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}</option> }
+            <option [ngValue]="null" disabled>
+              {{ 'workers.home.new.selectPost' | translate }}
+            </option>
+            @for (c of cargos; track c.id) {
+              <option [ngValue]="c.id">
+                {{ c.nombre }} — {{ c.valorJornal | pesos
+                }}{{ 'workers.home.list.perDay' | translate }}
+              </option>
+            }
           </select>
-          @if (invalido(formCargo, 'cargoId')) { <em class="err">{{ 'workers.home.new.selectPostError' | translate }}</em> }
+          @if (invalido(formCargo, 'cargoId')) {
+            <em class="err">{{ 'workers.home.new.selectPostError' | translate }}</em>
+          }
         </label>
         <footer class="lado-pie">
-          <button type="button" class="btn btn-texto" (click)="abrirDetalle(t)"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'workers.home.edit.back' | translate }}</button>
-          <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando ? 'workers.home.edit.saving' : 'workers.home.changePost.submit') | translate }}</button>
+          <button type="button" class="btn btn-texto" (click)="abrirDetalle(t)">
+            <i class="ti ti-arrow-left" aria-hidden="true"></i>
+            {{ 'workers.home.edit.back' | translate }}
+          </button>
+          <button type="submit" class="btn btn-prim" [disabled]="guardando">
+            <i class="ti ti-check" aria-hidden="true"></i>
+            {{
+              (guardando ? 'workers.home.edit.saving' : 'workers.home.changePost.submit')
+                | translate
+            }}
+          </button>
         </footer>
       </form>
     }

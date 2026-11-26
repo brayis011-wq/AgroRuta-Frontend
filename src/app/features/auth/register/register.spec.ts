@@ -20,15 +20,12 @@ describe('RegistroComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [RegistroComponent],
-      providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: authServiceMock },
-      ],
+      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(RegistroComponent);
+    fixture = TestBed.createComponent(RegistroComponent);
     component = fixture.componentInstance;
-    router    = TestBed.inject(Router);
+    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
@@ -61,13 +58,18 @@ describe('RegistroComponent', () => {
 
   it('onSubmit() should call authService.registro with form data', () => {
     authServiceMock.registro.mockReturnValue(of({} as any));
-    component.form = { nombre: 'Juan', email: 'juan@test.com', password: '123456', rol: 'Agricultor' };
+    component.form = {
+      nombre: 'Juan',
+      email: 'juan@test.com',
+      password: '123456',
+      rol: 'Agricultor',
+    };
     component.onSubmit();
     expect(authServiceMock.registro).toHaveBeenCalledWith({
-      nombre:   'Juan',
-      email:    'juan@test.com',
+      nombre: 'Juan',
+      email: 'juan@test.com',
       password: '123456',
-      rol:      'Agricultor',
+      rol: 'Agricultor',
     });
   });
 
@@ -98,7 +100,7 @@ describe('RegistroComponent', () => {
 
   it('onSubmit() should set error from err.error.message on failure', () => {
     authServiceMock.registro.mockReturnValue(
-      throwError(() => ({ error: { message: 'El correo ya existe.' } }))
+      throwError(() => ({ error: { message: 'El correo ya existe.' } })),
     );
     component.onSubmit();
     expect(component.error).toBe('El correo ya existe.');
@@ -106,23 +108,25 @@ describe('RegistroComponent', () => {
   });
 
   it('onSubmit() should set generic error when err.error.message is missing', () => {
-    authServiceMock.registro.mockReturnValue(
-      throwError(() => ({ error: {} }))
-    );
+    authServiceMock.registro.mockReturnValue(throwError(() => ({ error: {} })));
     component.onSubmit();
     expect(component.error).toBe('auth.register.error');
   });
 
   it('onSubmit() should set generic error when err.error is null', () => {
-    authServiceMock.registro.mockReturnValue(
-      throwError(() => ({}))
-    );
+    authServiceMock.registro.mockReturnValue(throwError(() => ({})));
     component.onSubmit();
     expect(component.error).toBe('auth.register.error');
   });
 
   it('onSubmit() should require the cédula for a worker', () => {
-    component.form = { nombre: 'Luis', email: 'luis@test.com', password: '12345678', rol: 'Trabajador', cedula: '  ' };
+    component.form = {
+      nombre: 'Luis',
+      email: 'luis@test.com',
+      password: '12345678',
+      rol: 'Trabajador',
+      cedula: '  ',
+    };
     component.onSubmit();
     expect(authServiceMock.registro).not.toHaveBeenCalled();
     expect(component.error).toBe('auth.register.cedulaRequired');
@@ -130,22 +134,51 @@ describe('RegistroComponent', () => {
 
   it('onSubmit() should send the trimmed cédula for a worker and explain the approval', () => {
     authServiceMock.registro.mockReturnValue(of({} as any));
-    component.form = { nombre: 'Luis', email: 'luis@test.com', password: '12345678', rol: 'Trabajador', cedula: ' 1052334120 ' };
+    component.form = {
+      nombre: 'Luis',
+      email: 'luis@test.com',
+      password: '12345678',
+      rol: 'Trabajador',
+      cedula: ' 1052334120 ',
+    };
     component.onSubmit();
-    expect(authServiceMock.registro).toHaveBeenCalledWith(expect.objectContaining({ cedula: '1052334120', rol: 'Trabajador' }));
+    expect(authServiceMock.registro).toHaveBeenCalledWith(
+      expect.objectContaining({ cedula: '1052334120', rol: 'Trabajador' }),
+    );
     expect(component.exito).toBe('auth.register.successWorker');
   });
 
   it('onSubmit() should not send a cédula for a farmer', () => {
     authServiceMock.registro.mockReturnValue(of({} as any));
-    component.form = { nombre: 'Ana', email: 'ana@test.com', password: '12345678', rol: 'Agricultor', cedula: '999999' };
+    component.form = {
+      nombre: 'Ana',
+      email: 'ana@test.com',
+      password: '12345678',
+      rol: 'Agricultor',
+      cedula: '999999',
+    };
     component.onSubmit();
     expect(authServiceMock.registro.mock.calls[0][0].cedula).toBeUndefined();
   });
 
   it('si falta confirmar el correo muestra el aviso y no navega', async () => {
-    authServiceMock.registro.mockReturnValue(of({ id: 1, token: null, email: 'ana@x.com', nombre: 'Ana', rol: 'Agricultor', verificacionPendiente: true }));
-    component.form = { nombre: 'Ana', email: 'ana@x.com', password: 'clave-larga', rol: 'Agricultor', cedula: '' };
+    authServiceMock.registro.mockReturnValue(
+      of({
+        id: 1,
+        token: null,
+        email: 'ana@x.com',
+        nombre: 'Ana',
+        rol: 'Agricultor',
+        verificacionPendiente: true,
+      }),
+    );
+    component.form = {
+      nombre: 'Ana',
+      email: 'ana@x.com',
+      password: 'clave-larga',
+      rol: 'Agricultor',
+      cedula: '',
+    };
     component.onSubmit();
     fixture.detectChanges();
     expect(component.pendiente).toBe('ana@x.com');

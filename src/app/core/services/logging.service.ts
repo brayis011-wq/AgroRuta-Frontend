@@ -1,11 +1,15 @@
 // src/app/core/services/logging.service.ts
 import { Injectable, isDevMode } from '@angular/core';
 
-export enum LogLevel { DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3 }
+export enum LogLevel {
+  DEBUG = 0,
+  INFO = 1,
+  WARN = 2,
+  ERROR = 3,
+}
 
 @Injectable({ providedIn: 'root' })
 export class LoggingService {
-
   private level: LogLevel = isDevMode() ? LogLevel.DEBUG : LogLevel.WARN;
 
   debug(message: string, ...args: any[]) {

@@ -43,6 +43,9 @@ export function iconoClima(iconUrl: string | null | undefined): string {
 
 /** Municipio de una ubicación "Vereda, Municipio, Departamento" */
 export function municipio(f: Pick<Finca, 'ubicacion'> | null | undefined): string {
-  const partes = (f?.ubicacion ?? '').split(',').map((p) => p.trim()).filter(Boolean);
+  const partes = (f?.ubicacion ?? '')
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean);
   return partes.length >= 2 ? partes[partes.length - 2] : (partes[0] ?? '');
 }

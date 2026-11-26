@@ -1,5 +1,8 @@
 <div class="cv">
-  <a routerLink="../" class="volver"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'workers.wages.new.back' | translate }}</a>
+  <a routerLink="../" class="volver"
+    ><i class="ti ti-arrow-left" aria-hidden="true"></i>
+    {{ 'workers.wages.new.back' | translate }}</a
+  >
 
   <header class="cv-head">
     <div>
@@ -11,54 +14,124 @@
 
   <form arSiguienteCampo class="rejilla" [formGroup]="form" (ngSubmit)="guardar()">
     <section class="tarjeta formu">
-      @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+      @if (error) {
+        <p class="aviso error" role="alert">
+          <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+        </p>
+      }
 
       <fieldset class="grupo">
         <legend>{{ 'workers.wages.new.info' | translate }}</legend>
         <div class="campos">
-          <label class="campo"><span>{{ 'workers.wages.new.worker' | translate }}</span>
+          <label class="campo"
+            ><span>{{ 'workers.wages.new.worker' | translate }}</span>
             <select formControlName="trabajadorId" [class.invalido]="invalido('trabajadorId')">
-              <option [ngValue]="null" disabled>{{ 'workers.wages.new.selectWorker' | translate }}</option>
-              @for (t of trabajadores; track t.id) { <option [ngValue]="t.id">{{ t.nombreCompleto }}{{ t.cargo ? ' — ' + t.cargo.nombre : '' }}</option> }
+              <option [ngValue]="null" disabled>
+                {{ 'workers.wages.new.selectWorker' | translate }}
+              </option>
+              @for (t of trabajadores; track t.id) {
+                <option [ngValue]="t.id">
+                  {{ t.nombreCompleto }}{{ t.cargo ? ' — ' + t.cargo.nombre : '' }}
+                </option>
+              }
             </select>
-            @if (invalido('trabajadorId')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            @if (invalido('trabajadorId')) {
+              <em class="err">{{ 'common.required' | translate }}</em>
+            }
           </label>
-          <label class="campo"><span>{{ 'workers.wages.new.date' | translate }}</span>
-            <input formControlName="fecha" type="date" [max]="hoy" [class.invalido]="invalido('fecha')" />
-            @if (invalido('fecha')) { <em class="err">{{ 'common.required' | translate }}</em> }
+          <label class="campo"
+            ><span>{{ 'workers.wages.new.date' | translate }}</span>
+            <input
+              formControlName="fecha"
+              type="date"
+              [max]="hoy"
+              [class.invalido]="invalido('fecha')"
+            />
+            @if (invalido('fecha')) {
+              <em class="err">{{ 'common.required' | translate }}</em>
+            }
           </label>
           @if (!cargandoCultivos && cultivos.length === 0) {
             <p class="aviso ambar campo ancho" role="status">
               <i class="ti ti-plant-off" aria-hidden="true"></i>
-              <span>{{ 'workers.wages.new.noCrops' | translate }} <a routerLink="/crops">{{ 'workers.wages.new.goToCrops' | translate }}</a></span>
+              <span
+                >{{ 'workers.wages.new.noCrops' | translate }}
+                <a routerLink="/crops">{{ 'workers.wages.new.goToCrops' | translate }}</a></span
+              >
             </p>
           } @else {
-            <label class="campo"><span>{{ 'workers.wages.new.farm' | translate }}</span>
+            <label class="campo"
+              ><span>{{ 'workers.wages.new.farm' | translate }}</span>
               <select formControlName="fincaId" [class.invalido]="invalido('fincaId')">
-                <option [ngValue]="null" disabled>{{ (cargandoCultivos ? 'common.loading' : 'workers.wages.new.selectFarm') | translate }}</option>
-                @for (f of fincas; track f.id) { <option [ngValue]="f.id">{{ f.nombre }}</option> }
-              </select>
-              @if (invalido('fincaId')) { <em class="err">{{ 'common.required' | translate }}</em> }
-            </label>
-            <label class="campo"><span>{{ 'workers.wages.new.crop' | translate }}</span>
-              <select formControlName="cultivoId" [class.invalido]="invalido('cultivoId')">
-                <option [ngValue]="null" disabled>{{ (form.get('fincaId')?.value == null ? 'workers.wages.new.selectFarmFirst' : 'workers.wages.new.selectCrop') | translate }}</option>
-                @for (c of cultivosDeFinca; track c.id) {
-                  <option [ngValue]="c.id">{{ c.loteNombre }}{{ c.variedad ? ' — ' + (c.tipoCultivo ? c.tipoCultivo + ' ' : '') + c.variedad : '' }}{{ c.estado ? ' · ' + ('enums.etapaCultivo.' + c.estado | translate) : '' }}</option>
+                <option [ngValue]="null" disabled>
+                  {{
+                    (cargandoCultivos ? 'common.loading' : 'workers.wages.new.selectFarm')
+                      | translate
+                  }}
+                </option>
+                @for (f of fincas; track f.id) {
+                  <option [ngValue]="f.id">{{ f.nombre }}</option>
                 }
               </select>
-              @if (invalido('cultivoId')) { <em class="err">{{ 'common.required' | translate }}</em> }
+              @if (invalido('fincaId')) {
+                <em class="err">{{ 'common.required' | translate }}</em>
+              }
+            </label>
+            <label class="campo"
+              ><span>{{ 'workers.wages.new.crop' | translate }}</span>
+              <select formControlName="cultivoId" [class.invalido]="invalido('cultivoId')">
+                <option [ngValue]="null" disabled>
+                  {{
+                    (form.get('fincaId')?.value == null
+                      ? 'workers.wages.new.selectFarmFirst'
+                      : 'workers.wages.new.selectCrop'
+                    ) | translate
+                  }}
+                </option>
+                @for (c of cultivosDeFinca; track c.id) {
+                  <option [ngValue]="c.id">
+                    {{ c.loteNombre
+                    }}{{
+                      c.variedad
+                        ? ' — ' + (c.tipoCultivo ? c.tipoCultivo + ' ' : '') + c.variedad
+                        : ''
+                    }}{{ c.estado ? ' · ' + ('enums.etapaCultivo.' + c.estado | translate) : '' }}
+                  </option>
+                }
+              </select>
+              @if (invalido('cultivoId')) {
+                <em class="err">{{ 'common.required' | translate }}</em>
+              }
             </label>
           }
           @if (porKilo) {
-            <label class="campo ancho"><span>{{ 'workers.wages.new.kilos' | translate }}</span>
-              <input formControlName="kilos" type="number" min="0.1" step="0.5" inputmode="decimal" placeholder="45" [class.invalido]="invalido('kilos')" />
-              <small class="ayuda">{{ 'workers.wages.new.kilosHelp' | translate: { value: (trabajadorElegido?.cargo?.valorKilo | pesos) } }}</small>
-              @if (invalido('kilos')) { <em class="err">{{ 'workers.wages.new.kilosRequired' | translate }}</em> }
+            <label class="campo ancho"
+              ><span>{{ 'workers.wages.new.kilos' | translate }}</span>
+              <input
+                formControlName="kilos"
+                type="number"
+                min="0.1"
+                step="0.5"
+                inputmode="decimal"
+                placeholder="45"
+                [class.invalido]="invalido('kilos')"
+              />
+              <small class="ayuda">{{
+                'workers.wages.new.kilosHelp'
+                  | translate: { value: (trabajadorElegido?.cargo?.valorKilo | pesos) }
+              }}</small>
+              @if (invalido('kilos')) {
+                <em class="err">{{ 'workers.wages.new.kilosRequired' | translate }}</em>
+              }
             </label>
           }
-          <label class="campo ancho"><span>{{ 'workers.wages.new.notes' | translate }}</span>
-            <input formControlName="observaciones" type="text" [placeholder]="'workers.wages.new.notesPlaceholder' | translate" />
+          <label class="campo ancho"
+            ><span>{{ 'workers.wages.new.notes' | translate }}</span>
+            <input
+              formControlName="observaciones"
+              type="text"
+              [placeholder]="'workers.wages.new.notesPlaceholder' | translate"
+            />
           </label>
         </div>
       </fieldset>
@@ -67,29 +140,74 @@
         <legend>{{ 'workers.wages.new.activitiesTitle' | translate }}</legend>
         <div class="acts">
           @for (a of actividades; track a.id) {
-            <button type="button" class="act" [class.on]="estaSeleccionada(a.id)" [attr.aria-pressed]="estaSeleccionada(a.id)" (click)="toggleActividad(a.id)">
-              <i class="ti" [class.ti-circle-check-filled]="estaSeleccionada(a.id)" [class.ti-circle]="!estaSeleccionada(a.id)" aria-hidden="true"></i>
-              <span><strong>{{ a.nombre }}</strong>@if (a.descripcion) { <small>{{ a.descripcion }}</small> }</span>
+            <button
+              type="button"
+              class="act"
+              [class.on]="estaSeleccionada(a.id)"
+              [attr.aria-pressed]="estaSeleccionada(a.id)"
+              (click)="toggleActividad(a.id)"
+            >
+              <i
+                class="ti"
+                [class.ti-circle-check-filled]="estaSeleccionada(a.id)"
+                [class.ti-circle]="!estaSeleccionada(a.id)"
+                aria-hidden="true"
+              ></i>
+              <span
+                ><strong>{{ a.nombre }}</strong>
+                @if (a.descripcion) {
+                  <small>{{ a.descripcion }}</small>
+                }
+              </span>
             </button>
           }
         </div>
         @if (actividadesSeleccionadas.size === 0) {
           <p class="nota-acts">{{ 'workers.wages.new.selectAtLeast' | translate }}</p>
         } @else {
-          <p class="nota-acts ok">{{ (actividadesSeleccionadas.size === 1 ? 'workers.wages.new.selectedCountOne' : 'workers.wages.new.selectedCount') | translate: { count: actividadesSeleccionadas.size } }}</p>
+          <p class="nota-acts ok">
+            {{
+              (actividadesSeleccionadas.size === 1
+                ? 'workers.wages.new.selectedCountOne'
+                : 'workers.wages.new.selectedCount'
+              ) | translate: { count: actividadesSeleccionadas.size }
+            }}
+          </p>
         }
       </fieldset>
     </section>
 
     <aside class="tarjeta resumen-j">
-      <h2><i class="ti ti-receipt" aria-hidden="true"></i> {{ 'workers.ui.summaryShort' | translate }}</h2>
+      <h2>
+        <i class="ti ti-receipt" aria-hidden="true"></i> {{ 'workers.ui.summaryShort' | translate }}
+      </h2>
       <dl>
-        <div><dt>{{ 'workers.ui.col.worker' | translate }}</dt><dd>{{ trabajadorElegido?.nombreCompleto ?? '—' }}</dd></div>
-        <div><dt>{{ 'workers.ui.col.post' | translate }}</dt><dd>{{ trabajadorElegido?.cargo?.nombre ?? '—' }}</dd></div>
-        <div><dt>{{ 'workers.wages.list.table.activities' | translate }}</dt><dd>{{ actividadesSeleccionadas.size }}</dd></div>
-        <div class="valor"><dt>{{ 'workers.ui.col.wage' | translate }}</dt><dd>{{ trabajadorElegido?.cargo ? (valorEstimado | pesos) : '—' }}</dd></div>
+        <div>
+          <dt>{{ 'workers.ui.col.worker' | translate }}</dt>
+          <dd>{{ trabajadorElegido?.nombreCompleto ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'workers.ui.col.post' | translate }}</dt>
+          <dd>{{ trabajadorElegido?.cargo?.nombre ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'workers.wages.list.table.activities' | translate }}</dt>
+          <dd>{{ actividadesSeleccionadas.size }}</dd>
+        </div>
+        <div class="valor">
+          <dt>{{ 'workers.ui.col.wage' | translate }}</dt>
+          <dd>{{ trabajadorElegido?.cargo ? (valorEstimado | pesos) : '—' }}</dd>
+        </div>
       </dl>
-      <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti" [class.ti-check]="!guardando" [class.ti-loader-2]="guardando" aria-hidden="true"></i> {{ (guardando ? 'workers.wages.new.saving' : 'workers.wages.new.submit') | translate }}</button>
+      <button type="submit" class="btn btn-prim" [disabled]="guardando">
+        <i
+          class="ti"
+          [class.ti-check]="!guardando"
+          [class.ti-loader-2]="guardando"
+          aria-hidden="true"
+        ></i>
+        {{ (guardando ? 'workers.wages.new.saving' : 'workers.wages.new.submit') | translate }}
+      </button>
       <a routerLink="../" class="btn btn-texto">{{ 'common.cancel' | translate }}</a>
     </aside>
   </form>

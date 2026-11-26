@@ -73,7 +73,8 @@ export class PrecargaDatosService {
   /** Descarga si la última descarga tiene más de esa antigüedad (y hay señal y no ahorra datos) */
   siHaceFalta(antiguedadMs: number): void {
     if (!this.cola.enLinea() || this.uidAgricultor() == null) return;
-    const ahorro = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+    const ahorro = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+      ?.saveData;
     if (ahorro) return;
     this.leerUltima();
     const u = this.ultima();
@@ -112,20 +113,31 @@ export class PrecargaDatosService {
 
       // Fincas → lotes en cultivo → su siembra y lo que muestra la ficha y sus formularios
       const fincas = (await traer(this.cultivo.listarFincasPorAgricultor(uid))) ?? [];
-      const lotes = (await enGrupos(fincas.filter((f) => f.id != null).map((f) => () => traer(this.cultivo.listarLotesPorFinca(f.id!)))))
+      const lotes = (
+        await enGrupos(
+          fincas
+            .filter((f) => f.id != null)
+            .map((f) => () => traer(this.cultivo.listarLotesPorFinca(f.id!))),
+        )
+      )
         .flatMap((l) => l ?? [])
         .filter((l) => l.estado === 'EN_CULTIVO' && l.id != null);
-      const siembras = (await enGrupos(lotes.map((l) => () => traer(this.cultivo.buscarSiembraPorLote(l.id!)))))
-        .filter((s): s is NonNullable<typeof s> => !!s?.id);
-      await enGrupos(fincas.filter((f) => f.id != null).map((f) => () => traer(this.cultivo.buscarFinca(f.id!))));
+      const siembras = (
+        await enGrupos(lotes.map((l) => () => traer(this.cultivo.buscarSiembraPorLote(l.id!))))
+      ).filter((s): s is NonNullable<typeof s> => !!s?.id);
+      await enGrupos(
+        fincas.filter((f) => f.id != null).map((f) => () => traer(this.cultivo.buscarFinca(f.id!))),
+      );
       await enGrupos(lotes.map((l) => () => traer(this.cultivo.buscarLote(l.id!))));
-      await enGrupos<unknown>(siembras.flatMap((s): (() => Promise<unknown>)[] => [
-        () => traer(this.cultivo.buscarSiembra(s.id!)),
-        () => traer(this.cultivo.resumenSiembra(s.id!)),
-        () => traer(this.cultivo.listarActividades(s.id!)),
-        () => traer(this.cultivo.listarFumigaciones(s.id!)),
-        () => traer(this.cultivo.listarCosechas(s.id!)),
-      ]));
+      await enGrupos<unknown>(
+        siembras.flatMap((s): (() => Promise<unknown>)[] => [
+          () => traer(this.cultivo.buscarSiembra(s.id!)),
+          () => traer(this.cultivo.resumenSiembra(s.id!)),
+          () => traer(this.cultivo.listarActividades(s.id!)),
+          () => traer(this.cultivo.listarFumigaciones(s.id!)),
+          () => traer(this.cultivo.listarCosechas(s.id!)),
+        ]),
+      );
 
       // Solo cuenta como descarga si llegó algo (sin señal todo falla y no se anota)
       if (ok > 0) {

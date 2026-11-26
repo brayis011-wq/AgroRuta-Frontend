@@ -40,15 +40,12 @@ export class ChangePasswordFormComponent {
         nuevaPassword: ['', [Validators.required, Validators.minLength(8)]],
         confirmarPassword: ['', [Validators.required]],
       },
-      { validators: passwordsMatch }
+      { validators: passwordsMatch },
     );
   }
 
   get mismatch(): boolean {
-    return !!(
-      this.form.hasError('mismatch') &&
-      this.form.get('confirmarPassword')?.touched
-    );
+    return !!(this.form.hasError('mismatch') && this.form.get('confirmarPassword')?.touched);
   }
 
   isInvalid(field: string): boolean {

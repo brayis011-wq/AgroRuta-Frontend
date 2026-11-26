@@ -27,9 +27,13 @@ export class FiltroTrabajadorComponent {
 
   readonly fichas = computed(() => this.trabajadores().length <= MAX_FICHAS);
   /** Los activos primero; los demás se siguen pudiendo ver (tienen jornales y pagos viejos) */
-  readonly ordenados = computed(() => [...this.trabajadores()].sort((a, b) =>
-    Number(a.estado !== 'ACTIVO') - Number(b.estado !== 'ACTIVO')
-    || (a.nombreCompleto ?? '').localeCompare(b.nombreCompleto ?? '')));
+  readonly ordenados = computed(() =>
+    [...this.trabajadores()].sort(
+      (a, b) =>
+        Number(a.estado !== 'ACTIVO') - Number(b.estado !== 'ACTIVO') ||
+        (a.nombreCompleto ?? '').localeCompare(b.nombreCompleto ?? ''),
+    ),
+  );
 
   elegir(id: number | null): void {
     if (id !== this.valor()) this.cambio.emit(id);

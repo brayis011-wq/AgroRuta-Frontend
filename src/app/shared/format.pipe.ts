@@ -6,7 +6,9 @@ import { formatoFecha, formatoPesos, localeDe } from './format';
 @Pipe({ name: 'pesos', standalone: true, pure: false })
 export class PesosPipe implements PipeTransform {
   private readonly lang = inject(LanguageService);
-  transform(v: number | null | undefined): string { return formatoPesos(v, this.lang.current()); }
+  transform(v: number | null | undefined): string {
+    return formatoPesos(v, this.lang.current());
+  }
 }
 
 /** Fecha corta según el idioma activo: 3 nov 2026 */
@@ -23,8 +25,12 @@ export class FechaPipe implements PipeTransform {
 @Pipe({ name: 'periodo', standalone: true, pure: false })
 export class PeriodoPipe implements PipeTransform {
   private readonly lang = inject(LanguageService);
-  transform(inicio: string | Date | null | undefined, fin: string | Date | null | undefined): string {
-    const a = aFecha(inicio), b = aFecha(fin);
+  transform(
+    inicio: string | Date | null | undefined,
+    fin: string | Date | null | undefined,
+  ): string {
+    const a = aFecha(inicio),
+      b = aFecha(fin);
     if (!a || !b) return '—';
     const loc = localeDe(this.lang.current());
     const dm = new Intl.DateTimeFormat(loc, { day: 'numeric', month: 'short' });

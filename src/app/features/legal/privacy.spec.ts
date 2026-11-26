@@ -4,12 +4,16 @@ import { PrivacidadComponent } from './privacy';
 
 describe('PrivacidadComponent', () => {
   const crear = () => {
-    TestBed.configureTestingModule({ imports: [PrivacidadComponent], providers: [provideRouter([])] });
+    TestBed.configureTestingModule({
+      imports: [PrivacidadComponent],
+      providers: [provideRouter([])],
+    });
     const f = TestBed.createComponent(PrivacidadComponent);
     f.detectChanges();
     return f;
   };
-  const enlaceGoogle = 'a[href="https://developers.google.com/terms/api-services-user-data-policy"]';
+  const enlaceGoogle =
+    'a[href="https://developers.google.com/terms/api-services-user-data-policy"]';
 
   afterEach(() => localStorage.removeItem('lang'));
 

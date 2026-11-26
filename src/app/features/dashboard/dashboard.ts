@@ -1,5 +1,16 @@
 import { PrecargarDirective } from '../../shared/prefetch.directive';
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnInit, afterEveryRender, computed, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  afterEveryRender,
+  computed,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -9,11 +20,23 @@ import { AuthService } from '../../core/services/auth.service';
 import { CultivoService } from '../../core/services/crop.service';
 import { LanguageService } from '../../core/services/language.service';
 import { FincaActivaService } from '../../core/services/active-farm.service';
-import { JornalService, NominaService, PagoService, TrabajadorService } from '../../core/services/worker.service';
+import {
+  JornalService,
+  NominaService,
+  PagoService,
+  TrabajadorService,
+} from '../../core/services/worker.service';
 import { InventarioService } from '../../core/services/inventory.service';
 import { PagosDelMes, ResumenNominas, Trabajador } from '../../core/models/worker.model';
 import { EventoCalendario, Finca, Lote, Siembra } from '../../core/models/crop.model';
-import { ICONO_EVENTO, TONO_EVENTO, diasHasta, esPorVenir, ordenAgenda, textoEvento } from '../crop/calendar/events';
+import {
+  ICONO_EVENTO,
+  TONO_EVENTO,
+  diasHasta,
+  esPorVenir,
+  ordenAgenda,
+  textoEvento,
+} from '../crop/calendar/events';
 import { WeatherAdviceComponent } from '../weather/weather-advice/weather-advice';
 import { formatoPesos, formatoNumero } from '../../shared/format';
 import { consejoFumigacion, iconoClima, municipio } from '../../shared/weather';
@@ -23,7 +46,15 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ContarDirective } from '../../shared/count-up.directive';
 import { almanaqueDe } from './almanac';
 import { emparejarColumnas, soltarColumnas } from './dashboard-columns';
-import { ETAPAS_AVANCE, ResumenInicio, calcularResumen, diasDesde, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
+import {
+  ETAPAS_AVANCE,
+  ResumenInicio,
+  calcularResumen,
+  diasDesde,
+  inicioMesAnterior,
+  pasoEtapa,
+  saludoSegunHora,
+} from './home-summary';
 import { PasoInicial, calcularPrimerosPasos } from './first-steps';
 import { PrimerosPasosComponent } from './first-steps-card';
 
@@ -54,9 +85,22 @@ export interface Pendiente {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TranslatePipe, RouterLink, NgTemplateOutlet, WeatherAdviceComponent, ContarDirective, PrimerosPasosComponent, PrecargarDirective],
+  imports: [
+    TranslatePipe,
+    RouterLink,
+    NgTemplateOutlet,
+    WeatherAdviceComponent,
+    ContarDirective,
+    PrimerosPasosComponent,
+    PrecargarDirective,
+  ],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css', './dashboard-hero.css', './dashboard-pending.css', './dashboard-body.css'],
+  styleUrls: [
+    './dashboard.css',
+    './dashboard-hero.css',
+    './dashboard-pending.css',
+    './dashboard-body.css',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit {
@@ -96,12 +140,56 @@ export class DashboardComponent implements OnInit {
     const r = this.resumen();
     if (!r) return [];
     const lista: Pendiente[] = [
-      { clave: 'toApprove', n: r.porAprobar.n, monto: r.porAprobar.total, icono: 'ti-clock-hour-4', tono: 'ambar', ruta: '/worker/payrolls', accion: 'review' },
-      { clave: 'toPay', n: r.sinPagar.n, monto: r.sinPagar.total, icono: 'ti-cash', tono: 'azul', ruta: '/worker/payrolls', accion: 'pay' },
-      { clave: 'portal', n: r.solicitudesPortal, icono: 'ti-user-check', tono: 'verde', ruta: '/worker', accion: 'approve' },
-      { clave: 'noWage', n: r.sinJornalHoy, icono: 'ti-calendar-plus', tono: 'gris', ruta: '/worker/workdays/new', accion: 'register' },
-      { clave: 'storeroom', n: this.avisosBodega(), icono: 'ti-building-warehouse', tono: 'ambar', ruta: '/crops/inventory', accion: 'review' },
-      { clave: 'freeLots', n: r.lotesDisponibles, icono: 'ti-seeding', tono: 'verde', ruta: '/crops', accion: 'plant' },
+      {
+        clave: 'toApprove',
+        n: r.porAprobar.n,
+        monto: r.porAprobar.total,
+        icono: 'ti-clock-hour-4',
+        tono: 'ambar',
+        ruta: '/worker/payrolls',
+        accion: 'review',
+      },
+      {
+        clave: 'toPay',
+        n: r.sinPagar.n,
+        monto: r.sinPagar.total,
+        icono: 'ti-cash',
+        tono: 'azul',
+        ruta: '/worker/payrolls',
+        accion: 'pay',
+      },
+      {
+        clave: 'portal',
+        n: r.solicitudesPortal,
+        icono: 'ti-user-check',
+        tono: 'verde',
+        ruta: '/worker',
+        accion: 'approve',
+      },
+      {
+        clave: 'noWage',
+        n: r.sinJornalHoy,
+        icono: 'ti-calendar-plus',
+        tono: 'gris',
+        ruta: '/worker/workdays/new',
+        accion: 'register',
+      },
+      {
+        clave: 'storeroom',
+        n: this.avisosBodega(),
+        icono: 'ti-building-warehouse',
+        tono: 'ambar',
+        ruta: '/crops/inventory',
+        accion: 'review',
+      },
+      {
+        clave: 'freeLots',
+        n: r.lotesDisponibles,
+        icono: 'ti-seeding',
+        tono: 'verde',
+        ruta: '/crops',
+        accion: 'plant',
+      },
     ];
     return lista.filter((p) => p.n > 0);
   });
@@ -113,12 +201,21 @@ export class DashboardComponent implements OnInit {
   // ── Clima de hoy resumido arriba, en el panel del almanaque (el detalle sigue más abajo) ──
   private readonly weather = inject(WeatherService);
   /** Cambia con la finca elegida en el menú; si llegan dos respuestas, vale la de la última finca */
-  readonly climaHoy = toSignal(toObservable(this.climaFinca).pipe(
-    switchMap((f) => (f?.centroideLat != null && f?.centroideLng != null
-      ? this.weather.getByCoordinates(f.centroideLat, f.centroideLng)
-      : this.weather.getByCity(municipio(f) || 'Bogotá')).pipe(catchError(() => of(null as Weather | null)))),
-  ), { initialValue: null as Weather | null });
-  readonly consejoHoy = computed(() => { const c = this.climaHoy(); return c ? consejoFumigacion(c) : null; });
+  readonly climaHoy = toSignal(
+    toObservable(this.climaFinca).pipe(
+      switchMap((f) =>
+        (f?.centroideLat != null && f?.centroideLng != null
+          ? this.weather.getByCoordinates(f.centroideLat, f.centroideLng)
+          : this.weather.getByCity(municipio(f) || 'Bogotá')
+        ).pipe(catchError(() => of(null as Weather | null))),
+      ),
+    ),
+    { initialValue: null as Weather | null },
+  );
+  readonly consejoHoy = computed(() => {
+    const c = this.climaHoy();
+    return c ? consejoFumigacion(c) : null;
+  });
   readonly iconoHoy = computed(() => iconoClima(this.climaHoy()?.iconUrl));
   grados(c: Weather): number {
     return Math.round(c.temperature);
@@ -129,7 +226,6 @@ export class DashboardComponent implements OnInit {
     const d = c.description ?? '';
     return d.charAt(0).toUpperCase() + d.slice(1);
   }
-
 
   private readonly cuerpo = viewChild<ElementRef<HTMLElement>>('cuerpo');
 
@@ -146,7 +242,9 @@ export class DashboardComponent implements OnInit {
 
   /** Al cambiar el tamaño de la ventana se vuelve a pintar, y con eso a decidir si se emparejan las columnas */
   @HostListener('window:resize')
-  alCambiarTamano(): void { /* basta con que Angular vuelva a pintar */ }
+  alCambiarTamano(): void {
+    /* basta con que Angular vuelva a pintar */
+  }
 
   ngOnInit(): void {
     this.cargar();
@@ -154,50 +252,98 @@ export class DashboardComponent implements OnInit {
 
   cargar(): void {
     const id = this.usuario?.id;
-    if (id == null) { this.cargando.set(false); return; }
+    if (id == null) {
+      this.cargando.set(false);
+      return;
+    }
     const desde = iso(inicioMesAnterior(this.hoy));
     const hasta = iso(this.hoy);
-    this.inventario.avisos().pipe(catchError(() => of([]))).subscribe((a) => this.avisosBodega.set(a.length));
+    this.inventario
+      .avisos()
+      .pipe(catchError(() => of([])))
+      .subscribe((a) => this.avisosBodega.set(a.length));
     // Si una consulta falla, el Inicio igual se muestra con lo demás
-    const vacio = <T>(o: Observable<T[]>): Observable<T[]> => o.pipe(catchError(() => of([] as T[])));
+    const vacio = <T>(o: Observable<T[]>): Observable<T[]> =>
+      o.pipe(catchError(() => of([] as T[])));
 
     const trabajadores$ = vacio<Trabajador>(this.trabajadores.listarTodos());
     // Una sola consulta con los conteos: antes se pedían los jornales de cada trabajador activo
     const jornales$ = this.jornales.resumenInicio(hasta).pipe(catchError(() => of(null)));
     const fincas$ = vacio<Finca>(this.cultivo.listarFincasPorAgricultor(id)).pipe(shareReplay(1));
     const lotes$ = fincas$.pipe(
-      switchMap((fs) => fs.length
-        ? forkJoin(fs.map((f) => vacio<Lote>(this.cultivo.listarLotesPorFinca(f.id!))
-            .pipe(map((ls) => ls.map((l): LoteConFinca => ({ ...l, fincaNombre: f.nombre })))))).pipe(map((l) => l.flat()))
-        : of([] as LoteConFinca[])),
+      switchMap((fs) =>
+        fs.length
+          ? forkJoin(
+              fs.map((f) =>
+                vacio<Lote>(this.cultivo.listarLotesPorFinca(f.id!)).pipe(
+                  map((ls) => ls.map((l): LoteConFinca => ({ ...l, fincaNombre: f.nombre }))),
+                ),
+              ),
+            ).pipe(map((l) => l.flat()))
+          : of([] as LoteConFinca[]),
+      ),
       shareReplay(1),
     );
 
     // Siembras en curso: una consulta por lote sembrado
-    lotes$.pipe(
-      switchMap((ls) => {
-        const sembrados = ls.filter((l) => l.estado === 'EN_CULTIVO' && l.id != null);
-        return sembrados.length
-          ? forkJoin(sembrados.map((l) => this.cultivo.buscarSiembraPorLote(l.id!).pipe(
-              map((s): CultivoEnCurso | null => s ? { siembra: s, lote: l, dias: diasDesde(s.fechaSiembra, this.hoy), paso: pasoEtapa(s.estadoCultivo) } : null),
-              catchError(() => of(null)))))
-          : of([] as (CultivoEnCurso | null)[]);
-      }),
-    ).subscribe((r) => this.cultivos.set(
-      r.filter((c): c is CultivoEnCurso => c !== null).sort((a, b) => b.paso - a.paso || b.dias - a.dias)));
+    lotes$
+      .pipe(
+        switchMap((ls) => {
+          const sembrados = ls.filter((l) => l.estado === 'EN_CULTIVO' && l.id != null);
+          return sembrados.length
+            ? forkJoin(
+                sembrados.map((l) =>
+                  this.cultivo.buscarSiembraPorLote(l.id!).pipe(
+                    map((s): CultivoEnCurso | null =>
+                      s
+                        ? {
+                            siembra: s,
+                            lote: l,
+                            dias: diasDesde(s.fechaSiembra, this.hoy),
+                            paso: pasoEtapa(s.estadoCultivo),
+                          }
+                        : null,
+                    ),
+                    catchError(() => of(null)),
+                  ),
+                ),
+              )
+            : of([] as (CultivoEnCurso | null)[]);
+        }),
+      )
+      .subscribe((r) =>
+        this.cultivos.set(
+          r
+            .filter((c): c is CultivoEnCurso => c !== null)
+            .sort((a, b) => b.paso - a.paso || b.dias - a.dias),
+        ),
+      );
 
     // Próximas tres semanas del calendario (de la finca elegida, o de todas)
-    const hace7 = new Date(this.hoy); hace7.setDate(hace7.getDate() - 7);
-    const hasta3 = new Date(this.hoy); hasta3.setDate(hasta3.getDate() + 21);
-    fincas$.pipe(
-      switchMap((fs) => {
-        const activa = this.fincaActiva.idActiva?.() ?? null;
-        const ids = activa != null && fs.some((f) => f.id === activa) ? [activa] : fs.map((f) => f.id!).filter((x) => x != null);
-        return ids.length
-          ? forkJoin(ids.map((fid) => vacio<EventoCalendario>(this.cultivo.calendarioFinca(fid, iso(hace7), iso(hasta3))))).pipe(map((l) => l.flat()))
-          : of([] as EventoCalendario[]);
-      }),
-    ).subscribe((ev) => this.agenda.set(ev.filter(esPorVenir).sort(ordenAgenda).slice(0, 6)));
+    const hace7 = new Date(this.hoy);
+    hace7.setDate(hace7.getDate() - 7);
+    const hasta3 = new Date(this.hoy);
+    hasta3.setDate(hasta3.getDate() + 21);
+    fincas$
+      .pipe(
+        switchMap((fs) => {
+          const activa = this.fincaActiva.idActiva?.() ?? null;
+          const ids =
+            activa != null && fs.some((f) => f.id === activa)
+              ? [activa]
+              : fs.map((f) => f.id!).filter((x) => x != null);
+          return ids.length
+            ? forkJoin(
+                ids.map((fid) =>
+                  vacio<EventoCalendario>(
+                    this.cultivo.calendarioFinca(fid, iso(hace7), iso(hasta3)),
+                  ),
+                ),
+              ).pipe(map((l) => l.flat()))
+            : of([] as EventoCalendario[]);
+        }),
+      )
+      .subscribe((ev) => this.agenda.set(ev.filter(esPorVenir).sort(ordenAgenda).slice(0, 6)));
 
     forkJoin({
       // Totales ya sumados por la base: antes se traían todas las nóminas y todos los pagos
@@ -219,7 +365,11 @@ export class DashboardComponent implements OnInit {
   }
 
   fechaHoy(): string {
-    return new Intl.DateTimeFormat(this.lang.current(), { weekday: 'long', day: 'numeric', month: 'long' }).format(this.hoy);
+    return new Intl.DateTimeFormat(this.lang.current(), {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+    }).format(this.hoy);
   }
 
   pesos(v: number): string {

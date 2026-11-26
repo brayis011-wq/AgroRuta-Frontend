@@ -13,7 +13,11 @@ import { TipoCultivo, VariedadCultivo } from '../../../core/models/crop.model';
   standalone: true,
   imports: [FormsModule, TranslatePipe],
   templateUrl: './admin-crops.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-crops.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    './admin-crops.css',
+  ],
 })
 export class AdminCultivosComponent implements OnInit {
   private readonly catalogo = inject(CatalogoCultivoService);
@@ -38,8 +42,16 @@ export class AdminCultivosComponent implements OnInit {
     this.cargando = true;
     this.error = false;
     this.catalogo.todos().subscribe({
-      next: (c) => { this.cultivos = c; this.cargando = false; this.cdr.markForCheck(); },
-      error: () => { this.error = true; this.cargando = false; this.cdr.markForCheck(); },
+      next: (c) => {
+        this.cultivos = c;
+        this.cargando = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.error = true;
+        this.cargando = false;
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -50,27 +62,47 @@ export class AdminCultivosComponent implements OnInit {
   crearCultivo(): void {
     const nombre = this.nuevoCultivo.trim();
     if (!nombre || this.guardando) return;
-    this.ejecutar(this.catalogo.crearTipo(nombre), 'admin.crops.created', { name: nombre }, () => (this.nuevoCultivo = ''));
+    this.ejecutar(
+      this.catalogo.crearTipo(nombre),
+      'admin.crops.created',
+      { name: nombre },
+      () => (this.nuevoCultivo = ''),
+    );
   }
 
   crearVariedad(t: TipoCultivo): void {
     const nombre = (this.nuevaVariedad[t.id] ?? '').trim();
     if (!nombre || this.guardando) return;
-    this.ejecutar(this.catalogo.crearVariedad(t.id, nombre), 'admin.crops.varietyCreated',
-      { name: nombre, crop: t.nombre }, () => (this.nuevaVariedad[t.id] = ''));
+    this.ejecutar(
+      this.catalogo.crearVariedad(t.id, nombre),
+      'admin.crops.varietyCreated',
+      { name: nombre, crop: t.nombre },
+      () => (this.nuevaVariedad[t.id] = ''),
+    );
   }
 
   alternarCultivo(t: TipoCultivo): void {
-    this.ejecutar(this.catalogo.estadoTipo(t.id, !t.activo),
-      t.activo ? 'admin.crops.deactivated' : 'admin.crops.activated', { name: t.nombre });
+    this.ejecutar(
+      this.catalogo.estadoTipo(t.id, !t.activo),
+      t.activo ? 'admin.crops.deactivated' : 'admin.crops.activated',
+      { name: t.nombre },
+    );
   }
 
   alternarVariedad(v: VariedadCultivo): void {
-    this.ejecutar(this.catalogo.estadoVariedad(v.id, !v.activo),
-      v.activo ? 'admin.crops.deactivated' : 'admin.crops.activated', { name: v.nombre });
+    this.ejecutar(
+      this.catalogo.estadoVariedad(v.id, !v.activo),
+      v.activo ? 'admin.crops.deactivated' : 'admin.crops.activated',
+      { name: v.nombre },
+    );
   }
 
-  private ejecutar(obs: import('rxjs').Observable<unknown>, clave: string, params: object, alTerminar?: () => void): void {
+  private ejecutar(
+    obs: import('rxjs').Observable<unknown>,
+    clave: string,
+    params: object,
+    alTerminar?: () => void,
+  ): void {
     this.guardando = true;
     this.mensaje = null;
     obs.subscribe({
@@ -82,7 +114,10 @@ export class AdminCultivosComponent implements OnInit {
       },
       error: (err) => {
         this.guardando = false;
-        this.mensaje = { tipo: 'error', texto: err?.error?.message || this.translate.instant('admin.crops.saveError') };
+        this.mensaje = {
+          tipo: 'error',
+          texto: err?.error?.message || this.translate.instant('admin.crops.saveError'),
+        };
         this.cdr.markForCheck();
       },
     });

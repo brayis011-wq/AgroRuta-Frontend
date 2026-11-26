@@ -9,7 +9,10 @@ export const MAX_ARCHIVO = 15 * 1024 * 1024;
 export const MAX_RESULTADO = 340_000;
 
 export function revisarArchivo(archivo: File): ErrorFoto | null {
-  if (!/^image\/(jpeg|png|webp|heic|heif|gif)$/i.test(archivo.type) && !/\.(jpe?g|png|webp|heic|heif|gif)$/i.test(archivo.name)) {
+  if (
+    !/^image\/(jpeg|png|webp|heic|heif|gif)$/i.test(archivo.type) &&
+    !/\.(jpe?g|png|webp|heic|heif|gif)$/i.test(archivo.name)
+  ) {
     return 'tipo';
   }
   if (archivo.size > MAX_ARCHIVO) return 'pesada';
@@ -29,7 +32,17 @@ export async function prepararFoto(archivo: File, lado = 320): Promise<string> {
   ctx.fillStyle = '#fff'; // las PNG con fondo transparente quedan sobre blanco
   ctx.fillRect(0, 0, lienzo.width, lienzo.height);
   ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(img, (ancho - corte) / 2, (alto - corte) / 2, corte, corte, 0, 0, lienzo.width, lienzo.height);
+  ctx.drawImage(
+    img,
+    (ancho - corte) / 2,
+    (alto - corte) / 2,
+    corte,
+    corte,
+    0,
+    0,
+    lienzo.width,
+    lienzo.height,
+  );
   if ('close' in img) img.close();
   for (const calidad of [0.86, 0.75, 0.6, 0.45]) {
     const url = lienzo.toDataURL('image/jpeg', calidad);
@@ -58,7 +71,9 @@ export async function reducirFoto(archivo: File, lado = 1280, calidad = 0.85): P
   ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(img, 0, 0, lienzo.width, lienzo.height);
   if ('close' in img) img.close();
-  const foto = await new Promise<Blob | null>((listo) => lienzo.toBlob(listo, 'image/jpeg', calidad));
+  const foto = await new Promise<Blob | null>((listo) =>
+    lienzo.toBlob(listo, 'image/jpeg', calidad),
+  );
   if (!foto) throw 'lectura' as ErrorFoto;
   return foto;
 }
@@ -68,7 +83,9 @@ async function cargar(archivo: File): Promise<ImageBitmap | HTMLImageElement> {
   if (typeof createImageBitmap === 'function') {
     try {
       return await createImageBitmap(archivo, { imageOrientation: 'from-image' });
-    } catch { /* se intenta con <img> */ }
+    } catch {
+      /* se intenta con <img> */
+    }
   }
   const url = URL.createObjectURL(archivo);
   try {

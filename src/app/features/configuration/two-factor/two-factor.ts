@@ -1,7 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { EstadoDosPasos, PreparacionDosPasos, SeguridadService } from '../../../core/services/security.service';
+import {
+  EstadoDosPasos,
+  PreparacionDosPasos,
+  SeguridadService,
+} from '../../../core/services/security.service';
 
 /** inicio: resumen · clave: pide la contraseña · qr: enlaza la app · codigos: los de respaldo · quitar: desactiva */
 type Paso = 'inicio' | 'clave' | 'qr' | 'codigos' | 'quitar';
@@ -15,7 +19,12 @@ type Paso = 'inicio' | 'clave' | 'qr' | 'codigos' | 'quitar';
   standalone: true,
   imports: [FormsModule, TranslatePipe],
   templateUrl: './two-factor.html',
-  styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../config-fields.css', '../security.css'],
+  styleUrls: [
+    '../../crop/crop-ui.css',
+    '../../crop/crop-blocks.css',
+    '../config-fields.css',
+    '../security.css',
+  ],
 })
 export class TwoFactorComponent implements OnInit {
   private seguridad = inject(SeguridadService);
@@ -67,7 +76,9 @@ export class TwoFactorComponent implements OnInit {
       },
       error: (err) => {
         this.ocupado.set(false);
-        this.error.set(err?.status === 422 ? 'config.twoFactor.wrongPassword' : 'config.twoFactor.error');
+        this.error.set(
+          err?.status === 422 ? 'config.twoFactor.wrongPassword' : 'config.twoFactor.error',
+        );
       },
     });
   }
@@ -90,7 +101,9 @@ export class TwoFactorComponent implements OnInit {
       error: (err) => {
         this.ocupado.set(false);
         this.codigo = '';
-        this.error.set(err?.status === 422 ? 'config.twoFactor.wrongCode' : 'config.twoFactor.error');
+        this.error.set(
+          err?.status === 422 ? 'config.twoFactor.wrongCode' : 'config.twoFactor.error',
+        );
       },
     });
   }
@@ -110,9 +123,11 @@ export class TwoFactorComponent implements OnInit {
         this.ocupado.set(false);
         this.codigo = '';
         this.error.set(
-          err?.error?.errorCode === 'AGR-035' ? 'config.twoFactor.wrongCode'
-            : err?.status === 422 ? 'config.twoFactor.wrongPassword'
-            : 'config.twoFactor.error',
+          err?.error?.errorCode === 'AGR-035'
+            ? 'config.twoFactor.wrongCode'
+            : err?.status === 422
+              ? 'config.twoFactor.wrongPassword'
+              : 'config.twoFactor.error',
         );
       },
     });

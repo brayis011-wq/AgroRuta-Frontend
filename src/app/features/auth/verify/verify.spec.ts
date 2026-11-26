@@ -14,7 +14,10 @@ describe('VerificarComponent', () => {
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: auth },
-        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap(token ? { token } : {}) } } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParamMap: convertToParamMap(token ? { token } : {}) } },
+        },
       ],
     });
     const f = TestBed.createComponent(VerificarComponent);
@@ -28,7 +31,9 @@ describe('VerificarComponent', () => {
 
   it('confirma el correo y entra a su inicio según el rol', () => {
     vi.useFakeTimers();
-    auth.verificar.mockReturnValue(of({ id: 1, token: 't', email: 'a@x.com', nombre: 'Ana', rol: 'Trabajador' }));
+    auth.verificar.mockReturnValue(
+      of({ id: 1, token: 't', email: 'a@x.com', nombre: 'Ana', rol: 'Trabajador' }),
+    );
     const f = crear('tok');
     const router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockResolvedValue(true);

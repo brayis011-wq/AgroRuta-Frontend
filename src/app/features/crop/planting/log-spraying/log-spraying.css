@@ -1,61 +1,321 @@
 /* Buscador de insumos del catálogo */
-.form-header__icon { background: var(--ar-azul-bg); color: var(--ar-azul); }
-.producto-buscador { display: flex; flex-direction: column; gap: .45rem; position: relative; }
-.input-search-wrapper { position: relative; }
-.input-search-wrapper input { padding-right: 2.4rem; }
-.search-icon { position: absolute; right: .8rem; top: 50%; transform: translateY(-50%); color: var(--ar-tinta-3); font-size: 18px; }
-.spinner.search-icon { border-color: var(--ar-borde); border-top-color: var(--ar-verde-600); width: 15px; height: 15px; margin-top: -7px; transform: none; }
+.form-header__icon {
+  background: var(--ar-azul-bg);
+  color: var(--ar-azul);
+}
+.producto-buscador {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  position: relative;
+}
+.input-search-wrapper {
+  position: relative;
+}
+.input-search-wrapper input {
+  padding-right: 2.4rem;
+}
+.search-icon {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ar-tinta-3);
+  font-size: 18px;
+}
+.spinner.search-icon {
+  border-color: var(--ar-borde);
+  border-top-color: var(--ar-verde-600);
+  width: 15px;
+  height: 15px;
+  margin-top: -7px;
+  transform: none;
+}
 
-.catalogo-lista, .catalogo-completo { border: 1px solid var(--ar-borde); border-radius: 12px; background: var(--ar-superficie); box-shadow: var(--ar-sombra-2); max-height: 320px; overflow: auto; }
-.catalogo-lista { position: absolute; top: 46px; left: 0; right: 0; z-index: 20; }
-.catalogo-completo { margin-top: .2rem; box-shadow: none; }
-.catalogo-completo__filtro { position: sticky; top: 0; background: var(--ar-superficie); padding: .5rem; border-bottom: 1px solid var(--ar-borde); z-index: 1; }
-.catalogo-filtro { padding: .5rem .7rem; font-size: .88rem; }
-.catalogo-item { display: flex; justify-content: space-between; align-items: center; gap: .6rem; width: 100%; padding: .6rem .8rem; border: 0; border-bottom: 1px solid var(--ar-borde); background: var(--ar-superficie); cursor: pointer; text-align: left; font: inherit; color: inherit; }
-.catalogo-item:last-child { border-bottom: 0; }
-.catalogo-item:hover, .catalogo-item.resaltado { background: var(--ar-verde-50); }
-.catalogo-item-info { display: flex; flex-direction: column; min-width: 0; }
-.catalogo-nombre { font-size: .9rem; font-weight: 600; }
-.catalogo-dosis { font-size: .76rem; color: var(--ar-tinta-3); }
-.catalogo-empty, .catalogo-cargando { padding: .8rem; font-size: .85rem; color: var(--ar-tinta-3); display: flex; align-items: center; gap: .4rem; }
-.catalogo-cargando .spinner { border-color: var(--ar-borde); border-top-color: var(--ar-verde-600); }
-.catalogo-grupo__titulo { display: flex; justify-content: space-between; padding: .5rem .8rem; font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ar-tinta-2); background: var(--ar-fondo); }
-.catalogo-grupo__count { background: var(--ar-superficie); border-radius: 99px; padding: 0 .45rem; }
+.catalogo-lista,
+.catalogo-completo {
+  border: 1px solid var(--ar-borde);
+  border-radius: 12px;
+  background: var(--ar-superficie);
+  box-shadow: var(--ar-sombra-2);
+  max-height: 320px;
+  overflow: auto;
+}
+.catalogo-lista {
+  position: absolute;
+  top: 46px;
+  left: 0;
+  right: 0;
+  z-index: 20;
+}
+.catalogo-completo {
+  margin-top: 0.2rem;
+  box-shadow: none;
+}
+.catalogo-completo__filtro {
+  position: sticky;
+  top: 0;
+  background: var(--ar-superficie);
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--ar-borde);
+  z-index: 1;
+}
+.catalogo-filtro {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.88rem;
+}
+.catalogo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 0;
+  border-bottom: 1px solid var(--ar-borde);
+  background: var(--ar-superficie);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+.catalogo-item:last-child {
+  border-bottom: 0;
+}
+.catalogo-item:hover,
+.catalogo-item.resaltado {
+  background: var(--ar-verde-50);
+}
+.catalogo-item-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.catalogo-nombre {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.catalogo-dosis {
+  font-size: 0.76rem;
+  color: var(--ar-tinta-3);
+}
+.catalogo-empty,
+.catalogo-cargando {
+  padding: 0.8rem;
+  font-size: 0.85rem;
+  color: var(--ar-tinta-3);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.catalogo-cargando .spinner {
+  border-color: var(--ar-borde);
+  border-top-color: var(--ar-verde-600);
+}
+.catalogo-grupo__titulo {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ar-tinta-2);
+  background: var(--ar-fondo);
+}
+.catalogo-grupo__count {
+  background: var(--ar-superficie);
+  border-radius: 99px;
+  padding: 0 0.45rem;
+}
 
-.btn-catalogo { align-self: flex-start; font: inherit; font-size: .84rem; font-weight: 600; color: var(--ar-verde-700); background: none; border: 0; padding: .2rem 0; cursor: pointer; }
-.btn-catalogo:hover { text-decoration: underline; }
+.btn-catalogo {
+  align-self: flex-start;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--ar-verde-700);
+  background: none;
+  border: 0;
+  padding: 0.2rem 0;
+  cursor: pointer;
+}
+.btn-catalogo:hover {
+  text-decoration: underline;
+}
 
-.insumo-seleccionado { display: flex; justify-content: space-between; align-items: center; gap: .6rem; padding: .7rem .85rem; border-radius: 11px; border: 1px solid var(--ar-verde-600); background: var(--ar-verde-50); }
-.insumo-seleccionado-info { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
-.insumo-nombre { font-weight: 700; }
-.btn-cambiar { font: inherit; font-size: .82rem; font-weight: 600; border: 1px solid var(--ar-borde); background: var(--ar-superficie); border-radius: 9px; padding: .35rem .7rem; cursor: pointer; }
-.reentrada-aviso { margin-top: .5rem; padding: .6rem .8rem; border-radius: 10px; font-size: .84rem; background: var(--ar-ambar-bg); color: var(--ar-ambar); display: flex; gap: .35rem; align-items: center; flex-wrap: wrap; }
+.insumo-seleccionado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 11px;
+  border: 1px solid var(--ar-verde-600);
+  background: var(--ar-verde-50);
+}
+.insumo-seleccionado-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.insumo-nombre {
+  font-weight: 700;
+}
+.btn-cambiar {
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid var(--ar-borde);
+  background: var(--ar-superficie);
+  border-radius: 9px;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+}
+.reentrada-aviso {
+  margin-top: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  background: var(--ar-ambar-bg);
+  color: var(--ar-ambar);
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
 
-.badge { flex: none; font-size: .7rem; font-weight: 700; border-radius: 99px; padding: .15rem .55rem; background: var(--ar-fondo); color: var(--ar-tinta-2); }
-.badge-fungicida { background: #e8f0fb; color: #1f5fa8; }
-.badge-insecticida { background: #fdecec; color: var(--ar-rojo); }
-.badge-acaricida { background: #fbe9f3; color: #a3326e; }
-.badge-nematicida { background: #f1ebfa; color: #6a3fb0; }
-.badge-herbicida { background: #fff4dc; color: #b26a00; }
-.badge-fertilizante, .badge-fertilizante-suelo { background: #e6f2e7; color: #236b28; }
-.badge-regulador { background: #e3f4f6; color: #127280; }
-.badge-coadyuvante { background: #eef0f2; color: #4b5560; }
-:host-context([data-tema="oscuro"]) [class^="badge-"] { background: color-mix(in srgb, currentColor 16%, transparent); filter: brightness(1.6); }
+.badge {
+  flex: none;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 99px;
+  padding: 0.15rem 0.55rem;
+  background: var(--ar-fondo);
+  color: var(--ar-tinta-2);
+}
+.badge-fungicida {
+  background: #e8f0fb;
+  color: #1f5fa8;
+}
+.badge-insecticida {
+  background: #fdecec;
+  color: var(--ar-rojo);
+}
+.badge-acaricida {
+  background: #fbe9f3;
+  color: #a3326e;
+}
+.badge-nematicida {
+  background: #f1ebfa;
+  color: #6a3fb0;
+}
+.badge-herbicida {
+  background: #fff4dc;
+  color: #b26a00;
+}
+.badge-fertilizante,
+.badge-fertilizante-suelo {
+  background: #e6f2e7;
+  color: #236b28;
+}
+.badge-regulador {
+  background: #e3f4f6;
+  color: #127280;
+}
+.badge-coadyuvante {
+  background: #eef0f2;
+  color: #4b5560;
+}
+:host-context([data-tema='oscuro']) [class^='badge-'] {
+  background: color-mix(in srgb, currentColor 16%, transparent);
+  filter: brightness(1.6);
+}
 
 /* Bodega de insumos: lo disponible y el costo calculado */
-.bodega-info { margin: -.35rem 0 0; padding: .55rem .8rem; border-radius: 10px; background: var(--ar-verde-50, var(--ar-gris-bg)); font-size: .84rem; display: grid; gap: .25rem; }
-.bodega-info p { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
-.bodega-info .suave { color: var(--ar-tinta-3); }
-.btn-link { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--ar-verde-700); text-decoration: underline; cursor: pointer; }
-.btn-link:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; border-radius: 4px; }
+.bodega-info {
+  margin: -0.35rem 0 0;
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  background: var(--ar-verde-50, var(--ar-gris-bg));
+  font-size: 0.84rem;
+  display: grid;
+  gap: 0.25rem;
+}
+.bodega-info p {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+.bodega-info .suave {
+  color: var(--ar-tinta-3);
+}
+.btn-link {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ar-verde-700);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.btn-link:focus-visible {
+  outline: 2px solid var(--ar-verde-600);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 
 /* Lo que queda en la bodega de cada producto, y el aviso cuando la bodega está vacía */
-.est-stock { display: inline-block; margin-left: .3rem; font-size: .68rem; font-weight: 600; border-radius: 99px; padding: .05rem .5rem; vertical-align: middle; }
-.est-stock.BAJO { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
-.est-stock.AGOTADO, .est-stock.NEGATIVO { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
-.bodega-vacia { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; padding: .65rem .8rem; border-radius: 10px; background: var(--ar-ambar-bg); color: var(--ar-ambar); font-size: .85rem; }
-.bodega-vacia a { font-weight: 700; color: inherit; text-decoration: underline; }
+.est-stock {
+  display: inline-block;
+  margin-left: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 99px;
+  padding: 0.05rem 0.5rem;
+  vertical-align: middle;
+}
+.est-stock.BAJO {
+  background: var(--ar-ambar-bg);
+  color: var(--ar-ambar);
+}
+.est-stock.AGOTADO,
+.est-stock.NEGATIVO {
+  background: var(--ar-rojo-bg);
+  color: var(--ar-rojo);
+}
+.bodega-vacia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  background: var(--ar-ambar-bg);
+  color: var(--ar-ambar);
+  font-size: 0.85rem;
+}
+.bodega-vacia a {
+  font-weight: 700;
+  color: inherit;
+  text-decoration: underline;
+}
 
 /* La cantidad total va en la misma unidad que la dosis: se ve al final del campo */
-.con-unidad input { padding-right: 4.75rem; }
-.sufijo-unidad { position: absolute; right: .9rem; top: 50%; transform: translateY(-50%); font-size: .85rem; font-weight: 600; color: var(--ar-tinta-3); pointer-events: none; }
+.con-unidad input {
+  padding-right: 4.75rem;
+}
+.sufijo-unidad {
+  position: absolute;
+  right: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ar-tinta-3);
+  pointer-events: none;
+}

@@ -3,14 +3,26 @@
     <strong id="avisos-push">{{ 'config.push.title' | translate }}</strong>
     <small>
       @switch (estado()) {
-        @case ('no-soportado') { {{ 'config.push.unsupported' | translate }} }
-        @case ('bloqueado') { {{ 'config.push.blocked' | translate }} }
-        @default { {{ pista() | translate }} }
+        @case ('no-soportado') {
+          {{ 'config.push.unsupported' | translate }}
+        }
+        @case ('bloqueado') {
+          {{ 'config.push.blocked' | translate }}
+        }
+        @default {
+          {{ pista() | translate }}
+        }
       }
     </small>
     @if (mensaje(); as m) {
       <small class="resultado" [class.mal]="m.error" role="status">
-        <i class="ti" [class.ti-circle-check]="!m.error" [class.ti-alert-circle]="m.error" aria-hidden="true"></i> {{ m.texto | translate }}
+        <i
+          class="ti"
+          [class.ti-circle-check]="!m.error"
+          [class.ti-alert-circle]="m.error"
+          aria-hidden="true"
+        ></i>
+        {{ m.texto | translate }}
       </small>
     }
   </div>
@@ -22,10 +34,16 @@
       </button>
     }
     <label class="interruptor">
-      <input type="checkbox" role="switch" aria-labelledby="avisos-push"
-             [checked]="estado() === 'activo'"
-             [disabled]="ocupado() || estado() === null || estado() === 'no-soportado' || estado() === 'bloqueado'"
-             (change)="cambiar($any($event.target).checked)" />
+      <input
+        type="checkbox"
+        role="switch"
+        aria-labelledby="avisos-push"
+        [checked]="estado() === 'activo'"
+        [disabled]="
+          ocupado() || estado() === null || estado() === 'no-soportado' || estado() === 'bloqueado'
+        "
+        (change)="cambiar($any($event.target).checked)"
+      />
       <span aria-hidden="true"></span>
     </label>
   </div>

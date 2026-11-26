@@ -14,15 +14,21 @@ class Prueba {}
 
 describe('PrecargarDirective', () => {
   const cultivo = {
-    buscarSiembra: vi.fn(() => of({})), listarActividades: vi.fn(() => of([])),
-    listarFumigaciones: vi.fn(() => of([])), listarCosechas: vi.fn(() => of([])),
-    buscarLote: vi.fn(() => of({})), historialLote: vi.fn(() => of([])),
+    buscarSiembra: vi.fn(() => of({})),
+    listarActividades: vi.fn(() => of([])),
+    listarFumigaciones: vi.fn(() => of([])),
+    listarCosechas: vi.fn(() => of([])),
+    buscarLote: vi.fn(() => of({})),
+    historialLote: vi.fn(() => of([])),
   };
 
   beforeEach(() => {
     olvidarPrecargas();
     vi.clearAllMocks();
-    TestBed.configureTestingModule({ imports: [Prueba], providers: [{ provide: CultivoService, useValue: cultivo }] });
+    TestBed.configureTestingModule({
+      imports: [Prueba],
+      providers: [{ provide: CultivoService, useValue: cultivo }],
+    });
   });
 
   it('al tocar el enlace pide los datos de la siembra una sola vez', () => {

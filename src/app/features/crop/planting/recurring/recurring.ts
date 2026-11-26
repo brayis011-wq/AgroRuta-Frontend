@@ -3,13 +3,24 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CampoService } from '../../../../core/services/finance.service';
-import { LaborProgramada, TIPOS_PROGRAMABLES, TipoProgramable } from '../../../../core/models/finance.model';
+import {
+  LaborProgramada,
+  TIPOS_PROGRAMABLES,
+  TipoProgramable,
+} from '../../../../core/models/finance.model';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { AvisosService } from '../../../../core/services/toast.service';
 import { FechaPipe } from '../../../../shared/format.pipe';
 import { iso } from '../../calendar/events';
 
-interface Borrador { id: number | null; tipo: TipoProgramable; cadaDias: number | null; desde: string; hasta: string; descripcion: string }
+interface Borrador {
+  id: number | null;
+  tipo: TipoProgramable;
+  cadaDias: number | null;
+  desde: string;
+  hasta: string;
+  descripcion: string;
+}
 
 /** Labores que se repiten en la siembra: "fertilizar cada 30 días" (salen en el calendario y en los avisos) */
 @Component({
@@ -56,12 +67,26 @@ export class LaboresRepetidasComponent {
 
   nueva(): void {
     this.error.set(null);
-    this.borrador.set({ id: null, tipo: 'FERTILIZACION', cadaDias: 30, desde: this.hoy, hasta: '', descripcion: '' });
+    this.borrador.set({
+      id: null,
+      tipo: 'FERTILIZACION',
+      cadaDias: 30,
+      desde: this.hoy,
+      hasta: '',
+      descripcion: '',
+    });
   }
 
   editar(p: LaborProgramada): void {
     this.error.set(null);
-    this.borrador.set({ id: p.id, tipo: p.tipo, cadaDias: p.cadaDias, desde: p.desde, hasta: p.hasta ?? '', descripcion: p.descripcion ?? '' });
+    this.borrador.set({
+      id: p.id,
+      tipo: p.tipo,
+      cadaDias: p.cadaDias,
+      desde: p.desde,
+      hasta: p.hasta ?? '',
+      descripcion: p.descripcion ?? '',
+    });
   }
 
   cambiar<K extends keyof Borrador>(campo: K, valor: Borrador[K]): void {
@@ -71,10 +96,21 @@ export class LaboresRepetidasComponent {
 
   guardar(): void {
     const b = this.borrador();
-    if (!b || !b.cadaDias || b.cadaDias < 1 || !b.desde) { this.error.set('temporadas.repetir.errors.incomplete'); return; }
+    if (!b || !b.cadaDias || b.cadaDias < 1 || !b.desde) {
+      this.error.set('temporadas.repetir.errors.incomplete');
+      return;
+    }
     this.guardando.set(true);
-    const req = { tipo: b.tipo, cadaDias: Number(b.cadaDias), desde: b.desde, hasta: b.hasta || null, descripcion: b.descripcion || null };
-    const op = b.id ? this.campo.actualizarProgramada(b.id, req) : this.campo.crearProgramada(this.siembraId(), req);
+    const req = {
+      tipo: b.tipo,
+      cadaDias: Number(b.cadaDias),
+      desde: b.desde,
+      hasta: b.hasta || null,
+      descripcion: b.descripcion || null,
+    };
+    const op = b.id
+      ? this.campo.actualizarProgramada(b.id, req)
+      : this.campo.crearProgramada(this.siembraId(), req);
     op.subscribe({
       next: () => {
         this.guardando.set(false);
@@ -82,13 +118,18 @@ export class LaboresRepetidasComponent {
         this.avisos.exito('temporadas.repetir.saved');
         this.cargar(this.siembraId());
       },
-      error: (e) => { this.guardando.set(false); this.error.set(e?.error?.message || 'temporadas.repetir.errors.save'); },
+      error: (e) => {
+        this.guardando.set(false);
+        this.error.set(e?.error?.message || 'temporadas.repetir.errors.save');
+      },
     });
   }
 
   async quitar(p: LaborProgramada): Promise<void> {
     const ok = await this.confirm.preguntar({
-      mensaje: this.translate.instant('temporadas.repetir.confirmDelete', { labor: this.translate.instant('enums.tipoActividad.' + p.tipo) }),
+      mensaje: this.translate.instant('temporadas.repetir.confirmDelete', {
+        labor: this.translate.instant('enums.tipoActividad.' + p.tipo),
+      }),
       peligro: true,
     });
     if (!ok) return;
@@ -97,7 +138,8 @@ export class LaboresRepetidasComponent {
 
   /** Para hacerla ahora: abre el formulario que la cumple */
   registrar(p: LaborProgramada): { ruta: string; query: Record<string, string> } {
-    if (p.tipo === 'FERTILIZACION' || p.tipo === 'FUMIGACION') return { ruta: 'spraying', query: {} };
+    if (p.tipo === 'FERTILIZACION' || p.tipo === 'FUMIGACION')
+      return { ruta: 'spraying', query: {} };
     return { ruta: 'activity', query: { tipo: p.tipo } };
   }
 }

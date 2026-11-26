@@ -14,7 +14,11 @@ type Pestana = 'fincas' | 'trabajadores' | 'nominas';
   standalone: true,
   imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './admin-farmer-detail.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-farmer-detail.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    './admin-farmer-detail.css',
+  ],
 })
 export class AdminAgricultorDetalleComponent implements OnInit {
   private readonly adminService = inject(AdminService);
@@ -51,18 +55,25 @@ export class AdminAgricultorDetalleComponent implements OnInit {
 
   claseEstadoNomina(estado: string | null): string {
     switch (estado) {
-      case 'PAGADA': return 'ok';
-      case 'APROBADA': return 'info';
-      case 'PENDIENTE': return 'warn';
-      default: return 'off';
+      case 'PAGADA':
+        return 'ok';
+      case 'APROBADA':
+        return 'info';
+      case 'PENDIENTE':
+        return 'warn';
+      default:
+        return 'off';
     }
   }
 
   claseEstadoTrabajador(estado: string | null): string {
     switch (estado) {
-      case 'ACTIVO': return 'ok';
-      case 'SUSPENDIDO': return 'warn';
-      default: return 'off';
+      case 'ACTIVO':
+        return 'ok';
+      case 'SUSPENDIDO':
+        return 'warn';
+      default:
+        return 'off';
     }
   }
 

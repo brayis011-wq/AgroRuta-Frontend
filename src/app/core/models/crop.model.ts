@@ -38,7 +38,13 @@ export interface Siembra {
 export type EtapaCultivo = 'GERMINACION' | 'CRECIMIENTO' | 'PRODUCCION' | 'COSECHA' | 'FINALIZADO';
 
 /** Orden de las etapas de una siembra */
-export const ETAPAS_CULTIVO: EtapaCultivo[] = ['GERMINACION', 'CRECIMIENTO', 'PRODUCCION', 'COSECHA', 'FINALIZADO'];
+export const ETAPAS_CULTIVO: EtapaCultivo[] = [
+  'GERMINACION',
+  'CRECIMIENTO',
+  'PRODUCCION',
+  'COSECHA',
+  'FINALIZADO',
+];
 
 /** Cuándo entró una siembra en cada etapa */
 export interface EtapaSiembra {
@@ -77,7 +83,9 @@ export interface TipoCultivo {
 }
 
 /** "Café · Castillo"; las siembras sin tipo muestran solo la variedad */
-export function nombreCultivo(s: { tipoCultivo?: string | null; variedad?: string | null } | null | undefined): string {
+export function nombreCultivo(
+  s: { tipoCultivo?: string | null; variedad?: string | null } | null | undefined,
+): string {
   if (!s) return '';
   return s.tipoCultivo ? `${s.tipoCultivo} · ${s.variedad ?? ''}` : (s.variedad ?? '');
 }
@@ -215,7 +223,12 @@ export interface CostosSiembra {
   precioPromedioKg: number | null;
   ganancia: number | null;
   costoPorKg: number | null;
-  trabajadores: { trabajadorId: number | null; nombre: string | null; jornales: number; valor: number }[];
+  trabajadores: {
+    trabajadorId: number | null;
+    nombre: string | null;
+    jornales: number;
+    valor: number;
+  }[];
   meses: { mes: string; manoObra: number; insumos: number; otros: number; ingresos: number }[];
   fumigacionesSinCosto: number;
   cosechasSinPrecio: number;
@@ -226,8 +239,17 @@ export interface CostosSiembra {
 }
 
 export type TipoEvento =
-  | 'SIEMBRA' | 'ETAPA' | 'ACTIVIDAD' | 'FUMIGACION' | 'COSECHA' | 'FIN_CARENCIA' | 'FIN_REENTRADA'
-  | 'FUMIGACION_SUGERIDA' | 'PROXIMA_ETAPA' | 'COSECHA_ESTIMADA' | 'PROGRAMADA';
+  | 'SIEMBRA'
+  | 'ETAPA'
+  | 'ACTIVIDAD'
+  | 'FUMIGACION'
+  | 'COSECHA'
+  | 'FIN_CARENCIA'
+  | 'FIN_REENTRADA'
+  | 'FUMIGACION_SUGERIDA'
+  | 'PROXIMA_ETAPA'
+  | 'COSECHA_ESTIMADA'
+  | 'PROGRAMADA';
 export type EstadoEvento = 'HECHO' | 'PENDIENTE' | 'ESTIMADO' | 'ATRASADO';
 
 /** Un evento del calendario de cultivo */

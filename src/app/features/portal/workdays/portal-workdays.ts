@@ -19,7 +19,11 @@ interface GrupoMes {
   standalone: true,
   imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './portal-workdays.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', '../portal-lists.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    '../portal-lists.css',
+  ],
 })
 export class PortalJornalesComponent implements OnInit {
   private readonly portal = inject(PortalService);
@@ -54,7 +58,10 @@ export class PortalJornalesComponent implements OnInit {
   /** Agrupa por mes, del más reciente al más antiguo. */
   private agrupar(lista: MiJornal[]): GrupoMes[] {
     const grupos = new Map<string, GrupoMes>();
-    const nombreMes = new Intl.DateTimeFormat(localeDe(this.lang.current()), { month: 'long', year: 'numeric' });
+    const nombreMes = new Intl.DateTimeFormat(localeDe(this.lang.current()), {
+      month: 'long',
+      year: 'numeric',
+    });
     for (const j of lista) {
       const clave = (j.fecha ?? '').slice(0, 7);
       if (!grupos.has(clave)) {

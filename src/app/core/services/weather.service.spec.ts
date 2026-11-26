@@ -21,11 +21,7 @@ describe('WeatherService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        WeatherService,
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), WeatherService],
     });
     service = TestBed.inject(WeatherService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -38,18 +34,18 @@ describe('WeatherService', () => {
   });
 
   it('getByCity() should GET weather by city name', () => {
-    service.getByCity('Bogotá').subscribe(r => expect(r).toEqual(mockWeather));
+    service.getByCity('Bogotá').subscribe((r) => expect(r).toEqual(mockWeather));
 
-    const req = httpMock.expectOne(r => r.url === `${baseUrl}/city`);
+    const req = httpMock.expectOne((r) => r.url === `${baseUrl}/city`);
     expect(req.request.method).toBe('GET');
     expect(req.request.params.get('city')).toBe('Bogotá');
     req.flush(mockWeather);
   });
 
   it('getByCoordinates() should GET weather by lat and lon', () => {
-    service.getByCoordinates(4.71, -74.07).subscribe(r => expect(r).toEqual(mockWeather));
+    service.getByCoordinates(4.71, -74.07).subscribe((r) => expect(r).toEqual(mockWeather));
 
-    const req = httpMock.expectOne(r => r.url === `${baseUrl}/coordinates`);
+    const req = httpMock.expectOne((r) => r.url === `${baseUrl}/coordinates`);
     expect(req.request.method).toBe('GET');
     expect(req.request.params.get('lat')).toBe('4.71');
     expect(req.request.params.get('lon')).toBe('-74.07');

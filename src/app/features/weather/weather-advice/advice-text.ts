@@ -45,9 +45,15 @@ export function ahoraEnColombia(d = new Date()): string {
 }
 
 /** Arma el texto de un consejo: qué hacer (título) y por qué (detalle) */
-export function textoConsejo(c: ConsejoClima, ahora: string, idioma: string, t: Traducir): TextoConsejo {
+export function textoConsejo(
+  c: ConsejoClima,
+  ahora: string,
+  idioma: string,
+  t: Traducir,
+): TextoConsejo {
   const hoy = ahora.slice(0, 10);
-  const dia = (fecha: string | null) => t(fecha && fecha.slice(0, 10) > hoy ? 'weather.advice.tomorrow' : 'weather.advice.today');
+  const dia = (fecha: string | null) =>
+    t(fecha && fecha.slice(0, 10) > hoy ? 'weather.advice.tomorrow' : 'weather.advice.today');
   const hora = horaCorta(c.problemaDesde, idioma);
   const faltan = horasHasta(c.problemaDesde, ahora);
   const mismoDia = !!c.problemaDesde && c.problemaDesde.slice(0, 10) === hoy;
@@ -58,31 +64,70 @@ export function textoConsejo(c: ConsejoClima, ahora: string, idioma: string, t: 
     if (!c.problemaDesde || faltan === null) return motivo + '.';
     if (!mismoDia) return t('weather.advice.whyTomorrow', { motivo, hora });
     if (faltan === 0) return t('weather.advice.whyNow', { motivo });
-    return t(faltan === 1 ? 'weather.advice.whyInOne' : 'weather.advice.whyIn', { motivo, n: faltan, hora });
+    return t(faltan === 1 ? 'weather.advice.whyInOne' : 'weather.advice.whyIn', {
+      motivo,
+      n: faltan,
+      hora,
+    });
   };
-  const ventana = c.ventanaInicio && c.ventanaFin
-    ? { dia: dia(c.ventanaInicio), desde: horaCorta(c.ventanaInicio, idioma), hasta: horaCorta(c.ventanaFin, idioma) }
-    : null;
+  const ventana =
+    c.ventanaInicio && c.ventanaFin
+      ? {
+          dia: dia(c.ventanaInicio),
+          desde: horaCorta(c.ventanaInicio, idioma),
+          hasta: horaCorta(c.ventanaFin, idioma),
+        }
+      : null;
   const mm = Math.round(c.valor ?? 0);
   const icono = ICONOS[c.tipo];
 
   switch (c.tipo) {
     case 'NO_FUMIGAR':
-      return { icono, titulo: t('weather.advice.noSpray', { dia: dia(c.dia) }),
-        detalle: causa() + (ventana ? ' ' + t('weather.advice.better', ventana) : '') };
+      return {
+        icono,
+        titulo: t('weather.advice.noSpray', { dia: dia(c.dia) }),
+        detalle: causa() + (ventana ? ' ' + t('weather.advice.better', ventana) : ''),
+      };
     case 'FUMIGAR_EN_VENTANA':
-      return { icono, titulo: ventana ? t('weather.advice.sprayWindow', ventana) : t('weather.advice.sprayOk', { dia: dia(c.dia) }),
-        detalle: causa() };
+      return {
+        icono,
+        titulo: ventana
+          ? t('weather.advice.sprayWindow', ventana)
+          : t('weather.advice.sprayOk', { dia: dia(c.dia) }),
+        detalle: causa(),
+      };
     case 'FUMIGAR_BIEN':
-      return { icono, titulo: t('weather.advice.sprayOk', { dia: dia(c.dia) }), detalle: t('weather.advice.sprayOkSub') };
+      return {
+        icono,
+        titulo: t('weather.advice.sprayOk', { dia: dia(c.dia) }),
+        detalle: t('weather.advice.sprayOkSub'),
+      };
     case 'NO_REGAR':
-      return { icono, titulo: t('weather.advice.noWater'),
-        detalle: t(hora ? 'weather.advice.noWaterSubAt' : 'weather.advice.noWaterSub', { mm, hora }) };
+      return {
+        icono,
+        titulo: t('weather.advice.noWater'),
+        detalle: t(hora ? 'weather.advice.noWaterSubAt' : 'weather.advice.noWaterSub', {
+          mm,
+          hora,
+        }),
+      };
     case 'HELADA':
-      return { icono, titulo: t('weather.advice.frost'),
-        detalle: t(hora ? 'weather.advice.frostSubAt' : 'weather.advice.frostSub', { temp: Math.round(c.valor ?? 0), hora }) };
+      return {
+        icono,
+        titulo: t('weather.advice.frost'),
+        detalle: t(hora ? 'weather.advice.frostSubAt' : 'weather.advice.frostSub', {
+          temp: Math.round(c.valor ?? 0),
+          hora,
+        }),
+      };
     case 'LLUVIA_FUERTE':
-      return { icono, titulo: t('weather.advice.heavyRain'),
-        detalle: t(hora ? 'weather.advice.heavyRainSubAt' : 'weather.advice.heavyRainSub', { mm, hora }) };
+      return {
+        icono,
+        titulo: t('weather.advice.heavyRain'),
+        detalle: t(hora ? 'weather.advice.heavyRainSubAt' : 'weather.advice.heavyRainSub', {
+          mm,
+          hora,
+        }),
+      };
   }
 }

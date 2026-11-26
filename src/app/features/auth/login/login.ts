@@ -58,9 +58,10 @@ export class LoginComponent implements OnInit {
     this.cargando = true;
 
     const codigo = this.codigo.trim();
-    const datos = this.pideCodigo && codigo
-      ? { ...this.form, codigo, recordarDispositivo: this.recordarDispositivo }
-      : this.form;
+    const datos =
+      this.pideCodigo && codigo
+        ? { ...this.form, codigo, recordarDispositivo: this.recordarDispositivo }
+        : this.form;
 
     this.authService.login(datos).subscribe({
       next: (respuesta) => {
@@ -72,7 +73,8 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.cargando = false;
-        const cuentaDesactivada = err.status === 401 && /desactivada/i.test(err.error?.message ?? '');
+        const cuentaDesactivada =
+          err.status === 401 && /desactivada/i.test(err.error?.message ?? '');
         this.sinConfirmar = err.status === 403 && err.error?.errorCode === 'AGR-033';
         this.reenviado = false;
         const faltaCodigo = err.status === 403 && err.error?.errorCode === 'AGR-034';
@@ -91,13 +93,13 @@ export class LoginComponent implements OnInit {
           ? 'auth.login.accountDisabled'
           : codigoMalo
             ? 'auth.login.codeWrong'
-          : this.sinConfirmar
-            ? 'auth.login.notVerified'
-          : err.status === 429
-            ? 'auth.login.tooManyAttempts'
-          : err.status === 401 || err.status === 403
-            ? 'auth.login.invalidCredentials'
-            : 'auth.login.serverError';
+            : this.sinConfirmar
+              ? 'auth.login.notVerified'
+              : err.status === 429
+                ? 'auth.login.tooManyAttempts'
+                : err.status === 401 || err.status === 403
+                  ? 'auth.login.invalidCredentials'
+                  : 'auth.login.serverError';
         this.cdr.detectChanges();
       },
     });

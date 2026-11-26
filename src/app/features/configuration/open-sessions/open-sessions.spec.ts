@@ -13,8 +13,20 @@ describe('OpenSessionsComponent', () => {
   const auth = { olvidarSesion: vi.fn() };
   const router = { navigate: vi.fn() };
 
-  const otra: SesionAbierta = { id: 7, dispositivo: 'Chrome · Android', iniciadaEn: '2026-11-01T10:00:00Z', ultimoUso: '2026-11-09T08:00:00Z', actual: false };
-  const esta: SesionAbierta = { id: 9, dispositivo: 'Firefox · Windows', iniciadaEn: '2026-11-08T10:00:00Z', ultimoUso: '2026-11-08T12:00:00Z', actual: true };
+  const otra: SesionAbierta = {
+    id: 7,
+    dispositivo: 'Chrome · Android',
+    iniciadaEn: '2026-11-01T10:00:00Z',
+    ultimoUso: '2026-11-09T08:00:00Z',
+    actual: false,
+  };
+  const esta: SesionAbierta = {
+    id: 9,
+    dispositivo: 'Firefox · Windows',
+    iniciadaEn: '2026-11-08T10:00:00Z',
+    ultimoUso: '2026-11-08T12:00:00Z',
+    actual: true,
+  };
 
   function crear() {
     TestBed.configureTestingModule({
@@ -73,8 +85,16 @@ describe('OpenSessionsComponent', () => {
   });
 
   it('con muchas sesiones muestra las 5 más recientes y el resto con "Ver todas"', () => {
-    const muchas = Array.from({ length: 8 }, (_, i): SesionAbierta =>
-      ({ id: 100 + i, dispositivo: 'Chrome · Windows', iniciadaEn: '2026-11-01T10:00:00Z', ultimoUso: `2026-11-0${i + 1}T08:00:00Z`, actual: false }));
+    const muchas = Array.from(
+      { length: 8 },
+      (_, i): SesionAbierta => ({
+        id: 100 + i,
+        dispositivo: 'Chrome · Windows',
+        iniciadaEn: '2026-11-01T10:00:00Z',
+        ultimoUso: `2026-11-0${i + 1}T08:00:00Z`,
+        actual: false,
+      }),
+    );
     seguridad.sesiones.mockReturnValue(of([...muchas, esta]));
     const f = crear();
     const c = f.componentInstance;

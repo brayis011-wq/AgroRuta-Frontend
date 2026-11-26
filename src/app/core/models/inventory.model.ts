@@ -72,11 +72,15 @@ export function unidadGrande(base: UnidadBase): MeasurementUnit {
 }
 
 /** "2,5 L", "750 ml", "1,2 kg", "300 g" */
-export function formatoCantidad(base: number | null | undefined, unidad: UnidadBase, locale = 'es-CO'): string {
+export function formatoCantidad(
+  base: number | null | undefined,
+  unidad: UnidadBase,
+  locale = 'es-CO',
+): string {
   if (base == null) return '—';
   const grande = Math.abs(base) >= 1000;
   const valor = grande ? base / 1000 : base;
-  const u = unidad === 'ML' ? (grande ? 'L' : 'ml') : (grande ? 'kg' : 'g');
+  const u = unidad === 'ML' ? (grande ? 'L' : 'ml') : grande ? 'kg' : 'g';
   const n = new Intl.NumberFormat(locale, { maximumFractionDigits: grande ? 2 : 0 }).format(valor);
   return `${n} ${u}`;
 }

@@ -37,23 +37,30 @@ export class MemoriaScrollService {
 
   iniciar(destroyRef: DestroyRef): void {
     if (typeof window === 'undefined') return;
-    try { history.scrollRestoration = 'manual'; } catch { /* navegador viejo */ }
+    try {
+      history.scrollRestoration = 'manual';
+    } catch {
+      /* navegador viejo */
+    }
 
-    const sub = this.router.events.pipe(filter((e) => e instanceof NavigationStart || e instanceof NavigationEnd)).subscribe((e) => {
-      if (e instanceof NavigationStart) {
-        this.posiciones.set(this.actualId, window.scrollY);
-        // "atrás"/"adelante": el navegador dice a qué entrada vuelve
-        this.volviendoA = e.navigationTrigger === 'popstate' ? (e.restoredState?.navigationId ?? null) : null;
-        return;
-      }
-      const fin = e as NavigationEnd;
-      this.actualId = this.volviendoA ?? fin.id;
-      const ruta = soloRuta(fin.urlAfterRedirects);
-      const cambioDePagina = ruta !== this.anterior && !esPanelDeLaMisma(this.anterior, ruta);
-      this.anterior = ruta;
-      if (this.volviendoA != null) this.restaurar(this.posiciones.get(this.volviendoA) ?? 0);
-      else if (cambioDePagina) this.arriba();
-    });
+    const sub = this.router.events
+      .pipe(filter((e) => e instanceof NavigationStart || e instanceof NavigationEnd))
+      .subscribe((e) => {
+        if (e instanceof NavigationStart) {
+          this.posiciones.set(this.actualId, window.scrollY);
+          // "atrás"/"adelante": el navegador dice a qué entrada vuelve
+          this.volviendoA =
+            e.navigationTrigger === 'popstate' ? (e.restoredState?.navigationId ?? null) : null;
+          return;
+        }
+        const fin = e as NavigationEnd;
+        this.actualId = this.volviendoA ?? fin.id;
+        const ruta = soloRuta(fin.urlAfterRedirects);
+        const cambioDePagina = ruta !== this.anterior && !esPanelDeLaMisma(this.anterior, ruta);
+        this.anterior = ruta;
+        if (this.volviendoA != null) this.restaurar(this.posiciones.get(this.volviendoA) ?? 0);
+        else if (cambioDePagina) this.arriba();
+      });
     destroyRef.onDestroy(() => sub.unsubscribe());
   }
 
@@ -78,6 +85,9 @@ export class MemoriaScrollService {
   }
 
   private cancelarEspera(): void {
-    if (this.espera !== null) { clearInterval(this.espera); this.espera = null; }
+    if (this.espera !== null) {
+      clearInterval(this.espera);
+      this.espera = null;
+    }
   }
 }

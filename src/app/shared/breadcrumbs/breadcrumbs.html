@@ -1,9 +1,19 @@
 <nav class="migas" [attr.aria-label]="'breadcrumbs.label' | translate">
   <!-- Celular: solo el paso anterior -->
   @if (padre(); as p) {
-    <a class="atras" [routerLink]="p.ruta" [attr.aria-label]="'breadcrumbs.backTo' | translate: { name: nombre(p) || ('breadcrumbs.loading' | translate) }">
+    <a
+      class="atras"
+      [routerLink]="p.ruta"
+      [attr.aria-label]="
+        'breadcrumbs.backTo' | translate: { name: nombre(p) || ('breadcrumbs.loading' | translate) }
+      "
+    >
       <i class="ti ti-arrow-left" aria-hidden="true"></i>
-      @if (nombre(p); as n) { <span>{{ n }}</span> } @else { <span class="hueco" aria-hidden="true"></span> }
+      @if (nombre(p); as n) {
+        <span>{{ n }}</span>
+      } @else {
+        <span class="hueco" aria-hidden="true"></span>
+      }
     </a>
   }
 
@@ -19,15 +29,29 @@
           }
           <!-- Las otras fincas / los otros lotes: se salta a uno sin volver atrás -->
           @if ((m.hermanos?.length ?? 0) > 1) {
-            <button type="button" class="hermanos-btn" (click)="alternar(i)" [attr.aria-expanded]="abierta() === i"
-                    aria-haspopup="menu" [attr.aria-label]="'breadcrumbs.siblings' | translate: { name: n }">
+            <button
+              type="button"
+              class="hermanos-btn"
+              (click)="alternar(i)"
+              [attr.aria-expanded]="abierta() === i"
+              aria-haspopup="menu"
+              [attr.aria-label]="'breadcrumbs.siblings' | translate: { name: n }"
+            >
               <i class="ti ti-chevron-down" [class.girada]="abierta() === i" aria-hidden="true"></i>
             </button>
             @if (abierta() === i) {
               <div class="hermanos" role="menu">
                 @for (h of m.hermanos; track h.ruta.join('/')) {
-                  <a role="menuitem" [routerLink]="h.ruta" [class.actual]="h.actual" (click)="abierta.set(null)">
-                    {{ h.texto }} @if (h.actual) { <i class="ti ti-check" aria-hidden="true"></i> }
+                  <a
+                    role="menuitem"
+                    [routerLink]="h.ruta"
+                    [class.actual]="h.actual"
+                    (click)="abierta.set(null)"
+                  >
+                    {{ h.texto }}
+                    @if (h.actual) {
+                      <i class="ti ti-check" aria-hidden="true"></i>
+                    }
                   </a>
                 }
               </div>
@@ -36,7 +60,9 @@
         } @else {
           <span class="hueco" [attr.aria-label]="'breadcrumbs.loading' | translate"></span>
         }
-        @if (!ultimo) { <i class="ti ti-chevron-right sep" aria-hidden="true"></i> }
+        @if (!ultimo) {
+          <i class="ti ti-chevron-right sep" aria-hidden="true"></i>
+        }
       </li>
     }
   </ol>

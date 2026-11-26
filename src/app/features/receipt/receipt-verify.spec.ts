@@ -13,7 +13,10 @@ describe('ReceiptVerifyComponent', () => {
       providers: [
         provideRouter([]),
         { provide: ComprobanteService, useValue: servicio },
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id, code }) } } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { paramMap: convertToParamMap({ id, code }) } },
+        },
       ],
     });
     const f = TestBed.createComponent(ReceiptVerifyComponent);
@@ -24,8 +27,19 @@ describe('ReceiptVerifyComponent', () => {
   beforeEach(() => servicio.verificar.mockReset());
 
   it('muestra el pago cuando el código es válido', () => {
-    servicio.verificar.mockReturnValue(of({ numero: 'CP-000012', fechaPago: '2026-10-16', monto: 450000, metodoPago: 'EFECTIVO',
-      trabajador: 'Juan Pérez', cedula: '•••• 120', empleador: 'María', periodoInicio: null, periodoFin: null }));
+    servicio.verificar.mockReturnValue(
+      of({
+        numero: 'CP-000012',
+        fechaPago: '2026-10-16',
+        monto: 450000,
+        metodoPago: 'EFECTIVO',
+        trabajador: 'Juan Pérez',
+        cedula: '•••• 120',
+        empleador: 'María',
+        periodoInicio: null,
+        periodoFin: null,
+      }),
+    );
     const f = crear('12', 'abc');
     expect(servicio.verificar).toHaveBeenCalledWith(12, 'abc');
     expect(f.componentInstance.estado()).toBe('valido');

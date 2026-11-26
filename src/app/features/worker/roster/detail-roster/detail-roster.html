@@ -9,7 +9,10 @@
       <div class="vacio">
         <i class="ti ti-file-off" aria-hidden="true"></i>
         <h3>{{ 'workers.rosters.detail.notFound' | translate }}</h3>
-        <a routerLink="../" class="btn"><i class="ti ti-arrow-left" aria-hidden="true"></i> {{ 'workers.rosters.detail.backShort' | translate }}</a>
+        <a routerLink="../" class="btn"
+          ><i class="ti ti-arrow-left" aria-hidden="true"></i>
+          {{ 'workers.rosters.detail.backShort' | translate }}</a
+        >
       </div>
     </section>
   </div>
@@ -22,74 +25,187 @@
         <p class="eyebrow">{{ 'workers.rosters.detail.title' | translate: { id: nomina.id } }}</p>
         <h1>{{ nomina.trabajador?.nombreCompleto }}</h1>
         <p class="cv-sub">
-          <span><i class="ti ti-calendar" aria-hidden="true"></i> {{ nomina.periodoInicio | periodo: nomina.periodoFin }}</span>
-          <span class="est" [class]="nomina.estado">{{ 'enums.estadoNomina.' + nomina.estado | translate }}</span>
+          <span
+            ><i class="ti ti-calendar" aria-hidden="true"></i>
+            {{ nomina.periodoInicio | periodo: nomina.periodoFin }}</span
+          >
+          <span class="est" [class]="nomina.estado">{{
+            'enums.estadoNomina.' + nomina.estado | translate
+          }}</span>
         </p>
       </div>
       <div class="cv-acciones">
         @if (nomina.estado === 'PENDIENTE' || nomina.estado === 'APROBADA') {
-          <button type="button" class="btn btn-borrar" [disabled]="guardando" (click)="anular()"><i class="ti ti-ban" aria-hidden="true"></i> {{ 'workers.rosters.detail.cancel' | translate }}</button>
+          <button type="button" class="btn btn-borrar" [disabled]="guardando" (click)="anular()">
+            <i class="ti ti-ban" aria-hidden="true"></i>
+            {{ 'workers.rosters.detail.cancel' | translate }}
+          </button>
         }
         @if (nomina.estado === 'PENDIENTE') {
-          <button type="button" class="btn btn-prim" [disabled]="guardando" (click)="aprobar()"><i class="ti" [class.ti-check]="!guardando" [class.ti-loader-2]="guardando" aria-hidden="true"></i> {{ (guardando ? 'workers.rosters.detail.processing' : 'workers.rosters.detail.approve') | translate }}</button>
+          <button type="button" class="btn btn-prim" [disabled]="guardando" (click)="aprobar()">
+            <i
+              class="ti"
+              [class.ti-check]="!guardando"
+              [class.ti-loader-2]="guardando"
+              aria-hidden="true"
+            ></i>
+            {{
+              (guardando ? 'workers.rosters.detail.processing' : 'workers.rosters.detail.approve')
+                | translate
+            }}
+          </button>
         }
         @if (nomina.estado === 'APROBADA' && !mostrarFormPago) {
-          <button type="button" class="btn btn-prim" [disabled]="guardando" (click)="abrirFormPago()"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'workers.rosters.detail.registerPayment' | translate }}</button>
+          <button
+            type="button"
+            class="btn btn-prim"
+            [disabled]="guardando"
+            (click)="abrirFormPago()"
+          >
+            <i class="ti ti-cash" aria-hidden="true"></i>
+            {{ 'workers.rosters.detail.registerPayment' | translate }}
+          </button>
         }
         @if (nomina.estado === 'PAGADA') {
-          <button type="button" class="btn" (click)="verPago()"><i class="ti ti-receipt" aria-hidden="true"></i> {{ 'workers.rosters.detail.viewPayment' | translate }}</button>
+          <button type="button" class="btn" (click)="verPago()">
+            <i class="ti ti-receipt" aria-hidden="true"></i>
+            {{ 'workers.rosters.detail.viewPayment' | translate }}
+          </button>
         }
       </div>
     </header>
 
-    @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
-    @if (exito) { <p class="aviso verde" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}</p> }
+    @if (error) {
+      <p class="aviso error" role="alert">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+      </p>
+    }
+    @if (exito) {
+      <p class="aviso verde" role="status">
+        <i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}
+      </p>
+    }
 
     @if (paso > 0) {
       <ol class="pasos" [attr.aria-label]="'workers.ui.rosters.flow' | translate">
-        <li [class.hecho]="paso > 1" [class.actual]="paso === 1"><i class="ti" [class.ti-check]="paso > 1" [class.ti-file-invoice]="paso === 1" aria-hidden="true"></i><span>{{ 'workers.ui.rosters.step1' | translate }}<small>{{ nomina.fechaGeneracion | fecha }}</small></span></li>
-        <li [class.hecho]="paso > 2" [class.actual]="paso === 2"><i class="ti" [class.ti-check]="paso > 2" [class.ti-checks]="paso <= 2" aria-hidden="true"></i><span>{{ 'workers.ui.rosters.step2' | translate }}</span></li>
-        <li [class.hecho]="paso === 3"><i class="ti" [class.ti-check]="paso === 3" [class.ti-cash]="paso < 3" aria-hidden="true"></i><span>{{ 'workers.ui.rosters.step3' | translate }}</span></li>
+        <li [class.hecho]="paso > 1" [class.actual]="paso === 1">
+          <i
+            class="ti"
+            [class.ti-check]="paso > 1"
+            [class.ti-file-invoice]="paso === 1"
+            aria-hidden="true"
+          ></i
+          ><span
+            >{{ 'workers.ui.rosters.step1' | translate
+            }}<small>{{ nomina.fechaGeneracion | fecha }}</small></span
+          >
+        </li>
+        <li [class.hecho]="paso > 2" [class.actual]="paso === 2">
+          <i
+            class="ti"
+            [class.ti-check]="paso > 2"
+            [class.ti-checks]="paso <= 2"
+            aria-hidden="true"
+          ></i
+          ><span>{{ 'workers.ui.rosters.step2' | translate }}</span>
+        </li>
+        <li [class.hecho]="paso === 3">
+          <i
+            class="ti"
+            [class.ti-check]="paso === 3"
+            [class.ti-cash]="paso < 3"
+            aria-hidden="true"
+          ></i
+          ><span>{{ 'workers.ui.rosters.step3' | translate }}</span>
+        </li>
       </ol>
     } @else {
-      <p class="aviso rojo" role="note"><i class="ti ti-ban" aria-hidden="true"></i> {{ 'workers.ui.rosters.cancelledNote' | translate }}</p>
+      <p class="aviso rojo" role="note">
+        <i class="ti ti-ban" aria-hidden="true"></i>
+        {{ 'workers.ui.rosters.cancelledNote' | translate }}
+      </p>
     }
 
     <section class="kpis tres">
       <div class="kpi">
         <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
-        <div><small>{{ 'workers.rosters.detail.summary.totalValue' | translate }}</small><strong>{{ nomina.valorTotal | pesos }}</strong></div>
+        <div>
+          <small>{{ 'workers.rosters.detail.summary.totalValue' | translate }}</small
+          ><strong>{{ nomina.valorTotal | pesos }}</strong>
+        </div>
       </div>
       <div class="kpi">
         <span class="ic azul"><i class="ti ti-calendar-week" aria-hidden="true"></i></span>
-        <div><small>{{ 'workers.rosters.detail.summary.totalWages' | translate }}</small><strong>{{ nomina.totalJornales }}</strong></div>
+        <div>
+          <small>{{ 'workers.rosters.detail.summary.totalWages' | translate }}</small
+          ><strong>{{ nomina.totalJornales }}</strong>
+        </div>
       </div>
       <div class="kpi">
         <span class="ic gris"><i class="ti ti-tag" aria-hidden="true"></i></span>
-        <div><small>{{ 'workers.rosters.detail.summary.post' | translate }}</small><strong>{{ nomina.trabajador?.cargo?.nombre ?? '—' }}</strong></div>
+        <div>
+          <small>{{ 'workers.rosters.detail.summary.post' | translate }}</small
+          ><strong>{{ nomina.trabajador?.cargo?.nombre ?? '—' }}</strong>
+        </div>
       </div>
     </section>
 
     @if (nomina.estado === 'APROBADA' && mostrarFormPago) {
       <section class="tarjeta">
-        <header><h2><i class="ti ti-cash" aria-hidden="true"></i> {{ 'workers.rosters.detail.paymentForm.title' | translate }}</h2><strong class="fuerte">{{ nomina.valorTotal | pesos }}</strong></header>
+        <header>
+          <h2>
+            <i class="ti ti-cash" aria-hidden="true"></i>
+            {{ 'workers.rosters.detail.paymentForm.title' | translate }}
+          </h2>
+          <strong class="fuerte">{{ nomina.valorTotal | pesos }}</strong>
+        </header>
         <form class="form-pago" [formGroup]="pagoForm" (ngSubmit)="registrarPago()" novalidate>
           <div class="campos">
-            <label class="campo"><span>{{ 'workers.rosters.detail.paymentForm.method' | translate }}</span>
+            <label class="campo"
+              ><span>{{ 'workers.rosters.detail.paymentForm.method' | translate }}</span>
               <select formControlName="metodoPago">
-                @for (m of metodosPago; track m) { <option [value]="m">{{ 'enums.metodoPago.' + m | translate }}</option> }
+                @for (m of metodosPago; track m) {
+                  <option [value]="m">{{ 'enums.metodoPago.' + m | translate }}</option>
+                }
               </select>
             </label>
-            <label class="campo"><span>{{ 'workers.rosters.detail.paymentForm.receipt' | translate }}</span>
-              <input type="text" formControlName="comprobante" maxlength="100" [placeholder]="'workers.rosters.detail.paymentForm.receiptPlaceholder' | translate" />
+            <label class="campo"
+              ><span>{{ 'workers.rosters.detail.paymentForm.receipt' | translate }}</span>
+              <input
+                type="text"
+                formControlName="comprobante"
+                maxlength="100"
+                [placeholder]="'workers.rosters.detail.paymentForm.receiptPlaceholder' | translate"
+              />
             </label>
-            <label class="campo ancho"><span>{{ 'workers.rosters.detail.paymentForm.notes' | translate }}</span>
+            <label class="campo ancho"
+              ><span>{{ 'workers.rosters.detail.paymentForm.notes' | translate }}</span>
               <input type="text" formControlName="observaciones" maxlength="500" />
             </label>
           </div>
           <div class="pie">
-            <button type="button" class="btn btn-texto" [disabled]="guardando" (click)="mostrarFormPago = false">{{ 'common.cancel' | translate }}</button>
-            <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti" [class.ti-check]="!guardando" [class.ti-loader-2]="guardando" aria-hidden="true"></i> {{ (guardando ? 'workers.rosters.detail.processing' : 'workers.rosters.detail.paymentForm.submit') | translate }}</button>
+            <button
+              type="button"
+              class="btn btn-texto"
+              [disabled]="guardando"
+              (click)="mostrarFormPago = false"
+            >
+              {{ 'common.cancel' | translate }}
+            </button>
+            <button type="submit" class="btn btn-prim" [disabled]="guardando">
+              <i
+                class="ti"
+                [class.ti-check]="!guardando"
+                [class.ti-loader-2]="guardando"
+                aria-hidden="true"
+              ></i>
+              {{
+                (guardando
+                  ? 'workers.rosters.detail.processing'
+                  : 'workers.rosters.detail.paymentForm.submit'
+                ) | translate
+              }}
+            </button>
           </div>
         </form>
       </section>
@@ -100,7 +216,15 @@
         <span class="ic verde" aria-hidden="true"><i class="ti ti-circle-check"></i></span>
         <div>
           <strong>{{ 'workers.rosters.detail.paymentRegistered' | translate }}</strong>
-          <p>{{ pagos[0].metodoPago ? ('enums.metodoPago.' + pagos[0].metodoPago | translate) : '' }} · {{ pagos[0].fechaPago | fecha }}@if (pagos[0].comprobante) { · {{ pagos[0].comprobante }} }</p>
+          <p>
+            {{
+              pagos[0].metodoPago ? ('enums.metodoPago.' + pagos[0].metodoPago | translate) : ''
+            }}
+            · {{ pagos[0].fechaPago | fecha }}
+            @if (pagos[0].comprobante) {
+              · {{ pagos[0].comprobante }}
+            }
+          </p>
         </div>
         <strong class="monto">{{ pagos[0].monto | pesos }}</strong>
       </section>
@@ -108,16 +232,28 @@
 
     <section class="tarjeta">
       <header>
-        <h2><i class="ti ti-list-details" aria-hidden="true"></i> {{ 'workers.rosters.detail.wagesIncluded' | translate }}</h2>
+        <h2>
+          <i class="ti ti-list-details" aria-hidden="true"></i>
+          {{ 'workers.rosters.detail.wagesIncluded' | translate }}
+        </h2>
         @if (nomina.estado === 'PENDIENTE') {
-          <button type="button" class="btn chico" [disabled]="guardando" (click)="traerNuevos()"><i class="ti ti-refresh" aria-hidden="true"></i> {{ 'workers.rosters.detail.bringNew' | translate }}</button>
+          <button type="button" class="btn chico" [disabled]="guardando" (click)="traerNuevos()">
+            <i class="ti ti-refresh" aria-hidden="true"></i>
+            {{ 'workers.rosters.detail.bringNew' | translate }}
+          </button>
         }
       </header>
       @if (nomina.estado === 'PENDIENTE') {
-        <p class="aviso gris corregir"><i class="ti ti-pencil-check" aria-hidden="true"></i> {{ 'workers.rosters.detail.fixHelp' | translate }}</p>
+        <p class="aviso gris corregir">
+          <i class="ti ti-pencil-check" aria-hidden="true"></i>
+          {{ 'workers.rosters.detail.fixHelp' | translate }}
+        </p>
       }
       @if (!nomina.jornales || nomina.jornales.length === 0) {
-        <div class="vacio"><i class="ti ti-calendar-off" aria-hidden="true"></i><p>{{ 'workers.rosters.detail.emptyWages' | translate }}</p></div>
+        <div class="vacio">
+          <i class="ti ti-calendar-off" aria-hidden="true"></i>
+          <p>{{ 'workers.rosters.detail.emptyWages' | translate }}</p>
+        </div>
       } @else {
         <div class="tabla-wrap">
           <table class="tabla resp">
@@ -128,7 +264,11 @@
                 <th>{{ 'workers.rosters.detail.table.activities' | translate }}</th>
                 <th class="num">{{ 'workers.rosters.detail.table.value' | translate }}</th>
                 <th>{{ 'common.status' | translate }}</th>
-                @if (nomina.estado === 'PENDIENTE') { <th><span class="sr-only">{{ 'common.actions' | translate }}</span></th> }
+                @if (nomina.estado === 'PENDIENTE') {
+                  <th>
+                    <span class="sr-only">{{ 'common.actions' | translate }}</span>
+                  </th>
+                }
               </tr>
             </thead>
             <tbody>
@@ -136,11 +276,40 @@
                 <tr>
                   <td class="suave">{{ j.fecha | fecha }}</td>
                   <td class="prin fuerte-n">{{ j.nombreCultivo }}</td>
-                  <td><span class="etqs">@for (a of j.actividades; track a.id) { <span class="etq">{{ a.nombre }}</span> }</span></td>
-                  <td class="num fuerte-n">{{ j.valorJornal | pesos }}@if (j.kilos) { <small class="suave kg-j">{{ j.kilos }} kg</small> }</td>
-                  <td><span class="est" [class.si]="j.liquidado" [class.PENDIENTE]="!j.liquidado">{{ (j.liquidado ? 'workers.rosters.detail.settled' : 'workers.rosters.detail.pending') | translate }}</span></td>
+                  <td>
+                    <span class="etqs">
+                      @for (a of j.actividades; track a.id) {
+                        <span class="etq">{{ a.nombre }}</span>
+                      }
+                    </span>
+                  </td>
+                  <td class="num fuerte-n">
+                    {{ j.valorJornal | pesos }}
+                    @if (j.kilos) {
+                      <small class="suave kg-j">{{ j.kilos }} kg</small>
+                    }
+                  </td>
+                  <td>
+                    <span class="est" [class.si]="j.liquidado" [class.PENDIENTE]="!j.liquidado">{{
+                      (j.liquidado
+                        ? 'workers.rosters.detail.settled'
+                        : 'workers.rosters.detail.pending'
+                      ) | translate
+                    }}</span>
+                  </td>
                   @if (nomina.estado === 'PENDIENTE') {
-                    <td class="acc"><button type="button" class="btn-ic peligro" [disabled]="guardando" (click)="quitarJornal(j.id)" [title]="'workers.rosters.detail.removeWage' | translate" [attr.aria-label]="'workers.rosters.detail.removeWage' | translate"><i class="ti ti-minus" aria-hidden="true"></i></button></td>
+                    <td class="acc">
+                      <button
+                        type="button"
+                        class="btn-ic peligro"
+                        [disabled]="guardando"
+                        (click)="quitarJornal(j.id)"
+                        [title]="'workers.rosters.detail.removeWage' | translate"
+                        [attr.aria-label]="'workers.rosters.detail.removeWage' | translate"
+                      >
+                        <i class="ti ti-minus" aria-hidden="true"></i>
+                      </button>
+                    </td>
                   }
                 </tr>
               }

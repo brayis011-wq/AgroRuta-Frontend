@@ -7,12 +7,28 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { StockInsumo } from '../../../core/models/inventory.model';
 
 const glifosato: StockInsumo = {
-  insumoId: 1, nombre: 'Glifosato', tipo: 'HERBICIDA', unidadBase: 'ML', cantidad: 750, stockMinimo: 1000,
-  costoPromedio: 30, valorStock: 22500, estado: 'BAJO', ultimoMovimiento: '2026-11-05',
+  insumoId: 1,
+  nombre: 'Glifosato',
+  tipo: 'HERBICIDA',
+  unidadBase: 'ML',
+  cantidad: 750,
+  stockMinimo: 1000,
+  costoPromedio: 30,
+  valorStock: 22500,
+  estado: 'BAJO',
+  ultimoMovimiento: '2026-11-05',
 };
 const mancozeb: StockInsumo = {
-  insumoId: 2, nombre: 'Mancozeb', tipo: 'FUNGICIDA', unidadBase: 'GRAMOS', cantidad: 3000, stockMinimo: null,
-  costoPromedio: null, valorStock: null, estado: 'OK', ultimoMovimiento: '2026-11-01',
+  insumoId: 2,
+  nombre: 'Mancozeb',
+  tipo: 'FUNGICIDA',
+  unidadBase: 'GRAMOS',
+  cantidad: 3000,
+  stockMinimo: null,
+  costoPromedio: null,
+  valorStock: null,
+  estado: 'OK',
+  ultimoMovimiento: '2026-11-01',
 };
 
 describe('InventarioComponent', () => {
@@ -25,10 +41,32 @@ describe('InventarioComponent', () => {
     respuesta = true;
     inventario = {
       stock: vi.fn().mockReturnValue(of([glifosato, mancozeb])),
-      movimientos: vi.fn().mockReturnValue(of([
-        { id: 10, insumoId: 1, tipo: 'COMPRA', cantidad: 1000, fecha: '2026-11-01', costoTotal: 30000, proveedor: null, fumigacionId: null, observaciones: null },
-        { id: 11, insumoId: 1, tipo: 'USO', cantidad: 250, fecha: '2026-11-05', costoTotal: null, proveedor: null, fumigacionId: 7, observaciones: null },
-      ])),
+      movimientos: vi.fn().mockReturnValue(
+        of([
+          {
+            id: 10,
+            insumoId: 1,
+            tipo: 'COMPRA',
+            cantidad: 1000,
+            fecha: '2026-11-01',
+            costoTotal: 30000,
+            proveedor: null,
+            fumigacionId: null,
+            observaciones: null,
+          },
+          {
+            id: 11,
+            insumoId: 1,
+            tipo: 'USO',
+            cantidad: 250,
+            fecha: '2026-11-05',
+            costoTotal: null,
+            proveedor: null,
+            fumigacionId: 7,
+            observaciones: null,
+          },
+        ]),
+      ),
       registrarCompra: vi.fn().mockReturnValue(of({})),
       ajustar: vi.fn().mockReturnValue(of({})),
       definirMinimo: vi.fn().mockReturnValue(of(glifosato)),
@@ -38,11 +76,20 @@ describe('InventarioComponent', () => {
       imports: [InventarioComponent],
       providers: [
         { provide: InventarioService, useValue: inventario },
-        { provide: AgriculturalInputService, useValue: { getAll: () => of([
-          { id: 1, nombre: 'Glifosato', tipo: 'HERBICIDA', unidadSugerida: 'LITROS' },
-          { id: 2, nombre: 'Mancozeb', tipo: 'FUNGICIDA', unidadSugerida: 'GRAMOS' },
-        ]) } },
-        { provide: ConfirmService, useValue: { preguntar: vi.fn(() => Promise.resolve(respuesta)) } },
+        {
+          provide: AgriculturalInputService,
+          useValue: {
+            getAll: () =>
+              of([
+                { id: 1, nombre: 'Glifosato', tipo: 'HERBICIDA', unidadSugerida: 'LITROS' },
+                { id: 2, nombre: 'Mancozeb', tipo: 'FUNGICIDA', unidadSugerida: 'GRAMOS' },
+              ]),
+          },
+        },
+        {
+          provide: ConfirmService,
+          useValue: { preguntar: vi.fn(() => Promise.resolve(respuesta)) },
+        },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(InventarioComponent);
@@ -74,9 +121,15 @@ describe('InventarioComponent', () => {
 
     component.guardarCompra();
 
-    expect(inventario['registrarCompra']).toHaveBeenCalledWith(expect.objectContaining({
-      insumoId: 2, cantidad: 5, unidad: 'KG', costoTotal: 120000, proveedor: 'Agro El Valle',
-    }));
+    expect(inventario['registrarCompra']).toHaveBeenCalledWith(
+      expect.objectContaining({
+        insumoId: 2,
+        cantidad: 5,
+        unidad: 'KG',
+        costoTotal: 120000,
+        proveedor: 'Agro El Valle',
+      }),
+    );
     expect(component.panel()).toBeNull();
   });
 
@@ -93,7 +146,9 @@ describe('InventarioComponent', () => {
     expect(component.ajuste.value.unidad).toBe('LITROS');
     component.ajuste.patchValue({ cantidadReal: 0.5 });
     component.guardarAjuste();
-    expect(inventario['ajustar']).toHaveBeenCalledWith(expect.objectContaining({ insumoId: 1, cantidadReal: 0.5, unidad: 'LITROS' }));
+    expect(inventario['ajustar']).toHaveBeenCalledWith(
+      expect.objectContaining({ insumoId: 1, cantidadReal: 0.5, unidad: 'LITROS' }),
+    );
   });
 
   it('quitar el mínimo envía null', () => {
@@ -112,7 +167,9 @@ describe('InventarioComponent', () => {
   });
 
   it('el error del backend se muestra en el formulario', () => {
-    inventario['registrarCompra'].mockReturnValue(throwError(() => ({ error: { message: 'Glifosato se mide en litros o mililitros.' } })));
+    inventario['registrarCompra'].mockReturnValue(
+      throwError(() => ({ error: { message: 'Glifosato se mide en litros o mililitros.' } })),
+    );
     component.abrirCompra();
     component.compra.patchValue({ insumoId: 1, cantidad: 2 });
     component.guardarCompra();

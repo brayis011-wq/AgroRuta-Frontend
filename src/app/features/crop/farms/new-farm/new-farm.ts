@@ -40,7 +40,7 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
   centroideLng: number | null = null;
 
   guardando = false;
-  error = '';          // clave de traducción
+  error = ''; // clave de traducción
   exito = false;
 
   private map!: L.Map;
@@ -68,13 +68,15 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
   /** Coordenadas con 4 decimales según el idioma activo */
   fmtCoord(v: number): string {
     return new Intl.NumberFormat(this.lang.current(), {
-      minimumFractionDigits: 4, maximumFractionDigits: 4,
+      minimumFractionDigits: 4,
+      maximumFractionDigits: 4,
     }).format(v);
   }
 
   private actualizarTextoBotonGps(): void {
     if (this.locateBtnEl) {
-      this.locateBtnEl.textContent ='📍 ' + this.translate.instant('cultivo.fincas.new.myLocation');
+      this.locateBtnEl.textContent =
+        '📍 ' + this.translate.instant('cultivo.fincas.new.myLocation');
     }
   }
 
@@ -83,23 +85,26 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
 
     this.map = L.map('mapa-nueva-finca').setView(center, 12);
 
-    const google = L.tileLayer(
-      'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-      { attribution: 'Google Satellite', maxZoom: 21, maxNativeZoom: 20 }
-    );
+    const google = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      attribution: 'Google Satellite',
+      maxZoom: 21,
+      maxNativeZoom: 20,
+    });
 
     const esri = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 }
+      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 },
     );
 
     google.addTo(this.map);
 
-    L.control.layers(
-      { 'Google Satellite': google, 'Esri Satellite': esri },
-      {},
-      { position: 'bottomleft' }
-    ).addTo(this.map);
+    L.control
+      .layers(
+        { 'Google Satellite': google, 'Esri Satellite': esri },
+        {},
+        { position: 'bottomleft' },
+      )
+      .addTo(this.map);
 
     // Botón GPS
     const locateBtn = new (L.Control.extend({
@@ -118,11 +123,11 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
             () => {
               this.error = 'cultivo.fincas.new.geoError';
               this.cdr.detectChanges();
-            }
+            },
           );
         });
         return btn;
-      }
+      },
     }))();
     locateBtn.addTo(this.map);
 
@@ -142,7 +147,7 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
         shadowUrl: 'leaflet/marker-shadow.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41],
-      })
+      }),
     }).addTo(this.map);
 
     this.centroideLat = latlng.lat;
@@ -190,40 +195,44 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
     this.guardando = true;
     this.error = '';
 
-    this.cultivoService.registrarFinca({
-      nombre: this.form.nombre,
-      ubicacion: this.form.ubicacion,
-      hectareas: this.form.hectareas,
-      agricultorId: usuario.id,
-    }).subscribe({
-      next: (finca) => {
-        // Guardar centroide
-        this.cultivoService.actualizarCentroideFinca(finca.id!, {
-          centroideLat: this.centroideLat!,
-          centroideLng: this.centroideLng!,
-        }).subscribe({
-          next: () => {
-            this.exito = true;
-            this.cdr.detectChanges();
-            this.fincaActiva.cargar(); // que aparezca en el selector de fincas del menú
-            this.avisos.exito('avisos.farmNext');
-            this.router.navigate(['/crops/farm', finca.id]); // siguiente paso: su primer lote
-          },
-          error: () => {
-            this.exito = true;
-            this.cdr.detectChanges();
-            this.fincaActiva.cargar(); // que aparezca en el selector de fincas del menú
-            this.avisos.exito('avisos.farmNext');
-            this.router.navigate(['/crops/farm', finca.id]);
-          }
-        });
-      },
-      error: () => {
-        this.error = 'cultivo.fincas.new.errors.register';
-        this.guardando = false;
-        this.cdr.detectChanges();
-      },
-    });
+    this.cultivoService
+      .registrarFinca({
+        nombre: this.form.nombre,
+        ubicacion: this.form.ubicacion,
+        hectareas: this.form.hectareas,
+        agricultorId: usuario.id,
+      })
+      .subscribe({
+        next: (finca) => {
+          // Guardar centroide
+          this.cultivoService
+            .actualizarCentroideFinca(finca.id!, {
+              centroideLat: this.centroideLat!,
+              centroideLng: this.centroideLng!,
+            })
+            .subscribe({
+              next: () => {
+                this.exito = true;
+                this.cdr.detectChanges();
+                this.fincaActiva.cargar(); // que aparezca en el selector de fincas del menú
+                this.avisos.exito('avisos.farmNext');
+                this.router.navigate(['/crops/farm', finca.id]); // siguiente paso: su primer lote
+              },
+              error: () => {
+                this.exito = true;
+                this.cdr.detectChanges();
+                this.fincaActiva.cargar(); // que aparezca en el selector de fincas del menú
+                this.avisos.exito('avisos.farmNext');
+                this.router.navigate(['/crops/farm', finca.id]);
+              },
+            });
+        },
+        error: () => {
+          this.error = 'cultivo.fincas.new.errors.register';
+          this.guardando = false;
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   cancelar(): void {

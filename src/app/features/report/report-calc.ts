@@ -1,12 +1,38 @@
-import { CropDetail, CropReport, MonthlyPayment, PayrollReport, WorkerPayrollDetail } from '../../core/services/report.service';
+import {
+  CropDetail,
+  CropReport,
+  MonthlyPayment,
+  PayrollReport,
+  WorkerPayrollDetail,
+} from '../../core/services/report.service';
 
-export const ETAPAS = ['GERMINACION', 'CRECIMIENTO', 'PRODUCCION', 'COSECHA', 'FINALIZADO'] as const;
+export const ETAPAS = [
+  'GERMINACION',
+  'CRECIMIENTO',
+  'PRODUCCION',
+  'COSECHA',
+  'FINALIZADO',
+] as const;
 
-export interface BarraMes { mes: string; etiqueta: string; total: number; pagos: number; altura: number; actual: boolean }
-export interface Participacion { nombre: string; valor: number; porcentaje: number; ancho: number }
+export interface BarraMes {
+  mes: string;
+  etiqueta: string;
+  total: number;
+  pagos: number;
+  altura: number;
+  actual: boolean;
+}
+export interface Participacion {
+  nombre: string;
+  valor: number;
+  porcentaje: number;
+  ancho: number;
+}
 
-const MESES = { es: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
-                en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] };
+const MESES = {
+  es: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+};
 
 /** "2026-11" → "nov" (con el año si cambia: "ene 27") */
 export function mesCorto(mes: string, lang: string, conAnio = false): string {
@@ -38,7 +64,11 @@ export function variacionUltimoMes(meses: MonthlyPayment[] | undefined): number 
 }
 
 /** Parte de cada uno sobre el total; ancho relativo al mayor (para las barras) */
-export function participacion<T>(items: T[], nombre: (t: T) => string, valor: (t: T) => number): Participacion[] {
+export function participacion<T>(
+  items: T[],
+  nombre: (t: T) => string,
+  valor: (t: T) => number,
+): Participacion[] {
   const total = items.reduce((s, t) => s + (valor(t) || 0), 0);
   const max = Math.max(0, ...items.map((t) => valor(t) || 0));
   return items.map((t) => ({
@@ -67,7 +97,11 @@ export function resumenNomina(r: PayrollReport) {
 
 export type OrdenNomina = 'total' | 'nombre' | 'jornales';
 
-export function ordenarTrabajadores(ws: WorkerPayrollDetail[], orden: OrdenNomina, filtro: string): WorkerPayrollDetail[] {
+export function ordenarTrabajadores(
+  ws: WorkerPayrollDetail[],
+  orden: OrdenNomina,
+  filtro: string,
+): WorkerPayrollDetail[] {
   const q = normalizar(filtro);
   const lista = ws.filter((w) => !q || normalizar(w.workerName).includes(q));
   const cmp: Record<OrdenNomina, (a: WorkerPayrollDetail, b: WorkerPayrollDetail) => number> = {
@@ -99,21 +133,42 @@ export function resumenCultivos(r: CropReport) {
   const activas = cs.filter((c) => c.estado !== 'FINALIZADO').length;
   const porEtapa = ETAPAS.map((e) => ({ etapa: e, n: cs.filter((c) => c.estado === e).length }));
   const kgPorCultivo = new Map<string, number>();
-  cs.forEach((c) => kgPorCultivo.set(cultivoDe(c), (kgPorCultivo.get(cultivoDe(c)) ?? 0) + (c.totalKgCosechado ?? 0)));
+  cs.forEach((c) =>
+    kgPorCultivo.set(
+      cultivoDe(c),
+      (kgPorCultivo.get(cultivoDe(c)) ?? 0) + (c.totalKgCosechado ?? 0),
+    ),
+  );
   const cultivos = [...kgPorCultivo.entries()].sort((a, b) => b[1] - a[1]);
   return {
-    siembras: cs.length, activas, finalizadas: cs.length - activas, kg, cosechas,
+    siembras: cs.length,
+    activas,
+    finalizadas: cs.length - activas,
+    kg,
+    cosechas,
     kgPorCosecha: cosechas ? kg / cosechas : 0,
     tipos: kgPorCultivo.size,
     porEtapa: porEtapa.map((p) => ({ ...p, porcentaje: cs.length ? (p.n / cs.length) * 100 : 0 })),
-    kgPorCultivo: participacion(cultivos, ([n]) => n, ([, v]) => v),
+    kgPorCultivo: participacion(
+      cultivos,
+      ([n]) => n,
+      ([, v]) => v,
+    ),
   };
 }
 
-export function filtrarSiembras(cs: CropDetail[], etapa: string | null, texto: string): CropDetail[] {
+export function filtrarSiembras(
+  cs: CropDetail[],
+  etapa: string | null,
+  texto: string,
+): CropDetail[] {
   const q = normalizar(texto);
-  return cs.filter((c) => (!etapa || c.estado === etapa)
-    && (!q || [c.variedad, c.fincaNombre, c.loteNombre].some((x) => normalizar(x ?? '').includes(q))));
+  return cs.filter(
+    (c) =>
+      (!etapa || c.estado === etapa) &&
+      (!q ||
+        [c.variedad, c.fincaNombre, c.loteNombre].some((x) => normalizar(x ?? '').includes(q))),
+  );
 }
 
 export function normalizar(t: string): string {

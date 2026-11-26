@@ -3,70 +3,270 @@
  * Cada tarjeta mide lo que su contenido. Antes la última de cada columna se estiraba para que las dos
  * terminaran parejas, y con pocos datos eso dejaba huecos enormes (y el clima inflado).
  */
-.cuerpo { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(320px, 1fr); gap: 1rem; align-items: start; }
+.cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(320px, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
 /*
  * Si las dos columnas quedan con alturas parecidas, se emparejan: la última tarjeta de la más corta crece
  * lo que falta. Lo decide emparejarColumnas() en dashboard.ts; con mucha diferencia no se estira nada.
  */
-.cuerpo.parejo { align-items: stretch; }
-.cuerpo.parejo .estira { flex: 1 1 auto; display: flex; flex-direction: column; }
-.cuerpo.parejo .estira > .al-dia { flex: 1; justify-content: center; }
+.cuerpo.parejo {
+  align-items: stretch;
+}
+.cuerpo.parejo .estira {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.cuerpo.parejo .estira > .al-dia {
+  flex: 1;
+  justify-content: center;
+}
 /* El alto extra se reparte dentro de la tarjeta en vez de quedar como un hueco abajo */
-.cuerpo.parejo .estira > .agenda { flex: 1; justify-content: space-evenly; }
-.cuerpo.parejo .estira > a.fila { flex: 1; }
-.cuerpo.parejo .estira > .cultivos { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; }
+.cuerpo.parejo .estira > .agenda {
+  flex: 1;
+  justify-content: space-evenly;
+}
+.cuerpo.parejo .estira > a.fila {
+  flex: 1;
+}
+.cuerpo.parejo .estira > .cultivos {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
 /* Uno o dos eventos: fichas más grandes con fondo suave, que se leen de un vistazo */
-.agenda.pocos { gap: .6rem; padding: .4rem 1.2rem 1.2rem; }
-.agenda.pocos li { padding: .9rem 1rem; background: var(--ar-fondo); border: 1px solid var(--ar-borde); }
-.agenda.pocos .fila-ic { width: 44px; height: 44px; font-size: 21px; border-radius: 12px; }
-.agenda.pocos .fila-txt strong { font-size: .98rem; }
-.agenda.pocos .fila-txt small { font-size: .82rem; }
+.agenda.pocos {
+  gap: 0.6rem;
+  padding: 0.4rem 1.2rem 1.2rem;
+}
+.agenda.pocos li {
+  padding: 0.9rem 1rem;
+  background: var(--ar-fondo);
+  border: 1px solid var(--ar-borde);
+}
+.agenda.pocos .fila-ic {
+  width: 44px;
+  height: 44px;
+  font-size: 21px;
+  border-radius: 12px;
+}
+.agenda.pocos .fila-txt strong {
+  font-size: 0.98rem;
+}
+.agenda.pocos .fila-txt small {
+  font-size: 0.82rem;
+}
 /* La etiqueta de cuándo tenía el mismo fondo que la ficha: aquí va clara para que se siga notando */
-.agenda.pocos li:not(.atrasado) .cuando { background: var(--ar-superficie); border: 1px solid var(--ar-borde); }
-.col-principal, .col-lateral { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
-.clima { min-width: 0; }
+.agenda.pocos li:not(.atrasado) .cuando {
+  background: var(--ar-superficie);
+  border: 1px solid var(--ar-borde);
+}
+.col-principal,
+.col-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+.clima {
+  min-width: 0;
+}
 
-.cultivos { display: flex; flex-direction: column; padding: .2rem .6rem .6rem; }
-.cultivo { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto auto; align-items: center; gap: .9rem; padding: .7rem; border-radius: 12px; text-decoration: none; color: inherit; transition: background .15s; animation: entrar .35s ease-out both; }
-.cultivo + .cultivo { border-top: 1px solid var(--ar-linea); }
-.cultivo:hover { background: var(--ar-verde-50); }
-.cultivo:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 1px; }
-.cul-ic { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; font-size: 20px; background: var(--ar-verde-100); color: var(--ar-verde-700); }
-.cul-txt { display: flex; flex-direction: column; min-width: 0; }
-.cul-txt strong { font-size: .92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cul-txt small { font-size: .8rem; color: var(--ar-tinta-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cul-etapa { display: flex; flex-direction: column; gap: .3rem; width: 130px; }
-.cul-etapa small { font-size: .76rem; font-weight: 600; color: var(--ar-verde-800); }
-.pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
-.pasos span { height: 6px; border-radius: 99px; background: var(--ar-pista); }
-.pasos span.on { background: linear-gradient(90deg, #43a047, var(--ar-verde-700)); }
-.cul-dias { display: flex; flex-direction: column; align-items: flex-end; min-width: 56px; }
-.cul-dias strong { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
-.cul-dias small { font-size: .72rem; color: var(--ar-tinta-3); }
-.cul-fin { color: var(--ar-tinta-3); font-size: 18px; }
-.check.gris { background: var(--ar-gris-bg); color: var(--ar-tinta-3); }
-.accion.chica { margin-top: .5rem; padding: .5rem .9rem; font-size: .85rem; }
+.cultivos {
+  display: flex;
+  flex-direction: column;
+  padding: 0.2rem 0.6rem 0.6rem;
+}
+.cultivo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+  animation: entrar 0.35s ease-out both;
+}
+.cultivo + .cultivo {
+  border-top: 1px solid var(--ar-linea);
+}
+.cultivo:hover {
+  background: var(--ar-verde-50);
+}
+.cultivo:focus-visible {
+  outline: 2px solid var(--ar-verde-600);
+  outline-offset: 1px;
+}
+.cul-ic {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  background: var(--ar-verde-100);
+  color: var(--ar-verde-700);
+}
+.cul-txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.cul-txt strong {
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cul-txt small {
+  font-size: 0.8rem;
+  color: var(--ar-tinta-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cul-etapa {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 130px;
+}
+.cul-etapa small {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ar-verde-800);
+}
+.pasos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+}
+.pasos span {
+  height: 6px;
+  border-radius: 99px;
+  background: var(--ar-pista);
+}
+.pasos span.on {
+  background: linear-gradient(90deg, #43a047, var(--ar-verde-700));
+}
+.cul-dias {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 56px;
+}
+.cul-dias strong {
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+}
+.cul-dias small {
+  font-size: 0.72rem;
+  color: var(--ar-tinta-3);
+}
+.cul-fin {
+  color: var(--ar-tinta-3);
+  font-size: 18px;
+}
+.check.gris {
+  background: var(--ar-gris-bg);
+  color: var(--ar-tinta-3);
+}
+.accion.chica {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+}
 
 @media (max-width: 1100px) {
-  .cuerpo { display: flex; flex-direction: column; }
-  .col-principal, .col-lateral { display: contents; }
-  .cuerpo > section, .col-principal > section, .col-lateral > section { min-width: 0; width: 100%; box-sizing: border-box; }
-  .pendientes { order: 1; } .sec-cultivos { order: 2; } .clima { order: 3; } .consejos-clima { order: 4; } .sec-agenda { order: 5; }
-  .consejos-clima { width: 100%; min-width: 0; }
+  .cuerpo {
+    display: flex;
+    flex-direction: column;
+  }
+  .col-principal,
+  .col-lateral {
+    display: contents;
+  }
+  .cuerpo > section,
+  .col-principal > section,
+  .col-lateral > section {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .pendientes {
+    order: 1;
+  }
+  .sec-cultivos {
+    order: 2;
+  }
+  .clima {
+    order: 3;
+  }
+  .consejos-clima {
+    order: 4;
+  }
+  .sec-agenda {
+    order: 5;
+  }
+  .consejos-clima {
+    width: 100%;
+    min-width: 0;
+  }
 }
 @media (max-width: 760px) {
-  .cultivo { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "ic txt dias" "ic etapa etapa"; gap: .45rem .7rem; }
-  .cul-ic { grid-area: ic; align-self: start; } .cul-txt { grid-area: txt; } .cul-dias { grid-area: dias; }
-  .cul-etapa { grid-area: etapa; width: auto; flex-direction: row; align-items: center; gap: .6rem; }
-  .cul-etapa .pasos { flex: 1; }
-  .cul-fin { display: none; }
+  .cultivo {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'ic txt dias' 'ic etapa etapa';
+    gap: 0.45rem 0.7rem;
+  }
+  .cul-ic {
+    grid-area: ic;
+    align-self: start;
+  }
+  .cul-txt {
+    grid-area: txt;
+  }
+  .cul-dias {
+    grid-area: dias;
+  }
+  .cul-etapa {
+    grid-area: etapa;
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .cul-etapa .pasos {
+    flex: 1;
+  }
+  .cul-fin {
+    display: none;
+  }
 }
-@media (prefers-reduced-motion: reduce) { .cultivo { animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .cultivo {
+    animation: none;
+  }
+}
 
 /* Clima abajo a lo ancho (cuando hay poca información en las dos columnas) */
-.clima.ancho { animation: entrar .35s ease-out both; }
+.clima.ancho {
+  animation: entrar 0.35s ease-out both;
+}
 
 /* Celular: el lote y la finca de cada cultivo se ven completos (dos líneas si hace falta) */
 @media (max-width: 760px) {
-  .cul-txt small { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .cul-txt small {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
 }

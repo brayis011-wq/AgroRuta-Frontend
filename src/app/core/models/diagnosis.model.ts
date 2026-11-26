@@ -1,4 +1,10 @@
-export type TipoProblema = 'PLAGA' | 'ENFERMEDAD' | 'DEFICIENCIA' | 'DANO_AMBIENTAL' | 'SANA' | 'INDETERMINADO';
+export type TipoProblema =
+  | 'PLAGA'
+  | 'ENFERMEDAD'
+  | 'DEFICIENCIA'
+  | 'DANO_AMBIENTAL'
+  | 'SANA'
+  | 'INDETERMINADO';
 export type ConfianzaDiagnostico = 'ALTA' | 'MEDIA' | 'BAJA';
 
 /** Diagnóstico de una foto, guardado en la bitácora de la siembra */

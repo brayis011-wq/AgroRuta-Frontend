@@ -43,13 +43,17 @@ export class BandejaAvisosService {
 
   private usuarios = 0;
   private reloj: ReturnType<typeof setInterval> | null = null;
-  private readonly alVolver = () => { if (document.visibilityState === 'visible') this.refrescarConteo(); };
+  private readonly alVolver = () => {
+    if (document.visibilityState === 'visible') this.refrescarConteo();
+  };
 
   /** Lo llama cada campana al aparecer; la consulta periódica corre mientras haya al menos una */
   iniciar(): void {
     if (this.usuarios++ > 0) return;
     this.refrescarConteo();
-    this.reloj = setInterval(() => { if (document.visibilityState === 'visible') this.refrescarConteo(); }, CADA_CUANTO_MS);
+    this.reloj = setInterval(() => {
+      if (document.visibilityState === 'visible') this.refrescarConteo();
+    }, CADA_CUANTO_MS);
     document.addEventListener('visibilitychange', this.alVolver);
   }
 
@@ -67,7 +71,9 @@ export class BandejaAvisosService {
   refrescarConteo(): void {
     this.http.get<{ noLeidos: number }>(`${this.base}/unread-count`).subscribe({
       next: (r) => this.noLeidos.set(r.noLeidos ?? 0),
-      error: () => { /* sin conexión o servidor dormido: se intenta en la próxima vuelta */ },
+      error: () => {
+        /* sin conexión o servidor dormido: se intenta en la próxima vuelta */
+      },
     });
   }
 
@@ -90,7 +96,9 @@ export class BandejaAvisosService {
     if (aviso.leido) return;
     this.avisos.update((l) => l?.map((a) => (a.id === aviso.id ? { ...a, leido: true } : a)) ?? l);
     this.noLeidos.update((n) => Math.max(0, n - 1));
-    this.http.patch<void>(`${this.base}/${aviso.id}/read`, null).subscribe({ error: () => this.cargar() });
+    this.http
+      .patch<void>(`${this.base}/${aviso.id}/read`, null)
+      .subscribe({ error: () => this.cargar() });
   }
 
   marcarTodos(): void {

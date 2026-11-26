@@ -18,21 +18,23 @@ describe('loggingInterceptor', () => {
   beforeEach(() => {
     loggingServiceMock = {
       debug: vi.fn(),
-      info:  vi.fn(),
+      info: vi.fn(),
       error: vi.fn(),
     };
 
     TestBed.configureTestingModule({
-      providers: [
-        { provide: LoggingService, useValue: loggingServiceMock },
-      ],
+      providers: [{ provide: LoggingService, useValue: loggingServiceMock }],
     });
   });
 
   afterEach(() => vi.restoreAllMocks());
 
   it('no toca las llamadas a servicios externos (clima, mapas, traducciones)', () => {
-    const req: any = { method: 'GET', url: 'https://api.openweathermap.org/data/2.5/weather', clone: vi.fn() };
+    const req: any = {
+      method: 'GET',
+      url: 'https://api.openweathermap.org/data/2.5/weather',
+      clone: vi.fn(),
+    };
     const next = vi.fn().mockReturnValue(of({}));
 
     interceptor(req, next).subscribe();
@@ -56,13 +58,13 @@ describe('loggingInterceptor', () => {
           expect(req.clone).toHaveBeenCalledWith(
             expect.objectContaining({
               setHeaders: expect.objectContaining({ 'X-Trace-Id': expect.any(String) }),
-            })
+            }),
           );
           expect(loggingServiceMock.debug).toHaveBeenCalledWith(
-            expect.stringContaining('GET ' + API + '/api/test')
+            expect.stringContaining('GET ' + API + '/api/test'),
           );
           expect(loggingServiceMock.info).toHaveBeenCalledWith(
-            expect.stringContaining('GET ' + API + '/api/test')
+            expect.stringContaining('GET ' + API + '/api/test'),
           );
           resolve();
         },
@@ -84,7 +86,7 @@ describe('loggingInterceptor', () => {
         error: (err) => {
           expect(loggingServiceMock.error).toHaveBeenCalledWith(
             expect.stringContaining('status=500'),
-            'Server error'
+            'Server error',
           );
           expect(err).toBe(httpError);
           resolve();

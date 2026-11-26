@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener, OnInit, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostListener,
+  OnInit,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
@@ -44,7 +55,12 @@ export class MigasComponent implements OnInit {
 
   @HostListener('document:click', ['$event.target'])
   alTocarFuera(destino: EventTarget | null): void {
-    if (this.abierta() !== null && destino instanceof Node && !this.el.nativeElement.contains(destino)) this.abierta.set(null);
+    if (
+      this.abierta() !== null &&
+      destino instanceof Node &&
+      !this.el.nativeElement.contains(destino)
+    )
+      this.abierta.set(null);
   }
 
   @HostListener('document:keydown.escape')

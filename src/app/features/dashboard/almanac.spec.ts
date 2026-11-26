@@ -1,4 +1,13 @@
-import { MES_LUNAR, TOTAL_DICHOS, almanaqueDe, caminoLuna, diaDelAnio, edadLuna, faseLuna, iluminacion } from './almanac';
+import {
+  MES_LUNAR,
+  TOTAL_DICHOS,
+  almanaqueDe,
+  caminoLuna,
+  diaDelAnio,
+  edadLuna,
+  faseLuna,
+  iluminacion,
+} from './almanac';
 
 /** Mediodía en Colombia (UTC-5) de una fecha */
 const dia = (a: number, m: number, d: number) => new Date(Date.UTC(a, m - 1, d, 17));

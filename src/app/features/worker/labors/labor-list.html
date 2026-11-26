@@ -6,21 +6,34 @@
       <p class="cv-sub">{{ 'workers.activities.subtitle' | translate }}</p>
     </div>
     <div class="cv-acciones">
-      <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'workers.activities.new' | translate }}</button>
+      <button type="button" class="btn btn-prim" (click)="abrirNuevo()">
+        <i class="ti ti-plus" aria-hidden="true"></i> {{ 'workers.activities.new' | translate }}
+      </button>
     </div>
   </header>
 
   <app-pestanas-catalogo />
 
-  @if (error && !mostrarForm) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+  @if (error && !mostrarForm) {
+    <p class="aviso error" role="alert">
+      <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+    </p>
+  }
 
   <section class="tarjeta">
-    <header><h2><i class="ti ti-list-check" aria-hidden="true"></i> {{ 'workers.activities.title' | translate }}</h2></header>
+    <header>
+      <h2>
+        <i class="ti ti-list-check" aria-hidden="true"></i>
+        {{ 'workers.activities.title' | translate }}
+      </h2>
+    </header>
     @if (actividades.length === 0) {
       <div class="vacio">
         <i class="ti ti-list-check" aria-hidden="true"></i>
         <p>{{ 'workers.activities.empty' | translate }}</p>
-        <button type="button" class="btn btn-prim" (click)="abrirNuevo()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'workers.activities.new' | translate }}</button>
+        <button type="button" class="btn btn-prim" (click)="abrirNuevo()">
+          <i class="ti ti-plus" aria-hidden="true"></i> {{ 'workers.activities.new' | translate }}
+        </button>
       </div>
     } @else {
       <div class="tabla-wrap">
@@ -30,24 +43,62 @@
               <th>{{ 'workers.activities.table.activity' | translate }}</th>
               <th>{{ 'workers.activities.table.description' | translate }}</th>
               <th>{{ 'common.status' | translate }}</th>
-              <th><span class="sr-only">{{ 'common.actions' | translate }}</span></th>
+              <th>
+                <span class="sr-only">{{ 'common.actions' | translate }}</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             @for (a of actividades; track a.id) {
               <tr [class.apagada]="!a.activa">
-                <td class="prin fuerte-n">{{ a.nombre }}@if (a.comun) { <span class="etq comun" [title]="'workers.activities.commonHint' | translate"><i class="ti ti-world" aria-hidden="true"></i> {{ 'workers.activities.common' | translate }}</span> }</td>
+                <td class="prin fuerte-n">
+                  {{ a.nombre }}
+                  @if (a.comun) {
+                    <span class="etq comun" [title]="'workers.activities.commonHint' | translate"
+                      ><i class="ti ti-world" aria-hidden="true"></i>
+                      {{ 'workers.activities.common' | translate }}</span
+                    >
+                  }
+                </td>
                 <td class="suave">{{ a.descripcion || '—' }}</td>
-                <td><span class="est" [class.si]="a.activa" [class.INACTIVO]="!a.activa">{{ (a.activa ? 'workers.activities.active' : 'workers.activities.inactive') | translate }}</span></td>
+                <td>
+                  <span class="est" [class.si]="a.activa" [class.INACTIVO]="!a.activa">{{
+                    (a.activa ? 'workers.activities.active' : 'workers.activities.inactive')
+                      | translate
+                  }}</span>
+                </td>
                 <td class="acc">
                   <span class="acc-in">
                     @if (a.comun) {
-                      <span class="btn-ic bloqueada" [title]="'workers.activities.commonHint' | translate"><i class="ti ti-lock" aria-hidden="true"></i><span class="sr-only">{{ 'workers.activities.commonHint' | translate }}</span></span>
+                      <span
+                        class="btn-ic bloqueada"
+                        [title]="'workers.activities.commonHint' | translate"
+                        ><i class="ti ti-lock" aria-hidden="true"></i
+                        ><span class="sr-only">{{
+                          'workers.activities.commonHint' | translate
+                        }}</span></span
+                      >
                     } @else {
-                    <button type="button" class="btn-ic verde-h" (click)="abrirEditar(a)" [title]="'common.edit' | translate" [attr.aria-label]="'common.edit' | translate"><i class="ti ti-pencil" aria-hidden="true"></i></button>
-                    @if (a.activa) {
-                      <button type="button" class="btn-ic peligro" (click)="desactivar(a)" [title]="'common.deactivate' | translate" [attr.aria-label]="'common.deactivate' | translate"><i class="ti ti-ban" aria-hidden="true"></i></button>
-                    }
+                      <button
+                        type="button"
+                        class="btn-ic verde-h"
+                        (click)="abrirEditar(a)"
+                        [title]="'common.edit' | translate"
+                        [attr.aria-label]="'common.edit' | translate"
+                      >
+                        <i class="ti ti-pencil" aria-hidden="true"></i>
+                      </button>
+                      @if (a.activa) {
+                        <button
+                          type="button"
+                          class="btn-ic peligro"
+                          (click)="desactivar(a)"
+                          [title]="'common.deactivate' | translate"
+                          [attr.aria-label]="'common.deactivate' | translate"
+                        >
+                          <i class="ti ti-ban" aria-hidden="true"></i>
+                        </button>
+                      }
                     }
                   </span>
                 </td>
@@ -61,28 +112,74 @@
 </div>
 
 @if (mostrarForm) {
-  <button type="button" class="overlay-l" (click)="mostrarForm = false" [attr.aria-label]="'common.cancel' | translate"></button>
+  <button
+    type="button"
+    class="overlay-l"
+    (click)="mostrarForm = false"
+    [attr.aria-label]="'common.cancel' | translate"
+  ></button>
   <dialog class="lado" open (keydown.escape)="mostrarForm = false">
     <header class="lado-head">
       <span class="ic verde" aria-hidden="true"><i class="ti ti-list-check"></i></span>
-      <div><h2>{{ (modoEdicion ? 'workers.activities.formEdit' : 'workers.activities.formNew') | translate }}</h2>@if (modoEdicion) { <p>{{ modoEdicion.nombre }}</p> }</div>
-      <button type="button" class="btn-ic" (click)="mostrarForm = false" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+      <div>
+        <h2>
+          {{
+            (modoEdicion ? 'workers.activities.formEdit' : 'workers.activities.formNew') | translate
+          }}
+        </h2>
+        @if (modoEdicion) {
+          <p>{{ modoEdicion.nombre }}</p>
+        }
+      </div>
+      <button
+        type="button"
+        class="btn-ic"
+        (click)="mostrarForm = false"
+        [attr.aria-label]="'common.cancel' | translate"
+      >
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
     </header>
     <form class="lado-cuerpo" [formGroup]="form" (ngSubmit)="guardar()">
-      @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+      @if (error) {
+        <p class="aviso error" role="alert">
+          <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+        </p>
+      }
       <div class="campos">
-        <label class="campo ancho"><span>{{ 'workers.activities.name' | translate }}</span>
-          <input formControlName="nombre" type="text" [placeholder]="'workers.activities.namePlaceholder' | translate" [class.invalido]="invalido('nombre')" />
-          @if (invalido('nombre')) { <em class="err">{{ 'common.required' | translate }}</em> }
+        <label class="campo ancho"
+          ><span>{{ 'workers.activities.name' | translate }}</span>
+          <input
+            formControlName="nombre"
+            type="text"
+            [placeholder]="'workers.activities.namePlaceholder' | translate"
+            [class.invalido]="invalido('nombre')"
+          />
+          @if (invalido('nombre')) {
+            <em class="err">{{ 'common.required' | translate }}</em>
+          }
         </label>
-        <label class="campo ancho"><span>{{ 'workers.activities.description' | translate }}</span>
-          <input formControlName="descripcion" type="text" [placeholder]="'workers.activities.descriptionPlaceholder' | translate" [class.invalido]="invalido('descripcion')" />
-          @if (invalido('descripcion')) { <em class="err">{{ 'common.required' | translate }}</em> }
+        <label class="campo ancho"
+          ><span>{{ 'workers.activities.description' | translate }}</span>
+          <input
+            formControlName="descripcion"
+            type="text"
+            [placeholder]="'workers.activities.descriptionPlaceholder' | translate"
+            [class.invalido]="invalido('descripcion')"
+          />
+          @if (invalido('descripcion')) {
+            <em class="err">{{ 'common.required' | translate }}</em>
+          }
         </label>
       </div>
       <footer class="lado-pie">
-        <button type="button" class="btn btn-texto" (click)="mostrarForm = false">{{ 'common.cancel' | translate }}</button>
-        <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando ? 'common.saving' : 'common.save') | translate }}</button>
+        <button type="button" class="btn btn-texto" (click)="mostrarForm = false">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn-prim" [disabled]="guardando">
+          <i class="ti ti-check" aria-hidden="true"></i>
+          {{ (guardando ? 'common.saving' : 'common.save') | translate }}
+        </button>
       </footer>
     </form>
   </dialog>

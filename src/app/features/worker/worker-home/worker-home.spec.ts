@@ -5,18 +5,32 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
 import { WorkerHomeComponent } from './worker-home';
 import {
-  TrabajadorService, CargoService, NominaService, PagoService
+  TrabajadorService,
+  CargoService,
+  NominaService,
+  PagoService,
 } from '../../../core/services/worker.service';
 import { vi } from 'vitest';
 
 const mkTrabajador = (overrides = {}): any => ({
-  id: 1, nombre: 'Juan', apellido: 'Perez', cedula: '123',
-  nombreCompleto: 'Juan Perez', estado: 'ACTIVO',
-  tipoContrato: 'FIJO', cargo: { id: 1, nombre: 'Jornalero' }, ...overrides
+  id: 1,
+  nombre: 'Juan',
+  apellido: 'Perez',
+  cedula: '123',
+  nombreCompleto: 'Juan Perez',
+  estado: 'ACTIVO',
+  tipoContrato: 'FIJO',
+  cargo: { id: 1, nombre: 'Jornalero' },
+  ...overrides,
 });
-const mkNomina  = (estado = 'PENDIENTE'): any => ({ id: 1, trabajadorId: 1, estado, valorTotal: 100000 });
-const mkPago    = (): any => ({ id: 1, monto: 100000 });
-const mkCargo   = (): any => ({ id: 1, nombre: 'Jornalero', valorJornal: 50000 });
+const mkNomina = (estado = 'PENDIENTE'): any => ({
+  id: 1,
+  trabajadorId: 1,
+  estado,
+  valorTotal: 100000,
+});
+const mkPago = (): any => ({ id: 1, monto: 100000 });
+const mkCargo = (): any => ({ id: 1, nombre: 'Jornalero', valorJornal: 50000 });
 
 describe('WorkerHomeComponent', () => {
   // El diálogo de confirmación responde lo que diga cada prueba
@@ -25,30 +39,35 @@ describe('WorkerHomeComponent', () => {
   let component: WorkerHomeComponent;
   let fixture: ComponentFixture<WorkerHomeComponent>;
   let trabajadorSvc: any;
-  let cargoSvc:      any;
-  let nominaSvc:     any;
-  let pagoSvc:       any;
+  let cargoSvc: any;
+  let nominaSvc: any;
+  let pagoSvc: any;
 
   beforeEach(async () => {
     respuesta = true;
     trabajadorSvc = {
       listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()])),
-      registrar:   vi.fn(),
-      actualizar:  vi.fn(),
+      registrar: vi.fn(),
+      actualizar: vi.fn(),
       cambiarCargo: vi.fn(),
-      desactivar:  vi.fn(),
-      suspender:   vi.fn(),
-      reactivar:   vi.fn()
+      desactivar: vi.fn(),
+      suspender: vi.fn(),
+      reactivar: vi.fn(),
     };
     cargoSvc = {
-      listar: vi.fn().mockReturnValue(of([mkCargo()]))
+      listar: vi.fn().mockReturnValue(of([mkCargo()])),
     };
     nominaSvc = {
-      resumen: vi.fn().mockReturnValue(of([{ estado: 'PENDIENTE', cantidad: 1, total: 100000 }, { estado: 'PAGADA', cantidad: 3, total: 300000 }])),
-      generar: vi.fn()
+      resumen: vi.fn().mockReturnValue(
+        of([
+          { estado: 'PENDIENTE', cantidad: 1, total: 100000 },
+          { estado: 'PAGADA', cantidad: 3, total: 300000 },
+        ]),
+      ),
+      generar: vi.fn(),
     };
     pagoSvc = {
-      resumen: vi.fn().mockReturnValue(of({ cantidad: 1, total: 100000, trabajadores: 1 }))
+      resumen: vi.fn().mockReturnValue(of({ cantidad: 1, total: 100000, trabajadores: 1 })),
     };
 
     await TestBed.configureTestingModule({
@@ -57,13 +76,13 @@ describe('WorkerHomeComponent', () => {
         { provide: ConfirmService, useValue: confirmSvc },
         provideRouter([]),
         { provide: TrabajadorService, useValue: trabajadorSvc },
-        { provide: CargoService,      useValue: cargoSvc },
-        { provide: NominaService,     useValue: nominaSvc },
-        { provide: PagoService,       useValue: pagoSvc },
-      ]
+        { provide: CargoService, useValue: cargoSvc },
+        { provide: NominaService, useValue: nominaSvc },
+        { provide: PagoService, useValue: pagoSvc },
+      ],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(WorkerHomeComponent);
+    fixture = TestBed.createComponent(WorkerHomeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -160,9 +179,14 @@ describe('WorkerHomeComponent', () => {
     vi.useFakeTimers();
     component.abrirNuevo();
     component.formNuevo.setValue({
-      nombre: 'Maria', apellido: 'Lopez', cedula: '456',
-      telefono: '', direccion: '', fechaIngreso: '2024-01-01',
-      tipoContrato: 'FIJO', cargoId: 1
+      nombre: 'Maria',
+      apellido: 'Lopez',
+      cedula: '456',
+      telefono: '',
+      direccion: '',
+      fechaIngreso: '2024-01-01',
+      tipoContrato: 'FIJO',
+      cargoId: 1,
     });
     component.guardarNuevo();
     expect(component.modoPanel).toBeNull();
@@ -176,9 +200,14 @@ describe('WorkerHomeComponent', () => {
     trabajadorSvc.registrar.mockReturnValue(throwError(() => new Error()));
     component.abrirNuevo();
     component.formNuevo.setValue({
-      nombre: 'Maria', apellido: 'Lopez', cedula: '456',
-      telefono: '', direccion: '', fechaIngreso: '2024-01-01',
-      tipoContrato: 'FIJO', cargoId: 1
+      nombre: 'Maria',
+      apellido: 'Lopez',
+      cedula: '456',
+      telefono: '',
+      direccion: '',
+      fechaIngreso: '2024-01-01',
+      tipoContrato: 'FIJO',
+      cargoId: 1,
     });
     component.guardarNuevo();
     expect(component.error).toBe('workers.home.errors.register');

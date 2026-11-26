@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { abreTeclado, barraOcultaTras } from './scroll-bar';
 
 describe('barra inferior al deslizar', () => {
-  const mover = (oculta: boolean, antes: number, ahora: number, maximo = 2000) => barraOcultaTras(oculta, { antes, ahora, maximo });
+  const mover = (oculta: boolean, antes: number, ahora: number, maximo = 2000) =>
+    barraOcultaTras(oculta, { antes, ahora, maximo });
 
   it('se esconde al bajar y vuelve al subir', () => {
     expect(mover(false, 200, 260)).toBe(true);
@@ -28,7 +29,7 @@ describe('barra inferior al deslizar', () => {
   it('el rebote del navegador más allá del final no la muestra ni la esconde', () => {
     expect(mover(true, 2000, 2030, 2000)).toBe(true);
     expect(mover(false, 1990, 2040, 2000)).toBe(false);
-    expect(mover(true, 500, -20)).toBe(false);   // por encima del inicio: zona alta
+    expect(mover(true, 500, -20)).toBe(false); // por encima del inicio: zona alta
   });
 
   it('reconoce los campos que abren el teclado', () => {

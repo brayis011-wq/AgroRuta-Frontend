@@ -12,7 +12,11 @@ type ModalMode = 'restore' | 'delete';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './backup-home.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './backup-home.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    './backup-home.css',
+  ],
 })
 export class BackupHomeComponent implements OnInit {
   private backupService = inject(BackupService);
@@ -146,7 +150,8 @@ export class BackupHomeComponent implements OnInit {
   fmtSize(bytes: number): string {
     if (bytes < 1024) return `${bytes} B`;
     const kb = bytes / 1024;
-    const fmt = (n: number) => n.toLocaleString(this.lang.current(), { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const fmt = (n: number) =>
+      n.toLocaleString(this.lang.current(), { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     if (kb < 1024) return `${fmt(kb)} KB`;
     return `${fmt(kb / 1024)} MB`;
   }

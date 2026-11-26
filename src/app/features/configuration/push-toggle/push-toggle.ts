@@ -8,7 +8,11 @@ import { AvisosPushService, EstadoPush } from '../../../core/services/push.servi
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './push-toggle.html',
-  styleUrls: ['../../crop/crop-ui.css', '../pages/configuration-page/configuration-page.scss', './push-toggle.css'],
+  styleUrls: [
+    '../../crop/crop-ui.css',
+    '../pages/configuration-page/configuration-page.scss',
+    './push-toggle.css',
+  ],
 })
 export class PushToggleComponent implements OnInit {
   private push = inject(AvisosPushService);
@@ -33,8 +37,10 @@ export class PushToggleComponent implements OnInit {
     try {
       const nuevo = activar ? await this.push.activar() : await this.push.desactivar();
       this.estado.set(nuevo);
-      if (activar && nuevo === 'activo') this.mensaje.set({ texto: 'config.push.enabled', error: false });
-      if (activar && nuevo === 'bloqueado') this.mensaje.set({ texto: 'config.push.blocked', error: true });
+      if (activar && nuevo === 'activo')
+        this.mensaje.set({ texto: 'config.push.enabled', error: false });
+      if (activar && nuevo === 'bloqueado')
+        this.mensaje.set({ texto: 'config.push.blocked', error: true });
     } catch {
       this.estado.set(await this.push.estado());
       this.mensaje.set({ texto: 'config.push.error', error: true });
@@ -49,7 +55,11 @@ export class PushToggleComponent implements OnInit {
     this.mensaje.set(null);
     try {
       const enviados = await this.push.probar();
-      this.mensaje.set(enviados > 0 ? { texto: 'config.push.testSent', error: false } : { texto: 'config.push.testFailed', error: true });
+      this.mensaje.set(
+        enviados > 0
+          ? { texto: 'config.push.testSent', error: false }
+          : { texto: 'config.push.testFailed', error: true },
+      );
     } catch {
       this.mensaje.set({ texto: 'config.push.testFailed', error: true });
     } finally {

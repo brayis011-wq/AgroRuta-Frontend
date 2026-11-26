@@ -1,13 +1,17 @@
 <!-- registrar-fumigacion.html -->
 <div class="page-bg registro">
   <div class="container">
-
-    <app-migas-cultivo [siembra]="siembraId" [actual]="registroId ? 'temporadas.registro.editSpray' : 'siembra.spray.title'" />
+    <app-migas-cultivo
+      [siembra]="siembraId"
+      [actual]="registroId ? 'temporadas.registro.editSpray' : 'siembra.spray.title'"
+    />
 
     <div class="form-header">
       <div class="form-header__icon" aria-hidden="true"><i class="ti ti-spray"></i></div>
       <div>
-        <h2>{{ (registroId ? 'temporadas.registro.editSpray' : 'siembra.spray.title') | translate }}</h2>
+        <h2>
+          {{ (registroId ? 'temporadas.registro.editSpray' : 'siembra.spray.title') | translate }}
+        </h2>
         <p>{{ 'siembra.spray.subtitle' | translate }}</p>
       </div>
     </div>
@@ -21,7 +25,6 @@
       <div class="form-card__accent" aria-hidden="true"></div>
 
       <form arSiguienteCampo (ngSubmit)="onSubmit()" #fumigacionForm="ngForm">
-
         <!-- En pantallas anchas, dos columnas de secciones: así el formulario cabe sin bajar -->
         <div class="grupos">
           <div class="grupo-col">
@@ -31,23 +34,31 @@
               <!-- Fecha -->
               <div class="field">
                 <label class="field__label" for="fecha">
-                  <i class="ti ti-calendar" aria-hidden="true"></i> {{ 'siembra.spray.date' | translate }}
+                  <i class="ti ti-calendar" aria-hidden="true"></i>
+                  {{ 'siembra.spray.date' | translate }}
                 </label>
                 <div class="field__input-wrap">
-                  <input id="fecha" type="date"
-                         [(ngModel)]="form.fecha" name="fecha" required />
+                  <input id="fecha" type="date" [(ngModel)]="form.fecha" name="fecha" required />
                 </div>
               </div>
 
               <!-- Área -->
               <div class="field">
                 <label class="field__label" for="area">
-                  <i class="ti ti-dimensions" aria-hidden="true"></i> {{ 'siembra.spray.area' | translate }}
+                  <i class="ti ti-dimensions" aria-hidden="true"></i>
+                  {{ 'siembra.spray.area' | translate }}
                 </label>
                 <div class="field__input-wrap">
-                  <input id="area" type="number" inputmode="decimal"
-                         [(ngModel)]="form.areaAplicada" name="areaAplicada"
-                         placeholder="0.0" step="0.1" required />
+                  <input
+                    id="area"
+                    type="number"
+                    inputmode="decimal"
+                    [(ngModel)]="form.areaAplicada"
+                    name="areaAplicada"
+                    placeholder="0.0"
+                    step="0.1"
+                    required
+                  />
                 </div>
               </div>
             </section>
@@ -58,12 +69,12 @@
               <!-- Producto: solo se ofrecen los insumos registrados en la bodega -->
               <fieldset class="field">
                 <legend class="field__label">
-                  <i class="ti ti-flask" aria-hidden="true"></i> {{ 'siembra.spray.product' | translate }}
+                  <i class="ti ti-flask" aria-hidden="true"></i>
+                  {{ 'siembra.spray.product' | translate }}
                 </legend>
 
                 <!-- Buscador (visible si no hay insumo seleccionado) -->
                 <ng-container *ngIf="!insumoSeleccionado()">
-
                   <div class="producto-buscador">
                     <div class="input-search-wrapper">
                       <input
@@ -81,8 +92,16 @@
                         aria-autocomplete="list"
                         [attr.aria-expanded]="mostrarCatalogo()"
                       />
-                      <i class="ti ti-search search-icon" aria-hidden="true" *ngIf="!cargandoBodega()"></i>
-                      <span class="spinner search-icon" aria-hidden="true" *ngIf="cargandoBodega()"></span>
+                      <i
+                        class="ti ti-search search-icon"
+                        aria-hidden="true"
+                        *ngIf="!cargandoBodega()"
+                      ></i>
+                      <span
+                        class="spinner search-icon"
+                        aria-hidden="true"
+                        *ngIf="cargandoBodega()"
+                      ></span>
                     </div>
 
                     <!-- Resultados de la búsqueda dentro de la bodega -->
@@ -95,7 +114,9 @@
                         (mouseenter)="resaltado.set(i)"
                         (mousedown)="$event.preventDefault(); seleccionarDeBodega(b)"
                       >
-                        <ng-container *ngTemplateOutlet="filaBodega; context: { $implicit: b }"></ng-container>
+                        <ng-container
+                          *ngTemplateOutlet="filaBodega; context: { $implicit: b }"
+                        ></ng-container>
                       </button>
 
                       <div class="catalogo-empty" *ngIf="catalogoFiltrado().length === 0">
@@ -108,19 +129,32 @@
                     </small>
 
                     <!-- Bodega vacía: no hay nada que ofrecer -->
-                    <div class="bodega-vacia" *ngIf="!cargandoBodega() && bodega().length === 0" role="note">
+                    <div
+                      class="bodega-vacia"
+                      *ngIf="!cargandoBodega() && bodega().length === 0"
+                      role="note"
+                    >
                       <i class="ti ti-building-warehouse" aria-hidden="true"></i>
                       <span>{{ 'siembra.spray.stockEmpty' | translate }}</span>
                       <a routerLink="/crops/inventory">{{ 'siembra.spray.stockGo' | translate }}</a>
                     </div>
 
-                    <button type="button" class="btn-catalogo" *ngIf="bodega().length > 0" (click)="verBodega()">
-                      {{ (mostrarBodega() ? 'siembra.spray.catalogClose' : 'siembra.spray.catalogOpen') | translate: { n: bodega().length } }}
+                    <button
+                      type="button"
+                      class="btn-catalogo"
+                      *ngIf="bodega().length > 0"
+                      (click)="verBodega()"
+                    >
+                      {{
+                        (mostrarBodega()
+                          ? 'siembra.spray.catalogClose'
+                          : 'siembra.spray.catalogOpen'
+                        ) | translate: { n: bodega().length }
+                      }}
                     </button>
 
                     <!-- Insumos de la bodega agrupados por tipo -->
                     <div class="catalogo-completo" *ngIf="mostrarBodega()">
-
                       <!-- Filtro interno -->
                       <div class="catalogo-completo__filtro">
                         <input
@@ -134,15 +168,21 @@
 
                       <!-- Sin resultados del filtro -->
                       <div class="catalogo-empty" *ngIf="getBodegaAgrupada().length === 0">
-                        <span>{{ 'siembra.spray.noResultsFor' | translate: { filter: filtroBodega } }}</span>
+                        <span>{{
+                          'siembra.spray.noResultsFor' | translate: { filter: filtroBodega }
+                        }}</span>
                       </div>
 
                       <!-- Grupos por tipo -->
                       <ng-container *ngFor="let grupo of getBodegaAgrupada()">
                         <div class="catalogo-grupo">
-
                           <div class="catalogo-grupo__titulo">
-                            <span>{{ (grupo.tipo ? 'enums.tipoInsumo.' + grupo.tipo : 'siembra.spray.noType') | translate }}</span>
+                            <span>{{
+                              (grupo.tipo
+                                ? 'enums.tipoInsumo.' + grupo.tipo
+                                : 'siembra.spray.noType'
+                              ) | translate
+                            }}</span>
                             <span class="catalogo-grupo__count">{{ grupo.items.length }}</span>
                           </div>
 
@@ -152,15 +192,14 @@
                             *ngFor="let b of grupo.items"
                             (click)="seleccionarDeBodega(b)"
                           >
-                            <ng-container *ngTemplateOutlet="filaBodega; context: { $implicit: b }"></ng-container>
+                            <ng-container
+                              *ngTemplateOutlet="filaBodega; context: { $implicit: b }"
+                            ></ng-container>
                           </button>
-
                         </div>
                       </ng-container>
-
                     </div>
                     <!-- fin lista de la bodega -->
-
                   </div>
                 </ng-container>
 
@@ -170,16 +209,38 @@
                     <span class="catalogo-nombre">{{ b.stock.nombre }}</span>
                     <span class="catalogo-dosis">
                       {{ 'inventario.spray.inStock' | translate: { cantidad: cantidadDe(b) } }}
-                      <span class="est-stock" *ngIf="b.stock.estado !== 'OK'" [ngClass]="b.stock.estado">{{ 'inventario.status.' + b.stock.estado | translate }}</span>
+                      <span
+                        class="est-stock"
+                        *ngIf="b.stock.estado !== 'OK'"
+                        [ngClass]="b.stock.estado"
+                        >{{ 'inventario.status.' + b.stock.estado | translate }}</span
+                      >
                       <ng-container *ngIf="b.insumo?.dosisSugerida">
-                        · {{ 'siembra.spray.doseShort' | translate: { dose: b.insumo.dosisSugerida, unit: ('enums.unidadMedida.' + b.insumo.unidadSugerida | translate) } }}
+                        ·
+                        {{
+                          'siembra.spray.doseShort'
+                            | translate
+                              : {
+                                  dose: b.insumo.dosisSugerida,
+                                  unit:
+                                    ('enums.unidadMedida.' + b.insumo.unidadSugerida | translate),
+                                }
+                        }}
                       </ng-container>
                       <span *ngIf="b.insumo?.reentradaHoras > 0">
-                        · <i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ 'siembra.spray.reentryShort' | translate: { hours: b.insumo.reentradaHoras } }}
+                        · <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+                        {{
+                          'siembra.spray.reentryShort'
+                            | translate: { hours: b.insumo.reentradaHoras }
+                        }}
                       </span>
                     </span>
                   </div>
-                  <span class="badge" *ngIf="b.stock.tipo" [ngClass]="getTipoBadgeClass(b.stock.tipo)">
+                  <span
+                    class="badge"
+                    *ngIf="b.stock.tipo"
+                    [ngClass]="getTipoBadgeClass(b.stock.tipo)"
+                  >
                     {{ 'enums.tipoInsumo.' + b.stock.tipo | translate }}
                   </span>
                 </ng-template>
@@ -200,42 +261,72 @@
 
                   <!-- Alerta período de reentrada -->
                   <div class="reentrada-aviso" *ngIf="insumo.reentradaHoras > 0" role="note">
-                    <i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ 'siembra.spray.reentryLabel' | translate }}
-                    <strong>{{ 'siembra.spray.reentryHours' | translate: { hours: insumo.reentradaHoras } }}</strong>
+                    <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+                    {{ 'siembra.spray.reentryLabel' | translate }}
+                    <strong>{{
+                      'siembra.spray.reentryHours' | translate: { hours: insumo.reentradaHoras }
+                    }}</strong>
                     — {{ 'siembra.spray.reentryNote' | translate }}
                   </div>
                 </ng-container>
-
               </fieldset>
 
               <!-- Dosis y Unidad -->
               <div class="field-row">
                 <div class="field">
                   <label class="field__label" for="dosis">
-                    <i class="ti ti-droplet" aria-hidden="true"></i> {{ 'siembra.spray.dose' | translate }}
+                    <i class="ti ti-droplet" aria-hidden="true"></i>
+                    {{ 'siembra.spray.dose' | translate }}
                   </label>
                   <div class="field__input-wrap">
-                    <input id="dosis" type="number" inputmode="decimal"
-                           [(ngModel)]="form.dosis" name="dosis"
-                           placeholder="0.0" step="0.1" required />
+                    <input
+                      id="dosis"
+                      type="number"
+                      inputmode="decimal"
+                      [(ngModel)]="form.dosis"
+                      name="dosis"
+                      placeholder="0.0"
+                      step="0.1"
+                      required
+                    />
                   </div>
-                  <small class="campo-hint" *ngIf="insumoSeleccionado()?.dosisSugerida && insumoSeleccionado() as insumo">
-                    {{ 'siembra.spray.doseHint' | translate: { dose: insumo.dosisSugerida, unit: ('enums.unidadMedida.' + insumo.unidadSugerida | translate) } }}
+                  <small
+                    class="campo-hint"
+                    *ngIf="insumoSeleccionado()?.dosisSugerida && insumoSeleccionado() as insumo"
+                  >
+                    {{
+                      'siembra.spray.doseHint'
+                        | translate
+                          : {
+                              dose: insumo.dosisSugerida,
+                              unit: ('enums.unidadMedida.' + insumo.unidadSugerida | translate),
+                            }
+                    }}
                   </small>
                 </div>
 
                 <div class="field">
                   <label class="field__label" for="unidad">
-                    <i class="ti ti-ruler-2" aria-hidden="true"></i> {{ 'siembra.spray.unit' | translate }}
+                    <i class="ti ti-ruler-2" aria-hidden="true"></i>
+                    {{ 'siembra.spray.unit' | translate }}
                   </label>
                   <div class="field__input-wrap">
-                    <select id="unidad"
-                            [(ngModel)]="form.unidadMedida" name="unidadMedida" required (ngModelChange)="cambiarUnidad()">
+                    <select
+                      id="unidad"
+                      [(ngModel)]="form.unidadMedida"
+                      name="unidadMedida"
+                      required
+                      (ngModelChange)="cambiarUnidad()"
+                    >
                       <option value="">{{ 'siembra.spray.unitPlaceholder' | translate }}</option>
-                      <option *ngFor="let u of unidadesDisponibles()" [value]="u">{{ 'enums.unidadMedida.' + u | translate }}</option>
+                      <option *ngFor="let u of unidadesDisponibles()" [value]="u">
+                        {{ 'enums.unidadMedida.' + u | translate }}
+                      </option>
                     </select>
                   </div>
-                  <small class="campo-hint" *ngIf="insumoSeleccionado()">{{ 'siembra.spray.unitHint' | translate }}</small>
+                  <small class="campo-hint" *ngIf="insumoSeleccionado()">{{
+                    'siembra.spray.unitHint' | translate
+                  }}</small>
                 </div>
               </div>
             </section>
@@ -247,34 +338,80 @@
 
               <!-- Cantidad total gastada: se descuenta de la bodega; usa la misma unidad que la dosis -->
               <div class="field" *ngIf="insumoSeleccionado()">
-                <label class="field__label" for="cantidadUsada"><i class="ti ti-building-warehouse" aria-hidden="true"></i> {{ 'inventario.spray.used' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
+                <label class="field__label" for="cantidadUsada"
+                  ><i class="ti ti-building-warehouse" aria-hidden="true"></i>
+                  {{ 'inventario.spray.used' | translate }}
+                  <span class="label-optional">({{ 'common.optional' | translate }})</span></label
+                >
                 <div class="field__input-wrap con-unidad">
-                  <input id="cantidadUsada" type="number" min="0" step="any" inputmode="decimal"
-                         [(ngModel)]="form.cantidadUsada" name="cantidadUsada" placeholder="0" (ngModelChange)="actualizarEstimado()"
-                         [attr.aria-describedby]="form.unidadCantidad ? 'unidadCantidad' : null" />
-                  <span class="sufijo-unidad" id="unidadCantidad" *ngIf="form.unidadCantidad">{{ 'enums.unidadMedida.' + form.unidadCantidad | translate }}</span>
+                  <input
+                    id="cantidadUsada"
+                    type="number"
+                    min="0"
+                    step="any"
+                    inputmode="decimal"
+                    [(ngModel)]="form.cantidadUsada"
+                    name="cantidadUsada"
+                    placeholder="0"
+                    (ngModelChange)="actualizarEstimado()"
+                    [attr.aria-describedby]="form.unidadCantidad ? 'unidadCantidad' : null"
+                  />
+                  <span class="sufijo-unidad" id="unidadCantidad" *ngIf="form.unidadCantidad">{{
+                    'enums.unidadMedida.' + form.unidadCantidad | translate
+                  }}</span>
                 </div>
                 <small class="campo-hint">{{ 'inventario.spray.usedHint' | translate }}</small>
               </div>
 
               <div class="field" [class.ancho]="!insumoSeleccionado()">
-                <label class="field__label" for="costoProducto"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'temporadas.costos.sprayCost' | translate }} <span class="label-optional">({{ 'common.optional' | translate }})</span></label>
+                <label class="field__label" for="costoProducto"
+                  ><i class="ti ti-cash" aria-hidden="true"></i>
+                  {{ 'temporadas.costos.sprayCost' | translate }}
+                  <span class="label-optional">({{ 'common.optional' | translate }})</span></label
+                >
                 <div class="field__input-wrap">
-                  <input id="costoProducto" type="number" min="0" step="any" inputmode="decimal" [(ngModel)]="form.costo" name="costoProducto" placeholder="0" />
+                  <input
+                    id="costoProducto"
+                    type="number"
+                    min="0"
+                    step="any"
+                    inputmode="decimal"
+                    [(ngModel)]="form.costo"
+                    name="costoProducto"
+                    placeholder="0"
+                  />
                 </div>
-                <small class="campo-hint">{{ 'temporadas.costos.sprayCostHint' | translate }}</small>
+                <small class="campo-hint">{{
+                  'temporadas.costos.sprayCostHint' | translate
+                }}</small>
               </div>
 
               <div class="bodega-info ancho" *ngIf="insumoSeleccionado() && estimado() as e">
                 <p *ngIf="e.disponible !== 0 || e.costoPorUnidad != null; else sinCompras">
-                  <i class="ti ti-packages" aria-hidden="true"></i> {{ 'inventario.spray.inStock' | translate: { cantidad: cantidadBodega(e) } }}
+                  <i class="ti ti-packages" aria-hidden="true"></i>
+                  {{ 'inventario.spray.inStock' | translate: { cantidad: cantidadBodega(e) } }}
                 </p>
-                <ng-template #sinCompras><p class="suave"><i class="ti ti-info-circle" aria-hidden="true"></i> {{ 'inventario.spray.notInStock' | translate }}</p></ng-template>
+                <ng-template #sinCompras
+                  ><p class="suave">
+                    <i class="ti ti-info-circle" aria-hidden="true"></i>
+                    {{ 'inventario.spray.notInStock' | translate }}
+                  </p></ng-template
+                >
                 <p *ngIf="e.costo != null && form.cantidadUsada">
-                  <i class="ti ti-calculator" aria-hidden="true"></i> {{ 'inventario.spray.estimated' | translate: { costo: pesos(e.costo) } }}
-                  <button type="button" class="btn-link" *ngIf="form.costo !== e.costo" (click)="usarCostoEstimado()">{{ 'inventario.spray.useEstimated' | translate }}</button>
+                  <i class="ti ti-calculator" aria-hidden="true"></i>
+                  {{ 'inventario.spray.estimated' | translate: { costo: pesos(e.costo) } }}
+                  <button
+                    type="button"
+                    class="btn-link"
+                    *ngIf="form.costo !== e.costo"
+                    (click)="usarCostoEstimado()"
+                  >
+                    {{ 'inventario.spray.useEstimated' | translate }}
+                  </button>
                 </p>
-                <p class="suave" *ngIf="e.costoPorUnidad == null && form.cantidadUsada">{{ 'inventario.spray.noPrice' | translate }}</p>
+                <p class="suave" *ngIf="e.costoPorUnidad == null && form.cantidadUsada">
+                  {{ 'inventario.spray.noPrice' | translate }}
+                </p>
               </div>
             </section>
 
@@ -284,16 +421,44 @@
               <!-- Restricciones del producto: deciden cuándo se puede cosechar y entrar al lote -->
               <div class="field-row restricciones">
                 <div class="field">
-                  <label class="field__label" for="carencia"><i class="ti ti-basket-off" aria-hidden="true"></i> {{ 'temporadas.carencia.field' | translate }}</label>
-                  <input id="carencia" type="number" inputmode="decimal" min="0" max="365" step="1" [(ngModel)]="form.diasCarencia" name="diasCarencia"
-                         [placeholder]="'temporadas.carencia.unknown' | translate" />
-                  <small class="campo-hint">{{ 'temporadas.carencia.fieldHint' | translate }}</small>
+                  <label class="field__label" for="carencia"
+                    ><i class="ti ti-basket-off" aria-hidden="true"></i>
+                    {{ 'temporadas.carencia.field' | translate }}</label
+                  >
+                  <input
+                    id="carencia"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    max="365"
+                    step="1"
+                    [(ngModel)]="form.diasCarencia"
+                    name="diasCarencia"
+                    [placeholder]="'temporadas.carencia.unknown' | translate"
+                  />
+                  <small class="campo-hint">{{
+                    'temporadas.carencia.fieldHint' | translate
+                  }}</small>
                 </div>
                 <div class="field">
-                  <label class="field__label" for="reentrada"><i class="ti ti-door-exit" aria-hidden="true"></i> {{ 'temporadas.carencia.reentryField' | translate }}</label>
-                  <input id="reentrada" type="number" inputmode="decimal" min="0" max="720" step="1" [(ngModel)]="form.reentradaHoras" name="reentradaHoras"
-                         [placeholder]="'temporadas.carencia.unknown' | translate" />
-                  <small class="campo-hint">{{ 'temporadas.carencia.reentryHint' | translate }}</small>
+                  <label class="field__label" for="reentrada"
+                    ><i class="ti ti-door-exit" aria-hidden="true"></i>
+                    {{ 'temporadas.carencia.reentryField' | translate }}</label
+                  >
+                  <input
+                    id="reentrada"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    max="720"
+                    step="1"
+                    [(ngModel)]="form.reentradaHoras"
+                    name="reentradaHoras"
+                    [placeholder]="'temporadas.carencia.unknown' | translate"
+                  />
+                  <small class="campo-hint">{{
+                    'temporadas.carencia.reentryHint' | translate
+                  }}</small>
                 </div>
               </div>
             </section>
@@ -307,10 +472,13 @@
             <span class="label-optional">({{ 'common.optional' | translate }})</span>
           </label>
           <div class="field__input-wrap">
-            <textarea id="observaciones"
-                      [(ngModel)]="form.observaciones" name="observaciones"
-                      [placeholder]="'siembra.spray.notesPlaceholder' | translate"
-                      rows="3">
+            <textarea
+              id="observaciones"
+              [(ngModel)]="form.observaciones"
+              name="observaciones"
+              [placeholder]="'siembra.spray.notesPlaceholder' | translate"
+              rows="3"
+            >
             </textarea>
           </div>
         </div>
@@ -318,9 +486,15 @@
         <div class="form-actions">
           <!-- El aviso va junto a los botones: se ve al pulsar Registrar aunque el formulario esté abajo -->
           <div class="alert alert--error" *ngIf="error" role="alert">
-            <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i>{{ error | translate }}
+            <i class="ti ti-alert-triangle alert__icon" aria-hidden="true"></i
+            >{{ error | translate }}
           </div>
-          <a class="btn-cancelar" [routerLink]="['/crops/planting', siembraId]" [queryParams]="{ tab: 'registros' }">{{ 'common.cancel' | translate }}</a>
+          <a
+            class="btn-cancelar"
+            [routerLink]="['/crops/planting', siembraId]"
+            [queryParams]="{ tab: 'registros' }"
+            >{{ 'common.cancel' | translate }}</a
+          >
           <button type="submit" class="btn-submit" [disabled]="cargando">
             <span class="btn-submit__text" *ngIf="!cargando">
               <span>{{ (registroId ? 'common.save' : 'siembra.spray.submit') | translate }}</span>
@@ -332,7 +506,6 @@
             </span>
           </button>
         </div>
-
       </form>
     </div>
   </div>

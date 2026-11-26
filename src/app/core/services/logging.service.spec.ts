@@ -24,7 +24,7 @@ describe('LoggingService', () => {
     expect(console.debug).toHaveBeenCalledWith(
       '%c[DEBUG]%c test debug',
       'color:#888',
-      'color:default'
+      'color:default',
     );
   });
 
@@ -35,7 +35,7 @@ describe('LoggingService', () => {
       'color:#888',
       'color:default',
       { extra: true },
-      42
+      42,
     );
   });
 
@@ -44,7 +44,7 @@ describe('LoggingService', () => {
     expect(console.info).toHaveBeenCalledWith(
       '%c[INFO]%c test info',
       'color:#4CAF50',
-      'color:default'
+      'color:default',
     );
   });
 
@@ -54,7 +54,7 @@ describe('LoggingService', () => {
       '%c[INFO]%c with args',
       'color:#4CAF50',
       'color:default',
-      'detail'
+      'detail',
     );
   });
 
@@ -63,7 +63,7 @@ describe('LoggingService', () => {
     expect(console.warn).toHaveBeenCalledWith(
       '%c[WARN]%c test warn',
       'color:#FF9800',
-      'color:default'
+      'color:default',
     );
   });
 
@@ -73,7 +73,7 @@ describe('LoggingService', () => {
       '%c[WARN]%c with args',
       'color:#FF9800',
       'color:default',
-      'detail'
+      'detail',
     );
   });
 
@@ -82,7 +82,7 @@ describe('LoggingService', () => {
     expect(console.error).toHaveBeenCalledWith(
       '%c[ERROR]%c test error',
       'color:#f44336',
-      'color:default'
+      'color:default',
     );
   });
 
@@ -92,7 +92,7 @@ describe('LoggingService', () => {
       '%c[ERROR]%c with args',
       'color:#f44336',
       'color:default',
-      new Error('boom')
+      new Error('boom'),
     );
   });
 

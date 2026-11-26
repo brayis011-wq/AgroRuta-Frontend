@@ -1,7 +1,9 @@
 <div class="shell" [class.mini]="colapsado()" [class.cajon]="cajonAbierto()">
-
-  <aside class="side" [attr.aria-label]="'layout.menu' | translate" (arDeslizaCierra)="cerrarCajon()">
-
+  <aside
+    class="side"
+    [attr.aria-label]="'layout.menu' | translate"
+    (arDeslizaCierra)="cerrarCajon()"
+  >
     <div class="brand">
       <div class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
       <div class="brand-text">
@@ -10,28 +12,52 @@
       </div>
       <!-- Bandeja de avisos (en el celular también va en la barra inferior) -->
       <app-campana />
-      <button type="button" class="ib colapsar" (click)="alternarColapsado()"
-              [attr.aria-label]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate"
-              [title]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate">
-        <i class="ti" [class.ti-layout-sidebar-left-collapse]="!colapsado()"
-           [class.ti-layout-sidebar-left-expand]="colapsado()"></i>
+      <button
+        type="button"
+        class="ib colapsar"
+        (click)="alternarColapsado()"
+        [attr.aria-label]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate"
+        [title]="(colapsado() ? 'layout.expand' : 'layout.collapse') | translate"
+      >
+        <i
+          class="ti"
+          [class.ti-layout-sidebar-left-collapse]="!colapsado()"
+          [class.ti-layout-sidebar-left-expand]="colapsado()"
+        ></i>
       </button>
-      <button type="button" class="ib cerrar-cajon" (click)="cerrarCajon()" [attr.aria-label]="'layout.closeMenu' | translate">
+      <button
+        type="button"
+        class="ib cerrar-cajon"
+        (click)="cerrarCajon()"
+        [attr.aria-label]="'layout.closeMenu' | translate"
+      >
         <i class="ti ti-x"></i>
       </button>
     </div>
 
     <!-- Selector de finca -->
     <div class="finca-sel" [class.abierto]="menuFincas()">
-      <button type="button" class="finca-btn" (click)="menuFincas.set(!menuFincas())"
-              [attr.aria-expanded]="menuFincas()" aria-haspopup="listbox"
-              [title]="(fincaActiva.activa()?.nombre ?? ('layout.farm.all' | translate))">
+      <button
+        type="button"
+        class="finca-btn"
+        (click)="menuFincas.set(!menuFincas())"
+        [attr.aria-expanded]="menuFincas()"
+        aria-haspopup="listbox"
+        [title]="fincaActiva.activa()?.nombre ?? ('layout.farm.all' | translate)"
+      >
         <span class="fi" aria-hidden="true"><i class="ti ti-map-pin"></i></span>
         <span class="finca-txt">
           <strong>{{ fincaActiva.activa()?.nombre ?? ('layout.farm.all' | translate) }}</strong>
           <small>
             @if (fincaActiva.activa(); as f) {
-              {{ municipioDe(f) || f.ubicacion }}@if (fincaActiva.lotesActiva() != null) { · {{ (fincaActiva.lotesActiva() === 1 ? 'layout.farm.lotsOne' : 'layout.farm.lots') | translate: { count: fincaActiva.lotesActiva() } }} }
+              {{ municipioDe(f) || f.ubicacion }}
+              @if (fincaActiva.lotesActiva() != null) {
+                ·
+                {{
+                  (fincaActiva.lotesActiva() === 1 ? 'layout.farm.lotsOne' : 'layout.farm.lots')
+                    | translate: { count: fincaActiva.lotesActiva() }
+                }}
+              }
             } @else {
               {{ 'layout.farm.count' | translate: { count: fincaActiva.fincas().length } }}
             }
@@ -41,27 +67,52 @@
       </button>
       @if (menuFincas()) {
         <div class="finca-menu" role="listbox" [attr.aria-label]="'layout.farm.choose' | translate">
-          <button type="button" role="option" [class.on]="fincaActiva.idActiva() === null"
-                  [attr.aria-selected]="fincaActiva.idActiva() === null" (click)="elegirFinca(null)">
-            <i class="ti ti-layout-grid" aria-hidden="true"></i><span>{{ 'layout.farm.all' | translate }}</span>
-            @if (fincaActiva.idActiva() === null) { <i class="ti ti-check ok" aria-hidden="true"></i> }
+          <button
+            type="button"
+            role="option"
+            [class.on]="fincaActiva.idActiva() === null"
+            [attr.aria-selected]="fincaActiva.idActiva() === null"
+            (click)="elegirFinca(null)"
+          >
+            <i class="ti ti-layout-grid" aria-hidden="true"></i
+            ><span>{{ 'layout.farm.all' | translate }}</span>
+            @if (fincaActiva.idActiva() === null) {
+              <i class="ti ti-check ok" aria-hidden="true"></i>
+            }
           </button>
           @for (f of fincaActiva.fincas(); track f.id; let i = $index) {
-            <button type="button" role="option" [class.on]="fincaActiva.idActiva() === f.id"
-                    [attr.aria-selected]="fincaActiva.idActiva() === f.id" (click)="elegirFinca(f.id!)"
-                    [style.animation-delay.ms]="(i + 1) * 25">
+            <button
+              type="button"
+              role="option"
+              [class.on]="fincaActiva.idActiva() === f.id"
+              [attr.aria-selected]="fincaActiva.idActiva() === f.id"
+              (click)="elegirFinca(f.id!)"
+              [style.animation-delay.ms]="(i + 1) * 25"
+            >
               <i class="ti ti-map-pin" aria-hidden="true"></i>
-              <span class="fm-txt"><b>{{ f.nombre }}</b><small>{{ municipioDe(f) }}</small></span>
-              @if (fincaActiva.idActiva() === f.id) { <i class="ti ti-check ok" aria-hidden="true"></i> }
+              <span class="fm-txt"
+                ><b>{{ f.nombre }}</b
+                ><small>{{ municipioDe(f) }}</small></span
+              >
+              @if (fincaActiva.idActiva() === f.id) {
+                <i class="ti ti-check ok" aria-hidden="true"></i>
+              }
             </button>
           }
-          <a routerLink="/crops/new-farm" class="fm-nueva"><i class="ti ti-plus" aria-hidden="true"></i>{{ 'layout.nav.newFarm' | translate }}</a>
+          <a routerLink="/crops/new-farm" class="fm-nueva"
+            ><i class="ti ti-plus" aria-hidden="true"></i>{{ 'layout.nav.newFarm' | translate }}</a
+          >
         </div>
       }
     </div>
 
     <!-- Buscador -->
-    <button type="button" class="buscar" (click)="cerrarCajon(); buscador.abrir()" [attr.aria-label]="'search.title' | translate">
+    <button
+      type="button"
+      class="buscar"
+      (click)="cerrarCajon(); buscador.abrir()"
+      [attr.aria-label]="'search.title' | translate"
+    >
       <i class="ti ti-search" aria-hidden="true"></i>
       <span class="txt">{{ 'search.button' | translate }}</span>
       <kbd>Ctrl K</kbd>
@@ -71,18 +122,63 @@
     <nav class="nav">
       <span class="sec">{{ 'layout.sections.management' | translate }}</span>
 
-      <a class="item" routerLink="/dashboard" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: true }">
+      <a
+        class="item"
+        routerLink="/dashboard"
+        routerLinkActive="on"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
         <i class="ti ti-layout-dashboard" aria-hidden="true"></i>
         <span class="txt">{{ 'layout.nav.home' | translate }}</span>
         <em class="tip">{{ 'layout.nav.home' | translate }}</em>
       </a>
 
-      <ng-container *ngTemplateOutlet="grupo; context: { id: 'cultivos', icono: 'ti-plant', clave: 'layout.nav.crops', items: subCultivos() }" />
-      <ng-container *ngTemplateOutlet="grupo; context: { id: 'trabajadores', icono: 'ti-users-group', clave: 'layout.nav.workers', items: subTrabajadores }" />
-      <ng-container *ngTemplateOutlet="grupo; context: { id: 'finanzas', icono: 'ti-cash', clave: 'layout.nav.finance', items: subFinanzas }" />
+      <ng-container
+        *ngTemplateOutlet="
+          grupo;
+          context: {
+            id: 'cultivos',
+            icono: 'ti-plant',
+            clave: 'layout.nav.crops',
+            items: subCultivos(),
+          }
+        "
+      />
+      <ng-container
+        *ngTemplateOutlet="
+          grupo;
+          context: {
+            id: 'trabajadores',
+            icono: 'ti-users-group',
+            clave: 'layout.nav.workers',
+            items: subTrabajadores,
+          }
+        "
+      />
+      <ng-container
+        *ngTemplateOutlet="
+          grupo;
+          context: {
+            id: 'finanzas',
+            icono: 'ti-cash',
+            clave: 'layout.nav.finance',
+            items: subFinanzas,
+          }
+        "
+      />
 
       <span class="sec">{{ 'layout.sections.analysis' | translate }}</span>
-      <ng-container *ngTemplateOutlet="grupo; context: { id: 'reportes', icono: 'ti-chart-bar', clave: 'layout.nav.reports', items: subReportes }" />
+      <ng-container
+        *ngTemplateOutlet="
+          grupo;
+          context: {
+            id: 'reportes',
+            icono: 'ti-chart-bar',
+            clave: 'layout.nav.reports',
+            items: subReportes,
+          }
+        "
+      />
 
       <span class="sec">{{ 'layout.sections.system' | translate }}</span>
       <a class="item" routerLink="/settings" routerLinkActive="on">
@@ -97,7 +193,9 @@
         <div [class]="'clima ' + (consejo() ?? '')">
           <span class="clima-ic" aria-hidden="true"><i [class]="'ti ' + iconoClima()"></i></span>
           <div class="clima-txt">
-            <small><b>{{ c.temperature | number: '1.0-0' }}°C</b> {{ lugarClima() }}</small>
+            <small
+              ><b>{{ c.temperature | number: '1.0-0' }}°C</b> {{ lugarClima() }}</small
+            >
             <em>{{ 'layout.weather.' + consejo() | translate }}</em>
           </div>
         </div>
@@ -106,19 +204,44 @@
       <div class="idioma" role="group" [attr.aria-label]="'common.language' | translate">
         <i class="ti ti-world" aria-hidden="true"></i>
         <span class="txt">{{ 'common.language' | translate }}</span>
-        <button type="button" class="tema-btn" (click)="tema.alternar()"
-                [title]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate"
-                [attr.aria-label]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate">
-          <i class="ti" [class.ti-moon]="!tema.oscuro()" [class.ti-sun]="tema.oscuro()" aria-hidden="true"></i>
+        <button
+          type="button"
+          class="tema-btn"
+          (click)="tema.alternar()"
+          [title]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate"
+          [attr.aria-label]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate"
+        >
+          <i
+            class="ti"
+            [class.ti-moon]="!tema.oscuro()"
+            [class.ti-sun]="tema.oscuro()"
+            aria-hidden="true"
+          ></i>
         </button>
         <div class="seg">
-          <button type="button" [class.on]="lang.current() === 'es'" [attr.aria-pressed]="lang.current() === 'es'"
-                  (click)="cambiarIdioma('es')">ES</button>
-          <button type="button" [class.on]="lang.current() === 'en'" [attr.aria-pressed]="lang.current() === 'en'"
-                  (click)="cambiarIdioma('en')">EN</button>
+          <button
+            type="button"
+            [class.on]="lang.current() === 'es'"
+            [attr.aria-pressed]="lang.current() === 'es'"
+            (click)="cambiarIdioma('es')"
+          >
+            ES
+          </button>
+          <button
+            type="button"
+            [class.on]="lang.current() === 'en'"
+            [attr.aria-pressed]="lang.current() === 'en'"
+            (click)="cambiarIdioma('en')"
+          >
+            EN
+          </button>
         </div>
-        <button type="button" class="idioma-mini" (click)="cambiarIdioma(lang.current() === 'es' ? 'en' : 'es')"
-                [attr.aria-label]="'common.language' | translate">
+        <button
+          type="button"
+          class="idioma-mini"
+          (click)="cambiarIdioma(lang.current() === 'es' ? 'en' : 'es')"
+          [attr.aria-label]="'common.language' | translate"
+        >
           <i class="ti ti-world"></i><b>{{ lang.current() | uppercase }}</b>
         </button>
       </div>
@@ -133,8 +256,13 @@
           <strong>{{ usuario?.nombre }}</strong>
           <small>{{ 'enums.rol.' + usuario?.rol | translate }}</small>
         </div>
-        <button type="button" class="ib salir" (click)="logout()"
-                [title]="'layout.logout' | translate" [attr.aria-label]="'layout.logout' | translate">
+        <button
+          type="button"
+          class="ib salir"
+          (click)="logout()"
+          [title]="'layout.logout' | translate"
+          [attr.aria-label]="'layout.logout' | translate"
+        >
           <i class="ti ti-logout"></i>
         </button>
       </div>
@@ -143,8 +271,14 @@
 
   <!-- Grupo del menú con submenú desplegable -->
   <ng-template #grupo let-id="id" let-icono="icono" let-clave="clave" let-items="items">
-    <button type="button" class="item grupo" [class.on]="colapsado() && enGrupo(id)"
-            [class.abierto]="enGrupo(id)" [attr.aria-expanded]="abierto(id)" (click)="alternar(id)">
+    <button
+      type="button"
+      class="item grupo"
+      [class.on]="colapsado() && enGrupo(id)"
+      [class.abierto]="enGrupo(id)"
+      [attr.aria-expanded]="abierto(id)"
+      (click)="alternar(id)"
+    >
       <i class="ti {{ icono }}" aria-hidden="true"></i>
       <span class="txt">{{ clave | translate }}</span>
       @if (id === 'trabajadores' && nominasPendientes() > 0 && !abierto(id)) {
@@ -159,20 +293,35 @@
           @if (s.titulo) {
             <span class="sub-titulo">{{ s.clave | translate }}</span>
           } @else {
-          <a [routerLink]="s.ruta" [queryParams]="s.query" routerLinkActive="on"
-             [routerLinkActiveOptions]="s.query
-               ? { paths: 'exact', queryParams: 'subset', matrixParams: 'ignored', fragment: 'ignored' }
-               : { exact: !!s.exacto }"
-             [class.lote]="s.icono === 'ti-point-filled'"
-             [class.on-tambien]="!!s.tambien && ruta().startsWith(s.tambien)">
-            <span class="sub-txt">
-              @if (s.icono) { <i class="ti {{ s.icono }}" aria-hidden="true"></i> }
-              {{ s.texto ?? (s.clave | translate) }}
-            </span>
-            @if (s.contador && nominasPendientes() > 0) {
-              <span class="badge" [title]="'layout.pendingPayrolls' | translate">{{ nominasPendientes() }}</span>
-            }
-          </a>
+            <a
+              [routerLink]="s.ruta"
+              [queryParams]="s.query"
+              routerLinkActive="on"
+              [routerLinkActiveOptions]="
+                s.query
+                  ? {
+                      paths: 'exact',
+                      queryParams: 'subset',
+                      matrixParams: 'ignored',
+                      fragment: 'ignored',
+                    }
+                  : { exact: !!s.exacto }
+              "
+              [class.lote]="s.icono === 'ti-point-filled'"
+              [class.on-tambien]="!!s.tambien && ruta().startsWith(s.tambien)"
+            >
+              <span class="sub-txt">
+                @if (s.icono) {
+                  <i class="ti {{ s.icono }}" aria-hidden="true"></i>
+                }
+                {{ s.texto ?? (s.clave | translate) }}
+              </span>
+              @if (s.contador && nominasPendientes() > 0) {
+                <span class="badge" [title]="'layout.pendingPayrolls' | translate">{{
+                  nominasPendientes()
+                }}</span>
+              }
+            </a>
           }
         }
       </div>
@@ -186,12 +335,32 @@
   <!-- Atajos de teclado: se ven con "?" -->
   @if (ayudaAtajos()) {
     <div class="atajos-velo" (click)="ayudaAtajos.set(false)"></div>
-    <div class="atajos" role="dialog" aria-modal="true" [attr.aria-label]="'shortcuts.title' | translate">
-      <header><strong>{{ 'shortcuts.title' | translate }}</strong>
-        <button type="button" class="ib" (click)="ayudaAtajos.set(false)" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x"></i></button></header>
+    <div
+      class="atajos"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="'shortcuts.title' | translate"
+    >
+      <header>
+        <strong>{{ 'shortcuts.title' | translate }}</strong>
+        <button
+          type="button"
+          class="ib"
+          (click)="ayudaAtajos.set(false)"
+          [attr.aria-label]="'common.cancel' | translate"
+        >
+          <i class="ti ti-x"></i>
+        </button>
+      </header>
       <ul>
         @for (a of atajos; track a.clave) {
-          <li><span>@for (t of a.teclas; track $index) { <kbd>{{ t }}</kbd> }</span>{{ a.clave | translate }}</li>
+          <li>
+            <span>
+              @for (t of a.teclas; track $index) {
+                <kbd>{{ t }}</kbd>
+              }</span
+            >{{ a.clave | translate }}
+          </li>
         }
       </ul>
     </div>
@@ -203,8 +372,13 @@
 
   <!-- App instalada: al tirar hacia abajo desde arriba aparece la flecha de actualizar -->
   @if (tiron() > 0) {
-    <div class="tiron" [style.transform]="'translate(-50%, ' + tiron() + 'px)'" [class.listo]="tiron() >= distanciaActualizar" aria-hidden="true">
-      <i class="ti ti-refresh" [style.rotate]="(tiron() * 3) + 'deg'"></i>
+    <div
+      class="tiron"
+      [style.transform]="'translate(-50%, ' + tiron() + 'px)'"
+      [class.listo]="tiron() >= distanciaActualizar"
+      aria-hidden="true"
+    >
+      <i class="ti ti-refresh" [style.rotate]="tiron() * 3 + 'deg'"></i>
     </div>
   }
 
@@ -215,7 +389,12 @@
   </main>
 
   <!-- Barra inferior (celular) -->
-  <nav class="barra" [class.oculta]="barraOculta() || escribiendo()" [attr.aria-label]="'layout.menu' | translate" (click)="tocarBarra($event)">
+  <nav
+    class="barra"
+    [class.oculta]="barraOculta() || escribiendo()"
+    [attr.aria-label]="'layout.menu' | translate"
+    (click)="tocarBarra($event)"
+  >
     <a routerLink="/dashboard" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: true }">
       <i class="ti ti-layout-dashboard"></i><span>{{ 'layout.nav.home' | translate }}</span>
     </a>
@@ -224,7 +403,9 @@
     </a>
     <a routerLink="/worker" routerLinkActive="on">
       <i class="ti ti-users-group"></i><span>{{ 'layout.nav.team' | translate }}</span>
-      @if (nominasPendientes() > 0) { <b class="punto">{{ nominasPendientes() }}</b> }
+      @if (nominasPendientes() > 0) {
+        <b class="punto">{{ nominasPendientes() }}</b>
+      }
     </a>
     <a routerLink="/reports" routerLinkActive="on">
       <i class="ti ti-chart-bar"></i><span>{{ 'layout.nav.reports' | translate }}</span>

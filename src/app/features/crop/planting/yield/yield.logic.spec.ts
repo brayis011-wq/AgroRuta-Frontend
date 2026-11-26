@@ -2,17 +2,43 @@ import { barrasSemanas, comparacion, partesCalidad } from './yield.logic';
 import { ResumenSiembra } from '../../../../core/models/crop.model';
 
 const base: ResumenSiembra = {
-  siembraId: 7, totalKg: 300, cosechas: 3, kgPrimera: 180, kgSegunda: 90, kgTercera: 30,
-  kgPorPlanta: 0.25, kgPorHectarea: 166.7, areaHa: 1.8,
+  siembraId: 7,
+  totalKg: 300,
+  cosechas: 3,
+  kgPrimera: 180,
+  kgSegunda: 90,
+  kgTercera: 30,
+  kgPorPlanta: 0.25,
+  kgPorHectarea: 166.7,
+  areaHa: 1.8,
   semanas: [
     { semana: '2026-10-12', primera: 50, segunda: 20, tercera: 0 },
     { semana: '2026-10-19', primera: 0, segunda: 0, tercera: 0 },
     { semana: '2026-10-26', primera: 130, segunda: 70, tercera: 30 },
   ],
-  carencia: null, reentrada: null,
+  carencia: null,
+  reentrada: null,
   otrasTemporadas: [
-    { siembraId: 5, cultivo: 'Uchuva · Kenya', fechaSiembra: '2025-04-10', fechaFin: '2026-01-20', enCurso: false, totalKg: 1640, kgPorPlanta: 1.64, mismoCultivo: true },
-    { siembraId: 2, cultivo: 'Fríjol · Cargamanto', fechaSiembra: '2024-08-01', fechaFin: '2024-12-15', enCurso: false, totalKg: 410, kgPorPlanta: 0.5, mismoCultivo: false },
+    {
+      siembraId: 5,
+      cultivo: 'Uchuva · Kenya',
+      fechaSiembra: '2025-04-10',
+      fechaFin: '2026-01-20',
+      enCurso: false,
+      totalKg: 1640,
+      kgPorPlanta: 1.64,
+      mismoCultivo: true,
+    },
+    {
+      siembraId: 2,
+      cultivo: 'Fríjol · Cargamanto',
+      fechaSiembra: '2024-08-01',
+      fechaFin: '2024-12-15',
+      enCurso: false,
+      totalKg: 410,
+      kgPorPlanta: 0.5,
+      mismoCultivo: false,
+    },
   ],
 };
 
@@ -26,7 +52,9 @@ describe('rendimiento de la siembra', () => {
   });
 
   it('sin cosechas no divide por cero', () => {
-    expect(barrasSemanas([{ semana: '2026-10-12', primera: 0, segunda: 0, tercera: 0 }])[0].primera).toBe(0);
+    expect(
+      barrasSemanas([{ semana: '2026-10-12', primera: 0, segunda: 0, tercera: 0 }])[0].primera,
+    ).toBe(0);
     expect(partesCalidad({ kgPrimera: 0, kgSegunda: 0, kgTercera: 0, totalKg: 0 }).primera).toBe(0);
   });
 
@@ -35,7 +63,12 @@ describe('rendimiento de la siembra', () => {
   });
 
   it('compara solo con temporadas del mismo cultivo, por kg por planta', () => {
-    const c = comparacion(base, { id: 7, nombre: 'Uchuva · Colombia', desde: '2026-03-02', plantas: 1200 });
+    const c = comparacion(base, {
+      id: 7,
+      nombre: 'Uchuva · Colombia',
+      desde: '2026-03-02',
+      plantas: 1200,
+    });
     expect(c.porPlanta).toBe(true);
     expect(c.filas.map((f) => f.id)).toEqual([7, 5]);
     expect(c.filas[1].ancho).toBe(100);
@@ -44,7 +77,10 @@ describe('rendimiento de la siembra', () => {
   });
 
   it('si alguna temporada no tiene plantas compara por kilos', () => {
-    const c = comparacion({ ...base, kgPorPlanta: null }, { id: 7, nombre: 'x', desde: '2026-03-02', plantas: 0 });
+    const c = comparacion(
+      { ...base, kgPorPlanta: null },
+      { id: 7, nombre: 'x', desde: '2026-03-02', plantas: 0 },
+    );
     expect(c.porPlanta).toBe(false);
     expect(c.filas[1].ancho).toBe(100);
   });

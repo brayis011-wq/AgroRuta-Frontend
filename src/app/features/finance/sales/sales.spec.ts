@@ -9,22 +9,74 @@ import { KilosEnBodega, Venta } from '../../../core/models/finance.model';
 import { CultivoService } from '../../../core/services/crop.service';
 
 /** Cosechas de la siembra 34: 380 kg vendidos 120 → de la vieja quedan 260; la de segunda está entera */
-const cosechasCafe = { listarCosechas: vi.fn().mockReturnValue(of([
-  { id: 1, fecha: '2026-11-12', cantidadKg: 300, calidad: 'PRIMERA', siembraId: 34, recolectores: [{ trabajadorId: 1, modalidad: 'KILO', nombre: 'Marta Salazar' }] },
-  { id: 2, fecha: '2026-11-15', cantidadKg: 80, calidad: 'SEGUNDA', siembraId: 34, recolectores: [] },
-])) };
+const cosechasCafe = {
+  listarCosechas: vi.fn().mockReturnValue(
+    of([
+      {
+        id: 1,
+        fecha: '2026-11-12',
+        cantidadKg: 300,
+        calidad: 'PRIMERA',
+        siembraId: 34,
+        recolectores: [{ trabajadorId: 1, modalidad: 'KILO', nombre: 'Marta Salazar' }],
+      },
+      {
+        id: 2,
+        fecha: '2026-11-15',
+        cantidadKg: 80,
+        calidad: 'SEGUNDA',
+        siembraId: 34,
+        recolectores: [],
+      },
+    ]),
+  ),
+};
 
 const bodega: KilosEnBodega[] = [
-  { siembraId: 10, cultivo: 'Aguacate', variedad: 'Choquette', lote: 'Lote A', finca: 'La Loma', kgCosechados: 75,
-    kgVendidos: 150, kgDisponibles: 0, kgSinCosecha: 75, ultimaCosecha: '2026-11-22', finalizada: false },
-  { siembraId: 34, cultivo: 'Café', variedad: 'Castillo', lote: 'Cafetal', finca: 'El Mirador', kgCosechados: 380,
-    kgVendidos: 120, kgDisponibles: 260, kgSinCosecha: 0, ultimaCosecha: '2026-11-12', finalizada: false },
+  {
+    siembraId: 10,
+    cultivo: 'Aguacate',
+    variedad: 'Choquette',
+    lote: 'Lote A',
+    finca: 'La Loma',
+    kgCosechados: 75,
+    kgVendidos: 150,
+    kgDisponibles: 0,
+    kgSinCosecha: 75,
+    ultimaCosecha: '2026-11-22',
+    finalizada: false,
+  },
+  {
+    siembraId: 34,
+    cultivo: 'Café',
+    variedad: 'Castillo',
+    lote: 'Cafetal',
+    finca: 'El Mirador',
+    kgCosechados: 380,
+    kgVendidos: 120,
+    kgDisponibles: 260,
+    kgSinCosecha: 0,
+    ultimaCosecha: '2026-11-12',
+    finalizada: false,
+  },
 ];
 
 const ventaVieja = {
-  id: 5, siembraId: 10, siembraNombre: 'Aguacate Choquette · Lote A', comprador: 'Cooperativa', fecha: '2026-11-22',
-  producto: 'Aguacate Choquette', cantidadKg: 100, precioKg: 5957, total: 595700, vence: null, observaciones: null,
-  abonado: 595700, saldo: 0, estado: 'PAGADA', abonos: [],
+  id: 5,
+  siembraId: 10,
+  siembraNombre: 'Aguacate Choquette · Lote A',
+  comprador: 'Cooperativa',
+  fecha: '2026-11-22',
+  producto: 'Aguacate Choquette',
+  cantidadKg: 100,
+  precioKg: 5957,
+  total: 595700,
+  vence: null,
+  observaciones: null,
+  abonado: 595700,
+  saldo: 0,
+  estado: 'PAGADA',
+  abonos: [],
 } as unknown as Venta;
 
 describe('VentasComponent: vender desde la bodega de la cosecha', () => {
@@ -34,7 +86,19 @@ describe('VentasComponent: vender desde la bodega de la cosecha', () => {
   beforeEach(() => {
     ventas = {
       listar: vi.fn().mockReturnValue(of([ventaVieja])),
-      resumen: vi.fn().mockReturnValue(of({ porCobrar: 0, vencido: 0, vendidoMes: 0, cobradoMes: 0, ventasPendientes: 0, ventasVencidas: 0, compradores: [] })),
+      resumen: vi
+        .fn()
+        .mockReturnValue(
+          of({
+            porCobrar: 0,
+            vencido: 0,
+            vendidoMes: 0,
+            cobradoMes: 0,
+            ventasPendientes: 0,
+            ventasVencidas: 0,
+            compradores: [],
+          }),
+        ),
       compradores: vi.fn().mockReturnValue(of([])),
       kilosEnBodega: vi.fn().mockReturnValue(of(bodega)),
       crear: vi.fn().mockReturnValue(of({})),
@@ -46,7 +110,10 @@ describe('VentasComponent: vender desde la bodega de la cosecha', () => {
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: { get: () => null } } } },
         { provide: VentasService, useValue: ventas },
         { provide: PreciosService, useValue: { deCultivo: vi.fn().mockReturnValue(of(null)) } },
-        { provide: JornalService, useValue: { cultivosDisponibles: vi.fn().mockReturnValue(of([])) } },
+        {
+          provide: JornalService,
+          useValue: { cultivosDisponibles: vi.fn().mockReturnValue(of([])) },
+        },
         { provide: ConfirmService, useValue: { preguntar: vi.fn() } },
         { provide: CultivoService, useValue: cosechasCafe },
       ],
@@ -87,7 +154,9 @@ describe('VentasComponent: vender desde la bodega de la cosecha', () => {
 
     component.campo('cantidadKg', 260);
     component.guardar();
-    expect(ventas.crear).toHaveBeenCalledWith(expect.objectContaining({ siembraId: 34, cantidadKg: 260 }));
+    expect(ventas.crear).toHaveBeenCalledWith(
+      expect.objectContaining({ siembraId: 34, cantidadKg: 260 }),
+    );
   });
 
   it('una venta de antes que ya pasaba de lo cosechado se puede guardar si no sube los kilos', () => {
@@ -99,7 +168,10 @@ describe('VentasComponent: vender desde la bodega de la cosecha', () => {
   });
   it('muestra de qué cosechas salen los kilos y deja vender todo, solo una calidad o lo marcado', () => {
     component.nuevaVenta();
-    expect(component.origen().map((o) => [o.id, o.quedan])).toEqual([[2, 80], [1, 180]]);
+    expect(component.origen().map((o) => [o.id, o.quedan])).toEqual([
+      [2, 80],
+      [1, 180],
+    ]);
     expect(component.origen().find((o) => o.id === 1)!.recolectores).toEqual(['Marta Salazar']);
     component.elegirCalidad('SEGUNDA');
     expect(component.form()!.cantidadKg).toBe(80);
@@ -112,7 +184,6 @@ describe('VentasComponent: vender desde la bodega de la cosecha', () => {
   });
 });
 
-
 describe('VentasComponent: precio de referencia', () => {
   it('en una venta nueva pone solo el precio de referencia del cultivo', async () => {
     vi.useFakeTimers();
@@ -121,12 +192,47 @@ describe('VentasComponent: precio de referencia', () => {
       providers: [
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: { get: () => null } } } },
-        { provide: VentasService, useValue: {
-          listar: vi.fn().mockReturnValue(of([])), compradores: vi.fn().mockReturnValue(of([])),
-          resumen: vi.fn().mockReturnValue(of({ porCobrar: 0, vencido: 0, vendidoMes: 0, cobradoMes: 0, ventasPendientes: 0, ventasVencidas: 0, compradores: [] })),
-          kilosEnBodega: vi.fn().mockReturnValue(of(bodega)) } },
-        { provide: PreciosService, useValue: { deCultivo: vi.fn().mockReturnValue(of({ cultivo: 'Café', fuente: 'PROPIO', producto: null, precioKg: 17800.4, alternativas: [] })) } },
-        { provide: JornalService, useValue: { cultivosDisponibles: vi.fn().mockReturnValue(of([])) } },
+        {
+          provide: VentasService,
+          useValue: {
+            listar: vi.fn().mockReturnValue(of([])),
+            compradores: vi.fn().mockReturnValue(of([])),
+            resumen: vi
+              .fn()
+              .mockReturnValue(
+                of({
+                  porCobrar: 0,
+                  vencido: 0,
+                  vendidoMes: 0,
+                  cobradoMes: 0,
+                  ventasPendientes: 0,
+                  ventasVencidas: 0,
+                  compradores: [],
+                }),
+              ),
+            kilosEnBodega: vi.fn().mockReturnValue(of(bodega)),
+          },
+        },
+        {
+          provide: PreciosService,
+          useValue: {
+            deCultivo: vi
+              .fn()
+              .mockReturnValue(
+                of({
+                  cultivo: 'Café',
+                  fuente: 'PROPIO',
+                  producto: null,
+                  precioKg: 17800.4,
+                  alternativas: [],
+                }),
+              ),
+          },
+        },
+        {
+          provide: JornalService,
+          useValue: { cultivosDisponibles: vi.fn().mockReturnValue(of([])) },
+        },
         { provide: ConfirmService, useValue: { preguntar: vi.fn() } },
         { provide: CultivoService, useValue: cosechasCafe },
       ],

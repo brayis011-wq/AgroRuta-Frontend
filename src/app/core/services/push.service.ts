@@ -32,8 +32,13 @@ export class AvisosPushService {
   constructor(private http: HttpClient) {}
 
   private get soportado(): boolean {
-    return typeof navigator !== 'undefined' && 'serviceWorker' in navigator
-      && typeof window !== 'undefined' && 'PushManager' in window && 'Notification' in window;
+    return (
+      typeof navigator !== 'undefined' &&
+      'serviceWorker' in navigator &&
+      typeof window !== 'undefined' &&
+      'PushManager' in window &&
+      'Notification' in window
+    );
   }
 
   /** El service worker ya registrado (public/sw.js); null si la app corre sin él (ng serve) */
@@ -68,15 +73,20 @@ export class AvisosPushService {
       await suscripcion.unsubscribe();
       suscripcion = null;
     }
-    suscripcion ??= await registro.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: deBase64Url(clave) });
+    suscripcion ??= await registro.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: deBase64Url(clave),
+    });
 
     const datos = suscripcion.toJSON();
     try {
-      await firstValueFrom(this.http.post<void>(`${this.api}/subscriptions`, {
-        endpoint: datos.endpoint,
-        p256dh: datos.keys?.['p256dh'],
-        auth: datos.keys?.['auth'],
-      }));
+      await firstValueFrom(
+        this.http.post<void>(`${this.api}/subscriptions`, {
+          endpoint: datos.endpoint,
+          p256dh: datos.keys?.['p256dh'],
+          auth: datos.keys?.['auth'],
+        }),
+      );
     } catch (e) {
       // El servidor no la aceptó: que el navegador no se quede suscrito a nada
       await suscripcion.unsubscribe().catch(() => undefined);
@@ -92,7 +102,9 @@ export class AvisosPushService {
     const endpoint = suscripcion.endpoint;
     await suscripcion.unsubscribe();
     // Si el aviso al servidor falla no importa: el próximo envío rebota y el servidor la borra solo
-    await firstValueFrom(this.http.post<void>(`${this.api}/unsubscribe`, { endpoint })).catch(() => undefined);
+    await firstValueFrom(this.http.post<void>(`${this.api}/unsubscribe`, { endpoint })).catch(
+      () => undefined,
+    );
     return 'inactivo';
   }
 

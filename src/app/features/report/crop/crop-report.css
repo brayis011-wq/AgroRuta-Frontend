@@ -1,31 +1,152 @@
 /* Siembras por etapa (barra apilada) y píldoras de etapa */
-.apilada { display: flex; height: 26px; border-radius: 99px; overflow: hidden; background: var(--ar-verde-100); }
-.seg-et { display: grid; place-items: center; color: #fff; font-size: .78rem; font-weight: 700; min-width: 22px; animation: aparecer .5s ease-out both; }
-.leyenda { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .9rem; }
-.ley {
-  display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .7rem; border-radius: 99px; cursor: pointer;
-  border: 1px solid var(--ar-borde); background: var(--ar-superficie); font: inherit; font-size: .8rem; color: var(--ar-tinta-2); transition: border-color .15s, background .15s;
+.apilada {
+  display: flex;
+  height: 26px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--ar-verde-100);
 }
-.ley b { color: var(--ar-tinta); }
-.ley:hover:not(:disabled) { border-color: var(--ar-borde-fuerte); }
-.ley.on { background: var(--ar-verde-50); border-color: var(--ar-verde-600); color: var(--ar-verde-800); }
-.ley.cero { opacity: .5; cursor: default; }
-.ley:focus-visible, .chip-filtro:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
-.punto { width: 10px; height: 10px; border-radius: 3px; }
-.pista { text-align: left; margin-top: .6rem; font-size: .78rem; }
-.chip-filtro { display: inline-flex; align-items: center; gap: .3rem; padding: .2rem .55rem; border-radius: 99px; border: 0; background: var(--ar-verde-100); color: var(--ar-verde-800); font: inherit; font-size: .76rem; font-weight: 600; cursor: pointer; }
+.seg-et {
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  min-width: 22px;
+  animation: aparecer 0.5s ease-out both;
+}
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+.ley {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 99px;
+  cursor: pointer;
+  border: 1px solid var(--ar-borde);
+  background: var(--ar-superficie);
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--ar-tinta-2);
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.ley b {
+  color: var(--ar-tinta);
+}
+.ley:hover:not(:disabled) {
+  border-color: var(--ar-borde-fuerte);
+}
+.ley.on {
+  background: var(--ar-verde-50);
+  border-color: var(--ar-verde-600);
+  color: var(--ar-verde-800);
+}
+.ley.cero {
+  opacity: 0.5;
+  cursor: default;
+}
+.ley:focus-visible,
+.chip-filtro:focus-visible {
+  outline: 2px solid var(--ar-verde-600);
+  outline-offset: 2px;
+}
+.punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+.pista {
+  text-align: left;
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+}
+.chip-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 99px;
+  border: 0;
+  background: var(--ar-verde-100);
+  color: var(--ar-verde-800);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
 
-.GERMINACION { background: #a5d6a7; } .CRECIMIENTO { background: #66bb6a; } .PRODUCCION { background: #2e7d32; }
-.COSECHA { background: #f9a825; } .FINALIZADO { background: #b0b8b2; }
+.GERMINACION {
+  background: #a5d6a7;
+}
+.CRECIMIENTO {
+  background: #66bb6a;
+}
+.PRODUCCION {
+  background: #2e7d32;
+}
+.COSECHA {
+  background: #f9a825;
+}
+.FINALIZADO {
+  background: #b0b8b2;
+}
 
-.pill-et { display: inline-block; padding: .2rem .6rem; border-radius: 99px; font-size: .76rem; font-weight: 600; white-space: nowrap; }
-.pill-et.GERMINACION { background: var(--ar-verde-100); color: var(--ar-verde-600); }
-.pill-et.CRECIMIENTO { background: var(--ar-verde-100); color: var(--ar-verde-700); }
-.pill-et.PRODUCCION { background: var(--ar-verde-100); color: var(--ar-verde-800); }
-.pill-et.COSECHA { background: var(--ar-ambar-bg); color: #8a5a00; }
-.pill-et.FINALIZADO { background: var(--ar-gris-bg); color: var(--ar-tinta-3); }
-@keyframes aparecer { from { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .seg-et { animation: none; } }
+.pill-et {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill-et.GERMINACION {
+  background: var(--ar-verde-100);
+  color: var(--ar-verde-600);
+}
+.pill-et.CRECIMIENTO {
+  background: var(--ar-verde-100);
+  color: var(--ar-verde-700);
+}
+.pill-et.PRODUCCION {
+  background: var(--ar-verde-100);
+  color: var(--ar-verde-800);
+}
+.pill-et.COSECHA {
+  background: var(--ar-ambar-bg);
+  color: #8a5a00;
+}
+.pill-et.FINALIZADO {
+  background: var(--ar-gris-bg);
+  color: var(--ar-tinta-3);
+}
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seg-et {
+    animation: none;
+  }
+}
 
 /* Siembra eliminada (borrado lógico): se conserva en el reporte con su historial */
-.eliminada { display: inline-block; margin-left: .35rem; font-size: .68rem; font-weight: 600; border-radius: 99px; padding: .05rem .5rem; background: var(--ar-gris-bg); color: var(--ar-tinta-2); border: 1px dashed var(--ar-borde-fuerte); vertical-align: middle; }
+.eliminada {
+  display: inline-block;
+  margin-left: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 99px;
+  padding: 0.05rem 0.5rem;
+  background: var(--ar-gris-bg);
+  color: var(--ar-tinta-2);
+  border: 1px dashed var(--ar-borde-fuerte);
+  vertical-align: middle;
+}

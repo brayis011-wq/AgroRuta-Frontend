@@ -23,7 +23,11 @@ interface AccionPendiente {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './admin-users.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-users.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    './admin-users.css',
+  ],
 })
 export class AdminUsuariosComponent implements OnInit {
   private readonly adminService = inject(AdminService);
@@ -107,9 +111,10 @@ export class AdminUsuariosComponent implements OnInit {
     this.guardando = true;
     this.mensaje = null;
 
-    const peticion = p.tipo === 'rol'
-      ? this.adminService.cambiarRol(p.usuario.id, p.rol!)
-      : this.adminService.cambiarEstado(p.usuario.id, p.activo!);
+    const peticion =
+      p.tipo === 'rol'
+        ? this.adminService.cambiarRol(p.usuario.id, p.rol!)
+        : this.adminService.cambiarEstado(p.usuario.id, p.activo!);
 
     peticion.subscribe({
       next: (actualizado) => {
@@ -119,8 +124,15 @@ export class AdminUsuariosComponent implements OnInit {
         this.mensaje = {
           tipo: 'ok',
           texto: this.translate.instant(
-            p.tipo === 'rol' ? 'admin.users.done.role' : actualizado.activo ? 'admin.users.done.activated' : 'admin.users.done.deactivated',
-            { name: actualizado.nombre, role: this.translate.instant('enums.rol.' + actualizado.rol) },
+            p.tipo === 'rol'
+              ? 'admin.users.done.role'
+              : actualizado.activo
+                ? 'admin.users.done.activated'
+                : 'admin.users.done.deactivated',
+            {
+              name: actualizado.nombre,
+              role: this.translate.instant('enums.rol.' + actualizado.rol),
+            },
           ),
         };
         this.cdr.detectChanges();

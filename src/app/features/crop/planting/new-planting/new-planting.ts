@@ -35,7 +35,7 @@ export class NuevaSiembraComponent implements OnInit {
   /** Id de la siembra cuando se está editando (ruta /crops/planting/:id/edit) */
   siembraId: number | null = null;
   guardando = false;
-  error = '';        // clave de traducción
+  error = ''; // clave de traducción
   exito = false;
 
   constructor(
@@ -55,8 +55,15 @@ export class NuevaSiembraComponent implements OnInit {
     if (!params.get('loteId') && params.get('id')) this.siembraId = Number(params.get('id'));
 
     const siembra$ = this.siembraId
-      ? this.cultivoService.buscarSiembra(this.siembraId).pipe(
-          switchMap((s) => this.cultivoService.buscarLote(s.loteId).pipe(map((l) => ({ s, fincaId: l.fincaId })))))
+      ? this.cultivoService
+          .buscarSiembra(this.siembraId)
+          .pipe(
+            switchMap((s) =>
+              this.cultivoService
+                .buscarLote(s.loteId)
+                .pipe(map((l) => ({ s, fincaId: l.fincaId }))),
+            ),
+          )
       : of(null);
 
     forkJoin({ catalogo: this.catalogo.activos(), actual: siembra$ }).subscribe({
@@ -95,8 +102,18 @@ export class NuevaSiembraComponent implements OnInit {
     let cultivo = this.cultivos.find((c) => c.variedades.some((v) => v.id === s.variedadId));
     if (!cultivo && s.variedadId) {
       cultivo = {
-        id: -1, nombre: s.tipoCultivo || s.variedad, activo: false,
-        variedades: [{ id: s.variedadId, nombre: s.variedad, activo: false, tipoCultivoId: -1, tipoCultivoNombre: s.tipoCultivo ?? '' }],
+        id: -1,
+        nombre: s.tipoCultivo || s.variedad,
+        activo: false,
+        variedades: [
+          {
+            id: s.variedadId,
+            nombre: s.variedad,
+            activo: false,
+            tipoCultivoId: -1,
+            tipoCultivoNombre: s.tipoCultivo ?? '',
+          },
+        ],
       };
       this.cultivos = [cultivo, ...this.cultivos];
     }
@@ -132,7 +149,9 @@ export class NuevaSiembraComponent implements OnInit {
         this.guardando = false;
         this.cdr.detectChanges();
         // al lote, donde se ve el ciclo de la nueva temporada; al editar, de vuelta a la siembra
-        const destino = this.siembraId ? ['/crops/planting', this.siembraId] : ['/crops/plot', s?.loteId ?? this.loteId];
+        const destino = this.siembraId
+          ? ['/crops/planting', this.siembraId]
+          : ['/crops/plot', s?.loteId ?? this.loteId];
         this.avisos.exito(this.siembraId ? 'avisos.saved' : 'avisos.planting');
         this.router.navigate(destino);
       },

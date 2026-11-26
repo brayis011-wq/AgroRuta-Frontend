@@ -9,15 +9,18 @@ import { vi } from 'vitest';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 
 const mkNomina = (estado = 'PENDIENTE', id = 1): any => ({
-  id, trabajadorId: 1, valorTotal: 100000, estado
+  id,
+  trabajadorId: 1,
+  valorTotal: 100000,
+  estado,
 });
 const mkPago = (): any => ({ id: 1, nominaId: 1, monto: 100000 });
 
 describe('DetalleNominaComponent', () => {
   let component: DetalleNominaComponent;
-  let fixture:   ComponentFixture<DetalleNominaComponent>;
+  let fixture: ComponentFixture<DetalleNominaComponent>;
   let nominaSvc: any;
-  let pagoSvc:   any;
+  let pagoSvc: any;
 
   // El diálogo de confirmación responde lo que diga cada prueba
   let respuesta = true;
@@ -31,15 +34,15 @@ describe('DetalleNominaComponent', () => {
         provideRouter([]),
         { provide: ConfirmService, useValue: confirmSvc },
         { provide: NominaService, useValue: nominaSvc },
-        { provide: PagoService,   useValue: pagoSvc },
+        { provide: PagoService, useValue: pagoSvc },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: () => paramId } } }
-        }
-      ]
+          useValue: { snapshot: { paramMap: { get: () => paramId } } },
+        },
+      ],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(DetalleNominaComponent);
+    fixture = TestBed.createComponent(DetalleNominaComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }
@@ -49,11 +52,11 @@ describe('DetalleNominaComponent', () => {
     nominaSvc = {
       obtener: vi.fn(),
       aprobar: vi.fn(),
-      anular:  vi.fn()
+      anular: vi.fn(),
     };
     pagoSvc = {
-      pagina:    vi.fn(),
-      registrar: vi.fn()
+      pagina: vi.fn(),
+      registrar: vi.fn(),
     };
   });
 
@@ -71,7 +74,9 @@ describe('DetalleNominaComponent', () => {
   });
 
   it('ngOnInit() should load pagos when nomina is PAGADA', async () => {
-    pagoSvc.pagina.mockReturnValue(of({ contenido: [mkPago()], pagina: 0, tamano: 20, total: 1, totalPaginas: 1 }));
+    pagoSvc.pagina.mockReturnValue(
+      of({ contenido: [mkPago()], pagina: 0, tamano: 20, total: 1, totalPaginas: 1 }),
+    );
     nominaSvc.obtener.mockReturnValue(of(mkNomina('PAGADA')));
     await createComponent();
     expect(pagoSvc.pagina).toHaveBeenCalledWith(0, 1);
@@ -145,7 +150,7 @@ describe('DetalleNominaComponent', () => {
       monto: 100000,
       metodoPago: 'TRANSFERENCIA',
       comprobante: 'TRX-9',
-      observaciones: undefined
+      observaciones: undefined,
     });
     expect(component.pagos.length).toBe(1);
     expect(component.mostrarFormPago).toBe(false);
@@ -164,7 +169,8 @@ describe('DetalleNominaComponent', () => {
   it('registrarPago() should show the backend message on failure', async () => {
     nominaSvc.obtener.mockReturnValue(of(mkNomina('APROBADA')));
     pagoSvc.registrar.mockReturnValue(
-      throwError(() => ({ error: { message: 'Esta nómina ya tiene un pago registrado.' } })));
+      throwError(() => ({ error: { message: 'Esta nómina ya tiene un pago registrado.' } })),
+    );
     await createComponent();
     component.registrarPago();
     expect(component.error).toBe('Esta nómina ya tiene un pago registrado.');

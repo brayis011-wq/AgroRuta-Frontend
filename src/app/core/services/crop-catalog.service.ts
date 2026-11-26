@@ -11,9 +11,13 @@ export class CatalogoCultivoService {
   private readonly api = `${environment.apiUrl}/api/crop-catalog`;
 
   /** Cultivos y variedades activos, para registrar una siembra */
-  activos(): Observable<TipoCultivo[]> { return this.http.get<TipoCultivo[]>(this.api); }
+  activos(): Observable<TipoCultivo[]> {
+    return this.http.get<TipoCultivo[]>(this.api);
+  }
   /** Todo el catálogo, incluidos los desactivados (solo administrador) */
-  todos(): Observable<TipoCultivo[]> { return this.http.get<TipoCultivo[]>(`${this.api}/all`); }
+  todos(): Observable<TipoCultivo[]> {
+    return this.http.get<TipoCultivo[]>(`${this.api}/all`);
+  }
 
   crearTipo(nombre: string): Observable<TipoCultivo> {
     return this.http.post<TipoCultivo>(`${this.api}/types`, { nombre });
@@ -22,9 +26,13 @@ export class CatalogoCultivoService {
     return this.http.post<VariedadCultivo>(`${this.api}/types/${tipoId}/varieties`, { nombre });
   }
   estadoTipo(id: number, activo: boolean): Observable<TipoCultivo> {
-    return this.http.patch<TipoCultivo>(`${this.api}/types/${id}/status`, null, { params: new HttpParams().set('activo', activo) });
+    return this.http.patch<TipoCultivo>(`${this.api}/types/${id}/status`, null, {
+      params: new HttpParams().set('activo', activo),
+    });
   }
   estadoVariedad(id: number, activo: boolean): Observable<VariedadCultivo> {
-    return this.http.patch<VariedadCultivo>(`${this.api}/varieties/${id}/status`, null, { params: new HttpParams().set('activo', activo) });
+    return this.http.patch<VariedadCultivo>(`${this.api}/varieties/${id}/status`, null, {
+      params: new HttpParams().set('activo', activo),
+    });
   }
 }

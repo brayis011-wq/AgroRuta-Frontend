@@ -38,7 +38,10 @@ export class PrecargarDirective {
 
   @HostListener('mouseleave')
   alAlejarRaton(): void {
-    if (this.reloj) { clearTimeout(this.reloj); this.reloj = null; }
+    if (this.reloj) {
+      clearTimeout(this.reloj);
+      this.reloj = null;
+    }
   }
 
   @HostListener('touchstart')
@@ -50,10 +53,15 @@ export class PrecargarDirective {
     const antes = hechas.get(clave);
     if (antes && Date.now() - antes < REPETIR_TRAS_MS) return;
     hechas.set(clave, Date.now());
-    const pedidos: Observable<unknown>[] = p.tipo === 'planting'
-      ? [this.cultivo.buscarSiembra(p.id), this.cultivo.listarActividades(p.id), this.cultivo.listarFumigaciones(p.id),
-         this.cultivo.listarCosechas(p.id)]
-      : [this.cultivo.buscarLote(p.id), this.cultivo.historialLote(p.id)];
+    const pedidos: Observable<unknown>[] =
+      p.tipo === 'planting'
+        ? [
+            this.cultivo.buscarSiembra(p.id),
+            this.cultivo.listarActividades(p.id),
+            this.cultivo.listarFumigaciones(p.id),
+            this.cultivo.listarCosechas(p.id),
+          ]
+        : [this.cultivo.buscarLote(p.id), this.cultivo.historialLote(p.id)];
     forkJoin(pedidos.map((o) => o.pipe(catchError(() => of(null))))).subscribe();
   }
 }

@@ -2,34 +2,69 @@
 <p class="sub">{{ 'auth.login.subtitle' | translate }}</p>
 
 @if (reenviado) {
-  <p class="aviso ok" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i><span>{{ 'auth.verify.resent' | translate }}</span></p>
+  <p class="aviso ok" role="status">
+    <i class="ti ti-circle-check" aria-hidden="true"></i
+    ><span>{{ 'auth.verify.resent' | translate }}</span>
+  </p>
 } @else if (error) {
-  <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i>
-    <span>{{ error | translate }}
-      @if (sinConfirmar) { <button type="button" class="en-linea" (click)="reenviarConfirmacion()">{{ 'auth.verify.resend' | translate }}</button> }
+  <p class="aviso error" role="alert">
+    <i class="ti ti-alert-circle" aria-hidden="true"></i>
+    <span
+      >{{ error | translate }}
+      @if (sinConfirmar) {
+        <button type="button" class="en-linea" (click)="reenviarConfirmacion()">
+          {{ 'auth.verify.resend' | translate }}
+        </button>
+      }
     </span>
   </p>
 } @else if (aviso) {
-  <p class="aviso ok" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i><span>{{ aviso | translate }}</span></p>
+  <p class="aviso ok" role="status">
+    <i class="ti ti-circle-check" aria-hidden="true"></i><span>{{ aviso | translate }}</span>
+  </p>
 }
 
 <form (ngSubmit)="onSubmit()">
   <div class="campo">
     <label for="email">{{ 'auth.login.email' | translate }}</label>
-    <input id="email" type="email" [(ngModel)]="form.email" name="email" autocomplete="email"
-           [placeholder]="'auth.login.emailPlaceholder' | translate" required />
+    <input
+      id="email"
+      type="email"
+      [(ngModel)]="form.email"
+      name="email"
+      autocomplete="email"
+      [placeholder]="'auth.login.emailPlaceholder' | translate"
+      required
+    />
   </div>
 
   <div class="campo">
     <div class="etq-fila">
       <label for="password">{{ 'auth.login.password' | translate }}</label>
-      <a class="olvido" routerLink="/auth/forgot-password" [queryParams]="form.email ? { email: form.email } : {}">{{ 'auth.login.forgot' | translate }}</a>
+      <a
+        class="olvido"
+        routerLink="/auth/forgot-password"
+        [queryParams]="form.email ? { email: form.email } : {}"
+        >{{ 'auth.login.forgot' | translate }}</a
+      >
     </div>
     <div class="con-ojo">
-      <input id="password" [type]="verPass ? 'text' : 'password'" [(ngModel)]="form.password" name="password"
-             autocomplete="current-password" placeholder="••••••••" required />
-      <button type="button" class="ojo" (click)="verPass = !verPass" [attr.aria-pressed]="verPass"
-              [attr.aria-label]="(verPass ? 'config.password.hide' : 'config.password.show') | translate">
+      <input
+        id="password"
+        [type]="verPass ? 'text' : 'password'"
+        [(ngModel)]="form.password"
+        name="password"
+        autocomplete="current-password"
+        placeholder="••••••••"
+        required
+      />
+      <button
+        type="button"
+        class="ojo"
+        (click)="verPass = !verPass"
+        [attr.aria-pressed]="verPass"
+        [attr.aria-label]="(verPass ? 'config.password.hide' : 'config.password.show') | translate"
+      >
         <i class="ti" [class.ti-eye]="!verPass" [class.ti-eye-off]="verPass" aria-hidden="true"></i>
       </button>
     </div>
@@ -38,8 +73,19 @@
   @if (pideCodigo) {
     <div class="campo">
       <label for="codigo">{{ 'auth.login.code' | translate }}</label>
-      <input id="codigo" type="text" [(ngModel)]="codigo" name="codigo" autocomplete="one-time-code" inputmode="text"
-             maxlength="20" autocapitalize="characters" spellcheck="false" placeholder="123456" required />
+      <input
+        id="codigo"
+        type="text"
+        [(ngModel)]="codigo"
+        name="codigo"
+        autocomplete="one-time-code"
+        inputmode="text"
+        maxlength="20"
+        autocapitalize="characters"
+        spellcheck="false"
+        placeholder="123456"
+        required
+      />
       <small class="pista">{{ 'auth.login.codeHint' | translate }}</small>
       <label class="recordar">
         <input type="checkbox" [(ngModel)]="recordarDispositivo" name="recordarDispositivo" />
@@ -49,7 +95,9 @@
   }
 
   <button type="submit" class="btn-prim" [disabled]="cargando">
-    @if (cargando) { <i class="ti ti-loader-2 gira" aria-hidden="true"></i> }
+    @if (cargando) {
+      <i class="ti ti-loader-2 gira" aria-hidden="true"></i>
+    }
     {{ (cargando ? 'auth.login.loggingIn' : 'auth.login.submit') | translate }}
   </button>
 </form>

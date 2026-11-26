@@ -9,7 +9,13 @@ export interface Weather {
   iconUrl: string;
 }
 
-export type TipoConsejoClima = 'NO_FUMIGAR' | 'FUMIGAR_EN_VENTANA' | 'FUMIGAR_BIEN' | 'NO_REGAR' | 'HELADA' | 'LLUVIA_FUERTE';
+export type TipoConsejoClima =
+  | 'NO_FUMIGAR'
+  | 'FUMIGAR_EN_VENTANA'
+  | 'FUMIGAR_BIEN'
+  | 'NO_REGAR'
+  | 'HELADA'
+  | 'LLUVIA_FUERTE';
 
 /**
  * Algo que el clima cambia en lo que hay programado ("no fumigues hoy: llueve a las 3").

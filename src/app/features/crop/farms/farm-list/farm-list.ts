@@ -1,7 +1,15 @@
 import { PrecargarDirective } from '../../../../shared/prefetch.directive';
-import { SiembraActiva, SiembrasActivasService } from '../../../../core/services/active-plantings.service';
 import {
-  Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject
+  SiembraActiva,
+  SiembrasActivasService,
+} from '../../../../core/services/active-plantings.service';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,9 +28,21 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-lista-fincas',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, RouterLink, ContarDirective, PrecargarDirective],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    RouterLink,
+    ContarDirective,
+    PrecargarDirective,
+  ],
   templateUrl: './farm-list.html',
-  styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './farm-list.css'],
+  styleUrls: [
+    '../../crop-ui.css',
+    '../../crop-blocks.css',
+    '../../crop-dialog.css',
+    './farm-list.css',
+  ],
 })
 export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
@@ -34,7 +54,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   fincas: Finca[] = [];
   cargando = true;
-  error = '';                       // clave de traducción
+  error = ''; // clave de traducción
   eliminandoId: number | null = null;
   fincaAEliminar: Finca | null = null;
   textoConfirmacion = '';
@@ -114,34 +134,37 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   private initMap(): void {
     this.map = L.map('mapa-fincas').setView([4.5709, -74.2973], 8);
 
-    const google = L.tileLayer(
-      'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-      { attribution: 'Google Satellite', maxZoom: 21, maxNativeZoom: 20 }
-    );
+    const google = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      attribution: 'Google Satellite',
+      maxZoom: 21,
+      maxNativeZoom: 20,
+    });
     const esri = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 }
+      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 },
     );
 
     google.addTo(this.map);
     this.lotesLayer.addTo(this.map);
-    L.control.layers(
-      { 'Google Satellite': google, 'Esri Satellite': esri },
-      {},
-      { position: 'bottomleft' }
-    ).addTo(this.map);
+    L.control
+      .layers(
+        { 'Google Satellite': google, 'Esri Satellite': esri },
+        {},
+        { position: 'bottomleft' },
+      )
+      .addTo(this.map);
   }
 
   private dibujarMarcadores(ajustarVista = true): void {
     // Limpiar marcadores anteriores
-    this.marcadores.forEach(m => this.map.removeLayer(m));
+    this.marcadores.forEach((m) => this.map.removeLayer(m));
     this.marcadores.clear();
 
-    const fincasConUbicacion = this.fincas.filter(f => f.centroideLat && f.centroideLng);
+    const fincasConUbicacion = this.fincas.filter((f) => f.centroideLat && f.centroideLng);
     const tEnter = this.translate.instant('cultivo.fincas.list.enterFarm');
     const tHa = this.translate.instant('cultivo.units.hectares');
 
-    fincasConUbicacion.forEach(finca => {
+    fincasConUbicacion.forEach((finca) => {
       const icono = L.divIcon({
         html: `<div class="marcador-finca"><i class="ti ti-home-2"></i></div>`,
         className: '',
@@ -150,10 +173,9 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
         popupAnchor: [0, -20],
       });
 
-      const marcador = L.marker(
-        [finca.centroideLat!, finca.centroideLng!],
-        { icon: icono }
-      ).addTo(this.map);
+      const marcador = L.marker([finca.centroideLat!, finca.centroideLng!], { icon: icono }).addTo(
+        this.map,
+      );
 
       // Popup con botón "Entrar" — permite ver el entorno antes de navegar
       const popupContent = `
@@ -188,16 +210,25 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private cargarLotes(): void {
     if (!this.fincas.length) return;
-    forkJoin(this.fincas.map(f => this.cultivoService.listarLotesPorFinca(f.id!).pipe(catchError(() => of([] as Lote[])))))
-      .subscribe(listas => {
-        this.fincas.forEach((f, i) => this.lotesPorFinca[f.id!] = listas[i]);
-        if (this.map) this.dibujarLotes(true);
-        this.cdr.detectChanges();
-      });
+    forkJoin(
+      this.fincas.map((f) =>
+        this.cultivoService.listarLotesPorFinca(f.id!).pipe(catchError(() => of([] as Lote[]))),
+      ),
+    ).subscribe((listas) => {
+      this.fincas.forEach((f, i) => (this.lotesPorFinca[f.id!] = listas[i]));
+      if (this.map) this.dibujarLotes(true);
+      this.cdr.detectChanges();
+    });
     // Siembras en curso de todas las fincas (las mismas consultas: el interceptor de copia breve las comparte)
     this.siembrasActivasSvc.listar(this.fincas).subscribe({
-      next: (s) => { this.siembrasActivas = s; this.cdr.detectChanges(); },
-      error: () => { this.siembrasActivas = []; this.cdr.detectChanges(); },
+      next: (s) => {
+        this.siembrasActivas = s;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.siembrasActivas = [];
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -230,7 +261,10 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Si hay fincas sin marcador (sin ubicación) pero con lotes, el encuadre debe incluirlos
     if (ajustarVista && this.lotesLayer.getLayers().length > 0) {
-      const todo = L.featureGroup([...this.marcadores.values(), ...(this.lotesLayer.getLayers() as L.Layer[])]);
+      const todo = L.featureGroup([
+        ...this.marcadores.values(),
+        ...(this.lotesLayer.getLayers() as L.Layer[]),
+      ]);
       this.map.fitBounds(todo.getBounds(), { padding: [40, 40], maxZoom: 16 });
     }
   }
@@ -242,7 +276,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   enCultivo(f: Finca): number {
-    return (this.lotesPorFinca[f.id!] ?? []).filter(l => l.estado === 'EN_CULTIVO').length;
+    return (this.lotesPorFinca[f.id!] ?? []).filter((l) => l.estado === 'EN_CULTIVO').length;
   }
 
   totalLotes(): number | null {
@@ -255,7 +289,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   fincasSinUbicacion(): number {
-    return this.fincas.filter(f => !f.centroideLat).length;
+    return this.fincas.filter((f) => !f.centroideLat).length;
   }
 
   totalHectareas(): number {
@@ -273,7 +307,8 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   fmtDec(valor: number): string {
     return new Intl.NumberFormat(this.lang.current(), {
-      minimumFractionDigits: 1, maximumFractionDigits: 1,
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
     }).format(valor);
   }
 
@@ -334,7 +369,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.eliminandoId = this.fincaAEliminar.id!;
     this.cultivoService.eliminarFinca(this.fincaAEliminar.id!).subscribe({
       next: () => {
-        this.fincas = this.fincas.filter(f => f.id !== this.fincaAEliminar!.id);
+        this.fincas = this.fincas.filter((f) => f.id !== this.fincaAEliminar!.id);
         this.fincaAEliminar = null;
         this.textoConfirmacion = '';
         this.eliminandoId = null;

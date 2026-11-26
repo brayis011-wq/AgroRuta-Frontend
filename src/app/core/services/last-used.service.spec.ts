@@ -15,6 +15,9 @@ describe('UltimoUsadoService', () => {
     const s = TestBed.inject(UltimoUsadoService);
     s.mezclar('fumigacion', { 3: { dosis: 2 } });
     s.mezclar('fumigacion', { 8: { dosis: 1.5 } });
-    expect(s.leer<Record<string, { dosis: number }>>('fumigacion')).toEqual({ 3: { dosis: 2 }, 8: { dosis: 1.5 } });
+    expect(s.leer<Record<string, { dosis: number }>>('fumigacion')).toEqual({
+      3: { dosis: 2 },
+      8: { dosis: 1.5 },
+    });
   });
 });

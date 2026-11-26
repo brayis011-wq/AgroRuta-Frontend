@@ -1,3 +1,11 @@
 /* Panel del administrador: usa el mismo menú que el panel del agricultor (layout.css y layout-movil.css) */
-.admin-tag { display: inline-flex; align-items: center; gap: 3px; font-weight: 600; color: var(--ar-ambar) !important; }
-.admin-tag .ti { font-size: 12px; }
+.admin-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 600;
+  color: var(--ar-ambar) !important;
+}
+.admin-tag .ti {
+  font-size: 12px;
+}

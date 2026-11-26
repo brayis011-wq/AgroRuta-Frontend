@@ -1,55 +1,61 @@
 <div class="weather-widget">
-
   <!-- Loading -->
   @if (loading()) {
-  <div class="weather-widget__loading">
-    <span class="spinner"></span>
-    <p>{{ 'weather.loading' | translate }}</p>
-  </div>
+    <div class="weather-widget__loading">
+      <span class="spinner"></span>
+      <p>{{ 'weather.loading' | translate }}</p>
+    </div>
   }
 
   <!-- Error -->
   @if (error()) {
-  <div class="weather-widget__error">
-    <span><i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ error()! | translate }}</span>
-    <button (click)="loadWeather()">{{ 'common.retry' | translate }}</button>
-  </div>
+    <div class="weather-widget__error">
+      <span
+        ><i class="ti ti-alert-triangle" aria-hidden="true"></i> {{ error()! | translate }}</span
+      >
+      <button (click)="loadWeather()">{{ 'common.retry' | translate }}</button>
+    </div>
   }
 
   <!-- Data -->
   @if (weather(); as w) {
-  <div class="weather-widget__content">
-    <div class="weather-widget__header">
-      <div class="weather-widget__location">
-        <i class="ti ti-map-pin" aria-hidden="true"></i>
-        <span>{{ lugar() }}</span>
+    <div class="weather-widget__content">
+      <div class="weather-widget__header">
+        <div class="weather-widget__location">
+          <i class="ti ti-map-pin" aria-hidden="true"></i>
+          <span>{{ lugar() }}</span>
+        </div>
+        <i [class]="'ti weather-widget__img ' + icono()" aria-hidden="true"></i>
       </div>
-      <i [class]="'ti weather-widget__img ' + icono()" aria-hidden="true"></i>
-    </div>
 
-    <div class="weather-widget__temp">
-      {{ w.temperature | number:'1.0-0' }}°C
-    </div>
+      <div class="weather-widget__temp">{{ w.temperature | number: '1.0-0' }}°C</div>
 
-    <p class="weather-widget__description">
-      {{ descriptionKey() ? (descriptionKey()! | translate) : (w.description | titlecase) }}
-    </p>
+      <p class="weather-widget__description">
+        {{ descriptionKey() ? (descriptionKey()! | translate) : (w.description | titlecase) }}
+      </p>
 
-    <div class="weather-widget__details">
-      <div class="weather-widget__detail">
-        <span class="label"><i class="ti ti-droplet" aria-hidden="true"></i> {{ 'weather.humidity' | translate }}</span>
-        <span class="value">{{ w.humidity }}%</span>
-      </div>
-      <div class="weather-widget__detail">
-        <span class="label"><i class="ti ti-temperature" aria-hidden="true"></i> {{ 'weather.feelsLike' | translate }}</span>
-        <span class="value">{{ w.feelsLike | number:'1.0-0' }}°C</span>
-      </div>
-      <div class="weather-widget__detail">
-        <span class="label"><i class="ti ti-wind" aria-hidden="true"></i> {{ 'weather.wind' | translate }}</span>
-        <span class="value">{{ w.windSpeed }} m/s</span>
+      <div class="weather-widget__details">
+        <div class="weather-widget__detail">
+          <span class="label"
+            ><i class="ti ti-droplet" aria-hidden="true"></i>
+            {{ 'weather.humidity' | translate }}</span
+          >
+          <span class="value">{{ w.humidity }}%</span>
+        </div>
+        <div class="weather-widget__detail">
+          <span class="label"
+            ><i class="ti ti-temperature" aria-hidden="true"></i>
+            {{ 'weather.feelsLike' | translate }}</span
+          >
+          <span class="value">{{ w.feelsLike | number: '1.0-0' }}°C</span>
+        </div>
+        <div class="weather-widget__detail">
+          <span class="label"
+            ><i class="ti ti-wind" aria-hidden="true"></i> {{ 'weather.wind' | translate }}</span
+          >
+          <span class="value">{{ w.windSpeed }} m/s</span>
+        </div>
       </div>
     </div>
-  </div>
   }
-
 </div>

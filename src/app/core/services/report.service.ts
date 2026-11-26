@@ -69,20 +69,30 @@ const isoLocal = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 /** Fechas (aaaa-mm-dd, las dos incluidas) de cada periodo; null = sin límite */
-export function rangoPeriodo(clave: ClavePeriodo, hoy = new Date()): { desde: string | null; hasta: string | null } {
+export function rangoPeriodo(
+  clave: ClavePeriodo,
+  hoy = new Date(),
+): { desde: string | null; hasta: string | null } {
   const y = hoy.getFullYear();
   switch (clave) {
-    case 'mes': return { desde: isoLocal(new Date(y, hoy.getMonth(), 1)), hasta: isoLocal(new Date(y, hoy.getMonth() + 1, 0)) };
-    case 'anio': return { desde: `${y}-01-01`, hasta: `${y}-12-31` };
-    case 'anioPasado': return { desde: `${y - 1}-01-01`, hasta: `${y - 1}-12-31` };
-    case 'doce': return { desde: isoLocal(new Date(y, hoy.getMonth() - 11, 1)), hasta: isoLocal(hoy) };
-    default: return { desde: null, hasta: null };
+    case 'mes':
+      return {
+        desde: isoLocal(new Date(y, hoy.getMonth(), 1)),
+        hasta: isoLocal(new Date(y, hoy.getMonth() + 1, 0)),
+      };
+    case 'anio':
+      return { desde: `${y}-01-01`, hasta: `${y}-12-31` };
+    case 'anioPasado':
+      return { desde: `${y - 1}-01-01`, hasta: `${y - 1}-12-31` };
+    case 'doce':
+      return { desde: isoLocal(new Date(y, hoy.getMonth() - 11, 1)), hasta: isoLocal(hoy) };
+    default:
+      return { desde: null, hasta: null };
   }
 }
 
 @Injectable({ providedIn: 'root' })
 export class ReportService {
-
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
@@ -95,32 +105,51 @@ export class ReportService {
   }
 
   getPayrollPreview(): Observable<PayrollReport> {
-    return this.http.get<PayrollReport>(`${this.apiUrl}/api/reports/payroll/preview`, { params: this.params() });
+    return this.http.get<PayrollReport>(`${this.apiUrl}/api/reports/payroll/preview`, {
+      params: this.params(),
+    });
   }
 
   getCropPreview(): Observable<CropReport> {
-    return this.http.get<CropReport>(`${this.apiUrl}/api/reports/crops/preview`, { params: this.params() });
+    return this.http.get<CropReport>(`${this.apiUrl}/api/reports/crops/preview`, {
+      params: this.params(),
+    });
   }
 
   downloadPayrollPdf(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/api/reports/payroll`, { responseType: 'blob', params: this.params() });
+    return this.http.get(`${this.apiUrl}/api/reports/payroll`, {
+      responseType: 'blob',
+      params: this.params(),
+    });
   }
 
   downloadCropPdf(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/api/reports/crops`, { responseType: 'blob', params: this.params() });
+    return this.http.get(`${this.apiUrl}/api/reports/crops`, {
+      responseType: 'blob',
+      params: this.params(),
+    });
   }
 
   downloadCostsPdf(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/api/reports/costs`, { responseType: 'blob', params: this.params() });
+    return this.http.get(`${this.apiUrl}/api/reports/costs`, {
+      responseType: 'blob',
+      params: this.params(),
+    });
   }
 
   /** Cuaderno de campo: las aplicaciones de producto del periodo (de una finca o de todas) */
   downloadFieldBookPdf(fincaId?: number | null): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/api/reports/field-book`, { responseType: 'blob', params: this.params(fincaId ? { farmId: String(fincaId) } : {}) });
+    return this.http.get(`${this.apiUrl}/api/reports/field-book`, {
+      responseType: 'blob',
+      params: this.params(fincaId ? { farmId: String(fincaId) } : {}),
+    });
   }
 
   downloadProfitabilityPdf(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/api/reports/profitability`, { responseType: 'blob', params: this.params() });
+    return this.http.get(`${this.apiUrl}/api/reports/profitability`, {
+      responseType: 'blob',
+      params: this.params(),
+    });
   }
 
   /** Las partes elegidas en un solo PDF (sin partes, el backend pone las cuatro) */

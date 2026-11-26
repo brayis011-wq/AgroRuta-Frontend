@@ -10,7 +10,9 @@ describe('NotificacionesService', () => {
   const url = `${environment.apiUrl}/api/notifications/preferences`;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     service = TestBed.inject(NotificacionesService);
     http = TestBed.inject(HttpTestingController);
   });

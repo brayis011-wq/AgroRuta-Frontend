@@ -7,25 +7,46 @@
     </div>
   </div>
   <ul class="incluye">
-    <li><i class="ti ti-check" aria-hidden="true"></i> {{ 'reports.fieldbook.has1' | translate }}</li>
-    <li><i class="ti ti-check" aria-hidden="true"></i> {{ 'reports.fieldbook.has2' | translate }}</li>
-    <li><i class="ti ti-check" aria-hidden="true"></i> {{ 'reports.fieldbook.has3' | translate }}</li>
-    <li><i class="ti ti-check" aria-hidden="true"></i> {{ 'reports.fieldbook.has4' | translate }}</li>
+    <li>
+      <i class="ti ti-check" aria-hidden="true"></i> {{ 'reports.fieldbook.has1' | translate }}
+    </li>
+    <li>
+      <i class="ti ti-check" aria-hidden="true"></i> {{ 'reports.fieldbook.has2' | translate }}
+    </li>
+    <li>
+      <i class="ti ti-check" aria-hidden="true"></i> {{ 'reports.fieldbook.has3' | translate }}
+    </li>
+    <li>
+      <i class="ti ti-check" aria-hidden="true"></i> {{ 'reports.fieldbook.has4' | translate }}
+    </li>
   </ul>
   <div class="acciones">
     @if (fincaActiva.fincas().length > 1) {
-      <label class="finca"><span>{{ 'reports.fieldbook.farm' | translate }}</span>
-        <select [value]="fincaId() ?? ''" (change)="fincaId.set($any($event.target).value ? +$any($event.target).value : null)">
+      <label class="finca"
+        ><span>{{ 'reports.fieldbook.farm' | translate }}</span>
+        <select
+          [value]="fincaId() ?? ''"
+          (change)="fincaId.set($any($event.target).value ? +$any($event.target).value : null)"
+        >
           <option value="">{{ 'reports.fieldbook.allFarms' | translate }}</option>
-          @for (f of fincaActiva.fincas(); track f.id) { <option [value]="f.id">{{ f.nombre }}</option> }
+          @for (f of fincaActiva.fincas(); track f.id) {
+            <option [value]="f.id">{{ f.nombre }}</option>
+          }
         </select>
       </label>
     }
     <button type="button" class="btn-pdf" (click)="descargarPdf()" [disabled]="descargando()">
-      <i class="ti" [class.ti-file-type-pdf]="!descargando()" [class.ti-loader-2]="descargando()" aria-hidden="true"></i>
+      <i
+        class="ti"
+        [class.ti-file-type-pdf]="!descargando()"
+        [class.ti-loader-2]="descargando()"
+        aria-hidden="true"
+      ></i>
       {{ (descargando() ? 'reports.downloading' : 'reports.fieldbook.download') | translate }}
     </button>
   </div>
-  @if (error()) { <p class="error" role="alert">{{ 'reports.downloadError' | translate }}</p> }
+  @if (error()) {
+    <p class="error" role="alert">{{ 'reports.downloadError' | translate }}</p>
+  }
   <p class="nota">{{ 'reports.fieldbook.note' | translate }}</p>
 </section>

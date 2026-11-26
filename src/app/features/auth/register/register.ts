@@ -62,9 +62,12 @@ export class RegistroComponent {
         }
         this.exito = esTrabajador ? 'auth.register.successWorker' : 'auth.register.success';
         this.cdr.detectChanges();
-        setTimeout(() => {
-          this.router.navigate(['/auth/login']);
-        }, esTrabajador ? 4000 : 2000);
+        setTimeout(
+          () => {
+            this.router.navigate(['/auth/login']);
+          },
+          esTrabajador ? 4000 : 2000,
+        );
       },
       error: (err) => {
         this.cargando = false;

@@ -3,11 +3,15 @@ import { conSingular } from './plural-compiler';
 
 describe('singular automático en las traducciones', () => {
   const parser = new TranslateDefaultParser();
-  const t = conSingular({
-    farm: { count: '{{count}} fincas', countOne: '1 finca', all: 'Todas las fincas' },
-    jornales: '{{count}} jornales · {{amount}}', jornalesOne: '1 jornal · {{amount}}',
-    sinPar: '{{count}} lotes',
-  }, parser) as Record<string, any>;
+  const t = conSingular(
+    {
+      farm: { count: '{{count}} fincas', countOne: '1 finca', all: 'Todas las fincas' },
+      jornales: '{{count}} jornales · {{amount}}',
+      jornalesOne: '1 jornal · {{amount}}',
+      sinPar: '{{count}} lotes',
+    },
+    parser,
+  ) as Record<string, any>;
 
   it('con count 1 usa la forma "One" y con otro número la plural', () => {
     expect(parser.interpolate(t['farm'].count, { count: 1 })).toBe('1 finca');
@@ -16,8 +20,12 @@ describe('singular automático en las traducciones', () => {
   });
 
   it('interpola los demás valores en las dos formas', () => {
-    expect(parser.interpolate(t['jornales'], { count: 1, amount: '$ 65.000' })).toBe('1 jornal · $ 65.000');
-    expect(parser.interpolate(t['jornales'], { count: 2, amount: '$ 130.000' })).toBe('2 jornales · $ 130.000');
+    expect(parser.interpolate(t['jornales'], { count: 1, amount: '$ 65.000' })).toBe(
+      '1 jornal · $ 65.000',
+    );
+    expect(parser.interpolate(t['jornales'], { count: 2, amount: '$ 130.000' })).toBe(
+      '2 jornales · $ 130.000',
+    );
   });
 
   it('deja igual los textos sin forma "One" y la propia clave "One"', () => {

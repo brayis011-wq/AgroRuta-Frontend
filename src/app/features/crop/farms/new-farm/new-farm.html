@@ -14,44 +14,114 @@
       <form (ngSubmit)="registrar()">
         <div class="field-row">
           <div class="field">
-            <label class="field__label" for="nombre"><i class="ti ti-home-2" aria-hidden="true"></i> {{ 'cultivo.fincas.new.name' | translate }}</label>
-            <input id="nombre" type="text" [(ngModel)]="form.nombre" name="nombre" [placeholder]="'cultivo.fincas.new.namePlaceholder' | translate" required />
+            <label class="field__label" for="nombre"
+              ><i class="ti ti-home-2" aria-hidden="true"></i>
+              {{ 'cultivo.fincas.new.name' | translate }}</label
+            >
+            <input
+              id="nombre"
+              type="text"
+              [(ngModel)]="form.nombre"
+              name="nombre"
+              [placeholder]="'cultivo.fincas.new.namePlaceholder' | translate"
+              required
+            />
           </div>
           <div class="field">
-            <label class="field__label" for="hectareas"><i class="ti ti-ruler-2" aria-hidden="true"></i> {{ 'cultivo.fincas.new.hectares' | translate }}</label>
-            <input id="hectareas" type="number" inputmode="decimal" [(ngModel)]="form.hectareas" name="hectareas" [placeholder]="'cultivo.fincas.new.hectaresPlaceholder' | translate" step="0.1" min="0.1" required />
+            <label class="field__label" for="hectareas"
+              ><i class="ti ti-ruler-2" aria-hidden="true"></i>
+              {{ 'cultivo.fincas.new.hectares' | translate }}</label
+            >
+            <input
+              id="hectareas"
+              type="number"
+              inputmode="decimal"
+              [(ngModel)]="form.hectareas"
+              name="hectareas"
+              [placeholder]="'cultivo.fincas.new.hectaresPlaceholder' | translate"
+              step="0.1"
+              min="0.1"
+              required
+            />
           </div>
         </div>
 
         <div class="field">
-          <span class="field__label"><i class="ti ti-map-pin" aria-hidden="true"></i> {{ 'temporadas.ui.whereIsFarm' | translate }}</span>
+          <span class="field__label"
+            ><i class="ti ti-map-pin" aria-hidden="true"></i>
+            {{ 'temporadas.ui.whereIsFarm' | translate }}</span
+          >
           <p class="map-instructions">
-            {{ 'cultivo.fincas.new.mapHelpPrefix' | translate }} <strong>{{ 'cultivo.fincas.new.mapHelpBold' | translate }}</strong> {{ 'cultivo.fincas.new.mapHelpSuffix' | translate }}
+            {{ 'cultivo.fincas.new.mapHelpPrefix' | translate }}
+            <strong>{{ 'cultivo.fincas.new.mapHelpBold' | translate }}</strong>
+            {{ 'cultivo.fincas.new.mapHelpSuffix' | translate }}
           </p>
           <div class="buscador-mapa">
-            <input type="text" [(ngModel)]="busquedaMapa" name="busquedaMapa" [placeholder]="'cultivo.fincas.new.searchPlaceholder' | translate" (keydown.enter)="$event.preventDefault(); buscarUbicacion()" />
-            <button type="button" (click)="buscarUbicacion()" [attr.aria-label]="'search.placeholder' | translate"><i class="ti ti-search"></i></button>
+            <input
+              type="text"
+              [(ngModel)]="busquedaMapa"
+              name="busquedaMapa"
+              [placeholder]="'cultivo.fincas.new.searchPlaceholder' | translate"
+              (keydown.enter)="$event.preventDefault(); buscarUbicacion()"
+            />
+            <button
+              type="button"
+              (click)="buscarUbicacion()"
+              [attr.aria-label]="'search.placeholder' | translate"
+            >
+              <i class="ti ti-search"></i>
+            </button>
           </div>
           <div id="mapa-nueva-finca" class="mapa-container"></div>
           @if (centroideLat) {
-            <p class="estado-mapa ok"><i class="ti ti-circle-check"></i> {{ 'cultivo.fincas.new.locationMarked' | translate }} <span class="coords">{{ fmtCoord(centroideLat) }}, {{ fmtCoord(centroideLng!) }}</span></p>
+            <p class="estado-mapa ok">
+              <i class="ti ti-circle-check"></i>
+              {{ 'cultivo.fincas.new.locationMarked' | translate }}
+              <span class="coords"
+                >{{ fmtCoord(centroideLat) }}, {{ fmtCoord(centroideLng!) }}</span
+              >
+            </p>
           } @else {
-            <p class="estado-mapa"><i class="ti ti-pointer"></i> {{ 'cultivo.fincas.new.locationPending' | translate }}</p>
+            <p class="estado-mapa">
+              <i class="ti ti-pointer"></i> {{ 'cultivo.fincas.new.locationPending' | translate }}
+            </p>
           }
         </div>
 
         <div class="field">
-          <label class="field__label" for="ubicacion"><i class="ti ti-map-2" aria-hidden="true"></i> {{ 'cultivo.fincas.new.locationText' | translate }}</label>
-          <input id="ubicacion" type="text" [(ngModel)]="form.ubicacion" name="ubicacion" [placeholder]="'cultivo.fincas.new.locationTextPlaceholder' | translate" />
+          <label class="field__label" for="ubicacion"
+            ><i class="ti ti-map-2" aria-hidden="true"></i>
+            {{ 'cultivo.fincas.new.locationText' | translate }}</label
+          >
+          <input
+            id="ubicacion"
+            type="text"
+            [(ngModel)]="form.ubicacion"
+            name="ubicacion"
+            [placeholder]="'cultivo.fincas.new.locationTextPlaceholder' | translate"
+          />
         </div>
 
-        @if (error) { <div class="alert alert--error"><i class="ti ti-alert-triangle alert__icon"></i> {{ error | translate }}</div> }
-        @if (exito) { <div class="alert alert--success"><i class="ti ti-circle-check alert__icon"></i> {{ 'cultivo.fincas.new.success' | translate }}</div> }
+        @if (error) {
+          <div class="alert alert--error">
+            <i class="ti ti-alert-triangle alert__icon"></i> {{ error | translate }}
+          </div>
+        }
+        @if (exito) {
+          <div class="alert alert--success">
+            <i class="ti ti-circle-check alert__icon"></i>
+            {{ 'cultivo.fincas.new.success' | translate }}
+          </div>
+        }
 
         <div class="form-actions">
-          <button type="button" class="btn-secondary" (click)="cancelar()">{{ 'cultivo.fincas.new.cancel' | translate }}</button>
+          <button type="button" class="btn-secondary" (click)="cancelar()">
+            {{ 'cultivo.fincas.new.cancel' | translate }}
+          </button>
           <button type="submit" class="btn-submit" [disabled]="guardando || !centroideLat">
-            {{ (guardando ? 'cultivo.fincas.new.saving' : 'cultivo.fincas.new.submit') | translate }}
+            {{
+              (guardando ? 'cultivo.fincas.new.saving' : 'cultivo.fincas.new.submit') | translate
+            }}
           </button>
         </div>
       </form>

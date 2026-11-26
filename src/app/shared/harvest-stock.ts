@@ -10,8 +10,13 @@ export interface CosechaKilos {
  * así que se descuenta de las más viejas primero (lo primero que se recoge es lo primero que se vende).
  * Devuelve los kilos que quedan por id de cosecha (0 = ya vendida toda).
  */
-export function quedanPorCosecha(cosechas: CosechaKilos[], kgVendidos: number): Map<number, number> {
-  const orden = [...cosechas].sort((a, b) => a.fecha.localeCompare(b.fecha) || (a.id ?? 0) - (b.id ?? 0));
+export function quedanPorCosecha(
+  cosechas: CosechaKilos[],
+  kgVendidos: number,
+): Map<number, number> {
+  const orden = [...cosechas].sort(
+    (a, b) => a.fecha.localeCompare(b.fecha) || (a.id ?? 0) - (b.id ?? 0),
+  );
   let porDescontar = Math.max(0, kgVendidos || 0);
   const quedan = new Map<number, number>();
   for (const c of orden) {

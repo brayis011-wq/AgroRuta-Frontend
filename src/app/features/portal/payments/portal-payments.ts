@@ -12,7 +12,11 @@ import { descargarArchivo, numeroComprobante } from '../../../shared/download';
   standalone: true,
   imports: [CommonModule, TranslatePipe],
   templateUrl: './portal-payments.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', '../portal-lists.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    '../portal-lists.css',
+  ],
 })
 export class PortalPagosComponent implements OnInit {
   private readonly portal = inject(PortalService);

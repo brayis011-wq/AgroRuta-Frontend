@@ -6,11 +6,15 @@ import { ConCambiosSinGuardar, cambiosSinGuardarGuard } from './unsaved-changes.
 describe('cambiosSinGuardarGuard', () => {
   const preguntar = vi.fn();
   const correr = (c: ConCambiosSinGuardar) =>
-    TestBed.runInInjectionContext(() => cambiosSinGuardarGuard(c, null as never, null as never, null as never));
+    TestBed.runInInjectionContext(() =>
+      cambiosSinGuardarGuard(c, null as never, null as never, null as never),
+    );
 
   beforeEach(() => {
     preguntar.mockReset();
-    TestBed.configureTestingModule({ providers: [{ provide: ConfirmService, useValue: { preguntar } }] });
+    TestBed.configureTestingModule({
+      providers: [{ provide: ConfirmService, useValue: { preguntar } }],
+    });
   });
 
   it('sin cambios deja salir sin preguntar', () => {

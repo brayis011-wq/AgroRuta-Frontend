@@ -1,17 +1,77 @@
 /* Pagos */
-.metodo { display: inline-flex; align-items: center; gap: .4rem; }
-.metodo .ti { font-size: 17px; color: var(--ar-tinta-3); }
-.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem; }
-.tabla tr.sel { background: var(--ar-verde-50); box-shadow: inset 3px 0 0 var(--ar-verde-600); }
-.monto-g { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; color: var(--ar-verde-700); font-variant-numeric: tabular-nums; }
-.jornales { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.jornales li { display: grid; grid-template-columns: auto 1fr auto; gap: .2rem .8rem; align-items: center; padding: .6rem 0; border-bottom: 1px solid var(--ar-linea); font-size: .86rem; }
-.jornales li:last-child { border-bottom: 0; }
-.jornales .f { color: var(--ar-tinta-3); font-size: .8rem; white-space: nowrap; }
-.jornales .v { font-weight: 600; font-variant-numeric: tabular-nums; }
-.jornales .etqs { grid-column: 2 / -1; }
-.tot-n { display: flex; justify-content: space-between; padding-top: .6rem; border-top: 1px solid var(--ar-borde); font-weight: 700; }
+.metodo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.metodo .ti {
+  font-size: 17px;
+  color: var(--ar-tinta-3);
+}
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.82rem;
+}
+.tabla tr.sel {
+  background: var(--ar-verde-50);
+  box-shadow: inset 3px 0 0 var(--ar-verde-600);
+}
+.monto-g {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ar-verde-700);
+  font-variant-numeric: tabular-nums;
+}
+.jornales {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.jornales li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.2rem 0.8rem;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--ar-linea);
+  font-size: 0.86rem;
+}
+.jornales li:last-child {
+  border-bottom: 0;
+}
+.jornales .f {
+  color: var(--ar-tinta-3);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.jornales .v {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.jornales .etqs {
+  grid-column: 2 / -1;
+}
+.tot-n {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--ar-borde);
+  font-weight: 700;
+}
 
 /* Comprobante en PDF */
-.comprobante { display: flex; flex-direction: column; align-items: flex-start; gap: .4rem; }
-.comprobante small { display: inline-flex; align-items: center; gap: .3rem; font-size: .78rem; }
+.comprobante {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+.comprobante small {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+}

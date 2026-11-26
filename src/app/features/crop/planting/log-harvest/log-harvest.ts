@@ -31,9 +31,16 @@ interface FilaRecolector {
 @Component({
   selector: 'app-registrar-cosecha',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    TranslatePipe,
+    MigasCultivoComponent,
+    SiguienteCampoDirective,
+  ],
   templateUrl: './log-harvest.html',
-  styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-harvest.css']
+  styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-harvest.css'],
 })
 export class RegistrarCosecha implements OnInit {
   private readonly avisos = inject(AvisosService);
@@ -57,8 +64,8 @@ export class RegistrarCosecha implements OnInit {
     return formatoFecha(v, this.lang.current());
   }
   cargando = false;
-  error = '';   // clave de traducción (o mensaje crudo del backend)
-  exito = '';   // clave de traducción
+  error = ''; // clave de traducción (o mensaje crudo del backend)
+  exito = ''; // clave de traducción
 
   form: any = {
     fecha: '',
@@ -84,7 +91,7 @@ export class RegistrarCosecha implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private cultivoService: CultivoService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   private readonly ultimo = inject(UltimoUsadoService);
@@ -100,7 +107,14 @@ export class RegistrarCosecha implements OnInit {
   }
 
   agregarRecolector(): void {
-    const fila: FilaRecolector = { trabajadorId: null, modalidad: 'KILO', kilos: null, valorKilo: null, valorDia: null, fija: false };
+    const fila: FilaRecolector = {
+      trabajadorId: null,
+      modalidad: 'KILO',
+      kilos: null,
+      valorKilo: null,
+      valorDia: null,
+      fija: false,
+    };
     const libres = this.disponiblesPara(null);
     this.recolectores = [...this.recolectores, fila];
     // Con una sola persona libre, ya queda elegida
@@ -132,7 +146,8 @@ export class RegistrarCosecha implements OnInit {
 
   /** Lo que se le paga a esa persona por esta cosecha */
   valorDe(f: FilaRecolector): number | null {
-    if (f.modalidad === 'KILO') return f.kilos && f.valorKilo ? Math.round(f.kilos * f.valorKilo) : null;
+    if (f.modalidad === 'KILO')
+      return f.kilos && f.valorKilo ? Math.round(f.kilos * f.valorKilo) : null;
     return f.valorDia || null;
   }
 
@@ -169,13 +184,17 @@ export class RegistrarCosecha implements OnInit {
 
   /** Falta algo en una fila: quién, los kilos o cuánto se le paga */
   private filaIncompleta(): boolean {
-    return this.recolectores.some((r) => !r.fija && (!r.trabajadorId
-      || (r.modalidad === 'KILO' ? !r.kilos || !r.valorKilo : !r.valorDia)));
+    return this.recolectores.some(
+      (r) =>
+        !r.fija &&
+        (!r.trabajadorId || (r.modalidad === 'KILO' ? !r.kilos || !r.valorKilo : !r.valorDia)),
+    );
   }
 
   private paraEnviar(): Recolector[] {
     return this.recolectores.map((r) => ({
-      trabajadorId: r.trabajadorId!, modalidad: r.modalidad,
+      trabajadorId: r.trabajadorId!,
+      modalidad: r.modalidad,
       // Por día los kilos son opcionales (no cambian el pago)
       kilos: r.kilos ? Number(r.kilos) : null,
       valorKilo: r.modalidad === 'KILO' && r.valorKilo ? Number(r.valorKilo) : null,
@@ -208,17 +227,26 @@ export class RegistrarCosecha implements OnInit {
 
     this.trabajadorSvc.listar().subscribe({
       next: (lista) => {
-        this.equipo = (lista ?? []).filter((t) => !t.estado || t.estado === 'ACTIVO')
+        this.equipo = (lista ?? [])
+          .filter((t) => !t.estado || t.estado === 'ACTIVO')
           .sort((a, b) => (a.nombreCompleto ?? '').localeCompare(b.nombreCompleto ?? ''));
         this.equipoCargado = true;
         this.cdr.detectChanges();
       },
-      error: () => { this.equipoCargado = true; this.cdr.detectChanges(); },
+      error: () => {
+        this.equipoCargado = true;
+        this.cdr.detectChanges();
+      },
     });
 
     this.cultivoService.resumenSiembra(this.siembraId).subscribe({
-      next: (r) => { this.carencia = r?.carencia ?? null; this.cdr.detectChanges(); },
-      error: () => { /* sin aviso de carencia */ },
+      next: (r) => {
+        this.carencia = r?.carencia ?? null;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        /* sin aviso de carencia */
+      },
     });
 
     const registro = this.route.snapshot.paramMap.get('registroId');
@@ -226,17 +254,32 @@ export class RegistrarCosecha implements OnInit {
       this.registroId = Number(registro);
       this.cultivoService.buscarCosecha(this.registroId).subscribe({
         next: (c) => {
-          this.form = { ...this.form, fecha: c.fecha, cantidadKg: c.cantidadKg, calidad: c.calidad, observaciones: c.observaciones ?? '', precioKg: c.precioKg ?? null };
+          this.form = {
+            ...this.form,
+            fecha: c.fecha,
+            cantidadKg: c.cantidadKg,
+            calidad: c.calidad,
+            observaciones: c.observaciones ?? '',
+            precioKg: c.precioKg ?? null,
+          };
           this.recolectores = (c.recolectores ?? []).map((r) => ({
-            trabajadorId: r.trabajadorId, modalidad: r.modalidad, kilos: r.kilos ?? null, valorKilo: r.valorKilo ?? null,
-            valorDia: r.modalidad === 'DIA' ? r.valor ?? null : null, fija: r.editable === false, nombre: r.nombre,
+            trabajadorId: r.trabajadorId,
+            modalidad: r.modalidad,
+            kilos: r.kilos ?? null,
+            valorKilo: r.valorKilo ?? null,
+            valorDia: r.modalidad === 'DIA' ? (r.valor ?? null) : null,
+            fija: r.editable === false,
+            nombre: r.nombre,
             estadoNomina: r.estadoNomina ?? null,
           }));
           // Al editar, el total es el que se guardó: no se recalcula solo
           this.kgManual = true;
           this.cdr.detectChanges();
         },
-        error: () => { this.error = 'temporadas.registro.errors.load'; this.cdr.detectChanges(); },
+        error: () => {
+          this.error = 'temporadas.registro.errors.load';
+          this.cdr.detectChanges();
+        },
       });
     }
   }
@@ -244,11 +287,21 @@ export class RegistrarCosecha implements OnInit {
   onSubmit(): void {
     this.error = '';
     this.exito = '';
-    if (this.filaIncompleta()) { this.error = 'siembra.harvest.pickers.incomplete'; return; }
-    if (this.kilosRecolectores > Number(this.form.cantidadKg || 0) + 0.01) { this.error = 'siembra.harvest.pickers.tooMany'; return; }
+    if (this.filaIncompleta()) {
+      this.error = 'siembra.harvest.pickers.incomplete';
+      return;
+    }
+    if (this.kilosRecolectores > Number(this.form.cantidadKg || 0) + 0.01) {
+      this.error = 'siembra.harvest.pickers.tooMany';
+      return;
+    }
     this.cargando = true;
 
-    const datos = { ...this.form, confirmarCarencia: this.confirmarCarencia, recolectores: this.paraEnviar() };
+    const datos = {
+      ...this.form,
+      confirmarCarencia: this.confirmarCarencia,
+      recolectores: this.paraEnviar(),
+    };
     const peticion = this.registroId
       ? this.cultivoService.actualizarCosecha(this.registroId, datos)
       : this.cultivoService.registrarCosecha(datos);
@@ -261,7 +314,9 @@ export class RegistrarCosecha implements OnInit {
         this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.harvest');
         // Al volver, la ficha baja hasta el registro y lo marca un momento
         const id = (guardado && guardado.id) || this.registroId;
-        this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros', nuevo: id ? 'cosecha-' + id : null } });
+        this.router.navigate(['/crops/planting', this.siembraId], {
+          queryParams: { tab: 'registros', nuevo: id ? 'cosecha-' + id : null },
+        });
       },
       error: (err) => {
         this.cargando = false;
@@ -273,7 +328,7 @@ export class RegistrarCosecha implements OnInit {
         }
         this.error = err.error?.message || 'siembra.harvest.errors.register';
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -292,5 +347,4 @@ export class RegistrarCosecha implements OnInit {
     this.mensajeCarencia = '';
     this.confirmarCarencia = false;
   }
-
 }

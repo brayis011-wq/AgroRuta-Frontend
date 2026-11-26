@@ -2,7 +2,15 @@ import { duracionDe, estimarCiclo } from './cycle-estimate';
 import { Siembra } from '../../../../core/models/crop.model';
 
 const siembra = (tipo: string, estado: Siembra['estadoCultivo'], fechaSiembra = '2026-01-01') =>
-  ({ id: 1, tipoCultivo: tipo, variedad: 'X', estadoCultivo: estado, fechaSiembra, cantidadPlantas: 10, loteId: 1 }) as Siembra;
+  ({
+    id: 1,
+    tipoCultivo: tipo,
+    variedad: 'X',
+    estadoCultivo: estado,
+    fechaSiembra,
+    cantidadPlantas: 10,
+    loteId: 1,
+  }) as Siembra;
 
 describe('Ciclo estimado por cultivo', () => {
   it('reconoce el cultivo sin tildes ni mayúsculas, y usa tiempos generales si no lo conoce', () => {

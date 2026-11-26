@@ -3,13 +3,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';          // ← 3 niveles: services→core→app→src/environments
+import { environment } from '../../../environments/environment'; // ← 3 niveles: services→core→app→src/environments
 import { AgriculturalInput, AgriculturalInputRequest } from '../models/agricultural-input.model'; // ← modelo en core/models
 
 @Injectable({ providedIn: 'root' })
 export class AgriculturalInputService {
-  private readonly http    = inject(HttpClient);
-private readonly baseUrl = `${environment.apiUrl}/api/agricultural-inputs`;
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.apiUrl}/api/agricultural-inputs`;
   getAll(): Observable<AgriculturalInput[]> {
     return this.http.get<AgriculturalInput[]>(this.baseUrl);
   }

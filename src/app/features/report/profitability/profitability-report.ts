@@ -1,5 +1,12 @@
 import { DescargasReporteComponent } from '../downloads/report-downloads';
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { forkJoin, of, catchError } from 'rxjs';
@@ -10,7 +17,13 @@ import { CultivoService } from '../../../core/services/crop.service';
 import { ReportBase } from '../report-base';
 import { tablaRentabilidad } from '../report-csv';
 import { FilaCostos } from '../costs/costs-calc';
-import { RentabilidadLote, TemporadaLote, anchoBarra, rentabilidadPorLote, resumenRentabilidad } from './profitability-calc';
+import {
+  RentabilidadLote,
+  TemporadaLote,
+  anchoBarra,
+  rentabilidadPorLote,
+  resumenRentabilidad,
+} from './profitability-calc';
 import { EtiquetasTablaDirective } from '../../../shared/table-labels.directive';
 
 /** Reportes → Rentabilidad: cuánto dejó cada lote y cómo le fue a cada temporada frente a la anterior */
@@ -50,13 +63,23 @@ export class ProfitabilityReportComponent extends ReportBase implements OnInit {
     this.filas.set(null);
     this.error.set(false);
     const { desde, hasta } = rangoPeriodo(this.reportService.periodo());
-    this.gastosService.resumen(desde, hasta).subscribe({ next: (g) => this.gastos.set(g), error: () => this.gastos.set(null) });
+    this.gastosService
+      .resumen(desde, hasta)
+      .subscribe({ next: (g) => this.gastos.set(g), error: () => this.gastos.set(null) });
     this.reportService.getCropPreview().subscribe({
       next: (r) => {
         const siembras = r.cropDetails ?? [];
-        if (!siembras.length) { this.filas.set([]); return; }
-        forkJoin(siembras.map((s) => this.cultivo.costosSiembra(s.siembraId).pipe(catchError(() => of(null)))))
-          .subscribe((cs) => this.filas.set(siembras.map((s, i) => ({ siembra: s, costos: cs[i] }))));
+        if (!siembras.length) {
+          this.filas.set([]);
+          return;
+        }
+        forkJoin(
+          siembras.map((s) =>
+            this.cultivo.costosSiembra(s.siembraId).pipe(catchError(() => of(null))),
+          ),
+        ).subscribe((cs) =>
+          this.filas.set(siembras.map((s, i) => ({ siembra: s, costos: cs[i] }))),
+        );
       },
       error: () => this.error.set(true),
     });
@@ -71,8 +94,14 @@ export class ProfitabilityReportComponent extends ReportBase implements OnInit {
     this.downloading.set(true);
     this.downloadError.set(false);
     this.reportService.downloadProfitabilityPdf().subscribe({
-      next: (b) => { this.descargar(b, 'reporte-rentabilidad.pdf'); this.downloading.set(false); },
-      error: () => { this.downloading.set(false); this.downloadError.set(true); },
+      next: (b) => {
+        this.descargar(b, 'reporte-rentabilidad.pdf');
+        this.downloading.set(false);
+      },
+      error: () => {
+        this.downloading.set(false);
+        this.downloadError.set(true);
+      },
     });
   }
 

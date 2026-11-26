@@ -1,5 +1,13 @@
 import { DescargasReporteComponent } from '../downloads/report-downloads';
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { forkJoin, of, catchError } from 'rxjs';
@@ -15,7 +23,13 @@ import { EtiquetasTablaDirective } from '../../../shared/table-labels.directive'
 @Component({
   selector: 'app-costs-report',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, CostosSiembraComponent, DescargasReporteComponent, EtiquetasTablaDirective],
+  imports: [
+    RouterLink,
+    TranslatePipe,
+    CostosSiembraComponent,
+    DescargasReporteComponent,
+    EtiquetasTablaDirective,
+  ],
   templateUrl: './costs-report.html',
   styleUrls: ['../report-shared.css', '../report-table.css', './costs-report.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,8 +51,12 @@ export class CostsReportComponent extends ReportBase implements OnInit {
   readonly elegida = signal<number | null>(null);
 
   readonly totales = computed(() => totalesCostos(this.filasBase() ?? []));
-  readonly filas = computed(() => ordenarCostos(this.filasBase() ?? [], this.orden(), this.filtro()));
-  readonly detalle = computed(() => (this.filasBase() ?? []).find((f) => f.siembra.siembraId === this.elegida()) ?? null);
+  readonly filas = computed(() =>
+    ordenarCostos(this.filasBase() ?? [], this.orden(), this.filtro()),
+  );
+  readonly detalle = computed(
+    () => (this.filasBase() ?? []).find((f) => f.siembra.siembraId === this.elegida()) ?? null,
+  );
 
   ngOnInit(): void {
     this.cargar();
@@ -50,13 +68,19 @@ export class CostsReportComponent extends ReportBase implements OnInit {
     this.reportService.getCropPreview().subscribe({
       next: (r) => {
         const siembras = r.cropDetails ?? [];
-        if (!siembras.length) { this.filasBase.set([]); return; }
-        forkJoin(siembras.map((s) => this.cultivo.costosSiembra(s.siembraId).pipe(catchError(() => of(null)))))
-          .subscribe((cs) => {
-            this.filasBase.set(siembras.map((s, i) => ({ siembra: s, costos: cs[i] })));
-            const inicial = this.siembraInicial();
-            if (inicial && siembras.some((s) => s.siembraId === inicial)) this.elegida.set(inicial);
-          });
+        if (!siembras.length) {
+          this.filasBase.set([]);
+          return;
+        }
+        forkJoin(
+          siembras.map((s) =>
+            this.cultivo.costosSiembra(s.siembraId).pipe(catchError(() => of(null))),
+          ),
+        ).subscribe((cs) => {
+          this.filasBase.set(siembras.map((s, i) => ({ siembra: s, costos: cs[i] })));
+          const inicial = this.siembraInicial();
+          if (inicial && siembras.some((s) => s.siembraId === inicial)) this.elegida.set(inicial);
+        });
       },
       error: () => this.error.set(true),
     });
@@ -64,8 +88,18 @@ export class CostsReportComponent extends ReportBase implements OnInit {
 
   elegir(id: number): void {
     this.elegida.set(this.elegida() === id ? null : id);
-    this.router.navigate([], { queryParams: { tab: 'costs', siembra: this.elegida() }, replaceUrl: true });
-    if (this.elegida()) setTimeout(() => document.getElementById('detalle-costos')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    this.router.navigate([], {
+      queryParams: { tab: 'costs', siembra: this.elegida() },
+      replaceUrl: true,
+    });
+    if (this.elegida())
+      setTimeout(
+        () =>
+          document
+            .getElementById('detalle-costos')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+        50,
+      );
   }
 
   /** Lo que se ve en pantalla (con filtros y orden) como CSV para Excel */
@@ -77,8 +111,14 @@ export class CostsReportComponent extends ReportBase implements OnInit {
     this.downloading.set(true);
     this.downloadError.set(false);
     this.reportService.downloadCostsPdf().subscribe({
-      next: (b) => { this.descargar(b, 'reporte-costos.pdf'); this.downloading.set(false); },
-      error: () => { this.downloading.set(false); this.downloadError.set(true); },
+      next: (b) => {
+        this.descargar(b, 'reporte-costos.pdf');
+        this.downloading.set(false);
+      },
+      error: () => {
+        this.downloading.set(false);
+        this.downloadError.set(true);
+      },
     });
   }
 

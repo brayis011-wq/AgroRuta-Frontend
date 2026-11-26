@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -39,8 +47,11 @@ export class CostosSiembraComponent {
     const costo = (x: CostosSiembra['meses'][number]) => x.manoObra + x.insumos + x.otros;
     const max = Math.max(0, ...m.map((x) => Math.max(costo(x), x.ingresos)));
     return m.slice(-6).map((x) => ({
-      mes: x.mes, costo: costo(x), ingresos: x.ingresos,
-      anchoCosto: max ? (costo(x) / max) * 100 : 0, anchoIngreso: max ? (x.ingresos / max) * 100 : 0,
+      mes: x.mes,
+      costo: costo(x),
+      ingresos: x.ingresos,
+      anchoCosto: max ? (costo(x) / max) * 100 : 0,
+      anchoIngreso: max ? (x.ingresos / max) * 100 : 0,
     }));
   });
 
@@ -49,7 +60,10 @@ export class CostosSiembraComponent {
       const id = this.siembraId();
       this.version();
       this.cultivo.costosSiembra(id).subscribe({
-        next: (c) => { this.costos.set(c); this.error.set(false); },
+        next: (c) => {
+          this.costos.set(c);
+          this.error.set(false);
+        },
         error: () => this.error.set(true),
       });
     });
@@ -65,7 +79,9 @@ export class CostosSiembraComponent {
 
   nombreMes(mes: string): string {
     const [y, m] = mes.split('-').map(Number);
-    const nombre = new Intl.DateTimeFormat(localeDe(this.lang.current()), { month: 'short' }).format(new Date(y, m - 1, 1)).replace('.', '');
+    const nombre = new Intl.DateTimeFormat(localeDe(this.lang.current()), { month: 'short' })
+      .format(new Date(y, m - 1, 1))
+      .replace('.', '');
     return `${nombre} ${String(y).slice(2)}`;
   }
 }

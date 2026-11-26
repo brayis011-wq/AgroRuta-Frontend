@@ -1,27 +1,64 @@
-<section class="lluvia" [class.compacta]="compacta()" [attr.aria-label]="'lluvia.title' | translate">
+<section
+  class="lluvia"
+  [class.compacta]="compacta()"
+  [attr.aria-label]="'lluvia.title' | translate"
+>
   <header>
-    <h3><i class="ti ti-cloud-rain" aria-hidden="true"></i> {{ 'lluvia.title' | translate }}@if (nombre()) { <small>· {{ nombre() }}</small> }</h3>
+    <h3>
+      <i class="ti ti-cloud-rain" aria-hidden="true"></i> {{ 'lluvia.title' | translate }}
+      @if (nombre()) {
+        <small>· {{ nombre() }}</small>
+      }
+    </h3>
   </header>
 
   @if (resumen(); as r) {
     <div class="cifras">
-      <div><strong>{{ mm(r.ultimos7) }} mm</strong><small>{{ 'lluvia.last7' | translate }}</small></div>
-      <div><strong>{{ mm(r.ultimos30) }} mm</strong><small>{{ 'lluvia.last30' | translate }}</small></div>
       <div>
-        <strong>@if (r.diasSinLluvia === null) { — } @else { {{ r.diasSinLluvia }} }</strong>
+        <strong>{{ mm(r.ultimos7) }} mm</strong><small>{{ 'lluvia.last7' | translate }}</small>
+      </div>
+      <div>
+        <strong>{{ mm(r.ultimos30) }} mm</strong><small>{{ 'lluvia.last30' | translate }}</small>
+      </div>
+      <div>
+        <strong>
+          @if (r.diasSinLluvia === null) {
+            —
+          } @else {
+            {{ r.diasSinLluvia }}
+          }
+        </strong>
         <small>{{ 'lluvia.dryDays' | translate }}</small>
       </div>
     </div>
     <div class="barras" role="img" [attr.aria-label]="'lluvia.chart' | translate">
       @for (b of barras(); track b.fecha) {
-        <span class="col" [class.sin]="b.mm === null" [title]="etiquetaDia(b.fecha) + ': ' + (b.mm === null ? ('lluvia.noData' | translate) : mm(b.mm) + ' mm')">
+        <span
+          class="col"
+          [class.sin]="b.mm === null"
+          [title]="
+            etiquetaDia(b.fecha) +
+            ': ' +
+            (b.mm === null ? ('lluvia.noData' | translate) : mm(b.mm) + ' mm')
+          "
+        >
           <span class="barra" [style.height.%]="b.alto"></span>
         </span>
       }
     </div>
     @switch (consejo()) {
-      @case ('noRegar') { <p class="consejo verde"><i class="ti ti-droplet-off" aria-hidden="true"></i> {{ 'lluvia.adviceNoWater' | translate }}</p> }
-      @case ('seco') { <p class="consejo ambar"><i class="ti ti-sun" aria-hidden="true"></i> {{ 'lluvia.adviceDry' | translate: { days: r.diasSinLluvia } }}</p> }
+      @case ('noRegar') {
+        <p class="consejo verde">
+          <i class="ti ti-droplet-off" aria-hidden="true"></i>
+          {{ 'lluvia.adviceNoWater' | translate }}
+        </p>
+      }
+      @case ('seco') {
+        <p class="consejo ambar">
+          <i class="ti ti-sun" aria-hidden="true"></i>
+          {{ 'lluvia.adviceDry' | translate: { days: r.diasSinLluvia } }}
+        </p>
+      }
     }
   } @else {
     <div class="esq" style="height: 70px; border-radius: 10px"></div>
@@ -29,16 +66,38 @@
 
   <form class="anotar" (ngSubmit)="anotar()">
     <div class="cuando" role="group" [attr.aria-label]="'lluvia.when' | translate">
-      <button type="button" [class.on]="dia() === hoy" (click)="dia.set(hoy)">{{ 'lluvia.today' | translate }}</button>
-      <button type="button" [class.on]="dia() === ayer" (click)="dia.set(ayer)">{{ 'lluvia.yesterday' | translate }}</button>
+      <button type="button" [class.on]="dia() === hoy" (click)="dia.set(hoy)">
+        {{ 'lluvia.today' | translate }}
+      </button>
+      <button type="button" [class.on]="dia() === ayer" (click)="dia.set(ayer)">
+        {{ 'lluvia.yesterday' | translate }}
+      </button>
     </div>
-    <label class="mm"><span class="sr-only">{{ 'lluvia.mm' | translate }}</span>
-      <input type="number" name="mm" min="0" max="500" step="0.5" inputmode="decimal" [(ngModel)]="milimetros" [placeholder]="yaAnotado() ? mm(yaAnotado()!.milimetros) : '0'" />
+    <label class="mm"
+      ><span class="sr-only">{{ 'lluvia.mm' | translate }}</span>
+      <input
+        type="number"
+        name="mm"
+        min="0"
+        max="500"
+        step="0.5"
+        inputmode="decimal"
+        [(ngModel)]="milimetros"
+        [placeholder]="yaAnotado() ? mm(yaAnotado()!.milimetros) : '0'"
+      />
       <span>mm</span>
     </label>
-    <button type="submit" class="btn-prim" [disabled]="guardando() || milimetros == null">{{ 'common.save' | translate }}</button>
-    <button type="button" class="btn-texto" [disabled]="guardando()" (click)="sinLluvia()">{{ 'lluvia.none' | translate }}</button>
+    <button type="submit" class="btn-prim" [disabled]="guardando() || milimetros == null">
+      {{ 'common.save' | translate }}
+    </button>
+    <button type="button" class="btn-texto" [disabled]="guardando()" (click)="sinLluvia()">
+      {{ 'lluvia.none' | translate }}
+    </button>
   </form>
-  @if (yaAnotado(); as y) { <p class="nota">{{ 'lluvia.already' | translate: { mm: mm(y.milimetros) } }}</p> }
-  @if (error()) { <p class="nota error" role="alert">{{ error()! | translate }}</p> }
+  @if (yaAnotado(); as y) {
+    <p class="nota">{{ 'lluvia.already' | translate: { mm: mm(y.milimetros) } }}</p>
+  }
+  @if (error()) {
+    <p class="nota error" role="alert">{{ error()! | translate }}</p>
+  }
 </section>

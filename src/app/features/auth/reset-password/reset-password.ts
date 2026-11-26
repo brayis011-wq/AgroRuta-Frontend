@@ -32,14 +32,19 @@ export class RestablecerComponent implements OnInit {
   readonly problema = computed(() => {
     const p = this.password();
     if (!p) return '';
-    if (p.length < RestablecerComponent.MIN || p.length > RestablecerComponent.MAX) return 'auth.reset.length';
+    if (p.length < RestablecerComponent.MIN || p.length > RestablecerComponent.MAX)
+      return 'auth.reset.length';
     if (this.confirmar() && this.confirmar() !== p) return 'auth.reset.mismatch';
     return '';
   });
 
-  readonly listo = computed(() =>
-    !!this.token() && this.password().length >= RestablecerComponent.MIN
-    && this.password().length <= RestablecerComponent.MAX && this.password() === this.confirmar());
+  readonly listo = computed(
+    () =>
+      !!this.token() &&
+      this.password().length >= RestablecerComponent.MIN &&
+      this.password().length <= RestablecerComponent.MAX &&
+      this.password() === this.confirmar(),
+  );
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token') ?? '';

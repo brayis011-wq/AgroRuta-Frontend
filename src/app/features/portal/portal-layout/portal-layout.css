@@ -1,10 +1,50 @@
 /* Portal del trabajador: el mismo menú que el panel del agricultor (layout.css y layout-movil.css) */
-.rol-tag { display: inline-flex; align-items: center; gap: 3px; font-weight: 600; color: var(--ar-verde-700) !important; }
-.rol-tag .ti { font-size: 12px; }
-.portal-cargando { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .9rem; background: var(--ar-fondo); color: var(--ar-tinta-2); font-family: var(--ar-fuente); }
-.portal-cargando p { margin: 0; }
-.portal-cargando .logo { animation: latir 1.4s ease-in-out infinite; }
-.btn-retry { font: inherit; font-weight: 600; padding: .55rem 1rem; border-radius: 11px; border: 1px solid var(--ar-borde); background: var(--ar-superficie); color: var(--ar-tinta); cursor: pointer; }
-@keyframes latir { 50% { transform: scale(1.08); } }
+.rol-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 600;
+  color: var(--ar-verde-700) !important;
+}
+.rol-tag .ti {
+  font-size: 12px;
+}
+.portal-cargando {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  background: var(--ar-fondo);
+  color: var(--ar-tinta-2);
+  font-family: var(--ar-fuente);
+}
+.portal-cargando p {
+  margin: 0;
+}
+.portal-cargando .logo {
+  animation: latir 1.4s ease-in-out infinite;
+}
+.btn-retry {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  border-radius: 11px;
+  border: 1px solid var(--ar-borde);
+  background: var(--ar-superficie);
+  color: var(--ar-tinta);
+  cursor: pointer;
+}
+@keyframes latir {
+  50% {
+    transform: scale(1.08);
+  }
+}
 /* En el celular la barra de abajo muestra todo; con 5 opciones caben justas */
-@media (max-width: 760px) { .barra a { min-width: 0; flex: 1; } }
+@media (max-width: 760px) {
+  .barra a {
+    min-width: 0;
+    flex: 1;
+  }
+}

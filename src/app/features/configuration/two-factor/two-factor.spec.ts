@@ -28,7 +28,13 @@ describe('TwoFactorComponent', () => {
 
   it('recorre el alta: contraseña, QR, código y códigos de respaldo', () => {
     seguridad.estado.mockReturnValue(of({ activo: false, codigosRespaldo: 0 }));
-    seguridad.preparar.mockReturnValue(of({ secreto: 'ABCDEFGHIJKLMNOP', uri: 'otpauth://totp/x', qr: 'data:image/svg+xml;base64,AAAA' }));
+    seguridad.preparar.mockReturnValue(
+      of({
+        secreto: 'ABCDEFGHIJKLMNOP',
+        uri: 'otpauth://totp/x',
+        qr: 'data:image/svg+xml;base64,AAAA',
+      }),
+    );
     seguridad.activar.mockReturnValue(of({ codigosRespaldo: ['AAAAA-BBBBB', 'CCCCC-DDDDD'] }));
     const f = crear();
     const c = f.componentInstance;
@@ -41,7 +47,9 @@ describe('TwoFactorComponent', () => {
     expect(c.password).toBe('');
     expect(c.secretoLegible).toBe('ABCD EFGH IJKL MNOP');
     f.detectChanges();
-    expect(f.nativeElement.querySelector('img.qr').getAttribute('src')).toContain('data:image/svg+xml');
+    expect(f.nativeElement.querySelector('img.qr').getAttribute('src')).toContain(
+      'data:image/svg+xml',
+    );
 
     c.codigo = ' 123456 ';
     c.activar();
@@ -58,7 +66,9 @@ describe('TwoFactorComponent', () => {
 
   it('contraseña incorrecta: se queda en el paso y avisa', () => {
     seguridad.estado.mockReturnValue(of({ activo: false, codigosRespaldo: 0 }));
-    seguridad.preparar.mockReturnValue(throwError(() => ({ status: 422, error: { errorCode: 'AGR-011' } })));
+    seguridad.preparar.mockReturnValue(
+      throwError(() => ({ status: 422, error: { errorCode: 'AGR-011' } })),
+    );
     const c = crear().componentInstance;
     c.ir('clave');
     c.password = 'mala';
@@ -69,7 +79,9 @@ describe('TwoFactorComponent', () => {
 
   it('código incorrecto al activar: lo borra y avisa', () => {
     seguridad.estado.mockReturnValue(of({ activo: false, codigosRespaldo: 0 }));
-    seguridad.activar.mockReturnValue(throwError(() => ({ status: 422, error: { errorCode: 'AGR-035' } })));
+    seguridad.activar.mockReturnValue(
+      throwError(() => ({ status: 422, error: { errorCode: 'AGR-035' } })),
+    );
     const c = crear().componentInstance;
     c.paso.set('qr');
     c.codigo = '000000';
@@ -84,13 +96,17 @@ describe('TwoFactorComponent', () => {
     const c = crear().componentInstance;
     c.ir('quitar');
 
-    seguridad.desactivar.mockReturnValue(throwError(() => ({ status: 422, error: { errorCode: 'AGR-035' } })));
+    seguridad.desactivar.mockReturnValue(
+      throwError(() => ({ status: 422, error: { errorCode: 'AGR-035' } })),
+    );
     c.password = 'secreta123';
     c.codigo = '111111';
     c.desactivar();
     expect(c.error()).toBe('config.twoFactor.wrongCode');
 
-    seguridad.desactivar.mockReturnValue(throwError(() => ({ status: 422, error: { errorCode: 'AGR-011' } })));
+    seguridad.desactivar.mockReturnValue(
+      throwError(() => ({ status: 422, error: { errorCode: 'AGR-011' } })),
+    );
     c.codigo = '222222';
     c.desactivar();
     expect(c.error()).toBe('config.twoFactor.wrongPassword');

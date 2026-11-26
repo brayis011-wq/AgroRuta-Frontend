@@ -4,7 +4,11 @@ export function localeDe(lang: string): string {
   return lang === 'en' ? 'en-US' : 'es-CO';
 }
 
-export function formatoNumero(valor: number | null | undefined, lang: string, decimales = 0): string {
+export function formatoNumero(
+  valor: number | null | undefined,
+  lang: string,
+  decimales = 0,
+): string {
   return new Intl.NumberFormat(localeDe(lang), {
     minimumFractionDigits: decimales,
     maximumFractionDigits: decimales,
@@ -28,5 +32,9 @@ export function formatoFecha(valor: string | null | undefined, lang: string): st
     ? new Date(Number(soloFecha[1]), Number(soloFecha[2]) - 1, Number(soloFecha[3]))
     : new Date(valor);
   if (Number.isNaN(fecha.getTime())) return '—';
-  return new Intl.DateTimeFormat(localeDe(lang), { day: 'numeric', month: 'short', year: 'numeric' }).format(fecha);
+  return new Intl.DateTimeFormat(localeDe(lang), {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(fecha);
 }

@@ -35,7 +35,9 @@ export class GeocodingService {
       .set('limit', '1')
       .set('accept-language', this.lang.current());
     return this.http.get<NominatimLugar[]>(`${this.base}/search`, { params }).pipe(
-      map((r) => (r?.length ? { lat: Number.parseFloat(r[0].lat), lng: Number.parseFloat(r[0].lon) } : null)),
+      map((r) =>
+        r?.length ? { lat: Number.parseFloat(r[0].lat), lng: Number.parseFloat(r[0].lon) } : null,
+      ),
       catchError(() => of(null)),
     );
   }
@@ -51,8 +53,11 @@ export class GeocodingService {
       map((r) => {
         const a = r?.address;
         if (!a) return null;
-        const partes = [a['village'] || a['town'] || a['suburb'] || '', a['county'] || a['state_district'] || '', a['state'] || '']
-          .filter(Boolean);
+        const partes = [
+          a['village'] || a['town'] || a['suburb'] || '',
+          a['county'] || a['state_district'] || '',
+          a['state'] || '',
+        ].filter(Boolean);
         return partes.length ? partes.join(', ') : null;
       }),
       catchError(() => of(null)),

@@ -18,30 +18,56 @@ describe('RegistrarFumigacion', () => {
   let router: Router;
 
   const mockInsumo: any = {
-    id: 1, nombre: 'Herbicida X', tipo: 'HERBICIDA',
-    unidadSugerida: 'LITROS', dosisSugerida: 2,
-    tipoDisplay: 'Herbicida', reentradaHoras: 12, diasCarencia: 7,
+    id: 1,
+    nombre: 'Herbicida X',
+    tipo: 'HERBICIDA',
+    unidadSugerida: 'LITROS',
+    dosisSugerida: 2,
+    tipoDisplay: 'Herbicida',
+    reentradaHoras: 12,
+    diasCarencia: 7,
   };
   /** En el catálogo, pero sin compras: no está en la bodega */
   const fueraDeBodega: any = {
-    id: 2, nombre: 'Mancozeb', tipo: 'FUNGICIDA',
-    unidadSugerida: 'KG', dosisSugerida: 1, tipoDisplay: 'Fungicida', reentradaHoras: 24,
+    id: 2,
+    nombre: 'Mancozeb',
+    tipo: 'FUNGICIDA',
+    unidadSugerida: 'KG',
+    dosisSugerida: 1,
+    tipoDisplay: 'Fungicida',
+    reentradaHoras: 24,
   };
   const stockHerbicida: any = {
-    insumoId: 1, nombre: 'Herbicida X', tipo: 'HERBICIDA', unidadBase: 'ML',
-    cantidad: 2500, stockMinimo: null, costoPromedio: 40, valorStock: 100000, estado: 'OK', ultimoMovimiento: null,
+    insumoId: 1,
+    nombre: 'Herbicida X',
+    tipo: 'HERBICIDA',
+    unidadBase: 'ML',
+    cantidad: 2500,
+    stockMinimo: null,
+    costoPromedio: 40,
+    valorStock: 100000,
+    estado: 'OK',
+    ultimoMovimiento: null,
   };
   /** En la bodega, pero su ficha ya no está en el catálogo activo */
   const stockSinFicha: any = {
-    insumoId: 9, nombre: 'Abono viejo', tipo: null, unidadBase: 'GRAMOS',
-    cantidad: 0, stockMinimo: null, costoPromedio: null, valorStock: null, estado: 'AGOTADO', ultimoMovimiento: null,
+    insumoId: 9,
+    nombre: 'Abono viejo',
+    tipo: null,
+    unidadBase: 'GRAMOS',
+    cantidad: 0,
+    stockMinimo: null,
+    costoPromedio: null,
+    valorStock: null,
+    estado: 'AGOTADO',
+    ultimoMovimiento: null,
   };
 
   beforeEach(async () => {
     cultivoServiceMock = {
       registrarFumigacion: vi.fn().mockReturnValue(of({})),
       buscarSiembra: vi.fn().mockReturnValue(of({ id: 1, loteId: 3 })),
-      buscarLote: vi.fn().mockReturnValue(of({ id: 3, nombre: "Lote 3", area: 2.5 })),
+      buscarLote: vi.fn().mockReturnValue(of({ id: 3, nombre: 'Lote 3', area: 2.5 })),
     };
     inputServiceMock = {
       search: vi.fn().mockReturnValue(of([mockInsumo, fueraDeBodega])),
@@ -56,19 +82,21 @@ describe('RegistrarFumigacion', () => {
       imports: [RegistrarFumigacion],
       providers: [
         provideRouter([]),
-        { provide: CultivoService,           useValue: cultivoServiceMock },
-        { provide: AgriculturalInputService, useValue: inputServiceMock   },
-        { provide: InventarioService,        useValue: inventarioMock     },
+        { provide: CultivoService, useValue: cultivoServiceMock },
+        { provide: AgriculturalInputService, useValue: inputServiceMock },
+        { provide: InventarioService, useValue: inventarioMock },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: vi.fn((k: string) => (k === 'id' ? '1' : null)) } } },
+          useValue: {
+            snapshot: { paramMap: { get: vi.fn((k: string) => (k === 'id' ? '1' : null)) } },
+          },
         },
       ],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(RegistrarFumigacion);
+    fixture = TestBed.createComponent(RegistrarFumigacion);
     component = fixture.componentInstance;
-    router    = TestBed.inject(Router);
+    router = TestBed.inject(Router);
     // Al guardar se navega enseguida y aquí no hay rutas: se observa la llamada sin navegar de verdad
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture.detectChanges();
@@ -258,7 +286,8 @@ describe('RegistrarFumigacion', () => {
     component.form.cantidadUsada = 900;
     component.onSubmit();
     expect(cultivoServiceMock.registrarFumigacion).toHaveBeenCalledWith(
-      expect.objectContaining({ unidadMedida: 'ML', cantidadUsada: 900, unidadCantidad: 'ML' }));
+      expect.objectContaining({ unidadMedida: 'ML', cantidadUsada: 900, unidadCantidad: 'ML' }),
+    );
   });
 
   it('shows the unit inside the total amount field instead of a second selector', () => {
@@ -273,10 +302,18 @@ describe('RegistrarFumigacion', () => {
   describe('editing a spraying saved before the units were unified', () => {
     function editar(guardada: any) {
       const route = TestBed.inject(ActivatedRoute) as any;
-      route.snapshot.paramMap.get.mockImplementation((k: string) => (k === 'id' ? '1' : k === 'registroId' ? '5' : null));
-      cultivoServiceMock.buscarFumigacion = vi.fn().mockReturnValue(of({
-        fecha: '2026-11-10', producto: 'Herbicida X', agriculturalInputId: 1, areaAplicada: 1, ...guardada,
-      }));
+      route.snapshot.paramMap.get.mockImplementation((k: string) =>
+        k === 'id' ? '1' : k === 'registroId' ? '5' : null,
+      );
+      cultivoServiceMock.buscarFumigacion = vi.fn().mockReturnValue(
+        of({
+          fecha: '2026-11-10',
+          producto: 'Herbicida X',
+          agriculturalInputId: 1,
+          areaAplicada: 1,
+          ...guardada,
+        }),
+      );
       inputServiceMock.getById = vi.fn().mockReturnValue(of(mockInsumo));
       const otro = TestBed.createComponent(RegistrarFumigacion);
       otro.detectChanges();
@@ -284,20 +321,35 @@ describe('RegistrarFumigacion', () => {
     }
 
     it('converts the total amount to the unit of the dose (2 L → 2000 ml)', () => {
-      const c = editar({ dosis: 150, unidadMedida: 'ML', cantidadUsada: 2, unidadCantidad: 'LITROS' });
+      const c = editar({
+        dosis: 150,
+        unidadMedida: 'ML',
+        cantidadUsada: 2,
+        unidadCantidad: 'LITROS',
+      });
       expect(c.form.cantidadUsada).toBe(2000);
       expect(c.form.unidadCantidad).toBe('ML');
     });
 
     it('leaves an inconsistent old record as it was (does not turn kilos into litres)', () => {
-      const c = editar({ dosis: 2, unidadMedida: 'LITROS', cantidadUsada: 3, unidadCantidad: 'KG' });
+      const c = editar({
+        dosis: 2,
+        unidadMedida: 'LITROS',
+        cantidadUsada: 3,
+        unidadCantidad: 'KG',
+      });
       expect(c.form.cantidadUsada).toBe(3);
       expect(c.form.unidadCantidad).toBe('KG');
       expect(c.unidadesDisponibles()).toEqual(['LITROS', 'ML']);
     });
 
     it('fills the missing unit of the total amount with the one of the dose', () => {
-      const c = editar({ dosis: 2, unidadMedida: 'LITROS', cantidadUsada: null, unidadCantidad: null });
+      const c = editar({
+        dosis: 2,
+        unidadMedida: 'LITROS',
+        cantidadUsada: null,
+        unidadCantidad: null,
+      });
       expect(c.form.unidadCantidad).toBe('LITROS');
     });
   });
@@ -344,7 +396,9 @@ describe('RegistrarFumigacion', () => {
   it('getBodegaAgrupada() groups the warehouse by type', () => {
     const grupos = component.getBodegaAgrupada();
     expect(grupos.map((g) => g.tipo).sort()).toEqual(['', 'HERBICIDA']); // el código del tipo; la pantalla lo traduce
-    expect(grupos.find((g) => g.tipo === 'HERBICIDA')!.items.map((b) => b.stock.insumoId)).toEqual([1]);
+    expect(grupos.find((g) => g.tipo === 'HERBICIDA')!.items.map((b) => b.stock.insumoId)).toEqual([
+      1,
+    ]);
   });
 
   it('getBodegaAgrupada() applies the list filter', () => {
@@ -358,10 +412,14 @@ describe('RegistrarFumigacion', () => {
     component.verBodega();
     fixture.componentRef.changeDetectorRef.markForCheck();
     fixture.detectChanges();
-    const filas = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('.catalogo-completo .catalogo-item'));
+    const filas = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('.catalogo-completo .catalogo-item'),
+    );
     expect(filas.length).toBe(2);
     expect(filas.some((f) => f.textContent?.includes('Herbicida X'))).toBe(true);
-    expect((fixture.nativeElement as HTMLElement).querySelector('.est-stock.AGOTADO')).not.toBeNull();
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('.est-stock.AGOTADO'),
+    ).not.toBeNull();
   });
 
   // ── getTipoBadgeClass ────────────────────────────────────────
@@ -381,8 +439,8 @@ describe('RegistrarFumigacion', () => {
   });
 
   it('onSubmit() should set error when no unidadMedida', () => {
-    component.form.producto      = 'Herbicida';
-    component.form.unidadMedida  = '';
+    component.form.producto = 'Herbicida';
+    component.form.unidadMedida = '';
     component.onSubmit();
     expect(component.error).toBe('siembra.spray.errors.unitRequired');
     expect(cultivoServiceMock.registrarFumigacion).not.toHaveBeenCalled();
@@ -390,9 +448,9 @@ describe('RegistrarFumigacion', () => {
 
   it('onSubmit() should call registrarFumigacion and set exito on success', async () => {
     vi.useFakeTimers();
-    component.form.producto     = 'Herbicida X';
+    component.form.producto = 'Herbicida X';
     component.form.unidadMedida = 'LITROS';
-    component.form.dosis        = 2;
+    component.form.dosis = 2;
     component.form.areaAplicada = 1;
     component.onSubmit();
     await fixture.whenStable();
@@ -403,18 +461,20 @@ describe('RegistrarFumigacion', () => {
 
   it('onSubmit() should navigate after 1500ms on success', async () => {
     vi.useFakeTimers();
-    component.form.producto     = 'Herbicida X';
+    component.form.producto = 'Herbicida X';
     component.form.unidadMedida = 'LITROS';
     component.onSubmit();
     vi.advanceTimersByTime(1500);
-    expect(router.navigate).toHaveBeenCalledWith(['/crops/planting', 1], { queryParams: expect.objectContaining({ tab: 'registros' }) });
+    expect(router.navigate).toHaveBeenCalledWith(['/crops/planting', 1], {
+      queryParams: expect.objectContaining({ tab: 'registros' }),
+    });
   });
 
   it('onSubmit() should set error on failure', async () => {
     cultivoServiceMock.registrarFumigacion.mockReturnValue(
-      throwError(() => ({ error: { message: 'Error del servidor' } }))
+      throwError(() => ({ error: { message: 'Error del servidor' } })),
     );
-    component.form.producto     = 'Herbicida X';
+    component.form.producto = 'Herbicida X';
     component.form.unidadMedida = 'LITROS';
     component.onSubmit();
     await fixture.whenStable();
@@ -423,10 +483,8 @@ describe('RegistrarFumigacion', () => {
   });
 
   it('onSubmit() should set generic error when no message', async () => {
-    cultivoServiceMock.registrarFumigacion.mockReturnValue(
-      throwError(() => ({}))
-    );
-    component.form.producto     = 'Herbicida X';
+    cultivoServiceMock.registrarFumigacion.mockReturnValue(throwError(() => ({})));
+    component.form.producto = 'Herbicida X';
     component.form.unidadMedida = 'LITROS';
     component.onSubmit();
     await fixture.whenStable();

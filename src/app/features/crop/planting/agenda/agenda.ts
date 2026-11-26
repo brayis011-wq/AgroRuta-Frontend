@@ -5,7 +5,16 @@ import { CultivoService } from '../../../../core/services/crop.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { formatoNumero, localeDe } from '../../../../shared/format';
 import { EventoCalendario } from '../../../../core/models/crop.model';
-import { ICONO_EVENTO, TONO_EVENTO, desdeIso, diasHasta, esPorVenir, iso, ordenAgenda, textoEvento } from '../../calendar/events';
+import {
+  ICONO_EVENTO,
+  TONO_EVENTO,
+  desdeIso,
+  diasHasta,
+  esPorVenir,
+  iso,
+  ordenAgenda,
+  textoEvento,
+} from '../../calendar/events';
 
 /** Lo que viene para esta siembra en las próximas semanas */
 @Component({
@@ -54,7 +63,10 @@ export class AgendaSiembraComponent {
     const d = diasHasta(e.fecha, this.hoy);
     if (d === 0) return this.translate.instant('temporadas.cal.today');
     if (d === 1) return this.translate.instant('temporadas.cal.tomorrow');
-    return new Intl.DateTimeFormat(localeDe(this.lang.current()), { weekday: 'short', day: 'numeric', month: 'short' })
-      .format(desdeIso(e.fecha));
+    return new Intl.DateTimeFormat(localeDe(this.lang.current()), {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    }).format(desdeIso(e.fecha));
   }
 }

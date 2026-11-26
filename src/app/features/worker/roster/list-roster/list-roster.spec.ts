@@ -4,17 +4,30 @@ import { provideRouter } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ListaNominasComponent } from './list-roster';
-import { NominaService, TrabajadorService, PagoService } from '../../../../core/services/worker.service';
+import {
+  NominaService,
+  TrabajadorService,
+  PagoService,
+} from '../../../../core/services/worker.service';
 import { vi } from 'vitest';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 
 const mkNomina = (estado = 'PENDIENTE', id = 1): any => ({
-  id, trabajadorId: 1, estado, valorTotal: 100000,
-  trabajador: { id: 1, nombreCompleto: 'Juan Perez' }
+  id,
+  trabajadorId: 1,
+  estado,
+  valorTotal: 100000,
+  trabajador: { id: 1, nombreCompleto: 'Juan Perez' },
 });
 const mkTrabajador = (): any => ({ id: 1, nombreCompleto: 'Juan Perez', estado: 'ACTIVO' });
 /** Respuesta de GET /api/payrolls/page con todas las nóminas en una sola página */
-const pag = (lista: any[]): any => ({ contenido: lista, pagina: 0, tamano: 20, total: lista.length, totalPaginas: 1 });
+const pag = (lista: any[]): any => ({
+  contenido: lista,
+  pagina: 0,
+  tamano: 20,
+  total: lista.length,
+  totalPaginas: 1,
+});
 /** Respuesta de GET /api/payrolls/summary calculada a partir de la lista */
 const resumenDe = (lista: any[]): any[] => {
   const m: Record<string, any> = {};
@@ -28,10 +41,10 @@ const resumenDe = (lista: any[]): any[] => {
 
 describe('ListaNominasComponent', () => {
   let component: ListaNominasComponent;
-  let fixture:   ComponentFixture<ListaNominasComponent>;
-  let nominaSvc:    any;
+  let fixture: ComponentFixture<ListaNominasComponent>;
+  let nominaSvc: any;
   let trabajadorSvc: any;
-  let pagoSvc:      any;
+  let pagoSvc: any;
 
   // El diálogo de confirmación responde lo que diga cada prueba
   let respuesta = true;
@@ -44,17 +57,17 @@ describe('ListaNominasComponent', () => {
       providers: [
         provideRouter([]),
         { provide: ConfirmService, useValue: confirmSvc },
-        { provide: NominaService,     useValue: nominaSvc },
+        { provide: NominaService, useValue: nominaSvc },
         { provide: TrabajadorService, useValue: trabajadorSvc },
-        { provide: PagoService,       useValue: pagoSvc },
+        { provide: PagoService, useValue: pagoSvc },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { queryParamMap: { get: (k: string) => queryParams[k] ?? null } } }
-        }
-      ]
+          useValue: { snapshot: { queryParamMap: { get: (k: string) => queryParams[k] ?? null } } },
+        },
+      ],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(ListaNominasComponent);
+    fixture = TestBed.createComponent(ListaNominasComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }
@@ -62,20 +75,20 @@ describe('ListaNominasComponent', () => {
   beforeEach(() => {
     respuesta = true;
     nominaSvc = {
-      pagina:      vi.fn().mockReturnValue(of(pag([mkNomina()]))),
-      resumen:     vi.fn().mockReturnValue(of(resumenDe([mkNomina()]))),
-      generar:     vi.fn(),
-      aprobar:     vi.fn(),
-      anular:      vi.fn(),
-      reactivar:   vi.fn(),
-      eliminar:    vi.fn()
+      pagina: vi.fn().mockReturnValue(of(pag([mkNomina()]))),
+      resumen: vi.fn().mockReturnValue(of(resumenDe([mkNomina()]))),
+      generar: vi.fn(),
+      aprobar: vi.fn(),
+      anular: vi.fn(),
+      reactivar: vi.fn(),
+      eliminar: vi.fn(),
     };
     trabajadorSvc = {
       listar: vi.fn().mockReturnValue(of([mkTrabajador()])),
-      listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()]))
+      listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()])),
     };
     pagoSvc = {
-      registrar: vi.fn()
+      registrar: vi.fn(),
     };
   });
 
@@ -141,7 +154,11 @@ describe('ListaNominasComponent', () => {
   it('generar() should call generar and reload on success', async () => {
     nominaSvc.generar.mockReturnValue(of(mkNomina()));
     await createComponent();
-    component.form.setValue({ trabajadorId: 1, periodoInicio: '2024-01-01', periodoFin: '2024-01-31' });
+    component.form.setValue({
+      trabajadorId: 1,
+      periodoInicio: '2024-01-01',
+      periodoFin: '2024-01-31',
+    });
     component.mostrarForm = true;
     component.generar();
     expect(nominaSvc.generar).toHaveBeenCalled();
@@ -151,7 +168,11 @@ describe('ListaNominasComponent', () => {
   it('generar() should set error on failure', async () => {
     nominaSvc.generar.mockReturnValue(throwError(() => new Error()));
     await createComponent();
-    component.form.setValue({ trabajadorId: 1, periodoInicio: '2024-01-01', periodoFin: '2024-01-31' });
+    component.form.setValue({
+      trabajadorId: 1,
+      periodoInicio: '2024-01-01',
+      periodoFin: '2024-01-31',
+    });
     component.generar();
     expect(component.error).toContain('workers.rosters.list.errors.');
   });
@@ -261,7 +282,7 @@ describe('ListaNominasComponent', () => {
     respuesta = true;
     vi.useFakeTimers();
     await createComponent();
-    datos([]);   // después de borrar, el servidor ya no la devuelve
+    datos([]); // después de borrar, el servidor ya no la devuelve
     await component.eliminar(1);
     expect(component.nominas.length).toBe(0);
     vi.advanceTimersByTime(3500);
@@ -283,10 +304,12 @@ describe('ListaNominasComponent', () => {
   });
 
   it('las tarjetas salen del resumen del servidor, no de las páginas cargadas', async () => {
-    nominaSvc.resumen.mockReturnValue(of([
-      { estado: 'PENDIENTE', cantidad: 30, total: 3000000 },
-      { estado: 'PAGADA', cantidad: 12, total: 1200000 },
-    ]));
+    nominaSvc.resumen.mockReturnValue(
+      of([
+        { estado: 'PENDIENTE', cantidad: 30, total: 3000000 },
+        { estado: 'PAGADA', cantidad: 12, total: 1200000 },
+      ]),
+    );
     await createComponent();
     expect(component.cuenta('PENDIENTE')).toBe(30);
     expect(component.suma('PAGADA')).toBe(1200000);
@@ -303,8 +326,18 @@ describe('ListaNominasComponent', () => {
 
   it('cargarMas() suma la página siguiente', async () => {
     nominaSvc.pagina
-      .mockReturnValueOnce(of({ contenido: [mkNomina('PENDIENTE', 1)], pagina: 0, tamano: 1, total: 2, totalPaginas: 2 }))
-      .mockReturnValueOnce(of({ contenido: [mkNomina('PAGADA', 2)], pagina: 1, tamano: 1, total: 2, totalPaginas: 2 }));
+      .mockReturnValueOnce(
+        of({
+          contenido: [mkNomina('PENDIENTE', 1)],
+          pagina: 0,
+          tamano: 1,
+          total: 2,
+          totalPaginas: 2,
+        }),
+      )
+      .mockReturnValueOnce(
+        of({ contenido: [mkNomina('PAGADA', 2)], pagina: 1, tamano: 1, total: 2, totalPaginas: 2 }),
+      );
     await createComponent();
     expect(component.hayMas).toBe(true);
     component.cargarMas();

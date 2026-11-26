@@ -1,4 +1,12 @@
-import { Component, OnInit, inject, ChangeDetectorRef, ViewChild, computed, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectorRef,
+  ViewChild,
+  computed,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -12,8 +20,15 @@ import { TwoFactorComponent } from '../../two-factor/two-factor';
 import { OpenSessionsComponent } from '../../open-sessions/open-sessions';
 import { PushToggleComponent } from '../../push-toggle/push-toggle';
 import { ProfileService } from '../../../../core/services/profile.service';
-import { Perfil, UpdateProfileRequest, ChangePasswordRequest } from '../../../../core/models/profile.model';
-import { NotificacionesService, PreferenciasCorreo } from '../../../../core/services/notifications.service';
+import {
+  Perfil,
+  UpdateProfileRequest,
+  ChangePasswordRequest,
+} from '../../../../core/models/profile.model';
+import {
+  NotificacionesService,
+  PreferenciasCorreo,
+} from '../../../../core/services/notifications.service';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 
 interface Toast {
@@ -24,22 +39,48 @@ interface Toast {
 export type GrupoConfig = 'perfil' | 'seguridad' | 'avisos' | 'preferencias';
 
 /** Pestañas de Configuración y las secciones (ids) que van en cada una */
-export const GRUPOS_CONFIG: { id: GrupoConfig; icono: string; clave: string; secciones: string[] }[] = [
+export const GRUPOS_CONFIG: {
+  id: GrupoConfig;
+  icono: string;
+  clave: string;
+  secciones: string[];
+}[] = [
   { id: 'perfil', icono: 'ti-user', clave: 'config.tabs.profile', secciones: ['perfil'] },
-  { id: 'seguridad', icono: 'ti-lock', clave: 'config.tabs.security', secciones: ['seguridad', 'dos-pasos', 'sesiones'] },
+  {
+    id: 'seguridad',
+    icono: 'ti-lock',
+    clave: 'config.tabs.security',
+    secciones: ['seguridad', 'dos-pasos', 'sesiones'],
+  },
   { id: 'avisos', icono: 'ti-bell', clave: 'config.tabs.notices', secciones: ['correos'] },
-  { id: 'preferencias', icono: 'ti-adjustments', clave: 'config.tabs.prefs', secciones: ['preferencias'] },
+  {
+    id: 'preferencias',
+    icono: 'ti-adjustments',
+    clave: 'config.tabs.prefs',
+    secciones: ['preferencias'],
+  },
 ];
 
 @Component({
   selector: 'app-configuration-page',
   standalone: true,
-  imports: [CommonModule, ProfileFormComponent, ChangePasswordFormComponent, TwoFactorComponent, OpenSessionsComponent, PushToggleComponent, TranslatePipe],
+  imports: [
+    CommonModule,
+    ProfileFormComponent,
+    ChangePasswordFormComponent,
+    TwoFactorComponent,
+    OpenSessionsComponent,
+    PushToggleComponent,
+    TranslatePipe,
+  ],
   templateUrl: './configuration-page.html',
-  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', './configuration-page.scss'],
+  styleUrls: [
+    '../../../crop/crop-ui.css',
+    '../../../crop/crop-blocks.css',
+    './configuration-page.scss',
+  ],
 })
 export class ConfigurationPageComponent implements OnInit {
-
   private profileService = inject(ProfileService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
@@ -150,9 +191,8 @@ export class ConfigurationPageComponent implements OnInit {
       },
       error: (err: { status: number }) => {
         this.loadingPassword = false;
-        const msg = err?.status === 400
-          ? 'config.toast.passwordWrong'
-          : 'config.toast.passwordError';
+        const msg =
+          err?.status === 400 ? 'config.toast.passwordWrong' : 'config.toast.passwordError';
         this.showToast(msg, 'error');
         this.cdr.detectChanges();
       },
@@ -171,7 +211,9 @@ export class ConfigurationPageComponent implements OnInit {
   ir(id: string): void {
     const g = GRUPOS_CONFIG.find((x) => x.secciones.includes(id));
     if (g) this.grupo.set(g.id);
-    setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    setTimeout(() =>
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    );
   }
 
   cambiarIdioma(lang: Lang): void {

@@ -8,7 +8,13 @@ import { TituloPaginaService } from './page-title.service';
 /** Un DestroyRef que se puede disparar a mano */
 function destruible() {
   const callbacks: (() => void)[] = [];
-  const ref = { onDestroy: (fn: () => void) => { callbacks.push(fn); return () => {}; }, destroyed: false } as unknown as DestroyRef;
+  const ref = {
+    onDestroy: (fn: () => void) => {
+      callbacks.push(fn);
+      return () => {};
+    },
+    destroyed: false,
+  } as unknown as DestroyRef;
   return { ref, destruir: () => callbacks.forEach((fn) => fn()) };
 }
 

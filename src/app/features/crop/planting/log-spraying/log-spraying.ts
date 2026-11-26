@@ -10,30 +10,32 @@ import {
   ChangeDetectorRef,
   inject,
   signal,
-  computed, HostListener } from '@angular/core';
+  computed,
+  HostListener,
+} from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { CommonModule }           from '@angular/common';
-import { FormsModule }            from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {
-  Subject,
-  debounceTime,
-  forkJoin,
-  switchMap,
-  of,
-  takeUntil,
-  catchError,
-} from 'rxjs';
+import { Subject, debounceTime, forkJoin, switchMap, of, takeUntil, catchError } from 'rxjs';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
-import { CultivoService }           from '../../../../core/services/crop.service';
+import { CultivoService } from '../../../../core/services/crop.service';
 import { AgriculturalInputService } from '../../../../core/services/agricultural-input.service';
-import { AgriculturalInput, MeasurementUnit } from '../../../../core/models/agricultural-input.model';
+import {
+  AgriculturalInput,
+  MeasurementUnit,
+} from '../../../../core/models/agricultural-input.model';
 import { InventarioService } from '../../../../core/services/inventory.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import {
-  CostoEstimado, StockInsumo, formatoCantidad, unidadBaseDe, unidadGrande, unidadesDe,
+  CostoEstimado,
+  StockInsumo,
+  formatoCantidad,
+  unidadBaseDe,
+  unidadGrande,
+  unidadesDe,
 } from '../../../../core/models/inventory.model';
 
 /** Un producto de la bodega del agricultor, con su ficha del catálogo (dosis, reentrada, carencia) si sigue activa */
@@ -72,7 +74,14 @@ interface FumigacionForm {
 @Component({
   selector: 'app-registrar-fumigacion',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    TranslatePipe,
+    MigasCultivoComponent,
+    SiguienteCampoDirective,
+  ],
   templateUrl: './log-spraying.html',
   styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-spraying.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -80,9 +89,9 @@ interface FumigacionForm {
 export class RegistrarFumigacion implements OnInit, OnDestroy {
   private readonly avisos = inject(AvisosService);
 
-  private readonly route      = inject(ActivatedRoute);
-  private readonly router     = inject(Router);
-  private readonly cdr        = inject(ChangeDetectorRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly cultivoSvc = inject(CultivoService);
   private readonly ultimo = inject(UltimoUsadoService);
   private readonly inputSvc: AgriculturalInputService = inject(AgriculturalInputService);
@@ -98,29 +107,27 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   /** Id de la fumigación cuando se está editando */
   registroId: number | null = null;
   cargando = false;
-  error    = '';   // clave de traducción (o mensaje crudo del backend)
-  exito    = '';   // clave de traducción
+  error = ''; // clave de traducción (o mensaje crudo del backend)
+  exito = ''; // clave de traducción
 
   // ── Insumos de la bodega: lo único que se ofrece (no todo el catálogo) ──
   /** Productos con movimientos en la bodega del agricultor, por nombre */
-  bodega         = signal<InsumoBodega[]>([]);
+  bodega = signal<InsumoBodega[]>([]);
   cargandoBodega = signal(true);
 
   // ── Búsqueda rápida (dentro de la bodega) ────────────────────
   busquedaProducto = '';
-  catalogoFiltrado   = signal<InsumoBodega[]>([]);
-  mostrarCatalogo    = signal(false);
+  catalogoFiltrado = signal<InsumoBodega[]>([]);
+  mostrarCatalogo = signal(false);
   /** Resultado marcado con las flechas del teclado (Enter lo elige) */
-  resaltado          = signal(0);
+  resaltado = signal(0);
   insumoSeleccionado = signal<AgriculturalInput | null>(null);
 
   // ── Lista completa de la bodega ──────────────────────────────
   mostrarBodega = signal(false);
-  filtroBodega  = '';
+  filtroBodega = '';
 
-  tipoBadgeClass = computed(() =>
-    this.getTipoBadgeClass(this.insumoSeleccionado()?.tipo ?? '')
-  );
+  tipoBadgeClass = computed(() => this.getTipoBadgeClass(this.insumoSeleccionado()?.tipo ?? ''));
 
   form: FumigacionForm = {
     fecha: '',
@@ -159,7 +166,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     this.actualizarEstimado();
   }
 
-  private readonly destroy$  = new Subject<void>();
+  private readonly destroy$ = new Subject<void>();
 
   // ── Lifecycle ────────────────────────────────────────────────
   // ── Cambios sin guardar: cuenta solo lo que escribe o elige la persona (no lo que la app rellena sola) ──
@@ -177,9 +184,9 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.siembraId      = Number(this.route.snapshot.paramMap.get('id'));
+    this.siembraId = Number(this.route.snapshot.paramMap.get('id'));
     this.form.siembraId = this.siembraId;
-    this.form.fecha     = new Date().toLocaleDateString('en-CA');
+    this.form.fecha = new Date().toLocaleDateString('en-CA');
 
     const registro = this.route.snapshot.paramMap.get('registroId');
     if (registro) {
@@ -199,10 +206,13 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
           const insumo = this.insumoSeleccionado();
           const unidad = this.form.unidadCantidad;
           if (!insumo || !unidad) return of(null);
-          const cantidad = Number(this.form.cantidadUsada) > 0 ? Number(this.form.cantidadUsada) : 0;
-          return this.inventario.costoEstimado(insumo.id, cantidad, unidad).pipe(catchError(() => of(null)));
+          const cantidad =
+            Number(this.form.cantidadUsada) > 0 ? Number(this.form.cantidadUsada) : 0;
+          return this.inventario
+            .costoEstimado(insumo.id, cantidad, unidad)
+            .pipe(catchError(() => of(null)));
         }),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
       )
       .subscribe((e) => {
         this.estimado.set(e);
@@ -212,56 +222,67 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
 
   /** Casi siempre se fumiga el lote entero: el área aplicada empieza con el área del lote (se puede cambiar) */
   private proponerArea(): void {
-    this.cultivoSvc.buscarSiembra(this.siembraId).pipe(
-      switchMap((s) => (s?.loteId ? this.cultivoSvc.buscarLote(s.loteId) : of(null))),
-      catchError(() => of(null)),
-      takeUntil(this.destroy$),
-    ).subscribe((lote) => {
-      if (lote?.area && this.form.areaAplicada == null) {
-        this.form.areaAplicada = lote.area;
-        this.cdr.markForCheck();
-      }
-    });
+    this.cultivoSvc
+      .buscarSiembra(this.siembraId)
+      .pipe(
+        switchMap((s) => (s?.loteId ? this.cultivoSvc.buscarLote(s.loteId) : of(null))),
+        catchError(() => of(null)),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((lote) => {
+        if (lote?.area && this.form.areaAplicada == null) {
+          this.form.areaAplicada = lote.area;
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   /** Llena el formulario con la fumigación guardada (y su insumo del catálogo, si tenía) */
   private cargarParaEditar(id: number): void {
-    this.cultivoSvc.buscarFumigacion(id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (f) => {
-        this.form = {
-          ...this.form,
-          fecha: f.fecha,
-          producto: f.producto,
-          agriculturalInputId: f.agriculturalInputId ?? undefined,
-          dosis: f.dosis,
-          unidadMedida: f.unidadMedida,
-          areaAplicada: f.areaAplicada,
-          observaciones: f.observaciones ?? '',
-          diasCarencia: f.diasCarencia ?? null,
-          reentradaHoras: f.reentradaHoras ?? null,
-          costo: f.costo ?? null,
-          cantidadUsada: f.cantidadUsada ?? null,
-          unidadCantidad: f.unidadCantidad ?? '',
-        };
-        this.busquedaProducto = f.producto;
-        this.cdr.markForCheck();
-        if (f.agriculturalInputId) {
-          this.inputSvc.getById(f.agriculturalInputId).pipe(takeUntil(this.destroy$)).subscribe({
-            next: (insumo) => {
-              this.insumoSeleccionado.set(insumo);
-              this.unificarUnidades();
-              this.actualizarEstimado();
-              this.cdr.markForCheck();
-            },
-            error: () => { /* el insumo ya no está en el catálogo: queda como texto */ },
-          });
-        }
-      },
-      error: () => {
-        this.error = 'temporadas.registro.errors.load';
-        this.cdr.markForCheck();
-      },
-    });
+    this.cultivoSvc
+      .buscarFumigacion(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (f) => {
+          this.form = {
+            ...this.form,
+            fecha: f.fecha,
+            producto: f.producto,
+            agriculturalInputId: f.agriculturalInputId ?? undefined,
+            dosis: f.dosis,
+            unidadMedida: f.unidadMedida,
+            areaAplicada: f.areaAplicada,
+            observaciones: f.observaciones ?? '',
+            diasCarencia: f.diasCarencia ?? null,
+            reentradaHoras: f.reentradaHoras ?? null,
+            costo: f.costo ?? null,
+            cantidadUsada: f.cantidadUsada ?? null,
+            unidadCantidad: f.unidadCantidad ?? '',
+          };
+          this.busquedaProducto = f.producto;
+          this.cdr.markForCheck();
+          if (f.agriculturalInputId) {
+            this.inputSvc
+              .getById(f.agriculturalInputId)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (insumo) => {
+                  this.insumoSeleccionado.set(insumo);
+                  this.unificarUnidades();
+                  this.actualizarEstimado();
+                  this.cdr.markForCheck();
+                },
+                error: () => {
+                  /* el insumo ya no está en el catálogo: queda como texto */
+                },
+              });
+          }
+        },
+        error: () => {
+          this.error = 'temporadas.registro.errors.load';
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   ngOnDestroy(): void {
@@ -309,9 +330,12 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     const q = normalizar(texto);
     if (!q) return true;
     const tipo = b.stock.tipo ?? '';
-    return normalizar(b.stock.nombre).includes(q)
-      || normalizar(tipo).includes(q)
-      || (!!tipo && normalizar(this.translate.instant('enums.tipoInsumo.' + tipo) as string).includes(q));
+    return (
+      normalizar(b.stock.nombre).includes(q) ||
+      normalizar(tipo).includes(q) ||
+      (!!tipo &&
+        normalizar(this.translate.instant('enums.tipoInsumo.' + tipo) as string).includes(q))
+    );
   }
 
   // ── Búsqueda rápida ──────────────────────────────────────────
@@ -331,7 +355,11 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   teclaBuscador(e: KeyboardEvent): void {
     const lista = this.catalogoFiltrado();
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      if (!this.mostrarCatalogo()) { this.onBusquedaChange(); e.preventDefault(); return; }
+      if (!this.mostrarCatalogo()) {
+        this.onBusquedaChange();
+        e.preventDefault();
+        return;
+      }
       if (!lista.length) return;
       e.preventDefault();
       const paso = e.key === 'ArrowDown' ? 1 : -1;
@@ -349,34 +377,41 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
 
   /** Elige un producto de la bodega; si su ficha del catálogo ya no está activa, se arma con lo que hay */
   seleccionarDeBodega(b: InsumoBodega): void {
-    this.seleccionarInsumo(b.insumo ?? {
-      id: b.stock.insumoId,
-      nombre: b.stock.nombre,
-      tipo: (b.stock.tipo ?? '') as AgriculturalInput['tipo'],
-      tipoDisplay: '',
-      unidadSugerida: unidadGrande(b.stock.unidadBase),
-      dosisSugerida: 0,
-      reentradaHoras: 0,
-      diasCarencia: null,
-      activo: false,
-      creadoEn: '',
-    });
+    this.seleccionarInsumo(
+      b.insumo ?? {
+        id: b.stock.insumoId,
+        nombre: b.stock.nombre,
+        tipo: (b.stock.tipo ?? '') as AgriculturalInput['tipo'],
+        tipoDisplay: '',
+        unidadSugerida: unidadGrande(b.stock.unidadBase),
+        dosisSugerida: 0,
+        reentradaHoras: 0,
+        diasCarencia: null,
+        activo: false,
+        creadoEn: '',
+      },
+    );
     this.mostrarBodega.set(false);
   }
 
   seleccionarInsumo(insumo: AgriculturalInput): void {
     this.insumoSeleccionado.set(insumo);
-    this.busquedaProducto         = insumo.nombre;
-    this.form.producto            = insumo.nombre;
+    this.busquedaProducto = insumo.nombre;
+    this.form.producto = insumo.nombre;
     this.form.agriculturalInputId = insumo.id;
-    this.form.unidadMedida        = insumo.unidadSugerida;
-    this.form.dosis               = insumo.dosisSugerida || undefined;
-    this.form.reentradaHoras      = insumo.reentradaHoras || null;
-    this.form.diasCarencia        = insumo.diasCarencia ?? null;
-    this.form.cantidadUsada       = null;
-    this.form.unidadCantidad      = insumo.unidadSugerida;
+    this.form.unidadMedida = insumo.unidadSugerida;
+    this.form.dosis = insumo.dosisSugerida || undefined;
+    this.form.reentradaHoras = insumo.reentradaHoras || null;
+    this.form.diasCarencia = insumo.diasCarencia ?? null;
+    this.form.cantidadUsada = null;
+    this.form.unidadCantidad = insumo.unidadSugerida;
     // La dosis que se usó la última vez con este producto, si se había registrado (solo en una fumigación nueva)
-    const antes = !this.registroId && insumo.id ? this.ultimo.leer<Record<string, { dosis?: number; unidad?: string }>>('fumigacion')?.[insumo.id] : null;
+    const antes =
+      !this.registroId && insumo.id
+        ? this.ultimo.leer<Record<string, { dosis?: number; unidad?: string }>>('fumigacion')?.[
+            insumo.id
+          ]
+        : null;
     if (antes?.dosis) this.form.dosis = antes.dosis;
     if (antes?.unidad) this.form.unidadMedida = antes.unidad as MeasurementUnit;
     this.mostrarCatalogo.set(false);
@@ -385,15 +420,15 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
 
   limpiarInsumo(): void {
     this.insumoSeleccionado.set(null);
-    this.busquedaProducto         = '';
-    this.form.producto            = '';
+    this.busquedaProducto = '';
+    this.form.producto = '';
     this.form.agriculturalInputId = undefined;
-    this.form.unidadMedida        = '';
-    this.form.dosis               = undefined;
-    this.form.reentradaHoras      = null;
-    this.form.diasCarencia        = null;
-    this.form.cantidadUsada       = null;
-    this.form.unidadCantidad      = '';
+    this.form.unidadMedida = '';
+    this.form.dosis = undefined;
+    this.form.reentradaHoras = null;
+    this.form.diasCarencia = null;
+    this.form.cantidadUsada = null;
+    this.form.unidadCantidad = '';
     this.estimado.set(null);
   }
 
@@ -411,10 +446,16 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     const dosis = this.form.unidadMedida;
     const cantidad = this.form.unidadCantidad;
     if (!dosis) return;
-    if (!cantidad) { this.form.unidadCantidad = dosis; return; }
+    if (!cantidad) {
+      this.form.unidadCantidad = dosis;
+      return;
+    }
     if (cantidad === dosis || unidadBaseDe(cantidad) !== unidadBaseDe(dosis)) return;
     if (this.form.cantidadUsada != null) {
-      this.form.cantidadUsada = Math.round(this.form.cantidadUsada * FACTOR_BASE[cantidad] / FACTOR_BASE[dosis] * 1000) / 1000;
+      this.form.cantidadUsada =
+        Math.round(
+          ((this.form.cantidadUsada * FACTOR_BASE[cantidad]) / FACTOR_BASE[dosis]) * 1000,
+        ) / 1000;
     }
     this.form.unidadCantidad = dosis;
   }
@@ -429,7 +470,11 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   }
 
   pesos(v: number): string {
-    return new Intl.NumberFormat(this.locale(), { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
+    return new Intl.NumberFormat(this.locale(), {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0,
+    }).format(v);
   }
 
   private locale(): string {
@@ -438,7 +483,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
 
   usarProductoManual(): void {
     if (!this.insumoSeleccionado()) {
-      this.form.producto            = this.busquedaProducto;
+      this.form.producto = this.busquedaProducto;
       this.form.agriculturalInputId = undefined;
     }
     this.mostrarCatalogo.set(false);
@@ -457,10 +502,13 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     // Se agrupa por la clave del enum (no por el nombre traducido)
     const grupos = this.bodega()
       .filter((b) => this.coincide(b, this.filtroBodega))
-      .reduce((acc, b) => {
-        (acc[b.stock.tipo ?? ''] ??= []).push(b);
-        return acc;
-      }, {} as Record<string, InsumoBodega[]>);
+      .reduce(
+        (acc, b) => {
+          (acc[b.stock.tipo ?? ''] ??= []).push(b);
+          return acc;
+        },
+        {} as Record<string, InsumoBodega[]>,
+      );
 
     return Object.entries(grupos)
       .map(([tipo, items]) => ({ tipo, items }))
@@ -477,66 +525,77 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       this.error = 'siembra.spray.errors.unitRequired';
       return;
     }
-    this.error    = '';
-    this.exito    = '';
+    this.error = '';
+    this.exito = '';
     this.cargando = true;
 
     const payload = {
-      fecha:               this.form.fecha,
-      producto:            this.form.producto,
+      fecha: this.form.fecha,
+      producto: this.form.producto,
       agriculturalInputId: this.form.agriculturalInputId,
-      dosis:               this.form.dosis!,
-      unidadMedida:        this.form.unidadMedida as MeasurementUnit,
-      areaAplicada:        this.form.areaAplicada!,
-      observaciones:       this.form.observaciones,
-      siembraId:           this.form.siembraId,
-      diasCarencia:        this.form.diasCarencia,
-      reentradaHoras:      this.form.reentradaHoras,
-      costo:               this.form.costo,
+      dosis: this.form.dosis!,
+      unidadMedida: this.form.unidadMedida as MeasurementUnit,
+      areaAplicada: this.form.areaAplicada!,
+      observaciones: this.form.observaciones,
+      siembraId: this.form.siembraId,
+      diasCarencia: this.form.diasCarencia,
+      reentradaHoras: this.form.reentradaHoras,
+      costo: this.form.costo,
       // Solo con producto de la bodega se descuenta de ella
-      cantidadUsada:       this.form.agriculturalInputId && Number(this.form.cantidadUsada) > 0 ? Number(this.form.cantidadUsada) : null,
-      unidadCantidad:      this.form.agriculturalInputId && Number(this.form.cantidadUsada) > 0 ? (this.form.unidadCantidad || null) : null,
+      cantidadUsada:
+        this.form.agriculturalInputId && Number(this.form.cantidadUsada) > 0
+          ? Number(this.form.cantidadUsada)
+          : null,
+      unidadCantidad:
+        this.form.agriculturalInputId && Number(this.form.cantidadUsada) > 0
+          ? this.form.unidadCantidad || null
+          : null,
     };
 
     const peticion = this.registroId
       ? this.cultivoSvc.actualizarFumigacion(this.registroId, payload)
       : this.cultivoSvc.registrarFumigacion(payload);
-    peticion
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (guardado: { id?: number } | null | void) => {
-          this.cargando = false;
-          this.guardado = true;
-          if (this.form.agriculturalInputId && this.form.dosis) {
-            this.ultimo.mezclar('fumigacion', { [this.form.agriculturalInputId]: { dosis: this.form.dosis, unidad: this.form.unidadMedida } });
-          }
-          this.exito    = this.registroId ? 'temporadas.registro.saved' : 'siembra.spray.success';
-          this.cdr.markForCheck();
-          this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.spray');
-          // Al volver, la ficha baja hasta el registro y lo marca un momento
-          const id = (guardado && guardado.id) || this.registroId;
-          this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros', nuevo: id ? 'fumigacion-' + id : null } });
-        },
-        error: (err: { error?: { message?: string } }) => {
-          this.cargando = false;
-          this.error    = err.error?.message ?? 'siembra.spray.errors.register';
-          this.cdr.markForCheck();
-        },
-      });
+    peticion.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (guardado: { id?: number } | null | void) => {
+        this.cargando = false;
+        this.guardado = true;
+        if (this.form.agriculturalInputId && this.form.dosis) {
+          this.ultimo.mezclar('fumigacion', {
+            [this.form.agriculturalInputId]: {
+              dosis: this.form.dosis,
+              unidad: this.form.unidadMedida,
+            },
+          });
+        }
+        this.exito = this.registroId ? 'temporadas.registro.saved' : 'siembra.spray.success';
+        this.cdr.markForCheck();
+        this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.spray');
+        // Al volver, la ficha baja hasta el registro y lo marca un momento
+        const id = (guardado && guardado.id) || this.registroId;
+        this.router.navigate(['/crops/planting', this.siembraId], {
+          queryParams: { tab: 'registros', nuevo: id ? 'fumigacion-' + id : null },
+        });
+      },
+      error: (err: { error?: { message?: string } }) => {
+        this.cargando = false;
+        this.error = err.error?.message ?? 'siembra.spray.errors.register';
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   // ── Helpers ──────────────────────────────────────────────────
   getTipoBadgeClass(tipo: string): string {
     const map: Record<string, string> = {
-      FUNGICIDA:             'badge-fungicida',
-      INSECTICIDA:           'badge-insecticida',
-      ACARICIDA:             'badge-acaricida',
-      NEMATICIDA:            'badge-nematicida',
-      HERBICIDA:             'badge-herbicida',
-      FERTILIZANTE_FOLIAR:   'badge-fertilizante',
-      FERTILIZANTE_SUELO:    'badge-fertilizante-suelo',
+      FUNGICIDA: 'badge-fungicida',
+      INSECTICIDA: 'badge-insecticida',
+      ACARICIDA: 'badge-acaricida',
+      NEMATICIDA: 'badge-nematicida',
+      HERBICIDA: 'badge-herbicida',
+      FERTILIZANTE_FOLIAR: 'badge-fertilizante',
+      FERTILIZANTE_SUELO: 'badge-fertilizante-suelo',
       REGULADOR_CRECIMIENTO: 'badge-regulador',
-      COADYUVANTE:           'badge-coadyuvante',
+      COADYUVANTE: 'badge-coadyuvante',
     };
     return map[tipo] ?? 'badge-default';
   }

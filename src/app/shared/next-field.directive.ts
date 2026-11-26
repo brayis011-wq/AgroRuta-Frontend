@@ -1,6 +1,7 @@
 import { Directive, ElementRef, HostListener, inject } from '@angular/core';
 
-const CAMPOS = 'input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([disabled]), select:not([disabled]), textarea:not([disabled])';
+const CAMPOS =
+  'input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([disabled]), select:not([disabled]), textarea:not([disabled])';
 
 /**
  * En un formulario, Enter (o "Siguiente" en el teclado del celular) pasa al campo siguiente en vez de
@@ -13,8 +14,9 @@ export class SiguienteCampoDirective {
   private readonly form = inject(ElementRef<HTMLFormElement>);
 
   private campos(): HTMLElement[] {
-    return Array.from(this.form.nativeElement.querySelectorAll(CAMPOS) as NodeListOf<HTMLElement>)
-      .filter((c) => c.offsetParent !== null || c === document.activeElement);
+    return Array.from(
+      this.form.nativeElement.querySelectorAll(CAMPOS) as NodeListOf<HTMLElement>,
+    ).filter((c) => c.offsetParent !== null || c === document.activeElement);
   }
 
   /** El teclado del celular muestra "Siguiente" o "Listo" según el campo */

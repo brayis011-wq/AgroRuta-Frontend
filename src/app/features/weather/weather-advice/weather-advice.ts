@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { WeatherService } from '../../../core/services/weather.service';
@@ -36,7 +43,9 @@ export class WeatherAdviceComponent implements OnInit {
 
   ngOnInit(): void {
     // Si falla (sin señal, OpenWeather caído) simplemente no se muestra: es una ayuda, no un dato del usuario
-    this.clima.consejos().subscribe({ next: (c) => this.consejos.set(c ?? []), error: () => this.consejos.set([]) });
+    this.clima
+      .consejos()
+      .subscribe({ next: (c) => this.consejos.set(c ?? []), error: () => this.consejos.set([]) });
   }
 
   donde(c: ConsejoClima): string {

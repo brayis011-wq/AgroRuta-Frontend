@@ -14,7 +14,10 @@ describe('actividadInterceptor', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(withInterceptors([actividadInterceptor])), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(withInterceptors([actividadInterceptor])),
+        provideHttpClientTesting(),
+      ],
     });
     http = TestBed.inject(HttpClient);
     ctrl = TestBed.inject(HttpTestingController);

@@ -15,15 +15,22 @@ import { AvisosService } from '../../../core/services/toast.service';
           <div class="aviso con-accion" [class.saliendo]="avisos.saliendo()">
             <span class="marca gris" aria-hidden="true"><i class="ti ti-trash"></i></span>
             <span class="texto">{{ a.clave | translate: a.params }}</span>
-            <button type="button" class="deshacer" (click)="avisos.deshacerActual()">{{ 'common.undo' | translate }}</button>
+            <button type="button" class="deshacer" (click)="avisos.deshacerActual()">
+              {{ 'common.undo' | translate }}
+            </button>
           </div>
         } @else {
-        <button type="button" class="aviso" [class.saliendo]="avisos.saliendo()" (click)="avisos.cerrar()">
-          <span class="marca" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M6.5 12.6l3.6 3.6 7.4-7.8" /></svg>
-          </span>
-          <span class="texto">{{ a.clave | translate: a.params }}</span>
-        </button>
+          <button
+            type="button"
+            class="aviso"
+            [class.saliendo]="avisos.saliendo()"
+            (click)="avisos.cerrar()"
+          >
+            <span class="marca" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M6.5 12.6l3.6 3.6 7.4-7.8" /></svg>
+            </span>
+            <span class="texto">{{ a.clave | translate: a.params }}</span>
+          </button>
         }
       }
     </div>

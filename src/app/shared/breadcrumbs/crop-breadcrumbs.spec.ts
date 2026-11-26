@@ -20,15 +20,22 @@ describe('armarMigas', () => {
   it('mientras carga deja huecos con el enlace que ya se conoce', () => {
     const items = armarMigas({ ...sinIds, siembra: 9 }, {}, null);
     expect(items).toHaveLength(4);
-    expect(items[1]).toEqual({ texto: null, ruta: null });            // finca: aún no se sabe cuál
-    expect(items[2]).toEqual({ texto: null, ruta: null });            // lote: tampoco
+    expect(items[1]).toEqual({ texto: null, ruta: null }); // finca: aún no se sabe cuál
+    expect(items[2]).toEqual({ texto: null, ruta: null }); // lote: tampoco
     expect(items[3]).toEqual({ texto: null, ruta: ['/crops/planting', 9] });
   });
 
   it('con todo cargado arma Finca › Lote › Siembra › acción', () => {
     const items = armarMigas(
       { ...sinIds, siembra: 9 },
-      { fincaId: 1, finca: 'La Esperanza', loteId: 3, lote: 'Lote 3', siembraId: 9, siembra: 'Café · Castillo' },
+      {
+        fincaId: 1,
+        finca: 'La Esperanza',
+        loteId: 3,
+        lote: 'Lote 3',
+        siembraId: 9,
+        siembra: 'Café · Castillo',
+      },
       'siembra.harvest.title',
     );
     expect(items).toEqual([
@@ -47,7 +54,11 @@ describe('armarMigas', () => {
   });
 
   it('una siembra sin nombre de cultivo se llama "Siembra"', () => {
-    const items = armarMigas({ ...sinIds, siembra: 9 }, { fincaId: 1, finca: 'F', loteId: 3, lote: 'L', siembra: '' }, null);
+    const items = armarMigas(
+      { ...sinIds, siembra: 9 },
+      { fincaId: 1, finca: 'F', loteId: 3, lote: 'L', siembra: '' },
+      null,
+    );
     expect(items[3]).toEqual({ clave: 'temporadas.ui.planting', ruta: ['/crops/planting', 9] });
   });
 });
@@ -81,13 +92,18 @@ describe('MigasCultivoComponent', () => {
     fixture.detectChanges();
 
     const el: HTMLElement = fixture.nativeElement;
-    const enlaces = [...el.querySelectorAll('ol a')].map((a) => [a.textContent?.trim(), a.getAttribute('href')]);
+    const enlaces = [...el.querySelectorAll('ol a')].map((a) => [
+      a.textContent?.trim(),
+      a.getAttribute('href'),
+    ]);
     expect(enlaces).toEqual([
-      ['cultivo.fincas.list.title', '/crops'],   // sin archivos de idioma en la prueba, se ve la clave
+      ['cultivo.fincas.list.title', '/crops'], // sin archivos de idioma en la prueba, se ve la clave
       ['La Esperanza', '/crops/farm/1'],
       ['Lote 3', '/crops/plot/3'],
     ]);
-    expect(el.querySelector('[aria-current="page"]')?.textContent?.trim()).toBe('siembra.new.title');
+    expect(el.querySelector('[aria-current="page"]')?.textContent?.trim()).toBe(
+      'siembra.new.title',
+    );
     // En el celular, el botón de volver lleva al lote
     expect(el.querySelector('a.atras')?.getAttribute('href')).toBe('/crops/plot/3');
   });
@@ -106,7 +122,14 @@ describe('MigasCultivoComponent', () => {
     const cultivo = { buscarLote: vi.fn().mockReturnValue(throwError(() => new Error('500'))) };
     const fixture = montar(cultivo as unknown as CultivoService);
     fixture.detectChanges();
-    const textos = [...fixture.nativeElement.querySelectorAll('ol li')].map((li: Element) => li.textContent?.trim());
-    expect(textos).toEqual(['cultivo.fincas.list.title', 'titles.farm', 'temporadas.lote.eyebrow', 'siembra.new.title']);
+    const textos = [...fixture.nativeElement.querySelectorAll('ol li')].map((li: Element) =>
+      li.textContent?.trim(),
+    );
+    expect(textos).toEqual([
+      'cultivo.fincas.list.title',
+      'titles.farm',
+      'temporadas.lote.eyebrow',
+      'siembra.new.title',
+    ]);
   });
 });

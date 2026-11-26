@@ -27,7 +27,9 @@ export class DiagnosticoService {
 
   /** La foto va con la sesión de la persona, así que se pide aparte y no con un <img src> directo */
   foto(siembraId: number, diagnosticoId: number): Observable<Blob> {
-    return this.http.get(`${this.ruta(siembraId)}/${diagnosticoId}/photo`, { responseType: 'blob' });
+    return this.http.get(`${this.ruta(siembraId)}/${diagnosticoId}/photo`, {
+      responseType: 'blob',
+    });
   }
 
   eliminar(siembraId: number, diagnosticoId: number): Observable<void> {

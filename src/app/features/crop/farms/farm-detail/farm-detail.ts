@@ -1,6 +1,13 @@
 import { LluviaFincaComponent } from '../../../weather/rain-card/rain-card';
 import { PrecargarDirective } from '../../../../shared/prefetch.directive';
-import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,16 +21,35 @@ import { escaparHtml } from '../../../../shared/html';
 import { colorEstadoLote } from '../../lot-map';
 import { progresoCiclo } from '../../planting/stage-cycle/stage-cycle.logic';
 import { CultivoService } from '../../../../core/services/crop.service';
-import { EstadoLote, Finca, Lote, Siembra, nombreCultivo } from '../../../../core/models/crop.model';
+import {
+  EstadoLote,
+  Finca,
+  Lote,
+  Siembra,
+  nombreCultivo,
+} from '../../../../core/models/crop.model';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
 import * as L from 'leaflet';
 
 @Component({
   selector: 'app-detalle-finca',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, ContarDirective, MigasCultivoComponent, PrecargarDirective, LluviaFincaComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslatePipe,
+    ContarDirective,
+    MigasCultivoComponent,
+    PrecargarDirective,
+    LluviaFincaComponent,
+  ],
   templateUrl: './farm-detail.html',
-  styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './farm-detail.css'],
+  styleUrls: [
+    '../../crop-ui.css',
+    '../../crop-blocks.css',
+    '../../crop-dialog.css',
+    './farm-detail.css',
+  ],
 })
 export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
@@ -37,7 +63,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   finca: Finca | null = null;
   lotes: Lote[] = [];
   cargando = true;
-  error = '';                 // clave de traducción
+  error = ''; // clave de traducción
   fincaId!: number;
   eliminando = false;
   loteAEliminar: Lote | null = null;
@@ -114,21 +140,24 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
     const center: L.LatLngTuple = [4.5709, -74.2973];
     this.map = L.map('mapa-finca').setView(center, 13);
 
-    const google = L.tileLayer(
-      'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-      { attribution: 'Google Satellite', maxZoom: 21, maxNativeZoom: 20 }
-    );
+    const google = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      attribution: 'Google Satellite',
+      maxZoom: 21,
+      maxNativeZoom: 20,
+    });
     const esri = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 }
+      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 },
     );
 
     google.addTo(this.map);
-    L.control.layers(
-      { 'Google Satellite': google, 'Esri Satellite': esri },
-      {},
-      { position: 'bottomleft' }
-    ).addTo(this.map);
+    L.control
+      .layers(
+        { 'Google Satellite': google, 'Esri Satellite': esri },
+        {},
+        { position: 'bottomleft' },
+      )
+      .addTo(this.map);
 
     this.poligonosLayer.addTo(this.map);
   }
@@ -136,12 +165,12 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   private dibujarLotes(recentrar = true): void {
     this.poligonosLayer.clearLayers();
 
-    this.lotes.forEach(lote => {
+    this.lotes.forEach((lote) => {
       if (!lote.coordenadas) return;
 
       try {
         const coords: [number, number][] = JSON.parse(lote.coordenadas);
-        const latlngs: L.LatLngTuple[] = coords.map(c => [c[0], c[1]]);
+        const latlngs: L.LatLngTuple[] = coords.map((c) => [c[0], c[1]]);
 
         const poligono = L.polygon(latlngs, {
           color: this.getColorEstado(lote.estado),
@@ -152,7 +181,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
         // Tooltip con nombre y estado
         poligono.bindTooltip(
           `<strong>${escaparHtml(lote.nombre)}</strong><br>${escaparHtml(this.getEstadoLabel(lote.estado))}<br>${escaparHtml(lote.area)} ha`,
-          { permanent: false, direction: 'center' }
+          { permanent: false, direction: 'center' },
         );
 
         // Clic navega al lote
@@ -169,7 +198,6 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         this.poligonosLayer.addLayer(poligono);
-
       } catch (e) {
         console.warn(`Coordenadas inválidas en lote ${lote.nombre}`);
       }
@@ -208,18 +236,23 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private cargarSiembras(): void {
-    const sembrados = this.lotes.filter(l => l.estado === 'EN_CULTIVO');
-    this.lotes.filter(l => l.estado !== 'EN_CULTIVO').forEach(l => this.siembras[l.id!] = null);
+    const sembrados = this.lotes.filter((l) => l.estado === 'EN_CULTIVO');
+    this.lotes
+      .filter((l) => l.estado !== 'EN_CULTIVO')
+      .forEach((l) => (this.siembras[l.id!] = null));
     if (!sembrados.length) return;
-    forkJoin(sembrados.map(l => this.cultivoService.buscarSiembraPorLote(l.id!).pipe(catchError(() => of(null)))))
-      .subscribe(lista => {
-        sembrados.forEach((l, i) => this.siembras[l.id!] = lista[i]);
-        this.cdr.detectChanges();
-      });
+    forkJoin(
+      sembrados.map((l) =>
+        this.cultivoService.buscarSiembraPorLote(l.id!).pipe(catchError(() => of(null))),
+      ),
+    ).subscribe((lista) => {
+      sembrados.forEach((l, i) => (this.siembras[l.id!] = lista[i]));
+      this.cdr.detectChanges();
+    });
   }
 
   contar(estado: EstadoLote): number {
-    return this.lotes.filter(l => l.estado === estado).length;
+    return this.lotes.filter((l) => l.estado === estado).length;
   }
 
   areaLotes(): number {
@@ -236,19 +269,27 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getEstadoColor(estado: string): string {
     switch (estado) {
-      case 'DISPONIBLE': return 'estado-disponible';
-      case 'EN_CULTIVO': return 'estado-cultivo';
-      case 'EN_DESCANSO': return 'estado-descanso';
-      default: return '';
+      case 'DISPONIBLE':
+        return 'estado-disponible';
+      case 'EN_CULTIVO':
+        return 'estado-cultivo';
+      case 'EN_DESCANSO':
+        return 'estado-descanso';
+      default:
+        return '';
     }
   }
 
   getEstadoEmoji(estado: string): string {
     switch (estado) {
-      case 'DISPONIBLE': return '🟢';
-      case 'EN_CULTIVO': return '🟡';
-      case 'EN_DESCANSO': return '⚫';
-      default: return '';
+      case 'DISPONIBLE':
+        return '🟢';
+      case 'EN_CULTIVO':
+        return '🟡';
+      case 'EN_DESCANSO':
+        return '⚫';
+      default:
+        return '';
     }
   }
 
@@ -281,7 +322,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
     this.eliminando = true;
     this.cultivoService.eliminarLote(this.loteAEliminar.id!).subscribe({
       next: () => {
-        this.lotes = this.lotes.filter(l => l.id !== this.loteAEliminar!.id);
+        this.lotes = this.lotes.filter((l) => l.id !== this.loteAEliminar!.id);
         this.loteAEliminar = null;
         this.textoConfirmacion = '';
         this.eliminando = false;
@@ -300,32 +341,40 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   editarFinca(): void {
     if (!this.finca) return;
-    this.formFinca = { nombre: this.finca.nombre, ubicacion: this.finca.ubicacion, hectareas: this.finca.hectareas };
+    this.formFinca = {
+      nombre: this.finca.nombre,
+      ubicacion: this.finca.ubicacion,
+      hectareas: this.finca.hectareas,
+    };
     this.editando = true;
   }
 
   guardarFinca(): void {
     const f = this.formFinca;
-    if (!this.finca || !f.nombre.trim() || !f.ubicacion.trim() || !f.hectareas || f.hectareas <= 0) return;
+    if (!this.finca || !f.nombre.trim() || !f.ubicacion.trim() || !f.hectareas || f.hectareas <= 0)
+      return;
     this.guardando = true;
-    this.cultivoService.actualizarFinca(this.fincaId, {
-      nombre: f.nombre.trim(), ubicacion: f.ubicacion.trim(), hectareas: f.hectareas,
-      agricultorId: this.finca.agricultorId,
-    }).subscribe({
-      next: (finca) => {
-        this.finca = finca;
-        this.guardando = false;
-        this.editando = false;
-        this.error = '';
-        this.fincaActiva.cargar();
-        this.cdr.detectChanges();
-      },
-      error: (e) => {
-        this.guardando = false;
-        this.error = e?.error?.message || 'temporadas.finca.errors.save';
-        this.cdr.detectChanges();
-      },
-    });
+    this.cultivoService
+      .actualizarFinca(this.fincaId, {
+        nombre: f.nombre.trim(),
+        ubicacion: f.ubicacion.trim(),
+        hectareas: f.hectareas,
+        agricultorId: this.finca.agricultorId,
+      })
+      .subscribe({
+        next: (finca) => {
+          this.finca = finca;
+          this.guardando = false;
+          this.editando = false;
+          this.error = '';
+          this.fincaActiva.cargar();
+          this.cdr.detectChanges();
+        },
+        error: (e) => {
+          this.guardando = false;
+          this.error = e?.error?.message || 'temporadas.finca.errors.save';
+          this.cdr.detectChanges();
+        },
+      });
   }
-
 }

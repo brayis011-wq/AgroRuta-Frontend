@@ -124,11 +124,23 @@ export class ColaSinConexionService {
   // ───────────── Registros por enviar ─────────────
 
   /** Guarda un registro en el dispositivo. Falla si no hay sesión o el navegador no deja guardar. */
-  async encolar(tipo: TipoPendiente, url: string, cuerpo: unknown, id: string, metodo: 'POST' | 'PUT' = 'POST'): Promise<void> {
+  async encolar(
+    tipo: TipoPendiente,
+    url: string,
+    cuerpo: unknown,
+    id: string,
+    metodo: 'POST' | 'PUT' = 'POST',
+  ): Promise<void> {
     const uid = this.usuarioId();
     if (uid == null) throw new Error('sin sesión');
     await this.almacen.guardarPendiente({
-      id, usuarioId: uid, tipo, url, cuerpo, creadoEn: new Date().toISOString(), ...(metodo === 'PUT' ? { metodo } : {}),
+      id,
+      usuarioId: uid,
+      tipo,
+      url,
+      cuerpo,
+      creadoEn: new Date().toISOString(),
+      ...(metodo === 'PUT' ? { metodo } : {}),
     });
     await this.refrescar();
     this.guardados.update((n) => n + 1);
@@ -153,7 +165,10 @@ export class ColaSinConexionService {
     const p = this.pendientes().find((x) => x.id === id);
     if (!p) return;
     const { error: _e, codigoError: _c, ...limpio } = p;
-    const cuerpo = cambios && typeof p.cuerpo === 'object' && p.cuerpo !== null ? { ...p.cuerpo, ...cambios } : p.cuerpo;
+    const cuerpo =
+      cambios && typeof p.cuerpo === 'object' && p.cuerpo !== null
+        ? { ...p.cuerpo, ...cambios }
+        : p.cuerpo;
     await this.almacen.guardarPendiente({ ...limpio, cuerpo });
     await this.refrescar();
     await this.sincronizar();
@@ -164,7 +179,9 @@ export class ColaSinConexionService {
     if (this.sincronizando() || this.usuarioId() == null) return;
     const candados = typeof navigator !== 'undefined' ? navigator.locks : undefined;
     if (candados?.request) {
-      await candados.request('agroruta-sincronizar', { ifAvailable: true }, (candado) => (candado ? this.enviarTodo() : undefined));
+      await candados.request('agroruta-sincronizar', { ifAvailable: true }, (candado) =>
+        candado ? this.enviarTodo() : undefined,
+      );
     } else {
       await this.enviarTodo();
     }
@@ -179,8 +196,15 @@ export class ColaSinConexionService {
       const cola = (await this.almacen.pendientes(uid)).filter((p) => !p.error);
       for (const p of cola) {
         try {
-          const opciones = { headers: { [CABECERA_ENVIO]: p.id }, context: new HttpContext().set(SIN_COLA, true) };
-          await firstValueFrom(p.metodo === 'PUT' ? this.http.put(p.url, p.cuerpo, opciones) : this.http.post(p.url, p.cuerpo, opciones));
+          const opciones = {
+            headers: { [CABECERA_ENVIO]: p.id },
+            context: new HttpContext().set(SIN_COLA, true),
+          };
+          await firstValueFrom(
+            p.metodo === 'PUT'
+              ? this.http.put(p.url, p.cuerpo, opciones)
+              : this.http.post(p.url, p.cuerpo, opciones),
+          );
           await this.almacen.quitarPendiente(p.id);
           enviados++;
         } catch (e) {
@@ -191,7 +215,12 @@ export class ColaSinConexionService {
             enviados++;
             continue;
           }
-          const transitorio = !err.status || err.status === 401 || err.status === 408 || err.status === 429 || err.status >= 500;
+          const transitorio =
+            !err.status ||
+            err.status === 401 ||
+            err.status === 408 ||
+            err.status === 429 ||
+            err.status >= 500;
           if (transitorio) break;
           // Regla de negocio (422, 404, 409...): se queda hasta que la persona decida
           await this.almacen.guardarPendiente({

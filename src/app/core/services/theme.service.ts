@@ -13,7 +13,9 @@ export class TemaService {
   readonly tema = signal<Tema>(leer());
   private readonly sistemaOscuro = signal(prefiereOscuro());
   /** Cómo se ve en este momento */
-  readonly oscuro = computed(() => this.tema() === 'oscuro' || (this.tema() === 'sistema' && this.sistemaOscuro()));
+  readonly oscuro = computed(
+    () => this.tema() === 'oscuro' || (this.tema() === 'sistema' && this.sistemaOscuro()),
+  );
 
   constructor() {
     try {
@@ -21,13 +23,19 @@ export class TemaService {
         this.sistemaOscuro.set(e.matches);
         this.aplicar();
       });
-    } catch { /* navegador sin matchMedia */ }
+    } catch {
+      /* navegador sin matchMedia */
+    }
     this.aplicar();
   }
 
   elegir(tema: Tema): void {
     this.tema.set(tema);
-    try { localStorage.setItem(CLAVE, tema); } catch { /* sin almacenamiento */ }
+    try {
+      localStorage.setItem(CLAVE, tema);
+    } catch {
+      /* sin almacenamiento */
+    }
     this.aplicar();
   }
 
@@ -51,5 +59,9 @@ function leer(): Tema {
 }
 
 function prefiereOscuro(): boolean {
-  try { return matchMedia('(prefers-color-scheme: dark)').matches; } catch { return false; }
+  try {
+    return matchMedia('(prefers-color-scheme: dark)').matches;
+  } catch {
+    return false;
+  }
 }

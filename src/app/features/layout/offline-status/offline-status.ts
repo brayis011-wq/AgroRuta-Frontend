@@ -43,7 +43,9 @@ export class OfflineStatusComponent implements OnInit {
   /** Registro que pidió confirmación para descartarse */
   readonly porDescartar = signal<string | null>(null);
 
-  readonly visible = computed(() => !this.cola.enLinea() || this.cola.pendientes().length > 0 || this.aviso() !== null);
+  readonly visible = computed(
+    () => !this.cola.enLinea() || this.cola.pendientes().length > 0 || this.aviso() !== null,
+  );
 
   private reloj: ReturnType<typeof setTimeout> | null = null;
 
@@ -123,7 +125,10 @@ export class OfflineStatusComponent implements OnInit {
     const d = new Date(iso);
     if (isNaN(d.getTime())) return '';
     return d.toLocaleString(this.idioma.current() === 'en' ? 'en-US' : 'es-CO', {
-      day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit',
+      day: 'numeric',
+      month: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
     });
   }
 }

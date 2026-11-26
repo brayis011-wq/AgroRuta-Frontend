@@ -21,13 +21,29 @@ describe('ConfigurationPageComponent — correos', () => {
       imports: [ConfigurationPageComponent],
       providers: [
         provideRouter([]),
-        { provide: ProfileService, useValue: { getPerfil: () => of({ id: 1, nombre: 'Ana Pérez', email: 'ana@x.com', rol: 'Agricultor' }), olvidarFoto: vi.fn() } },
+        {
+          provide: ProfileService,
+          useValue: {
+            getPerfil: () =>
+              of({ id: 1, nombre: 'Ana Pérez', email: 'ana@x.com', rol: 'Agricultor' }),
+            olvidarFoto: vi.fn(),
+          },
+        },
         { provide: NotificacionesService, useValue: notificaciones },
         { provide: AuthService, useValue: { logout: vi.fn(), getUsuario: () => ({ id: 1, rol }) } },
-        { provide: FincaActivaService, useValue: { fincas: signal(fincas), idActiva: signal(null), elegir: vi.fn() } },
+        {
+          provide: FincaActivaService,
+          useValue: { fincas: signal(fincas), idActiva: signal(null), elegir: vi.fn() },
+        },
         { provide: LanguageService, useValue: { current: signal('es'), set: vi.fn() } },
         { provide: TemaService, useValue: { tema: signal('claro'), elegir: vi.fn() } },
-        { provide: SeguridadService, useValue: { estado: () => of({ activo: false, codigosRespaldo: 0 }), sesiones: () => of([]) } },
+        {
+          provide: SeguridadService,
+          useValue: {
+            estado: () => of({ activo: false, codigosRespaldo: 0 }),
+            sesiones: () => of([]),
+          },
+        },
         { provide: AvisosPushService, useValue: { estado: () => Promise.resolve('no-soportado') } },
       ],
     });
@@ -45,7 +61,9 @@ describe('ConfigurationPageComponent — correos', () => {
   it('carga las preferencias y muestra los dos interruptores', () => {
     notificaciones.obtener.mockReturnValue(of({ alertasCultivo: true, avisosTrabajadores: false }));
     const f = crear();
-    const switches = f.nativeElement.querySelectorAll('#correos > .pref input[role="switch"]') as NodeListOf<HTMLInputElement>;
+    const switches = f.nativeElement.querySelectorAll(
+      '#correos > .pref input[role="switch"]',
+    ) as NodeListOf<HTMLInputElement>;
     expect(switches.length).toBe(2);
     expect(switches[0].checked).toBe(true);
     expect(switches[1].checked).toBe(false);
@@ -56,7 +74,10 @@ describe('ConfigurationPageComponent — correos', () => {
     notificaciones.guardar.mockImplementation((p) => of(p));
     const c = crear().componentInstance;
     c.cambiarCorreo('alertasCultivo', false);
-    expect(notificaciones.guardar).toHaveBeenCalledWith({ alertasCultivo: false, avisosTrabajadores: true });
+    expect(notificaciones.guardar).toHaveBeenCalledWith({
+      alertasCultivo: false,
+      avisosTrabajadores: true,
+    });
     expect(c.correos()).toEqual({ alertasCultivo: false, avisosTrabajadores: true });
     expect(c.guardandoCorreos()).toBe(false);
   });
@@ -79,7 +100,10 @@ describe('ConfigurationPageComponent — correos', () => {
 });
 
 describe('ConfigurationPageComponent — según el rol', () => {
-  const notificaciones = { obtener: vi.fn(() => of({ alertasCultivo: true, avisosTrabajadores: true })), guardar: vi.fn() };
+  const notificaciones = {
+    obtener: vi.fn(() => of({ alertasCultivo: true, avisosTrabajadores: true })),
+    guardar: vi.fn(),
+  };
   const fincas = [{ id: 4, nombre: 'El Mirador' }];
 
   function crear(rol: string) {
@@ -87,14 +111,29 @@ describe('ConfigurationPageComponent — según el rol', () => {
       imports: [ConfigurationPageComponent],
       providers: [
         provideRouter([]),
-        { provide: ProfileService, useValue: { getPerfil: () => of({ id: 1, nombre: 'Ana', email: 'ana@x.com', rol }), olvidarFoto: vi.fn() } },
+        {
+          provide: ProfileService,
+          useValue: {
+            getPerfil: () => of({ id: 1, nombre: 'Ana', email: 'ana@x.com', rol }),
+            olvidarFoto: vi.fn(),
+          },
+        },
         { provide: NotificacionesService, useValue: notificaciones },
         { provide: AuthService, useValue: { logout: vi.fn(), getUsuario: () => ({ id: 1, rol }) } },
         // Fincas que quedaron de otra sesión en la misma pestaña: no deben verse en otro rol
-        { provide: FincaActivaService, useValue: { fincas: signal(fincas), idActiva: signal(null), elegir: vi.fn() } },
+        {
+          provide: FincaActivaService,
+          useValue: { fincas: signal(fincas), idActiva: signal(null), elegir: vi.fn() },
+        },
         { provide: LanguageService, useValue: { current: signal('es'), set: vi.fn() } },
         { provide: TemaService, useValue: { tema: signal('claro'), elegir: vi.fn() } },
-        { provide: SeguridadService, useValue: { estado: () => of({ activo: false, codigosRespaldo: 0 }), sesiones: () => of([]) } },
+        {
+          provide: SeguridadService,
+          useValue: {
+            estado: () => of({ activo: false, codigosRespaldo: 0 }),
+            sesiones: () => of([]),
+          },
+        },
         { provide: AvisosPushService, useValue: { estado: () => Promise.resolve('inactivo') } },
       ],
     });

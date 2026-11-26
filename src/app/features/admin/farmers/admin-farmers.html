@@ -9,16 +9,27 @@
 
   <div class="card">
     <div class="card-head">
-      <h2 class="card-title">{{ 'admin.farmers.count' | translate: { count: visibles.length } }}</h2>
+      <h2 class="card-title">
+        {{ 'admin.farmers.count' | translate: { count: visibles.length } }}
+      </h2>
       <div class="toolbar">
         <label class="search">
           <i class="ti ti-search" aria-hidden="true"></i>
-          <input id="admin-buscar-agricultor" class="input" type="search" [(ngModel)]="busqueda"
-                 [placeholder]="'admin.farmers.search' | translate"
-                 [attr.aria-label]="'admin.farmers.search' | translate" />
+          <input
+            id="admin-buscar-agricultor"
+            class="input"
+            type="search"
+            [(ngModel)]="busqueda"
+            [placeholder]="'admin.farmers.search' | translate"
+            [attr.aria-label]="'admin.farmers.search' | translate"
+          />
         </label>
-        <select id="admin-orden-agricultores" class="select" [(ngModel)]="orden"
-                [attr.aria-label]="'admin.farmers.sortBy' | translate">
+        <select
+          id="admin-orden-agricultores"
+          class="select"
+          [(ngModel)]="orden"
+          [attr.aria-label]="'admin.farmers.sortBy' | translate"
+        >
           <option value="nombre">{{ 'admin.farmers.sort.name' | translate }}</option>
           <option value="hectareas">{{ 'admin.farmers.sort.hectares' | translate }}</option>
           <option value="trabajadores">{{ 'admin.farmers.sort.workers' | translate }}</option>
@@ -30,9 +41,13 @@
     <div class="estado" *ngIf="cargando">{{ 'common.loading' | translate }}</div>
     <div class="estado" *ngIf="error">
       {{ 'admin.farmers.loadError' | translate }}
-      <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">{{ 'common.retry' | translate }}</button>
+      <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">
+        {{ 'common.retry' | translate }}
+      </button>
     </div>
-    <div class="estado" *ngIf="!cargando && !error && visibles.length === 0">{{ 'admin.farmers.empty' | translate }}</div>
+    <div class="estado" *ngIf="!cargando && !error && visibles.length === 0">
+      {{ 'admin.farmers.empty' | translate }}
+    </div>
 
     <div class="table-wrap" *ngIf="!cargando && !error && visibles.length > 0">
       <table class="resp">
@@ -51,15 +66,29 @@
           <tr *ngFor="let a of visibles">
             <td class="prin">
               <span class="cell-main">{{ a.nombre }}</span>
-              <span class="pill off" *ngIf="!a.activo" style="margin-left:.4rem">{{ 'admin.common.inactive' | translate }}</span>
+              <span class="pill off" *ngIf="!a.activo" style="margin-left: 0.4rem">{{
+                'admin.common.inactive' | translate
+              }}</span>
               <span class="cell-sub">{{ a.email }}</span>
             </td>
-            <td class="num" [attr.data-label]="'admin.farmers.table.farms' | translate">{{ num(a.fincas) }}</td>
-            <td class="num" [attr.data-label]="'admin.farmers.table.hectares' | translate">{{ num(a.hectareas, 1) }}</td>
-            <td class="num" [attr.data-label]="'admin.farmers.table.workers' | translate">{{ num(a.trabajadoresActivos) }}</td>
-            <td class="num" [attr.data-label]="'admin.farmers.table.payrolls' | translate">{{ num(a.nominas) }}</td>
-            <td class="num" [attr.data-label]="'admin.farmers.table.paid' | translate">{{ pesos(a.totalPagado) }}</td>
-            <td class="num acc"><a class="link" [routerLink]="[a.id]">{{ 'admin.farmers.view' | translate }} →</a></td>
+            <td class="num" [attr.data-label]="'admin.farmers.table.farms' | translate">
+              {{ num(a.fincas) }}
+            </td>
+            <td class="num" [attr.data-label]="'admin.farmers.table.hectares' | translate">
+              {{ num(a.hectareas, 1) }}
+            </td>
+            <td class="num" [attr.data-label]="'admin.farmers.table.workers' | translate">
+              {{ num(a.trabajadoresActivos) }}
+            </td>
+            <td class="num" [attr.data-label]="'admin.farmers.table.payrolls' | translate">
+              {{ num(a.nominas) }}
+            </td>
+            <td class="num" [attr.data-label]="'admin.farmers.table.paid' | translate">
+              {{ pesos(a.totalPagado) }}
+            </td>
+            <td class="num acc">
+              <a class="link" [routerLink]="[a.id]">{{ 'admin.farmers.view' | translate }} →</a>
+            </td>
           </tr>
         </tbody>
       </table>

@@ -38,37 +38,67 @@ export function esPorVenir(e: EventoCalendario): boolean {
 /** Orden para la agenda: primero lo atrasado, luego por fecha */
 export function ordenAgenda(a: EventoCalendario, b: EventoCalendario): number {
   const peso = (s: EstadoEvento) => (s === 'ATRASADO' ? 0 : 1);
-  return peso(a.estado) - peso(b.estado) || a.fecha.localeCompare(b.fecha) || a.tipo.localeCompare(b.tipo);
+  return (
+    peso(a.estado) - peso(b.estado) ||
+    a.fecha.localeCompare(b.fecha) ||
+    a.tipo.localeCompare(b.tipo)
+  );
 }
 
 /** Texto principal y secundario de un evento, traducidos */
-export function textoEvento(e: EventoCalendario, t: TranslateService, num: (v: number, d?: number) => string): { titulo: string; sub: string } {
+export function textoEvento(
+  e: EventoCalendario,
+  t: TranslateService,
+  num: (v: number, d?: number) => string,
+): { titulo: string; sub: string } {
   const k = (clave: string, p?: object) => t.instant('temporadas.cal.tipo.' + clave, p) as string;
   const etapa = (v: string | null) => (v ? (t.instant('enums.etapaCultivo.' + v) as string) : '');
   switch (e.tipo) {
-    case 'SIEMBRA': return { titulo: k('SIEMBRA'), sub: e.cultivo };
-    case 'ETAPA': return { titulo: k('ETAPA', { etapa: etapa(e.titulo) }), sub: '' };
-    case 'ACTIVIDAD': return {
-      titulo: t.instant('enums.tipoActividad.' + (e.titulo ?? 'OTRO')) + (e.estado === 'PENDIENTE' ? ' · ' + k('scheduled') : ''),
-      sub: e.detalle ?? '',
-    };
-    case 'FUMIGACION': return { titulo: k('FUMIGACION', { producto: e.titulo ?? '' }), sub: '' };
-    case 'COSECHA': return {
-      titulo: k('COSECHA', { kg: num(Number(e.titulo) || 0, 1) }),
-      sub: e.detalle ? (t.instant('enums.calidadCosecha.' + e.detalle) as string) : '',
-    };
-    case 'FIN_CARENCIA': return { titulo: k('FIN_CARENCIA'), sub: k('carenciaSub', { producto: e.titulo ?? '', days: e.detalle }) };
-    case 'FIN_REENTRADA': return { titulo: k('FIN_REENTRADA'), sub: k('reentradaSub', { producto: e.titulo ?? '', hours: e.detalle }) };
-    case 'FUMIGACION_SUGERIDA': return {
-      titulo: k(e.estado === 'ATRASADO' ? 'FUMIGACION_ATRASADA' : 'FUMIGACION_SUGERIDA'),
-      sub: k('cadaDias', { days: e.detalle }),
-    };
-    case 'PROXIMA_ETAPA': return { titulo: k('PROXIMA_ETAPA', { etapa: etapa(e.titulo) }), sub: k('estimado') };
-    case 'COSECHA_ESTIMADA': return { titulo: k('COSECHA_ESTIMADA'), sub: k('estimadoDias', { days: e.detalle }) };
-    case 'PROGRAMADA': return {
-      titulo: (t.instant('enums.tipoActividad.' + (e.titulo ?? 'OTRO')) as string) + ' · ' + k(e.estado === 'ATRASADO' ? 'programadaAtrasada' : 'programada'),
-      sub: e.detalle ?? '',
-    };
+    case 'SIEMBRA':
+      return { titulo: k('SIEMBRA'), sub: e.cultivo };
+    case 'ETAPA':
+      return { titulo: k('ETAPA', { etapa: etapa(e.titulo) }), sub: '' };
+    case 'ACTIVIDAD':
+      return {
+        titulo:
+          t.instant('enums.tipoActividad.' + (e.titulo ?? 'OTRO')) +
+          (e.estado === 'PENDIENTE' ? ' · ' + k('scheduled') : ''),
+        sub: e.detalle ?? '',
+      };
+    case 'FUMIGACION':
+      return { titulo: k('FUMIGACION', { producto: e.titulo ?? '' }), sub: '' };
+    case 'COSECHA':
+      return {
+        titulo: k('COSECHA', { kg: num(Number(e.titulo) || 0, 1) }),
+        sub: e.detalle ? (t.instant('enums.calidadCosecha.' + e.detalle) as string) : '',
+      };
+    case 'FIN_CARENCIA':
+      return {
+        titulo: k('FIN_CARENCIA'),
+        sub: k('carenciaSub', { producto: e.titulo ?? '', days: e.detalle }),
+      };
+    case 'FIN_REENTRADA':
+      return {
+        titulo: k('FIN_REENTRADA'),
+        sub: k('reentradaSub', { producto: e.titulo ?? '', hours: e.detalle }),
+      };
+    case 'FUMIGACION_SUGERIDA':
+      return {
+        titulo: k(e.estado === 'ATRASADO' ? 'FUMIGACION_ATRASADA' : 'FUMIGACION_SUGERIDA'),
+        sub: k('cadaDias', { days: e.detalle }),
+      };
+    case 'PROXIMA_ETAPA':
+      return { titulo: k('PROXIMA_ETAPA', { etapa: etapa(e.titulo) }), sub: k('estimado') };
+    case 'COSECHA_ESTIMADA':
+      return { titulo: k('COSECHA_ESTIMADA'), sub: k('estimadoDias', { days: e.detalle }) };
+    case 'PROGRAMADA':
+      return {
+        titulo:
+          (t.instant('enums.tipoActividad.' + (e.titulo ?? 'OTRO')) as string) +
+          ' · ' +
+          k(e.estado === 'ATRASADO' ? 'programadaAtrasada' : 'programada'),
+        sub: e.detalle ?? '',
+      };
   }
 }
 
@@ -103,15 +133,24 @@ export function diasHasta(fecha: string, hoy: string): number {
 }
 
 /** Etiqueta corta para la cuadrícula del mes */
-export function textoCorto(e: EventoCalendario, t: TranslateService, num: (v: number, d?: number) => string): string {
+export function textoCorto(
+  e: EventoCalendario,
+  t: TranslateService,
+  num: (v: number, d?: number) => string,
+): string {
   const k = (clave: string) => t.instant('temporadas.cal.corto.' + clave) as string;
   switch (e.tipo) {
     case 'ETAPA':
-    case 'PROXIMA_ETAPA': return t.instant('enums.etapaCultivo.' + (e.titulo ?? '')) as string;
+    case 'PROXIMA_ETAPA':
+      return t.instant('enums.etapaCultivo.' + (e.titulo ?? '')) as string;
     case 'ACTIVIDAD':
-    case 'PROGRAMADA': return t.instant('enums.tipoActividad.' + (e.titulo ?? 'OTRO')) as string;
-    case 'FUMIGACION': return e.titulo ?? k('FUMIGACION');
-    case 'COSECHA': return num(Number(e.titulo) || 0, 0) + ' kg';
-    default: return k(e.tipo);
+    case 'PROGRAMADA':
+      return t.instant('enums.tipoActividad.' + (e.titulo ?? 'OTRO')) as string;
+    case 'FUMIGACION':
+      return e.titulo ?? k('FUMIGACION');
+    case 'COSECHA':
+      return num(Number(e.titulo) || 0, 0) + ' kg';
+    default:
+      return k(e.tipo);
   }
 }

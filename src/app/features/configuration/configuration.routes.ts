@@ -6,7 +6,7 @@ export const configurationRoutes: Routes = [
     title: 'config.title',
     loadComponent: () =>
       import('./pages/configuration-page/configuration-page').then(
-        (m) => m.ConfigurationPageComponent
+        (m) => m.ConfigurationPageComponent,
       ),
   },
 ];

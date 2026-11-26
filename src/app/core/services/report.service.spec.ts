@@ -44,11 +44,7 @@ describe('ReportService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        ReportService,
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), ReportService],
     });
     service = TestBed.inject(ReportService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -61,14 +57,14 @@ describe('ReportService', () => {
   });
 
   it('getPayrollPreview() should GET payroll report', () => {
-    service.getPayrollPreview().subscribe(r => expect(r).toEqual(mockPayrollReport));
+    service.getPayrollPreview().subscribe((r) => expect(r).toEqual(mockPayrollReport));
     const req = httpMock.expectOne(`${api}/api/reports/payroll/preview`);
     expect(req.request.method).toBe('GET');
     req.flush(mockPayrollReport);
   });
 
   it('getCropPreview() should GET crop report', () => {
-    service.getCropPreview().subscribe(r => expect(r).toEqual(mockCropReport));
+    service.getCropPreview().subscribe((r) => expect(r).toEqual(mockCropReport));
     const req = httpMock.expectOne(`${api}/api/reports/crops/preview`);
     expect(req.request.method).toBe('GET');
     req.flush(mockCropReport);
@@ -76,7 +72,7 @@ describe('ReportService', () => {
 
   it('downloadPayrollPdf() should GET payroll as blob', () => {
     const mockBlob = new Blob(['pdf content'], { type: 'application/pdf' });
-    service.downloadPayrollPdf().subscribe(r => {
+    service.downloadPayrollPdf().subscribe((r) => {
       expect(r).toBeInstanceOf(Blob);
       expect(r.type).toBe('application/pdf');
     });
@@ -88,7 +84,7 @@ describe('ReportService', () => {
 
   it('downloadCropPdf() should GET crops as blob', () => {
     const mockBlob = new Blob(['pdf content'], { type: 'application/pdf' });
-    service.downloadCropPdf().subscribe(r => {
+    service.downloadCropPdf().subscribe((r) => {
       expect(r).toBeInstanceOf(Blob);
       expect(r.type).toBe('application/pdf');
     });

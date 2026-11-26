@@ -20,7 +20,9 @@ export class ProfileService {
   }
 
   updatePerfil(data: UpdateProfileRequest): Observable<Perfil> {
-    return this.http.put<Perfil>(`${this.base}/profile`, data).pipe(tap((p) => this.recordarFoto(p)));
+    return this.http
+      .put<Perfil>(`${this.base}/profile`, data)
+      .pipe(tap((p) => this.recordarFoto(p)));
   }
 
   /** Carga la foto una sola vez por sesión (el menú la pide al abrirse) */

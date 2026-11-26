@@ -7,16 +7,30 @@ describe('PayrollReportComponent', () => {
   let svc: any;
   const crear = () => {
     TestBed.overrideComponent(PayrollReportComponent, { set: { template: '' } });
-    TestBed.configureTestingModule({ imports: [PayrollReportComponent], providers: [{ provide: ReportService, useValue: svc }] });
+    TestBed.configureTestingModule({
+      imports: [PayrollReportComponent],
+      providers: [{ provide: ReportService, useValue: svc }],
+    });
     const c = TestBed.createComponent(PayrollReportComponent).componentInstance;
     c.ngOnInit();
     return c;
   };
   beforeEach(() => {
     svc = {
-      getPayrollPreview: vi.fn(() => of({ generatedAt: '2026-11-04T10:00:00', totalAccumulated: 900,
-        workerDetails: [{ workerId: 1, workerName: 'Ana', totalPaid: 300 }, { workerId: 2, workerName: 'Luis', totalPaid: 600 }],
-        pagosPorMes: [{ mes: '2026-10', total: 300, pagos: 1 }, { mes: '2026-11', total: 600, pagos: 1 }] })),
+      getPayrollPreview: vi.fn(() =>
+        of({
+          generatedAt: '2026-11-04T10:00:00',
+          totalAccumulated: 900,
+          workerDetails: [
+            { workerId: 1, workerName: 'Ana', totalPaid: 300 },
+            { workerId: 2, workerName: 'Luis', totalPaid: 600 },
+          ],
+          pagosPorMes: [
+            { mes: '2026-10', total: 300, pagos: 1 },
+            { mes: '2026-11', total: 600, pagos: 1 },
+          ],
+        }),
+      ),
       downloadPayrollPdf: vi.fn(() => of(new Blob(['%PDF']))),
     };
   });

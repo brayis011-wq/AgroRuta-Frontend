@@ -40,13 +40,17 @@ export class AuthService {
     // Descarta cualquier sesión anterior sin llamar al servidor: un logout en vuelo
     // podría llegar después y borrar la cookie que trae este login
     this.olvidarSesion();
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, data).pipe(tap((r) => this.guardar(r)));
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/login`, data)
+      .pipe(tap((r) => this.guardar(r)));
   }
 
   /** Enlace del correo de confirmación: confirma la cuenta y deja la sesión iniciada. */
   verificar(token: string): Observable<AuthResponse> {
     this.olvidarSesion();
-    return this.http.post<AuthResponse>(`${this.apiUrl}/verify`, { token }).pipe(tap((r) => this.guardar(r)));
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/verify`, { token })
+      .pipe(tap((r) => this.guardar(r)));
   }
 
   /** Vuelve a mandar el correo de confirmación. Responde igual exista o no la cuenta. */
@@ -61,7 +65,10 @@ export class AuthService {
 
   /** Crea la contraseña nueva con el token del enlace que llegó al correo. */
   restablecer(token: string, password: string): Observable<{ mensaje: string }> {
-    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/reset-password`, { token, password });
+    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/reset-password`, {
+      token,
+      password,
+    });
   }
 
   /**
@@ -101,7 +108,8 @@ export class AuthService {
    */
   private quitarAvisosPush(): void {
     if (typeof navigator === 'undefined' || !navigator.serviceWorker?.getRegistration) return;
-    navigator.serviceWorker.getRegistration()
+    navigator.serviceWorker
+      .getRegistration()
       .then((registro) => registro?.pushManager?.getSubscription())
       .then((suscripcion) => suscripcion?.unsubscribe())
       .catch(() => undefined);

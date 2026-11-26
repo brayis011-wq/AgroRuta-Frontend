@@ -12,7 +12,6 @@ async function login(page: any) {
 }
 
 test.describe('Reportes', () => {
-
   test('Descargar reporte de trabajadores', async ({ page }) => {
     await login(page);
 
@@ -40,5 +39,4 @@ test.describe('Reportes', () => {
 
     expect(download.suggestedFilename()).toBeTruthy();
   });
-
 });

@@ -8,7 +8,11 @@ const CLAVE_OCULTO = 'primerosPasosOculto';
 
 /** Recuerda en este navegador que la persona ocultó la tarjeta (por usuario) */
 function leerOculto(usuarioId: number | null | undefined): boolean {
-  try { return localStorage.getItem(`${CLAVE_OCULTO}:${usuarioId ?? ''}`) === '1'; } catch { return false; }
+  try {
+    return localStorage.getItem(`${CLAVE_OCULTO}:${usuarioId ?? ''}`) === '1';
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -37,6 +41,10 @@ export class PrimerosPasosComponent {
 
   ocultar(): void {
     this.oculto.set(true);
-    try { localStorage.setItem(`${CLAVE_OCULTO}:${this.usuarioId ?? ''}`, '1'); } catch { /* sin almacenamiento */ }
+    try {
+      localStorage.setItem(`${CLAVE_OCULTO}:${this.usuarioId ?? ''}`, '1');
+    } catch {
+      /* sin almacenamiento */
+    }
   }
 }

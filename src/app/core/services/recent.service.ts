@@ -26,10 +26,15 @@ export class RecientesService {
   /** Lo pone de primero (si ya estaba, lo mueve) */
   anotar(r: Reciente): void {
     if (!r.titulo || !r.ruta) return;
-    const misma = (x: Reciente) => x.ruta === r.ruta && JSON.stringify(x.query ?? {}) === JSON.stringify(r.query ?? {});
+    const misma = (x: Reciente) =>
+      x.ruta === r.ruta && JSON.stringify(x.query ?? {}) === JSON.stringify(r.query ?? {});
     const nueva = [r, ...this.leer().filter((x) => !misma(x))].slice(0, MAX_RECIENTES);
     this.lista.set(nueva);
-    try { localStorage.setItem(this.clave(), JSON.stringify(nueva)); } catch { /* sin almacenamiento */ }
+    try {
+      localStorage.setItem(this.clave(), JSON.stringify(nueva));
+    } catch {
+      /* sin almacenamiento */
+    }
   }
 
   /** Vuelve a leer (al cambiar de cuenta en el mismo navegador) */
@@ -40,7 +45,9 @@ export class RecientesService {
   private leer(): Reciente[] {
     try {
       const v = JSON.parse(localStorage.getItem(this.clave()) ?? '[]');
-      return Array.isArray(v) ? v.filter((x) => x && typeof x.ruta === 'string' && typeof x.titulo === 'string') : [];
+      return Array.isArray(v)
+        ? v.filter((x) => x && typeof x.ruta === 'string' && typeof x.titulo === 'string')
+        : [];
     } catch {
       return [];
     }
@@ -48,7 +55,11 @@ export class RecientesService {
 
   private clave(): string {
     let id: number | null | undefined = null;
-    try { id = this.injector.get(AuthService).getUsuario()?.id; } catch { /* sin sesión */ }
+    try {
+      id = this.injector.get(AuthService).getUsuario()?.id;
+    } catch {
+      /* sin sesión */
+    }
     return `recientes:${id ?? 'anon'}`;
   }
 }

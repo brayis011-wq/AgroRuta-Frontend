@@ -12,7 +12,9 @@ describe('ServidorLentoComponent', () => {
 
     red.lentas.set(1);
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('.aviso strong')?.textContent?.trim()).toBe('slowServer.title');
+    expect(fixture.nativeElement.querySelector('.aviso strong')?.textContent?.trim()).toBe(
+      'slowServer.title',
+    );
     // La zona con role=status existe siempre, así los lectores de pantalla anuncian el aviso al aparecer
     expect(fixture.nativeElement.querySelector('[role=status]')).not.toBeNull();
 

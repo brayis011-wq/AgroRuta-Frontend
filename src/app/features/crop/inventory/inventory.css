@@ -1,24 +1,97 @@
-.bloque { display: block; font-size: .76rem; }
-tr.sel td { background: var(--ar-verde-50, var(--ar-gris-bg)); }
+.bloque {
+  display: block;
+  font-size: 0.76rem;
+}
+tr.sel td {
+  background: var(--ar-verde-50, var(--ar-gris-bg));
+}
 
 /* Estado del stock */
-.est-stock { display: inline-block; margin-left: .4rem; font-size: .68rem; font-weight: 600; border-radius: 99px; padding: .05rem .5rem; vertical-align: middle; }
-.est-stock.BAJO { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
-.est-stock.AGOTADO, .est-stock.NEGATIVO { background: var(--ar-rojo-bg); color: var(--ar-rojo); }
+.est-stock {
+  display: inline-block;
+  margin-left: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 99px;
+  padding: 0.05rem 0.5rem;
+  vertical-align: middle;
+}
+.est-stock.BAJO {
+  background: var(--ar-ambar-bg);
+  color: var(--ar-ambar);
+}
+.est-stock.AGOTADO,
+.est-stock.NEGATIVO {
+  background: var(--ar-rojo-bg);
+  color: var(--ar-rojo);
+}
 
 /* Historial de un insumo */
-.historial-fila td { padding-top: 0; }
-.historial { padding: .6rem .8rem; border-radius: 12px; background: var(--ar-gris-bg); }
-.historial-tit { margin: 0 0 .4rem; font-size: .8rem; font-weight: 600; color: var(--ar-tinta-2); }
-.historial ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; }
-.historial li { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .7rem; font-size: .82rem; }
-.mov-tipo { font-size: .68rem; font-weight: 700; letter-spacing: .02em; border-radius: 6px; padding: .1rem .4rem; background: var(--ar-fondo); color: var(--ar-tinta-2); }
-.mov-tipo.COMPRA { background: var(--ar-verde-100); color: var(--ar-verde-800); }
-.mov-tipo.USO { background: var(--ar-azul-bg); color: var(--ar-azul); }
-.mov-cant { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ar-verde-800); }
-.mov-cant.resta { color: var(--ar-rojo); }
-.historial .btn-ic { margin-left: auto; }
+.historial-fila td {
+  padding-top: 0;
+}
+.historial {
+  padding: 0.6rem 0.8rem;
+  border-radius: 12px;
+  background: var(--ar-gris-bg);
+}
+.historial-tit {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ar-tinta-2);
+}
+.historial ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+.historial li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.7rem;
+  font-size: 0.82rem;
+}
+.mov-tipo {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: 6px;
+  padding: 0.1rem 0.4rem;
+  background: var(--ar-fondo);
+  color: var(--ar-tinta-2);
+}
+.mov-tipo.COMPRA {
+  background: var(--ar-verde-100);
+  color: var(--ar-verde-800);
+}
+.mov-tipo.USO {
+  background: var(--ar-azul-bg);
+  color: var(--ar-azul);
+}
+.mov-cant {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ar-verde-800);
+}
+.mov-cant.resta {
+  color: var(--ar-rojo);
+}
+.historial .btn-ic {
+  margin-left: auto;
+}
 
 /* Textos de ayuda del panel: que bajen de línea en vez de salirse */
-.campo small { white-space: normal; font-size: .76rem; color: var(--ar-tinta-3); font-weight: 400; }
-.esq.alta { height: 260px; margin-top: 1rem; }
+.campo small {
+  white-space: normal;
+  font-size: 0.76rem;
+  color: var(--ar-tinta-3);
+  font-weight: 400;
+}
+.esq.alta {
+  height: 260px;
+  margin-top: 1rem;
+}

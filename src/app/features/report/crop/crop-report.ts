@@ -1,5 +1,12 @@
 import { DescargasReporteComponent } from '../downloads/report-downloads';
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CropReport, ReportService } from '../../../core/services/report.service';
 import { ReportBase } from '../report-base';
@@ -28,17 +35,30 @@ export class CropReportComponent extends ReportBase implements OnInit {
   readonly etapa = signal<string | null>(null);
   readonly filtro = signal('');
 
-  readonly resumen = computed(() => { const r = this.report(); return r ? resumenCultivos(r) : null; });
-  readonly filas = computed(() => filtrarSiembras(this.report()?.cropDetails ?? [], this.etapa(), this.filtro()));
+  readonly resumen = computed(() => {
+    const r = this.report();
+    return r ? resumenCultivos(r) : null;
+  });
+  readonly filas = computed(() =>
+    filtrarSiembras(this.report()?.cropDetails ?? [], this.etapa(), this.filtro()),
+  );
 
-  ngOnInit(): void { this.cargar(); }
+  ngOnInit(): void {
+    this.cargar();
+  }
 
   cargar(): void {
     this.loading.set(true);
     this.error.set(false);
     this.reportService.getCropPreview().subscribe({
-      next: (r) => { this.report.set(r); this.loading.set(false); },
-      error: () => { this.error.set(true); this.loading.set(false); },
+      next: (r) => {
+        this.report.set(r);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set(true);
+        this.loading.set(false);
+      },
     });
   }
 
@@ -51,8 +71,14 @@ export class CropReportComponent extends ReportBase implements OnInit {
     this.downloading.set(true);
     this.downloadError.set(false);
     this.reportService.downloadCropPdf().subscribe({
-      next: (b) => { this.descargar(b, 'reporte-cultivos.pdf'); this.downloading.set(false); },
-      error: () => { this.downloading.set(false); this.downloadError.set(true); },
+      next: (b) => {
+        this.descargar(b, 'reporte-cultivos.pdf');
+        this.downloading.set(false);
+      },
+      error: () => {
+        this.downloading.set(false);
+        this.downloadError.set(true);
+      },
     });
   }
 

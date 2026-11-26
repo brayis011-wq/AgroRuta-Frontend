@@ -4,20 +4,35 @@
       <p class="eyebrow">{{ 'workers.home.title' | translate }}</p>
       <h1>{{ 'workers.rosters.list.title' | translate }}</h1>
       @if (trabajadorFiltrado) {
-        <p class="cv-sub"><span><i class="ti ti-user" aria-hidden="true"></i> {{ 'workers.rosters.list.subtitleOf' | translate }} <strong>{{ trabajadorFiltrado.nombreCompleto }}</strong></span></p>
+        <p class="cv-sub">
+          <span
+            ><i class="ti ti-user" aria-hidden="true"></i>
+            {{ 'workers.rosters.list.subtitleOf' | translate }}
+            <strong>{{ trabajadorFiltrado.nombreCompleto }}</strong></span
+          >
+        </p>
       } @else {
         <p class="cv-sub">{{ 'workers.rosters.list.subtitleAll' | translate }}</p>
       }
     </div>
     <div class="cv-acciones">
       @if (trabajadorFiltrado) {
-        <button type="button" class="btn" (click)="verTodas()"><i class="ti ti-users" aria-hidden="true"></i> {{ 'workers.rosters.list.showAll' | translate }}</button>
+        <button type="button" class="btn" (click)="verTodas()">
+          <i class="ti ti-users" aria-hidden="true"></i>
+          {{ 'workers.rosters.list.showAll' | translate }}
+        </button>
       }
       @if (!trabajadorFiltrado) {
-        <button type="button" class="btn" (click)="abrirEquipo()"><i class="ti ti-users-group" aria-hidden="true"></i> {{ 'workers.rosters.team.open' | translate }}</button>
+        <button type="button" class="btn" (click)="abrirEquipo()">
+          <i class="ti ti-users-group" aria-hidden="true"></i>
+          {{ 'workers.rosters.team.open' | translate }}
+        </button>
       }
       @if (!trabajadorFiltrado || puedeGenerarNomina) {
-        <button type="button" class="btn btn-prim" (click)="mostrarForm = true"><i class="ti ti-file-plus" aria-hidden="true"></i> {{ 'workers.rosters.list.generate' | translate }}</button>
+        <button type="button" class="btn btn-prim" (click)="mostrarForm = true">
+          <i class="ti ti-file-plus" aria-hidden="true"></i>
+          {{ 'workers.rosters.list.generate' | translate }}
+        </button>
       }
     </div>
   </header>
@@ -26,39 +41,100 @@
   <app-flujo-pago actual="payrolls" />
 
   @if (trabajadores.length > 0) {
-    <app-filtro-trabajador [trabajadores]="trabajadores" [valor]="trabajadorIdElegido" (cambio)="filtrarTrabajador($event)" />
+    <app-filtro-trabajador
+      [trabajadores]="trabajadores"
+      [valor]="trabajadorIdElegido"
+      (cambio)="filtrarTrabajador($event)"
+    />
   }
 
-  @if (error && !mostrarForm) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+  @if (error && !mostrarForm) {
+    <p class="aviso error" role="alert">
+      <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+    </p>
+  }
 
   <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">
     <button type="button" class="kpi clic" (click)="filtroEstado = 'PENDIENTE'">
       <span class="ic ambar"><i class="ti ti-hourglass" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.ui.rosters.toApprove' | translate }}</small><strong>{{ cuenta('PENDIENTE') }}</strong><em>{{ suma('PENDIENTE') | pesos }}</em></div>
+      <div>
+        <small>{{ 'workers.ui.rosters.toApprove' | translate }}</small
+        ><strong>{{ cuenta('PENDIENTE') }}</strong
+        ><em>{{ suma('PENDIENTE') | pesos }}</em>
+      </div>
     </button>
     <button type="button" class="kpi clic" (click)="filtroEstado = 'APROBADA'">
       <span class="ic azul"><i class="ti ti-receipt" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.ui.rosters.toPay' | translate }}</small><strong>{{ cuenta('APROBADA') }}</strong><em>{{ suma('APROBADA') | pesos }}</em></div>
+      <div>
+        <small>{{ 'workers.ui.rosters.toPay' | translate }}</small
+        ><strong>{{ cuenta('APROBADA') }}</strong
+        ><em>{{ suma('APROBADA') | pesos }}</em>
+      </div>
     </button>
     <button type="button" class="kpi clic" (click)="filtroEstado = 'PAGADA'">
       <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.ui.rosters.paid' | translate }}</small><strong>{{ suma('PAGADA') | pesos }}</strong><em>{{ 'workers.ui.rosters.count' | translate: { count: cuenta('PAGADA') } }}</em></div>
+      <div>
+        <small>{{ 'workers.ui.rosters.paid' | translate }}</small
+        ><strong>{{ suma('PAGADA') | pesos }}</strong
+        ><em>{{ 'workers.ui.rosters.count' | translate: { count: cuenta('PAGADA') } }}</em>
+      </div>
     </button>
     <div class="kpi">
       <span class="ic gris"><i class="ti ti-file-invoice" aria-hidden="true"></i></span>
-      <div><small>{{ 'workers.home.stats.totalRosters' | translate }}</small><strong>{{ totalNominas }}</strong></div>
+      <div>
+        <small>{{ 'workers.home.stats.totalRosters' | translate }}</small
+        ><strong>{{ totalNominas }}</strong>
+      </div>
     </div>
   </section>
 
   <section class="tarjeta">
     <header class="tabla-head">
-      <h2><i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.rosters.list.title' | translate }}</h2>
+      <h2>
+        <i class="ti ti-file-invoice" aria-hidden="true"></i>
+        {{ 'workers.rosters.list.title' | translate }}
+      </h2>
       <div class="seg" role="group" [attr.aria-label]="'workers.ui.filterState' | translate">
-        <button type="button" [class.on]="filtroEstado === 'TODAS'" [attr.aria-pressed]="filtroEstado === 'TODAS'" (click)="filtroEstado = 'TODAS'">{{ 'workers.ui.rosters.all' | translate }}</button>
-        <button type="button" [class.on]="filtroEstado === 'PENDIENTE'" [attr.aria-pressed]="filtroEstado === 'PENDIENTE'" (click)="filtroEstado = 'PENDIENTE'">{{ 'enums.estadoNomina.PENDIENTE' | translate }}</button>
-        <button type="button" [class.on]="filtroEstado === 'APROBADA'" [attr.aria-pressed]="filtroEstado === 'APROBADA'" (click)="filtroEstado = 'APROBADA'">{{ 'enums.estadoNomina.APROBADA' | translate }}</button>
-        <button type="button" [class.on]="filtroEstado === 'PAGADA'" [attr.aria-pressed]="filtroEstado === 'PAGADA'" (click)="filtroEstado = 'PAGADA'">{{ 'enums.estadoNomina.PAGADA' | translate }}</button>
-        <button type="button" [class.on]="filtroEstado === 'ANULADA'" [attr.aria-pressed]="filtroEstado === 'ANULADA'" (click)="filtroEstado = 'ANULADA'">{{ 'enums.estadoNomina.ANULADA' | translate }}</button>
+        <button
+          type="button"
+          [class.on]="filtroEstado === 'TODAS'"
+          [attr.aria-pressed]="filtroEstado === 'TODAS'"
+          (click)="filtroEstado = 'TODAS'"
+        >
+          {{ 'workers.ui.rosters.all' | translate }}
+        </button>
+        <button
+          type="button"
+          [class.on]="filtroEstado === 'PENDIENTE'"
+          [attr.aria-pressed]="filtroEstado === 'PENDIENTE'"
+          (click)="filtroEstado = 'PENDIENTE'"
+        >
+          {{ 'enums.estadoNomina.PENDIENTE' | translate }}
+        </button>
+        <button
+          type="button"
+          [class.on]="filtroEstado === 'APROBADA'"
+          [attr.aria-pressed]="filtroEstado === 'APROBADA'"
+          (click)="filtroEstado = 'APROBADA'"
+        >
+          {{ 'enums.estadoNomina.APROBADA' | translate }}
+        </button>
+        <button
+          type="button"
+          [class.on]="filtroEstado === 'PAGADA'"
+          [attr.aria-pressed]="filtroEstado === 'PAGADA'"
+          (click)="filtroEstado = 'PAGADA'"
+        >
+          {{ 'enums.estadoNomina.PAGADA' | translate }}
+        </button>
+        <button
+          type="button"
+          [class.on]="filtroEstado === 'ANULADA'"
+          [attr.aria-pressed]="filtroEstado === 'ANULADA'"
+          (click)="filtroEstado = 'ANULADA'"
+        >
+          {{ 'enums.estadoNomina.ANULADA' | translate }}
+        </button>
       </div>
     </header>
 
@@ -67,23 +143,59 @@
     } @else if (visibles.length === 0) {
       <div class="vacio">
         <i class="ti ti-file-off" aria-hidden="true"></i>
-        <p>{{ (trabajadorFiltrado ? 'workers.rosters.list.emptyFiltered' : 'workers.rosters.list.empty') | translate }}</p>
+        <p>
+          {{
+            (trabajadorFiltrado
+              ? 'workers.rosters.list.emptyFiltered'
+              : 'workers.rosters.list.empty'
+            ) | translate
+          }}
+        </p>
       </div>
     } @else {
       @if (pendientesVisibles.length > 1 || aprobadasVisibles.length > 1) {
-        <div class="lote-barra" role="group" [attr.aria-label]="'workers.rosters.team.bulk' | translate">
+        <div
+          class="lote-barra"
+          role="group"
+          [attr.aria-label]="'workers.rosters.team.bulk' | translate"
+        >
           @if (pendientesVisibles.length > 1) {
-            <button type="button" class="btn" [disabled]="procesandoLote" (click)="aprobarVisibles()"><i class="ti ti-checks" aria-hidden="true"></i> {{ 'workers.rosters.team.approveAll' | translate: { count: pendientesVisibles.length } }}</button>
+            <button
+              type="button"
+              class="btn"
+              [disabled]="procesandoLote"
+              (click)="aprobarVisibles()"
+            >
+              <i class="ti ti-checks" aria-hidden="true"></i>
+              {{
+                'workers.rosters.team.approveAll' | translate: { count: pendientesVisibles.length }
+              }}
+            </button>
           }
           @if (aprobadasVisibles.length > 1) {
-            <label class="metodo-lote"><span class="sr-only">{{ 'workers.rosters.team.method' | translate }}</span>
+            <label class="metodo-lote"
+              ><span class="sr-only">{{ 'workers.rosters.team.method' | translate }}</span>
               <select [value]="metodoLote" (change)="metodoLote = $any($event.target).value">
                 <option value="EFECTIVO">{{ 'enums.metodoPago.EFECTIVO' | translate }}</option>
-                <option value="TRANSFERENCIA">{{ 'enums.metodoPago.TRANSFERENCIA' | translate }}</option>
+                <option value="TRANSFERENCIA">
+                  {{ 'enums.metodoPago.TRANSFERENCIA' | translate }}
+                </option>
                 <option value="CHEQUE">{{ 'enums.metodoPago.CHEQUE' | translate }}</option>
               </select>
             </label>
-            <button type="button" class="btn btn-prim" [disabled]="procesandoLote" (click)="pagarVisibles()"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'workers.rosters.team.payAll' | translate: { count: aprobadasVisibles.length, total: (totalAprobadasVisibles | pesos) } }}</button>
+            <button
+              type="button"
+              class="btn btn-prim"
+              [disabled]="procesandoLote"
+              (click)="pagarVisibles()"
+            >
+              <i class="ti ti-cash" aria-hidden="true"></i>
+              {{
+                'workers.rosters.team.payAll'
+                  | translate
+                    : { count: aprobadasVisibles.length, total: (totalAprobadasVisibles | pesos) }
+              }}
+            </button>
           }
         </div>
       }
@@ -96,7 +208,9 @@
               <th class="num">{{ 'workers.rosters.list.table.wages' | translate }}</th>
               <th class="num">{{ 'workers.rosters.list.table.total' | translate }}</th>
               <th>{{ 'common.status' | translate }}</th>
-              <th><span class="sr-only">{{ 'common.actions' | translate }}</span></th>
+              <th>
+                <span class="sr-only">{{ 'common.actions' | translate }}</span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -105,33 +219,101 @@
                 <td class="prin">
                   <a class="persona enlace" [routerLink]="['/worker/payrolls', n.id]">
                     <span class="av" aria-hidden="true">{{ iniciales(n.trabajador) }}</span>
-                    <span>{{ n.trabajador?.nombreCompleto }}<small>#{{ n.id }}</small></span>
+                    <span
+                      >{{ n.trabajador?.nombreCompleto }}<small>#{{ n.id }}</small></span
+                    >
                   </a>
                 </td>
                 <td class="suave nowrap">{{ n.periodoInicio | periodo: n.periodoFin }}</td>
                 <td class="num ocultar-m">{{ n.totalJornales }}</td>
                 <td class="num fuerte-n">{{ n.valorTotal | pesos }}</td>
-                <td><span class="est" [class]="n.estado">{{ 'enums.estadoNomina.' + n.estado | translate }}</span></td>
+                <td>
+                  <span class="est" [class]="n.estado">{{
+                    'enums.estadoNomina.' + n.estado | translate
+                  }}</span>
+                </td>
                 <td class="acc">
                   <span class="acc-in">
                     @switch (n.estado) {
                       @case ('PENDIENTE') {
-                        <button type="button" class="btn btn-prim chico" [disabled]="aprobando === n.id" (click)="aprobar(n.id)"><i class="ti" [class.ti-check]="aprobando !== n.id" [class.ti-loader-2]="aprobando === n.id" aria-hidden="true"></i> {{ 'workers.rosters.list.actions.approve' | translate }}</button>
-                        <button type="button" class="btn-ic peligro" [title]="'workers.rosters.list.actions.cancel' | translate" [attr.aria-label]="'workers.rosters.list.actions.cancel' | translate" (click)="anular(n.id)"><i class="ti ti-ban" aria-hidden="true"></i></button>
+                        <button
+                          type="button"
+                          class="btn btn-prim chico"
+                          [disabled]="aprobando === n.id"
+                          (click)="aprobar(n.id)"
+                        >
+                          <i
+                            class="ti"
+                            [class.ti-check]="aprobando !== n.id"
+                            [class.ti-loader-2]="aprobando === n.id"
+                            aria-hidden="true"
+                          ></i>
+                          {{ 'workers.rosters.list.actions.approve' | translate }}
+                        </button>
+                        <button
+                          type="button"
+                          class="btn-ic peligro"
+                          [title]="'workers.rosters.list.actions.cancel' | translate"
+                          [attr.aria-label]="'workers.rosters.list.actions.cancel' | translate"
+                          (click)="anular(n.id)"
+                        >
+                          <i class="ti ti-ban" aria-hidden="true"></i>
+                        </button>
                       }
                       @case ('APROBADA') {
-                        <a class="btn btn-prim chico" [routerLink]="['/worker/payrolls', n.id]"><i class="ti ti-cash" aria-hidden="true"></i> {{ 'workers.rosters.list.actions.registerPayment' | translate }}</a>
-                        <button type="button" class="btn-ic peligro" [title]="'workers.rosters.list.actions.cancel' | translate" [attr.aria-label]="'workers.rosters.list.actions.cancel' | translate" (click)="anular(n.id)"><i class="ti ti-ban" aria-hidden="true"></i></button>
+                        <a class="btn btn-prim chico" [routerLink]="['/worker/payrolls', n.id]"
+                          ><i class="ti ti-cash" aria-hidden="true"></i>
+                          {{ 'workers.rosters.list.actions.registerPayment' | translate }}</a
+                        >
+                        <button
+                          type="button"
+                          class="btn-ic peligro"
+                          [title]="'workers.rosters.list.actions.cancel' | translate"
+                          [attr.aria-label]="'workers.rosters.list.actions.cancel' | translate"
+                          (click)="anular(n.id)"
+                        >
+                          <i class="ti ti-ban" aria-hidden="true"></i>
+                        </button>
                       }
                       @case ('PAGADA') {
-                        <a class="btn chico" [routerLink]="['/worker/payments']" [queryParams]="{ nominaId: n.id }"><i class="ti ti-receipt" aria-hidden="true"></i> {{ 'workers.rosters.list.actions.viewPayment' | translate }}</a>
+                        <a
+                          class="btn chico"
+                          [routerLink]="['/worker/payments']"
+                          [queryParams]="{ nominaId: n.id }"
+                          ><i class="ti ti-receipt" aria-hidden="true"></i>
+                          {{ 'workers.rosters.list.actions.viewPayment' | translate }}</a
+                        >
                       }
                       @case ('ANULADA') {
-                        <button type="button" class="btn-ic verde-h" [title]="'workers.rosters.list.actions.reactivate' | translate" [attr.aria-label]="'workers.rosters.list.actions.reactivate' | translate" (click)="reactivar(n.id)"><i class="ti ti-restore" aria-hidden="true"></i></button>
-                        <button type="button" class="btn-ic peligro" [title]="'workers.rosters.list.actions.deleteForever' | translate" [attr.aria-label]="'workers.rosters.list.actions.deleteForever' | translate" (click)="eliminar(n.id)"><i class="ti ti-trash" aria-hidden="true"></i></button>
+                        <button
+                          type="button"
+                          class="btn-ic verde-h"
+                          [title]="'workers.rosters.list.actions.reactivate' | translate"
+                          [attr.aria-label]="'workers.rosters.list.actions.reactivate' | translate"
+                          (click)="reactivar(n.id)"
+                        >
+                          <i class="ti ti-restore" aria-hidden="true"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn-ic peligro"
+                          [title]="'workers.rosters.list.actions.deleteForever' | translate"
+                          [attr.aria-label]="
+                            'workers.rosters.list.actions.deleteForever' | translate
+                          "
+                          (click)="eliminar(n.id)"
+                        >
+                          <i class="ti ti-trash" aria-hidden="true"></i>
+                        </button>
                       }
                     }
-                    <a class="btn-ic" [routerLink]="['/worker/payrolls', n.id]" [title]="'workers.rosters.list.actions.viewDetail' | translate" [attr.aria-label]="'workers.rosters.list.actions.viewDetail' | translate"><i class="ti ti-chevron-right" aria-hidden="true"></i></a>
+                    <a
+                      class="btn-ic"
+                      [routerLink]="['/worker/payrolls', n.id]"
+                      [title]="'workers.rosters.list.actions.viewDetail' | translate"
+                      [attr.aria-label]="'workers.rosters.list.actions.viewDetail' | translate"
+                      ><i class="ti ti-chevron-right" aria-hidden="true"></i
+                    ></a>
                   </span>
                 </td>
               </tr>
@@ -142,96 +324,240 @@
       @if (hayMas) {
         <div class="cargar-mas">
           <button type="button" class="btn" [disabled]="cargandoMas" (click)="cargarMas()">
-            <i class="ti" [class.ti-chevron-down]="!cargandoMas" [class.ti-loader-2]="cargandoMas" aria-hidden="true"></i> {{ 'common.loadMore' | translate }}
+            <i
+              class="ti"
+              [class.ti-chevron-down]="!cargandoMas"
+              [class.ti-loader-2]="cargandoMas"
+              aria-hidden="true"
+            ></i>
+            {{ 'common.loadMore' | translate }}
           </button>
-          <small>{{ 'common.showingOf' | translate: { shown: nominas.length, total: total } }}</small>
+          <small>{{
+            'common.showingOf' | translate: { shown: nominas.length, total: total }
+          }}</small>
         </div>
       }
     }
   </section>
 
-  @if (exito) { <p class="aviso verde msj" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}</p> }
+  @if (exito) {
+    <p class="aviso verde msj" role="status">
+      <i class="ti ti-circle-check" aria-hidden="true"></i> {{ exito | translate: exitoParams }}
+    </p>
+  }
 </div>
 
 @if (mostrarForm) {
-  <button type="button" class="overlay-l" (click)="mostrarForm = false" [attr.aria-label]="'workers.home.panel.close' | translate"></button>
+  <button
+    type="button"
+    class="overlay-l"
+    (click)="mostrarForm = false"
+    [attr.aria-label]="'workers.home.panel.close' | translate"
+  ></button>
   <dialog class="lado" open (keydown.escape)="mostrarForm = false">
     <header class="lado-head">
       <span class="ic azul" aria-hidden="true"><i class="ti ti-file-plus"></i></span>
-      <div><h2>{{ 'workers.rosters.list.formTitle' | translate }}</h2><p>{{ 'workers.wages.list.panel.periodHelp' | translate }}</p></div>
-      <button type="button" class="btn-ic" (click)="mostrarForm = false" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+      <div>
+        <h2>{{ 'workers.rosters.list.formTitle' | translate }}</h2>
+        <p>{{ 'workers.wages.list.panel.periodHelp' | translate }}</p>
+      </div>
+      <button
+        type="button"
+        class="btn-ic"
+        (click)="mostrarForm = false"
+        [attr.aria-label]="'workers.home.panel.close' | translate"
+      >
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
     </header>
     <form class="lado-cuerpo" [formGroup]="form" (ngSubmit)="generar()">
-      @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+      @if (error) {
+        <p class="aviso error" role="alert">
+          <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+        </p>
+      }
       <div class="campos">
-        <label class="campo ancho"><span>{{ 'workers.rosters.list.worker' | translate }}</span>
+        <label class="campo ancho"
+          ><span>{{ 'workers.rosters.list.worker' | translate }}</span>
           <select formControlName="trabajadorId" [class.invalido]="invalido('trabajadorId')">
-            <option [ngValue]="null" disabled>{{ 'workers.rosters.list.select' | translate }}</option>
-            @for (t of trabajadores; track t.id) { <option [ngValue]="t.id">{{ t.nombreCompleto }}</option> }
+            <option [ngValue]="null" disabled>
+              {{ 'workers.rosters.list.select' | translate }}
+            </option>
+            @for (t of trabajadores; track t.id) {
+              <option [ngValue]="t.id">{{ t.nombreCompleto }}</option>
+            }
           </select>
-          @if (invalido('trabajadorId')) { <em class="err">{{ 'common.required' | translate }}</em> }
+          @if (invalido('trabajadorId')) {
+            <em class="err">{{ 'common.required' | translate }}</em>
+          }
         </label>
-        <label class="campo"><span>{{ 'workers.rosters.list.periodStart' | translate }}</span>
-          <input formControlName="periodoInicio" type="date" [class.invalido]="invalido('periodoInicio')" />
-          @if (invalido('periodoInicio')) { <em class="err">{{ 'common.required' | translate }}</em> }
+        <label class="campo"
+          ><span>{{ 'workers.rosters.list.periodStart' | translate }}</span>
+          <input
+            formControlName="periodoInicio"
+            type="date"
+            [class.invalido]="invalido('periodoInicio')"
+          />
+          @if (invalido('periodoInicio')) {
+            <em class="err">{{ 'common.required' | translate }}</em>
+          }
         </label>
-        <label class="campo"><span>{{ 'workers.rosters.list.periodEnd' | translate }}</span>
-          <input formControlName="periodoFin" type="date" [class.invalido]="invalido('periodoFin')" />
-          @if (invalido('periodoFin')) { <em class="err">{{ 'common.required' | translate }}</em> }
+        <label class="campo"
+          ><span>{{ 'workers.rosters.list.periodEnd' | translate }}</span>
+          <input
+            formControlName="periodoFin"
+            type="date"
+            [class.invalido]="invalido('periodoFin')"
+          />
+          @if (invalido('periodoFin')) {
+            <em class="err">{{ 'common.required' | translate }}</em>
+          }
         </label>
       </div>
       <footer class="lado-pie">
-        <button type="button" class="btn btn-texto" (click)="mostrarForm = false">{{ 'common.cancel' | translate }}</button>
-        <button type="submit" class="btn btn-prim" [disabled]="guardando"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando ? 'workers.rosters.list.generating' : 'workers.rosters.list.generateSubmit') | translate }}</button>
+        <button type="button" class="btn btn-texto" (click)="mostrarForm = false">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn-prim" [disabled]="guardando">
+          <i class="ti ti-check" aria-hidden="true"></i>
+          {{
+            (guardando ? 'workers.rosters.list.generating' : 'workers.rosters.list.generateSubmit')
+              | translate
+          }}
+        </button>
       </footer>
     </form>
   </dialog>
 }
 
 @if (mostrarEquipo) {
-  <button type="button" class="overlay-l" (click)="mostrarEquipo = false" [attr.aria-label]="'workers.home.panel.close' | translate"></button>
+  <button
+    type="button"
+    class="overlay-l"
+    (click)="mostrarEquipo = false"
+    [attr.aria-label]="'workers.home.panel.close' | translate"
+  ></button>
   <dialog class="lado" open (keydown.escape)="mostrarEquipo = false">
     <header class="lado-head">
       <span class="ic verde" aria-hidden="true"><i class="ti ti-users-group"></i></span>
-      <div><h2>{{ 'workers.rosters.team.title' | translate }}</h2><p>{{ 'workers.rosters.team.help' | translate }}</p></div>
-      <button type="button" class="btn-ic" (click)="mostrarEquipo = false" [attr.aria-label]="'workers.home.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+      <div>
+        <h2>{{ 'workers.rosters.team.title' | translate }}</h2>
+        <p>{{ 'workers.rosters.team.help' | translate }}</p>
+      </div>
+      <button
+        type="button"
+        class="btn-ic"
+        (click)="mostrarEquipo = false"
+        [attr.aria-label]="'workers.home.panel.close' | translate"
+      >
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
     </header>
     <div class="lado-cuerpo">
-      @if (errorLote) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ errorLote | translate }}</p> }
+      @if (errorLote) {
+        <p class="aviso error" role="alert">
+          <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ errorLote | translate }}
+        </p>
+      }
       @if (!generadas) {
         <div class="campos">
-          <div class="campo ancho"><span>{{ 'workers.rosters.team.week' | translate }}</span>
+          <div class="campo ancho">
+            <span>{{ 'workers.rosters.team.week' | translate }}</span>
             <div class="opciones">
               @for (q of semanas; track q.inicio) {
-                <button type="button" class="opcion" [class.on]="equipoInicio === q.inicio && equipoFin === q.fin" (click)="elegirSemana(q)"><span class="sem"><strong>{{ q.clave | translate }}</strong><small>{{ q.inicio | periodo: q.fin }}</small></span></button>
+                <button
+                  type="button"
+                  class="opcion"
+                  [class.on]="equipoInicio === q.inicio && equipoFin === q.fin"
+                  (click)="elegirSemana(q)"
+                >
+                  <span class="sem"
+                    ><strong>{{ q.clave | translate }}</strong
+                    ><small>{{ q.inicio | periodo: q.fin }}</small></span
+                  >
+                </button>
               }
             </div>
           </div>
-          <label class="campo"><span>{{ 'workers.rosters.list.periodStart' | translate }}</span>
-            <input type="date" [value]="equipoInicio" (change)="equipoInicio = $any($event.target).value" />
+          <label class="campo"
+            ><span>{{ 'workers.rosters.list.periodStart' | translate }}</span>
+            <input
+              type="date"
+              [value]="equipoInicio"
+              (change)="equipoInicio = $any($event.target).value"
+            />
           </label>
-          <label class="campo"><span>{{ 'workers.rosters.list.periodEnd' | translate }}</span>
-            <input type="date" [value]="equipoFin" (change)="equipoFin = $any($event.target).value" />
+          <label class="campo"
+            ><span>{{ 'workers.rosters.list.periodEnd' | translate }}</span>
+            <input
+              type="date"
+              [value]="equipoFin"
+              (change)="equipoFin = $any($event.target).value"
+            />
           </label>
         </div>
         <footer class="lado-pie">
-          <button type="button" class="btn btn-texto" (click)="mostrarEquipo = false">{{ 'common.cancel' | translate }}</button>
-          <button type="button" class="btn btn-prim" [disabled]="procesandoLote" (click)="generarEquipo()"><i class="ti" [class.ti-file-plus]="!procesandoLote" [class.ti-loader-2]="procesandoLote" aria-hidden="true"></i> {{ 'workers.rosters.team.generate' | translate }}</button>
+          <button type="button" class="btn btn-texto" (click)="mostrarEquipo = false">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-prim"
+            [disabled]="procesandoLote"
+            (click)="generarEquipo()"
+          >
+            <i
+              class="ti"
+              [class.ti-file-plus]="!procesandoLote"
+              [class.ti-loader-2]="procesandoLote"
+              aria-hidden="true"
+            ></i>
+            {{ 'workers.rosters.team.generate' | translate }}
+          </button>
         </footer>
       } @else {
-        <p class="aviso verde"><i class="ti ti-circle-check" aria-hidden="true"></i> {{ 'workers.rosters.team.generated' | translate: { count: generadas.length, total: (totalGeneradas | pesos) } }}</p>
+        <p class="aviso verde">
+          <i class="ti ti-circle-check" aria-hidden="true"></i>
+          {{
+            'workers.rosters.team.generated'
+              | translate: { count: generadas.length, total: (totalGeneradas | pesos) }
+          }}
+        </p>
         <ul class="lista-generadas">
           @for (n of generadas; track n.id) {
-            <li><a class="g-fila" [routerLink]="['/worker/payrolls', n.id]"><span class="av" aria-hidden="true">{{ iniciales(n.trabajador) }}</span><span class="g-nombre">{{ n.trabajador?.nombreCompleto }}<small>{{ 'workers.rosters.team.wagesCount' | translate: { count: n.totalJornales } }}</small></span><strong>{{ n.valorTotal | pesos }}</strong><i class="ti ti-chevron-right" aria-hidden="true"></i></a></li>
+            <li>
+              <a class="g-fila" [routerLink]="['/worker/payrolls', n.id]"
+                ><span class="av" aria-hidden="true">{{ iniciales(n.trabajador) }}</span
+                ><span class="g-nombre"
+                  >{{ n.trabajador?.nombreCompleto
+                  }}<small>{{
+                    'workers.rosters.team.wagesCount' | translate: { count: n.totalJornales }
+                  }}</small></span
+                ><strong>{{ n.valorTotal | pesos }}</strong
+                ><i class="ti ti-chevron-right" aria-hidden="true"></i
+              ></a>
+            </li>
           }
         </ul>
         <ol class="siguientes">
-          <li><b>{{ 'workers.rosters.team.step1' | translate }}</b> {{ 'workers.rosters.team.step1Help' | translate }}</li>
-          <li><b>{{ 'workers.rosters.team.step2' | translate }}</b> {{ 'workers.rosters.team.step2Help' | translate }}</li>
-          <li><b>{{ 'workers.rosters.team.step3' | translate }}</b> {{ 'workers.rosters.team.step3Help' | translate }}</li>
+          <li>
+            <b>{{ 'workers.rosters.team.step1' | translate }}</b>
+            {{ 'workers.rosters.team.step1Help' | translate }}
+          </li>
+          <li>
+            <b>{{ 'workers.rosters.team.step2' | translate }}</b>
+            {{ 'workers.rosters.team.step2Help' | translate }}
+          </li>
+          <li>
+            <b>{{ 'workers.rosters.team.step3' | translate }}</b>
+            {{ 'workers.rosters.team.step3Help' | translate }}
+          </li>
         </ol>
         <footer class="lado-pie">
-          <button type="button" class="btn btn-prim" (click)="revisarGeneradas()"><i class="ti ti-list-check" aria-hidden="true"></i> {{ 'workers.rosters.team.review' | translate }}</button>
+          <button type="button" class="btn btn-prim" (click)="revisarGeneradas()">
+            <i class="ti ti-list-check" aria-hidden="true"></i>
+            {{ 'workers.rosters.team.review' | translate }}
+          </button>
         </footer>
       }
     </div>

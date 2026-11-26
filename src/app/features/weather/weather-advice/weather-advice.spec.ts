@@ -23,8 +23,24 @@ describe('WeatherAdviceComponent', () => {
   });
 
   it('muestra cada consejo con su lote y su nivel', () => {
-    clima.consejos.mockReturnValue(of([{ tipo: 'NO_FUMIGAR', nivel: 'ALERTA', fincaId: 1, finca: 'La Esperanza', lote: 'Lote El Mango',
-      cultivo: 'Café', dia: '2026-11-10', motivo: 'LLUVIA', problemaDesde: null, ventanaInicio: null, ventanaFin: null, valor: null }]));
+    clima.consejos.mockReturnValue(
+      of([
+        {
+          tipo: 'NO_FUMIGAR',
+          nivel: 'ALERTA',
+          fincaId: 1,
+          finca: 'La Esperanza',
+          lote: 'Lote El Mango',
+          cultivo: 'Café',
+          dia: '2026-11-10',
+          motivo: 'LLUVIA',
+          problemaDesde: null,
+          ventanaInicio: null,
+          ventanaFin: null,
+          valor: null,
+        },
+      ]),
+    );
     const el: HTMLElement = crear().nativeElement;
     expect(el.querySelectorAll('li.alerta').length).toBe(1);
     expect(el.textContent).toContain('Lote El Mango · La Esperanza');
