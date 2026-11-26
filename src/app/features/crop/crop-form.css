@@ -262,7 +262,7 @@ textarea {
   font: inherit;
   font-weight: 600;
   font-size: 0.95rem;
-  background: linear-gradient(180deg, #38923d, var(--ar-verde-600));
+  background: linear-gradient(180deg, var(--ar-verde-brillo), var(--ar-verde-600));
   color: #fff;
   box-shadow: 0 3px 10px rgba(46, 125, 50, 0.3);
   transition:

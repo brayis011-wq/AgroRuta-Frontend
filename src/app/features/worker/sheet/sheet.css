@@ -379,7 +379,7 @@ tr.apagada .av-s {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--ar-ambar, #b26a00);
+  background: var(--ar-ambar);
   box-shadow: 0 0 0 2px var(--ar-superficie);
 }
 .punto {

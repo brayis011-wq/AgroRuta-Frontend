@@ -125,7 +125,7 @@
   height: 100%;
   min-width: 6px;
   border-radius: 99px;
-  background: linear-gradient(90deg, #43a047, var(--ar-verde-700));
+  background: linear-gradient(90deg, var(--ar-verde-500), var(--ar-verde-700));
 }
 .etapa {
   margin: 0;

@@ -241,7 +241,7 @@
   border-color: var(--ar-ambar-borde);
 }
 .clima.hot em {
-  color: #b4471a;
+  color: var(--ar-tierra);
 }
 
 /* Colapsado: solo el buscador como ícono */

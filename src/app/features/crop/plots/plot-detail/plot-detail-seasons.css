@@ -79,7 +79,7 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: #fff;
-  background: linear-gradient(180deg, #38923d, var(--ar-verde-600));
+  background: linear-gradient(180deg, var(--ar-verde-brillo), var(--ar-verde-600));
   box-shadow: 0 3px 10px rgba(46, 125, 50, 0.28);
   transition: box-shadow 0.15s;
 }

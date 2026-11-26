@@ -39,7 +39,7 @@
 
 .tab-btn.payroll .tab-icon {
   background-color: var(--ar-ambar-bg);
-  color: #b45309;
+  color: var(--ar-ambar);
 }
 
 .tab-btn.crops .tab-icon {
@@ -49,7 +49,7 @@
 
 .tab-btn.costs .tab-icon {
   background-color: var(--ar-azul-bg);
-  color: #1f5fa8;
+  color: var(--ar-azul);
 }
 
 .tab-btn.profitability .tab-icon {
@@ -73,7 +73,7 @@
 
 .tab-sub {
   font-size: 12px; /* antes: 11px */
-  color: #999;
+  color: var(--ar-tinta-3);
   line-height: 1.2;
 }
 
@@ -323,7 +323,7 @@
 }
 .tab-btn.fieldbook .tab-icon {
   background-color: var(--ar-ambar-bg);
-  color: var(--ar-tierra, #8a5a2b);
+  color: var(--ar-tierra);
 }
 
 @media (max-width: 760px) {

@@ -196,37 +196,37 @@
   color: var(--ar-tinta-2);
 }
 .badge-fungicida {
-  background: #e8f0fb;
-  color: #1f5fa8;
+  background: var(--ar-azul-bg);
+  color: var(--ar-azul);
 }
 .badge-insecticida {
-  background: #fdecec;
+  background: var(--ar-rojo-bg);
   color: var(--ar-rojo);
 }
 .badge-acaricida {
-  background: #fbe9f3;
-  color: #a3326e;
+  background: var(--ar-rosa-bg);
+  color: var(--ar-rosa);
 }
 .badge-nematicida {
-  background: #f1ebfa;
-  color: #6a3fb0;
+  background: var(--ar-morado-bg);
+  color: var(--ar-morado);
 }
 .badge-herbicida {
-  background: #fff4dc;
-  color: #b26a00;
+  background: var(--ar-ambar-bg);
+  color: var(--ar-ambar);
 }
 .badge-fertilizante,
 .badge-fertilizante-suelo {
-  background: #e6f2e7;
-  color: #236b28;
+  background: var(--ar-verde-100);
+  color: var(--ar-verde-700);
 }
 .badge-regulador {
-  background: #e3f4f6;
-  color: #127280;
+  background: var(--ar-turquesa-bg);
+  color: var(--ar-turquesa);
 }
 .badge-coadyuvante {
-  background: #eef0f2;
-  color: #4b5560;
+  background: var(--ar-gris-etiqueta-bg);
+  color: var(--ar-gris);
 }
 :host-context([data-tema='oscuro']) [class^='badge-'] {
   background: color-mix(in srgb, currentColor 16%, transparent);

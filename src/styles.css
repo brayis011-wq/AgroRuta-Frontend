@@ -37,6 +37,18 @@
   --ar-borde-fuerte: #bcd9be;
   --ar-ambar-borde: #f1dcae;
   --ar-rojo-borde: #f1c4c0;
+  /* Brillo de los botones verdes (arriba del degradado) */
+  --ar-verde-brillo: #38923d;
+  --ar-verde-500: #43a047;
+  /* Etiquetas de tipos de producto (fumigación) */
+  --ar-rosa: #a3326e;
+  --ar-rosa-bg: #fbe9f3;
+  --ar-morado: #6a3fb0;
+  --ar-morado-bg: #f1ebfa;
+  --ar-turquesa: #127280;
+  --ar-turquesa-bg: #e3f4f6;
+  --ar-gris: #4b5560;
+  --ar-gris-etiqueta-bg: #eef0f2;
   /* Recuadros semitransparentes sobre fondos de color */
   --ar-vidrio: rgba(255, 255, 255, 0.75);
   --ar-radio: 14px;
@@ -80,6 +92,16 @@
   --ar-tierra-bg: #33251a;
   --ar-tierra-borde: #5a402c;
   --ar-maiz: #f0bd4f;
+  --ar-verde-brillo: #4aa651;
+  --ar-verde-500: #4caf50;
+  --ar-rosa: #f08cc0;
+  --ar-rosa-bg: #3a1a2c;
+  --ar-morado: #c3a5f5;
+  --ar-morado-bg: #2a2140;
+  --ar-turquesa: #7fd3df;
+  --ar-turquesa-bg: #142e33;
+  --ar-gris: #b9c2cc;
+  --ar-gris-etiqueta-bg: #262b30;
   --ar-sombra-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
   --ar-sombra-2: 0 4px 16px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.35);
 }

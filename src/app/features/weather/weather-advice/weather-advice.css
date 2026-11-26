@@ -64,7 +64,7 @@ li.alerta {
 }
 li.precaucion {
   background: var(--ar-ambar-bg);
-  border-left-color: #b26a00;
+  border-left-color: var(--ar-ambar);
 }
 li.bien {
   background: var(--ar-verde-50);

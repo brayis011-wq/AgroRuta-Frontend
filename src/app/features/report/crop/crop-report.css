@@ -120,7 +120,7 @@
 }
 .pill-et.COSECHA {
   background: var(--ar-ambar-bg);
-  color: #8a5a00;
+  color: var(--ar-ambar);
 }
 .pill-et.FINALIZADO {
   background: var(--ar-gris-bg);

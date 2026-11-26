@@ -154,7 +154,7 @@
   background: var(--ar-pista);
 }
 .pasos span.on {
-  background: linear-gradient(90deg, #43a047, var(--ar-verde-700));
+  background: linear-gradient(90deg, var(--ar-verde-500), var(--ar-verde-700));
 }
 .cul-dias {
   display: flex;

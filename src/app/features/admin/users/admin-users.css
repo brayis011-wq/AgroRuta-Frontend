@@ -12,7 +12,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #8a6510;
+  color: var(--ar-ambar);
   background: var(--ar-ambar-bg);
   border-radius: 4px;
   padding: 1px 5px;

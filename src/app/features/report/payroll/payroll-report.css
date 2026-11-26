@@ -56,7 +56,7 @@
   transition: filter 0.15s;
 }
 .col.actual .col-barra > span {
-  background: linear-gradient(180deg, #43a047, var(--ar-verde-700));
+  background: linear-gradient(180deg, var(--ar-verde-500), var(--ar-verde-700));
 }
 .col:hover .col-barra > span {
   filter: brightness(0.95);

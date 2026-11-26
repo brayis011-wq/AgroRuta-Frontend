@@ -37,7 +37,7 @@
   border: 0;
   border-radius: 11px;
   cursor: pointer;
-  background: linear-gradient(180deg, #38923d, var(--ar-verde-600));
+  background: linear-gradient(180deg, var(--ar-verde-brillo), var(--ar-verde-600));
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -230,7 +230,7 @@
   display: block;
   height: 100%;
   border-radius: 99px;
-  background: linear-gradient(90deg, #43a047, var(--ar-verde-700));
+  background: linear-gradient(90deg, var(--ar-verde-500), var(--ar-verde-700));
   transform-origin: left;
   animation: crecer-x 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
