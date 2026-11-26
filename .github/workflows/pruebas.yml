@@ -1,5 +1,5 @@
-# Corre las pruebas y la compilación en cada push y en cada pull request a main.
-# Así un error se ve en GitHub antes de gastar créditos de Netlify en un despliegue roto.
+# Corre las revisiones, las pruebas y la compilación en cada push y en cada pull request a main.
+# Así un error se ve en GitHub antes de unir el PR y de que Cloudflare publique un despliegue roto.
 name: Pruebas
 
 on:
@@ -23,6 +23,12 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      - name: Formato (Prettier)
+        run: npm run format:check
+
+      - name: Revisión de código (ESLint)
+        run: npm run lint
+
       - name: Pruebas
         run: npx ng test --watch=false
 
@@ -31,3 +37,24 @@ jobs:
 
       - name: Revisar dependencias con fallas de seguridad
         run: npm audit --omit=dev --audit-level=high
+
+  humo:
+    # La app arranca, enruta y muestra errores del servidor (API simulada, sin backend)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar Chromium para Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Prueba de humo
+        run: npx playwright test e2e/humo.spec.ts --project=chromium --reporter=line
