@@ -26,6 +26,7 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { PesosPipe, FechaPipe } from '../../../shared/format.pipe';
 import { iniciales as inicialesDe } from '../../../shared/iniciales';
 import { mensajeDeError } from '../../../shared/error-message';
+import { filtrarTrabajadores } from './worker-filter';
 
 type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 
@@ -201,18 +202,7 @@ export class WorkerHomeComponent implements OnInit {
   // ── Getters ──────────────────────────────────────────────────────────────
 
   get trabajadoresFiltrados(): Trabajador[] {
-    let lista = this.trabajadores;
-    if (this.filtroEstado !== 'TODOS') {
-      lista = lista.filter((t) => t.estado === this.filtroEstado);
-    }
-    const q = this.busqueda.toLowerCase();
-    if (!q) return lista;
-    return lista.filter(
-      (t) =>
-        t.nombreCompleto?.toLowerCase().includes(q) ||
-        t.cedula?.toLowerCase().includes(q) ||
-        t.cargo?.nombre?.toLowerCase().includes(q),
-    );
+    return filtrarTrabajadores(this.trabajadores, this.filtroEstado, this.busqueda);
   }
 
   /** Trabajadores que pidieron acceso a su portal y esperan aprobación. */

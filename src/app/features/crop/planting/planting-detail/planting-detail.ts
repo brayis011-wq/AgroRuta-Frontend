@@ -56,25 +56,7 @@ import { Pendiente } from '../../../../core/offline/offline-store';
 import { Weather } from '../../../../core/models/weather.model';
 import { ConsejoClima, consejoFumigacion, municipio } from '../../../../shared/weather';
 import { mensajeDeError } from '../../../../shared/error-message';
-
-interface TimelineItem {
-  id: number;
-  fecha: string;
-  tipo: 'actividad' | 'fumigacion' | 'cosecha';
-  tituloKey?: string; // clave de traducción (actividad)
-  titulo?: string; // texto directo (producto / kg)
-  detalle?: string; // descripción libre del usuario (actividad)
-  dosis?: number; // fumigación
-  unidad?: string;
-  area?: number;
-  calidad?: string; // cosecha
-  enCarencia?: boolean; // cosecha registrada dentro de la carencia de una fumigación
-  recolectores?: number; // cosecha: cuántos la recogieron
-  kg?: number; // cosecha: kilos
-  carencia?: number | null; // fumigación: días sin cosechar
-  reentrada?: number | null; // fumigación: horas sin entrar
-  extra?: string;
-}
+import { TimelineItem, armarHistorial } from './planting-timeline';
 
 export type PestanaSiembra = 'resumen' | 'registros' | 'cosechas' | 'dinero' | 'diagnostico';
 
@@ -453,57 +435,10 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   }
 
   private construirTimeline(): void {
-    const items: TimelineItem[] = [];
-
-    this.actividades.forEach((a) =>
-      items.push({
-        id: a.id!,
-        fecha: a.fecha,
-        tipo: 'actividad',
-        tituloKey: 'enums.tipoActividad.' + a.tipo,
-        detalle: a.descripcion,
-        // El insumo que gastó (abonado...): "Abono 15-15-15 · 50 kg"
-        extra: a.producto
-          ? a.producto +
-            (a.cantidadUsada
-              ? ` · ${this.fmtNum(a.cantidadUsada)} ${this.translate.instant('enums.unidadMedida.' + a.unidadCantidad)}`
-              : '')
-          : undefined,
-      }),
-    );
-
-    this.fumigaciones.forEach((f) =>
-      items.push({
-        id: f.id!,
-        carencia: f.diasCarencia ?? null,
-        reentrada: f.reentradaHoras ?? null,
-        fecha: f.fecha,
-        tipo: 'fumigacion',
-        titulo: f.producto,
-        dosis: f.dosis,
-        unidad: f.unidadMedida,
-        area: f.areaAplicada,
-        extra: f.observaciones,
-      }),
-    );
-
-    this.cosechas.forEach((c) =>
-      items.push({
-        id: c.id!,
-        fecha: c.fecha,
-        tipo: 'cosecha',
-        titulo: `${this.fmtNum(c.cantidadKg)} kg`,
-        calidad: c.calidad,
-        enCarencia: !!c.enCarencia,
-        recolectores: c.recolectores?.length ?? 0,
-        kg: c.cantidadKg,
-        extra: c.observaciones,
-      }),
-    );
-
-    this.timelineCompleto = items.sort(
-      (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
-    );
+    this.timelineCompleto = armarHistorial(this.actividades, this.fumigaciones, this.cosechas, {
+      num: (v) => this.fmtNum(v),
+      unidad: (u) => this.translate.instant('enums.unidadMedida.' + u),
+    });
   }
 
   // ===== Formato según idioma activo (Intl nativo) =====

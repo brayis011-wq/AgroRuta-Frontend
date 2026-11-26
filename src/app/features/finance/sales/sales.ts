@@ -40,6 +40,13 @@ import { AvisosService } from '../../../core/services/toast.service';
 import { FechaPipe, PesosPipe } from '../../../shared/format.pipe';
 import { esPendiente } from '../../../core/offline/offline-queue.service';
 import { mensajeDeError } from '../../../shared/error-message';
+import {
+  diasVencida as diasDeVencida,
+  kilosQueQuedan,
+  pasaDeLoQueQueda as excedeLoQueQueda,
+  sumarPorCalidad,
+  totalVenta,
+} from './sales-math';
 
 type Filtro = 'debe' | 'VENCIDA' | 'PAGADA' | 'todas';
 
@@ -87,14 +94,7 @@ export class VentasComponent implements OnInit {
   /** Las cosechas que entran en esta venta (todas al empezar) */
   readonly elegidas = signal<Set<number>>(new Set());
   /** Lo que queda, sumado por calidad (para "Solo primera"...) */
-  readonly porCalidad = computed(() => {
-    const suma = new Map<string, number>();
-    for (const o of this.origen()) suma.set(o.calidad, (suma.get(o.calidad) ?? 0) + o.quedan);
-    return [...suma.entries()].map(([calidad, kg]) => ({
-      calidad,
-      kg: Math.round(kg * 100) / 100,
-    }));
-  });
+  readonly porCalidad = computed(() => sumarPorCalidad(this.origen()));
 
   private cargarOrigen(siembraId: number | null): void {
     this.origen.set([]);
@@ -386,7 +386,7 @@ export class VentasComponent implements OnInit {
     const propios =
       original && original.siembraId === f.siembraId ? Number(original.cantidadKg ?? 0) : 0;
     // Igual que el backend: lo cosechado menos lo vendido, más lo que ya tenía esta venta
-    return Math.max(0, Math.round((k.kgCosechados - k.kgVendidos + propios) * 100) / 100);
+    return kilosQueQuedan(k.kgCosechados, k.kgVendidos, propios);
   }
 
   /**
@@ -397,14 +397,9 @@ export class VentasComponent implements OnInit {
     const quedan = this.quedanDe(f);
     if (f.siembraId == null || !f.cantidadKg) return false;
     const original = f.id == null ? null : (this.lista() ?? []).find((v) => v.id === f.id);
-    if (
-      original &&
-      original.siembraId === f.siembraId &&
-      original.cantidadKg &&
-      f.cantidadKg <= original.cantidadKg
-    )
-      return false;
-    return quedan == null || f.cantidadKg > quedan + 0.004;
+    const mismaSiembra =
+      original && original.siembraId === f.siembraId ? original.cantidadKg : null;
+    return excedeLoQueQueda(f.cantidadKg, quedan, mismaSiembra ?? null);
   }
 
   nombreBodega(k: KilosEnBodega): string {
@@ -482,8 +477,7 @@ export class VentasComponent implements OnInit {
 
   /** Kilos × precio cuando están los dos; si no, el total escrito */
   totalDe(f: FormVenta): number | null {
-    if (f.cantidadKg && f.precioKg) return Math.round(f.cantidadKg * f.precioKg);
-    return f.total;
+    return totalVenta(f.cantidadKg, f.precioKg, f.total);
   }
 
   guardar(): void {
@@ -622,8 +616,6 @@ export class VentasComponent implements OnInit {
   }
 
   diasVencida(v: Venta): number {
-    if (!v.vence) return 0;
-    const [y, m, d] = v.vence.split('-').map(Number);
-    return Math.max(0, Math.round((Date.now() - new Date(y, m - 1, d).getTime()) / 86_400_000));
+    return diasDeVencida(v.vence);
   }
 }

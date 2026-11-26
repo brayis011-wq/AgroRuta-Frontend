@@ -38,19 +38,18 @@ import {
   unidadesDe,
 } from '../../../../core/models/inventory.model';
 import { mensajeDeError } from '../../../../shared/error-message';
+import {
+  agruparPorTipo,
+  claseDeTipo,
+  coincideBusqueda,
+  convertirCantidad,
+} from './spraying-helpers';
 
 /** Un producto de la bodega del agricultor, con su ficha del catálogo (dosis, reentrada, carencia) si sigue activa */
 export interface InsumoBodega {
   stock: StockInsumo;
   insumo: AgriculturalInput | null;
 }
-
-/** Cuántas unidades base (ml o g) hay en cada unidad */
-const FACTOR_BASE: Record<MeasurementUnit, number> = { LITROS: 1000, ML: 1, KG: 1000, GRAMOS: 1 };
-
-/** Sin tildes ni mayúsculas, para que "fungicida" encuentre "Fungicída" */
-const normalizar = (t: string | null | undefined): string =>
-  (t ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
 interface FumigacionForm {
   fecha: string;
@@ -329,15 +328,9 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
   }
 
   private coincide(b: InsumoBodega, texto: string): boolean {
-    const q = normalizar(texto);
-    if (!q) return true;
     const tipo = b.stock.tipo ?? '';
-    return (
-      normalizar(b.stock.nombre).includes(q) ||
-      normalizar(tipo).includes(q) ||
-      (!!tipo &&
-        normalizar(this.translate.instant('enums.tipoInsumo.' + tipo) as string).includes(q))
-    );
+    const traducido = tipo ? (this.translate.instant('enums.tipoInsumo.' + tipo) as string) : '';
+    return coincideBusqueda(texto, b.stock.nombre, tipo, traducido);
   }
 
   // ── Búsqueda rápida ──────────────────────────────────────────
@@ -454,10 +447,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     }
     if (cantidad === dosis || unidadBaseDe(cantidad) !== unidadBaseDe(dosis)) return;
     if (this.form.cantidadUsada != null) {
-      this.form.cantidadUsada =
-        Math.round(
-          ((this.form.cantidadUsada * FACTOR_BASE[cantidad]) / FACTOR_BASE[dosis]) * 1000,
-        ) / 1000;
+      this.form.cantidadUsada = convertirCantidad(this.form.cantidadUsada, cantidad, dosis);
     }
     this.form.unidadCantidad = dosis;
   }
@@ -501,20 +491,11 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
     const label = (tipo: string) =>
       tipo ? (this.translate.instant('enums.tipoInsumo.' + tipo) as string) : '';
 
-    // Se agrupa por la clave del enum (no por el nombre traducido)
-    const grupos = this.bodega()
-      .filter((b) => this.coincide(b, this.filtroBodega))
-      .reduce(
-        (acc, b) => {
-          (acc[b.stock.tipo ?? ''] ??= []).push(b);
-          return acc;
-        },
-        {} as Record<string, InsumoBodega[]>,
-      );
-
-    return Object.entries(grupos)
-      .map(([tipo, items]) => ({ tipo, items }))
-      .sort((a, b) => label(a.tipo).localeCompare(label(b.tipo)));
+    return agruparPorTipo(
+      this.bodega().filter((b) => this.coincide(b, this.filtroBodega)),
+      (b) => b.stock.tipo ?? '',
+      label,
+    );
   }
 
   // ── Submit ───────────────────────────────────────────────────
@@ -588,17 +569,6 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
 
   // ── Helpers ──────────────────────────────────────────────────
   getTipoBadgeClass(tipo: string): string {
-    const map: Record<string, string> = {
-      FUNGICIDA: 'badge-fungicida',
-      INSECTICIDA: 'badge-insecticida',
-      ACARICIDA: 'badge-acaricida',
-      NEMATICIDA: 'badge-nematicida',
-      HERBICIDA: 'badge-herbicida',
-      FERTILIZANTE_FOLIAR: 'badge-fertilizante',
-      FERTILIZANTE_SUELO: 'badge-fertilizante-suelo',
-      REGULADOR_CRECIMIENTO: 'badge-regulador',
-      COADYUVANTE: 'badge-coadyuvante',
-    };
-    return map[tipo] ?? 'badge-default';
+    return claseDeTipo(tipo);
   }
 }
