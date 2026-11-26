@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -18,6 +18,7 @@ interface Planta {
 
 /** Ilustración animada del acceso: un cultivo sano creciendo bajo el sol */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-auth-cultivo',
   standalone: true,
   imports: [TranslatePipe, NgTemplateOutlet],

@@ -1,6 +1,7 @@
 import { LluviaFincaComponent } from '../../../weather/rain-card/rain-card';
 import { PrecargarDirective } from '../../../../shared/prefetch.directive';
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   AfterViewInit,
@@ -32,6 +33,7 @@ import { FincaActivaService } from '../../../../core/services/active-farm.servic
 import * as L from 'leaflet';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-detalle-finca',
   standalone: true,
   imports: [

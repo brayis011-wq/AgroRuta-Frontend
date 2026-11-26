@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { NgClass } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -10,6 +16,7 @@ import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/forma
 type Pestana = 'fincas' | 'trabajadores' | 'nominas';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-agricultor-detalle',
   standalone: true,
   imports: [NgClass, RouterModule, TranslatePipe],

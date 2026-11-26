@@ -1,4 +1,11 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
@@ -10,6 +17,7 @@ const MAX_VISIBLES = 5;
 
 /** Dispositivos donde la cuenta tiene la sesión iniciada, con la opción de cerrarlos a distancia. */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-open-sessions',
   standalone: true,
   imports: [TranslatePipe],

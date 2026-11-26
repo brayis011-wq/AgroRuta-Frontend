@@ -1,6 +1,12 @@
 // src/app/features/worker/roster/detail-roster/detail-roster.ts
 
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -12,6 +18,7 @@ import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pip
 import { Miga, MigasComponent } from '../../../../shared/breadcrumbs/breadcrumbs';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-detalle-nomina',
   standalone: true,
   imports: [

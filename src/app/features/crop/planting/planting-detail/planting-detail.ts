@@ -8,6 +8,7 @@ import {
 } from '../../../../core/services/active-plantings.service';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   OnDestroy,
@@ -84,6 +85,7 @@ export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: strin
 ];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-detalle-siembra',
   standalone: true,
   imports: [

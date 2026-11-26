@@ -1,4 +1,12 @@
-import { Component, OnInit, inject, signal, input, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+  input,
+  computed,
+} from '@angular/core';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { WeatherService } from '../../../core/services/weather.service';
@@ -10,6 +18,7 @@ import { iconoClima } from '../../../shared/weather';
 const CODIGOS_CLIMA = ['01', '02', '03', '04', '09', '10', '11', '13', '50'];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-weather-widget',
   standalone: true,
   imports: [DecimalPipe, TitleCasePipe, TranslatePipe],

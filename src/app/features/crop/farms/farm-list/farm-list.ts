@@ -4,6 +4,7 @@ import {
   SiembrasActivasService,
 } from '../../../../core/services/active-plantings.service';
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   AfterViewInit,
@@ -26,6 +27,7 @@ import { ESTADOS_LOTE, colorEstadoLote, puntosDelLote } from '../../lot-map';
 import * as L from 'leaflet';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-fincas',
   standalone: true,
   imports: [FormsModule, TranslatePipe, RouterLink, ContarDirective, PrecargarDirective],

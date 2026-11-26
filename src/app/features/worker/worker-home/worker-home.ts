@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { guardarEnUrl, leerDeUrl } from '../../../shared/url-state';
 
 import {
@@ -29,6 +35,7 @@ import { iniciales as inicialesDe } from '../../../shared/iniciales';
 type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-worker-home',
   standalone: true,
   imports: [

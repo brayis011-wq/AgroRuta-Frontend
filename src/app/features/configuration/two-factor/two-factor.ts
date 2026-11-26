@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
@@ -15,6 +15,7 @@ type Paso = 'inicio' | 'clave' | 'qr' | 'codigos' | 'quitar';
  * El secreto y los códigos de respaldo solo viven en memoria mientras se muestran.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-two-factor',
   standalone: true,
   imports: [FormsModule, TranslatePipe],

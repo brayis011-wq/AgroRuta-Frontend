@@ -34,7 +34,7 @@ export class PortalLayoutComponent implements OnInit {
   readonly cajonAbierto = signal(false);
   /** Nóminas aprobadas o pendientes que todavía no le han pagado (contador del menú) */
   readonly porCobrar = signal(0);
-  errorEstado = false;
+  readonly errorEstado = signal(false);
 
   readonly pestanas = [
     { ruta: 'home', icono: 'ti-home', etiqueta: 'portal.nav.home', soloAprobado: false },
@@ -60,12 +60,12 @@ export class PortalLayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.errorEstado = false;
+    this.errorEstado.set(false);
     this.portal.cargarEstado().subscribe({
       next: (e) => {
         if (e?.estado === 'APROBADO') this.contarPorCobrar();
       },
-      error: () => (this.errorEstado = true),
+      error: () => this.errorEstado.set(true),
     });
   }
 

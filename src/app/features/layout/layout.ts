@@ -171,13 +171,11 @@ export class LayoutComponent {
       if (lotes.length) {
         items.push({ ruta: '#lotes', titulo: true, clave: 'layout.nav.plots' });
         items.push(
-          ...lotes
-            .slice(0, MAX_LOTES_MENU)
-            .map((l) => ({
-              ruta: `/crops/plot/${l.id}`,
-              texto: l.nombre,
-              icono: 'ti-point-filled',
-            })),
+          ...lotes.slice(0, MAX_LOTES_MENU).map((l) => ({
+            ruta: `/crops/plot/${l.id}`,
+            texto: l.nombre,
+            icono: 'ti-point-filled',
+          })),
         );
       }
     }

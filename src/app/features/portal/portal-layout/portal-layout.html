@@ -153,7 +153,7 @@
 } @else {
   <div class="portal-cargando">
     <div class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></div>
-    @if (!errorEstado) {
+    @if (!errorEstado()) {
       <p>{{ 'common.loading' | translate }}</p>
     } @else {
       <p>{{ 'portal.loadError' | translate }}</p>

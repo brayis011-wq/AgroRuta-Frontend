@@ -1,9 +1,18 @@
-import { Component, ElementRef, HostListener, effect, inject, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  effect,
+  inject,
+  viewChild,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ConfirmService } from './confirm.service';
 
 /** Se monta una sola vez en app.html y muestra las preguntas de ConfirmService. */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-confirm-dialog',
   standalone: true,
   imports: [TranslatePipe],

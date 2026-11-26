@@ -1,6 +1,12 @@
 // src/app/features/worker/roster/list-roster/list-roster.ts
 
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
@@ -24,6 +30,7 @@ import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.servic
 import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-nominas',
   standalone: true,
   imports: [

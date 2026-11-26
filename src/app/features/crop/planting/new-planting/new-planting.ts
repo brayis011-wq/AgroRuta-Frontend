@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 
 import { FormsModule } from '@angular/forms';
@@ -11,6 +17,7 @@ import { Siembra, TipoCultivo } from '../../../../core/models/crop.model';
 import { forkJoin, of, switchMap, map } from 'rxjs';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nueva-siembra',
   standalone: true,
   imports: [FormsModule, TranslatePipe, MigasCultivoComponent],

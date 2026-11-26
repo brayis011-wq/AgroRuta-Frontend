@@ -1,4 +1,13 @@
-import { Component, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ColaSinConexionService } from '../../../core/offline/offline-queue.service';
 import { Pendiente } from '../../../core/offline/offline-store';
@@ -26,6 +35,7 @@ const AVISO_MS = 6000;
  * en el dispositivo y deja enviarlos, reintentarlos o descartarlos.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-offline-status',
   standalone: true,
   imports: [TranslatePipe],

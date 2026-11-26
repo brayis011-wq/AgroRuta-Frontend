@@ -1,9 +1,10 @@
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AvisosPushService, EstadoPush } from '../../../core/services/push.service';
 
 /** Interruptor de los avisos push en este dispositivo (dentro de la tarjeta de avisos de Configuración). */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-push-toggle',
   standalone: true,
   imports: [TranslatePipe],

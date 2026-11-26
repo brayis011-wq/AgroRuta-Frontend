@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   AfterViewInit,
@@ -21,6 +22,7 @@ import 'leaflet-draw';
 import { GeocodingService } from '../../../../core/services/geocoding.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nuevo-lote',
   standalone: true,
   imports: [FormsModule, TranslatePipe, MigasCultivoComponent],

@@ -1,4 +1,11 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -27,6 +34,7 @@ type Panel = 'compra' | 'ajuste' | 'minimo';
  * de compras, gastos en fumigaciones y ajustes. El gasto de las fumigaciones se descuenta solo.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-inventario',
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe],

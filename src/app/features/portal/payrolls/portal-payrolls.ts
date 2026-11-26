@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { NgClass } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PortalService } from '../../../core/services/portal.service';
@@ -7,6 +13,7 @@ import { MiNomina } from '../../../core/models/portal.model';
 import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/format';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-portal-nominas',
   standalone: true,
   imports: [NgClass, TranslatePipe],

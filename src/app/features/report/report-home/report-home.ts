@@ -1,5 +1,5 @@
 import { PedidoReporteCompleto } from '../downloads/report-downloads';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -22,6 +22,7 @@ type Tab = ParteReporte | 'fieldbook';
 const TABS: Tab[] = [...PARTES_REPORTE, 'fieldbook'];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-report-home',
   standalone: true,
   imports: [
@@ -42,9 +43,9 @@ export class ReportHomeComponent extends ReportBase {
   private readonly router = inject(Router);
   private readonly reportService = inject(ReportService);
 
-  activeTab: Tab = 'payroll';
+  readonly activeTab = signal<Tab>('payroll');
   /** Temporada a abrir en la pestaña de costos (?siembra=7) */
-  siembra: number | null = null;
+  readonly siembra = signal<number | null>(null);
 
   // ── PDF completo ──────────────────────────────────────────────
   readonly partes = PARTES_REPORTE;
@@ -63,8 +64,8 @@ export class ReportHomeComponent extends ReportBase {
         this.setTab('payroll');
         return;
       }
-      this.activeTab = tab;
-      this.siembra = Number(q.get('siembra')) || null;
+      this.activeTab.set(tab);
+      this.siembra.set(Number(q.get('siembra')) || null);
       const periodo = q.get('periodo') as ClavePeriodo | null;
       this.reportService.periodo.set(
         periodo && CLAVES_PERIODO.includes(periodo) ? periodo : 'todo',
@@ -88,7 +89,7 @@ export class ReportHomeComponent extends ReportBase {
   }
 
   setTab(tab: Tab): void {
-    this.activeTab = tab;
+    this.activeTab.set(tab);
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab, siembra: null },

@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -11,6 +17,7 @@ import { formatoNumero, formatoPesos } from '../../../shared/format';
 type Orden = 'nombre' | 'hectareas' | 'trabajadores' | 'pagado';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-agricultores',
   standalone: true,
   imports: [FormsModule, RouterModule, TranslatePipe],

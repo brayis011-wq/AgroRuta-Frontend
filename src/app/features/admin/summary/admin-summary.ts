@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 
 import { RouterModule } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -10,6 +16,7 @@ import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/forma
 import { iniciales as inicialesDe } from '../../../shared/iniciales';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-resumen',
   standalone: true,
   imports: [RouterModule, TranslatePipe],

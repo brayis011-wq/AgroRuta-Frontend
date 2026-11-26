@@ -1,6 +1,13 @@
 import { UltimoUsadoService } from '../../../../core/services/last-used.service';
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
-import { Component, OnInit, ChangeDetectorRef, inject, HostListener } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+  HostListener,
+} from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 
 import { FormsModule } from '@angular/forms';
@@ -24,6 +31,7 @@ import { Subject, catchError, debounceTime, of, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-registrar-actividad',
   standalone: true,
   imports: [FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],

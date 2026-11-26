@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -7,6 +7,7 @@ import { inicioPorRol } from '../../../core/guards/role-guards';
 
 /** Página del enlace de confirmación del correo: confirma la cuenta y entra. */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-verificar',
   standalone: true,
   imports: [FormsModule, RouterLink, TranslatePipe],

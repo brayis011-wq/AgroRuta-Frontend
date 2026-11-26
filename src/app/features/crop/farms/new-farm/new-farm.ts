@@ -1,4 +1,11 @@
-import { Component, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 
 import { FormsModule } from '@angular/forms';
@@ -14,6 +21,7 @@ import * as L from 'leaflet';
 import { GeocodingService } from '../../../../core/services/geocoding.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nueva-finca',
   standalone: true,
   imports: [FormsModule, TranslatePipe, MigasCultivoComponent],

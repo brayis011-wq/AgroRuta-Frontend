@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   inject,
@@ -62,6 +63,7 @@ export const GRUPOS_CONFIG: {
 ];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-configuration-page',
   standalone: true,
   imports: [

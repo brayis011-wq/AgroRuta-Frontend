@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
   OnChanges,
@@ -16,6 +17,7 @@ import { Perfil, UpdateProfileRequest } from '../../../core/models/profile.model
 import { ErrorFoto, prepararFoto, revisarArchivo } from '../../../shared/photo';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-profile-form',
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe],

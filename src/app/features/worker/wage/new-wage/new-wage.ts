@@ -1,7 +1,14 @@
 import { UltimoUsadoService } from '../../../../core/services/last-used.service';
 
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
-import { ChangeDetectorRef, Component, OnInit, inject, HostListener } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+  HostListener,
+} from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -25,6 +32,7 @@ interface UltimoJornal {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nuevo-jornal',
   standalone: true,
   imports: [ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe, SiguienteCampoDirective],
@@ -264,6 +272,7 @@ export class NuevoJornalComponent implements OnInit {
         // El backend explica el motivo (cultivo finalizado, de otra finca, etc.)
         this.error = err?.error?.message || 'workers.wages.new.errors.register';
         this.guardando = false;
+        this.cdr.detectChanges();
       },
     });
   }

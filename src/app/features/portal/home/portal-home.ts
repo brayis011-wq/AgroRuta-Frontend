@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -10,6 +16,7 @@ import { EstadoPortal, MiJornal, MiNomina, MiPago } from '../../../core/models/p
 import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/format';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-portal-inicio',
   standalone: true,
   imports: [AsyncPipe, FormsModule, RouterModule, TranslatePipe],

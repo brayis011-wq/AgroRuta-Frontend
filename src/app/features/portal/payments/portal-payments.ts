@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { PortalService } from '../../../core/services/portal.service';
@@ -8,6 +14,7 @@ import { formatoFecha, formatoPesos } from '../../../shared/format';
 import { descargarArchivo, numeroComprobante } from '../../../shared/download';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-portal-pagos',
   standalone: true,
   imports: [TranslatePipe],

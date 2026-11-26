@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { RecientesService } from '../../../../core/services/recent.service';
 
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -23,6 +29,7 @@ import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
 import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-jornales',
   standalone: true,
   imports: [

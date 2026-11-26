@@ -35,12 +35,12 @@ describe('ReportHomeComponent', () => {
   }
 
   it('opens the tab given in the URL', () => {
-    expect(crear('crops').activeTab).toBe('crops');
+    expect(crear('crops').activeTab()).toBe('crops');
   });
 
   it('defaults to payroll and writes it in the URL', () => {
     const c = crear();
-    expect(c.activeTab).toBe('payroll');
+    expect(c.activeTab()).toBe('payroll');
     expect(router.navigate).toHaveBeenCalledWith(
       [],
       expect.objectContaining({ queryParams: { tab: 'payroll', siembra: null }, replaceUrl: true }),
@@ -50,7 +50,7 @@ describe('ReportHomeComponent', () => {
   it('follows the URL when the side menu changes the tab', () => {
     const c = crear('payroll');
     query.next(convertToParamMap({ tab: 'crops' }));
-    expect(c.activeTab).toBe('crops');
+    expect(c.activeTab()).toBe('crops');
   });
 
   describe('PDF with everything', () => {
