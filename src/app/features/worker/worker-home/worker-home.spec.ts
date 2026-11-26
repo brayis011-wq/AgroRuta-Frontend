@@ -29,7 +29,6 @@ const mkNomina = (estado = 'PENDIENTE'): any => ({
   estado,
   valorTotal: 100000,
 });
-const mkPago = (): any => ({ id: 1, monto: 100000 });
 const mkCargo = (): any => ({ id: 1, nombre: 'Jornalero', valorJornal: 50000 });
 
 describe('WorkerHomeComponent', () => {

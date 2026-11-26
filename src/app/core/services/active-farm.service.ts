@@ -67,7 +67,8 @@ export class FincaActivaService {
   elegir(id: number | null): void {
     this.idActiva.set(id);
     try {
-      id == null ? localStorage.removeItem(CLAVE) : localStorage.setItem(CLAVE, String(id));
+      if (id == null) localStorage.removeItem(CLAVE);
+      else localStorage.setItem(CLAVE, String(id));
     } catch {
       /* sin almacenamiento */
     }

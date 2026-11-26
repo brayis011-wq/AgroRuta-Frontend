@@ -29,7 +29,7 @@ export function alCruzar(
  */
 export function vigilarEntradas(contenido: HTMLElement): () => void {
   if (typeof IntersectionObserver === 'undefined' || typeof MutationObserver === 'undefined')
-    return () => {};
+    return () => undefined;
   const medio = window.matchMedia?.(CELULAR);
   const vistos = new WeakSet<Element>();
   const esperando = new WeakSet<Element>();

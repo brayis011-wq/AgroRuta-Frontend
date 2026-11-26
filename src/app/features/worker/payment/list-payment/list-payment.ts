@@ -114,7 +114,9 @@ export class ListaPagosComponent implements OnInit {
         this.trabajadores = t;
         this.cdr.detectChanges();
       },
-      error: () => {},
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
 
     this.cargar();
@@ -128,7 +130,9 @@ export class ListaPagosComponent implements OnInit {
         this.resumen = r;
         this.cdr.detectChanges();
       },
-      error: () => {},
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
   }
 

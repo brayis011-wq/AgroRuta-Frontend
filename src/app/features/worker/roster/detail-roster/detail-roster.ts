@@ -112,7 +112,9 @@ export class DetalleNominaComponent implements OnInit {
         this.pagos = p.contenido;
         this.cdr.detectChanges();
       },
-      error: () => {},
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
   }
 

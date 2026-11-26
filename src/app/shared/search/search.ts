@@ -356,7 +356,8 @@ export class BuscadorComponent {
   atajo(e: KeyboardEvent): void {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
-      this.abierto() ? this.cerrar() : this.abrir();
+      if (this.abierto()) this.cerrar();
+      else this.abrir();
     }
   }
 

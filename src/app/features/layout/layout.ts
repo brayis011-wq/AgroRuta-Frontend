@@ -198,7 +198,7 @@ export class LayoutComponent {
     const alDeslizar = () => this.seguirDesplazamiento();
     const zona = inject(NgZone);
     const raiz = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    let dejarDeVigilar = () => {};
+    let dejarDeVigilar: () => void = () => undefined;
     zona.runOutsideAngular(() => window.addEventListener('scroll', alDeslizar, { passive: true }));
     afterNextRender(() => {
       const contenido = raiz.querySelector<HTMLElement>('.main');
@@ -451,7 +451,8 @@ export class LayoutComponent {
     }
     this.abiertos.update((s) => {
       const n = new Set(s);
-      n.has(g) ? n.delete(g) : n.add(g);
+      if (n.has(g)) n.delete(g);
+      else n.add(g);
       return n;
     });
   }

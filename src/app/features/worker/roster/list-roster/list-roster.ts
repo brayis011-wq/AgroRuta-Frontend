@@ -125,7 +125,9 @@ export class ListaNominasComponent implements OnInit {
         }
         this.cdr.detectChanges();
       },
-      error: () => {},
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
 
     this.cargar();
@@ -153,7 +155,9 @@ export class ListaNominasComponent implements OnInit {
         this.resumen = Object.fromEntries(r.map((x) => [x.estado, x]));
         this.cdr.detectChanges();
       },
-      error: () => {},
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
   }
 

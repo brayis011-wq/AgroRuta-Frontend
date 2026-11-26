@@ -92,6 +92,7 @@
                         autocomplete="off"
                         role="combobox"
                         aria-autocomplete="list"
+                        aria-controls="catalogo-bodega"
                         [attr.aria-expanded]="mostrarCatalogo()"
                       />
                       @if (!cargandoBodega()) {
@@ -103,7 +104,7 @@
                     </div>
                     <!-- Resultados de la búsqueda dentro de la bodega -->
                     @if (mostrarCatalogo()) {
-                      <div class="catalogo-lista">
+                      <div id="catalogo-bodega" class="catalogo-lista">
                         @for (b of catalogoFiltrado(); track b; let i = $index) {
                           <button
                             type="button"

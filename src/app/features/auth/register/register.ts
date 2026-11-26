@@ -29,9 +29,9 @@ export class RegistroComponent {
     cedula: '',
   };
 
-  error: string = '';
-  exito: string = '';
-  cargando: boolean = false;
+  error = '';
+  exito = '';
+  cargando = false;
   /** Correo al que se mandó el enlace de confirmación (la cuenta ya se creó) */
   pendiente = '';
   trabajador = false;

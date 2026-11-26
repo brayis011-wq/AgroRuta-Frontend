@@ -196,7 +196,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         this.poligonosLayer.addLayer(poligono);
-      } catch (e) {
+      } catch {
         console.warn(`Coordenadas inválidas en lote ${lote.nombre}`);
       }
     });

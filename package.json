@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint",
+    "format": "prettier --write \"src/**/*.{ts,html,css,json}\" \"e2e/**/*.ts\" \"worker/**/*.js\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,css,json}\" \"e2e/**/*.ts\" \"worker/**/*.js\""
   },
   "private": true,
   "packageManager": "npm@11.9.0",
@@ -32,14 +35,18 @@
     "@angular/build": "^21.2.29",
     "@angular/cli": "^21.2.29",
     "@angular/compiler-cli": "^21.2.26",
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.60.0",
     "@types/leaflet": "^1.9.21",
     "@types/leaflet-draw": "^1.0.13",
     "@types/node": "^25.9.1",
     "@vitest/coverage-v8": "^4.1.0",
+    "angular-eslint": "21.4.0",
+    "eslint": "^10.3.0",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
+    "typescript-eslint": "8.59.2",
     "vitest": "^4.0.8"
   }
 }

@@ -247,7 +247,7 @@ export class VentasComponent implements OnInit {
     this.cargar();
     this.jornales
       .cultivosDisponibles()
-      .subscribe({ next: (c) => this.cultivos.set(c), error: () => {} });
+      .subscribe({ next: (c) => this.cultivos.set(c), error: () => this.cultivos.set([]) });
   }
 
   cargar(): void {

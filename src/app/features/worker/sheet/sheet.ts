@@ -158,9 +158,12 @@ export class PlanillaComponent implements OnInit {
   /** Vuelve a leer la semana sin el efecto de carga (para ver en qué nómina quedó cada jornal) */
   private refrescar(): void {
     const dias = this.dias();
-    this.jornales
-      .planilla(dias[0], dias[6])
-      .subscribe({ next: (p) => this.planilla.set(p), error: () => {} });
+    this.jornales.planilla(dias[0], dias[6]).subscribe({
+      next: (p) => this.planilla.set(p),
+      error: () => {
+        // Si falla, la planilla sigue con lo que ya mostraba
+      },
+    });
   }
 
   semana(delta: number): void {

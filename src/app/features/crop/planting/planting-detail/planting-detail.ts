@@ -216,7 +216,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   });
 
   private cargarVecinos(id: number): void {
-    let fincas: Finca[] = [];
+    let fincas: Finca[];
     try {
       fincas = this.injector.get(FincaActivaService).fincas?.() ?? [];
     } catch {
@@ -245,7 +245,9 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
           };
           this.cdr.markForCheck();
         },
-        error: () => {},
+        error: () => {
+          // Si falla, la pantalla sigue con lo que ya mostraba
+        },
       });
   }
 

@@ -500,12 +500,16 @@
             }
           </p>
         }
-        <label class="campo"
-          ><span>{{ 'ventas.total' | translate }}</span>
+        <!-- Con kilos y precio el total se calcula solo (no hay campo que llenar) -->
+        <div class="campo">
+          <span id="venta-total">{{ 'ventas.total' | translate }}</span>
           @if (f.cantidadKg && f.precioKg) {
-            <output class="total-calc">{{ totalDe(f) | pesos }}</output>
+            <output class="total-calc" aria-labelledby="venta-total">{{
+              totalDe(f) | pesos
+            }}</output>
           } @else {
             <input
+              aria-labelledby="venta-total"
               name="total"
               type="number"
               min="0"
@@ -516,7 +520,7 @@
               placeholder="0"
             />
           }
-        </label>
+        </div>
         @if (!f.id) {
           <div class="campo ancho">
             <span>{{ 'ventas.howPaid' | translate }}</span>

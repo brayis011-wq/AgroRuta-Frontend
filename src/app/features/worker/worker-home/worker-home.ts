@@ -172,7 +172,9 @@ export class WorkerHomeComponent implements OnInit {
         this.cargos = c;
         this.cdr.detectChanges();
       },
-      error: () => {},
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
 
     this.nominaService.resumen().subscribe({
@@ -180,7 +182,9 @@ export class WorkerHomeComponent implements OnInit {
         this.nominasPendientes = r.find((x) => x.estado === 'PENDIENTE')?.cantidad ?? 0;
         this.cdr.detectChanges();
       },
-      error: () => {},
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
 
     this.pagoService.resumen().subscribe({
@@ -188,7 +192,9 @@ export class WorkerHomeComponent implements OnInit {
         this.resumenPagos = r;
         this.cdr.detectChanges();
       },
-      error: () => {},
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
   }
 

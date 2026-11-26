@@ -62,7 +62,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   lotesPorFinca: Record<number, Lote[]> = {};
 
   private map!: L.Map;
-  private marcadores: Map<number, L.Marker> = new Map();
+  private marcadores = new Map<number, L.Marker>();
   /** Los lotes de todas las fincas, coloreados por estado */
   private lotesLayer = L.featureGroup();
   /** Estados que tienen al menos un lote dibujado (para la leyenda) */

@@ -60,7 +60,7 @@ export class NuevoJornalComponent implements OnInit {
   form!: FormGroup;
   trabajadores: Trabajador[] = [];
   actividades: Labor[] = [];
-  actividadesSeleccionadas: Set<number> = new Set();
+  actividadesSeleccionadas = new Set<number>();
 
   /** Cultivos activos del agricultor y las fincas donde están */
   cultivos: CultivoDisponible[] = [];
@@ -225,9 +225,8 @@ export class NuevoJornalComponent implements OnInit {
 
   toggleActividad(id: number | undefined): void {
     if (id == null) return;
-    this.actividadesSeleccionadas.has(id)
-      ? this.actividadesSeleccionadas.delete(id)
-      : this.actividadesSeleccionadas.add(id);
+    if (this.actividadesSeleccionadas.has(id)) this.actividadesSeleccionadas.delete(id);
+    else this.actividadesSeleccionadas.add(id);
   }
 
   estaSeleccionada(id: number | undefined): boolean {

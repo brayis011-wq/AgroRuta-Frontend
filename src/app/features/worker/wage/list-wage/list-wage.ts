@@ -144,7 +144,9 @@ export class ListaJornalesComponent implements OnInit {
           });
         this.cdr.detectChanges();
       },
-      error: () => {},
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
   }
 
@@ -167,7 +169,9 @@ export class ListaJornalesComponent implements OnInit {
             this.cdr.detectChanges();
           }
         },
-        error: () => {},
+        error: () => {
+          // Si falla, la pantalla sigue con lo que ya mostraba
+        },
       });
   }
 

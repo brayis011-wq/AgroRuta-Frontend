@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
     password: '',
   };
 
-  error: string = '';
+  error = '';
   /** Mensaje de éxito (por ejemplo, después de crear una contraseña nueva) */
   aviso = '';
   /** La contraseña era correcta pero falta confirmar el correo */
@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
   codigo = '';
   /** No volver a pedir el código en este navegador por 30 días (se desmarca en un equipo prestado) */
   recordarDispositivo = true;
-  cargando: boolean = false;
+  cargando = false;
 
   ngOnInit(): void {
     // El interceptor redirige aquí con ?sesion=expirada cuando el servidor responde 401
