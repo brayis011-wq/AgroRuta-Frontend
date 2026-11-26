@@ -20,7 +20,8 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { formatoFecha, formatoPesos } from '../../../../shared/format';
 import { TrabajadorService } from '../../../../core/services/worker.service';
 import { Trabajador } from '../../../../core/models/worker.model';
-import { Recolector } from '../../../../core/models/crop.model';
+import { Cosecha, Recolector } from '../../../../core/models/crop.model';
+import { mensajeDeError, mensajeDelServidor } from '../../../../shared/error-message';
 
 /** Una fila de "¿Quién la recogió?" mientras se llena el formulario */
 interface FilaRecolector {
@@ -33,6 +34,16 @@ interface FilaRecolector {
   fija: boolean;
   nombre?: string;
   estadoNomina?: string | null;
+}
+
+/** Lo que se escribe en el formulario de la cosecha (con ngModel) */
+interface FormCosecha {
+  fecha: string;
+  cantidadKg: number | null;
+  calidad: Cosecha['calidad'] | '';
+  observaciones: string;
+  siembraId: number;
+  precioKg: number | null;
 }
 
 @Component({
@@ -73,13 +84,13 @@ export class RegistrarCosecha implements OnInit {
   error = ''; // clave de traducción (o mensaje crudo del backend)
   exito = ''; // clave de traducción
 
-  form: any = {
+  form: FormCosecha = {
     fecha: '',
     cantidadKg: null,
     calidad: '',
     observaciones: '',
     siembraId: 0,
-    precioKg: null as number | null,
+    precioKg: null,
   };
 
   // ── Quién la recogió ──
@@ -298,6 +309,8 @@ export class RegistrarCosecha implements OnInit {
 
     const datos = {
       ...this.form,
+      cantidadKg: this.form.cantidadKg ?? undefined,
+      calidad: this.form.calidad || undefined,
       confirmarCarencia: this.confirmarCarencia,
       recolectores: this.paraEnviar(),
     };
@@ -321,11 +334,11 @@ export class RegistrarCosecha implements OnInit {
         this.cargando = false;
         // AGR-012: la fecha cae en la carencia de una fumigación; se muestra el aviso con la casilla para confirmar
         if (err.error?.errorCode === 'AGR-012') {
-          this.mensajeCarencia = err.error?.message ?? '';
+          this.mensajeCarencia = mensajeDelServidor(err) ?? '';
           this.cdr.detectChanges();
           return;
         }
-        this.error = err.error?.message || 'siembra.harvest.errors.register';
+        this.error = mensajeDeError(err, 'siembra.harvest.errors.register');
         this.cdr.detectChanges();
       },
     });

@@ -14,6 +14,7 @@ import { ResumenLluvia } from '../../../core/models/finance.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { AvisosService } from '../../../core/services/toast.service';
 import { formatoNumero, localeDe } from '../../../shared/format';
+import { mensajeDeError } from '../../../shared/error-message';
 
 /** "aaaa-mm-dd" local */
 function isoLocal(d: Date): string {
@@ -116,7 +117,7 @@ export class LluviaFincaComponent {
       },
       error: (e) => {
         this.guardando.set(false);
-        this.error.set(e?.error?.message || 'lluvia.errors.save');
+        this.error.set(mensajeDeError(e, 'lluvia.errors.save'));
       },
     });
   }

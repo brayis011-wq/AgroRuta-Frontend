@@ -31,6 +31,7 @@ import {
 } from '../../../../core/models/crop.model';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
 import * as L from 'leaflet';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -330,7 +331,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (e) => {
         // p. ej. "El lote tiene una siembra en curso..."
-        this.error = e?.error?.message || 'cultivo.fincas.detail.errors.deleteLot';
+        this.error = mensajeDeError(e, 'cultivo.fincas.detail.errors.deleteLot');
         this.loteAEliminar = null;
         this.eliminando = false;
         this.cdr.detectChanges();
@@ -371,7 +372,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         error: (e) => {
           this.guardando = false;
-          this.error = e?.error?.message || 'temporadas.finca.errors.save';
+          this.error = mensajeDeError(e, 'temporadas.finca.errors.save');
           this.cdr.detectChanges();
         },
       });

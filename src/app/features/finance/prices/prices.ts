@@ -19,6 +19,7 @@ import { JornalService } from '../../../core/services/worker.service';
 import { EstadoPrecios, PrecioCultivo, PrecioReferencia } from '../../../core/models/finance.model';
 import { AvisosService } from '../../../core/services/toast.service';
 import { FechaPipe, PesosPipe } from '../../../shared/format.pipe';
+import { mensajeDeError } from '../../../shared/error-message';
 
 /** Un cultivo del agricultor (nombre y variedad) con su precio de referencia */
 interface CultivoPrecio {
@@ -192,7 +193,7 @@ export class PreciosComponent implements OnInit {
       },
       error: (e) => {
         this.guardando.set(false);
-        this.error.set(e?.error?.message || 'precios.errors.save');
+        this.error.set(mensajeDeError(e, 'precios.errors.save'));
       },
     });
   }

@@ -1,3 +1,4 @@
+import { estadoHttp, mensajeDelServidor } from '../../../shared/error-message';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -180,9 +181,9 @@ export class BackupHomeComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  private showError(err: any, fallbackKey: string): void {
+  private showError(err: unknown, fallbackKey: string): void {
     // 422 = regla de negocio (ej. "hay otra operación en curso"): el backend manda el motivo
-    const serverMsg = err?.status === 422 ? err?.error?.message : null;
+    const serverMsg = estadoHttp(err) === 422 ? mensajeDelServidor(err) : null;
     this.message = { type: 'error', text: serverMsg || this.translate.instant(fallbackKey) };
     this.cdr.detectChanges();
   }

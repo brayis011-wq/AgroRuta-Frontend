@@ -54,6 +54,7 @@ import { ColaSinConexionService } from '../../../../core/offline/offline-queue.s
 import { Pendiente } from '../../../../core/offline/offline-store';
 import { Weather } from '../../../../core/models/weather.model';
 import { ConsejoClima, consejoFumigacion, municipio } from '../../../../shared/weather';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 interface TimelineItem {
   id: number;
@@ -672,7 +673,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
         },
         error: (e) => {
           this.ocultos.delete(clave);
-          this.error = e?.error?.message || 'temporadas.registro.errors.delete';
+          this.error = mensajeDeError(e, 'temporadas.registro.errors.delete');
           this.cdr.detectChanges();
         },
       });

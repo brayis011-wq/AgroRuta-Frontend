@@ -28,6 +28,7 @@ import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
 type FiltroEstado = 'TODAS' | 'PENDIENTE' | 'APROBADA' | 'PAGADA' | 'ANULADA';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -305,7 +306,7 @@ export class ListaNominasComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: (e) => {
-        this.errorLote = e?.error?.message || 'workers.rosters.team.errors.generate';
+        this.errorLote = mensajeDeError(e, 'workers.rosters.team.errors.generate');
         this.procesandoLote = false;
         this.cdr.detectChanges();
       },
@@ -381,7 +382,7 @@ export class ListaNominasComponent implements OnInit {
       },
       error: (e) => {
         this.procesandoLote = false;
-        this.errorLote = e?.error?.message || 'workers.rosters.team.errors.pay';
+        this.errorLote = mensajeDeError(e, 'workers.rosters.team.errors.pay');
         this.error = this.errorLote;
         this.cdr.detectChanges();
       },
@@ -432,7 +433,7 @@ export class ListaNominasComponent implements OnInit {
         this.cargar();
       },
       error: (e) => {
-        this.error = e?.error?.message || 'workers.rosters.list.errors.cancel';
+        this.error = mensajeDeError(e, 'workers.rosters.list.errors.cancel');
         this.cdr.detectChanges();
       },
     });
@@ -474,7 +475,7 @@ export class ListaNominasComponent implements OnInit {
         }, 3500);
       },
       error: (e) => {
-        this.error = e?.error?.message || 'workers.rosters.list.errors.delete';
+        this.error = mensajeDeError(e, 'workers.rosters.list.errors.delete');
         this.cdr.detectChanges();
       },
     });

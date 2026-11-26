@@ -7,7 +7,7 @@ export function aplicarTextosDibujo(translate: TranslateService): void {
   const t = (k: string): string => translate.instant('mapDraw.' + k);
 
   // leaflet-draw agrega drawLocal al L global (window.L)
-  const Lg: any = (window as any).L ?? (L as any);
+  const Lg = (window as unknown as { L?: typeof L }).L ?? L;
   const d = Lg.drawLocal;
   if (!d) return;
 

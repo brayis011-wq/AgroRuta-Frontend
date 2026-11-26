@@ -11,6 +11,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { inicioPorRol } from '../../../core/guards/role-guards';
 import { LoginRequest } from '../../../core/models/auth.model';
+import { mensajeDelServidor } from '../../../shared/error-message';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,7 +80,7 @@ export class LoginComponent implements OnInit {
       error: (err) => {
         this.cargando = false;
         const cuentaDesactivada =
-          err.status === 401 && /desactivada/i.test(err.error?.message ?? '');
+          err.status === 401 && /desactivada/i.test(mensajeDelServidor(err) ?? '');
         this.sinConfirmar = err.status === 403 && err.error?.errorCode === 'AGR-033';
         this.reenviado = false;
         const faltaCodigo = err.status === 403 && err.error?.errorCode === 'AGR-034';

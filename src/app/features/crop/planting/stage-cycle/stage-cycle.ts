@@ -25,6 +25,7 @@ import {
   siguienteEtapa,
 } from './stage-cycle.logic';
 import { estimarCiclo, etapasConDias } from './cycle-estimate';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 type Panel = 'avanzar' | 'terminar' | null;
 
@@ -156,7 +157,7 @@ export class CicloEtapasComponent {
       },
       error: (err) => {
         this.guardando.set(false);
-        this.error.set(err?.error?.message || 'temporadas.ciclo.error');
+        this.error.set(mensajeDeError(err, 'temporadas.ciclo.error'));
       },
     });
   }

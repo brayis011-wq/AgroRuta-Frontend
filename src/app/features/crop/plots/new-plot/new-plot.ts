@@ -14,6 +14,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
 import { Subscription } from 'rxjs';
+import { Finca } from '../../../../core/models/crop.model';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { aplicarTextosDibujo } from '../../../../shared/leaflet-draw-i18n';
@@ -44,7 +45,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   form = { nombre: '' };
 
   fincaId!: number;
-  finca: any = null;
+  finca: Finca | null = null;
   hectareasFinca: number | null = null;
 
   areaCalculada: number | null = null;
@@ -61,7 +62,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private map!: L.Map;
   private drawnItems!: L.FeatureGroup;
-  private drawControl: any = null;
+  private drawControl: L.Control.Draw | null = null;
   private locateBtnEl: HTMLElement | null = null;
   private langSub?: Subscription;
 
@@ -126,7 +127,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.drawControl) this.map.removeControl(this.drawControl);
 
-    this.drawControl = new (L as any).Control.Draw({
+    this.drawControl = new L.Control.Draw({
       edit: { featureGroup: this.drawnItems, remove: true },
       draw: {
         polygon: {
@@ -205,11 +206,12 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.crearControlDibujo();
 
-    this.map.on('draw:created', (event: any) => {
+    this.map.on(L.Draw.Event.CREATED, (e: L.LeafletEvent) => {
+      const event = e as L.DrawEvents.Created;
       this.drawnItems.clearLayers();
       const layer = event.layer;
       this.drawnItems.addLayer(layer);
-      const latlngs: L.LatLng[] = layer.getLatLngs()[0];
+      const latlngs = (layer as L.Polygon).getLatLngs()[0] as L.LatLng[];
       this.coordenadas = JSON.stringify(latlngs.map((p) => [p.lat, p.lng]));
       this.areaCalculada = this.calcularAreaHectareas(latlngs);
       const c = this.calcularCentroide(latlngs);

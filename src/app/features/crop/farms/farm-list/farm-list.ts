@@ -25,6 +25,7 @@ import { Finca, Lote, nombreCultivo } from '../../../../core/models/crop.model';
 import { escaparHtml } from '../../../../shared/html';
 import { ESTADOS_LOTE, colorEstadoLote, puntosDelLote } from '../../lot-map';
 import * as L from 'leaflet';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -312,7 +313,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.fincaResaltada = finca.id ?? null;
     const marcador = finca.id != null ? this.marcadores.get(finca.id) : null;
     if (marcador) {
-      const el = (marcador as any)._icon as HTMLElement | null;
+      const el = marcador.getElement();
       el?.querySelector('.marcador-finca')?.classList.add('marcador-finca--activo');
     }
   }
@@ -320,7 +321,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
   quitarResaltado(): void {
     if (this.fincaResaltada != null) {
       const marcador = this.marcadores.get(this.fincaResaltada);
-      const el = (marcador as any)?._icon as HTMLElement | null;
+      const el = marcador?.getElement();
       el?.querySelector('.marcador-finca')?.classList.remove('marcador-finca--activo');
     }
     this.fincaResaltada = null;
@@ -371,7 +372,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (e) => {
         // p. ej. "El lote 'Norte' tiene una siembra en curso..."
-        this.error = e?.error?.message || 'cultivo.fincas.errors.delete';
+        this.error = mensajeDeError(e, 'cultivo.fincas.errors.delete');
         this.fincaAEliminar = null;
         this.eliminandoId = null;
         this.cdr.detectChanges();

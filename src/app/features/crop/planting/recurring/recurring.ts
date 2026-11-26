@@ -12,6 +12,7 @@ import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.servic
 import { AvisosService } from '../../../../core/services/toast.service';
 import { FechaPipe } from '../../../../shared/format.pipe';
 import { iso } from '../../calendar/events';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 interface Borrador {
   id: number | null;
@@ -120,7 +121,7 @@ export class LaboresRepetidasComponent {
       },
       error: (e) => {
         this.guardando.set(false);
-        this.error.set(e?.error?.message || 'temporadas.repetir.errors.save');
+        this.error.set(mensajeDeError(e, 'temporadas.repetir.errors.save'));
       },
     });
   }

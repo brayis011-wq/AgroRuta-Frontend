@@ -22,6 +22,7 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { AvisosService } from '../../../core/services/toast.service';
 import { FechaPipe, PesosPipe } from '../../../shared/format.pipe';
 import { ClavePeriodo, rangoPeriodo } from '../../../core/services/report.service';
+import { mensajeDeError } from '../../../shared/error-message';
 
 /** Icono de cada categoría */
 export const ICONO_CATEGORIA: Record<CategoriaGasto, string> = {
@@ -190,7 +191,7 @@ export class GastosComponent implements OnInit {
       },
       error: (e) => {
         this.guardando.set(false);
-        this.errorPanel.set(e?.error?.message || 'gastos.errors.save');
+        this.errorPanel.set(mensajeDeError(e, 'gastos.errors.save'));
       },
     });
   }
@@ -202,12 +203,10 @@ export class GastosComponent implements OnInit {
       peligro: true,
     });
     if (!ok) return;
-    this.gastos
-      .eliminar(g.id)
-      .subscribe({
-        next: () => this.cargar(),
-        error: () => this.error.set('gastos.errors.delete'),
-      });
+    this.gastos.eliminar(g.id).subscribe({
+      next: () => this.cargar(),
+      error: () => this.error.set('gastos.errors.delete'),
+    });
   }
 
   esCategoria(clave: string): clave is CategoriaGasto {

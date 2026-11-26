@@ -16,6 +16,7 @@ import { Nomina, Pago } from '../../../../core/models/worker.model';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 import { Miga, MigasComponent } from '../../../../shared/breadcrumbs/breadcrumbs';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -143,7 +144,7 @@ export class DetalleNominaComponent implements OnInit {
         this.mostrarExito('workers.rosters.detail.success.wageRemoved');
       },
       error: (e) => {
-        this.error = e?.error?.message || 'workers.rosters.detail.errors.fix';
+        this.error = mensajeDeError(e, 'workers.rosters.detail.errors.fix');
         this.guardando = false;
         this.cdr.detectChanges();
       },
@@ -162,7 +163,7 @@ export class DetalleNominaComponent implements OnInit {
         this.mostrarExito('workers.rosters.detail.success.wagesAdded');
       },
       error: (e) => {
-        this.error = e?.error?.message || 'workers.rosters.detail.errors.fix';
+        this.error = mensajeDeError(e, 'workers.rosters.detail.errors.fix');
         this.guardando = false;
         this.cdr.detectChanges();
       },
@@ -237,7 +238,7 @@ export class DetalleNominaComponent implements OnInit {
       },
       error: (err) => {
         this.guardando = false;
-        this.error = err?.error?.message || 'workers.rosters.detail.errors.payment';
+        this.error = mensajeDeError(err, 'workers.rosters.detail.errors.payment');
         this.cdr.detectChanges();
       },
     });

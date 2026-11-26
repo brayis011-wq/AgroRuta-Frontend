@@ -80,6 +80,11 @@ describe('RegistrarActividad', () => {
       descripcion: 'Riego manual',
       fecha: '2024-04-01',
       siembraId: 7,
+      costo: null,
+      producto: '',
+      agriculturalInputId: null,
+      cantidadUsada: null,
+      unidadCantidad: null,
     };
     component.onSubmit();
     expect(cultivoServiceMock.registrarActividad).toHaveBeenCalledWith({

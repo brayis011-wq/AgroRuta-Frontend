@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CatalogoCultivoService } from '../../../core/services/crop-catalog.service';
 import { TipoCultivo, VariedadCultivo } from '../../../core/models/crop.model';
+import { mensajeDeError } from '../../../shared/error-message';
 
 /**
  * Catálogo de cultivos y variedades que los agricultores eligen al sembrar.
@@ -123,7 +124,7 @@ export class AdminCultivosComponent implements OnInit {
         this.guardando = false;
         this.mensaje = {
           tipo: 'error',
-          texto: err?.error?.message || this.translate.instant('admin.crops.saveError'),
+          texto: mensajeDeError(err, this.translate.instant('admin.crops.saveError')),
         };
         this.cdr.markForCheck();
       },

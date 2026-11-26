@@ -37,6 +37,7 @@ import {
   unidadGrande,
   unidadesDe,
 } from '../../../../core/models/inventory.model';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 /** Un producto de la bodega del agricultor, con su ficha del catálogo (dosis, reentrada, carencia) si sigue activa */
 export interface InsumoBodega {
@@ -579,7 +580,7 @@ export class RegistrarFumigacion implements OnInit, OnDestroy {
       },
       error: (err: { error?: { message?: string } }) => {
         this.cargando = false;
-        this.error = err.error?.message ?? 'siembra.spray.errors.register';
+        this.error = mensajeDeError(err, 'siembra.spray.errors.register');
         this.cdr.markForCheck();
       },
     });

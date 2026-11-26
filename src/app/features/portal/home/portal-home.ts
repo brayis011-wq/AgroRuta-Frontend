@@ -14,6 +14,7 @@ import { PortalService } from '../../../core/services/portal.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { EstadoPortal, MiJornal, MiNomina, MiPago } from '../../../core/models/portal.model';
 import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/format';
+import { mensajeDeError } from '../../../shared/error-message';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -96,7 +97,7 @@ export class PortalInicioComponent implements OnInit {
       },
       error: (err) => {
         this.enviando = false;
-        this.errorSolicitud = err?.error?.message || 'portal.request.error';
+        this.errorSolicitud = mensajeDeError(err, 'portal.request.error');
         this.cdr.detectChanges();
       },
     });

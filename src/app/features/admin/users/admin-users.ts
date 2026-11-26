@@ -13,6 +13,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { ROLES, RolUsuario, UsuarioAdmin } from '../../../core/models/admin.model';
 import { formatoFecha } from '../../../shared/format';
+import { mensajeDeError } from '../../../shared/error-message';
 
 type FiltroEstado = 'todos' | 'activos' | 'inactivos';
 
@@ -149,7 +150,7 @@ export class AdminUsuariosComponent implements OnInit {
         this.pendiente = null;
         this.mensaje = {
           tipo: 'error',
-          texto: err?.error?.message || this.translate.instant('admin.users.errors.save'),
+          texto: mensajeDeError(err, this.translate.instant('admin.users.errors.save')),
         };
         this.cdr.detectChanges();
       },

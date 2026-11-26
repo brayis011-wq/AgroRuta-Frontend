@@ -15,6 +15,7 @@ import { CultivoService } from '../../../../core/services/crop.service';
 import { CatalogoCultivoService } from '../../../../core/services/crop-catalog.service';
 import { Siembra, TipoCultivo } from '../../../../core/models/crop.model';
 import { forkJoin, of, switchMap, map } from 'rxjs';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -162,7 +163,7 @@ export class NuevaSiembraComponent implements OnInit {
       },
       error: (err) => {
         // El backend explica el motivo (lote ocupado, variedad desactivada...)
-        this.error = err?.error?.message || 'siembra.new.errors.register';
+        this.error = mensajeDeError(err, 'siembra.new.errors.register');
         this.guardando = false;
         this.cdr.detectChanges();
       },

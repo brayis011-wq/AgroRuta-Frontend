@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { AvisosService } from '../services/toast.service';
 import { AlmacenSinConexion, Lectura, Pendiente, TipoPendiente } from './offline-store';
+import { mensajeDeError } from '../../shared/error-message';
 
 /** Cabecera con la clave del envío: el servidor rechaza la segunda vez que llega la misma (409 AGR-036) */
 export const CABECERA_ENVIO = 'X-Idempotency-Key';
@@ -225,7 +226,7 @@ export class ColaSinConexionService {
           // Regla de negocio (422, 404, 409...): se queda hasta que la persona decida
           await this.almacen.guardarPendiente({
             ...p,
-            error: err.error?.message || 'offline.rejected',
+            error: mensajeDeError(err, 'offline.rejected'),
             codigoError: err.error?.errorCode,
           });
         }

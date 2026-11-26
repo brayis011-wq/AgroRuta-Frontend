@@ -23,6 +23,7 @@ import {
   LaborService,
 } from '../../../../core/services/worker.service';
 import { Trabajador, Labor } from '../../../../core/models/worker.model';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 /** Lo que se recuerda del último jornal registrado */
 interface UltimoJornal {
@@ -270,7 +271,7 @@ export class NuevoJornalComponent implements OnInit {
       },
       error: (err) => {
         // El backend explica el motivo (cultivo finalizado, de otra finca, etc.)
-        this.error = err?.error?.message || 'workers.wages.new.errors.register';
+        this.error = mensajeDeError(err, 'workers.wages.new.errors.register');
         this.guardando = false;
         this.cdr.detectChanges();
       },

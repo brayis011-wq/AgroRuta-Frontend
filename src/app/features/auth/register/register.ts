@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { RegisterRequest } from '../../../core/models/auth.model';
+import { mensajeDeError } from '../../../shared/error-message';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,7 +71,7 @@ export class RegistroComponent {
       },
       error: (err) => {
         this.cargando = false;
-        this.error = err.error?.message || 'auth.register.error';
+        this.error = mensajeDeError(err, 'auth.register.error');
         this.cdr.detectChanges();
       },
     });

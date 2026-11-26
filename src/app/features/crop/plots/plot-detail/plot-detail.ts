@@ -32,6 +32,7 @@ import {
 import { environment } from '../../../../../environments/environment';
 import { rangoNdvi } from '../../../../shared/ndvi';
 import { diasEntre, hoyIso } from '../../planting/stage-cycle/stage-cycle.logic';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 export interface Temporada {
   siembra: Siembra;
@@ -222,7 +223,7 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         this.lote.set(l);
         this.error.set('');
       },
-      error: (e) => this.error.set(e?.error?.message || 'temporadas.lote.errors.state'),
+      error: (e) => this.error.set(mensajeDeError(e, 'temporadas.lote.errors.state')),
     });
   }
 
@@ -254,7 +255,7 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         error: (e) => {
           this.guardando.set(false);
-          this.error.set(e?.error?.message || 'temporadas.lote.errors.save');
+          this.error.set(mensajeDeError(e, 'temporadas.lote.errors.save'));
         },
       });
   }
@@ -317,7 +318,7 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         maxcc: 30,
         format: 'image/png',
         transparent: true,
-      } as any,
+      } as L.WMSOptions & { time: string; maxcc: number },
     );
   }
 

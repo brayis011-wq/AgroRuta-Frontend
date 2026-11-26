@@ -17,6 +17,7 @@ import {
   MeasurementUnit,
 } from '../../../core/models/agricultural-input.model';
 import { formatoNumero } from '../../../shared/format';
+import { mensajeDeError } from '../../../shared/error-message';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -162,7 +163,7 @@ export class AdminInsumosComponent implements OnInit {
         this.guardando = false;
         this.mensaje = {
           tipo: 'error',
-          texto: err?.error?.message || this.translate.instant('admin.inputs.saveError'),
+          texto: mensajeDeError(err, this.translate.instant('admin.inputs.saveError')),
         };
         this.cdr.detectChanges();
       },
@@ -208,7 +209,7 @@ export class AdminInsumosComponent implements OnInit {
         this.porDesactivar = null;
         this.mensaje = {
           tipo: 'error',
-          texto: err?.error?.message || this.translate.instant('admin.inputs.statusError'),
+          texto: mensajeDeError(err, this.translate.instant('admin.inputs.statusError')),
         };
         this.cdr.detectChanges();
       },

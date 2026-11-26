@@ -1,3 +1,4 @@
+import { ActividadCultivo } from '../../../../core/models/crop.model';
 import { UltimoUsadoService } from '../../../../core/services/last-used.service';
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import {
@@ -29,6 +30,21 @@ import { formatoPesos } from '../../../../shared/format';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, catchError, debounceTime, of, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { mensajeDeError } from '../../../../shared/error-message';
+
+/** Lo que se escribe en el formulario de la actividad (con ngModel) */
+interface FormActividad {
+  // Viene de la URL, de lo último usado o de un registro viejo (FERTILIZACION); el backend valida el valor
+  tipo: string;
+  descripcion: string;
+  fecha: string;
+  siembraId: number;
+  costo: number | null;
+  producto: string;
+  agriculturalInputId: number | null;
+  cantidadUsada: number | null;
+  unidadCantidad: MeasurementUnit | null;
+}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,16 +69,16 @@ export class RegistrarActividad implements OnInit {
   error = ''; // clave de traducción (o mensaje crudo del backend)
   exito = ''; // clave de traducción
 
-  form: any = {
+  form: FormActividad = {
     tipo: '',
     descripcion: '',
     fecha: '',
     siembraId: 0,
-    costo: null as number | null,
-    producto: '' as string,
-    agriculturalInputId: null as number | null,
-    cantidadUsada: null as number | null,
-    unidadCantidad: null as MeasurementUnit | null,
+    costo: null,
+    producto: '',
+    agriculturalInputId: null,
+    cantidadUsada: null,
+    unidadCantidad: null,
   };
 
   tiposActividad = ['ABONADO', 'PODA', 'TUTOREO', 'DESHIERBE', 'RIEGO', 'REVISION', 'OTRO'];
@@ -259,12 +275,14 @@ export class RegistrarActividad implements OnInit {
       this.conInsumo && (f.producto?.trim() || f.agriculturalInputId)
         ? {
             ...f,
+            tipo: (f.tipo || undefined) as ActividadCultivo['tipo'] | undefined,
             producto: f.producto?.trim() || null,
             cantidadUsada: f.cantidadUsada ? Number(f.cantidadUsada) : null,
             unidadCantidad: f.cantidadUsada ? f.unidadCantidad : null,
           }
         : {
             ...f,
+            tipo: (f.tipo || undefined) as ActividadCultivo['tipo'] | undefined,
             producto: null,
             agriculturalInputId: null,
             cantidadUsada: null,
@@ -294,7 +312,7 @@ export class RegistrarActividad implements OnInit {
       },
       error: (err) => {
         this.cargando = false;
-        this.error = err.error?.message || 'siembra.activity.errors.register';
+        this.error = mensajeDeError(err, 'siembra.activity.errors.register');
         this.cdr.detectChanges();
       },
     });

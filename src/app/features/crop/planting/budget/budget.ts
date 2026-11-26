@@ -18,6 +18,7 @@ import { AvisosService } from '../../../../core/services/toast.service';
 import { PesosPipe } from '../../../../shared/format.pipe';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { TranslateService } from '@ngx-translate/core';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 /** Ancho de una barra de avance (0 a 100) */
 export function avance(gastado: number, presupuesto: number | null): number {
@@ -105,12 +106,10 @@ export class PresupuestoSiembraComponent {
     effect(() => {
       const id = this.siembraId();
       this.version();
-      this.campo
-        .presupuesto(id)
-        .subscribe({
-          next: (p) => this.presupuesto.set(p ?? null),
-          error: () => this.presupuesto.set(null),
-        });
+      this.campo.presupuesto(id).subscribe({
+        next: (p) => this.presupuesto.set(p ?? null),
+        error: () => this.presupuesto.set(null),
+      });
       this.cultivos
         .costosSiembra(id)
         .subscribe({ next: (c) => this.costos.set(c), error: () => this.costos.set(null) });
@@ -151,7 +150,7 @@ export class PresupuestoSiembraComponent {
       },
       error: (e) => {
         this.guardando.set(false);
-        this.error.set(e?.error?.message || 'presupuesto.errors.save');
+        this.error.set(mensajeDeError(e, 'presupuesto.errors.save'));
       },
     });
   }

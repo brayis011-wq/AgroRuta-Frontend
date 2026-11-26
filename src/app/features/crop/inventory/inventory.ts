@@ -26,6 +26,7 @@ import {
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { ActivatedRoute } from '@angular/router';
 import { LanguageService } from '../../../core/services/language.service';
+import { mensajeDeError } from '../../../shared/error-message';
 
 type Panel = 'compra' | 'ajuste' | 'minimo';
 
@@ -176,7 +177,7 @@ export class InventarioComponent implements OnInit {
         this.abierto.set(null);
         this.alternarHistorial(s);
       },
-      error: (e) => this.error.set(e?.error?.message || 'inventario.errors.save'),
+      error: (e) => this.error.set(mensajeDeError(e, 'inventario.errors.save')),
     });
   }
 
@@ -283,7 +284,7 @@ export class InventarioComponent implements OnInit {
       },
       error: (e) => {
         this.guardando.set(false);
-        this.errorForm.set(e?.error?.message || 'inventario.errors.save');
+        this.errorForm.set(mensajeDeError(e, 'inventario.errors.save'));
       },
     });
   }

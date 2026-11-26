@@ -40,6 +40,7 @@ import {
   totalFila,
 } from './sheet.logic';
 import { esPendiente } from '../../../core/offline/offline-queue.service';
+import { mensajeDeError } from '../../../shared/error-message';
 
 /** Lo que se recuerda de la planilla: el cultivo y las labores con que se anota */
 interface UltimaPlanilla {
@@ -319,7 +320,7 @@ export class PlanillaComponent implements OnInit {
             entradas.map((x) => clave(x.trabajadorId, x.fecha)),
             false,
           );
-          this.error.set(e?.error?.message || 'workers.sheet.errors.save');
+          this.error.set(mensajeDeError(e, 'workers.sheet.errors.save'));
         },
       });
   }
@@ -353,7 +354,7 @@ export class PlanillaComponent implements OnInit {
       },
       error: (e) => {
         this.marcar([k], false);
-        this.error.set(e?.error?.message || 'workers.sheet.errors.remove');
+        this.error.set(mensajeDeError(e, 'workers.sheet.errors.remove'));
       },
     });
   }

@@ -31,6 +31,7 @@ import { Trabajador, Nomina, Cargo, ResumenPagos } from '../../../core/models/wo
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { PesosPipe, FechaPipe } from '../../../shared/format.pipe';
 import { iniciales as inicialesDe } from '../../../shared/iniciales';
+import { mensajeDeError } from '../../../shared/error-message';
 
 type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 
@@ -349,7 +350,7 @@ export class WorkerHomeComponent implements OnInit {
       },
       error: (err) => {
         this.guardandoNomina = false;
-        this.errorNomina = err?.error?.message ?? 'workers.home.errors.generateRoster';
+        this.errorNomina = mensajeDeError(err, 'workers.home.errors.generateRoster');
         this.cdr.detectChanges();
       },
     });

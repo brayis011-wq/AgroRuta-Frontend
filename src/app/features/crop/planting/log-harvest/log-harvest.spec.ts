@@ -198,6 +198,7 @@ describe('RegistrarCosecha', () => {
       calidad: 'PRIMERA',
       observaciones: 'Ok',
       siembraId: 5,
+      precioKg: null,
     };
     component.onSubmit();
     expect(cultivoServiceMock.registrarCosecha).toHaveBeenCalledWith({

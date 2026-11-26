@@ -20,6 +20,7 @@ import {
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { localeDe } from '../../../../shared/format';
 import { reducirFoto, revisarArchivo } from '../../../../shared/photo';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 const ICONO: Record<TipoProblema, string> = {
   PLAGA: 'ti-bug',
@@ -167,7 +168,7 @@ export class DiagnosticoSiembraComponent implements OnDestroy {
           this.error.set('diagnostico.errors.offline');
           return;
         }
-        this.error.set(e.error?.message || 'diagnostico.errors.generic');
+        this.error.set(mensajeDeError(e, 'diagnostico.errors.generic'));
         // Una foto que no sirvió también gasta un análisis: se trae la cuenta al día
         this.servicio.listar(id).subscribe({
           next: (actual) => {

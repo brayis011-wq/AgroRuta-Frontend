@@ -39,6 +39,7 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { AvisosService } from '../../../core/services/toast.service';
 import { FechaPipe, PesosPipe } from '../../../shared/format.pipe';
 import { esPendiente } from '../../../core/offline/offline-queue.service';
+import { mensajeDeError } from '../../../shared/error-message';
 
 type Filtro = 'debe' | 'VENCIDA' | 'PAGADA' | 'todas';
 
@@ -528,7 +529,7 @@ export class VentasComponent implements OnInit {
       },
       error: (e) => {
         this.guardando.set(false);
-        this.errorPanel.set(e?.error?.message || 'ventas.errors.save');
+        this.errorPanel.set(mensajeDeError(e, 'ventas.errors.save'));
       },
     });
   }
@@ -597,7 +598,7 @@ export class VentasComponent implements OnInit {
         },
         error: (e) => {
           this.guardando.set(false);
-          this.errorPanel.set(e?.error?.message || 'ventas.errors.payment');
+          this.errorPanel.set(mensajeDeError(e, 'ventas.errors.payment'));
         },
       });
   }
