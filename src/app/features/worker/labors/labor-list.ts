@@ -1,13 +1,7 @@
 // src/app/features/worker/labors/labor-list.ts
 
 import { PestanasCatalogoComponent } from '../catalog-tabs/catalog-tabs';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -16,7 +10,6 @@ import { Labor } from '../../../core/models/worker.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-labores',
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe, PestanasCatalogoComponent],

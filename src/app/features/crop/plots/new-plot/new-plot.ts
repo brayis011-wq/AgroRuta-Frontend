@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   OnInit,
   AfterViewInit,
@@ -13,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
-import { Subscription } from 'rxjs';
+import { Subscription, catchError, map, of, switchMap } from 'rxjs';
 import { Finca } from '../../../../core/models/crop.model';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -23,7 +22,6 @@ import 'leaflet-draw';
 import { GeocodingService } from '../../../../core/services/geocoding.service';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nuevo-lote',
   standalone: true,
   imports: [FormsModule, TranslatePipe, MigasCultivoComponent],
@@ -281,8 +279,9 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         area: this.areaCalculada,
         fincaId: this.fincaId,
       })
-      .subscribe({
-        next: (lote) => {
+      .pipe(
+        // Después se guarda el dibujo; si eso falla el lote ya existe y se sigue igual
+        switchMap((lote) =>
           this.cultivoService
             .actualizarGeometriaLote(lote.id!, {
               coordenadas: this.coordenadas!,
@@ -290,20 +289,18 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
               centroideLat: this.centroideLat!,
               centroideLng: this.centroideLng!,
             })
-            .subscribe({
-              next: () => {
-                this.exito = true;
-                this.cdr.detectChanges();
-                this.avisos.exito('avisos.plotNext');
-                this.router.navigate(['/crops/plot', lote.id]); // siguiente paso: sembrar en él
-              },
-              error: () => {
-                this.exito = true;
-                this.cdr.detectChanges();
-                this.avisos.exito('avisos.plotNext');
-                this.router.navigate(['/crops/plot', lote.id]);
-              },
-            });
+            .pipe(
+              map(() => lote),
+              catchError(() => of(lote)),
+            ),
+        ),
+      )
+      .subscribe({
+        next: (lote) => {
+          this.exito = true;
+          this.cdr.detectChanges();
+          this.avisos.exito('avisos.plotNext');
+          this.router.navigate(['/crops/plot', lote.id]); // siguiente paso: sembrar en él
         },
         error: () => {
           this.guardando = false;

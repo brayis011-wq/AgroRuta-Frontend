@@ -4,7 +4,6 @@ import {
   SiembrasActivasService,
 } from '../../../../core/services/active-plantings.service';
 import {
-  ChangeDetectionStrategy,
   Component,
   OnInit,
   AfterViewInit,
@@ -28,7 +27,6 @@ import * as L from 'leaflet';
 import { mensajeDeError } from '../../../../shared/error-message';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-fincas',
   standalone: true,
   imports: [FormsModule, TranslatePipe, RouterLink, ContarDirective, PrecargarDirective],

@@ -1,11 +1,5 @@
 import { estadoHttp, mensajeDelServidor } from '../../../shared/error-message';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -15,7 +9,6 @@ import { LanguageService } from '../../../core/services/language.service';
 type ModalMode = 'restore' | 'delete';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-backup-home',
   standalone: true,
   imports: [FormsModule, TranslatePipe],

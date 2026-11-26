@@ -5,7 +5,9 @@ import {
   computed,
   inject,
   signal,
+  DestroyRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -50,6 +52,7 @@ type Panel = 'compra' | 'ajuste' | 'minimo';
   ],
 })
 export class InventarioComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly inventario = inject(InventarioService);
   private readonly insumosService = inject(AgriculturalInputService);
   private readonly confirm = inject(ConfirmService);
@@ -104,10 +107,12 @@ export class InventarioComponent implements OnInit {
       .getAll()
       .subscribe({ next: (l) => this.catalogo.set(l), error: () => this.catalogo.set([]) });
     // La unidad de la compra sigue al insumo elegido (no se mezclan litros con gramos)
-    this.compra.controls.insumoId.valueChanges.subscribe((id) => {
-      const i = this.catalogo().find((x) => x.id === Number(id));
-      if (i) this.compra.controls.unidad.setValue(unidadGrande(unidadBaseDe(i.unidadSugerida)));
-    });
+    this.compra.controls.insumoId.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((id) => {
+        const i = this.catalogo().find((x) => x.id === Number(id));
+        if (i) this.compra.controls.unidad.setValue(unidadGrande(unidadBaseDe(i.unidadSugerida)));
+      });
   }
 
   cargar(): void {

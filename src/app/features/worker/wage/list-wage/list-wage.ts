@@ -4,7 +4,9 @@ import {
   OnInit,
   ChangeDetectorRef,
   inject,
+  DestroyRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RecientesService } from '../../../../core/services/recent.service';
 
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -54,6 +56,7 @@ import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
   ],
 })
 export class ListaJornalesComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly jornalService = inject(JornalService);
   private readonly trabajadorService = inject(TrabajadorService);
   private readonly nominaService = inject(NominaService);
@@ -109,7 +112,7 @@ export class ListaJornalesComponent implements OnInit {
       },
     });
 
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const idParam = params['trabajadorId'];
       if (idParam) {
         this.trabajadorId = Number(idParam);

@@ -8,7 +8,6 @@ import {
 } from '../../../../core/services/active-plantings.service';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
 import {
-  ChangeDetectionStrategy,
   Component,
   OnInit,
   OnDestroy,
@@ -18,7 +17,9 @@ import {
   effect,
   inject,
   untracked,
+  DestroyRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription, of } from 'rxjs';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -86,7 +87,6 @@ export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: strin
 ];
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-detalle-siembra',
   standalone: true,
   imports: [
@@ -118,6 +118,7 @@ export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: strin
   ],
 })
 export class DetalleSiembraComponent implements OnInit, OnDestroy {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly cultivoService = inject(CultivoService);
@@ -287,7 +288,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
     this.rutaSub = params$.subscribe((p) => this.cargarSiembra(Number(p.get('id'))));
     // Al volver de un formulario del panel la ficha no se crea de nuevo: la pestaña sigue a la dirección
-    this.route.queryParamMap?.subscribe((q) => {
+    this.route.queryParamMap?.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((q) => {
       const t = q.get('tab') as PestanaSiembra | null;
       this.pestana = t && PESTANAS_SIEMBRA.some((p) => p.id === t) ? t : 'resumen';
       const nuevo = q.get('nuevo');

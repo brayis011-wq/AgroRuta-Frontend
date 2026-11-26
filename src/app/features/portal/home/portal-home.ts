@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  inject,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -17,7 +11,6 @@ import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/forma
 import { mensajeDeError } from '../../../shared/error-message';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-portal-inicio',
   standalone: true,
   imports: [AsyncPipe, FormsModule, RouterModule, TranslatePipe],

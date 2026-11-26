@@ -2,13 +2,14 @@ import { UltimoUsadoService } from '../../../../core/services/last-used.service'
 
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import {
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnInit,
   inject,
   HostListener,
+  DestroyRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AvisosService } from '../../../../core/services/toast.service';
 
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -33,7 +34,6 @@ interface UltimoJornal {
 }
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nuevo-jornal',
   standalone: true,
   imports: [ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe, SiguienteCampoDirective],
@@ -48,6 +48,7 @@ interface UltimoJornal {
   ],
 })
 export class NuevoJornalComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly jornalService = inject(JornalService);
   private readonly trabajadorService = inject(TrabajadorService);
@@ -101,7 +102,10 @@ export class NuevoJornalComponent implements OnInit {
       observaciones: [''],
     });
     // Si el cargo se paga por kilo, los kilos son obligatorios
-    this.form.get('trabajadorId')!.valueChanges.subscribe(() => this.ajustarKilos());
+    this.form
+      .get('trabajadorId')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.ajustarKilos());
 
     // ✅ Fix: usar listarTodos() igual que en worker-home
     this.trabajadorService.listarTodos().subscribe({
@@ -124,7 +128,10 @@ export class NuevoJornalComponent implements OnInit {
     });
 
     // Al cambiar de finca se reinicia el cultivo elegido
-    this.form.get('fincaId')!.valueChanges.subscribe((id) => this.alCambiarFinca(id));
+    this.form
+      .get('fincaId')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((id) => this.alCambiarFinca(id));
 
     this.jornalService.cultivosDisponibles().subscribe({
       next: (c: CultivoDisponible[]) => {

@@ -1,18 +1,11 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  AfterViewInit,
-  OnDestroy,
-  ChangeDetectorRef,
-  inject,
-} from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
-import { Subscription } from 'rxjs';
+import { Subscription, catchError, map, of, switchMap } from 'rxjs';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
@@ -21,7 +14,6 @@ import * as L from 'leaflet';
 import { GeocodingService } from '../../../../core/services/geocoding.service';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nueva-finca',
   standalone: true,
   imports: [FormsModule, TranslatePipe, MigasCultivoComponent],
@@ -208,30 +200,27 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
         hectareas: this.form.hectareas,
         agricultorId: usuario.id,
       })
-      .subscribe({
-        next: (finca) => {
-          // Guardar centroide
+      .pipe(
+        // Después se guarda el centroide; si eso falla la finca ya existe y se sigue igual
+        switchMap((finca) =>
           this.cultivoService
             .actualizarCentroideFinca(finca.id!, {
               centroideLat: this.centroideLat!,
               centroideLng: this.centroideLng!,
             })
-            .subscribe({
-              next: () => {
-                this.exito = true;
-                this.cdr.detectChanges();
-                this.fincaActiva.cargar(); // que aparezca en el selector de fincas del menú
-                this.avisos.exito('avisos.farmNext');
-                this.router.navigate(['/crops/farm', finca.id]); // siguiente paso: su primer lote
-              },
-              error: () => {
-                this.exito = true;
-                this.cdr.detectChanges();
-                this.fincaActiva.cargar(); // que aparezca en el selector de fincas del menú
-                this.avisos.exito('avisos.farmNext');
-                this.router.navigate(['/crops/farm', finca.id]);
-              },
-            });
+            .pipe(
+              map(() => finca),
+              catchError(() => of(finca)),
+            ),
+        ),
+      )
+      .subscribe({
+        next: (finca) => {
+          this.exito = true;
+          this.cdr.detectChanges();
+          this.fincaActiva.cargar(); // que aparezca en el selector de fincas del menú
+          this.avisos.exito('avisos.farmNext');
+          this.router.navigate(['/crops/farm', finca.id]); // siguiente paso: su primer lote
         },
         error: () => {
           this.error = 'cultivo.fincas.new.errors.register';

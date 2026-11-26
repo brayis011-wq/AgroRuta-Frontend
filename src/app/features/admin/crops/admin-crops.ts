@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  inject,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CatalogoCultivoService } from '../../../core/services/crop-catalog.service';
@@ -16,7 +10,6 @@ import { mensajeDeError } from '../../../shared/error-message';
  * No se borra nada: se desactiva, así las siembras ya registradas conservan su cultivo.
  */
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-cultivos',
   standalone: true,
   imports: [FormsModule, TranslatePipe],

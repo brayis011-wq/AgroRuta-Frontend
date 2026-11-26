@@ -1,11 +1,6 @@
 import { PestanasCatalogoComponent } from '../catalog-tabs/catalog-tabs';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -16,7 +11,6 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { AvisosService } from '../../../core/services/toast.service';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-cargos',
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe, PesosPipe, PestanasCatalogoComponent],
@@ -31,6 +25,7 @@ import { AvisosService } from '../../../core/services/toast.service';
   ],
 })
 export class ListaCargosComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly cargoService = inject(CargoService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -58,7 +53,10 @@ export class ListaCargosComponent implements OnInit {
       valorKilo: [cargo?.valorKilo ?? null],
     });
     this.ajustarValidadores();
-    this.form.get('modalidadPago')!.valueChanges.subscribe(() => this.ajustarValidadores());
+    this.form
+      .get('modalidadPago')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.ajustarValidadores());
   }
 
   /** Por día pide el valor del jornal; por kilo, el valor del kilo */
