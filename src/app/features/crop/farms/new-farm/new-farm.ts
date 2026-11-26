@@ -1,4 +1,11 @@
-import { Component, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
 
 import { FormsModule } from '@angular/forms';
@@ -14,6 +21,7 @@ import * as L from 'leaflet';
 import { GeocodingService } from '../../../../core/services/geocoding.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nueva-finca',
   standalone: true,
   imports: [FormsModule, TranslatePipe, MigasCultivoComponent],
@@ -55,7 +63,10 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.initMap();
     // Actualiza el texto del botón del mapa al cambiar de idioma
-    this.langSub = this.translate.onLangChange.subscribe(() => this.actualizarTextoBotonGps());
+    this.langSub = this.translate.onLangChange.subscribe(() => {
+      this.actualizarTextoBotonGps();
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnDestroy(): void {
@@ -132,6 +143,7 @@ export class NuevaFincaComponent implements AfterViewInit, OnDestroy {
     // Clic en el mapa coloca el marcador
     this.map.on('click', (e: L.LeafletMouseEvent) => {
       this.colocarMarcador(e.latlng);
+      this.cdr.markForCheck();
     });
   }
 

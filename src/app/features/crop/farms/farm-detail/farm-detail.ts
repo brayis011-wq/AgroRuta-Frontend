@@ -1,6 +1,7 @@
 import { LluviaFincaComponent } from '../../../weather/rain-card/rain-card';
 import { PrecargarDirective } from '../../../../shared/prefetch.directive';
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   AfterViewInit,
@@ -33,6 +34,7 @@ import * as L from 'leaflet';
 import { mensajeDeError } from '../../../../shared/error-message';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-detalle-finca',
   standalone: true,
   imports: [
@@ -93,11 +95,15 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
     // Al cambiar de idioma se redibujan los polígonos para actualizar los tooltips
     this.langSub = this.translate.onLangChange.subscribe(() => {
       if (this.map && this.lotes.length > 0) this.dibujarLotes(false);
+      this.cdr.markForCheck();
     });
 
     // La página se reutiliza al cambiar de finca desde el panel: recargar con cada id
     const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
-    this.rutaSub = params$.subscribe((p) => this.cargarFinca(Number(p.get('id'))));
+    this.rutaSub = params$.subscribe((p) => {
+      this.cargarFinca(Number(p.get('id')));
+      this.cdr.markForCheck();
+    });
   }
 
   private cargarFinca(id: number): void {
@@ -115,6 +121,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
         if (id !== this.fincaId) return;
         this.finca = finca;
         this.cargarLotes(this.fincaId);
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'cultivo.fincas.detail.errors.loadFarm';
@@ -223,6 +230,7 @@ export class DetalleFincaComponent implements OnInit, AfterViewInit, OnDestroy {
             this.map.invalidateSize();
             this.dibujarLotes();
           }
+          this.cdr.markForCheck();
         }, 100);
       },
       error: () => {

@@ -4,6 +4,7 @@ import {
   SiembrasActivasService,
 } from '../../../../core/services/active-plantings.service';
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   AfterViewInit,
@@ -27,6 +28,7 @@ import * as L from 'leaflet';
 import { mensajeDeError } from '../../../../shared/error-message';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-fincas',
   standalone: true,
   imports: [FormsModule, TranslatePipe, RouterLink, ContarDirective, PrecargarDirective],
@@ -82,6 +84,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dibujarMarcadores(false);
         this.dibujarLotes(false);
       }
+      this.cdr.markForCheck();
     });
 
     const usuario = this.authService.getUsuario();
@@ -99,6 +102,7 @@ export class ListaFincasComponent implements OnInit, AfterViewInit, OnDestroy {
               // Si los lotes llegaron antes que este dibujo, se vuelven a encuadrar con ellos
               if (Object.keys(this.lotesPorFinca).length) this.dibujarLotes(true);
             }
+            this.cdr.markForCheck();
           }, 100);
         },
         error: () => {

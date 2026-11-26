@@ -1,7 +1,13 @@
 // src/app/features/worker/labors/labor-list.ts
 
 import { PestanasCatalogoComponent } from '../catalog-tabs/catalog-tabs';
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -10,6 +16,7 @@ import { Labor } from '../../../core/models/worker.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-labores',
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe, PestanasCatalogoComponent],
@@ -88,6 +95,7 @@ export class ListaLaboresComponent implements OnInit {
         this.mostrarForm = false;
         this.guardando = false;
         this.cargar(); // ya llama detectChanges internamente
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.activities.errors.save';
@@ -104,7 +112,10 @@ export class ListaLaboresComponent implements OnInit {
     });
     if (!(await this.confirmService.preguntar({ mensaje, peligro: true }))) return;
     this.actividadService.desactivar(a.id).subscribe({
-      next: () => this.cargar(),
+      next: () => {
+        this.cargar();
+        this.cdr.markForCheck();
+      },
     });
   }
 

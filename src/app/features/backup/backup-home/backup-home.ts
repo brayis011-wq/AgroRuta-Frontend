@@ -1,5 +1,11 @@
 import { estadoHttp, mensajeDelServidor } from '../../../shared/error-message';
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectorRef,
+} from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -9,6 +15,7 @@ import { LanguageService } from '../../../core/services/language.service';
 type ModalMode = 'restore' | 'delete';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-backup-home',
   standalone: true,
   imports: [FormsModule, TranslatePipe],
@@ -68,10 +75,12 @@ export class BackupHomeComponent implements OnInit {
         this.creating = false;
         this.showOk('backups.success.created');
         this.load();
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.creating = false;
         this.showError(err, 'backups.errors.create');
+        this.cdr.markForCheck();
       },
     });
   }
@@ -93,6 +102,7 @@ export class BackupHomeComponent implements OnInit {
       error: (err) => {
         this.busyName = null;
         this.showError(err, 'backups.errors.download');
+        this.cdr.markForCheck();
       },
     });
   }
@@ -125,10 +135,12 @@ export class BackupHomeComponent implements OnInit {
           this.busyName = null;
           this.showOk('backups.success.restored');
           this.load(); // aparece la copia "previa a restauración"
+          this.cdr.markForCheck();
         },
         error: (err) => {
           this.busyName = null;
           this.showError(err, 'backups.errors.restore');
+          this.cdr.markForCheck();
         },
       });
     } else {
@@ -137,10 +149,12 @@ export class BackupHomeComponent implements OnInit {
           this.busyName = null;
           this.showOk('backups.success.deleted');
           this.load();
+          this.cdr.markForCheck();
         },
         error: (err) => {
           this.busyName = null;
           this.showError(err, 'backups.errors.delete');
+          this.cdr.markForCheck();
         },
       });
     }

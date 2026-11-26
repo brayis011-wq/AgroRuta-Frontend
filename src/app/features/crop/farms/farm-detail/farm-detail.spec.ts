@@ -38,7 +38,7 @@ describe('DetalleFincaComponent', () => {
 
     routerMock = { navigate: vi.fn() };
     routeMock = { snapshot: { paramMap: { get: () => '1' } } };
-    cdrMock = { detectChanges: vi.fn() };
+    cdrMock = { detectChanges: vi.fn(), markForCheck: vi.fn() };
 
     // La pantalla pide algunos servicios con inject(): se crea dentro del contexto de Angular
     TestBed.configureTestingModule({
