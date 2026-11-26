@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   AfterViewInit,
@@ -22,6 +23,7 @@ import 'leaflet-draw';
 import { GeocodingService } from '../../../../core/services/geocoding.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nuevo-lote',
   standalone: true,
   imports: [FormsModule, TranslatePipe, MigasCultivoComponent],
@@ -93,7 +95,10 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.cdr.detectChanges();
       },
-      error: () => this.setError('lotes.new.errors.loadFarm'),
+      error: () => {
+        this.setError('lotes.new.errors.loadFarm');
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -103,6 +108,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     this.langSub = this.translate.onLangChange.subscribe(() => {
       this.actualizarTextoBotonGps();
       this.crearControlDibujo();
+      this.cdr.markForCheck();
     });
   }
 
@@ -150,6 +156,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       } else {
         this.setError('cultivo.fincas.new.errors.notFound');
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -196,6 +203,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             () => this.setError('cultivo.fincas.new.geoError'),
           );
+          this.cdr.markForCheck();
         });
         return btn;
       },
@@ -305,6 +313,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         error: () => {
           this.guardando = false;
           this.setError('lotes.new.errors.register');
+          this.cdr.markForCheck();
         },
       });
   }

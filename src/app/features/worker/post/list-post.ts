@@ -1,5 +1,12 @@
 import { PestanasCatalogoComponent } from '../catalog-tabs/catalog-tabs';
-import { Component, OnInit, ChangeDetectorRef, inject, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+  DestroyRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -11,6 +18,7 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { AvisosService } from '../../../core/services/toast.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-cargos',
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe, PesosPipe, PestanasCatalogoComponent],
@@ -56,7 +64,10 @@ export class ListaCargosComponent implements OnInit {
     this.form
       .get('modalidadPago')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.ajustarValidadores());
+      .subscribe(() => {
+        this.ajustarValidadores();
+        this.cdr.markForCheck();
+      });
   }
 
   /** Por día pide el valor del jornal; por kilo, el valor del kilo */
@@ -125,6 +136,7 @@ export class ListaCargosComponent implements OnInit {
         this.cargar();
         this.mostrarForm = false;
         this.guardando = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.posts.errors.save';
@@ -152,6 +164,7 @@ export class ListaCargosComponent implements OnInit {
           { count: creados.length },
         );
         this.cargar();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.agregandoTipicos = false;
@@ -165,7 +178,12 @@ export class ListaCargosComponent implements OnInit {
     if (c.id == null) return;
     const mensaje = this.translate.instant('workers.posts.confirmDeactivate', { name: c.nombre });
     if (!(await this.confirmService.preguntar({ mensaje, peligro: true }))) return;
-    this.cargoService.desactivar(c.id).subscribe({ next: () => this.cargar() });
+    this.cargoService.desactivar(c.id).subscribe({
+      next: () => {
+        this.cargar();
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   invalido(nombre: string): boolean {

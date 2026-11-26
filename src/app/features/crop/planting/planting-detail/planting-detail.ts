@@ -8,6 +8,7 @@ import {
 } from '../../../../core/services/active-plantings.service';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   OnDestroy,
@@ -69,6 +70,7 @@ export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: strin
 ];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-detalle-siembra',
   standalone: true,
   imports: [
@@ -270,7 +272,10 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     if (filtro) this.filtroActivo = filtro as 'actividad' | 'fumigacion' | 'cosecha';
     // Se reutiliza al pasar de una siembra a otra: recargar con cada id
     const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
-    this.rutaSub = params$.subscribe((p) => this.cargarSiembra(Number(p.get('id'))));
+    this.rutaSub = params$.subscribe((p) => {
+      this.cargarSiembra(Number(p.get('id')));
+      this.cdr.markForCheck();
+    });
     // Al volver de un formulario del panel la ficha no se crea de nuevo: la pestaña sigue a la dirección
     this.route.queryParamMap?.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((q) => {
       const t = q.get('tab') as PestanaSiembra | null;
@@ -289,7 +294,11 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     const el = document.getElementById('reg-' + clave);
     // Los registros llegan del servidor después de volver del formulario: se espera un poco
     if (!el) {
-      if (intentos < 20) setTimeout(() => this.resaltarCuandoAparezca(clave, intentos + 1), 150);
+      if (intentos < 20)
+        setTimeout(() => {
+          this.resaltarCuandoAparezca(clave, intentos + 1);
+          this.cdr.markForCheck();
+        }, 150);
       return;
     }
     this.resaltar = clave;
@@ -360,6 +369,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.cultivoService.buscarSiembra(id).subscribe({
       next: (siembra) => {
         this.siembra = siembra;
+        this.cdr.markForCheck();
         this.cargarVecinos(id);
         this.cargarDatos(id);
         this.cargarResumen(id);
@@ -379,7 +389,10 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
                 this.cargarClima(municipio(finca));
                 this.cdr.detectChanges();
               },
-              error: () => this.cargarClima(''),
+              error: () => {
+                this.cargarClima('');
+                this.cdr.markForCheck();
+              },
             });
             this.cdr.detectChanges();
           },
@@ -408,6 +421,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       next: (a) => {
         this.actividades = a;
         verificar();
+        this.cdr.markForCheck();
       },
       error: () => verificar(),
     });
@@ -415,6 +429,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       next: (f) => {
         this.fumigaciones = f;
         verificar();
+        this.cdr.markForCheck();
       },
       error: () => verificar(),
     });
@@ -423,6 +438,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
         this.cosechas = c;
         this.repartirVendido();
         verificar();
+        this.cdr.markForCheck();
       },
       error: () => verificar(),
     });
@@ -500,6 +516,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.kgPorVender = null;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -519,6 +536,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.clima = null;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -608,6 +626,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
           this.version++;
           this.cargarDatos(siembraId);
           this.cargarResumen(siembraId);
+          this.cdr.markForCheck();
         },
         error: (e) => {
           this.ocultos.delete(clave);

@@ -1,6 +1,12 @@
 // src/app/features/worker/roster/list-roster/list-roster.ts
 
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
@@ -25,6 +31,7 @@ import { PesosPipe, PeriodoPipe } from '../../../../shared/format.pipe';
 import { mensajeDeError } from '../../../../shared/error-message';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-nominas',
   standalone: true,
   imports: [
@@ -259,6 +266,7 @@ export class ListaNominasComponent implements OnInit {
         this.cargar();
         this.mostrarForm = false;
         this.guardando = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.rosters.list.errors.generate';
@@ -344,6 +352,7 @@ export class ListaNominasComponent implements OnInit {
         this.procesandoLote = false;
         this.avisos.exito('workers.rosters.team.approved', { count: ids.length });
         this.cargar();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.procesandoLote = false;
@@ -376,6 +385,7 @@ export class ListaNominasComponent implements OnInit {
         this.avisos.exito('workers.rosters.team.paid', { count: p.length });
         alTerminar?.();
         this.cargar();
+        this.cdr.markForCheck();
       },
       error: (e) => {
         this.procesandoLote = false;
@@ -428,6 +438,7 @@ export class ListaNominasComponent implements OnInit {
     this.nominaService.anular(id).subscribe({
       next: () => {
         this.cargar();
+        this.cdr.markForCheck();
       },
       error: (e) => {
         this.error = mensajeDeError(e, 'workers.rosters.list.errors.cancel');

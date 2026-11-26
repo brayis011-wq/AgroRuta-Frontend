@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { guardarEnUrl, leerDeUrl } from '../../../shared/url-state';
 
 import {
@@ -31,6 +37,7 @@ import { filtrarTrabajadores } from './worker-filter';
 type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-worker-home',
   standalone: true,
   imports: [
@@ -377,6 +384,7 @@ export class WorkerHomeComponent implements OnInit {
         this.guardando = false;
         this.modoPanel = null;
         this.mostrarExito('workers.home.success.registered', { name: t.nombreCompleto });
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.home.errors.register';
@@ -399,6 +407,7 @@ export class WorkerHomeComponent implements OnInit {
         this.guardando = false;
         this.modoPanel = null;
         this.mostrarExito('workers.home.success.updated');
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.home.errors.update';
@@ -418,6 +427,7 @@ export class WorkerHomeComponent implements OnInit {
         this.guardando = false;
         this.modoPanel = null;
         this.mostrarExito('workers.home.success.postUpdated');
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.home.errors.changePost';
@@ -434,6 +444,7 @@ export class WorkerHomeComponent implements OnInit {
         this.trabajadores = this.trabajadores.filter((x) => x.id !== t.id);
         this.cerrarPanel();
         this.mostrarExito('workers.home.success.deactivated');
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.home.errors.deactivate';
@@ -451,6 +462,7 @@ export class WorkerHomeComponent implements OnInit {
         );
         this.trabajadorSeleccionado = this.trabajadores.find((x) => x.id === t.id) ?? null;
         this.mostrarExito('workers.home.success.suspended');
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.home.errors.suspend';
@@ -468,6 +480,7 @@ export class WorkerHomeComponent implements OnInit {
         );
         this.trabajadorSeleccionado = this.trabajadores.find((x) => x.id === t.id) ?? null;
         this.mostrarExito('workers.home.success.reactivated');
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.home.errors.reactivate';
@@ -482,7 +495,10 @@ export class WorkerHomeComponent implements OnInit {
     if (!t.id) return;
     this.guardando = true;
     this.trabajadorService.aprobarAcceso(t.id).subscribe({
-      next: (actualizado) => this.actualizarAcceso(actualizado, 'workers.home.access.approved'),
+      next: (actualizado) => {
+        this.actualizarAcceso(actualizado, 'workers.home.access.approved');
+        this.cdr.markForCheck();
+      },
       error: () => {
         this.guardando = false;
         this.error = 'workers.home.access.errors.approve';
@@ -500,13 +516,15 @@ export class WorkerHomeComponent implements OnInit {
     if (!(await this.preguntar(clave, t, true))) return;
     this.guardando = true;
     this.trabajadorService.rechazarAcceso(t.id).subscribe({
-      next: (actualizado) =>
+      next: (actualizado) => {
         this.actualizarAcceso(
           actualizado,
           t.accesoEstado === 'APROBADO'
             ? 'workers.home.access.revoked'
             : 'workers.home.access.rejected',
-        ),
+        );
+        this.cdr.markForCheck();
+      },
       error: () => {
         this.guardando = false;
         this.error = 'workers.home.access.errors.reject';

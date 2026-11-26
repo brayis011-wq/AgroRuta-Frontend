@@ -1,6 +1,12 @@
 // src/app/features/worker/roster/detail-roster/detail-roster.ts
 
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -13,6 +19,7 @@ import { Miga, MigasComponent } from '../../../../shared/breadcrumbs/breadcrumbs
 import { mensajeDeError } from '../../../../shared/error-message';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-detalle-nomina',
   standalone: true,
   imports: [
@@ -137,6 +144,7 @@ export class DetalleNominaComponent implements OnInit {
         this.nomina = n;
         this.guardando = false;
         this.mostrarExito('workers.rosters.detail.success.wageRemoved');
+        this.cdr.markForCheck();
       },
       error: (e) => {
         this.error = mensajeDeError(e, 'workers.rosters.detail.errors.fix');
@@ -156,6 +164,7 @@ export class DetalleNominaComponent implements OnInit {
         this.nomina = n;
         this.guardando = false;
         this.mostrarExito('workers.rosters.detail.success.wagesAdded');
+        this.cdr.markForCheck();
       },
       error: (e) => {
         this.error = mensajeDeError(e, 'workers.rosters.detail.errors.fix');
@@ -181,6 +190,7 @@ export class DetalleNominaComponent implements OnInit {
         // El pago se registra cuando de verdad se le pague (botón Registrar pago)
         this.mostrarFormPago = false;
         this.mostrarExito('workers.rosters.detail.success.approved');
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.rosters.detail.errors.approve';
@@ -230,6 +240,7 @@ export class DetalleNominaComponent implements OnInit {
         });
         // Recarga para ver los jornales marcados como liquidados
         this.cargarNomina(this.nomina.id!);
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.guardando = false;
@@ -258,6 +269,7 @@ export class DetalleNominaComponent implements OnInit {
       next: () => {
         this.cargarNomina(this.nomina!.id!);
         this.guardando = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'workers.rosters.detail.errors.cancel';

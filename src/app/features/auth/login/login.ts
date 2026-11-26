@@ -1,4 +1,10 @@
-import { Component, ChangeDetectorRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ChangeDetectorRef,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -8,6 +14,7 @@ import { LoginRequest } from '../../../core/models/auth.model';
 import { mensajeDelServidor } from '../../../shared/error-message';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, RouterLink, TranslatePipe],

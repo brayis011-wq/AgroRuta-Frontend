@@ -2,6 +2,7 @@ import { UltimoUsadoService } from '../../../../core/services/last-used.service'
 
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnInit,
@@ -34,6 +35,7 @@ interface UltimoJornal {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nuevo-jornal',
   standalone: true,
   imports: [ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe, SiguienteCampoDirective],
@@ -105,7 +107,10 @@ export class NuevoJornalComponent implements OnInit {
     this.form
       .get('trabajadorId')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.ajustarKilos());
+      .subscribe(() => {
+        this.ajustarKilos();
+        this.cdr.markForCheck();
+      });
 
     // ✅ Fix: usar listarTodos() igual que en worker-home
     this.trabajadorService.listarTodos().subscribe({
@@ -131,7 +136,10 @@ export class NuevoJornalComponent implements OnInit {
     this.form
       .get('fincaId')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((id) => this.alCambiarFinca(id));
+      .subscribe((id) => {
+        this.alCambiarFinca(id);
+        this.cdr.markForCheck();
+      });
 
     this.jornalService.cultivosDisponibles().subscribe({
       next: (c: CultivoDisponible[]) => {
@@ -274,6 +282,7 @@ export class NuevoJornalComponent implements OnInit {
         } else {
           this.router.navigate(['/worker']);
         }
+        this.cdr.markForCheck();
       },
       error: (err) => {
         // El backend explica el motivo (cultivo finalizado, de otra finca, etc.)
