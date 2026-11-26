@@ -40,7 +40,8 @@ jobs:
 
   humo:
     # La app arranca, enruta y muestra errores del servidor (API simulada, sin backend)
-    runs-on: ubuntu-latest
+    # Fijo en 24.04: Playwright 1.60 todavía no instala Chromium en ubuntu-latest (26.04)
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
