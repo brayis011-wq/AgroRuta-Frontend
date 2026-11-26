@@ -24,7 +24,12 @@ describe('PrecargaDatosService', () => {
     enLinea = signal(true);
     cultivo = {
       listarFincasPorAgricultor: vi.fn(() => of([{ id: 1 }])),
-      listarLotesPorFinca: vi.fn(() => of([{ id: 10, estado: 'EN_CULTIVO' }, { id: 11, estado: 'DISPONIBLE' }])),
+      listarLotesPorFinca: vi.fn(() =>
+        of([
+          { id: 10, estado: 'EN_CULTIVO' },
+          { id: 11, estado: 'DISPONIBLE' },
+        ]),
+      ),
       buscarSiembraPorLote: vi.fn(() => of({ id: 100, loteId: 10 })),
       buscarFinca: vi.fn(() => of({ id: 1 })),
       buscarLote: vi.fn(() => of({ id: 10 })),
@@ -45,7 +50,10 @@ describe('PrecargaDatosService', () => {
         { provide: JornalService, useValue: { cultivosDisponibles: lista() } },
         { provide: InventarioService, useValue: { stock: lista() } },
         { provide: AgriculturalInputService, useValue: { getAll: lista() } },
-        { provide: VentasService, useValue: { kilosEnBodega: lista(), listar: lista(), resumen: vi.fn(() => of({})) } },
+        {
+          provide: VentasService,
+          useValue: { kilosEnBodega: lista(), listar: lista(), resumen: vi.fn(() => of({})) },
+        },
       ],
     });
   });

@@ -2,9 +2,19 @@ import { comparar } from './yield';
 import { RendimientoTrabajador } from '../../../core/models/worker.model';
 
 const base: RendimientoTrabajador = {
-  trabajadorId: 1, nombre: 'Eva Ruiz', cargo: 'Jornalero', modalidadCargo: 'JORNAL',
-  diasPorDia: 2, kilosPorDia: 100, pagadoPorDia: 120000, diasPorKilo: 0, kilosPorKilo: 0, pagadoPorKilo: 0,
-  kilosAlDia: 50, costoKiloPorDia: 1200, costoKiloPorKilo: null,
+  trabajadorId: 1,
+  nombre: 'Eva Ruiz',
+  cargo: 'Jornalero',
+  modalidadCargo: 'JORNAL',
+  diasPorDia: 2,
+  kilosPorDia: 100,
+  pagadoPorDia: 120000,
+  diasPorKilo: 0,
+  kilosPorKilo: 0,
+  pagadoPorKilo: 0,
+  kilosAlDia: 50,
+  costoKiloPorDia: 1200,
+  costoKiloPorKilo: null,
 };
 
 describe('comparar (rendimiento)', () => {
@@ -13,7 +23,13 @@ describe('comparar (rendimiento)', () => {
   });
 
   it('con los dos datos del mismo trabajador dice cuál sale más barato', () => {
-    const r = { ...base, diasPorKilo: 1, kilosPorKilo: 40, pagadoPorKilo: 60000, costoKiloPorKilo: 1500 };
+    const r = {
+      ...base,
+      diasPorKilo: 1,
+      kilosPorKilo: 40,
+      pagadoPorKilo: 60000,
+      costoKiloPorKilo: 1500,
+    };
     expect(comparar(r, 900)).toEqual({ mejor: 'DIA', diferencia: 300, delEquipo: false });
   });
 

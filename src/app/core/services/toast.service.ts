@@ -53,7 +53,12 @@ export class AvisosService {
   }
 
   /** "Registro eliminado · Deshacer": se queda más tiempo y ofrece volver atrás */
-  conDeshacer(clave: string, params: Record<string, unknown> | undefined, deshacer: () => void, ms = DESHACER_MS): void {
+  conDeshacer(
+    clave: string,
+    params: Record<string, unknown> | undefined,
+    deshacer: () => void,
+    ms = DESHACER_MS,
+  ): void {
     this.parar();
     this.saliendo.set(false);
     this.actual.set({ id: ++this.serie, clave, params, deshacer });

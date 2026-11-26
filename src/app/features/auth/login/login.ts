@@ -1,10 +1,11 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { inicioPorRol } from '../../../core/guards/role-guards';
 import { LoginRequest } from '../../../core/models/auth.model';
+import { mensajeDelServidor } from '../../../shared/error-message';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,11 @@ import { LoginRequest } from '../../../core/models/auth.model';
   styleUrl: '../auth-form.css',
 })
 export class LoginComponent implements OnInit {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   verPass = false;
 
   form: LoginRequest = {
@@ -21,7 +27,7 @@ export class LoginComponent implements OnInit {
     password: '',
   };
 
-  error: string = '';
+  error = '';
   /** Mensaje de éxito (por ejemplo, después de crear una contraseña nueva) */
   aviso = '';
   /** La contraseña era correcta pero falta confirmar el correo */
@@ -32,14 +38,7 @@ export class LoginComponent implements OnInit {
   codigo = '';
   /** No volver a pedir el código en este navegador por 30 días (se desmarca en un equipo prestado) */
   recordarDispositivo = true;
-  cargando: boolean = false;
-
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  cargando = false;
 
   ngOnInit(): void {
     // El interceptor redirige aquí con ?sesion=expirada cuando el servidor responde 401
@@ -58,9 +57,10 @@ export class LoginComponent implements OnInit {
     this.cargando = true;
 
     const codigo = this.codigo.trim();
-    const datos = this.pideCodigo && codigo
-      ? { ...this.form, codigo, recordarDispositivo: this.recordarDispositivo }
-      : this.form;
+    const datos =
+      this.pideCodigo && codigo
+        ? { ...this.form, codigo, recordarDispositivo: this.recordarDispositivo }
+        : this.form;
 
     this.authService.login(datos).subscribe({
       next: (respuesta) => {
@@ -72,7 +72,8 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.cargando = false;
-        const cuentaDesactivada = err.status === 401 && /desactivada/i.test(err.error?.message ?? '');
+        const cuentaDesactivada =
+          err.status === 401 && /desactivada/i.test(mensajeDelServidor(err) ?? '');
         this.sinConfirmar = err.status === 403 && err.error?.errorCode === 'AGR-033';
         this.reenviado = false;
         const faltaCodigo = err.status === 403 && err.error?.errorCode === 'AGR-034';
@@ -91,13 +92,13 @@ export class LoginComponent implements OnInit {
           ? 'auth.login.accountDisabled'
           : codigoMalo
             ? 'auth.login.codeWrong'
-          : this.sinConfirmar
-            ? 'auth.login.notVerified'
-          : err.status === 429
-            ? 'auth.login.tooManyAttempts'
-          : err.status === 401 || err.status === 403
-            ? 'auth.login.invalidCredentials'
-            : 'auth.login.serverError';
+            : this.sinConfirmar
+              ? 'auth.login.notVerified'
+              : err.status === 429
+                ? 'auth.login.tooManyAttempts'
+                : err.status === 401 || err.status === 403
+                  ? 'auth.login.invalidCredentials'
+                  : 'auth.login.serverError';
         this.cdr.detectChanges();
       },
     });

@@ -8,8 +8,9 @@ const primera = (t: string | null | undefined): string => Array.from((t ?? '').t
  * Sin nada que mostrar devuelve "?".
  */
 export function iniciales(nombre: string | null | undefined, apellido?: string | null): string {
-  const r = apellido !== undefined
-    ? primera(nombre) + primera(apellido)
-    : (nombre ?? '').trim().split(/\s+/).slice(0, 2).map(primera).join('');
+  const r =
+    apellido !== undefined
+      ? primera(nombre) + primera(apellido)
+      : (nombre ?? '').trim().split(/\s+/).slice(0, 2).map(primera).join('');
   return r.toLocaleUpperCase('es') || '?';
 }

@@ -51,21 +51,41 @@ describe('DetalleLoteComponent', () => {
   let router: Router;
 
   const mockLote: any = {
-    id: 1, nombre: 'Lote A', fincaId: 10, estado: 'EN_CULTIVO',
+    id: 1,
+    nombre: 'Lote A',
+    fincaId: 10,
+    estado: 'EN_CULTIVO',
     coordenadas: '[[4.5,-74.1],[4.6,-74.2],[4.5,-74.2]]',
     area: 5,
   };
-  const activa: any = { id: 3, loteId: 1, estadoCultivo: 'CRECIMIENTO', fechaSiembra: '2026-01-01', variedad: 'Castillo', tipoCultivo: 'Café', cantidadPlantas: 300 };
-  const pasada: any = { id: 2, loteId: 1, estadoCultivo: 'FINALIZADO', fechaSiembra: '2025-01-01', fechaFin: '2025-08-20', variedad: 'Colombia', tipoCultivo: 'Uchuva', cantidadPlantas: 200 };
+  const activa: any = {
+    id: 3,
+    loteId: 1,
+    estadoCultivo: 'CRECIMIENTO',
+    fechaSiembra: '2026-01-01',
+    variedad: 'Castillo',
+    tipoCultivo: 'Café',
+    cantidadPlantas: 300,
+  };
+  const pasada: any = {
+    id: 2,
+    loteId: 1,
+    estadoCultivo: 'FINALIZADO',
+    fechaSiembra: '2025-01-01',
+    fechaFin: '2025-08-20',
+    variedad: 'Colombia',
+    tipoCultivo: 'Uchuva',
+    cantidadPlantas: 200,
+  };
 
   beforeEach(async () => {
     cultivoServiceMock = {
-      buscarLote:        vi.fn().mockReturnValue(of(mockLote)),
-      historialLote:     vi.fn().mockReturnValue(of([activa, pasada])),
-      totalKgCosechado:  vi.fn().mockReturnValue(of(845.5)),
-      etapasSiembra:     vi.fn().mockReturnValue(of([])),
+      buscarLote: vi.fn().mockReturnValue(of(mockLote)),
+      historialLote: vi.fn().mockReturnValue(of([activa, pasada])),
+      totalKgCosechado: vi.fn().mockReturnValue(of(845.5)),
+      etapasSiembra: vi.fn().mockReturnValue(of([])),
       cambiarEstadoLote: vi.fn().mockReturnValue(of({ ...mockLote, estado: 'EN_DESCANSO' })),
-      actualizarLote:    vi.fn().mockReturnValue(of({ ...mockLote, nombre: 'Lote Norte', area: 6 })),
+      actualizarLote: vi.fn().mockReturnValue(of({ ...mockLote, nombre: 'Lote Norte', area: 6 })),
     };
     confirmMock = { preguntar: vi.fn().mockResolvedValue(true) };
 
@@ -83,9 +103,9 @@ describe('DetalleLoteComponent', () => {
       ],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(DetalleLoteComponent);
+    fixture = TestBed.createComponent(DetalleLoteComponent);
     component = fixture.componentInstance;
-    router    = TestBed.inject(Router);
+    router = TestBed.inject(Router);
   });
 
   afterEach(() => vi.restoreAllMocks());
@@ -95,7 +115,7 @@ describe('DetalleLoteComponent', () => {
     await fixture.whenStable();
     expect(component.lote()).toEqual(mockLote);
     expect(component.siembra()?.id).toBe(3);
-    expect(component.temporadas().map(t => t.siembra.id)).toEqual([2]);
+    expect(component.temporadas().map((t) => t.siembra.id)).toEqual([2]);
     expect(component.temporadas()[0].dias).toBe(231);
     expect(component.temporadas()[0].kg).toBe(845.5);
     expect(component.cargando()).toBe(false);
@@ -140,7 +160,11 @@ describe('DetalleLoteComponent', () => {
     component.formNombre = ' Lote Norte ';
     component.formArea = 6;
     component.guardarLote();
-    expect(cultivoServiceMock.actualizarLote).toHaveBeenCalledWith(1, { nombre: 'Lote Norte', area: 6, fincaId: 10 });
+    expect(cultivoServiceMock.actualizarLote).toHaveBeenCalledWith(1, {
+      nombre: 'Lote Norte',
+      area: 6,
+      fincaId: 10,
+    });
     expect(component.lote()?.nombre).toBe('Lote Norte');
     expect(component.editando()).toBe(false);
   });

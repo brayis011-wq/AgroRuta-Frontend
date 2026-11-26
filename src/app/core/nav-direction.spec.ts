@@ -6,7 +6,10 @@ import { esPanelDeSiembra, nivel, sentido, tramos } from './nav-direction';
 function ruta(...niveles: string[][]): ActivatedRouteSnapshot {
   let hijo: Partial<ActivatedRouteSnapshot> | null = null;
   for (const partes of [...niveles].reverse()) {
-    hijo = { url: partes.map((p) => new UrlSegment(p, {})), firstChild: hijo as ActivatedRouteSnapshot | null };
+    hijo = {
+      url: partes.map((p) => new UrlSegment(p, {})),
+      firstChild: hijo as ActivatedRouteSnapshot | null,
+    };
   }
   return hijo as ActivatedRouteSnapshot;
 }
@@ -28,9 +31,13 @@ describe('sentido de la navegación', () => {
     expect(sentido(['crops', 'farm', '30'], ['crops', 'plot', '28'])).toBe('adelante');
     expect(sentido(['crops', 'plot', '28'], ['crops', 'planting', '16'])).toBe('adelante');
     expect(sentido(['crops', 'planting', '16'], ['crops', 'farm', '30'])).toBe('atras');
-    expect(sentido(['crops', 'planting', '16'], ['crops', 'planting', '16', 'harvest'])).toBe('adelante');
+    expect(sentido(['crops', 'planting', '16'], ['crops', 'planting', '16', 'harvest'])).toBe(
+      'adelante',
+    );
     expect(sentido(['crops', 'planting', '16', 'edit'], ['crops', 'planting', '16'])).toBe('atras');
-    expect(sentido(['crops', 'farm', '30'], ['crops', 'farm', '30', 'plot', '28', 'new-planting'])).toBe('adelante');
+    expect(
+      sentido(['crops', 'farm', '30'], ['crops', 'farm', '30', 'plot', '28', 'new-planting']),
+    ).toBe('adelante');
     expect(nivel(['crops'])).toBe(0);
     expect(nivel(['crops', 'calendar'])).toBe(nivel(['crops', 'inventory']));
   });
@@ -41,13 +48,28 @@ describe('sentido de la navegación', () => {
     expect(sentido(['reports'], ['reports'])).toBe('lado');
   });
   it('abrir, cambiar o cerrar el panel de registro de una siembra no anima la página', () => {
-    expect(esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '16', 'spraying'])).toBe(true);
-    expect(esPanelDeSiembra(['crops', 'planting', '16', 'harvest', '4'], ['crops', 'planting', '16'])).toBe(true);
-    expect(esPanelDeSiembra(['crops', 'planting', '16', 'activity'], ['crops', 'planting', '16', 'spraying'])).toBe(true);
+    expect(
+      esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '16', 'spraying']),
+    ).toBe(true);
+    expect(
+      esPanelDeSiembra(['crops', 'planting', '16', 'harvest', '4'], ['crops', 'planting', '16']),
+    ).toBe(true);
+    expect(
+      esPanelDeSiembra(
+        ['crops', 'planting', '16', 'activity'],
+        ['crops', 'planting', '16', 'spraying'],
+      ),
+    ).toBe(true);
     // Editar la siembra, otra siembra u otra página sí se animan
-    expect(esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '16', 'edit'])).toBe(false);
-    expect(esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '17', 'spraying'])).toBe(false);
+    expect(esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '16', 'edit'])).toBe(
+      false,
+    );
+    expect(
+      esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '17', 'spraying']),
+    ).toBe(false);
     expect(esPanelDeSiembra(['crops', 'planting', '16'], ['crops', 'planting', '17'])).toBe(false);
-    expect(esPanelDeSiembra(['crops', 'plot', '28'], ['crops', 'planting', '16', 'spraying'])).toBe(false);
+    expect(esPanelDeSiembra(['crops', 'plot', '28'], ['crops', 'planting', '16', 'spraying'])).toBe(
+      false,
+    );
   });
 });

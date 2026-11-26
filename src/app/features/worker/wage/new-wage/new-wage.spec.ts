@@ -5,13 +5,29 @@ import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { NuevoJornalComponent } from './new-wage';
-import { JornalService, TrabajadorService, LaborService } from '../../../../core/services/worker.service';
+import {
+  JornalService,
+  TrabajadorService,
+  LaborService,
+} from '../../../../core/services/worker.service';
 
-const mkTrabajador = (estado = 'ACTIVO'): any => ({ id: 1, nombre: 'Juan', estado, nombreCompleto: 'Juan Perez' });
-const mkActividad  = (): any => ({ id: 1, nombre: 'Riego' });
-const mkJornal     = (): any => ({ id: 1, trabajadorId: 1, cultivoId: 2 });
+const mkTrabajador = (estado = 'ACTIVO'): any => ({
+  id: 1,
+  nombre: 'Juan',
+  estado,
+  nombreCompleto: 'Juan Perez',
+});
+const mkActividad = (): any => ({ id: 1, nombre: 'Riego' });
+const mkJornal = (): any => ({ id: 1, trabajadorId: 1, cultivoId: 2 });
 const mkCultivo = (id: number, fincaId: number, loteNombre = 'Lote ' + id): any => ({
-  id, fincaId, fincaNombre: 'Finca ' + fincaId, loteId: id, loteNombre, tipoCultivo: 'Uchuva', variedad: 'Colombia', estado: 'PRODUCCION'
+  id,
+  fincaId,
+  fincaNombre: 'Finca ' + fincaId,
+  loteId: id,
+  loteNombre,
+  tipoCultivo: 'Uchuva',
+  variedad: 'Colombia',
+  estado: 'PRODUCCION',
 });
 /** Rellena el formulario con datos válidos (finca 1, cultivo 2) */
 const llenar = (c: any) => {
@@ -21,10 +37,10 @@ const llenar = (c: any) => {
 
 describe('NuevoJornalComponent', () => {
   let component: NuevoJornalComponent;
-  let fixture:   ComponentFixture<NuevoJornalComponent>;
-  let jornalSvc:    any;
+  let fixture: ComponentFixture<NuevoJornalComponent>;
+  let jornalSvc: any;
   let trabajadorSvc: any;
-  let actividadSvc:  any;
+  let actividadSvc: any;
 
   async function createComponent(queryParams: Record<string, string> = {}) {
     TestBed.resetTestingModule();
@@ -33,21 +49,21 @@ describe('NuevoJornalComponent', () => {
       imports: [NuevoJornalComponent, ReactiveFormsModule],
       providers: [
         provideRouter([]),
-        { provide: JornalService,     useValue: jornalSvc },
+        { provide: JornalService, useValue: jornalSvc },
         { provide: TrabajadorService, useValue: trabajadorSvc },
-        { provide: LaborService,  useValue: actividadSvc },
+        { provide: LaborService, useValue: actividadSvc },
         {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
-              queryParamMap: { get: (k: string) => queryParams[k] ?? null }
-            }
-          }
-        }
-      ]
+              queryParamMap: { get: (k: string) => queryParams[k] ?? null },
+            },
+          },
+        },
+      ],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(NuevoJornalComponent);
+    fixture = TestBed.createComponent(NuevoJornalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }
@@ -56,13 +72,15 @@ describe('NuevoJornalComponent', () => {
     localStorage.clear(); // lo recordado del último jornal no debe pasar de una prueba a otra
     jornalSvc = {
       registrar: vi.fn(),
-      cultivosDisponibles: vi.fn().mockReturnValue(of([mkCultivo(2, 1), mkCultivo(3, 1), mkCultivo(4, 9)]))
+      cultivosDisponibles: vi
+        .fn()
+        .mockReturnValue(of([mkCultivo(2, 1), mkCultivo(3, 1), mkCultivo(4, 9)])),
     };
     trabajadorSvc = {
-      listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()]))
+      listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()])),
     };
     actividadSvc = {
-      listar: vi.fn().mockReturnValue(of([mkActividad()]))
+      listar: vi.fn().mockReturnValue(of([mkActividad()])),
     };
   });
 
@@ -72,7 +90,9 @@ describe('NuevoJornalComponent', () => {
   });
 
   it('ngOnInit() should load only ACTIVO trabajadores', async () => {
-    trabajadorSvc.listarTodos.mockReturnValue(of([mkTrabajador('ACTIVO'), mkTrabajador('SUSPENDIDO')]));
+    trabajadorSvc.listarTodos.mockReturnValue(
+      of([mkTrabajador('ACTIVO'), mkTrabajador('SUSPENDIDO')]),
+    );
     await createComponent();
     expect(component.trabajadores.length).toBe(1);
     expect(component.trabajadores[0].estado).toBe('ACTIVO');
@@ -152,10 +172,9 @@ describe('NuevoJornalComponent', () => {
     llenar(component);
     component.toggleActividad(1);
     component.guardar();
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/worker/workdays'],
-      { queryParams: { trabajadorId: 1 } }
-    );
+    expect(router.navigate).toHaveBeenCalledWith(['/worker/workdays'], {
+      queryParams: { trabajadorId: 1 },
+    });
   });
 
   it('guardar() should navigate to /worker on success without origen', async () => {
@@ -181,14 +200,14 @@ describe('NuevoJornalComponent', () => {
 
   it('lists each farm once and keeps the crop disabled until one is chosen', async () => {
     await createComponent();
-    expect(component.fincas.map(f => f.id)).toEqual([1, 9]);
+    expect(component.fincas.map((f) => f.id)).toEqual([1, 9]);
     expect(component.form.get('cultivoId')!.disabled).toBe(true);
   });
 
   it('choosing a farm shows only its crops', async () => {
     await createComponent();
     component.elegirFinca(1);
-    expect(component.cultivosDeFinca.map(c => c.id)).toEqual([2, 3]);
+    expect(component.cultivosDeFinca.map((c) => c.id)).toEqual([2, 3]);
     expect(component.form.get('cultivoId')!.enabled).toBe(true);
   });
 
@@ -230,7 +249,9 @@ describe('NuevoJornalComponent', () => {
   });
 
   it('shows the backend reason when the crop is rejected', async () => {
-    jornalSvc.registrar.mockReturnValue(throwError(() => ({ error: { message: 'El cultivo ya está finalizado.' } })));
+    jornalSvc.registrar.mockReturnValue(
+      throwError(() => ({ error: { message: 'El cultivo ya está finalizado.' } })),
+    );
     await createComponent();
     llenar(component);
     component.toggleActividad(1);

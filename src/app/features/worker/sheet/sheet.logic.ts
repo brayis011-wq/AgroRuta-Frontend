@@ -61,7 +61,11 @@ export function clave(trabajadorId: number, fecha: string): string {
   return `${trabajadorId}|${fecha}`;
 }
 
-export interface TotalFila { jornales: number; kilos: number; valor: number }
+export interface TotalFila {
+  jornales: number;
+  kilos: number;
+  valor: number;
+}
 
 /** Lo de cada trabajador en la semana */
 export function totalFila(t: FilaPlanilla, jornales: CasillaPlanilla[]): TotalFila {
@@ -82,7 +86,10 @@ export function totalDia(fecha: string, jornales: CasillaPlanilla[]): number {
  * De los jornales de una casilla, el que se quita al tocarla: el del cultivo elegido si lo hay,
  * si no el último; nunca uno que ya está en nómina. null si no se puede quitar ninguno.
  */
-export function porQuitar(casilla: CasillaPlanilla[], cultivoId: number | null): CasillaPlanilla | null {
+export function porQuitar(
+  casilla: CasillaPlanilla[],
+  cultivoId: number | null,
+): CasillaPlanilla | null {
   const libres = casilla.filter(sePuedeQuitar);
   if (!libres.length) return null;
   return libres.find((j) => j.cultivoId === cultivoId) ?? libres[libres.length - 1];

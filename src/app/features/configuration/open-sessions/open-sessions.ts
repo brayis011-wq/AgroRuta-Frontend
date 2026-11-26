@@ -1,4 +1,11 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
@@ -10,6 +17,7 @@ const MAX_VISIBLES = 5;
 
 /** Dispositivos donde la cuenta tiene la sesión iniciada, con la opción de cerrarlos a distancia. */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-open-sessions',
   standalone: true,
   imports: [TranslatePipe],
@@ -45,7 +53,11 @@ export class OpenSessionsComponent implements OnInit {
       next: (lista) => {
         this.sinDatos.set(false);
         // La de este navegador primero; después, la más usada recientemente
-        this.sesiones.set([...lista].sort((a, b) => Number(b.actual) - Number(a.actual) || b.ultimoUso.localeCompare(a.ultimoUso)));
+        this.sesiones.set(
+          [...lista].sort(
+            (a, b) => Number(b.actual) - Number(a.actual) || b.ultimoUso.localeCompare(a.ultimoUso),
+          ),
+        );
       },
       error: () => this.sinDatos.set(true),
     });
@@ -101,7 +113,10 @@ export class OpenSessionsComponent implements OnInit {
     const d = new Date(iso);
     if (isNaN(d.getTime())) return '';
     return d.toLocaleString(this.idioma.current() === 'en' ? 'en-US' : 'es-CO', {
-      day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit',
+      day: 'numeric',
+      month: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
     });
   }
 }

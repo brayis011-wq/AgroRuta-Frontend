@@ -14,7 +14,10 @@ describe('RestablecerComponent', () => {
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: auth },
-        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap(token ? { token } : {}) } } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParamMap: convertToParamMap(token ? { token } : {}) } },
+        },
       ],
     });
     const f = TestBed.createComponent(RestablecerComponent);
@@ -52,7 +55,9 @@ describe('RestablecerComponent', () => {
     c.confirmar.set('una-clave-larga');
     c.guardar();
     expect(auth.restablecer).toHaveBeenCalledWith('tok', 'una-clave-larga');
-    expect(router.navigate).toHaveBeenCalledWith(['/auth/login'], { queryParams: { clave: 'nueva' } });
+    expect(router.navigate).toHaveBeenCalledWith(['/auth/login'], {
+      queryParams: { clave: 'nueva' },
+    });
   });
 
   it('enlace vencido (422) ofrece pedir otro; otros errores se muestran', () => {

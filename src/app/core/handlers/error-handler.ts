@@ -10,7 +10,9 @@ const ESPERA_RECARGA_MS = 60_000;
  */
 export function esFalloDeDescarga(error: unknown): boolean {
   const texto = error instanceof Error ? `${error.name} ${error.message}` : '';
-  return /ChunkLoadError|Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i.test(texto);
+  return /ChunkLoadError|Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i.test(
+    texto,
+  );
 }
 
 @Injectable()

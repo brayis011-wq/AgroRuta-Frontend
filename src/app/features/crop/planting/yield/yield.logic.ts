@@ -1,4 +1,8 @@
-import { ResumenSiembra, SemanaCosecha, TemporadaComparada } from '../../../../core/models/crop.model';
+import {
+  ResumenSiembra,
+  SemanaCosecha,
+  TemporadaComparada,
+} from '../../../../core/models/crop.model';
 
 export interface BarraSemana {
   semana: string;
@@ -29,7 +33,9 @@ export function totalSemana(s: SemanaCosecha): number {
 }
 
 /** Porcentaje de cada calidad sobre el total */
-export function partesCalidad(r: Pick<ResumenSiembra, 'kgPrimera' | 'kgSegunda' | 'kgTercera' | 'totalKg'>) {
+export function partesCalidad(
+  r: Pick<ResumenSiembra, 'kgPrimera' | 'kgSegunda' | 'kgTercera' | 'totalKg'>,
+) {
   const t = r.totalKg || 0;
   const p = (v: number) => (t > 0 ? Math.round((v / t) * 100) : 0);
   return { primera: p(r.kgPrimera), segunda: p(r.kgSegunda), tercera: p(r.kgTercera) };
@@ -52,18 +58,38 @@ export interface FilaComparacion {
  * Esta temporada y las anteriores del mismo cultivo en el lote, de la más reciente a la más vieja.
  * Se comparan por kg por planta cuando todas lo tienen; si no, por kg totales.
  */
-export function comparacion(r: ResumenSiembra, actual: { id: number; nombre: string; desde: string; plantas: number }):
-  { filas: FilaComparacion[]; porPlanta: boolean } {
+export function comparacion(
+  r: ResumenSiembra,
+  actual: { id: number; nombre: string; desde: string; plantas: number },
+): { filas: FilaComparacion[]; porPlanta: boolean } {
   const otras = r.otrasTemporadas.filter((t) => t.mismoCultivo);
   const todas: Omit<FilaComparacion, 'ancho'>[] = [
-    { id: actual.id, nombre: actual.nombre, desde: actual.desde, hasta: null, kg: r.totalKg, kgPorPlanta: r.kgPorPlanta, actual: true, enCurso: true },
+    {
+      id: actual.id,
+      nombre: actual.nombre,
+      desde: actual.desde,
+      hasta: null,
+      kg: r.totalKg,
+      kgPorPlanta: r.kgPorPlanta,
+      actual: true,
+      enCurso: true,
+    },
     ...otras.map((t: TemporadaComparada) => ({
-      id: t.siembraId, nombre: t.cultivo, desde: t.fechaSiembra, hasta: t.fechaFin,
-      kg: t.totalKg, kgPorPlanta: t.kgPorPlanta, actual: false, enCurso: t.enCurso,
+      id: t.siembraId,
+      nombre: t.cultivo,
+      desde: t.fechaSiembra,
+      hasta: t.fechaFin,
+      kg: t.totalKg,
+      kgPorPlanta: t.kgPorPlanta,
+      actual: false,
+      enCurso: t.enCurso,
     })),
   ].sort((a, b) => b.desde.localeCompare(a.desde));
   const porPlanta = todas.every((f) => f.kgPorPlanta != null);
-  const valor = (f: Omit<FilaComparacion, 'ancho'>) => (porPlanta ? f.kgPorPlanta ?? 0 : f.kg);
+  const valor = (f: Omit<FilaComparacion, 'ancho'>) => (porPlanta ? (f.kgPorPlanta ?? 0) : f.kg);
   const max = Math.max(0, ...todas.map(valor));
-  return { porPlanta, filas: todas.map((f) => ({ ...f, ancho: max > 0 ? (valor(f) / max) * 100 : 0 })) };
+  return {
+    porPlanta,
+    filas: todas.map((f) => ({ ...f, ancho: max > 0 ? (valor(f) / max) * 100 : 0 })),
+  };
 }

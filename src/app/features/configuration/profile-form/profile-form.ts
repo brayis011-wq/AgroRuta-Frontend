@@ -1,31 +1,35 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
-  Output,
-  EventEmitter,
   OnChanges,
   SimpleChanges,
   ChangeDetectorRef,
   inject,
   signal,
+  input,
+  output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Perfil, UpdateProfileRequest } from '../../../core/models/profile.model';
 import { ErrorFoto, prepararFoto, revisarArchivo } from '../../../shared/photo';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-profile-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './profile-form.html',
   styleUrls: ['../config-fields.css', './profile-form.scss'],
 })
 export class ProfileFormComponent implements OnChanges {
+  private readonly fb = inject(FormBuilder);
+
   @Input() perfil: Perfil | null = null;
-  @Input() loading = false;
-  @Output() save = new EventEmitter<UpdateProfileRequest>();
+  readonly loading = input(false);
+  readonly save = output<UpdateProfileRequest>();
 
   private readonly cdr = inject(ChangeDetectorRef);
 
@@ -38,7 +42,7 @@ export class ProfileFormComponent implements OnChanges {
   /** Hay un archivo encima del recuadro de la foto */
   readonly arrastrando = signal(false);
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
     this.form = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(2)]],
       email: [{ value: '', disabled: true }],
@@ -64,7 +68,11 @@ export class ProfileFormComponent implements OnChanges {
   /** Vuelve a los datos guardados */
   descartar(): void {
     if (!this.perfil) return;
-    this.form.patchValue({ nombre: this.perfil.nombre, telefono: this.perfil.telefono, fotoPerfil: this.perfil.fotoPerfil });
+    this.form.patchValue({
+      nombre: this.perfil.nombre,
+      telefono: this.perfil.telefono,
+      fotoPerfil: this.perfil.fotoPerfil,
+    });
     this.imageError = false;
     this.form.markAsPristine();
     this.form.markAsUntouched();
@@ -82,7 +90,10 @@ export class ProfileFormComponent implements OnChanges {
     this.arrastrando.set(false);
     if (!archivo) return;
     const problema = revisarArchivo(archivo);
-    if (problema) { this.errorFoto.set(problema); return; }
+    if (problema) {
+      this.errorFoto.set(problema);
+      return;
+    }
     this.errorFoto.set(null);
     this.procesando.set(true);
     try {

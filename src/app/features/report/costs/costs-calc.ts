@@ -27,7 +27,8 @@ export function totalesCostos(filas: FilaCostos[]): TotalesCostos {
   const kg = con.reduce((s, f) => s + f.costos!.kgTotal, 0);
   return {
     temporadas: filas.length,
-    costo, ingresos,
+    costo,
+    ingresos,
     ganancia: conPrecio ? ingresos - costo : null,
     kg,
     costoPorKg: kg > 0 ? costo / kg : null,
@@ -37,16 +38,26 @@ export function totalesCostos(filas: FilaCostos[]): TotalesCostos {
 
 export type OrdenCostos = 'reciente' | 'costo' | 'ganancia';
 
-export function ordenarCostos(filas: FilaCostos[], orden: OrdenCostos, texto: string): FilaCostos[] {
+export function ordenarCostos(
+  filas: FilaCostos[],
+  orden: OrdenCostos,
+  texto: string,
+): FilaCostos[] {
   const q = texto.trim().toLowerCase();
   const visibles = q
-    ? filas.filter((f) => [f.siembra.cultivo, f.siembra.variedad, f.siembra.loteNombre, f.siembra.fincaNombre]
-        .some((v) => (v ?? '').toLowerCase().includes(q)))
+    ? filas.filter((f) =>
+        [f.siembra.cultivo, f.siembra.variedad, f.siembra.loteNombre, f.siembra.fincaNombre].some(
+          (v) => (v ?? '').toLowerCase().includes(q),
+        ),
+      )
     : filas;
   const valor = (f: FilaCostos) =>
-    orden === 'costo' ? f.costos?.costoTotal ?? -1 : f.costos?.ganancia ?? Number.NEGATIVE_INFINITY;
+    orden === 'costo'
+      ? (f.costos?.costoTotal ?? -1)
+      : (f.costos?.ganancia ?? Number.NEGATIVE_INFINITY);
   return [...visibles].sort((a, b) =>
     orden === 'reciente'
       ? (b.siembra.fechaSiembra ?? '').localeCompare(a.siembra.fechaSiembra ?? '')
-      : valor(b) - valor(a));
+      : valor(b) - valor(a),
+  );
 }

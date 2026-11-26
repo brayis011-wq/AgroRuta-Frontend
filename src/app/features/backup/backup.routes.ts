@@ -4,7 +4,6 @@ export const BACKUP_ROUTES: Routes = [
   {
     path: '',
     title: 'backups.title',
-    loadComponent: () =>
-      import('./backup-home/backup-home').then((m) => m.BackupHomeComponent),
+    loadComponent: () => import('./backup-home/backup-home').then((m) => m.BackupHomeComponent),
   },
 ];

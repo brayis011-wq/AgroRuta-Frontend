@@ -2,7 +2,7 @@
 
 import { PestanasCatalogoComponent } from '../catalog-tabs/catalog-tabs';
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LaborService } from '../../../core/services/worker.service';
@@ -12,25 +12,29 @@ import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 @Component({
   selector: 'app-lista-labores',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, PestanasCatalogoComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, PestanasCatalogoComponent],
   templateUrl: './labor-list.html',
-  styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../worker-ui.css', '../worker-panel.css']
+  styleUrls: [
+    '../../crop/crop-ui.css',
+    '../../crop/crop-blocks.css',
+    '../../report/report-table.css',
+    '../worker-ui.css',
+    '../worker-panel.css',
+  ],
 })
 export class ListaLaboresComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly actividadService = inject(LaborService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
+
   private readonly confirmService = inject(ConfirmService);
   actividades: Labor[] = [];
   form!: FormGroup;
   modoEdicion: Labor | null = null;
   mostrarForm = false;
   guardando = false;
-  error = '';   // clave de traducción
-
-  constructor(
-    private fb: FormBuilder,
-    private actividadService: LaborService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService
-  ) {}
+  error = '';
 
   ngOnInit(): void {
     this.iniciarForm();
@@ -39,8 +43,8 @@ export class ListaLaboresComponent implements OnInit {
 
   iniciarForm(a?: Labor): void {
     this.form = this.fb.group({
-      nombre:      [a?.nombre      ?? '', Validators.required],
-      descripcion: [a?.descripcion ?? '', Validators.required]
+      nombre: [a?.nombre ?? '', Validators.required],
+      descripcion: [a?.descripcion ?? '', Validators.required],
     });
   }
 
@@ -53,7 +57,7 @@ export class ListaLaboresComponent implements OnInit {
       error: () => {
         this.error = 'workers.activities.errors.load';
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -70,11 +74,15 @@ export class ListaLaboresComponent implements OnInit {
   }
 
   guardar(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.guardando = true;
-    const op = (this.modoEdicion?.id != null)
-      ? this.actividadService.actualizar(this.modoEdicion.id, this.form.value)
-      : this.actividadService.crear(this.form.value);
+    const op =
+      this.modoEdicion?.id != null
+        ? this.actividadService.actualizar(this.modoEdicion.id, this.form.value)
+        : this.actividadService.crear(this.form.value);
     op.subscribe({
       next: () => {
         this.mostrarForm = false;
@@ -85,16 +93,18 @@ export class ListaLaboresComponent implements OnInit {
         this.error = 'workers.activities.errors.save';
         this.guardando = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
   async desactivar(a: Labor): Promise<void> {
     if (a.id == null) return;
-    const mensaje = this.translate.instant('workers.activities.confirmDeactivate', { name: a.nombre });
+    const mensaje = this.translate.instant('workers.activities.confirmDeactivate', {
+      name: a.nombre,
+    });
     if (!(await this.confirmService.preguntar({ mensaje, peligro: true }))) return;
     this.actividadService.desactivar(a.id).subscribe({
-      next: () => this.cargar()
+      next: () => this.cargar(),
     });
   }
 

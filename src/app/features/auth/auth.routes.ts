@@ -19,7 +19,8 @@ export const authRoutes: Routes = [
       {
         path: 'forgot-password',
         title: 'auth.forgot.title',
-        loadComponent: () => import('./forgot-password/forgot-password').then((m) => m.RecuperarComponent),
+        loadComponent: () =>
+          import('./forgot-password/forgot-password').then((m) => m.RecuperarComponent),
       },
       {
         path: 'verify',
@@ -29,7 +30,8 @@ export const authRoutes: Routes = [
       {
         path: 'reset-password',
         title: 'auth.reset.title',
-        loadComponent: () => import('./reset-password/reset-password').then((m) => m.RestablecerComponent),
+        loadComponent: () =>
+          import('./reset-password/reset-password').then((m) => m.RestablecerComponent),
       },
     ],
   },

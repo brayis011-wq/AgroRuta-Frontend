@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
+
 import { RouterModule } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
@@ -10,11 +16,16 @@ import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/forma
 import { iniciales as inicialesDe } from '../../../shared/iniciales';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-resumen',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [RouterModule, TranslatePipe],
   templateUrl: './admin-summary.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-summary.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    './admin-summary.css',
+  ],
 })
 export class AdminResumenComponent implements OnInit {
   private readonly adminService = inject(AdminService);
@@ -54,24 +65,32 @@ export class AdminResumenComponent implements OnInit {
 
   /** Listas de actividad: si fallan solo se quedan vacías, el resumen sigue funcionando */
   private cargarActividad(): void {
-    this.adminService.agricultores().pipe(catchError(() => of([] as AgricultorAdmin[]))).subscribe((lista) => {
-      this.topAgricultores = [...lista]
-        .sort((a, b) => (b.totalPagado ?? 0) - (a.totalPagado ?? 0) || b.fincas - a.fincas)
-        .slice(0, 5);
-      this.cdr.detectChanges();
-    });
-    this.adminService.usuarios().pipe(catchError(() => of([] as UsuarioAdmin[]))).subscribe((lista) => {
-      this.recientes = [...lista]
-        .sort((a, b) => (b.fechaCreacion ?? '').localeCompare(a.fechaCreacion ?? ''))
-        .slice(0, 5);
-      this.cdr.detectChanges();
-    });
+    this.adminService
+      .agricultores()
+      .pipe(catchError(() => of([] as AgricultorAdmin[])))
+      .subscribe((lista) => {
+        this.topAgricultores = [...lista]
+          .sort((a, b) => (b.totalPagado ?? 0) - (a.totalPagado ?? 0) || b.fincas - a.fincas)
+          .slice(0, 5);
+        this.cdr.detectChanges();
+      });
+    this.adminService
+      .usuarios()
+      .pipe(catchError(() => of([] as UsuarioAdmin[])))
+      .subscribe((lista) => {
+        this.recientes = [...lista]
+          .sort((a, b) => (b.fechaCreacion ?? '').localeCompare(a.fechaCreacion ?? ''))
+          .slice(0, 5);
+        this.cdr.detectChanges();
+      });
   }
 
   /** "3 fincas · 24,5 ha · 9 trabajadores", con singular cuando toca */
   lineaAgricultor(a: AgricultorAdmin): string {
     const t = (clave: string, n: number) =>
-      this.translate.instant(`admin.summary.line.${clave}${n === 1 ? 'One' : ''}`, { count: this.num(n) });
+      this.translate.instant(`admin.summary.line.${clave}${n === 1 ? 'One' : ''}`, {
+        count: this.num(n),
+      });
     return `${t('farms', a.fincas)} · ${this.num(a.hectareas, 1)} ha · ${t('workers', a.trabajadoresActivos)}`;
   }
 

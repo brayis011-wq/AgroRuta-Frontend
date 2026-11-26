@@ -46,7 +46,13 @@ export interface AgricultorAdmin {
 export interface AgricultorDetalleAdmin {
   agricultor: AgricultorAdmin;
   fincas: { id: number; nombre: string; ubicacion: string; hectareas: number }[];
-  trabajadores: { id: number; nombreCompleto: string; cedula: string; cargo: string | null; estado: string | null }[];
+  trabajadores: {
+    id: number;
+    nombreCompleto: string;
+    cedula: string;
+    cargo: string | null;
+    estado: string | null;
+  }[];
   nominas: {
     id: number;
     trabajador: string | null;

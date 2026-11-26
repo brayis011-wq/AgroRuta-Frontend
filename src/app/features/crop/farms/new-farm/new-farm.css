@@ -1,2 +1,5 @@
 /* Usa los estilos comunes de formularios (cultivo-form.css y cultivo-form-mapa.css) */
-.form-header__icon { background: var(--ar-azul-bg); color: var(--ar-azul); }
+.form-header__icon {
+  background: var(--ar-azul-bg);
+  color: var(--ar-azul);
+}

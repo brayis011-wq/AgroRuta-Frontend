@@ -25,15 +25,16 @@ describe('ContarDirective', () => {
 
   afterEach(() => vi.unstubAllGlobals());
 
-  const texto = (f: { nativeElement: HTMLElement }) => f.nativeElement.querySelector('strong')!.textContent;
+  const texto = (f: { nativeElement: HTMLElement }) =>
+    f.nativeElement.querySelector('strong')!.textContent;
 
   it('sube desde cero hasta el valor, con el formato de la pantalla', () => {
     const f = TestBed.createComponent(Anfitrion);
     f.detectChanges();
     expect(texto(f)).toBe('$ 0');
 
-    avanzar(1000);          // primer cuadro: marca el inicio
-    avanzar(1000 + 200);    // a medio camino
+    avanzar(1000); // primer cuadro: marca el inicio
+    avanzar(1000 + 200); // a medio camino
     const medio = Number(texto(f)!.slice(2));
     expect(medio).toBeGreaterThan(0);
     expect(medio).toBeLessThan(1200);

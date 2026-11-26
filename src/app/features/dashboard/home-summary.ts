@@ -1,4 +1,9 @@
-import { PagosDelMes, ResumenJornalesInicio, ResumenNominas, Trabajador } from '../../core/models/worker.model';
+import {
+  PagosDelMes,
+  ResumenJornalesInicio,
+  ResumenNominas,
+  Trabajador,
+} from '../../core/models/worker.model';
 import { Lote } from '../../core/models/crop.model';
 
 export interface DatosInicio {
@@ -43,7 +48,11 @@ export function fechaLocal(v: string | Date | null | undefined): Date | null {
 }
 
 function tendencia(actual: number, anterior: number): Tendencia {
-  return { actual, anterior, porcentaje: anterior > 0 ? Math.round(((actual - anterior) / anterior) * 100) : null };
+  return {
+    actual,
+    anterior,
+    porcentaje: anterior > 0 ? Math.round(((actual - anterior) / anterior) * 100) : null,
+  };
 }
 
 /** Primer día del mes anterior, para pedir solo los jornales que hacen falta */
@@ -67,8 +76,10 @@ export function calcularResumen(d: DatosInicio, hoy = new Date()): ResumenInicio
   const activos = d.trabajadores.filter((t) => t.estado === 'ACTIVO');
 
   const conJornalHoy = new Set(d.jornales?.trabajadoresHoy ?? []);
-  const claveMes = (ref: Date) => `${ref.getFullYear()}-${String(ref.getMonth() + 1).padStart(2, '0')}`;
-  const pagadoEn = (ref: Date) => Number(d.pagosPorMes.find((m) => m.mes === claveMes(ref))?.total ?? 0);
+  const claveMes = (ref: Date) =>
+    `${ref.getFullYear()}-${String(ref.getMonth() + 1).padStart(2, '0')}`;
+  const pagadoEn = (ref: Date) =>
+    Number(d.pagosPorMes.find((m) => m.mes === claveMes(ref))?.total ?? 0);
 
   const solicitudes = d.trabajadores.filter((t) => t.accesoEstado === 'PENDIENTE').length;
   const disponibles = d.lotes.filter((l) => l.estado === 'DISPONIBLE').length;

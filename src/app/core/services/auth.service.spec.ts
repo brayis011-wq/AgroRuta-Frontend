@@ -8,7 +8,8 @@ import { environment } from '../../../environments/environment';
 
 /** JWT de prueba (sin firma real) con el exp indicado, en segundos desde 1970. */
 const jwtConExp = (expSegundos: number): string => {
-  const b64 = (o: object) => btoa(JSON.stringify(o)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  const b64 = (o: object) =>
+    btoa(JSON.stringify(o)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
   return `${b64({ alg: 'HS256' })}.${b64({ exp: expSegundos })}.firma`;
 };
 const enSegundos = (s: number) => Math.floor(Date.now() / 1000) + s;
@@ -30,7 +31,10 @@ describe('AuthService', () => {
 
   const mockLoginRequest: LoginRequest = { email: 'juan@test.com', password: '123456' } as any;
   const mockRegisterRequest: RegisterRequest = {
-    nombre: 'Juan', email: 'juan@test.com', password: '123456', rol: 'Agricultor',
+    nombre: 'Juan',
+    email: 'juan@test.com',
+    password: '123456',
+    rol: 'Agricultor',
   } as any;
 
   function iniciarSesion(r: AuthResponse = mockAuthResponse) {
@@ -59,7 +63,9 @@ describe('AuthService', () => {
   it('borra el token que guardaban las versiones anteriores en localStorage', () => {
     localStorage.setItem('token', 'viejo');
     TestBed.resetTestingModule();
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), AuthService] });
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting(), AuthService],
+    });
     TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
     expect(localStorage.getItem('token')).toBeNull();
@@ -89,7 +95,9 @@ describe('AuthService', () => {
     service.login(mockLoginRequest).subscribe({ error: () => undefined });
     expect(localStorage.getItem('usuario')).toBeNull();
     httpMock.expectNone(`${apiUrl}/logout`);
-    httpMock.expectOne(`${apiUrl}/login`).flush({ message: 'Credenciales inválidas' }, { status: 401, statusText: 'Unauthorized' });
+    httpMock
+      .expectOne(`${apiUrl}/login`)
+      .flush({ message: 'Credenciales inválidas' }, { status: 401, statusText: 'Unauthorized' });
     expect(service.isLoggedIn()).toBe(false);
   });
 

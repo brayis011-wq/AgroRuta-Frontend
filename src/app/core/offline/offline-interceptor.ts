@@ -63,7 +63,9 @@ export const sinConexionInterceptor: HttpInterceptorFn = (req, next) => {
   // Cada respuesta dice si hay conexión de verdad: el indicador no depende solo de lo que diga el teléfono
   const vigilar = <T>(peticion: Observable<T>): Observable<T> =>
     peticion.pipe(
-      tap((evento) => { if (evento instanceof HttpResponse) cola.marcarRed(true); }),
+      tap((evento) => {
+        if (evento instanceof HttpResponse) cola.marcarRed(true);
+      }),
       catchError((e: unknown) => {
         if (e instanceof HttpErrorResponse) cola.marcarRed(e.status !== 0);
         return throwError(() => e);
@@ -78,7 +80,15 @@ export const sinConexionInterceptor: HttpInterceptorFn = (req, next) => {
     const metodo = req.method as 'POST' | 'PUT';
     const guardarAqui = (original?: unknown) =>
       from(cola.encolar(tipo, req.url, req.body, clave, metodo)).pipe(
-        map(() => new HttpResponse({ status: 202, statusText: 'Accepted', url: req.url, body: { pendiente: true } })),
+        map(
+          () =>
+            new HttpResponse({
+              status: 202,
+              statusText: 'Accepted',
+              url: req.url,
+              body: { pendiente: true },
+            }),
+        ),
         // No se pudo guardar en el dispositivo: que la pantalla muestre el error de siempre
         catchError((e) => throwError(() => original ?? e)),
       );
@@ -88,21 +98,31 @@ export const sinConexionInterceptor: HttpInterceptorFn = (req, next) => {
     return vigilar(next(req.clone({ setHeaders: { [CABECERA_ENVIO]: clave } }))).pipe(
       // Señal tan débil que no llega la respuesta: se guarda en el dispositivo y se reenvía después
       timeout({ each: ESPERA_REGISTRO_MS, with: () => guardarAqui() }),
-      catchError((error: unknown) => (sinRed(error) ? guardarAqui(error) : throwError(() => error))),
+      catchError((error: unknown) =>
+        sinRed(error) ? guardarAqui(error) : throwError(() => error),
+      ),
     );
   }
 
   if (req.method === 'GET' && req.responseType === 'json' && !sinCopia(ruta, SIN_COPIA)) {
     return vigilar(next(req)).pipe(
       tap((evento) => {
-        if (evento instanceof HttpResponse && evento.ok) cola.guardarLectura(req.urlWithParams, evento.body);
+        if (evento instanceof HttpResponse && evento.ok)
+          cola.guardarLectura(req.urlWithParams, evento.body);
       }),
       catchError((error: unknown) =>
         sinRed(error)
           ? from(cola.leerLectura(req.urlWithParams)).pipe(
               switchMap((copia) =>
                 copia
-                  ? of(new HttpResponse({ status: 200, statusText: 'OK', url: req.urlWithParams, body: copia.valor }))
+                  ? of(
+                      new HttpResponse({
+                        status: 200,
+                        statusText: 'OK',
+                        url: req.urlWithParams,
+                        body: copia.valor,
+                      }),
+                    )
                   : throwError(() => error),
               ),
             )

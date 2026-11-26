@@ -10,11 +10,12 @@ function armar(izquierda: number[], derecha: number[], display = 'flex') {
     c.style.display = display;
     altos.forEach((h) => {
       const t = document.createElement('section');
-      t.getBoundingClientRect = () => ({ height: h } as DOMRect);
+      t.getBoundingClientRect = () => ({ height: h }) as DOMRect;
       c.appendChild(t);
     });
-    const total = altos.reduce((s, h) => s + h, 0) + Math.max(0, altos.filter((h) => h > 0).length - 1) * 16;
-    c.getBoundingClientRect = () => ({ height: total } as DOMRect);
+    const total =
+      altos.reduce((s, h) => s + h, 0) + Math.max(0, altos.filter((h) => h > 0).length - 1) * 16;
+    c.getBoundingClientRect = () => ({ height: total }) as DOMRect;
     cuerpo.appendChild(c);
     return c;
   };
@@ -25,7 +26,10 @@ function armar(izquierda: number[], derecha: number[], display = 'flex') {
 }
 
 describe('emparejarColumnas', () => {
-  afterEach(() => { document.body.innerHTML = ''; vi.restoreAllMocks(); });
+  afterEach(() => {
+    document.body.innerHTML = '';
+    vi.restoreAllMocks();
+  });
 
   it('shares the missing height among the cards of the shorter column when the heights are close', () => {
     const { cuerpo, izq, der } = armar([150, 145, 190], [310, 330]);
@@ -69,7 +73,7 @@ describe('emparejarColumnas', () => {
   it('undoes a previous pairing when the data changes', () => {
     const { cuerpo, izq, der } = armar([150, 145, 190], [310, 330]);
     emparejarColumnas(cuerpo);
-    der.getBoundingClientRect = () => ({ height: 1200 } as DOMRect);
+    der.getBoundingClientRect = () => ({ height: 1200 }) as DOMRect;
 
     emparejarColumnas(cuerpo);
 
@@ -91,7 +95,9 @@ describe('emparejarColumnas', () => {
 });
 
 describe('elegirLugarClima', () => {
-  afterEach(() => { document.body.innerHTML = ''; });
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
 
   it('lo deja junto a Pendientes cuando así las columnas quedan parejas (mucha información a la izquierda)', () => {
     const { cuerpo } = armar([250, 270, 145], [370]);
@@ -113,7 +119,7 @@ describe('elegirLugarClima', () => {
     const { cuerpo, der } = armar([148, 180], [325]);
     const clima = document.createElement('section');
     clima.className = 'clima';
-    clima.getBoundingClientRect = () => ({ height: 310 } as DOMRect);
+    clima.getBoundingClientRect = () => ({ height: 310 }) as DOMRect;
     der.appendChild(clima);
     expect(elegirLugarClima(cuerpo, 310)).toBe('abajo');
   });

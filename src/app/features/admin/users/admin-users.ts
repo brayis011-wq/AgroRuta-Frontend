@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
@@ -7,6 +13,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { ROLES, RolUsuario, UsuarioAdmin } from '../../../core/models/admin.model';
 import { formatoFecha } from '../../../shared/format';
+import { mensajeDeError } from '../../../shared/error-message';
 
 type FiltroEstado = 'todos' | 'activos' | 'inactivos';
 
@@ -19,11 +26,16 @@ interface AccionPendiente {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [FormsModule, TranslatePipe],
   templateUrl: './admin-users.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-users.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    './admin-users.css',
+  ],
 })
 export class AdminUsuariosComponent implements OnInit {
   private readonly adminService = inject(AdminService);
@@ -107,9 +119,10 @@ export class AdminUsuariosComponent implements OnInit {
     this.guardando = true;
     this.mensaje = null;
 
-    const peticion = p.tipo === 'rol'
-      ? this.adminService.cambiarRol(p.usuario.id, p.rol!)
-      : this.adminService.cambiarEstado(p.usuario.id, p.activo!);
+    const peticion =
+      p.tipo === 'rol'
+        ? this.adminService.cambiarRol(p.usuario.id, p.rol!)
+        : this.adminService.cambiarEstado(p.usuario.id, p.activo!);
 
     peticion.subscribe({
       next: (actualizado) => {
@@ -119,8 +132,15 @@ export class AdminUsuariosComponent implements OnInit {
         this.mensaje = {
           tipo: 'ok',
           texto: this.translate.instant(
-            p.tipo === 'rol' ? 'admin.users.done.role' : actualizado.activo ? 'admin.users.done.activated' : 'admin.users.done.deactivated',
-            { name: actualizado.nombre, role: this.translate.instant('enums.rol.' + actualizado.rol) },
+            p.tipo === 'rol'
+              ? 'admin.users.done.role'
+              : actualizado.activo
+                ? 'admin.users.done.activated'
+                : 'admin.users.done.deactivated',
+            {
+              name: actualizado.nombre,
+              role: this.translate.instant('enums.rol.' + actualizado.rol),
+            },
           ),
         };
         this.cdr.detectChanges();
@@ -130,7 +150,7 @@ export class AdminUsuariosComponent implements OnInit {
         this.pendiente = null;
         this.mensaje = {
           tipo: 'error',
-          texto: err?.error?.message || this.translate.instant('admin.users.errors.save'),
+          texto: mensajeDeError(err, this.translate.instant('admin.users.errors.save')),
         };
         this.cdr.detectChanges();
       },

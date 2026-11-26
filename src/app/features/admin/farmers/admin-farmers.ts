@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -11,9 +17,10 @@ import { formatoNumero, formatoPesos } from '../../../shared/format';
 type Orden = 'nombre' | 'hectareas' | 'trabajadores' | 'pagado';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-agricultores',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe],
+  imports: [FormsModule, RouterModule, TranslatePipe],
   templateUrl: './admin-farmers.html',
   styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css'],
 })

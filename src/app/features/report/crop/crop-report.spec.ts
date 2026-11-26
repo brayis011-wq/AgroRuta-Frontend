@@ -8,11 +8,34 @@ describe('CropReportComponent', () => {
     TestBed.overrideComponent(CropReportComponent, { set: { template: '' } });
     TestBed.configureTestingModule({
       imports: [CropReportComponent],
-      providers: [{ provide: ReportService, useValue: {
-        getCropPreview: () => of({ generatedAt: '', cropDetails: [
-          { siembraId: 1, variedad: 'Uchuva · Colombia', estado: 'PRODUCCION', totalKgCosechado: 20.5, totalCosechas: 2 },
-          { siembraId: 2, variedad: 'Café · Castillo', estado: 'COSECHA', totalKgCosechado: 0, totalCosechas: 0 }] }),
-        downloadCropPdf: () => of(new Blob()) } }],
+      providers: [
+        {
+          provide: ReportService,
+          useValue: {
+            getCropPreview: () =>
+              of({
+                generatedAt: '',
+                cropDetails: [
+                  {
+                    siembraId: 1,
+                    variedad: 'Uchuva · Colombia',
+                    estado: 'PRODUCCION',
+                    totalKgCosechado: 20.5,
+                    totalCosechas: 2,
+                  },
+                  {
+                    siembraId: 2,
+                    variedad: 'Café · Castillo',
+                    estado: 'COSECHA',
+                    totalKgCosechado: 0,
+                    totalCosechas: 0,
+                  },
+                ],
+              }),
+            downloadCropPdf: () => of(new Blob()),
+          },
+        },
+      ],
     });
     const c = TestBed.createComponent(CropReportComponent).componentInstance;
     c.ngOnInit();

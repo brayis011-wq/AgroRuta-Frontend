@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-language-switcher',
   standalone: true,
   imports: [TranslatePipe],
@@ -19,25 +20,36 @@ import { LanguageService } from '../../core/services/language.service';
       <span class="opt" [class.active]="lang.current() === 'en'">EN</span>
     </button>
   `,
-  styles: [`
-    .lang-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      border: 1px solid currentColor;
-      border-radius: 999px;
-      background: transparent;
-      color: inherit;
-      font-size: 0.75rem;
-      cursor: pointer;
-      line-height: 1;
-    }
-    .lang-toggle:hover { background: rgba(128, 128, 128, 0.15); }
-    .opt { opacity: 0.5; }
-    .opt.active { opacity: 1; font-weight: 700; }
-    .sep { opacity: 0.4; }
-  `],
+  styles: [
+    `
+      .lang-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        background: transparent;
+        color: inherit;
+        font-size: 0.75rem;
+        cursor: pointer;
+        line-height: 1;
+      }
+      .lang-toggle:hover {
+        background: rgba(128, 128, 128, 0.15);
+      }
+      .opt {
+        opacity: 0.5;
+      }
+      .opt.active {
+        opacity: 1;
+        font-weight: 700;
+      }
+      .sep {
+        opacity: 0.4;
+      }
+    `,
+  ],
 })
 export class LanguageSwitcher {
   lang = inject(LanguageService);

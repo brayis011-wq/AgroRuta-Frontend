@@ -5,7 +5,10 @@
  *   G y I    ir al Inicio; G y C, Cultivos; G y E, Equipo; G y J, Jornales; G y N, Nóminas; G y R, Reportes
  *   ?        ver esta lista
  */
-export interface Atajo { teclas: string[]; clave: string }
+export interface Atajo {
+  teclas: string[];
+  clave: string;
+}
 
 export const ATAJOS: Atajo[] = [
   { teclas: ['/'], clave: 'shortcuts.search' },
@@ -21,11 +24,19 @@ export const ATAJOS: Atajo[] = [
 
 /** A dónde lleva "G" seguida de cada letra */
 export const IR_A: Record<string, string> = {
-  i: '/dashboard', c: '/crops', e: '/worker', j: '/worker/workdays', n: '/worker/payrolls', r: '/reports',
+  i: '/dashboard',
+  c: '/crops',
+  e: '/worker',
+  j: '/worker/workdays',
+  n: '/worker/payrolls',
+  r: '/reports',
 };
 
 /** Qué abre "N" en cada pantalla (la más parecida a la dirección actual) */
-export function nuevoSegun(ruta: string): { ruta: (string | number)[]; query?: Record<string, string> } {
+export function nuevoSegun(ruta: string): {
+  ruta: (string | number)[];
+  query?: Record<string, string>;
+} {
   const siembra = /^\/crops\/planting\/(\d+)$/.exec(ruta);
   if (siembra) return { ruta: ['/crops/planting', Number(siembra[1]), 'activity'] };
   const finca = /^\/crops\/farm\/(\d+)$/.exec(ruta);

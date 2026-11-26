@@ -17,7 +17,10 @@ export interface Desplazamiento {
  * La barra inferior del celular se esconde al bajar (para dejar toda la pantalla al contenido) y vuelve
  * al subir. Devuelve si debe quedar oculta después de un movimiento.
  */
-export function barraOcultaTras(oculta: boolean, { antes, ahora, maximo }: Desplazamiento): boolean {
+export function barraOcultaTras(
+  oculta: boolean,
+  { antes, ahora, maximo }: Desplazamiento,
+): boolean {
   if (ahora <= ZONA_ALTA_PX) return false;
   // Rebote elástico del navegador más allá del final (o del inicio): no cuenta como movimiento
   if (ahora < 0 || ahora > maximo) return oculta;

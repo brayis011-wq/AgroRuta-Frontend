@@ -1,19 +1,98 @@
 /* Detalle de nómina: pasos del flujo y pago */
-.pasos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; margin: 0; padding: 0; list-style: none; }
-.pasos li { display: flex; align-items: center; gap: .6rem; padding: .7rem .8rem; border-radius: 12px; background: var(--ar-superficie); border: 1px solid var(--ar-borde); color: var(--ar-tinta-3); font-size: .85rem; font-weight: 600; min-width: 0; }
-.pasos li .ti { width: 30px; height: 30px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--ar-superficie); border: 1px solid var(--ar-borde); font-size: 16px; }
-.pasos li.hecho { border-color: var(--ar-verde-100); background: var(--ar-verde-50); color: var(--ar-verde-800); }
-.pasos li.hecho .ti { background: var(--ar-verde-600); border-color: transparent; color: #fff; }
-.pasos li.actual { color: var(--ar-tinta); border-color: var(--ar-verde-600); box-shadow: inset 0 0 0 1px var(--ar-verde-600); }
-.pasos li small { display: block; font-weight: 400; font-size: .74rem; color: var(--ar-tinta-3); }
-.pago { display: flex; align-items: center; gap: .9rem; flex-wrap: wrap; }
-.pago > div { flex: 1; min-width: 0; }
-.pago strong.monto { font-size: 1.3rem; color: var(--ar-verde-700); font-variant-numeric: tabular-nums; }
-.pago p { margin: .15rem 0 0; font-size: .84rem; color: var(--ar-tinta-2); }
-.form-pago { display: flex; flex-direction: column; gap: .9rem; }
-.form-pago .pie { display: flex; justify-content: flex-end; gap: .5rem; }
-@media (max-width: 720px) { .pasos { grid-template-columns: 1fr; } }
+.pasos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pasos li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 12px;
+  background: var(--ar-superficie);
+  border: 1px solid var(--ar-borde);
+  color: var(--ar-tinta-3);
+  font-size: 0.85rem;
+  font-weight: 600;
+  min-width: 0;
+}
+.pasos li .ti {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ar-superficie);
+  border: 1px solid var(--ar-borde);
+  font-size: 16px;
+}
+.pasos li.hecho {
+  border-color: var(--ar-verde-100);
+  background: var(--ar-verde-50);
+  color: var(--ar-verde-800);
+}
+.pasos li.hecho .ti {
+  background: var(--ar-verde-600);
+  border-color: transparent;
+  color: #fff;
+}
+.pasos li.actual {
+  color: var(--ar-tinta);
+  border-color: var(--ar-verde-600);
+  box-shadow: inset 0 0 0 1px var(--ar-verde-600);
+}
+.pasos li small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.74rem;
+  color: var(--ar-tinta-3);
+}
+.pago {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+.pago > div {
+  flex: 1;
+  min-width: 0;
+}
+.pago strong.monto {
+  font-size: 1.3rem;
+  color: var(--ar-verde-700);
+  font-variant-numeric: tabular-nums;
+}
+.pago p {
+  margin: 0.15rem 0 0;
+  font-size: 0.84rem;
+  color: var(--ar-tinta-2);
+}
+.form-pago {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.form-pago .pie {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+@media (max-width: 720px) {
+  .pasos {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* Nómina pendiente: se puede corregir */
-.corregir { margin-bottom: .8rem; }
-.btn.chico { padding: .4rem .7rem; font-size: .82rem; }
+.corregir {
+  margin-bottom: 0.8rem;
+}
+.btn.chico {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.82rem;
+}

@@ -2,7 +2,14 @@ import { PrecargarDirective } from '../../../../shared/prefetch.directive';
 import { AnteriorSiguienteComponent, Vecino } from '../../../../shared/prev-next/prev-next';
 import { ordenar, vecinos } from '../../../../core/services/active-plantings.service';
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -16,11 +23,16 @@ import { FincaActivaService } from '../../../../core/services/active-farm.servic
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { formatoFecha, formatoNumero } from '../../../../shared/format';
 import {
-  EstadoLote, Lote, Siembra, nombreCultivo as nombreDeCultivo, siembraActiva,
+  EstadoLote,
+  Lote,
+  Siembra,
+  nombreCultivo as nombreDeCultivo,
+  siembraActiva,
 } from '../../../../core/models/crop.model';
 import { environment } from '../../../../../environments/environment';
 import { rangoNdvi } from '../../../../shared/ndvi';
 import { diasEntre, hoyIso } from '../../planting/stage-cycle/stage-cycle.logic';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 export interface Temporada {
   siembra: Siembra;
@@ -31,9 +43,21 @@ export interface Temporada {
 @Component({
   selector: 'app-detalle-lote',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, AnteriorSiguienteComponent, PrecargarDirective],
+  imports: [
+    FormsModule,
+    RouterLink,
+    TranslatePipe,
+    MigasCultivoComponent,
+    AnteriorSiguienteComponent,
+    PrecargarDirective,
+  ],
   templateUrl: './plot-detail.html',
-  styleUrls: ['../../crop-ui.css', '../../crop-dialog.css', './plot-detail.css', './plot-detail-seasons.css'],
+  styleUrls: [
+    '../../crop-ui.css',
+    '../../crop-dialog.css',
+    './plot-detail.css',
+    './plot-detail-seasons.css',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -48,17 +72,30 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly lote = signal<Lote | null>(null);
   /** Anterior y siguiente entre los lotes de la misma finca */
-  readonly vecinos = signal<{ anterior: Vecino | null; siguiente: Vecino | null; posicion: number; total: number }>({ anterior: null, siguiente: null, posicion: 0, total: 0 });
+  readonly vecinos = signal<{
+    anterior: Vecino | null;
+    siguiente: Vecino | null;
+    posicion: number;
+    total: number;
+  }>({ anterior: null, siguiente: null, posicion: 0, total: 0 });
 
   private cargarVecinos(lote: Lote): void {
     if (!lote.fincaId) return;
-    defer(() => this.cultivoService.listarLotesPorFinca(lote.fincaId)).pipe(catchError(() => of([] as Lote[]))).subscribe((todos) => {
-      if (this.lote()?.id !== lote.id) return;
-      const lista = ordenar(todos.filter((l) => l.id != null));
-      const v = vecinos(lista, (l) => l.id === lote.id);
-      const comoVecino = (l: Lote | null): Vecino | null => (l ? { texto: l.nombre, ruta: ['/crops/plot', l.id!] } : null);
-      this.vecinos.set({ anterior: comoVecino(v.anterior), siguiente: comoVecino(v.siguiente), posicion: v.posicion, total: v.posicion < 0 ? 0 : lista.length });
-    });
+    defer(() => this.cultivoService.listarLotesPorFinca(lote.fincaId))
+      .pipe(catchError(() => of([] as Lote[])))
+      .subscribe((todos) => {
+        if (this.lote()?.id !== lote.id) return;
+        const lista = ordenar(todos.filter((l) => l.id != null));
+        const v = vecinos(lista, (l) => l.id === lote.id);
+        const comoVecino = (l: Lote | null): Vecino | null =>
+          l ? { texto: l.nombre, ruta: ['/crops/plot', l.id!] } : null;
+        this.vecinos.set({
+          anterior: comoVecino(v.anterior),
+          siguiente: comoVecino(v.siguiente),
+          posicion: v.posicion,
+          total: v.posicion < 0 ? 0 : lista.length,
+        });
+      });
   }
   readonly siembra = signal<Siembra | null>(null);
   readonly temporadas = signal<Temporada[]>([]);
@@ -96,8 +133,14 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     this.error.set('');
     this.editando.set(false);
     this.cargando.set(true);
-    if (this.poligono) { this.map?.removeLayer(this.poligono); this.poligono = undefined; }
-    if (this.ndviActivo() && this.ndviLayer) { this.map?.removeLayer(this.ndviLayer); this.ndviActivo.set(false); }
+    if (this.poligono) {
+      this.map?.removeLayer(this.poligono);
+      this.poligono = undefined;
+    }
+    if (this.ndviActivo() && this.ndviLayer) {
+      this.map?.removeLayer(this.ndviLayer);
+      this.ndviActivo.set(false);
+    }
 
     this.cultivoService.buscarLote(id).subscribe({
       next: (lote) => {
@@ -124,20 +167,32 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Siembra en curso y temporadas anteriores (con lo cosechado en cada una) */
   cargarTemporadas(): void {
     const id = this.loteId;
-    this.cultivoService.historialLote(id).pipe(catchError(() => of([] as Siembra[]))).subscribe((todas) => {
-      if (id !== this.loteId) return; // ya se cambió a otro lote
-      this.siembra.set(todas.find(siembraActiva) ?? null);
-      const pasadas = todas.filter((s) => !siembraActiva(s));
-      this.temporadas.set(pasadas.map((s) => ({
-        siembra: s, dias: diasEntre(s.fechaSiembra, s.fechaFin ?? hoyIso()), kg: null,
-      })));
-      this.cargando.set(false);
-      this.refrescarMapa();
+    this.cultivoService
+      .historialLote(id)
+      .pipe(catchError(() => of([] as Siembra[])))
+      .subscribe((todas) => {
+        if (id !== this.loteId) return; // ya se cambió a otro lote
+        this.siembra.set(todas.find(siembraActiva) ?? null);
+        const pasadas = todas.filter((s) => !siembraActiva(s));
+        this.temporadas.set(
+          pasadas.map((s) => ({
+            siembra: s,
+            dias: diasEntre(s.fechaSiembra, s.fechaFin ?? hoyIso()),
+            kg: null,
+          })),
+        );
+        this.cargando.set(false);
+        this.refrescarMapa();
 
-      if (!pasadas.length) return;
-      forkJoin(pasadas.map((s) => this.cultivoService.totalKgCosechado(s.id!).pipe(catchError(() => of(null)))))
-        .subscribe((kgs) => this.temporadas.update((ts) => ts.map((t, i) => ({ ...t, kg: kgs[i] ?? 0 }))));
-    });
+        if (!pasadas.length) return;
+        forkJoin(
+          pasadas.map((s) =>
+            this.cultivoService.totalKgCosechado(s.id!).pipe(catchError(() => of(null))),
+          ),
+        ).subscribe((kgs) =>
+          this.temporadas.update((ts) => ts.map((t, i) => ({ ...t, kg: kgs[i] ?? 0 }))),
+        );
+      });
   }
 
   /** Cambió la etapa o se cerró la temporada */
@@ -164,8 +219,11 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!ok) return;
     }
     this.cultivoService.cambiarEstadoLote(this.loteId, estado).subscribe({
-      next: (l) => { this.lote.set(l); this.error.set(''); },
-      error: (e) => this.error.set(e?.error?.message || 'temporadas.lote.errors.state'),
+      next: (l) => {
+        this.lote.set(l);
+        this.error.set('');
+      },
+      error: (e) => this.error.set(mensajeDeError(e, 'temporadas.lote.errors.state')),
     });
   }
 
@@ -181,21 +239,25 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     const l = this.lote();
     if (!l || !this.formNombre.trim() || !this.formArea || this.formArea <= 0) return;
     this.guardando.set(true);
-    this.cultivoService.actualizarLote(this.loteId, {
-      nombre: this.formNombre.trim(), area: this.formArea, fincaId: l.fincaId,
-    }).subscribe({
-      next: (actualizado) => {
-        this.lote.set(actualizado);
-        this.guardando.set(false);
-        this.editando.set(false);
-        this.error.set('');
-        this.fincaActiva.refrescarLotes();
-      },
-      error: (e) => {
-        this.guardando.set(false);
-        this.error.set(e?.error?.message || 'temporadas.lote.errors.save');
-      },
-    });
+    this.cultivoService
+      .actualizarLote(this.loteId, {
+        nombre: this.formNombre.trim(),
+        area: this.formArea,
+        fincaId: l.fincaId,
+      })
+      .subscribe({
+        next: (actualizado) => {
+          this.lote.set(actualizado);
+          this.guardando.set(false);
+          this.editando.set(false);
+          this.error.set('');
+          this.fincaActiva.refrescarLotes();
+        },
+        error: (e) => {
+          this.guardando.set(false);
+          this.error.set(mensajeDeError(e, 'temporadas.lote.errors.save'));
+        },
+      });
   }
 
   // ── Formato ───────────────────────────────────────────────────────
@@ -229,21 +291,35 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     const el = document.getElementById('mapa-lote');
     if (!el) return;
     this.map = L.map(el).setView([4.5709, -74.2973], 15);
-    const google = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-      { attribution: 'Google Satellite', maxZoom: 21, maxNativeZoom: 20 });
-    const esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 });
+    const google = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      attribution: 'Google Satellite',
+      maxZoom: 21,
+      maxNativeZoom: 20,
+    });
+    const esri = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 },
+    );
     google.addTo(this.map);
-    L.control.layers({ 'Google Satellite': google, 'Esri Satellite': esri }, {}, { position: 'bottomleft' }).addTo(this.map);
-    this.ndviLayer = L.tileLayer.wms(`https://sh.dataspace.copernicus.eu/ogc/wms/${environment.sentinelInstanceId}`, {
-      tileSize: 512,
-      attribution: '© Copernicus/Sentinel Hub',
-      layers: 'NDVI',
-      time: rangoNdvi(environment.ndviDias),
-      maxcc: 30,
-      format: 'image/png',
-      transparent: true,
-    } as any);
+    L.control
+      .layers(
+        { 'Google Satellite': google, 'Esri Satellite': esri },
+        {},
+        { position: 'bottomleft' },
+      )
+      .addTo(this.map);
+    this.ndviLayer = L.tileLayer.wms(
+      `https://sh.dataspace.copernicus.eu/ogc/wms/${environment.sentinelInstanceId}`,
+      {
+        tileSize: 512,
+        attribution: '© Copernicus/Sentinel Hub',
+        layers: 'NDVI',
+        time: rangoNdvi(environment.ndviDias),
+        maxcc: 30,
+        format: 'image/png',
+        transparent: true,
+      } as L.WMSOptions & { time: string; maxcc: number },
+    );
   }
 
   private refrescarMapa(): void {
@@ -260,9 +336,14 @@ export class DetalleLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       const coords: [number, number][] = JSON.parse(coordenadas);
       if (this.poligono) this.map.removeLayer(this.poligono);
-      this.poligono = L.polygon(coords.map((c) => [c[0], c[1]] as L.LatLngTuple), {
-        color: '#2e7d32', fillOpacity: 0.25, weight: 2,
-      }).addTo(this.map);
+      this.poligono = L.polygon(
+        coords.map((c) => [c[0], c[1]] as L.LatLngTuple),
+        {
+          color: '#2e7d32',
+          fillOpacity: 0.25,
+          weight: 2,
+        },
+      ).addTo(this.map);
       this.map.fitBounds(this.poligono.getBounds(), { padding: [40, 40] });
     } catch {
       console.warn('Coordenadas inválidas');

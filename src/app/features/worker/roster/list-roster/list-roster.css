@@ -1,16 +1,95 @@
 /* Nóminas: acciones en grupo */
-.lote-barra { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; justify-content: flex-end; margin-bottom: .8rem; padding: .6rem; border-radius: 12px; background: var(--ar-fondo); }
-.metodo-lote select { font: inherit; font-size: .88rem; padding: .55rem .7rem; border: 1px solid var(--ar-borde); border-radius: 10px; background: var(--ar-superficie); color: var(--ar-tinta); }
-.lista-generadas { list-style: none; margin: .8rem 0; padding: 0; display: flex; flex-direction: column; gap: .2rem; max-height: 40vh; overflow-y: auto; }
-.lista-generadas li { display: flex; align-items: center; gap: .6rem; padding: .45rem .2rem; border-bottom: 1px solid var(--ar-borde); }
-.lista-generadas .g-nombre { flex: 1; min-width: 0; font-size: .88rem; }
-.lista-generadas small { display: block; font-size: .74rem; color: var(--ar-tinta-3); }
-.lista-generadas strong { font-variant-numeric: tabular-nums; }
-@media (max-width: 720px) { .lote-barra { justify-content: stretch; } .lote-barra .btn { flex: 1; } }
-.lista-generadas .g-fila { display: flex; align-items: center; gap: .6rem; width: 100%; color: inherit; text-decoration: none; }
-.lista-generadas .g-fila:hover .g-nombre { color: var(--ar-verde-700); }
-.lista-generadas .g-fila .ti { color: var(--ar-tinta-3); }
-.siguientes { margin: .4rem 0 1rem; padding-left: 1.2rem; display: grid; gap: .35rem; font-size: .84rem; color: var(--ar-tinta-2); }
-.siguientes b { color: var(--ar-tinta); }
-.opcion .sem { display: flex; flex-direction: column; align-items: center; line-height: 1.25; }
-.opcion .sem small { font-weight: 500; font-size: .76rem; opacity: .8; }
+.lote-barra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 0.8rem;
+  padding: 0.6rem;
+  border-radius: 12px;
+  background: var(--ar-fondo);
+}
+.metodo-lote select {
+  font: inherit;
+  font-size: 0.88rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--ar-borde);
+  border-radius: 10px;
+  background: var(--ar-superficie);
+  color: var(--ar-tinta);
+}
+.lista-generadas {
+  list-style: none;
+  margin: 0.8rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+.lista-generadas li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.2rem;
+  border-bottom: 1px solid var(--ar-borde);
+}
+.lista-generadas .g-nombre {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.88rem;
+}
+.lista-generadas small {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--ar-tinta-3);
+}
+.lista-generadas strong {
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 720px) {
+  .lote-barra {
+    justify-content: stretch;
+  }
+  .lote-barra .btn {
+    flex: 1;
+  }
+}
+.lista-generadas .g-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+.lista-generadas .g-fila:hover .g-nombre {
+  color: var(--ar-verde-700);
+}
+.lista-generadas .g-fila .ti {
+  color: var(--ar-tinta-3);
+}
+.siguientes {
+  margin: 0.4rem 0 1rem;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.84rem;
+  color: var(--ar-tinta-2);
+}
+.siguientes b {
+  color: var(--ar-tinta);
+}
+.opcion .sem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.25;
+}
+.opcion .sem small {
+  font-weight: 500;
+  font-size: 0.76rem;
+  opacity: 0.8;
+}

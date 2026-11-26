@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CampoService } from '../../../core/services/finance.service';
@@ -6,6 +14,7 @@ import { ResumenLluvia } from '../../../core/models/finance.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { AvisosService } from '../../../core/services/toast.service';
 import { formatoNumero, localeDe } from '../../../shared/format';
+import { mensajeDeError } from '../../../shared/error-message';
 
 /** "aaaa-mm-dd" local */
 function isoLocal(d: Date): string {
@@ -20,7 +29,9 @@ export function consejoLluvia(r: ResumenLluvia | null, hoy: string): 'noRegar' |
   if (!r) return null;
   const [y, m, d] = hoy.split('-').map(Number);
   const desde = new Date(y, m - 1, d - 2);
-  const tres = r.dias.filter((d) => d.fecha >= isoLocal(desde) && d.fecha <= hoy).reduce((s, d) => s + Number(d.milimetros), 0);
+  const tres = r.dias
+    .filter((d) => d.fecha >= isoLocal(desde) && d.fecha <= hoy)
+    .reduce((s, d) => s + Number(d.milimetros), 0);
   if (tres >= MM_SIN_RIEGO) return 'noRegar';
   if (r.diasSinLluvia != null && r.diasSinLluvia >= 7 && r.dias.length > 0) return 'seco';
   return null;
@@ -50,7 +61,11 @@ export class LluviaFincaComponent {
 
   readonly resumen = signal<ResumenLluvia | null>(null);
   readonly hoy = isoLocal(new Date());
-  readonly ayer = (() => { const d = new Date(); d.setDate(d.getDate() - 1); return isoLocal(d); })();
+  readonly ayer = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return isoLocal(d);
+  })();
   readonly dia = signal<string>(this.hoy);
   milimetros: number | null = null;
   readonly guardando = signal(false);
@@ -72,7 +87,9 @@ export class LluviaFincaComponent {
   });
 
   readonly consejo = computed(() => consejoLluvia(this.resumen(), this.hoy));
-  readonly yaAnotado = computed(() => (this.resumen()?.dias ?? []).find((d) => d.fecha === this.dia()) ?? null);
+  readonly yaAnotado = computed(
+    () => (this.resumen()?.dias ?? []).find((d) => d.fecha === this.dia()) ?? null,
+  );
 
   constructor() {
     effect(() => this.cargar(this.fincaId()));
@@ -98,7 +115,10 @@ export class LluviaFincaComponent {
         this.avisos.exito('lluvia.saved');
         this.cargar(this.fincaId());
       },
-      error: (e) => { this.guardando.set(false); this.error.set(e?.error?.message || 'lluvia.errors.save'); },
+      error: (e) => {
+        this.guardando.set(false);
+        this.error.set(mensajeDeError(e, 'lluvia.errors.save'));
+      },
     });
   }
 
@@ -114,6 +134,9 @@ export class LluviaFincaComponent {
 
   etiquetaDia(fecha: string): string {
     const [y, m, d] = fecha.split('-').map(Number);
-    return new Intl.DateTimeFormat(localeDe(this.lang.current()), { weekday: 'short', day: 'numeric' }).format(new Date(y, m - 1, d));
+    return new Intl.DateTimeFormat(localeDe(this.lang.current()), {
+      weekday: 'short',
+      day: 'numeric',
+    }).format(new Date(y, m - 1, d));
   }
 }

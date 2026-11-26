@@ -1,24 +1,38 @@
 import { PedidoReporteCompleto } from '../downloads/report-downloads';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { TranslatePipe } from '@ngx-translate/core';
 import { PayrollReportComponent } from '../payroll/payroll-report';
 import { CropReportComponent } from '../crop/crop-report';
 import { CostsReportComponent } from '../costs/costs-report';
 import { ProfitabilityReportComponent } from '../profitability/profitability-report';
 import { CuadernoCampoComponent } from '../field-book/field-book';
-import { PARTES_REPORTE, ParteReporte, ReportService, CLAVES_PERIODO, ClavePeriodo } from '../../../core/services/report.service';
+import {
+  PARTES_REPORTE,
+  ParteReporte,
+  ReportService,
+  CLAVES_PERIODO,
+  ClavePeriodo,
+} from '../../../core/services/report.service';
 import { ReportBase } from '../report-base';
 
 type Tab = ParteReporte | 'fieldbook';
 const TABS: Tab[] = [...PARTES_REPORTE, 'fieldbook'];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-report-home',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, PayrollReportComponent, CropReportComponent, CostsReportComponent, ProfitabilityReportComponent, CuadernoCampoComponent],
+  imports: [
+    TranslatePipe,
+    PayrollReportComponent,
+    CropReportComponent,
+    CostsReportComponent,
+    ProfitabilityReportComponent,
+    CuadernoCampoComponent,
+  ],
   templateUrl: './report-home.html',
   styleUrls: ['./report-home.css', '../report-shared.css'],
   // Cada reporte abre el panel de "PDF con todo" desde su menú Descargar
@@ -29,9 +43,9 @@ export class ReportHomeComponent extends ReportBase {
   private readonly router = inject(Router);
   private readonly reportService = inject(ReportService);
 
-  activeTab: Tab = 'payroll';
+  readonly activeTab = signal<Tab>('payroll');
   /** Temporada a abrir en la pestaña de costos (?siembra=7) */
-  siembra: number | null = null;
+  readonly siembra = signal<number | null>(null);
 
   // ── PDF completo ──────────────────────────────────────────────
   readonly partes = PARTES_REPORTE;
@@ -50,10 +64,12 @@ export class ReportHomeComponent extends ReportBase {
         this.setTab('payroll');
         return;
       }
-      this.activeTab = tab;
-      this.siembra = Number(q.get('siembra')) || null;
+      this.activeTab.set(tab);
+      this.siembra.set(Number(q.get('siembra')) || null);
       const periodo = q.get('periodo') as ClavePeriodo | null;
-      this.reportService.periodo.set(periodo && CLAVES_PERIODO.includes(periodo) ? periodo : 'todo');
+      this.reportService.periodo.set(
+        periodo && CLAVES_PERIODO.includes(periodo) ? periodo : 'todo',
+      );
     });
   }
 
@@ -64,17 +80,28 @@ export class ReportHomeComponent extends ReportBase {
   /** Va en la URL (?periodo=anio) para que al volver o recargar se vea lo mismo */
   elegirPeriodo(p: ClavePeriodo): void {
     this.reportService.periodo.set(p);
-    this.router.navigate([], { relativeTo: this.route, queryParams: { periodo: p === 'todo' ? null : p }, queryParamsHandling: 'merge', replaceUrl: true });
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { periodo: p === 'todo' ? null : p },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   setTab(tab: Tab): void {
-    this.activeTab = tab;
-    this.router.navigate([], { relativeTo: this.route, queryParams: { tab, siembra: null }, queryParamsHandling: 'merge', replaceUrl: true });
+    this.activeTab.set(tab);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab, siembra: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   alternarParte(p: ParteReporte): void {
     const s = new Set(this.elegidas());
-    if (s.has(p)) s.delete(p); else s.add(p);
+    if (s.has(p)) s.delete(p);
+    else s.add(p);
     this.elegidas.set(s);
   }
 
@@ -86,11 +113,17 @@ export class ReportHomeComponent extends ReportBase {
     this.errorCompleto.set(false);
     this.reportService.downloadFullPdf(partes).subscribe({
       next: (b) => {
-        this.descargar(b, partes.length === 1 ? `reporte-${partes[0]}.pdf` : 'reporte-agroruta.pdf');
+        this.descargar(
+          b,
+          partes.length === 1 ? `reporte-${partes[0]}.pdf` : 'reporte-agroruta.pdf',
+        );
         this.descargandoCompleto.set(false);
         this.panelCompleto.set(false);
       },
-      error: () => { this.descargandoCompleto.set(false); this.errorCompleto.set(true); },
+      error: () => {
+        this.descargandoCompleto.set(false);
+        this.errorCompleto.set(true);
+      },
     });
   }
 }

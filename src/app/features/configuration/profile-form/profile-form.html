@@ -1,29 +1,73 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-  <div class="foto" [class.arrastrando]="arrastrando()"
-       (dragover)="$event.preventDefault(); arrastrando.set(true)" (dragleave)="arrastrando.set(false)" (drop)="alSoltar($event)">
-    <button type="button" class="foto-btn" (click)="archivo.click()" [disabled]="procesando()" [attr.aria-label]="'config.profile.upload' | translate">
+  <div
+    class="foto"
+    [class.arrastrando]="arrastrando()"
+    (dragover)="$event.preventDefault(); arrastrando.set(true)"
+    (dragleave)="arrastrando.set(false)"
+    (drop)="alSoltar($event)"
+  >
+    <button
+      type="button"
+      class="foto-btn"
+      (click)="archivo.click()"
+      [disabled]="procesando()"
+      [attr.aria-label]="'config.profile.upload' | translate"
+    >
       @if (hasValidImage) {
-        <img class="foto-img" [src]="fotoUrl" [alt]="'config.profile.photoAlt' | translate" (error)="onImageError()" />
+        <img
+          class="foto-img"
+          [src]="fotoUrl"
+          [alt]="'config.profile.photoAlt' | translate"
+          (error)="onImageError()"
+        />
       } @else {
         <span class="foto-ini" aria-hidden="true">{{ initials || '?' }}</span>
       }
-      <span class="foto-cam" aria-hidden="true"><i class="ti" [class.ti-camera]="!procesando()" [class.ti-loader-2]="procesando()" [class.gira]="procesando()"></i></span>
+      <span class="foto-cam" aria-hidden="true"
+        ><i
+          class="ti"
+          [class.ti-camera]="!procesando()"
+          [class.ti-loader-2]="procesando()"
+          [class.gira]="procesando()"
+        ></i
+      ></span>
     </button>
     <div class="foto-txt">
       <strong>{{ 'config.profile.photoTitle' | translate }}</strong>
       <div class="fila">
         <button type="button" class="btn" (click)="archivo.click()" [disabled]="procesando()">
-          <i class="ti ti-upload" aria-hidden="true"></i> {{ (fotoUrl ? 'config.profile.change' : 'config.profile.upload') | translate }}
+          <i class="ti ti-upload" aria-hidden="true"></i>
+          {{ (fotoUrl ? 'config.profile.change' : 'config.profile.upload') | translate }}
         </button>
         @if (fotoUrl) {
-          <button type="button" class="btn btn-texto" (click)="quitarFoto()" [disabled]="procesando()"><i class="ti ti-trash" aria-hidden="true"></i> {{ 'config.profile.removePhoto' | translate }}</button>
+          <button
+            type="button"
+            class="btn btn-texto"
+            (click)="quitarFoto()"
+            [disabled]="procesando()"
+          >
+            <i class="ti ti-trash" aria-hidden="true"></i>
+            {{ 'config.profile.removePhoto' | translate }}
+          </button>
         }
       </div>
-      <input #archivo type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" hidden (change)="alElegir($event)" />
+      <input
+        #archivo
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif"
+        hidden
+        (change)="alElegir($event)"
+      />
       @if (errorFoto(); as e) {
-        <em class="err" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ 'config.profile.photoError.' + e | translate }}</em>
+        <em class="err" role="alert"
+          ><i class="ti ti-alert-circle" aria-hidden="true"></i>
+          {{ 'config.profile.photoError.' + e | translate }}</em
+        >
       } @else if (imageError) {
-        <em class="err"><i class="ti ti-photo-off" aria-hidden="true"></i> {{ 'config.profile.photoBroken' | translate }}</em>
+        <em class="err"
+          ><i class="ti ti-photo-off" aria-hidden="true"></i>
+          {{ 'config.profile.photoBroken' | translate }}</em
+        >
       } @else {
         <span class="ayuda">{{ 'config.profile.photoHint' | translate }}</span>
       }
@@ -33,36 +77,79 @@
   <div class="campos">
     <div class="campo">
       <label for="nombre">{{ 'config.profile.fullName' | translate }}</label>
-      <input id="nombre" type="text" formControlName="nombre" autocomplete="name" [class.invalido]="isInvalid('nombre')" [placeholder]="'config.profile.fullNamePlaceholder' | translate" />
-      @if (isInvalid('nombre')) { <em class="err">{{ 'config.profile.nameError' | translate }}</em> }
+      <input
+        id="nombre"
+        type="text"
+        formControlName="nombre"
+        autocomplete="name"
+        [class.invalido]="isInvalid('nombre')"
+        [placeholder]="'config.profile.fullNamePlaceholder' | translate"
+      />
+      @if (isInvalid('nombre')) {
+        <em class="err">{{ 'config.profile.nameError' | translate }}</em>
+      }
     </div>
     <div class="campo">
       <label for="telefono">{{ 'config.profile.phone' | translate }}</label>
-      <input id="telefono" type="tel" inputmode="numeric" formControlName="telefono" autocomplete="tel" [class.invalido]="isInvalid('telefono')" placeholder="3001234567" />
-      @if (isInvalid('telefono')) { <em class="err">{{ 'config.profile.phoneError' | translate }}</em> }
+      <input
+        id="telefono"
+        type="tel"
+        inputmode="numeric"
+        formControlName="telefono"
+        autocomplete="tel"
+        [class.invalido]="isInvalid('telefono')"
+        placeholder="3001234567"
+      />
+      @if (isInvalid('telefono')) {
+        <em class="err">{{ 'config.profile.phoneError' | translate }}</em>
+      }
     </div>
     <div class="campo">
       <label for="email">{{ 'config.profile.email' | translate }}</label>
       <input id="email" type="email" formControlName="email" readonly />
-      <span class="ayuda"><i class="ti ti-lock" aria-hidden="true"></i> {{ 'config.profile.emailHint' | translate }}</span>
+      <span class="ayuda"
+        ><i class="ti ti-lock" aria-hidden="true"></i>
+        {{ 'config.profile.emailHint' | translate }}</span
+      >
     </div>
     <div class="campo">
       <label for="rol">{{ 'config.profile.role' | translate }}</label>
-      <input id="rol" type="text" [value]="perfil ? ('enums.rol.' + perfil.rol | translate) : ''" readonly />
-      <span class="ayuda"><i class="ti ti-lock" aria-hidden="true"></i> {{ 'config.profile.roleHint' | translate }}</span>
+      <input
+        id="rol"
+        type="text"
+        [value]="perfil ? ('enums.rol.' + perfil.rol | translate) : ''"
+        readonly
+      />
+      <span class="ayuda"
+        ><i class="ti ti-lock" aria-hidden="true"></i>
+        {{ 'config.profile.roleHint' | translate }}</span
+      >
     </div>
   </div>
 
   <div class="pie">
     @if (form.dirty) {
-      <span class="estado cambios"><i class="ti ti-point-filled" aria-hidden="true"></i> {{ 'config.unsaved' | translate }}</span>
-      <button type="button" class="btn btn-texto" [disabled]="loading" (click)="descartar()">{{ 'config.discard' | translate }}</button>
+      <span class="estado cambios"
+        ><i class="ti ti-point-filled" aria-hidden="true"></i>
+        {{ 'config.unsaved' | translate }}</span
+      >
+      <button type="button" class="btn btn-texto" [disabled]="loading()" (click)="descartar()">
+        {{ 'config.discard' | translate }}
+      </button>
     } @else {
-      <span class="estado"><i class="ti ti-check" aria-hidden="true"></i> {{ 'config.upToDate' | translate }}</span>
+      <span class="estado"
+        ><i class="ti ti-check" aria-hidden="true"></i> {{ 'config.upToDate' | translate }}</span
+      >
     }
-    <button type="submit" class="btn btn-prim" [disabled]="loading || !form.dirty">
-      <i class="ti" [class.ti-device-floppy]="!loading" [class.ti-loader-2]="loading" [class.gira]="loading" aria-hidden="true"></i>
-      {{ (loading ? 'config.profile.saving' : 'config.profile.save') | translate }}
+    <button type="submit" class="btn btn-prim" [disabled]="loading() || !form.dirty">
+      <i
+        class="ti"
+        [class.ti-device-floppy]="!loading()"
+        [class.ti-loader-2]="loading()"
+        [class.gira]="loading()"
+        aria-hidden="true"
+      ></i>
+      {{ (loading() ? 'config.profile.saving' : 'config.profile.save') | translate }}
     </button>
   </div>
 </form>

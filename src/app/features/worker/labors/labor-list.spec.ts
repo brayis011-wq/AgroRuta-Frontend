@@ -43,8 +43,12 @@ describe('ListaLaboresComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => { expect(component).toBeTruthy(); });
-  it('ngOnInit() should load actividades', () => { expect(component.actividades).toEqual(mockActividades); });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+  it('ngOnInit() should load actividades', () => {
+    expect(component.actividades).toEqual(mockActividades);
+  });
   it('cargar() should set error on failure', () => {
     actividadServiceMock.listar.mockReturnValue(throwError(() => new Error()));
     component.cargar();
@@ -68,7 +72,9 @@ describe('ListaLaboresComponent', () => {
     expect(component.modoEdicion).toEqual(mockActividades[0]);
     expect(component.mostrarForm).toBe(true);
   });
-  it('invalido() should return false when not touched', () => { expect(component.invalido('nombre')).toBe(false); });
+  it('invalido() should return false when not touched', () => {
+    expect(component.invalido('nombre')).toBe(false);
+  });
   it('guardar() should call crear when modoEdicion is null', () => {
     component.modoEdicion = null;
     component.form.get('nombre')?.setValue('Nueva');

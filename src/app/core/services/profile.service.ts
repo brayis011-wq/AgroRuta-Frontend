@@ -7,20 +7,22 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
+  private readonly http = inject(HttpClient);
+
   private readonly base = `${environment.apiUrl}/api/configuration`;
   /** Foto de la cuenta que inició sesión, para el menú lateral (null = sin foto o sin cargar) */
   readonly foto = signal<string | null>(null);
   private fotoCargada = false;
   private readonly auth = inject(AuthService);
 
-  constructor(private http: HttpClient) {}
-
   getPerfil(): Observable<Perfil> {
     return this.http.get<Perfil>(`${this.base}/profile`).pipe(tap((p) => this.recordarFoto(p)));
   }
 
   updatePerfil(data: UpdateProfileRequest): Observable<Perfil> {
-    return this.http.put<Perfil>(`${this.base}/profile`, data).pipe(tap((p) => this.recordarFoto(p)));
+    return this.http
+      .put<Perfil>(`${this.base}/profile`, data)
+      .pipe(tap((p) => this.recordarFoto(p)));
   }
 
   /** Carga la foto una sola vez por sesión (el menú la pide al abrirse) */

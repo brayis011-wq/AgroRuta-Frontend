@@ -2,56 +2,109 @@
   <header class="rep-head">
     <div>
       <h2>{{ 'reports.crops.title' | translate }}</h2>
-      <p>{{ 'reports.crops.subtitle' | translate }}
-        @if (report(); as r) { · <span class="gen">{{ 'reports.generatedAt' | translate: { date: fechaHora(r.generatedAt) } }}</span> }
+      <p>
+        {{ 'reports.crops.subtitle' | translate }}
+        @if (report(); as r) {
+          ·
+          <span class="gen">{{
+            'reports.generatedAt' | translate: { date: fechaHora(r.generatedAt) }
+          }}</span>
+        }
       </p>
     </div>
     <div class="rep-acciones">
-      <app-descargas [descargando]="downloading()" [deshabilitado]="loading() || error()" [hayDatos]="filas().length > 0"
-                     (pdf)="descargarPdf()" (csv)="descargarExcel()" />
+      <app-descargas
+        [descargando]="downloading()"
+        [deshabilitado]="loading() || error()"
+        [hayDatos]="filas().length > 0"
+        (pdf)="descargarPdf()"
+        (csv)="descargarExcel()"
+      />
     </div>
   </header>
-  @if (downloadError()) { <div class="aviso error" role="alert">{{ 'reports.downloadError' | translate }}</div> }
+  @if (downloadError()) {
+    <div class="aviso error" role="alert">{{ 'reports.downloadError' | translate }}</div>
+  }
 
   @if (loading()) {
-    <div class="kpis">@for (i of [1, 2, 3, 4]; track i) { <div class="kpi esq"></div> }</div>
+    <div class="kpis">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="kpi esq"></div>
+      }
+    </div>
     <div class="tarjeta esq alta"></div>
   } @else if (error()) {
     <div class="tarjeta vacio">
       <i class="ti ti-cloud-off" aria-hidden="true"></i>
       <strong>{{ 'reports.error' | translate }}</strong>
-      <button type="button" class="btn-sec" (click)="cargar()">{{ 'common.retry' | translate }}</button>
+      <button type="button" class="btn-sec" (click)="cargar()">
+        {{ 'common.retry' | translate }}
+      </button>
     </div>
   } @else if (resumen(); as s) {
     <div class="kpis">
-      <article class="kpi"><span class="ic verde"><i class="ti ti-seeding" aria-hidden="true"></i></span>
-        <div><small>{{ 'reports.crops.kpi.plantings' | translate }}</small><strong>{{ numero(s.siembras) }}</strong>
-          <em>{{ (s.tipos === 1 ? 'reports.crops.kpi.cropsOne' : 'reports.crops.kpi.crops') | translate: { count: s.tipos } }}</em></div></article>
-      <article class="kpi"><span class="ic verde"><i class="ti ti-plant" aria-hidden="true"></i></span>
-        <div><small>{{ 'reports.crops.kpi.active' | translate }}</small><strong>{{ numero(s.activas) }}</strong>
-          <em>{{ 'reports.crops.kpi.finished' | translate: { count: s.finalizadas } }}</em></div></article>
-      <article class="kpi"><span class="ic ambar"><i class="ti ti-basket" aria-hidden="true"></i></span>
-        <div><small>{{ 'reports.crops.kpi.kg' | translate }}</small><strong>{{ kg(s.kg) }} kg</strong>
-          <em>{{ 'reports.crops.kpi.kgSub' | translate }}</em></div></article>
-      <article class="kpi"><span class="ic azul"><i class="ti ti-tractor" aria-hidden="true"></i></span>
-        <div><small>{{ 'reports.crops.kpi.harvests' | translate }}</small><strong>{{ numero(s.cosechas) }}</strong>
-          <em>{{ 'reports.crops.kpi.perHarvest' | translate: { kg: kg(s.kgPorCosecha) } }}</em></div></article>
+      <article class="kpi">
+        <span class="ic verde"><i class="ti ti-seeding" aria-hidden="true"></i></span>
+        <div>
+          <small>{{ 'reports.crops.kpi.plantings' | translate }}</small
+          ><strong>{{ numero(s.siembras) }}</strong>
+          <em>{{
+            (s.tipos === 1 ? 'reports.crops.kpi.cropsOne' : 'reports.crops.kpi.crops')
+              | translate: { count: s.tipos }
+          }}</em>
+        </div>
+      </article>
+      <article class="kpi">
+        <span class="ic verde"><i class="ti ti-plant" aria-hidden="true"></i></span>
+        <div>
+          <small>{{ 'reports.crops.kpi.active' | translate }}</small
+          ><strong>{{ numero(s.activas) }}</strong>
+          <em>{{ 'reports.crops.kpi.finished' | translate: { count: s.finalizadas } }}</em>
+        </div>
+      </article>
+      <article class="kpi">
+        <span class="ic ambar"><i class="ti ti-basket" aria-hidden="true"></i></span>
+        <div>
+          <small>{{ 'reports.crops.kpi.kg' | translate }}</small
+          ><strong>{{ kg(s.kg) }} kg</strong> <em>{{ 'reports.crops.kpi.kgSub' | translate }}</em>
+        </div>
+      </article>
+      <article class="kpi">
+        <span class="ic azul"><i class="ti ti-tractor" aria-hidden="true"></i></span>
+        <div>
+          <small>{{ 'reports.crops.kpi.harvests' | translate }}</small
+          ><strong>{{ numero(s.cosechas) }}</strong>
+          <em>{{ 'reports.crops.kpi.perHarvest' | translate: { kg: kg(s.kgPorCosecha) } }}</em>
+        </div>
+      </article>
     </div>
 
     <div class="dos">
       <article class="tarjeta">
-        <header><h3>{{ 'reports.crops.byStage' | translate }}</h3></header>
+        <header>
+          <h3>{{ 'reports.crops.byStage' | translate }}</h3>
+        </header>
         @if (s.siembras) {
           <div class="apilada" role="img" [attr.aria-label]="'reports.crops.byStage' | translate">
             @for (p of s.porEtapa; track p.etapa) {
-              @if (p.n) { <span [class]="'seg-et ' + p.etapa" [style.width.%]="p.porcentaje">{{ p.n }}</span> }
+              @if (p.n) {
+                <span [class]="'seg-et ' + p.etapa" [style.width.%]="p.porcentaje">{{ p.n }}</span>
+              }
             }
           </div>
           <div class="leyenda">
             @for (p of s.porEtapa; track p.etapa) {
-              <button type="button" class="ley" [class.on]="etapa() === p.etapa" [class.cero]="!p.n" [disabled]="!p.n"
-                      (click)="alternarEtapa(p.etapa)" [attr.aria-pressed]="etapa() === p.etapa">
-                <span [class]="'punto ' + p.etapa"></span>{{ 'enums.etapaCultivo.' + p.etapa | translate }} <b>{{ p.n }}</b>
+              <button
+                type="button"
+                class="ley"
+                [class.on]="etapa() === p.etapa"
+                [class.cero]="!p.n"
+                [disabled]="!p.n"
+                (click)="alternarEtapa(p.etapa)"
+                [attr.aria-pressed]="etapa() === p.etapa"
+              >
+                <span [class]="'punto ' + p.etapa"></span
+                >{{ 'enums.etapaCultivo.' + p.etapa | translate }} <b>{{ p.n }}</b>
               </button>
             }
           </div>
@@ -62,12 +115,18 @@
       </article>
 
       <article class="tarjeta">
-        <header><h3>{{ 'reports.crops.kgByCrop' | translate }}</h3></header>
+        <header>
+          <h3>{{ 'reports.crops.kgByCrop' | translate }}</h3>
+        </header>
         @for (p of s.kgPorCultivo; track p.nombre; let i = $index) {
           <div class="hbar">
             <span class="hbar-nom" [title]="p.nombre">{{ p.nombre }}</span>
-            <span class="hbar-pista"><span [style.width.%]="p.ancho" [style.animation-delay.ms]="i * 60"></span></span>
-            <span class="hbar-val">{{ kg(p.valor) }} kg<small>{{ p.porcentaje }} %</small></span>
+            <span class="hbar-pista"
+              ><span [style.width.%]="p.ancho" [style.animation-delay.ms]="i * 60"></span
+            ></span>
+            <span class="hbar-val"
+              >{{ kg(p.valor) }} kg<small>{{ p.porcentaje }} %</small></span
+            >
           </div>
         } @empty {
           <p class="nota">{{ 'reports.crops.empty' | translate }}</p>
@@ -77,43 +136,69 @@
 
     <article class="tarjeta">
       <header class="tabla-head">
-        <h3>{{ 'reports.crops.detailTitle' | translate }}
+        <h3>
+          {{ 'reports.crops.detailTitle' | translate }}
           @if (etapa()) {
             <button type="button" class="chip-filtro" (click)="etapa.set(null)">
-              {{ 'enums.etapaCultivo.' + etapa() | translate }} <i class="ti ti-x" aria-hidden="true"></i>
+              {{ 'enums.etapaCultivo.' + etapa() | translate }}
+              <i class="ti ti-x" aria-hidden="true"></i>
             </button>
           }
         </h3>
         <label class="buscar-t">
           <i class="ti ti-search" aria-hidden="true"></i>
-          <input type="search" [value]="filtro()" (input)="filtro.set($any($event.target).value)"
-                 [placeholder]="'reports.crops.search' | translate" [attr.aria-label]="'reports.crops.search' | translate" />
+          <input
+            type="search"
+            [value]="filtro()"
+            (input)="filtro.set($any($event.target).value)"
+            [placeholder]="'reports.crops.search' | translate"
+            [attr.aria-label]="'reports.crops.search' | translate"
+          />
         </label>
       </header>
       <div class="tabla-wrap">
         <table class="tabla tarjetas-m" arEtiquetas>
-          <thead><tr>
-            <th>{{ 'reports.crops.table.crop' | translate }}</th>
-            <th>{{ 'reports.crops.table.place' | translate }}</th>
-            <th>{{ 'reports.crops.table.stage' | translate }}</th>
-            <th>{{ 'reports.crops.table.planted' | translate }}</th>
-            <th class="num">{{ 'reports.crops.table.days' | translate }}</th>
-            <th class="num">{{ 'reports.crops.table.kg' | translate }}</th>
-            <th class="num">{{ 'reports.crops.table.harvests' | translate }}</th>
-          </tr></thead>
+          <thead>
+            <tr>
+              <th>{{ 'reports.crops.table.crop' | translate }}</th>
+              <th>{{ 'reports.crops.table.place' | translate }}</th>
+              <th>{{ 'reports.crops.table.stage' | translate }}</th>
+              <th>{{ 'reports.crops.table.planted' | translate }}</th>
+              <th class="num">{{ 'reports.crops.table.days' | translate }}</th>
+              <th class="num">{{ 'reports.crops.table.kg' | translate }}</th>
+              <th class="num">{{ 'reports.crops.table.harvests' | translate }}</th>
+            </tr>
+          </thead>
           <tbody>
             @for (c of filas(); track c.siembraId) {
               <tr>
-                <td class="fuerte-n">{{ c.variedad }}@if (c.eliminada) { <span class="eliminada" [title]="'reports.deletedHint' | translate">{{ 'reports.deleted' | translate }}</span> }</td>
+                <td class="fuerte-n">
+                  {{ c.variedad }}
+                  @if (c.eliminada) {
+                    <span class="eliminada" [title]="'reports.deletedHint' | translate">{{
+                      'reports.deleted' | translate
+                    }}</span>
+                  }
+                </td>
                 <td class="suave">{{ ubicacion(c) }}</td>
-                <td><span [class]="'pill-et ' + c.estado">{{ 'enums.etapaCultivo.' + c.estado | translate }}</span></td>
+                <td>
+                  <span [class]="'pill-et ' + c.estado">{{
+                    'enums.etapaCultivo.' + c.estado | translate
+                  }}</span>
+                </td>
                 <td class="suave">{{ fecha(c.fechaSiembra) }}</td>
                 <td class="num">{{ numero(c.diasDesdeSiembra) }}</td>
                 <td class="num">{{ c.totalKgCosechado ? kg(c.totalKgCosechado) : '—' }}</td>
                 <td class="num">{{ numero(c.totalCosechas) }}</td>
               </tr>
             } @empty {
-              <tr><td colspan="7" class="nota">{{ (filtro() || etapa() ? 'reports.noMatches' : 'reports.crops.empty') | translate }}</td></tr>
+              <tr>
+                <td colspan="7" class="nota">
+                  {{
+                    (filtro() || etapa() ? 'reports.noMatches' : 'reports.crops.empty') | translate
+                  }}
+                </td>
+              </tr>
             }
           </tbody>
         </table>

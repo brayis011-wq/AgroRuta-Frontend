@@ -4,7 +4,11 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { ListaPagosComponent } from './list-payment';
-import { PagoService, NominaService, TrabajadorService } from '../../../../core/services/worker.service';
+import {
+  PagoService,
+  NominaService,
+  TrabajadorService,
+} from '../../../../core/services/worker.service';
 
 const mockPagos = [
   { id: 1, trabajadorNombre: 'Juan', monto: 500000, nominaId: 10, metodoPago: 'EFECTIVO' },
@@ -21,7 +25,11 @@ describe('ListaPagosComponent', () => {
 
   beforeEach(async () => {
     pagoServiceMock = {
-      pagina: vi.fn().mockReturnValue(of({ contenido: mockPagos, pagina: 0, tamano: 20, total: 3, totalPaginas: 1 })),
+      pagina: vi
+        .fn()
+        .mockReturnValue(
+          of({ contenido: mockPagos, pagina: 0, tamano: 20, total: 3, totalPaginas: 1 }),
+        ),
       resumen: vi.fn().mockReturnValue(of({ cantidad: 3, total: 1200000, trabajadores: 2 })),
     };
     nominaServiceMock = { obtener: vi.fn().mockReturnValue(of(mockNomina)) };
@@ -40,7 +48,9 @@ describe('ListaPagosComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => { expect(component).toBeTruthy(); });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
   it('ngOnInit() carga la primera página y el resumen', () => {
     expect(pagoServiceMock.pagina).toHaveBeenCalledWith(0, null, undefined, null);
     expect(component.pagos).toEqual(mockPagos);
@@ -62,13 +72,17 @@ describe('ListaPagosComponent', () => {
   it('cargarMas() suma la página siguiente', () => {
     const otro = { id: 4, trabajadorNombre: 'Ana', monto: 100000, nominaId: 12 };
     pagoServiceMock.pagina
-      .mockReturnValueOnce(of({ contenido: mockPagos.slice(0, 2), pagina: 0, tamano: 2, total: 4, totalPaginas: 2 }))
-      .mockReturnValueOnce(of({ contenido: [otro], pagina: 1, tamano: 2, total: 4, totalPaginas: 2 }));
+      .mockReturnValueOnce(
+        of({ contenido: mockPagos.slice(0, 2), pagina: 0, tamano: 2, total: 4, totalPaginas: 2 }),
+      )
+      .mockReturnValueOnce(
+        of({ contenido: [otro], pagina: 1, tamano: 2, total: 4, totalPaginas: 2 }),
+      );
     component.ngOnInit();
     expect(component.hayMas).toBe(true);
     component.cargarMas();
     expect(pagoServiceMock.pagina).toHaveBeenLastCalledWith(1, null, undefined, null);
-    expect(component.pagos.map(p => p.id)).toEqual([1, 2, 4]);
+    expect(component.pagos.map((p) => p.id)).toEqual([1, 2, 4]);
   });
   it('verTodos() quita el filtro de nómina y recarga', () => {
     component.nominaIdFiltro = 10;

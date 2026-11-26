@@ -12,7 +12,12 @@ export type Entrada = 'asomar' | 'esperar' | 'dejar';
  * - lo que está más abajo espera, y asoma cuando el dedo lo trae a la pantalla;
  * - lo que quedó arriba no se anima al volver a subir.
  */
-export function alCruzar(cruza: boolean, primeraVez: boolean, arriba: number, altoPantalla: number): Entrada {
+export function alCruzar(
+  cruza: boolean,
+  primeraVez: boolean,
+  arriba: number,
+  altoPantalla: number,
+): Entrada {
   if (cruza) return primeraVez ? 'dejar' : 'asomar';
   return arriba >= altoPantalla / 2 ? 'esperar' : 'dejar';
 }
@@ -23,28 +28,37 @@ export function alCruzar(cruza: boolean, primeraVez: boolean, arriba: number, al
  * no puede quedarse puesta. Devuelve la función que deja de vigilar.
  */
 export function vigilarEntradas(contenido: HTMLElement): () => void {
-  if (typeof IntersectionObserver === 'undefined' || typeof MutationObserver === 'undefined') return () => {};
+  if (typeof IntersectionObserver === 'undefined' || typeof MutationObserver === 'undefined')
+    return () => undefined;
   const medio = window.matchMedia?.(CELULAR);
   const vistos = new WeakSet<Element>();
   const esperando = new WeakSet<Element>();
 
-  const cruces = new IntersectionObserver((entradas) => {
-    for (const e of entradas) {
-      const bloque = e.target as HTMLElement;
-      const alto = e.rootBounds?.height ?? window.innerHeight;
-      const hacer = alCruzar(e.isIntersecting, !esperando.has(bloque), e.boundingClientRect.top, alto);
-      if (hacer === 'esperar') {
-        esperando.add(bloque);
-        continue;
+  const cruces = new IntersectionObserver(
+    (entradas) => {
+      for (const e of entradas) {
+        const bloque = e.target as HTMLElement;
+        const alto = e.rootBounds?.height ?? window.innerHeight;
+        const hacer = alCruzar(
+          e.isIntersecting,
+          !esperando.has(bloque),
+          e.boundingClientRect.top,
+          alto,
+        );
+        if (hacer === 'esperar') {
+          esperando.add(bloque);
+          continue;
+        }
+        cruces.unobserve(bloque);
+        if (hacer !== 'asomar' || !medio?.matches) continue;
+        const limpiar = () => bloque.removeAttribute('data-asoma');
+        bloque.setAttribute('data-asoma', '');
+        bloque.addEventListener('animationend', limpiar, { once: true });
+        setTimeout(limpiar, LIMPIAR_MS);
       }
-      cruces.unobserve(bloque);
-      if (hacer !== 'asomar' || !medio?.matches) continue;
-      const limpiar = () => bloque.removeAttribute('data-asoma');
-      bloque.setAttribute('data-asoma', '');
-      bloque.addEventListener('animationend', limpiar, { once: true });
-      setTimeout(limpiar, LIMPIAR_MS);
-    }
-  }, { rootMargin: '0px 0px -24px 0px' });
+    },
+    { rootMargin: '0px 0px -24px 0px' },
+  );
 
   let pendiente = 0;
   const revisar = () => {

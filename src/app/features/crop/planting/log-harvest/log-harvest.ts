@@ -1,8 +1,15 @@
 import { UltimoUsadoService } from '../../../../core/services/last-used.service';
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
-import { Component, OnInit, ChangeDetectorRef, inject, HostListener } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+  HostListener,
+} from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -13,7 +20,8 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { formatoFecha, formatoPesos } from '../../../../shared/format';
 import { TrabajadorService } from '../../../../core/services/worker.service';
 import { Trabajador } from '../../../../core/models/worker.model';
-import { Recolector } from '../../../../core/models/crop.model';
+import { Cosecha, Recolector } from '../../../../core/models/crop.model';
+import { mensajeDeError, mensajeDelServidor } from '../../../../shared/error-message';
 
 /** Una fila de "¿Quién la recogió?" mientras se llena el formulario */
 interface FilaRecolector {
@@ -28,14 +36,30 @@ interface FilaRecolector {
   estadoNomina?: string | null;
 }
 
+/** Lo que se escribe en el formulario de la cosecha (con ngModel) */
+interface FormCosecha {
+  fecha: string;
+  cantidadKg: number | null;
+  calidad: Cosecha['calidad'] | '';
+  observaciones: string;
+  siembraId: number;
+  precioKg: number | null;
+}
+
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-registrar-cosecha',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
+  imports: [FormsModule, RouterLink, TranslatePipe, MigasCultivoComponent, SiguienteCampoDirective],
   templateUrl: './log-harvest.html',
-  styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-harvest.css']
+  styleUrls: ['../../crop-form.css', '../../crop-form-actions.css', './log-harvest.css'],
 })
 export class RegistrarCosecha implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly cultivoService = inject(CultivoService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   private readonly avisos = inject(AvisosService);
 
   siembraId!: number;
@@ -47,7 +71,7 @@ export class RegistrarCosecha implements OnInit {
   mensajeCarencia = '';
   /** La persona marcó que cosecha de todos modos */
   confirmarCarencia = false;
-  private lang = inject(LanguageService);
+  private readonly lang = inject(LanguageService);
 
   pesos(v: number): string {
     return formatoPesos(v, this.lang.current());
@@ -57,16 +81,16 @@ export class RegistrarCosecha implements OnInit {
     return formatoFecha(v, this.lang.current());
   }
   cargando = false;
-  error = '';   // clave de traducción (o mensaje crudo del backend)
-  exito = '';   // clave de traducción
+  error = ''; // clave de traducción (o mensaje crudo del backend)
+  exito = ''; // clave de traducción
 
-  form: any = {
+  form: FormCosecha = {
     fecha: '',
     cantidadKg: null,
     calidad: '',
     observaciones: '',
     siembraId: 0,
-    precioKg: null as number | null,
+    precioKg: null,
   };
 
   // ── Quién la recogió ──
@@ -79,13 +103,6 @@ export class RegistrarCosecha implements OnInit {
   private kgManual = false;
 
   calidades = ['PRIMERA', 'SEGUNDA', 'TERCERA'];
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private cultivoService: CultivoService,
-    private cdr: ChangeDetectorRef
-  ) {}
 
   private readonly ultimo = inject(UltimoUsadoService);
 
@@ -100,7 +117,14 @@ export class RegistrarCosecha implements OnInit {
   }
 
   agregarRecolector(): void {
-    const fila: FilaRecolector = { trabajadorId: null, modalidad: 'KILO', kilos: null, valorKilo: null, valorDia: null, fija: false };
+    const fila: FilaRecolector = {
+      trabajadorId: null,
+      modalidad: 'KILO',
+      kilos: null,
+      valorKilo: null,
+      valorDia: null,
+      fija: false,
+    };
     const libres = this.disponiblesPara(null);
     this.recolectores = [...this.recolectores, fila];
     // Con una sola persona libre, ya queda elegida
@@ -132,7 +156,8 @@ export class RegistrarCosecha implements OnInit {
 
   /** Lo que se le paga a esa persona por esta cosecha */
   valorDe(f: FilaRecolector): number | null {
-    if (f.modalidad === 'KILO') return f.kilos && f.valorKilo ? Math.round(f.kilos * f.valorKilo) : null;
+    if (f.modalidad === 'KILO')
+      return f.kilos && f.valorKilo ? Math.round(f.kilos * f.valorKilo) : null;
     return f.valorDia || null;
   }
 
@@ -169,13 +194,17 @@ export class RegistrarCosecha implements OnInit {
 
   /** Falta algo en una fila: quién, los kilos o cuánto se le paga */
   private filaIncompleta(): boolean {
-    return this.recolectores.some((r) => !r.fija && (!r.trabajadorId
-      || (r.modalidad === 'KILO' ? !r.kilos || !r.valorKilo : !r.valorDia)));
+    return this.recolectores.some(
+      (r) =>
+        !r.fija &&
+        (!r.trabajadorId || (r.modalidad === 'KILO' ? !r.kilos || !r.valorKilo : !r.valorDia)),
+    );
   }
 
   private paraEnviar(): Recolector[] {
     return this.recolectores.map((r) => ({
-      trabajadorId: r.trabajadorId!, modalidad: r.modalidad,
+      trabajadorId: r.trabajadorId!,
+      modalidad: r.modalidad,
       // Por día los kilos son opcionales (no cambian el pago)
       kilos: r.kilos ? Number(r.kilos) : null,
       valorKilo: r.modalidad === 'KILO' && r.valorKilo ? Number(r.valorKilo) : null,
@@ -208,17 +237,26 @@ export class RegistrarCosecha implements OnInit {
 
     this.trabajadorSvc.listar().subscribe({
       next: (lista) => {
-        this.equipo = (lista ?? []).filter((t) => !t.estado || t.estado === 'ACTIVO')
+        this.equipo = (lista ?? [])
+          .filter((t) => !t.estado || t.estado === 'ACTIVO')
           .sort((a, b) => (a.nombreCompleto ?? '').localeCompare(b.nombreCompleto ?? ''));
         this.equipoCargado = true;
         this.cdr.detectChanges();
       },
-      error: () => { this.equipoCargado = true; this.cdr.detectChanges(); },
+      error: () => {
+        this.equipoCargado = true;
+        this.cdr.detectChanges();
+      },
     });
 
     this.cultivoService.resumenSiembra(this.siembraId).subscribe({
-      next: (r) => { this.carencia = r?.carencia ?? null; this.cdr.detectChanges(); },
-      error: () => { /* sin aviso de carencia */ },
+      next: (r) => {
+        this.carencia = r?.carencia ?? null;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        /* sin aviso de carencia */
+      },
     });
 
     const registro = this.route.snapshot.paramMap.get('registroId');
@@ -226,17 +264,32 @@ export class RegistrarCosecha implements OnInit {
       this.registroId = Number(registro);
       this.cultivoService.buscarCosecha(this.registroId).subscribe({
         next: (c) => {
-          this.form = { ...this.form, fecha: c.fecha, cantidadKg: c.cantidadKg, calidad: c.calidad, observaciones: c.observaciones ?? '', precioKg: c.precioKg ?? null };
+          this.form = {
+            ...this.form,
+            fecha: c.fecha,
+            cantidadKg: c.cantidadKg,
+            calidad: c.calidad,
+            observaciones: c.observaciones ?? '',
+            precioKg: c.precioKg ?? null,
+          };
           this.recolectores = (c.recolectores ?? []).map((r) => ({
-            trabajadorId: r.trabajadorId, modalidad: r.modalidad, kilos: r.kilos ?? null, valorKilo: r.valorKilo ?? null,
-            valorDia: r.modalidad === 'DIA' ? r.valor ?? null : null, fija: r.editable === false, nombre: r.nombre,
+            trabajadorId: r.trabajadorId,
+            modalidad: r.modalidad,
+            kilos: r.kilos ?? null,
+            valorKilo: r.valorKilo ?? null,
+            valorDia: r.modalidad === 'DIA' ? (r.valor ?? null) : null,
+            fija: r.editable === false,
+            nombre: r.nombre,
             estadoNomina: r.estadoNomina ?? null,
           }));
           // Al editar, el total es el que se guardó: no se recalcula solo
           this.kgManual = true;
           this.cdr.detectChanges();
         },
-        error: () => { this.error = 'temporadas.registro.errors.load'; this.cdr.detectChanges(); },
+        error: () => {
+          this.error = 'temporadas.registro.errors.load';
+          this.cdr.detectChanges();
+        },
       });
     }
   }
@@ -244,11 +297,23 @@ export class RegistrarCosecha implements OnInit {
   onSubmit(): void {
     this.error = '';
     this.exito = '';
-    if (this.filaIncompleta()) { this.error = 'siembra.harvest.pickers.incomplete'; return; }
-    if (this.kilosRecolectores > Number(this.form.cantidadKg || 0) + 0.01) { this.error = 'siembra.harvest.pickers.tooMany'; return; }
+    if (this.filaIncompleta()) {
+      this.error = 'siembra.harvest.pickers.incomplete';
+      return;
+    }
+    if (this.kilosRecolectores > Number(this.form.cantidadKg || 0) + 0.01) {
+      this.error = 'siembra.harvest.pickers.tooMany';
+      return;
+    }
     this.cargando = true;
 
-    const datos = { ...this.form, confirmarCarencia: this.confirmarCarencia, recolectores: this.paraEnviar() };
+    const datos = {
+      ...this.form,
+      cantidadKg: this.form.cantidadKg ?? undefined,
+      calidad: this.form.calidad || undefined,
+      confirmarCarencia: this.confirmarCarencia,
+      recolectores: this.paraEnviar(),
+    };
     const peticion = this.registroId
       ? this.cultivoService.actualizarCosecha(this.registroId, datos)
       : this.cultivoService.registrarCosecha(datos);
@@ -261,19 +326,21 @@ export class RegistrarCosecha implements OnInit {
         this.avisos.exito(this.registroId ? 'avisos.saved' : 'avisos.harvest');
         // Al volver, la ficha baja hasta el registro y lo marca un momento
         const id = (guardado && guardado.id) || this.registroId;
-        this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: 'registros', nuevo: id ? 'cosecha-' + id : null } });
+        this.router.navigate(['/crops/planting', this.siembraId], {
+          queryParams: { tab: 'registros', nuevo: id ? 'cosecha-' + id : null },
+        });
       },
       error: (err) => {
         this.cargando = false;
         // AGR-012: la fecha cae en la carencia de una fumigación; se muestra el aviso con la casilla para confirmar
         if (err.error?.errorCode === 'AGR-012') {
-          this.mensajeCarencia = err.error?.message ?? '';
+          this.mensajeCarencia = mensajeDelServidor(err) ?? '';
           this.cdr.detectChanges();
           return;
         }
-        this.error = err.error?.message || 'siembra.harvest.errors.register';
+        this.error = mensajeDeError(err, 'siembra.harvest.errors.register');
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -292,5 +359,4 @@ export class RegistrarCosecha implements OnInit {
     this.mensajeCarencia = '';
     this.confirmarCarencia = false;
   }
-
 }

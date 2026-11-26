@@ -1,11 +1,19 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MigasCultivoComponent } from '../../../../shared/breadcrumbs/crop-breadcrumbs';
-import { Subscription } from 'rxjs';
+import { Subscription, catchError, map, of, switchMap } from 'rxjs';
+import { Finca } from '../../../../core/models/crop.model';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { aplicarTextosDibujo } from '../../../../shared/leaflet-draw-i18n';
@@ -16,22 +24,26 @@ import { GeocodingService } from '../../../../core/services/geocoding.service';
 @Component({
   selector: 'app-nuevo-lote',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, MigasCultivoComponent],
+  imports: [FormsModule, TranslatePipe, MigasCultivoComponent],
   templateUrl: './new-plot.html',
   styleUrls: ['../../crop-form.css', '../../crop-form-map.css', './new-plot.css'],
 })
 export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
+  private readonly cultivoService = inject(CultivoService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
   private readonly avisos = inject(AvisosService);
 
-  private translate = inject(TranslateService);
-  private lang = inject(LanguageService);
-  private cdr = inject(ChangeDetectorRef);
-  private geocoding = inject(GeocodingService);
+  private readonly translate = inject(TranslateService);
+  private readonly lang = inject(LanguageService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly geocoding = inject(GeocodingService);
 
   form = { nombre: '' };
 
   fincaId!: number;
-  finca: any = null;
+  finca: Finca | null = null;
   hectareasFinca: number | null = null;
 
   areaCalculada: number | null = null;
@@ -42,21 +54,15 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   busquedaMapa = '';
 
   guardando = false;
-  error = '';                                  // clave de traducción
-  errorParams: Record<string, unknown> = {};   // parámetros del mensaje
+  error = ''; // clave de traducción
+  errorParams: Record<string, unknown> = {}; // parámetros del mensaje
   exito = false;
 
   private map!: L.Map;
   private drawnItems!: L.FeatureGroup;
-  private drawControl: any = null;
+  private drawControl: L.Control.Draw | null = null;
   private locateBtnEl: HTMLElement | null = null;
   private langSub?: Subscription;
-
-  constructor(
-    private cultivoService: CultivoService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
 
   private setError(key: string, params: Record<string, unknown> = {}): void {
     this.error = key;
@@ -67,7 +73,8 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Número con hasta 2 decimales según el idioma activo */
   fmtArea(v: number): string {
     return new Intl.NumberFormat(this.lang.current(), {
-      minimumFractionDigits: 0, maximumFractionDigits: 2,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
     }).format(v);
   }
 
@@ -106,7 +113,8 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private actualizarTextoBotonGps(): void {
     if (this.locateBtnEl) {
-      this.locateBtnEl.textContent ='📍 ' + this.translate.instant('cultivo.fincas.new.myLocation');
+      this.locateBtnEl.textContent =
+        '📍 ' + this.translate.instant('cultivo.fincas.new.myLocation');
     }
   }
 
@@ -117,7 +125,7 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.drawControl) this.map.removeControl(this.drawControl);
 
-    this.drawControl = new (L as any).Control.Draw({
+    this.drawControl = new L.Control.Draw({
       edit: { featureGroup: this.drawnItems, remove: true },
       draw: {
         polygon: {
@@ -152,21 +160,24 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const esri = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 }
+      { attribution: 'Tiles © Esri', maxZoom: 21, maxNativeZoom: 19 },
     );
 
-    const google = L.tileLayer(
-      'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-      { attribution: 'Google Satellite', maxZoom: 21, maxNativeZoom: 20 }
-    );
+    const google = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      attribution: 'Google Satellite',
+      maxZoom: 21,
+      maxNativeZoom: 20,
+    });
 
     google.addTo(this.map);
 
-    L.control.layers(
-      { 'Google Satellite': google, 'Esri Satellite': esri },
-      {},
-      { position: 'bottomleft' }
-    ).addTo(this.map);
+    L.control
+      .layers(
+        { 'Google Satellite': google, 'Esri Satellite': esri },
+        {},
+        { position: 'bottomleft' },
+      )
+      .addTo(this.map);
 
     this.drawnItems = new L.FeatureGroup();
     this.map.addLayer(this.drawnItems);
@@ -178,39 +189,41 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
         this.locateBtnEl = btn;
         this.actualizarTextoBotonGps();
         L.DomEvent.on(btn, 'click', () => {
-          navigator.geolocation.getCurrentPosition( // NOSONAR
+          navigator.geolocation.getCurrentPosition(
+            // NOSONAR
             (pos) => {
               this.map.setView([pos.coords.latitude, pos.coords.longitude], 17);
             },
-            () => this.setError('cultivo.fincas.new.geoError')
+            () => this.setError('cultivo.fincas.new.geoError'),
           );
         });
         return btn;
-      }
+      },
     }))();
     locateBtn.addTo(this.map);
 
     this.crearControlDibujo();
 
-    this.map.on('draw:created', (event: any) => {
+    this.map.on(L.Draw.Event.CREATED, (e: L.LeafletEvent) => {
+      const event = e as L.DrawEvents.Created;
       this.drawnItems.clearLayers();
       const layer = event.layer;
       this.drawnItems.addLayer(layer);
-      const latlngs: L.LatLng[] = layer.getLatLngs()[0];
-      this.coordenadas   = JSON.stringify(latlngs.map(p => [p.lat, p.lng]));
+      const latlngs = (layer as L.Polygon).getLatLngs()[0] as L.LatLng[];
+      this.coordenadas = JSON.stringify(latlngs.map((p) => [p.lat, p.lng]));
       this.areaCalculada = this.calcularAreaHectareas(latlngs);
-      const c            = this.calcularCentroide(latlngs);
-      this.centroideLat  = c.lat;
-      this.centroideLng  = c.lng;
+      const c = this.calcularCentroide(latlngs);
+      this.centroideLat = c.lat;
+      this.centroideLng = c.lng;
       this.error = '';
       this.cdr.detectChanges();
     });
 
     this.map.on('draw:deleted', () => {
-      this.coordenadas   = null;
+      this.coordenadas = null;
       this.areaCalculada = null;
-      this.centroideLat  = null;
-      this.centroideLng  = null;
+      this.centroideLat = null;
+      this.centroideLng = null;
       this.cdr.detectChanges();
     });
 
@@ -224,14 +237,14 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     const n = latlngs.length;
     let area = 0;
     for (let i = 0; i < n; i++) {
-      const j    = (i + 1) % n;
-      const lat1 = latlngs[i].lat * Math.PI / 180;
-      const lat2 = latlngs[j].lat * Math.PI / 180;
-      const lng1 = latlngs[i].lng * Math.PI / 180;
-      const lng2 = latlngs[j].lng * Math.PI / 180;
+      const j = (i + 1) % n;
+      const lat1 = (latlngs[i].lat * Math.PI) / 180;
+      const lat2 = (latlngs[j].lat * Math.PI) / 180;
+      const lng1 = (latlngs[i].lng * Math.PI) / 180;
+      const lng2 = (latlngs[j].lng * Math.PI) / 180;
       area += (lng2 - lng1) * (2 + Math.sin(lat1) + Math.sin(lat2));
     }
-    return Math.round(Math.abs(area * R * R / 2) / 10000 * 100) / 100;
+    return Math.round((Math.abs((area * R * R) / 2) / 10000) * 100) / 100;
   }
 
   private calcularCentroide(latlngs: L.LatLng[]): { lat: number; lng: number } {
@@ -260,37 +273,40 @@ export class NuevoLoteComponent implements OnInit, AfterViewInit, OnDestroy {
     this.guardando = true;
     this.error = '';
 
-    this.cultivoService.registrarLote({
-      nombre: this.form.nombre,
-      area: this.areaCalculada,
-      fincaId: this.fincaId,
-    }).subscribe({
-      next: (lote) => {
-        this.cultivoService.actualizarGeometriaLote(lote.id!, {
-          coordenadas: this.coordenadas!,
-          area: this.areaCalculada!,
-          centroideLat: this.centroideLat!,
-          centroideLng: this.centroideLng!,
-        }).subscribe({
-          next: () => {
-            this.exito = true;
-            this.cdr.detectChanges();
-            this.avisos.exito('avisos.plotNext');
-            this.router.navigate(['/crops/plot', lote.id]); // siguiente paso: sembrar en él
-          },
-          error: () => {
-            this.exito = true;
-            this.cdr.detectChanges();
-            this.avisos.exito('avisos.plotNext');
-            this.router.navigate(['/crops/plot', lote.id]);
-          }
-        });
-      },
-      error: () => {
-        this.guardando = false;
-        this.setError('lotes.new.errors.register');
-      },
-    });
+    this.cultivoService
+      .registrarLote({
+        nombre: this.form.nombre,
+        area: this.areaCalculada,
+        fincaId: this.fincaId,
+      })
+      .pipe(
+        // Después se guarda el dibujo; si eso falla el lote ya existe y se sigue igual
+        switchMap((lote) =>
+          this.cultivoService
+            .actualizarGeometriaLote(lote.id!, {
+              coordenadas: this.coordenadas!,
+              area: this.areaCalculada!,
+              centroideLat: this.centroideLat!,
+              centroideLng: this.centroideLng!,
+            })
+            .pipe(
+              map(() => lote),
+              catchError(() => of(lote)),
+            ),
+        ),
+      )
+      .subscribe({
+        next: (lote) => {
+          this.exito = true;
+          this.cdr.detectChanges();
+          this.avisos.exito('avisos.plotNext');
+          this.router.navigate(['/crops/plot', lote.id]); // siguiente paso: sembrar en él
+        },
+        error: () => {
+          this.guardando = false;
+          this.setError('lotes.new.errors.register');
+        },
+      });
   }
 
   cancelar(): void {

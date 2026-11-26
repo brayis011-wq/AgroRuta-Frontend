@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Injectable, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  Injectable,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
@@ -19,9 +29,21 @@ export class PedidoReporteCompleto {
   styleUrl: './report-downloads.css',
   template: `
     <div class="descargas">
-      <button type="button" class="btn-descargar" (click)="abierto.set(!abierto())" [disabled]="deshabilitado()"
-              aria-haspopup="menu" [attr.aria-expanded]="abierto()">
-        <i class="ti" [class.ti-download]="!descargando()" [class.ti-loader-2]="descargando()" [class.gira]="descargando()" aria-hidden="true"></i>
+      <button
+        type="button"
+        class="btn-descargar"
+        (click)="abierto.set(!abierto())"
+        [disabled]="deshabilitado()"
+        aria-haspopup="menu"
+        [attr.aria-expanded]="abierto()"
+      >
+        <i
+          class="ti"
+          [class.ti-download]="!descargando()"
+          [class.ti-loader-2]="descargando()"
+          [class.gira]="descargando()"
+          aria-hidden="true"
+        ></i>
         {{ (descargando() ? 'reports.downloading' : 'reports.download.button') | translate }}
         <i class="ti ti-chevron-down flecha" [class.girada]="abierto()" aria-hidden="true"></i>
       </button>
@@ -29,16 +51,25 @@ export class PedidoReporteCompleto {
         <div class="menu" role="menu">
           <button type="button" role="menuitem" (click)="elegir('pdf')" [disabled]="descargando()">
             <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
-            <span><b>{{ 'reports.download.pdf' | translate }}</b><small>{{ 'reports.download.pdfHint' | translate }}</small></span>
+            <span
+              ><b>{{ 'reports.download.pdf' | translate }}</b
+              ><small>{{ 'reports.download.pdfHint' | translate }}</small></span
+            >
           </button>
           <button type="button" role="menuitem" (click)="elegir('csv')" [disabled]="!hayDatos()">
             <i class="ti ti-file-spreadsheet" aria-hidden="true"></i>
-            <span><b>{{ 'reports.csv.button' | translate }}</b><small>{{ 'reports.csv.hint' | translate }}</small></span>
+            <span
+              ><b>{{ 'reports.csv.button' | translate }}</b
+              ><small>{{ 'reports.csv.hint' | translate }}</small></span
+            >
           </button>
           @if (pedido) {
             <button type="button" role="menuitem" (click)="elegir('completo')">
               <i class="ti ti-files" aria-hidden="true"></i>
-              <span><b>{{ 'reports.full.button' | translate }}</b><small>{{ 'reports.download.fullHint' | translate }}</small></span>
+              <span
+                ><b>{{ 'reports.full.button' | translate }}</b
+                ><small>{{ 'reports.download.fullHint' | translate }}</small></span
+              >
             </button>
           }
         </div>
@@ -67,7 +98,8 @@ export class DescargasReporteComponent {
 
   @HostListener('document:click', ['$event.target'])
   alTocarFuera(destino: EventTarget | null): void {
-    if (this.abierto() && destino instanceof Node && !this.el.nativeElement.contains(destino)) this.abierto.set(false);
+    if (this.abierto() && destino instanceof Node && !this.el.nativeElement.contains(destino))
+      this.abierto.set(false);
   }
 
   @HostListener('document:keydown.escape')

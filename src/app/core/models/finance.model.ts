@@ -27,10 +27,29 @@ export interface PrecioCultivo {
   alternativas: PrecioReferencia[];
 }
 
-export interface PreferenciaPrecio { cultivo: string; producto: string | null; precioKg: number | null }
+export interface PreferenciaPrecio {
+  cultivo: string;
+  producto: string | null;
+  precioKg: number | null;
+}
 
-export type CategoriaGasto = 'TRANSPORTE' | 'HERRAMIENTAS' | 'SERVICIOS' | 'MANTENIMIENTO' | 'ADMINISTRACION' | 'IMPUESTOS' | 'OTRO';
-export const CATEGORIAS_GASTO: CategoriaGasto[] = ['TRANSPORTE', 'HERRAMIENTAS', 'SERVICIOS', 'MANTENIMIENTO', 'ADMINISTRACION', 'IMPUESTOS', 'OTRO'];
+export type CategoriaGasto =
+  | 'TRANSPORTE'
+  | 'HERRAMIENTAS'
+  | 'SERVICIOS'
+  | 'MANTENIMIENTO'
+  | 'ADMINISTRACION'
+  | 'IMPUESTOS'
+  | 'OTRO';
+export const CATEGORIAS_GASTO: CategoriaGasto[] = [
+  'TRANSPORTE',
+  'HERRAMIENTAS',
+  'SERVICIOS',
+  'MANTENIMIENTO',
+  'ADMINISTRACION',
+  'IMPUESTOS',
+  'OTRO',
+];
 
 export interface GastoFinca {
   id?: number;
@@ -42,13 +61,30 @@ export interface GastoFinca {
   monto: number;
 }
 
-export interface ParteResumen { clave: string; nombre: string | null; total: number; cantidad: number }
-export interface ResumenGastos { total: number; cantidad: number; porCategoria: ParteResumen[]; porFinca: ParteResumen[] }
+export interface ParteResumen {
+  clave: string;
+  nombre: string | null;
+  total: number;
+  cantidad: number;
+}
+export interface ResumenGastos {
+  total: number;
+  cantidad: number;
+  porCategoria: ParteResumen[];
+  porFinca: ParteResumen[];
+}
 
 export type EstadoVenta = 'PENDIENTE' | 'VENCIDA' | 'PAGADA';
 export type MetodoCobro = 'EFECTIVO' | 'TRANSFERENCIA' | 'CHEQUE';
 
-export interface Abono { id: number; ventaId: number; fecha: string; monto: number; metodo: MetodoCobro; observaciones: string | null }
+export interface Abono {
+  id: number;
+  ventaId: number;
+  fecha: string;
+  monto: number;
+  metodo: MetodoCobro;
+  observaciones: string | null;
+}
 
 export interface Venta {
   id: number;
@@ -82,7 +118,12 @@ export interface VentaRequest {
   metodo?: MetodoCobro;
 }
 
-export interface Deudor { comprador: string; saldo: number; ventas: number; conVencidas: boolean }
+export interface Deudor {
+  comprador: string;
+  saldo: number;
+  ventas: number;
+  conVencidas: boolean;
+}
 /** Cómo van los precios de SIPSA */
 export interface EstadoPrecios {
   hayPrecios: boolean;
@@ -137,7 +178,10 @@ export interface Presupuesto {
   otrosSuperados: boolean;
 }
 
-export interface Lluvia { fecha: string; milimetros: number }
+export interface Lluvia {
+  fecha: string;
+  milimetros: number;
+}
 export interface ResumenLluvia {
   ultimos7: number;
   ultimos30: number;
@@ -147,8 +191,17 @@ export interface ResumenLluvia {
 }
 
 /** Tipos de labor que se pueden repetir: los de las actividades más fertilizar y fumigar */
-export const TIPOS_PROGRAMABLES = ['FERTILIZACION', 'FUMIGACION', 'RIEGO', 'DESHIERBE', 'PODA', 'TUTOREO', 'REVISION', 'OTRO'] as const;
-export type TipoProgramable = typeof TIPOS_PROGRAMABLES[number];
+export const TIPOS_PROGRAMABLES = [
+  'FERTILIZACION',
+  'FUMIGACION',
+  'RIEGO',
+  'DESHIERBE',
+  'PODA',
+  'TUTOREO',
+  'REVISION',
+  'OTRO',
+] as const;
+export type TipoProgramable = (typeof TIPOS_PROGRAMABLES)[number];
 
 export interface LaborProgramada {
   id: number;

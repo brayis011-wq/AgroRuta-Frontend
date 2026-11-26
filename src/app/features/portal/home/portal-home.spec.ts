@@ -11,8 +11,15 @@ describe('PortalInicioComponent', () => {
 
   const aprobado: any = {
     estado: 'APROBADO',
-    trabajador: { nombreCompleto: 'Luis Herrera', cedula: '1052334120', cargo: 'Recolector', estado: 'ACTIVO',
-                  tipoContrato: 'JORNAL', fechaIngreso: '2025-01-10', empleador: 'Ana Rodríguez' },
+    trabajador: {
+      nombreCompleto: 'Luis Herrera',
+      cedula: '1052334120',
+      cargo: 'Recolector',
+      estado: 'ACTIVO',
+      tipoContrato: 'JORNAL',
+      fechaIngreso: '2025-01-10',
+      empleador: 'Ana Rodríguez',
+    },
   };
 
   async function crear(estadoInicial: any) {
@@ -48,9 +55,30 @@ describe('PortalInicioComponent', () => {
   it('sums only the unpaid payrolls', async () => {
     await crear(aprobado);
     component.nominas = [
-      { id: 1, periodoInicio: '2026-10-01', periodoFin: '2026-10-15', totalJornales: 5, valorTotal: 300000, estado: 'APROBADA' },
-      { id: 2, periodoInicio: '2026-09-15', periodoFin: '2026-09-30', totalJornales: 6, valorTotal: 360000, estado: 'PAGADA' },
-      { id: 3, periodoInicio: '2026-10-16', periodoFin: '2026-10-31', totalJornales: 4, valorTotal: 240000, estado: 'PENDIENTE' },
+      {
+        id: 1,
+        periodoInicio: '2026-10-01',
+        periodoFin: '2026-10-15',
+        totalJornales: 5,
+        valorTotal: 300000,
+        estado: 'APROBADA',
+      },
+      {
+        id: 2,
+        periodoInicio: '2026-09-15',
+        periodoFin: '2026-09-30',
+        totalJornales: 6,
+        valorTotal: 360000,
+        estado: 'PAGADA',
+      },
+      {
+        id: 3,
+        periodoInicio: '2026-10-16',
+        periodoFin: '2026-10-31',
+        totalJornales: 4,
+        valorTotal: 240000,
+        estado: 'PENDIENTE',
+      },
     ];
     expect(component.porCobrar.length).toBe(2);
     expect(component.valorPorCobrar).toBe(540000);
@@ -66,9 +94,11 @@ describe('PortalInicioComponent', () => {
 
   it('shows the backend message when the cédula is unknown', async () => {
     await crear({ estado: 'SIN_SOLICITUD', trabajador: null });
-    portal.solicitar.mockReturnValue(throwError(() => ({
-      error: { message: 'Ningún agricultor ha registrado esta cédula.' },
-    })));
+    portal.solicitar.mockReturnValue(
+      throwError(() => ({
+        error: { message: 'Ningún agricultor ha registrado esta cédula.' },
+      })),
+    );
     component.cedula = '99999999';
     component.solicitar();
     expect(component.errorSolicitud).toBe('Ningún agricultor ha registrado esta cédula.');

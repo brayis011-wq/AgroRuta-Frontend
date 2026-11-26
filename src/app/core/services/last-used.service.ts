@@ -20,7 +20,11 @@ export class UltimoUsadoService {
   }
 
   guardar<T>(formulario: string, valor: T): void {
-    try { localStorage.setItem(this.clave(formulario), JSON.stringify(valor)); } catch { /* sin almacenamiento */ }
+    try {
+      localStorage.setItem(this.clave(formulario), JSON.stringify(valor));
+    } catch {
+      /* sin almacenamiento */
+    }
   }
 
   /** Mezcla con lo que ya había (para guardar por partes, p. ej. la dosis de cada producto) */
@@ -30,7 +34,11 @@ export class UltimoUsadoService {
 
   private clave(formulario: string): string {
     let id: number | null | undefined = null;
-    try { id = this.injector.get(AuthService).getUsuario()?.id; } catch { /* sin sesión */ }
+    try {
+      id = this.injector.get(AuthService).getUsuario()?.id;
+    } catch {
+      /* sin sesión */
+    }
     return `ultimo:${id ?? 'anon'}:${formulario}`;
   }
 }

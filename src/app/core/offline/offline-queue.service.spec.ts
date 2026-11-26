@@ -53,7 +53,9 @@ describe('ColaSinConexionService', () => {
     await cola.encolar('cosecha', '/api/harvests', {}, 'clave-0001');
     const fin = cola.sincronizar();
     await esperar();
-    httpMock.expectOne('/api/harvests').flush({ errorCode: 'AGR-036' }, { status: 409, statusText: 'x' });
+    httpMock
+      .expectOne('/api/harvests')
+      .flush({ errorCode: 'AGR-036' }, { status: 409, statusText: 'x' });
     await fin;
     expect(cola.pendientes()).toEqual([]);
     expect(cola.enviados()).toBe(1);
@@ -66,13 +68,22 @@ describe('ColaSinConexionService', () => {
 
     const fin = cola.sincronizar();
     await esperar();
-    httpMock.expectOne('/api/harvests').flush({ errorCode: 'AGR-012', message: 'Faltan 3 días de carencia' }, { status: 422, statusText: 'x' });
+    httpMock
+      .expectOne('/api/harvests')
+      .flush(
+        { errorCode: 'AGR-012', message: 'Faltan 3 días de carencia' },
+        { status: 422, statusText: 'x' },
+      );
     await esperar();
     httpMock.expectOne('/api/workdays').flush({ id: 2 });
     await fin;
 
     expect(cola.pendientes().length).toBe(1);
-    expect(cola.pendientes()[0]).toMatchObject({ id: 'clave-0001', error: 'Faltan 3 días de carencia', codigoError: 'AGR-012' });
+    expect(cola.pendientes()[0]).toMatchObject({
+      id: 'clave-0001',
+      error: 'Faltan 3 días de carencia',
+      codigoError: 'AGR-012',
+    });
     expect(cola.conError()).toBe(1);
     expect(cola.porEnviar()).toBe(0);
 
@@ -82,10 +93,17 @@ describe('ColaSinConexionService', () => {
   });
 
   it('reintentar con cambios (confirmar la carencia) limpia el error y lo vuelve a mandar', async () => {
-    await cola.encolar('cosecha', '/api/harvests', { cantidad: 1, confirmarCarencia: false }, 'clave-0001');
+    await cola.encolar(
+      'cosecha',
+      '/api/harvests',
+      { cantidad: 1, confirmarCarencia: false },
+      'clave-0001',
+    );
     let fin = cola.sincronizar();
     await esperar();
-    httpMock.expectOne('/api/harvests').flush({ errorCode: 'AGR-012', message: 'x' }, { status: 422, statusText: 'x' });
+    httpMock
+      .expectOne('/api/harvests')
+      .flush({ errorCode: 'AGR-012', message: 'x' }, { status: 422, statusText: 'x' });
     await fin;
 
     fin = cola.reintentar('clave-0001', { confirmarCarencia: true });

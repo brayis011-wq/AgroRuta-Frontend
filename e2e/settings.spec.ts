@@ -12,7 +12,6 @@ async function login(page: any) {
 }
 
 test.describe('Configuración', () => {
-
   test('Cambiar contraseña', async ({ page }) => {
     await login(page);
 
@@ -24,7 +23,8 @@ test.describe('Configuración', () => {
     await page.getByRole('textbox', { name: 'Confirmar nueva contraseña *' }).fill('12345678');
     await page.getByRole('button', { name: '🔒 Cambiar contraseña' }).click();
 
-    await expect(page.getByRole('button', { name: '🔒 Cambiar contraseña' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('button', { name: '🔒 Cambiar contraseña' })).toBeVisible({
+      timeout: 10000,
+    });
   });
-
 });

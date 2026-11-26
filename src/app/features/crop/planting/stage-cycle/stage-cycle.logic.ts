@@ -1,4 +1,9 @@
-import { ETAPAS_CULTIVO, EtapaCultivo, EtapaSiembra, Siembra } from '../../../../core/models/crop.model';
+import {
+  ETAPAS_CULTIVO,
+  EtapaCultivo,
+  EtapaSiembra,
+  Siembra,
+} from '../../../../core/models/crop.model';
 
 export interface PasoCiclo {
   etapa: EtapaCultivo;
@@ -13,7 +18,10 @@ export function hoyIso(hoy = new Date()): string {
 }
 
 /** Días entre dos fechas "yyyy-MM-dd" (sin problemas de zona horaria) */
-export function diasEntre(desde: string | null | undefined, hasta: string | null | undefined): number {
+export function diasEntre(
+  desde: string | null | undefined,
+  hasta: string | null | undefined,
+): number {
   if (!desde || !hasta) return 0;
   const a = Date.UTC(+desde.slice(0, 4), +desde.slice(5, 7) - 1, +desde.slice(8, 10));
   const b = Date.UTC(+hasta.slice(0, 4), +hasta.slice(5, 7) - 1, +hasta.slice(8, 10));
@@ -25,7 +33,7 @@ export function pasosCiclo(siembra: Siembra, etapas: EtapaSiembra[]): PasoCiclo[
   const actual = ETAPAS_CULTIVO.indexOf(siembra.estadoCultivo);
   const fechaDe = (e: EtapaCultivo): string | null => {
     // la última vez que entró en esa etapa (si retrocedió y volvió a avanzar)
-    const regs = etapas.filter(r => r.etapa === e);
+    const regs = etapas.filter((r) => r.etapa === e);
     if (regs.length) return regs[regs.length - 1].fecha;
     if (e === 'GERMINACION') return siembra.fechaSiembra;
     if (e === 'FINALIZADO') return siembra.fechaFin ?? null;
@@ -33,7 +41,12 @@ export function pasosCiclo(siembra: Siembra, etapas: EtapaSiembra[]): PasoCiclo[
   };
   return ETAPAS_CULTIVO.map((etapa, i) => ({
     etapa,
-    estado: i < actual || (i === actual && etapa === 'FINALIZADO') ? 'hecho' : i === actual ? 'actual' : 'pendiente',
+    estado:
+      i < actual || (i === actual && etapa === 'FINALIZADO')
+        ? 'hecho'
+        : i === actual
+          ? 'actual'
+          : 'pendiente',
     fecha: i <= actual ? fechaDe(etapa) : null,
   }));
 }
@@ -47,13 +60,16 @@ export function siguienteEtapa(etapa: EtapaCultivo): EtapaCultivo | null {
 
 /** Fecha mínima para el próximo cambio: el último cambio registrado o la siembra */
 export function fechaMinima(siembra: Siembra, etapas: EtapaSiembra[]): string {
-  const fechas = etapas.map(e => e.fecha).filter(Boolean).sort();
+  const fechas = etapas
+    .map((e) => e.fecha)
+    .filter(Boolean)
+    .sort();
   return fechas.length ? fechas[fechas.length - 1] : siembra.fechaSiembra;
 }
 
 /** Días que lleva en la etapa actual */
 export function diasEnEtapa(siembra: Siembra, etapas: EtapaSiembra[], hoy = hoyIso()): number {
-  const paso = pasosCiclo(siembra, etapas).find(p => p.etapa === siembra.estadoCultivo);
+  const paso = pasosCiclo(siembra, etapas).find((p) => p.etapa === siembra.estadoCultivo);
   return diasEntre(paso?.fecha ?? siembra.fechaSiembra, hoy);
 }
 

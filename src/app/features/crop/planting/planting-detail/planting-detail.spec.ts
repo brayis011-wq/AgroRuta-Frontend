@@ -7,17 +7,39 @@ import { DetalleSiembraComponent } from './planting-detail';
 import { CultivoService } from '../../../../core/services/crop.service';
 import { DiagnosticoService } from '../../../../core/services/diagnosis.service';
 
-const mockSiembra = { id: 1, loteId: 10, cultivo: 'Maiz', fechaSiembra: '2024-01-01', estado: 'ACTIVA' };
+const mockSiembra = {
+  id: 1,
+  loteId: 10,
+  cultivo: 'Maiz',
+  fechaSiembra: '2024-01-01',
+  estado: 'ACTIVA',
+};
 const mockLote = { id: 10, nombre: 'Lote A', centroideLat: 4.5, centroideLng: -74.1 };
 const mockActividades = [
   { id: 1, tipo: 'RIEGO', descripcion: 'Riego diario', fecha: '2024-03-01', siembraId: 1 },
   { id: 2, tipo: 'PODA', descripcion: 'Poda general', fecha: '2024-03-10', siembraId: 1 },
 ];
 const mockFumigaciones = [
-  { id: 1, producto: 'Fungicida X', dosis: 2, unidadMedida: 'L', areaAplicada: 1, fecha: '2024-02-20', observaciones: 'Ninguna', siembraId: 1 },
+  {
+    id: 1,
+    producto: 'Fungicida X',
+    dosis: 2,
+    unidadMedida: 'L',
+    areaAplicada: 1,
+    fecha: '2024-02-20',
+    observaciones: 'Ninguna',
+    siembraId: 1,
+  },
 ];
 const mockCosechas = [
-  { id: 1, cantidadKg: 500, calidad: 'PRIMERA', fecha: '2024-04-01', observaciones: 'Buena', siembraId: 1 },
+  {
+    id: 1,
+    cantidadKg: 500,
+    calidad: 'PRIMERA',
+    fecha: '2024-04-01',
+    observaciones: 'Buena',
+    siembraId: 1,
+  },
 ];
 
 describe('DetalleSiembraComponent', () => {
@@ -51,7 +73,10 @@ describe('DetalleSiembraComponent', () => {
       imports: [DetalleSiembraComponent],
       providers: [
         { provide: CultivoService, useValue: cultivoServiceMock },
-        { provide: DiagnosticoService, useValue: { listar: () => of({ disponible: false, restantesHoy: 0, diagnosticos: [] }) } },
+        {
+          provide: DiagnosticoService,
+          useValue: { listar: () => of({ disponible: false, restantesHoy: 0, diagnosticos: [] }) },
+        },
         { provide: Router, useValue: routerMock },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },
         ChangeDetectorRef,
@@ -63,8 +88,12 @@ describe('DetalleSiembraComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => { expect(component).toBeTruthy(); });
-  it('ngOnInit() should load siembra', () => { expect(component.siembra).toEqual(mockSiembra); });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+  it('ngOnInit() should load siembra', () => {
+    expect(component.siembra).toEqual(mockSiembra);
+  });
   it('ngOnInit() should set fincaLat and fincaLng', () => {
     expect(component.fincaLat).toBe(4.5);
     expect(component.fincaLng).toBe(-74.1);
@@ -75,7 +104,9 @@ describe('DetalleSiembraComponent', () => {
     expect(component.error).toBe('siembra.detail.errors.load');
   });
   it('ngOnInit() should not set coords if lote has no centroide', () => {
-    cultivoServiceMock.buscarLote.mockReturnValue(of({ id: 10, centroideLat: null, centroideLng: null }));
+    cultivoServiceMock.buscarLote.mockReturnValue(
+      of({ id: 10, centroideLat: null, centroideLng: null }),
+    );
     component.fincaLat = null;
     component.ngOnInit();
     expect(component.fincaLat).toBeNull();
@@ -103,15 +134,15 @@ describe('DetalleSiembraComponent', () => {
   });
   it('timelineFiltrado should filter by actividad', () => {
     component.filtroActivo = 'actividad';
-    component.timelineFiltrado.forEach(i => expect(i.tipo).toBe('actividad'));
+    component.timelineFiltrado.forEach((i) => expect(i.tipo).toBe('actividad'));
   });
   it('timelineFiltrado should filter by fumigacion', () => {
     component.filtroActivo = 'fumigacion';
-    component.timelineFiltrado.forEach(i => expect(i.tipo).toBe('fumigacion'));
+    component.timelineFiltrado.forEach((i) => expect(i.tipo).toBe('fumigacion'));
   });
   it('timelineFiltrado should filter by cosecha', () => {
     component.filtroActivo = 'cosecha';
-    component.timelineFiltrado.forEach(i => expect(i.tipo).toBe('cosecha'));
+    component.timelineFiltrado.forEach((i) => expect(i.tipo).toBe('cosecha'));
   });
   it('setFiltro() should change filtroActivo', () => {
     component.setFiltro('cosecha');
@@ -184,13 +215,19 @@ describe('DetalleSiembraComponent', () => {
     expect(component.getAlerta()).toContain('🔴');
   });
   it('getAlerta() should return yellow when 6 days ago', () => {
-    const d = new Date(); d.setDate(d.getDate() - 6);
-    component.fumigaciones = [{ ...mockFumigaciones[0], fecha: d.toISOString().split('T')[0] }] as any;
+    const d = new Date();
+    d.setDate(d.getDate() - 6);
+    component.fumigaciones = [
+      { ...mockFumigaciones[0], fecha: d.toISOString().split('T')[0] },
+    ] as any;
     expect(component.getAlerta()).toContain('🟡');
   });
   it('getAlerta() should return green when recent', () => {
-    const d = new Date(); d.setDate(d.getDate() - 1);
-    component.fumigaciones = [{ ...mockFumigaciones[0], fecha: d.toISOString().split('T')[0] }] as any;
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    component.fumigaciones = [
+      { ...mockFumigaciones[0], fecha: d.toISOString().split('T')[0] },
+    ] as any;
     expect(component.getAlerta()).toContain('🟢');
   });
   it('registrarActividad() should navigate', () => {

@@ -10,7 +10,9 @@ import { environment } from '../../../environments/environment';
 
 /** JWT de prueba con el exp indicado (segundos desde ahora). La firma no importa en el frontend. */
 function jwt(segundos: number, nombre = 'x'): string {
-  const payload = btoa(JSON.stringify({ sub: nombre, exp: Math.floor(Date.now() / 1000) + segundos }));
+  const payload = btoa(
+    JSON.stringify({ sub: nombre, exp: Math.floor(Date.now() / 1000) + segundos }),
+  );
   return `h.${payload}.s`;
 }
 
@@ -24,7 +26,9 @@ describe('jwtInterceptor', () => {
   /** Simula un login para tener token en memoria y la marca de sesión. */
   function iniciarSesion(token = jwt(900)) {
     auth.login({ email: 'a@x.com', password: 'p' } as any).subscribe();
-    httpMock.expectOne(`${api}/auth/login`).flush({ id: 1, token, nombre: 'Ana', rol: 'Agricultor' });
+    httpMock
+      .expectOne(`${api}/auth/login`)
+      .flush({ id: 1, token, nombre: 'Ana', rol: 'Agricultor' });
   }
 
   beforeEach(() => {
@@ -86,7 +90,9 @@ describe('jwtInterceptor', () => {
     const nuevo = jwt(900, 'nuevo');
 
     http.get(`${api}/farms`).subscribe();
-    httpMock.expectOne(`${api}/auth/refresh`).flush({ id: 1, token: nuevo, nombre: 'Ana', rol: 'Agricultor' });
+    httpMock
+      .expectOne(`${api}/auth/refresh`)
+      .flush({ id: 1, token: nuevo, nombre: 'Ana', rol: 'Agricultor' });
 
     const req = httpMock.expectOne(`${api}/farms`);
     expect(req.request.headers.get('Authorization')).toBe(`Bearer ${nuevo}`);
@@ -125,11 +131,15 @@ describe('jwtInterceptor', () => {
     let error: any;
 
     http.get(`${api}/farms`).subscribe({ error: (e) => (error = e) });
-    httpMock.expectOne(`${api}/auth/refresh`).flush(null, { status: 401, statusText: 'Unauthorized' });
+    httpMock
+      .expectOne(`${api}/auth/refresh`)
+      .flush(null, { status: 401, statusText: 'Unauthorized' });
 
     expect(error.status).toBe(401);
     expect(auth.isLoggedIn()).toBe(false);
-    expect(router.navigate).toHaveBeenCalledWith(['/auth/login'], { queryParams: { sesion: 'expirada' } });
+    expect(router.navigate).toHaveBeenCalledWith(['/auth/login'], {
+      queryParams: { sesion: 'expirada' },
+    });
   });
 
   it('un error de red al renovar no cierra la sesión', () => {

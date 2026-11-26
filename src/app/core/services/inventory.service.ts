@@ -4,7 +4,11 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { MeasurementUnit } from '../models/agricultural-input.model';
 import {
-  AjusteRequest, CompraRequest, CostoEstimado, MovimientoInventario, StockInsumo,
+  AjusteRequest,
+  CompraRequest,
+  CostoEstimado,
+  MovimientoInventario,
+  StockInsumo,
 } from '../models/inventory.model';
 
 /** Bodega de insumos del usuario (una por agricultor) */
@@ -35,7 +39,11 @@ export class InventarioService {
   }
 
   /** minimo = null quita el aviso */
-  definirMinimo(insumoId: number, minimo: number | null, unidad: MeasurementUnit): Observable<StockInsumo> {
+  definirMinimo(
+    insumoId: number,
+    minimo: number | null,
+    unidad: MeasurementUnit,
+  ): Observable<StockInsumo> {
     return this.http.put<StockInsumo>(`${this.api}/${insumoId}/minimum`, { minimo, unidad });
   }
 
@@ -43,8 +51,15 @@ export class InventarioService {
     return this.http.delete<void>(`${this.api}/movements/${id}`);
   }
 
-  costoEstimado(insumoId: number, cantidad: number, unidad: MeasurementUnit): Observable<CostoEstimado> {
-    const params = new HttpParams().set('insumoId', insumoId).set('cantidad', cantidad).set('unidad', unidad);
+  costoEstimado(
+    insumoId: number,
+    cantidad: number,
+    unidad: MeasurementUnit,
+  ): Observable<CostoEstimado> {
+    const params = new HttpParams()
+      .set('insumoId', insumoId)
+      .set('cantidad', cantidad)
+      .set('unidad', unidad);
     return this.http.get<CostoEstimado>(`${this.api}/estimated-cost`, { params });
   }
 }

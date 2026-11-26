@@ -1,13 +1,37 @@
-﻿import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { NuevoLoteComponent } from './new-plot';
 import { CultivoService } from '../../../../core/services/crop.service';
 
-vi.mock('leaflet', () => ({ default: {}, map: vi.fn(() => ({ setView: vi.fn().mockReturnThis(), addLayer: vi.fn(), addControl: vi.fn(), on: vi.fn(), remove: vi.fn() })), tileLayer: vi.fn(() => ({ addTo: vi.fn() })), control: { layers: vi.fn(() => ({ addTo: vi.fn() })) }, FeatureGroup: vi.fn(() => ({ clearLayers: vi.fn(), addLayer: vi.fn() })), Control: { extend: vi.fn(() => vi.fn(() => ({ addTo: vi.fn() }))) }, DomUtil: { create: vi.fn(() => ({ innerHTML: '' })) }, DomEvent: { on: vi.fn() }, marker: vi.fn(() => ({ addTo: vi.fn() })), icon: vi.fn(), latLng: vi.fn((lat: number, lng: number) => ({ lat, lng })) }));
+vi.mock('leaflet', () => ({
+  default: {},
+  map: vi.fn(() => ({
+    setView: vi.fn().mockReturnThis(),
+    addLayer: vi.fn(),
+    addControl: vi.fn(),
+    on: vi.fn(),
+    remove: vi.fn(),
+  })),
+  tileLayer: vi.fn(() => ({ addTo: vi.fn() })),
+  control: { layers: vi.fn(() => ({ addTo: vi.fn() })) },
+  FeatureGroup: vi.fn(() => ({ clearLayers: vi.fn(), addLayer: vi.fn() })),
+  Control: { extend: vi.fn(() => vi.fn(() => ({ addTo: vi.fn() }))) },
+  DomUtil: { create: vi.fn(() => ({ innerHTML: '' })) },
+  DomEvent: { on: vi.fn() },
+  marker: vi.fn(() => ({ addTo: vi.fn() })),
+  icon: vi.fn(),
+  latLng: vi.fn((lat: number, lng: number) => ({ lat, lng })),
+}));
 vi.mock('leaflet-draw', () => ({}));
 
-const mockFinca = { id: 3, nombre: 'Finca A', hectareas: 10, centroideLat: 4.5, centroideLng: -74.1 };
+const mockFinca = {
+  id: 3,
+  nombre: 'Finca A',
+  hectareas: 10,
+  centroideLat: 4.5,
+  centroideLng: -74.1,
+};
 
 describe('NuevoLoteComponent', () => {
   let component: NuevoLoteComponent;
@@ -33,7 +57,9 @@ describe('NuevoLoteComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should create', () => { expect(component).toBeTruthy(); });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
   it('ngOnInit() should set fincaId and load finca', () => {
     component.ngOnInit();
     expect(component.fincaId).toBe(3);

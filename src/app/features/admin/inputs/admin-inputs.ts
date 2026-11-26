@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AgriculturalInputService } from '../../../core/services/agricultural-input.service';
@@ -11,13 +17,19 @@ import {
   MeasurementUnit,
 } from '../../../core/models/agricultural-input.model';
 import { formatoNumero } from '../../../shared/format';
+import { mensajeDeError } from '../../../shared/error-message';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-insumos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './admin-inputs.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-inputs.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    './admin-inputs.css',
+  ],
 })
 export class AdminInsumosComponent implements OnInit {
   private readonly insumoService = inject(AgriculturalInputService);
@@ -27,7 +39,12 @@ export class AdminInsumosComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   /** Tipos y unidades que acepta el backend (AgriculturalInputRequest). */
-  readonly tipos: AgriculturalInputType[] = ['FUNGICIDA', 'INSECTICIDA', 'HERBICIDA', 'FERTILIZANTE_FOLIAR'];
+  readonly tipos: AgriculturalInputType[] = [
+    'FUNGICIDA',
+    'INSECTICIDA',
+    'HERBICIDA',
+    'FERTILIZANTE_FOLIAR',
+  ];
   readonly unidades: MeasurementUnit[] = ['LITROS', 'ML', 'GRAMOS', 'KG'];
 
   insumos: AgriculturalInput[] = [];
@@ -77,7 +94,9 @@ export class AdminInsumosComponent implements OnInit {
   get visibles(): AgriculturalInput[] {
     const q = this.busqueda.trim().toLowerCase();
     return this.insumos
-      .filter((i) => this.filtroEstado === 'todos' || (this.filtroEstado === 'activos') === i.activo)
+      .filter(
+        (i) => this.filtroEstado === 'todos' || (this.filtroEstado === 'activos') === i.activo,
+      )
       .filter((i) => !q || i.nombre.toLowerCase().includes(q))
       .sort((a, b) => a.nombre.localeCompare(b.nombre));
   }
@@ -134,13 +153,18 @@ export class AdminInsumosComponent implements OnInit {
         this.formularioAbierto = false;
         this.mensaje = {
           tipo: 'ok',
-          texto: this.translate.instant(existe ? 'admin.inputs.updated' : 'admin.inputs.created', { name: guardado.nombre }),
+          texto: this.translate.instant(existe ? 'admin.inputs.updated' : 'admin.inputs.created', {
+            name: guardado.nombre,
+          }),
         };
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.guardando = false;
-        this.mensaje = { tipo: 'error', texto: err?.error?.message || this.translate.instant('admin.inputs.saveError') };
+        this.mensaje = {
+          tipo: 'error',
+          texto: mensajeDeError(err, this.translate.instant('admin.inputs.saveError')),
+        };
         this.cdr.detectChanges();
       },
     });
@@ -173,14 +197,20 @@ export class AdminInsumosComponent implements OnInit {
         this.porDesactivar = null;
         this.mensaje = {
           tipo: 'ok',
-          texto: this.translate.instant(activo ? 'admin.inputs.activated' : 'admin.inputs.deactivated', { name: insumo.nombre }),
+          texto: this.translate.instant(
+            activo ? 'admin.inputs.activated' : 'admin.inputs.deactivated',
+            { name: insumo.nombre },
+          ),
         };
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.guardando = false;
         this.porDesactivar = null;
-        this.mensaje = { tipo: 'error', texto: err?.error?.message || this.translate.instant('admin.inputs.statusError') };
+        this.mensaje = {
+          tipo: 'error',
+          texto: mensajeDeError(err, this.translate.instant('admin.inputs.statusError')),
+        };
         this.cdr.detectChanges();
       },
     });

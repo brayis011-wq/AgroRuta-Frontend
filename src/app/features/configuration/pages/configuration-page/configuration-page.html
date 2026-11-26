@@ -23,14 +23,31 @@
           }
           <h2>{{ perfil?.nombre || '—' }}</h2>
           <p>{{ perfil?.email }}</p>
-          @if (perfil?.telefono) { <p><i class="ti ti-phone" aria-hidden="true"></i> {{ perfil!.telefono }}</p> }
-          @if (perfil?.rol) { <span class="rol"><i class="ti ti-shield-check" aria-hidden="true"></i> {{ 'enums.rol.' + perfil!.rol | translate }}</span> }
+          @if (perfil?.telefono) {
+            <p><i class="ti ti-phone" aria-hidden="true"></i> {{ perfil!.telefono }}</p>
+          }
+          @if (perfil?.rol) {
+            <span class="rol"
+              ><i class="ti ti-shield-check" aria-hidden="true"></i>
+              {{ 'enums.rol.' + perfil!.rol | translate }}</span
+            >
+          }
         </section>
 
         <!-- Pestañas: cada una muestra sus secciones (las demás quedan ocultas, sin perder lo escrito) -->
-        <nav class="tarjeta indice" role="tablist" [attr.aria-label]="'config.sections' | translate">
+        <nav
+          class="tarjeta indice"
+          role="tablist"
+          [attr.aria-label]="'config.sections' | translate"
+        >
           @for (g of grupos; track g.id) {
-            <button type="button" role="tab" [class.on]="grupo() === g.id" [attr.aria-selected]="grupo() === g.id" (click)="elegirGrupo(g.id)">
+            <button
+              type="button"
+              role="tab"
+              [class.on]="grupo() === g.id"
+              [attr.aria-selected]="grupo() === g.id"
+              (click)="elegirGrupo(g.id)"
+            >
               <i class="ti {{ g.icono }}" aria-hidden="true"></i> {{ g.clave | translate }}
             </button>
           }
@@ -42,27 +59,43 @@
           <header>
             <div class="tit">
               <span class="ic verde" aria-hidden="true"><i class="ti ti-user"></i></span>
-              <div><h2>{{ 'config.profileCard.title' | translate }}</h2><p>{{ 'config.profileCard.desc' | translate }}</p></div>
+              <div>
+                <h2>{{ 'config.profileCard.title' | translate }}</h2>
+                <p>{{ 'config.profileCard.desc' | translate }}</p>
+              </div>
             </div>
           </header>
-          <app-profile-form [perfil]="perfil" [loading]="loadingProfile" (save)="onSaveProfile($event)" />
+          <app-profile-form
+            [perfil]="perfil"
+            [loading]="loadingProfile"
+            (save)="onSaveProfile($event)"
+          />
         </section>
 
         <section class="tarjeta" id="seguridad" [hidden]="grupo() !== 'seguridad'">
           <header>
             <div class="tit">
               <span class="ic ambar" aria-hidden="true"><i class="ti ti-lock"></i></span>
-              <div><h2>{{ 'config.passwordCard.title' | translate }}</h2><p>{{ 'config.passwordCard.desc' | translate }}</p></div>
+              <div>
+                <h2>{{ 'config.passwordCard.title' | translate }}</h2>
+                <p>{{ 'config.passwordCard.desc' | translate }}</p>
+              </div>
             </div>
           </header>
-          <app-change-password-form [loading]="loadingPassword" (changePassword)="onChangePassword($event)" />
+          <app-change-password-form
+            [loading]="loadingPassword"
+            (changePassword)="onChangePassword($event)"
+          />
         </section>
 
         <section class="tarjeta" id="dos-pasos" [hidden]="grupo() !== 'seguridad'">
           <header>
             <div class="tit">
               <span class="ic verde" aria-hidden="true"><i class="ti ti-shield-lock"></i></span>
-              <div><h2>{{ 'config.twoFactor.title' | translate }}</h2><p>{{ 'config.twoFactor.desc' | translate }}</p></div>
+              <div>
+                <h2>{{ 'config.twoFactor.title' | translate }}</h2>
+                <p>{{ 'config.twoFactor.desc' | translate }}</p>
+              </div>
             </div>
           </header>
           <app-two-factor />
@@ -72,7 +105,10 @@
           <header>
             <div class="tit">
               <span class="ic azul" aria-hidden="true"><i class="ti ti-devices"></i></span>
-              <div><h2>{{ 'config.sessions.title' | translate }}</h2><p>{{ 'config.sessions.desc' | translate }}</p></div>
+              <div>
+                <h2>{{ 'config.sessions.title' | translate }}</h2>
+                <p>{{ 'config.sessions.desc' | translate }}</p>
+              </div>
             </div>
           </header>
           <app-open-sessions />
@@ -82,27 +118,46 @@
           <header>
             <div class="tit">
               <span class="ic verde" aria-hidden="true"><i class="ti ti-mail"></i></span>
-              <div><h2>{{ 'config.mail.title' | translate }}</h2><p>{{ 'config.mail.desc' | translate: { email: perfil?.email ?? '' } }}</p></div>
+              <div>
+                <h2>{{ 'config.mail.title' | translate }}</h2>
+                <p>{{ 'config.mail.desc' | translate: { email: perfil?.email ?? '' } }}</p>
+              </div>
             </div>
           </header>
 
           @if (esAgricultor) {
             <div class="pref">
-              <div><strong id="correo-cultivo">{{ 'config.mail.crop' | translate }}</strong><small>{{ 'config.mail.cropHint' | translate }}</small></div>
+              <div>
+                <strong id="correo-cultivo">{{ 'config.mail.crop' | translate }}</strong
+                ><small>{{ 'config.mail.cropHint' | translate }}</small>
+              </div>
               <label class="interruptor">
-                <input type="checkbox" role="switch" aria-labelledby="correo-cultivo"
-                       [checked]="correos()?.alertasCultivo ?? true" [disabled]="!correos() || guardandoCorreos()"
-                       (change)="cambiarCorreo('alertasCultivo', $any($event.target).checked)" />
+                <input
+                  type="checkbox"
+                  role="switch"
+                  aria-labelledby="correo-cultivo"
+                  [checked]="correos()?.alertasCultivo ?? true"
+                  [disabled]="!correos() || guardandoCorreos()"
+                  (change)="cambiarCorreo('alertasCultivo', $any($event.target).checked)"
+                />
                 <span aria-hidden="true"></span>
               </label>
             </div>
 
             <div class="pref">
-              <div><strong id="correo-trabajadores">{{ 'config.mail.workers' | translate }}</strong><small>{{ 'config.mail.workersHint' | translate }}</small></div>
+              <div>
+                <strong id="correo-trabajadores">{{ 'config.mail.workers' | translate }}</strong
+                ><small>{{ 'config.mail.workersHint' | translate }}</small>
+              </div>
               <label class="interruptor">
-                <input type="checkbox" role="switch" aria-labelledby="correo-trabajadores"
-                       [checked]="correos()?.avisosTrabajadores ?? true" [disabled]="!correos() || guardandoCorreos()"
-                       (change)="cambiarCorreo('avisosTrabajadores', $any($event.target).checked)" />
+                <input
+                  type="checkbox"
+                  role="switch"
+                  aria-labelledby="correo-trabajadores"
+                  [checked]="correos()?.avisosTrabajadores ?? true"
+                  [disabled]="!correos() || guardandoCorreos()"
+                  (change)="cambiarCorreo('avisosTrabajadores', $any($event.target).checked)"
+                />
                 <span aria-hidden="true"></span>
               </label>
             </div>
@@ -111,55 +166,120 @@
           } @else if (esTrabajador) {
             <!-- Al trabajador solo le llegan sus pagos y la respuesta a su solicitud: no hay nada que apagar por correo -->
             <div class="pref">
-              <div><strong>{{ 'config.mail.workerTitle' | translate }}</strong><small>{{ 'config.mail.workerHint' | translate }}</small></div>
+              <div>
+                <strong>{{ 'config.mail.workerTitle' | translate }}</strong
+                ><small>{{ 'config.mail.workerHint' | translate }}</small>
+              </div>
             </div>
             <app-push-toggle pista="config.push.hintWorker" />
           }
 
-          <p class="nota"><i class="ti ti-shield-lock" aria-hidden="true"></i> {{ 'config.mail.security' | translate }}</p>
+          <p class="nota">
+            <i class="ti ti-shield-lock" aria-hidden="true"></i>
+            {{ 'config.mail.security' | translate }}
+          </p>
         </section>
 
         <section class="tarjeta" id="preferencias" [hidden]="grupo() !== 'preferencias'">
           <header>
             <div class="tit">
               <span class="ic azul" aria-hidden="true"><i class="ti ti-adjustments"></i></span>
-              <div><h2>{{ 'config.prefs.title' | translate }}</h2><p>{{ 'config.prefs.desc' | translate }}</p></div>
+              <div>
+                <h2>{{ 'config.prefs.title' | translate }}</h2>
+                <p>{{ 'config.prefs.desc' | translate }}</p>
+              </div>
             </div>
           </header>
 
           <div class="pref">
-            <div><strong>{{ 'config.prefs.language' | translate }}</strong><small>{{ 'config.prefs.languageHint' | translate }}</small></div>
+            <div>
+              <strong>{{ 'config.prefs.language' | translate }}</strong
+              ><small>{{ 'config.prefs.languageHint' | translate }}</small>
+            </div>
             <div class="seg" role="group" [attr.aria-label]="'config.prefs.language' | translate">
-              <button type="button" [class.on]="idioma.current() === 'es'" [attr.aria-pressed]="idioma.current() === 'es'" (click)="cambiarIdioma('es')">Español</button>
-              <button type="button" [class.on]="idioma.current() === 'en'" [attr.aria-pressed]="idioma.current() === 'en'" (click)="cambiarIdioma('en')">English</button>
+              <button
+                type="button"
+                [class.on]="idioma.current() === 'es'"
+                [attr.aria-pressed]="idioma.current() === 'es'"
+                (click)="cambiarIdioma('es')"
+              >
+                Español
+              </button>
+              <button
+                type="button"
+                [class.on]="idioma.current() === 'en'"
+                [attr.aria-pressed]="idioma.current() === 'en'"
+                (click)="cambiarIdioma('en')"
+              >
+                English
+              </button>
             </div>
           </div>
 
           <div class="pref">
-            <div><strong>{{ 'theme.title' | translate }}</strong><small>{{ 'theme.hint' | translate }}</small></div>
+            <div>
+              <strong>{{ 'theme.title' | translate }}</strong
+              ><small>{{ 'theme.hint' | translate }}</small>
+            </div>
             <div class="seg" role="group" [attr.aria-label]="'theme.title' | translate">
-              <button type="button" [class.on]="temaSvc.tema() === 'claro'" [attr.aria-pressed]="temaSvc.tema() === 'claro'" (click)="temaSvc.elegir('claro')"><i class="ti ti-sun" aria-hidden="true"></i> {{ 'theme.light' | translate }}</button>
-              <button type="button" [class.on]="temaSvc.tema() === 'oscuro'" [attr.aria-pressed]="temaSvc.tema() === 'oscuro'" (click)="temaSvc.elegir('oscuro')"><i class="ti ti-moon" aria-hidden="true"></i> {{ 'theme.dark' | translate }}</button>
-              <button type="button" [class.on]="temaSvc.tema() === 'sistema'" [attr.aria-pressed]="temaSvc.tema() === 'sistema'" (click)="temaSvc.elegir('sistema')"><i class="ti ti-device-desktop" aria-hidden="true"></i> {{ 'theme.system' | translate }}</button>
+              <button
+                type="button"
+                [class.on]="temaSvc.tema() === 'claro'"
+                [attr.aria-pressed]="temaSvc.tema() === 'claro'"
+                (click)="temaSvc.elegir('claro')"
+              >
+                <i class="ti ti-sun" aria-hidden="true"></i> {{ 'theme.light' | translate }}
+              </button>
+              <button
+                type="button"
+                [class.on]="temaSvc.tema() === 'oscuro'"
+                [attr.aria-pressed]="temaSvc.tema() === 'oscuro'"
+                (click)="temaSvc.elegir('oscuro')"
+              >
+                <i class="ti ti-moon" aria-hidden="true"></i> {{ 'theme.dark' | translate }}
+              </button>
+              <button
+                type="button"
+                [class.on]="temaSvc.tema() === 'sistema'"
+                [attr.aria-pressed]="temaSvc.tema() === 'sistema'"
+                (click)="temaSvc.elegir('sistema')"
+              >
+                <i class="ti ti-device-desktop" aria-hidden="true"></i>
+                {{ 'theme.system' | translate }}
+              </button>
             </div>
           </div>
 
           @if (tieneFincas()) {
             <div class="pref">
-              <div><strong>{{ 'config.prefs.farm' | translate }}</strong><small>{{ 'config.prefs.farmHint' | translate }}</small></div>
+              <div>
+                <strong>{{ 'config.prefs.farm' | translate }}</strong
+                ><small>{{ 'config.prefs.farmHint' | translate }}</small>
+              </div>
               <label>
                 <span class="sr-only">{{ 'config.prefs.farm' | translate }}</span>
                 <select (change)="elegirFinca($any($event.target).value)">
-                  <option value="" [selected]="fincaActiva.idActiva() == null">{{ 'layout.farm.all' | translate }}</option>
-                  @for (f of fincaActiva.fincas(); track f.id) { <option [value]="f.id" [selected]="f.id === fincaActiva.idActiva()">{{ f.nombre }}</option> }
+                  <option value="" [selected]="fincaActiva.idActiva() == null">
+                    {{ 'layout.farm.all' | translate }}
+                  </option>
+                  @for (f of fincaActiva.fincas(); track f.id) {
+                    <option [value]="f.id" [selected]="f.id === fincaActiva.idActiva()">
+                      {{ f.nombre }}
+                    </option>
+                  }
                 </select>
               </label>
             </div>
           }
 
           <div class="pref">
-            <div><strong>{{ 'config.prefs.session' | translate }}</strong><small>{{ 'config.prefs.sessionHint' | translate }}</small></div>
-            <button type="button" class="btn btn-salir" (click)="cerrarSesion()"><i class="ti ti-logout" aria-hidden="true"></i> {{ 'layout.logout' | translate }}</button>
+            <div>
+              <strong>{{ 'config.prefs.session' | translate }}</strong
+              ><small>{{ 'config.prefs.sessionHint' | translate }}</small>
+            </div>
+            <button type="button" class="btn btn-salir" (click)="cerrarSesion()">
+              <i class="ti ti-logout" aria-hidden="true"></i> {{ 'layout.logout' | translate }}
+            </button>
           </div>
         </section>
       </div>
@@ -167,8 +287,18 @@
   }
 
   @if (toast) {
-    <p class="aviso msj" [class.verde]="toast.type === 'success'" [class.error]="toast.type === 'error'" role="status">
-      <i class="ti" [class.ti-circle-check]="toast.type === 'success'" [class.ti-alert-circle]="toast.type === 'error'" aria-hidden="true"></i>
+    <p
+      class="aviso msj"
+      [class.verde]="toast.type === 'success'"
+      [class.error]="toast.type === 'error'"
+      role="status"
+    >
+      <i
+        class="ti"
+        [class.ti-circle-check]="toast.type === 'success'"
+        [class.ti-alert-circle]="toast.type === 'error'"
+        aria-hidden="true"
+      ></i>
       {{ toast.message | translate }}
     </p>
   }

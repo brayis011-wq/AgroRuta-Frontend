@@ -1,10 +1,24 @@
 import { DescargasReporteComponent } from '../downloads/report-downloads';
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PayrollReport, ReportService } from '../../../core/services/report.service';
 import { ReportBase } from '../report-base';
 import { tablaNomina } from '../report-csv';
-import { OrdenNomina, barrasMensuales, ordenarTrabajadores, participacion, resumenNomina, variacionUltimoMes } from '../report-calc';
+import {
+  OrdenNomina,
+  barrasMensuales,
+  ordenarTrabajadores,
+  participacion,
+  resumenNomina,
+  variacionUltimoMes,
+} from '../report-calc';
 import { iniciales as inicialesDe } from '../../../shared/iniciales';
 import { EtiquetasTablaDirective } from '../../../shared/table-labels.directive';
 
@@ -27,22 +41,41 @@ export class PayrollReportComponent extends ReportBase implements OnInit {
   readonly orden = signal<OrdenNomina>('total');
   readonly filtro = signal('');
 
-  readonly resumen = computed(() => { const r = this.report(); return r ? resumenNomina(r) : null; });
+  readonly resumen = computed(() => {
+    const r = this.report();
+    return r ? resumenNomina(r) : null;
+  });
   readonly meses = computed(() => barrasMensuales(this.report()?.pagosPorMes, this.lang.current()));
   readonly variacion = computed(() => variacionUltimoMes(this.report()?.pagosPorMes));
-  readonly reparto = computed(() => participacion(
-    [...(this.report()?.workerDetails ?? [])].sort((a, b) => (b.totalPaid ?? 0) - (a.totalPaid ?? 0)).slice(0, 8),
-    (w) => w.workerName, (w) => w.totalPaid ?? 0));
-  readonly filas = computed(() => ordenarTrabajadores(this.report()?.workerDetails ?? [], this.orden(), this.filtro()));
+  readonly reparto = computed(() =>
+    participacion(
+      [...(this.report()?.workerDetails ?? [])]
+        .sort((a, b) => (b.totalPaid ?? 0) - (a.totalPaid ?? 0))
+        .slice(0, 8),
+      (w) => w.workerName,
+      (w) => w.totalPaid ?? 0,
+    ),
+  );
+  readonly filas = computed(() =>
+    ordenarTrabajadores(this.report()?.workerDetails ?? [], this.orden(), this.filtro()),
+  );
 
-  ngOnInit(): void { this.cargar(); }
+  ngOnInit(): void {
+    this.cargar();
+  }
 
   cargar(): void {
     this.loading.set(true);
     this.error.set(false);
     this.reportService.getPayrollPreview().subscribe({
-      next: (r) => { this.report.set(r); this.loading.set(false); },
-      error: () => { this.error.set(true); this.loading.set(false); },
+      next: (r) => {
+        this.report.set(r);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set(true);
+        this.loading.set(false);
+      },
     });
   }
 
@@ -55,13 +88,23 @@ export class PayrollReportComponent extends ReportBase implements OnInit {
     this.downloading.set(true);
     this.downloadError.set(false);
     this.reportService.downloadPayrollPdf().subscribe({
-      next: (b) => { this.descargar(b, 'reporte-nomina.pdf'); this.downloading.set(false); },
-      error: () => { this.downloading.set(false); this.downloadError.set(true); },
+      next: (b) => {
+        this.descargar(b, 'reporte-nomina.pdf');
+        this.downloading.set(false);
+      },
+      error: () => {
+        this.downloading.set(false);
+        this.downloadError.set(true);
+      },
     });
   }
 
-  ordenarPor(o: OrdenNomina): void { this.orden.set(o); }
+  ordenarPor(o: OrdenNomina): void {
+    this.orden.set(o);
+  }
 
   /** Respaldo si el backend aún no manda las iniciales */
-  iniciales(nombre: string): string { return inicialesDe(nombre); }
+  iniciales(nombre: string): string {
+    return inicialesDe(nombre);
+  }
 }

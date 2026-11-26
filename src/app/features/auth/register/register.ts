@@ -1,11 +1,13 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { RegisterRequest } from '../../../core/models/auth.model';
+import { mensajeDeError } from '../../../shared/error-message';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-registro',
   standalone: true,
   imports: [FormsModule, RouterLink, TranslatePipe],
@@ -13,6 +15,10 @@ import { RegisterRequest } from '../../../core/models/auth.model';
   styleUrls: ['../auth-form.css', '../auth-recovery.css'],
 })
 export class RegistroComponent {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   verPass = false;
 
   form: RegisterRequest = {
@@ -23,20 +29,14 @@ export class RegistroComponent {
     cedula: '',
   };
 
-  error: string = '';
-  exito: string = '';
-  cargando: boolean = false;
+  error = '';
+  exito = '';
+  cargando = false;
   /** Correo al que se mandó el enlace de confirmación (la cuenta ya se creó) */
   pendiente = '';
   trabajador = false;
   reenviando = false;
   reenviado = false;
-
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   onSubmit(): void {
     this.error = '';
@@ -62,13 +62,16 @@ export class RegistroComponent {
         }
         this.exito = esTrabajador ? 'auth.register.successWorker' : 'auth.register.success';
         this.cdr.detectChanges();
-        setTimeout(() => {
-          this.router.navigate(['/auth/login']);
-        }, esTrabajador ? 4000 : 2000);
+        setTimeout(
+          () => {
+            this.router.navigate(['/auth/login']);
+          },
+          esTrabajador ? 4000 : 2000,
+        );
       },
       error: (err) => {
         this.cargando = false;
-        this.error = err.error?.message || 'auth.register.error';
+        this.error = mensajeDeError(err, 'auth.register.error');
         this.cdr.detectChanges();
       },
     });

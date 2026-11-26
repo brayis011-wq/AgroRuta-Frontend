@@ -11,14 +11,25 @@ describe('MemoriaScrollService', () => {
 
   beforeEach(() => {
     eventos = new Subject();
-    TestBed.configureTestingModule({ providers: [{ provide: Router, useValue: { events: eventos } }] });
+    TestBed.configureTestingModule({
+      providers: [{ provide: Router, useValue: { events: eventos } }],
+    });
     scrollTo = vi.fn();
     window.scrollTo = scrollTo as unknown as typeof window.scrollTo;
-    TestBed.inject(MemoriaScrollService).iniciar({ onDestroy: () => () => {} } as unknown as DestroyRef);
+    TestBed.inject(MemoriaScrollService).iniciar({
+      onDestroy: () => () => {},
+    } as unknown as DestroyRef);
   });
 
-  const ir = (id: number, url: string, trigger: 'imperative' | 'popstate' = 'imperative', vuelveA?: number) => {
-    eventos.next(new NavigationStart(id, url, trigger, vuelveA != null ? { navigationId: vuelveA } : null));
+  const ir = (
+    id: number,
+    url: string,
+    trigger: 'imperative' | 'popstate' = 'imperative',
+    vuelveA?: number,
+  ) => {
+    eventos.next(
+      new NavigationStart(id, url, trigger, vuelveA != null ? { navigationId: vuelveA } : null),
+    );
     eventos.next(new NavigationEnd(id, url, url));
   };
 
@@ -36,7 +47,10 @@ describe('MemoriaScrollService', () => {
   });
 
   it('con "atrás" vuelve a la posición guardada cuando la página ya es alta', () => {
-    Object.defineProperty(document.documentElement, 'scrollHeight', { value: 3000, configurable: true });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 3000,
+      configurable: true,
+    });
     ir(1, '/worker');
     Object.defineProperty(window, 'scrollY', { value: 640, configurable: true });
     ir(2, '/worker/payrolls/61');
@@ -47,7 +61,10 @@ describe('MemoriaScrollService', () => {
 
   it('si la página aún no es alta, espera a que lleguen los datos (y se rinde a los 2,5 s)', () => {
     vi.useFakeTimers();
-    Object.defineProperty(document.documentElement, 'scrollHeight', { value: 0, configurable: true });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 0,
+      configurable: true,
+    });
     ir(1, '/worker');
     Object.defineProperty(window, 'scrollY', { value: 900, configurable: true });
     ir(2, '/worker/payrolls/61');

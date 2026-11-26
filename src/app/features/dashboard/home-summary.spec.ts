@@ -1,4 +1,11 @@
-import { calcularResumen, diasDesde, fechaLocal, inicioMesAnterior, pasoEtapa, saludoSegunHora } from './home-summary';
+import {
+  calcularResumen,
+  diasDesde,
+  fechaLocal,
+  inicioMesAnterior,
+  pasoEtapa,
+  saludoSegunHora,
+} from './home-summary';
 
 const HOY = new Date(2026, 10, 4, 15, 0); // 4 nov 2026, 3 p. m.
 const base = { nominas: [], pagosPorMes: [], trabajadores: [], jornales: null, lotes: [] } as any;
@@ -19,50 +26,89 @@ describe('resumen del Inicio', () => {
   });
 
   it('counts payrolls to approve and to pay with their totals', () => {
-    const r = calcularResumen({ ...base, nominas: [
-      { estado: 'PENDIENTE', cantidad: 2, total: 150 },
-      { estado: 'APROBADA', cantidad: 1, total: 70 }, { estado: 'PAGADA', cantidad: 4, total: 999 },
-    ] }, HOY);
+    const r = calcularResumen(
+      {
+        ...base,
+        nominas: [
+          { estado: 'PENDIENTE', cantidad: 2, total: 150 },
+          { estado: 'APROBADA', cantidad: 1, total: 70 },
+          { estado: 'PAGADA', cantidad: 4, total: 999 },
+        ],
+      },
+      HOY,
+    );
     expect(r.porAprobar).toEqual({ n: 2, total: 150 });
     expect(r.sinPagar).toEqual({ n: 1, total: 70 });
     expect(r.pendientes).toBe(3);
   });
 
   it('active workers without a work day today', () => {
-    const r = calcularResumen({ ...base,
-      trabajadores: [{ id: 1, estado: 'ACTIVO' }, { id: 2, estado: 'ACTIVO' }, { id: 3, estado: 'INACTIVO' }],
-      jornales: { mesActual: 2, mesAnterior: 0, trabajadoresHoy: [1] },
-    }, HOY);
+    const r = calcularResumen(
+      {
+        ...base,
+        trabajadores: [
+          { id: 1, estado: 'ACTIVO' },
+          { id: 2, estado: 'ACTIVO' },
+          { id: 3, estado: 'INACTIVO' },
+        ],
+        jornales: { mesActual: 2, mesAnterior: 0, trabajadoresHoy: [1] },
+      },
+      HOY,
+    );
     expect(r.trabajadoresActivos).toBe(2);
     expect(r.sinJornalHoy).toBe(1);
   });
 
   it('month trends compare with the previous month', () => {
-    const r = calcularResumen({ ...base,
-      jornales: { mesActual: 3, mesAnterior: 2, trabajadoresHoy: [] },
-      pagosPorMes: [{ mes: '2026-10', total: 200, cantidad: 1 }, { mes: '2026-11', total: 300, cantidad: 1 }],
-    }, HOY);
+    const r = calcularResumen(
+      {
+        ...base,
+        jornales: { mesActual: 3, mesAnterior: 2, trabajadoresHoy: [] },
+        pagosPorMes: [
+          { mes: '2026-10', total: 200, cantidad: 1 },
+          { mes: '2026-11', total: 300, cantidad: 1 },
+        ],
+      },
+      HOY,
+    );
     expect(r.jornalesMes).toEqual({ actual: 3, anterior: 2, porcentaje: 50 });
     expect(r.pagadoMes).toEqual({ actual: 300, anterior: 200, porcentaje: 50 });
   });
 
   it('a month without payments counts as zero', () => {
-    const r = calcularResumen({ ...base, pagosPorMes: [{ mes: '2026-11', total: 300, cantidad: 2 }] }, HOY);
+    const r = calcularResumen(
+      { ...base, pagosPorMes: [{ mes: '2026-11', total: 300, cantidad: 2 }] },
+      HOY,
+    );
     expect(r.pagadoMes).toEqual({ actual: 300, anterior: 0, porcentaje: null });
     expect(calcularResumen(base, HOY).porAprobar).toEqual({ n: 0, total: 0 });
   });
 
   it('no percentage when last month was zero', () => {
-    const r = calcularResumen({ ...base, jornales: { mesActual: 1, mesAnterior: 0, trabajadoresHoy: [] } }, HOY);
+    const r = calcularResumen(
+      { ...base, jornales: { mesActual: 1, mesAnterior: 0, trabajadoresHoy: [] } },
+      HOY,
+    );
     expect(r.jornalesMes.porcentaje).toBeNull();
   });
 
   it('plots: free, in production and portal requests', () => {
-    const r = calcularResumen({ ...base,
-      lotes: [{ estado: 'DISPONIBLE' }, { estado: 'EN_CULTIVO' }, { estado: 'EN_CULTIVO' }, { estado: 'EN_DESCANSO' }],
-      trabajadores: [{ id: 1, estado: 'ACTIVO', accesoEstado: 'PENDIENTE' }],
-    }, HOY);
-    expect([r.lotesDisponibles, r.lotesEnCultivo, r.lotesTotal, r.solicitudesPortal]).toEqual([1, 2, 4, 1]);
+    const r = calcularResumen(
+      {
+        ...base,
+        lotes: [
+          { estado: 'DISPONIBLE' },
+          { estado: 'EN_CULTIVO' },
+          { estado: 'EN_CULTIVO' },
+          { estado: 'EN_DESCANSO' },
+        ],
+        trabajadores: [{ id: 1, estado: 'ACTIVO', accesoEstado: 'PENDIENTE' }],
+      },
+      HOY,
+    );
+    expect([r.lotesDisponibles, r.lotesEnCultivo, r.lotesTotal, r.solicitudesPortal]).toEqual([
+      1, 2, 4, 1,
+    ]);
   });
 
   it('pasoEtapa and diasDesde', () => {

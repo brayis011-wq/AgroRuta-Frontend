@@ -13,7 +13,10 @@ const MAXIMO = 150;
 
 // Sesión, seguridad, configuración y administración siempre se consultan de nuevo (lista en rutas-sin-copia.ts)
 
-interface Copia { hasta: number; respuesta: HttpResponse<unknown>; }
+interface Copia {
+  hasta: number;
+  respuesta: HttpResponse<unknown>;
+}
 
 const copias = new Map<string, Copia>();
 const enVuelo = new Map<string, Observable<HttpEvent<unknown>>>();
@@ -29,7 +32,9 @@ export function vaciarCacheBreve(): void {
 /** Cada pantalla recibe su propia copia: si una ordena o cambia la lista, no daña la guardada */
 function copiar<T>(cuerpo: T): T {
   if (cuerpo === null || typeof cuerpo !== 'object') return cuerpo;
-  return typeof structuredClone === 'function' ? structuredClone(cuerpo) : JSON.parse(JSON.stringify(cuerpo));
+  return typeof structuredClone === 'function'
+    ? structuredClone(cuerpo)
+    : JSON.parse(JSON.stringify(cuerpo));
 }
 
 function guardar(clave: string, respuesta: HttpResponse<unknown>): void {
@@ -61,7 +66,12 @@ export const cacheBreveInterceptor: HttpInterceptorFn = (req, next) => {
 
   const ruta = req.url.slice(environment.apiUrl.length);
   const sesion = req.headers.get('Authorization');
-  if (!sesion || req.responseType !== 'json' || req.context.get(SIN_CACHE) || sinCopia(ruta, SIN_COPIA_EN_MEMORIA)) {
+  if (
+    !sesion ||
+    req.responseType !== 'json' ||
+    req.context.get(SIN_CACHE) ||
+    sinCopia(ruta, SIN_COPIA_EN_MEMORIA)
+  ) {
     return next(req);
   }
 
@@ -87,5 +97,7 @@ export const cacheBreveInterceptor: HttpInterceptorFn = (req, next) => {
     vuelo = mio;
     enVuelo.set(clave, mio);
   }
-  return vuelo.pipe(map((e) => (e instanceof HttpResponse ? e.clone({ body: copiar(e.body) }) : e)));
+  return vuelo.pipe(
+    map((e) => (e instanceof HttpResponse ? e.clone({ body: copiar(e.body) }) : e)),
+  );
 };

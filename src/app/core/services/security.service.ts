@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -30,11 +30,11 @@ export interface SesionAbierta {
 
 @Injectable({ providedIn: 'root' })
 export class SeguridadService {
+  private readonly http = inject(HttpClient);
+
   private dosPasosUrl = `${environment.apiUrl}/api/configuration/security/2fa`;
   /** Bajo /api/auth: es la única ruta a la que el navegador manda la cookie de sesión */
   private sesionesUrl = `${environment.apiUrl}/api/auth/sessions`;
-
-  constructor(private http: HttpClient) {}
 
   estado(): Observable<EstadoDosPasos> {
     return this.http.get<EstadoDosPasos>(this.dosPasosUrl);

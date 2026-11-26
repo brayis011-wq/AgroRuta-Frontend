@@ -1,4 +1,13 @@
-import { Component, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ColaSinConexionService } from '../../../core/offline/offline-queue.service';
 import { Pendiente } from '../../../core/offline/offline-store';
@@ -26,6 +35,7 @@ const AVISO_MS = 6000;
  * en el dispositivo y deja enviarlos, reintentarlos o descartarlos.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-offline-status',
   standalone: true,
   imports: [TranslatePipe],
@@ -43,7 +53,9 @@ export class OfflineStatusComponent implements OnInit {
   /** Registro que pidió confirmación para descartarse */
   readonly porDescartar = signal<string | null>(null);
 
-  readonly visible = computed(() => !this.cola.enLinea() || this.cola.pendientes().length > 0 || this.aviso() !== null);
+  readonly visible = computed(
+    () => !this.cola.enLinea() || this.cola.pendientes().length > 0 || this.aviso() !== null,
+  );
 
   private reloj: ReturnType<typeof setTimeout> | null = null;
 
@@ -123,7 +135,10 @@ export class OfflineStatusComponent implements OnInit {
     const d = new Date(iso);
     if (isNaN(d.getTime())) return '';
     return d.toLocaleString(this.idioma.current() === 'en' ? 'en-US' : 'es-CO', {
-      day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit',
+      day: 'numeric',
+      month: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
     });
   }
 }

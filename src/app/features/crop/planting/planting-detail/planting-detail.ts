@@ -1,11 +1,27 @@
 import { AvisosService, DESHACER_MS } from '../../../../core/services/toast.service';
 import { guardarEnUrl, leerDeUrl } from '../../../../shared/url-state';
 import { AnteriorSiguienteComponent, Vecino } from '../../../../shared/prev-next/prev-next';
-import { SiembraActiva, SiembrasActivasService, vecinos } from '../../../../core/services/active-plantings.service';
+import {
+  SiembraActiva,
+  SiembrasActivasService,
+  vecinos,
+} from '../../../../core/services/active-plantings.service';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, HostListener, Injector, effect, inject, untracked } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  HostListener,
+  Injector,
+  effect,
+  inject,
+  untracked,
+  DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription, of } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -39,25 +55,8 @@ import { ColaSinConexionService } from '../../../../core/offline/offline-queue.s
 import { Pendiente } from '../../../../core/offline/offline-store';
 import { Weather } from '../../../../core/models/weather.model';
 import { ConsejoClima, consejoFumigacion, municipio } from '../../../../shared/weather';
-
-interface TimelineItem {
-  id: number;
-  fecha: string;
-  tipo: 'actividad' | 'fumigacion' | 'cosecha';
-  tituloKey?: string;      // clave de traducción (actividad)
-  titulo?: string;         // texto directo (producto / kg)
-  detalle?: string;        // descripción libre del usuario (actividad)
-  dosis?: number;          // fumigación
-  unidad?: string;
-  area?: number;
-  calidad?: string;        // cosecha
-  enCarencia?: boolean;    // cosecha registrada dentro de la carencia de una fumigación
-  recolectores?: number;   // cosecha: cuántos la recogieron
-  kg?: number;             // cosecha: kilos
-  carencia?: number | null;  // fumigación: días sin cosechar
-  reentrada?: number | null; // fumigación: horas sin entrar
-  extra?: string;
-}
+import { mensajeDeError } from '../../../../shared/error-message';
+import { TimelineItem, armarHistorial } from './planting-timeline';
 
 export type PestanaSiembra = 'resumen' | 'registros' | 'cosechas' | 'dinero' | 'diagnostico';
 
@@ -72,19 +71,49 @@ export const PESTANAS_SIEMBRA: { id: PestanaSiembra; icono: string; clave: strin
 @Component({
   selector: 'app-detalle-siembra',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, CicloEtapasComponent, RendimientoSiembraComponent, AgendaSiembraComponent, DiagnosticoSiembraComponent, LaboresRepetidasComponent, PresupuestoSiembraComponent, CostosSiembraComponent, RouterLink, RouterOutlet, MigasCultivoComponent, AyudaComponent, AnteriorSiguienteComponent],
+  imports: [
+    DecimalPipe,
+    TitleCasePipe,
+    FormsModule,
+    TranslatePipe,
+    CicloEtapasComponent,
+    RendimientoSiembraComponent,
+    AgendaSiembraComponent,
+    DiagnosticoSiembraComponent,
+    LaboresRepetidasComponent,
+    PresupuestoSiembraComponent,
+    CostosSiembraComponent,
+    RouterLink,
+    RouterOutlet,
+    MigasCultivoComponent,
+    AyudaComponent,
+    AnteriorSiguienteComponent,
+  ],
   templateUrl: './planting-detail.html',
-  styleUrls: ['../../crop-ui.css', '../../crop-blocks.css', '../../crop-dialog.css', './planting-detail.css', './planting-detail-today.css', './planting-panel.css'],
+  styleUrls: [
+    '../../crop-ui.css',
+    '../../crop-blocks.css',
+    '../../crop-dialog.css',
+    './planting-detail.css',
+    './planting-detail-today.css',
+    './planting-panel.css',
+  ],
 })
 export class DetalleSiembraComponent implements OnInit, OnDestroy {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly cultivoService = inject(CultivoService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   /** \"Café · Castillo\" */
   readonly nombreCultivo = nombreDeCultivo;
-  private translate = inject(TranslateService);
-  private lang = inject(LanguageService);
-  private confirm = inject(ConfirmService);
-  private weather = inject(WeatherService);
-  private avisos = inject(AvisosService);
-  private ventas = inject(VentasService);
+  private readonly translate = inject(TranslateService);
+  private readonly lang = inject(LanguageService);
+  private readonly confirm = inject(ConfirmService);
+  private readonly weather = inject(WeatherService);
+  private readonly avisos = inject(AvisosService);
+  private readonly ventas = inject(VentasService);
   /** Kilos cosechados de esta siembra que todavía no se han vendido (null mientras carga o si falla) */
   kgPorVender: number | null = null;
   /** Kilos vendidos de esta siembra (null mientras carga o si falla) */
@@ -94,13 +123,20 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
 
   /** Lo vendido se descuenta de las cosechas más viejas primero */
   private repartirVendido(): void {
-    this.quedanCosecha = this.kgVendidos == null ? new Map()
-      : quedanPorCosecha(this.cosechas.map((c) => ({ id: c.id, fecha: c.fecha, cantidadKg: c.cantidadKg })), this.kgVendidos);
+    this.quedanCosecha =
+      this.kgVendidos == null
+        ? new Map()
+        : quedanPorCosecha(
+            this.cosechas.map((c) => ({ id: c.id, fecha: c.fecha, cantidadKg: c.cantidadKg })),
+            this.kgVendidos,
+          );
   }
 
   /** null: no se sabe todavía (se muestra Vender); 0: vendida; otro: los kilos que quedan */
   quedanDe(item: TimelineItem): number | null {
-    return item.tipo === 'cosecha' && this.quedanCosecha.has(item.id) ? this.quedanCosecha.get(item.id)! : null;
+    return item.tipo === 'cosecha' && this.quedanCosecha.has(item.id)
+      ? this.quedanCosecha.get(item.id)!
+      : null;
   }
 
   /** Clima actual del lote (o del municipio de la finca) */
@@ -125,7 +161,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   cosechas: Cosecha[] = [];
   totalKg = 0;
   cargando = true;
-  error = '';              // clave de traducción
+  error = ''; // clave de traducción
   mostrarConfirmacion = false;
   textoConfirmacion = '';
   eliminando = false;
@@ -137,14 +173,16 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   filtroActivo: 'todo' | 'actividad' | 'fumigacion' | 'cosecha' = 'todo';
 
   /** Anterior y siguiente entre las siembras en curso de todas las fincas */
-  vecinos: { anterior: Vecino | null; siguiente: Vecino | null; posicion: number; total: number } = { anterior: null, siguiente: null, posicion: 0, total: 0 };
+  vecinos: { anterior: Vecino | null; siguiente: Vecino | null; posicion: number; total: number } =
+    { anterior: null, siguiente: null, posicion: 0, total: 0 };
   private readonly injector = inject(Injector);
 
   // ── Registros hechos sin señal en esta siembra, que aún no llegan al servidor ──
   private readonly cola = inject(ColaSinConexionService);
   porEnviar(): Pendiente[] {
     if (this.siembraId == null) return [];
-    return this.cola.pendientesDeSiembra(this.siembraId)
+    return this.cola
+      .pendientesDeSiembra(this.siembraId)
       .filter((p) => p.tipo === 'actividad' || p.tipo === 'fumigacion' || p.tipo === 'cosecha');
   }
   fechaPendiente(p: Pendiente): string {
@@ -153,24 +191,46 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   }
   /** Cuando la cola envía lo pendiente, el historial se vuelve a pedir para mostrarlo ya guardado */
   private readonly alEnviarPendientes = effect(() => {
-    if (this.cola.enviados() > 0) untracked(() => { if (this.siembraId != null && this.siembra) this.cargarDatos(this.siembraId); });
+    if (this.cola.enviados() > 0)
+      untracked(() => {
+        if (this.siembraId != null && this.siembra) this.cargarDatos(this.siembraId);
+      });
   });
 
   private cargarVecinos(id: number): void {
-    let fincas: Finca[] = [];
-    try { fincas = this.injector.get(FincaActivaService).fincas?.() ?? []; } catch { return; }
+    let fincas: Finca[];
+    try {
+      fincas = this.injector.get(FincaActivaService).fincas?.() ?? [];
+    } catch {
+      return;
+    }
     if (!fincas.length) return;
-    this.injector.get(SiembrasActivasService).listar(fincas).subscribe({
-      next: (activas) => {
-        if (this.siembraId !== id) return;
-        const comoVecino = (a: SiembraActiva | null): Vecino | null =>
-          a ? { texto: nombreDeCultivo(a.siembra) || a.lote.nombre, ruta: ['/crops/planting', a.siembra.id!] } : null;
-        const v = vecinos(activas, (a) => a.siembra.id === id);
-        this.vecinos = { anterior: comoVecino(v.anterior), siguiente: comoVecino(v.siguiente), posicion: v.posicion, total: v.posicion < 0 ? 0 : activas.length };
-        this.cdr.markForCheck();
-      },
-      error: () => {},
-    });
+    this.injector
+      .get(SiembrasActivasService)
+      .listar(fincas)
+      .subscribe({
+        next: (activas) => {
+          if (this.siembraId !== id) return;
+          const comoVecino = (a: SiembraActiva | null): Vecino | null =>
+            a
+              ? {
+                  texto: nombreDeCultivo(a.siembra) || a.lote.nombre,
+                  ruta: ['/crops/planting', a.siembra.id!],
+                }
+              : null;
+          const v = vecinos(activas, (a) => a.siembra.id === id);
+          this.vecinos = {
+            anterior: comoVecino(v.anterior),
+            siguiente: comoVecino(v.siguiente),
+            posicion: v.posicion,
+            total: v.posicion < 0 ? 0 : activas.length,
+          };
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          // Si falla, la pantalla sigue con lo que ya mostraba
+        },
+      });
   }
 
   /** Pestañas de la ficha: así la página no es una sola columna larguísima */
@@ -180,26 +240,26 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   elegirPestana(p: PestanaSiembra): void {
     this.pestana = p;
     // En la dirección: al volver atrás desde un registro se abre la misma pestaña
-    this.router.navigate([], { relativeTo: this.route, queryParams: { tab: p === 'resumen' ? null : p }, queryParamsHandling: 'merge', replaceUrl: true });
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: p === 'resumen' ? null : p },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   get timelineFiltrado(): TimelineItem[] {
-    const visibles = this.ocultos.size ? this.timelineCompleto.filter((i) => !this.ocultos.has(i.tipo + '-' + i.id)) : this.timelineCompleto;
+    const visibles = this.ocultos.size
+      ? this.timelineCompleto.filter((i) => !this.ocultos.has(i.tipo + '-' + i.id))
+      : this.timelineCompleto;
     if (this.filtroActivo === 'todo') return visibles;
-    return visibles.filter(i => i.tipo === this.filtroActivo);
+    return visibles.filter((i) => i.tipo === this.filtroActivo);
   }
 
   /** Palabra que el usuario debe escribir para confirmar (cambia con el idioma) */
   get palabraConfirmacion(): string {
     return this.translate.instant('cultivo.fincas.delete.confirmWord');
   }
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private cultivoService: CultivoService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   private rutaSub?: Subscription;
 
@@ -212,7 +272,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     const params$ = this.route.paramMap ?? of(this.route.snapshot.paramMap);
     this.rutaSub = params$.subscribe((p) => this.cargarSiembra(Number(p.get('id'))));
     // Al volver de un formulario del panel la ficha no se crea de nuevo: la pestaña sigue a la dirección
-    this.route.queryParamMap?.subscribe((q) => {
+    this.route.queryParamMap?.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((q) => {
       const t = q.get('tab') as PestanaSiembra | null;
       this.pestana = t && PESTANAS_SIEMBRA.some((p) => p.id === t) ? t : 'resumen';
       const nuevo = q.get('nuevo');
@@ -236,7 +296,10 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     if (this.relojResaltar) clearTimeout(this.relojResaltar);
-    this.relojResaltar = setTimeout(() => { this.resaltar = null; this.cdr.markForCheck(); }, 2600);
+    this.relojResaltar = setTimeout(() => {
+      this.resaltar = null;
+      this.cdr.markForCheck();
+    }, 2600);
     // Se quita de la dirección para que recargar no vuelva a marcarlo
     guardarEnUrl(this.router, this.route, { nuevo: null });
   }
@@ -261,7 +324,9 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
 
   cerrarPanel(): void {
     if (!this.siembraId) return;
-    this.router.navigate(['/crops/planting', this.siembraId], { queryParams: { tab: this.pestana === 'resumen' ? null : this.pestana } });
+    this.router.navigate(['/crops/planting', this.siembraId], {
+      queryParams: { tab: this.pestana === 'resumen' ? null : this.pestana },
+    });
   }
 
   @HostListener('document:keydown.escape')
@@ -278,12 +343,20 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   private cargarSiembra(id: number): void {
     this.siembraId = id;
     this.siembra = null;
-    this.actividades = []; this.fumigaciones = []; this.cosechas = [];
-    this.timelineCompleto = []; this.totalKg = 0;
-    this.clima = null; this.consejo = null; this.resumen = null;
-    this.nombreLote = null; this.nombreFinca = null;
-    this.fincaLat = null; this.fincaLng = null;
-    this.cargando = true; this.error = '';
+    this.actividades = [];
+    this.fumigaciones = [];
+    this.cosechas = [];
+    this.timelineCompleto = [];
+    this.totalKg = 0;
+    this.clima = null;
+    this.consejo = null;
+    this.resumen = null;
+    this.nombreLote = null;
+    this.nombreFinca = null;
+    this.fincaLat = null;
+    this.fincaLng = null;
+    this.cargando = true;
+    this.error = '';
     this.cultivoService.buscarSiembra(id).subscribe({
       next: (siembra) => {
         this.siembra = siembra;
@@ -309,7 +382,7 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
               error: () => this.cargarClima(''),
             });
             this.cdr.detectChanges();
-          }
+          },
         });
       },
       error: () => {
@@ -332,63 +405,40 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     };
 
     this.cultivoService.listarActividades(siembraId).subscribe({
-      next: (a) => { this.actividades = a; verificar(); },
+      next: (a) => {
+        this.actividades = a;
+        verificar();
+      },
       error: () => verificar(),
     });
     this.cultivoService.listarFumigaciones(siembraId).subscribe({
-      next: (f) => { this.fumigaciones = f; verificar(); },
+      next: (f) => {
+        this.fumigaciones = f;
+        verificar();
+      },
       error: () => verificar(),
     });
     this.cultivoService.listarCosechas(siembraId).subscribe({
-      next: (c) => { this.cosechas = c; this.repartirVendido(); verificar(); },
+      next: (c) => {
+        this.cosechas = c;
+        this.repartirVendido();
+        verificar();
+      },
       error: () => verificar(),
     });
     this.cultivoService.totalKgCosechado(siembraId).subscribe({
-      next: (t) => { this.totalKg = t || 0; this.cdr.detectChanges(); },
+      next: (t) => {
+        this.totalKg = t || 0;
+        this.cdr.detectChanges();
+      },
     });
   }
 
   private construirTimeline(): void {
-    const items: TimelineItem[] = [];
-
-    this.actividades.forEach(a => items.push({
-      id: a.id!,
-      fecha: a.fecha,
-      tipo: 'actividad',
-      tituloKey: 'enums.tipoActividad.' + a.tipo,
-      detalle: a.descripcion,
-      // El insumo que gastó (abonado...): "Abono 15-15-15 · 50 kg"
-      extra: a.producto ? a.producto + (a.cantidadUsada ? ` · ${this.fmtNum(a.cantidadUsada)} ${this.translate.instant('enums.unidadMedida.' + a.unidadCantidad)}` : '') : undefined,
-    }));
-
-    this.fumigaciones.forEach(f => items.push({
-      id: f.id!,
-      carencia: f.diasCarencia ?? null,
-      reentrada: f.reentradaHoras ?? null,
-      fecha: f.fecha,
-      tipo: 'fumigacion',
-      titulo: f.producto,
-      dosis: f.dosis,
-      unidad: f.unidadMedida,
-      area: f.areaAplicada,
-      extra: f.observaciones,
-    }));
-
-    this.cosechas.forEach(c => items.push({
-      id: c.id!,
-      fecha: c.fecha,
-      tipo: 'cosecha',
-      titulo: `${this.fmtNum(c.cantidadKg)} kg`,
-      calidad: c.calidad,
-      enCarencia: !!c.enCarencia,
-      recolectores: c.recolectores?.length ?? 0,
-      kg: c.cantidadKg,
-      extra: c.observaciones,
-    }));
-
-    this.timelineCompleto = items.sort((a, b) =>
-      new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-    );
+    this.timelineCompleto = armarHistorial(this.actividades, this.fumigaciones, this.cosechas, {
+      num: (v) => this.fmtNum(v),
+      unidad: (u) => this.translate.instant('enums.unidadMedida.' + u),
+    });
   }
 
   // ===== Formato según idioma activo (Intl nativo) =====
@@ -402,16 +452,22 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     if (!v) return '';
     const fecha = /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T00:00:00') : new Date(v);
     return new Intl.DateTimeFormat(this.lang.current(), {
-      day: 'numeric', month: 'short', year: 'numeric',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
     }).format(fecha);
   }
 
   getIcono(tipo: string): string {
     switch (tipo) {
-      case 'actividad':  return '📋';
-      case 'fumigacion': return '💨';
-      case 'cosecha':    return '⚖️';
-      default: return '•';
+      case 'actividad':
+        return '📋';
+      case 'fumigacion':
+        return '💨';
+      case 'cosecha':
+        return '⚖️';
+      default:
+        return '•';
     }
   }
 
@@ -422,8 +478,15 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
 
   private cargarResumen(id: number): void {
     this.cultivoService.resumenSiembra(id).subscribe({
-      next: (r) => { if (this.siembra?.id === id) { this.resumen = r; this.cdr.detectChanges(); } },
-      error: () => { /* la página sigue sin el resumen */ },
+      next: (r) => {
+        if (this.siembra?.id === id) {
+          this.resumen = r;
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {
+        /* la página sigue sin el resumen */
+      },
     });
     // Lo que queda en la bodega de la cosecha (se vende desde Ventas)
     this.ventas.kilosEnBodega().subscribe({
@@ -435,29 +498,39 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
         this.repartirVendido();
         this.cdr.detectChanges();
       },
-      error: () => { this.kgPorVender = null; },
+      error: () => {
+        this.kgPorVender = null;
+      },
     });
   }
 
   private cargarClima(lugar: string): void {
-    const obs = this.fincaLat != null && this.fincaLng != null
-      ? this.weather.getByCoordinates(this.fincaLat, this.fincaLng)
-      : lugar ? this.weather.getByCity(lugar) : null;
+    const obs =
+      this.fincaLat != null && this.fincaLng != null
+        ? this.weather.getByCoordinates(this.fincaLat, this.fincaLng)
+        : lugar
+          ? this.weather.getByCity(lugar)
+          : null;
     obs?.subscribe({
       next: (w) => {
         this.clima = w;
         this.consejo = consejoFumigacion(w);
         this.cdr.detectChanges();
       },
-      error: () => { this.clima = null; },
+      error: () => {
+        this.clima = null;
+      },
     });
   }
 
   /** Días desde la última fumigación y qué tan urgente es la próxima */
   estadoFumigacion(): { nivel: 'verde' | 'ambar' | 'rojo'; clave: string; dias: number } {
-    if (!this.fumigaciones.length) return { nivel: 'rojo', clave: 'siembra.detail.alert.noSprays', dias: 0 };
+    if (!this.fumigaciones.length)
+      return { nivel: 'rojo', clave: 'siembra.detail.alert.noSprays', dias: 0 };
     const ultima = [...this.fumigaciones].sort((a, b) => b.fecha.localeCompare(a.fecha))[0];
-    const dias = Math.floor((Date.now() - new Date(ultima.fecha + 'T00:00:00').getTime()) / 86_400_000);
+    const dias = Math.floor(
+      (Date.now() - new Date(ultima.fecha + 'T00:00:00').getTime()) / 86_400_000,
+    );
     if (dias > 7) return { nivel: 'rojo', clave: 'siembra.detail.alert.overdue', dias };
     if (dias > 5) return { nivel: 'ambar', clave: 'siembra.detail.alert.overdue', dias };
     return { nivel: 'verde', clave: 'siembra.detail.alert.upToDate', dias };
@@ -482,8 +555,11 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   fmtDia(v: string | null | undefined): string {
     if (!v) return '';
     const [y, m, d] = v.split('-').map(Number);
-    return new Intl.DateTimeFormat(this.lang.current() === 'en' ? 'en-US' : 'es-CO', { weekday: 'long', day: 'numeric', month: 'short' })
-      .format(new Date(y, m - 1, d));
+    return new Intl.DateTimeFormat(this.lang.current() === 'en' ? 'en-US' : 'es-CO', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'short',
+    }).format(new Date(y, m - 1, d));
   }
 
   fmtFechaLarga(v: string | null | undefined): string {
@@ -503,7 +579,11 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   // El registro desaparece al instante y se borra en el servidor a los pocos segundos, salvo que se toque
   // "Deshacer". Si se sale de la siembra antes, el borrado se hace en ese momento.
   private ocultos = new Set<string>();
-  private borradoPendiente: { clave: string; ejecutar: () => void; reloj: ReturnType<typeof setTimeout> } | null = null;
+  private borradoPendiente: {
+    clave: string;
+    ejecutar: () => void;
+    reloj: ReturnType<typeof setTimeout>;
+  } | null = null;
 
   eliminarRegistro(item: TimelineItem): void {
     if (!this.siembra?.id) return;
@@ -512,20 +592,26 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     const siembraId = this.siembra.id;
     this.ocultos.add(clave);
     const ejecutar = () => {
-      if (this.borradoPendiente?.clave === clave) { clearTimeout(this.borradoPendiente.reloj); this.borradoPendiente = null; }
-      const peticion = item.tipo === 'actividad'
-        ? this.cultivoService.eliminarActividad(item.id)
-        : item.tipo === 'fumigacion'
-          ? this.cultivoService.eliminarFumigacion(item.id)
-          : this.cultivoService.eliminarCosecha(item.id);
+      if (this.borradoPendiente?.clave === clave) {
+        clearTimeout(this.borradoPendiente.reloj);
+        this.borradoPendiente = null;
+      }
+      const peticion =
+        item.tipo === 'actividad'
+          ? this.cultivoService.eliminarActividad(item.id)
+          : item.tipo === 'fumigacion'
+            ? this.cultivoService.eliminarFumigacion(item.id)
+            : this.cultivoService.eliminarCosecha(item.id);
       peticion.subscribe({
         next: () => {
           if (this.siembra?.id !== siembraId) return;
-          this.version++; this.cargarDatos(siembraId); this.cargarResumen(siembraId);
+          this.version++;
+          this.cargarDatos(siembraId);
+          this.cargarResumen(siembraId);
         },
         error: (e) => {
           this.ocultos.delete(clave);
-          this.error = e?.error?.message || 'temporadas.registro.errors.delete';
+          this.error = mensajeDeError(e, 'temporadas.registro.errors.delete');
           this.cdr.detectChanges();
         },
       });
@@ -545,7 +631,6 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   private hacerBorradoPendiente(): void {
     this.borradoPendiente?.ejecutar();
   }
-
 
   iniciarEliminacion(): void {
     this.mostrarConfirmacion = true;
@@ -580,14 +665,16 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   }
 
   getUltimaActividad(): string {
-    if (this.actividades.length === 0) return this.translate.instant('siembra.detail.cards.noActivities');
+    if (this.actividades.length === 0)
+      return this.translate.instant('siembra.detail.cards.noActivities');
     const ultima = this.actividades[this.actividades.length - 1];
     const tipo = this.translate.instant('enums.tipoActividad.' + ultima.tipo);
     return `${tipo} - ${this.fmtFecha(ultima.fecha)}`;
   }
 
   getUltimaFumigacion(): string {
-    if (this.fumigaciones.length === 0) return this.translate.instant('siembra.detail.cards.noSprays');
+    if (this.fumigaciones.length === 0)
+      return this.translate.instant('siembra.detail.cards.noSprays');
     const ultima = this.fumigaciones[this.fumigaciones.length - 1];
     return `${ultima.producto} - ${this.fmtFecha(ultima.fecha)}`;
   }
@@ -598,8 +685,10 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
     }
     const ultima = new Date(this.fumigaciones[this.fumigaciones.length - 1].fecha);
     const dias = Math.floor((new Date().getTime() - ultima.getTime()) / (1000 * 60 * 60 * 24));
-    if (dias > 7) return '🔴 ' + this.translate.instant('siembra.detail.alert.overdue', { days: dias });
-    if (dias > 5) return '🟡 ' + this.translate.instant('siembra.detail.alert.overdue', { days: dias });
+    if (dias > 7)
+      return '🔴 ' + this.translate.instant('siembra.detail.alert.overdue', { days: dias });
+    if (dias > 5)
+      return '🟡 ' + this.translate.instant('siembra.detail.alert.overdue', { days: dias });
     return '🟢 ' + this.translate.instant('siembra.detail.alert.upToDate');
   }
 
@@ -614,5 +703,4 @@ export class DetalleSiembraComponent implements OnInit, OnDestroy {
   registrarCosecha(): void {
     this.router.navigate(['/crops/planting', this.siembra!.id, 'harvest']);
   }
-
 }

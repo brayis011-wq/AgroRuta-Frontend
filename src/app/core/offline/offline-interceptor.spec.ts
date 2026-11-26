@@ -1,5 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClient, HttpResponse, provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpResponse,
+  provideHttpClient,
+  withInterceptors,
+} from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { vi } from 'vitest';
 import { ESPERA_REGISTRO_MS, sinConexionInterceptor, tipoEnCola } from './offline-interceptor';
@@ -51,13 +56,20 @@ describe('sinConexionInterceptor', () => {
   it('sin conexión, guarda el registro en el dispositivo y responde como pendiente', async () => {
     cola.enLinea.set(false);
     let respuesta: HttpResponse<unknown> | undefined;
-    http.post(`${api}/workdays`, { trabajadorId: 3 }, { observe: 'response' }).subscribe((r) => (respuesta = r));
+    http
+      .post(`${api}/workdays`, { trabajadorId: 3 }, { observe: 'response' })
+      .subscribe((r) => (respuesta = r));
     await esperar();
     httpMock.expectNone(`${api}/workdays`);
     expect(respuesta?.status).toBe(202);
     expect(respuesta?.body).toEqual({ pendiente: true });
     expect(cola.pendientes().length).toBe(1);
-    expect(cola.pendientes()[0]).toMatchObject({ tipo: 'jornal', usuarioId: 5, url: `${api}/workdays`, cuerpo: { trabajadorId: 3 } });
+    expect(cola.pendientes()[0]).toMatchObject({
+      tipo: 'jornal',
+      usuarioId: 5,
+      url: `${api}/workdays`,
+      cuerpo: { trabajadorId: 3 },
+    });
     expect(cola.guardados()).toBe(1);
   });
 
@@ -76,7 +88,9 @@ describe('sinConexionInterceptor', () => {
   it('un rechazo del servidor (422) llega a la pantalla y no se encola', async () => {
     let error: { status: number } | undefined;
     http.post(`${api}/harvests`, {}).subscribe({ error: (e) => (error = e) });
-    httpMock.expectOne(`${api}/harvests`).flush({ errorCode: 'AGR-012' }, { status: 422, statusText: 'x' });
+    httpMock
+      .expectOne(`${api}/harvests`)
+      .flush({ errorCode: 'AGR-012' }, { status: 422, statusText: 'x' });
     await esperar();
     expect(error?.status).toBe(422);
     expect(cola.pendientes()).toEqual([]);
@@ -180,11 +194,17 @@ describe('sinConexionInterceptor', () => {
   it('la lluvia del día sin señal se guarda y se reenvía con PUT', async () => {
     cola.enLinea.set(false);
     let respuesta: unknown;
-    http.put(`${api}/farms/3/rain/2026-11-22`, { milimetros: 12 }).subscribe((r) => (respuesta = r));
+    http
+      .put(`${api}/farms/3/rain/2026-11-22`, { milimetros: 12 })
+      .subscribe((r) => (respuesta = r));
     await esperar();
     httpMock.expectNone(`${api}/farms/3/rain/2026-11-22`);
     expect(respuesta).toEqual({ pendiente: true });
-    expect(cola.pendientes()[0]).toMatchObject({ tipo: 'lluvia', metodo: 'PUT', cuerpo: { milimetros: 12 } });
+    expect(cola.pendientes()[0]).toMatchObject({
+      tipo: 'lluvia',
+      metodo: 'PUT',
+      cuerpo: { milimetros: 12 },
+    });
 
     cola.enLinea.set(true);
     const fin = cola.sincronizar();

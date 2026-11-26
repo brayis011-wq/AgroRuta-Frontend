@@ -19,15 +19,12 @@ describe('LoginComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: authServiceMock },
-      ],
+      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(LoginComponent);
+    fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
-    router    = TestBed.inject(Router);
+    router = TestBed.inject(Router);
 
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
@@ -72,10 +69,12 @@ describe('LoginComponent', () => {
   });
 
   it('onSubmit() should explain when the account is disabled', () => {
-    authServiceMock.login.mockReturnValue(throwError(() => ({
-      status: 401,
-      error: { message: 'Tu cuenta está desactivada. Contacta al administrador.' },
-    })));
+    authServiceMock.login.mockReturnValue(
+      throwError(() => ({
+        status: 401,
+        error: { message: 'Tu cuenta está desactivada. Contacta al administrador.' },
+      })),
+    );
     component.onSubmit();
     expect(component.error).toBe('auth.login.accountDisabled');
   });
@@ -121,17 +120,26 @@ describe('LoginComponent', () => {
   });
 
   it('verificación en dos pasos (403 AGR-034): pide el código y lo manda en el segundo intento', () => {
-    authServiceMock.login.mockReturnValue(throwError(() => ({ status: 403, error: { errorCode: 'AGR-034' } })));
+    authServiceMock.login.mockReturnValue(
+      throwError(() => ({ status: 403, error: { errorCode: 'AGR-034' } })),
+    );
     component.form = { email: 'ana@x.com', password: 'secreta123' };
     component.onSubmit();
     expect(component.pideCodigo).toBe(true);
     expect(component.error).toBe('');
     expect(component.aviso).toBe('auth.login.codeNeeded');
 
-    authServiceMock.login.mockReturnValue(throwError(() => ({ status: 422, error: { errorCode: 'AGR-035' } })));
+    authServiceMock.login.mockReturnValue(
+      throwError(() => ({ status: 422, error: { errorCode: 'AGR-035' } })),
+    );
     component.codigo = ' 123456 ';
     component.onSubmit();
-    expect(authServiceMock.login).toHaveBeenLastCalledWith({ email: 'ana@x.com', password: 'secreta123', codigo: '123456', recordarDispositivo: true });
+    expect(authServiceMock.login).toHaveBeenLastCalledWith({
+      email: 'ana@x.com',
+      password: 'secreta123',
+      codigo: '123456',
+      recordarDispositivo: true,
+    });
     expect(component.error).toBe('auth.login.codeWrong');
     expect(component.pideCodigo).toBe(true);
     expect(component.codigo).toBe('');
@@ -139,26 +147,40 @@ describe('LoginComponent', () => {
 
   it('recordar el dispositivo: la casilla viene marcada y se puede desmarcar; sin código no se manda', () => {
     expect(component.recordarDispositivo).toBe(true);
-    authServiceMock.login.mockReturnValue(throwError(() => ({ status: 403, error: { errorCode: 'AGR-034' } })));
+    authServiceMock.login.mockReturnValue(
+      throwError(() => ({ status: 403, error: { errorCode: 'AGR-034' } })),
+    );
     component.form = { email: 'ana@x.com', password: 'secreta123' };
     component.onSubmit();
-    expect(authServiceMock.login).toHaveBeenLastCalledWith({ email: 'ana@x.com', password: 'secreta123' });
+    expect(authServiceMock.login).toHaveBeenLastCalledWith({
+      email: 'ana@x.com',
+      password: 'secreta123',
+    });
 
     component.codigo = '123456';
     component.recordarDispositivo = false;
     component.onSubmit();
-    expect(authServiceMock.login).toHaveBeenLastCalledWith({ email: 'ana@x.com', password: 'secreta123', codigo: '123456', recordarDispositivo: false });
+    expect(authServiceMock.login).toHaveBeenLastCalledWith({
+      email: 'ana@x.com',
+      password: 'secreta123',
+      codigo: '123456',
+      recordarDispositivo: false,
+    });
   });
 
   it('muestra la casilla de recordar el dispositivo junto al campo del código', () => {
     component.pideCodigo = true;
     fixture.detectChanges();
-    const casilla = (fixture.nativeElement as HTMLElement).querySelector('.recordar input[type=checkbox]');
+    const casilla = (fixture.nativeElement as HTMLElement).querySelector(
+      '.recordar input[type=checkbox]',
+    );
     expect(casilla).not.toBeNull();
   });
 
   it('correo sin confirmar (403 AGR-033): avisa y permite reenviar el enlace', () => {
-    authServiceMock.login.mockReturnValue(throwError(() => ({ status: 403, error: { errorCode: 'AGR-033' } })));
+    authServiceMock.login.mockReturnValue(
+      throwError(() => ({ status: 403, error: { errorCode: 'AGR-033' } })),
+    );
     component.form = { email: 'ana@x.com', password: 'clave-larga' };
     component.onSubmit();
     expect(component.error).toBe('auth.login.notVerified');

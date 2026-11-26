@@ -1,27 +1,72 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+  DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RecientesService } from '../../../../core/services/recent.service';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
-import { JornalService, TrabajadorService, NominaService, NominaRequest } from '../../../../core/services/worker.service';
+import {
+  JornalService,
+  TrabajadorService,
+  NominaService,
+  NominaRequest,
+} from '../../../../core/services/worker.service';
 import { Jornal, Trabajador, Nomina, ResumenJornales } from '../../../../core/models/worker.model';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
 import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-jornales',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe, FlujoPagoComponent, FiltroTrabajadorComponent],
+  imports: [
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslatePipe,
+    PesosPipe,
+    FechaPipe,
+    PeriodoPipe,
+    FlujoPagoComponent,
+    FiltroTrabajadorComponent,
+  ],
   templateUrl: './list-wage.html',
-  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './list-wage.css']
+  styleUrls: [
+    '../../../crop/crop-ui.css',
+    '../../../crop/crop-blocks.css',
+    '../../../report/report-table.css',
+    '../../worker-ui.css',
+    '../../worker-panel.css',
+    './list-wage.css',
+  ],
 })
 export class ListaJornalesComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly jornalService = inject(JornalService);
+  private readonly trabajadorService = inject(TrabajadorService);
+  private readonly nominaService = inject(NominaService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   /** Jornales cargados hasta ahora, más recientes primero (se suman páginas con "Cargar más") */
-  jornales:   Jornal[]      = [];
+  jornales: Jornal[] = [];
   /** Jornales en total del trabajador en el rango, en todas las páginas */
   total = 0;
   private pagina = 0;
@@ -36,43 +81,38 @@ export class ListaJornalesComponent implements OnInit {
 
   trabajadorId: number | null = null;
   private readonly recientes = inject(RecientesService);
-  busqueda    = '';
+  busqueda = '';
   fechaInicio = '';
-  fechaFin    = '';
-  cargando    = false;
-  error       = '';   // clave de traducción
-  exito       = '';
+  fechaFin = '';
+  cargando = false;
+  error = ''; // clave de traducción
+  exito = '';
 
-  panelNomina  = false;
-  generando    = false;
+  panelNomina = false;
+  generando = false;
   formNomina!: FormGroup;
-
-  constructor(
-    private jornalService:    JornalService,
-    private trabajadorService: TrabajadorService,
-    private nominaService:    NominaService,
-    private route:  ActivatedRoute,
-    private router: Router,
-    private fb:     FormBuilder,
-    private cdr:    ChangeDetectorRef
-  ) {}
 
   ngOnInit(): void {
     this.formNomina = this.fb.group({
       periodoInicio: ['', Validators.required],
-      periodoFin:    ['', Validators.required]
+      periodoFin: ['', Validators.required],
     });
 
     this.trabajadorService.listarTodos().subscribe({
       next: (t) => {
-        this.trabajadores = [...t].sort((a, b) => (a.nombreCompleto ?? '').localeCompare(b.nombreCompleto ?? ''));
+        this.trabajadores = [...t].sort((a, b) =>
+          (a.nombreCompleto ?? '').localeCompare(b.nombreCompleto ?? ''),
+        );
         this.cargandoTrabajadores = false;
         this.cdr.detectChanges();
       },
-      error: () => { this.cargandoTrabajadores = false; this.cdr.detectChanges(); }
+      error: () => {
+        this.cargandoTrabajadores = false;
+        this.cdr.detectChanges();
+      },
     });
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const idParam = params['trabajadorId'];
       if (idParam) {
         this.trabajadorId = Number(idParam);
@@ -91,13 +131,22 @@ export class ListaJornalesComponent implements OnInit {
   cargarTrabajador(): void {
     if (!this.trabajadorId) return;
     this.trabajadorService.buscarPorId(this.trabajadorId).subscribe({
-      next:  (t) => {
+      next: (t) => {
         this.trabajador = t;
         // "Seguir donde iba": los jornales de este trabajador
-        if (t?.id) this.recientes.anotar({ tipo: 'worker', titulo: t.nombreCompleto ?? '', detalle: t.cargo?.nombre, ruta: '/worker/workdays', query: { trabajadorId: t.id } });
+        if (t?.id)
+          this.recientes.anotar({
+            tipo: 'worker',
+            titulo: t.nombreCompleto ?? '',
+            detalle: t.cargo?.nombre,
+            ruta: '/worker/workdays',
+            query: { trabajadorId: t.id },
+          });
         this.cdr.detectChanges();
       },
-      error: () => {}
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
   }
 
@@ -107,12 +156,23 @@ export class ListaJornalesComponent implements OnInit {
     this.resumen = null;
     this.cargarPagina(0);
     const id = this.trabajadorId;
-    this.jornalService.resumenEquipo({ trabajadorId: id, inicio: this.fechaInicio || undefined, fin: this.fechaFin || undefined }).subscribe({
-      next: (r) => {
-        if (id === this.trabajadorId) { this.resumen = r; this.cdr.detectChanges(); }
-      },
-      error: () => {}
-    });
+    this.jornalService
+      .resumenEquipo({
+        trabajadorId: id,
+        inicio: this.fechaInicio || undefined,
+        fin: this.fechaFin || undefined,
+      })
+      .subscribe({
+        next: (r) => {
+          if (id === this.trabajadorId) {
+            this.resumen = r;
+            this.cdr.detectChanges();
+          }
+        },
+        error: () => {
+          // Si falla, la pantalla sigue con lo que ya mostraba
+        },
+      });
   }
 
   cargarMas(): void {
@@ -120,40 +180,44 @@ export class ListaJornalesComponent implements OnInit {
     this.cargarPagina(this.pagina + 1);
   }
 
-  get hayMas(): boolean { return this.jornales.length < this.total; }
+  get hayMas(): boolean {
+    return this.jornales.length < this.total;
+  }
 
   private cargarPagina(pagina: number): void {
-    if (pagina === 0) this.cargando = true; else this.cargandoMas = true;
+    if (pagina === 0) this.cargando = true;
+    else this.cargandoMas = true;
     this.cdr.detectChanges();
     const id = this.trabajadorId;
 
-    this.jornalService.paginaEquipo(pagina, {
-      trabajadorId: id,
-      inicio: this.fechaInicio || undefined,
-      fin: this.fechaFin || undefined,
-    }).subscribe({
-      next: (p) => {
-        if (id !== this.trabajadorId) return;   // cambió de trabajador mientras cargaba
-        this.jornales = pagina === 0 ? p.contenido : [...this.jornales, ...p.contenido];
-        this.total = p.total;
-        this.pagina = pagina;
-        this.cargando = false;
-        this.cargandoMas = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.error       = 'workers.wages.list.errors.load';
-        this.cargando    = false;
-        this.cargandoMas = false;
-        this.cdr.detectChanges();
-      }
-    });
+    this.jornalService
+      .paginaEquipo(pagina, {
+        trabajadorId: id,
+        inicio: this.fechaInicio || undefined,
+        fin: this.fechaFin || undefined,
+      })
+      .subscribe({
+        next: (p) => {
+          if (id !== this.trabajadorId) return; // cambió de trabajador mientras cargaba
+          this.jornales = pagina === 0 ? p.contenido : [...this.jornales, ...p.contenido];
+          this.total = p.total;
+          this.pagina = pagina;
+          this.cargando = false;
+          this.cargandoMas = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.error = 'workers.wages.list.errors.load';
+          this.cargando = false;
+          this.cargandoMas = false;
+          this.cdr.detectChanges();
+        },
+      });
   }
-
 
   /** Trabajador elegido: se toma de la lista ya cargada y, si no está, del detalle pedido aparte */
   get seleccionado(): Trabajador | null {
-    return this.trabajadores.find(t => t.id === this.trabajadorId) ?? this.trabajador;
+    return this.trabajadores.find((t) => t.id === this.trabajadorId) ?? this.trabajador;
   }
 
   iniciales(t: Trabajador): string {
@@ -168,20 +232,23 @@ export class ListaJornalesComponent implements OnInit {
     });
   }
 
-  filtrarFechas(): void { this.cargarJornales(); }
+  filtrarFechas(): void {
+    this.cargarJornales();
+  }
 
   limpiarFiltros(): void {
     this.fechaInicio = '';
-    this.fechaFin    = '';
+    this.fechaFin = '';
     this.cargarJornales();
   }
 
   get filtrados(): Jornal[] {
     const q = this.busqueda.toLowerCase();
     if (!q) return this.jornales;
-    return this.jornales.filter(j =>
-      j.trabajador?.nombreCompleto?.toLowerCase().includes(q) ||
-      j.nombreCultivo?.toLowerCase().includes(q)
+    return this.jornales.filter(
+      (j) =>
+        j.trabajador?.nombreCompleto?.toLowerCase().includes(q) ||
+        j.nombreCultivo?.toLowerCase().includes(q),
     );
   }
 
@@ -189,7 +256,9 @@ export class ListaJornalesComponent implements OnInit {
    * Los totales salen del resumen del servidor (todos los jornales del rango, no solo los cargados).
    * Con una búsqueda escrita se calculan sobre los jornales que coinciden entre los ya cargados.
    */
-  private get conBusqueda(): boolean { return !!this.busqueda.trim(); }
+  private get conBusqueda(): boolean {
+    return !!this.busqueda.trim();
+  }
 
   get cantidadJornales(): number {
     if (!this.conBusqueda && this.resumen) return this.resumen.cantidad;
@@ -203,14 +272,12 @@ export class ListaJornalesComponent implements OnInit {
 
   get pendientes(): number {
     if (!this.conBusqueda && this.resumen) return this.resumen.pendientes;
-    return this.filtrados.filter(j => !j.liquidado).length;
+    return this.filtrados.filter((j) => !j.liquidado).length;
   }
 
   get totalPendiente(): number {
     if (!this.conBusqueda && this.resumen) return this.resumen.valorPendiente;
-    return this.filtrados
-      .filter(j => !j.liquidado)
-      .reduce((a, j) => a + (j.valorJornal ?? 0), 0);
+    return this.filtrados.filter((j) => !j.liquidado).reduce((a, j) => a + (j.valorJornal ?? 0), 0);
   }
 
   abrirGenerarNomina(): void {
@@ -223,7 +290,7 @@ export class ListaJornalesComponent implements OnInit {
       this.formNomina.reset();
     }
     this.nominaGenerada = null;
-    this.error  = '';
+    this.error = '';
     this.panelNomina = true;
     this.cdr.detectChanges();
   }
@@ -231,16 +298,16 @@ export class ListaJornalesComponent implements OnInit {
   /** Fecha (yyyy-mm-dd) del jornal pendiente más antiguo o más reciente entre los cargados, si no hay resumen */
   private fechaPendiente(elegir: (...n: number[]) => number): string | null {
     const fechas = this.jornales
-      .filter(j => !j.liquidado && j.fecha)
-      .map(j => new Date(j.fecha!).getTime());
+      .filter((j) => !j.liquidado && j.fecha)
+      .map((j) => new Date(j.fecha!).getTime());
     return fechas.length ? new Date(elegir(...fechas)).toISOString().split('T')[0] : null;
   }
 
   cerrarPanel(): void {
-    this.panelNomina    = false;
+    this.panelNomina = false;
     this.nominaGenerada = null;
-    this.error  = '';
-    this.exito  = '';
+    this.error = '';
+    this.exito = '';
     this.cdr.detectChanges();
   }
 
@@ -257,38 +324,40 @@ export class ListaJornalesComponent implements OnInit {
     }
 
     this.generando = true;
-    this.error     = '';
+    this.error = '';
 
     const req: NominaRequest = {
-      trabajadorId:  this.trabajadorId,
+      trabajadorId: this.trabajadorId,
       periodoInicio,
-      periodoFin
+      periodoFin,
     };
 
     this.nominaService.generar(req).subscribe({
       next: (n) => {
         this.nominaGenerada = n;
-        this.generando      = false;
+        this.generando = false;
         this.cargarJornales();
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error     = 'workers.wages.list.errors.generate';
+        this.error = 'workers.wages.list.errors.generate';
         this.generando = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
   verNominaCompleta(): void {
     if (!this.trabajadorId) return;
     this.cerrarPanel();
-    this.router.navigate(['/worker/payrolls'], { queryParams: { trabajadorId: this.trabajadorId } });
+    this.router.navigate(['/worker/payrolls'], {
+      queryParams: { trabajadorId: this.trabajadorId },
+    });
   }
 
   irANuevoJornal(): void {
     this.router.navigate(['/worker/workdays/new'], {
-      queryParams: this.trabajadorId ? { trabajadorId: this.trabajadorId } : {}
+      queryParams: this.trabajadorId ? { trabajadorId: this.trabajadorId } : {},
     });
   }
 

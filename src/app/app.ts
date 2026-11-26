@@ -9,7 +9,7 @@ import { ServidorLentoComponent } from './shared/slow-server/slow-server';
   selector: 'app-root',
   imports: [RouterOutlet, ConfirmDialogComponent, ServidorLentoComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
   /** Se crea al arrancar para aplicar el modo claro u oscuro en todas las pantallas */

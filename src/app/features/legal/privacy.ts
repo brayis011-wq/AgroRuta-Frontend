@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Lang, LanguageService } from '../../core/services/language.service';
 
@@ -8,6 +8,7 @@ import { Lang, LanguageService } from '../../core/services/language.service';
  * y revisar de corrido. La versión en español es la que rige (Ley 1581 de 2012, Colombia).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-privacidad',
   standalone: true,
   imports: [RouterLink],
@@ -16,7 +17,10 @@ import { Lang, LanguageService } from '../../core/services/language.service';
 })
 export class PrivacidadComponent {
   readonly idioma = inject(LanguageService);
-  readonly actualizada: Record<Lang, string> = { es: '5 de noviembre de 2026', en: 'November 5, 2026' };
+  readonly actualizada: Record<Lang, string> = {
+    es: '5 de noviembre de 2026',
+    en: 'November 5, 2026',
+  };
 
   cambiar(lang: Lang): void {
     this.idioma.set(lang);

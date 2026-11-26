@@ -23,30 +23,30 @@ const ORDEN: EtapaConDuracion[] = ['GERMINACION', 'CRECIMIENTO', 'PRODUCCION', '
  */
 const TABLA: Record<string, [number, number, number, number, boolean]> = {
   //            germ  crec  prod  cos  perenne
-  cafe:        [30,  450,  230, 120, true],
-  aguacate:    [30, 1000,  240,  90, true],
-  cacao:       [30,  900,  165, 120, true],
-  platano:     [30,  240,  100,  30, true],
-  banano:      [30,  240,   90,  30, true],
-  mora:        [30,  180,   60, 180, true],
-  lulo:        [30,  210,   90, 240, true],
-  uchuva:      [30,  120,   60, 240, true],
-  fresa:       [20,   60,   30, 180, true],
-  maracuya:    [30,  240,   75, 180, true],
-  granadilla:  [30,  270,   80, 180, true],
-  gulupa:      [30,  270,   80, 180, true],
-  naranja:     [30, 1100,  240,  90, true],
-  mandarina:   [30, 1000,  240,  90, true],
-  limon:       [30,  900,  180, 120, true],
-  mango:       [30, 1100,  120,  60, true],
-  pina:        [30,  450,  150,  30, false],
-  tomate:      [25,   45,   30,  60, false],
-  papa:        [20,   40,   50,  20, false],
-  maiz:        [10,   50,   60,  20, false],
-  frijol:      [10,   30,   30,  20, false],
-  arveja:      [10,   35,   30,  20, false],
-  cebolla:     [15,   60,   45,  20, false],
-  yuca:        [20,  180,  120,  30, false],
+  cafe: [30, 450, 230, 120, true],
+  aguacate: [30, 1000, 240, 90, true],
+  cacao: [30, 900, 165, 120, true],
+  platano: [30, 240, 100, 30, true],
+  banano: [30, 240, 90, 30, true],
+  mora: [30, 180, 60, 180, true],
+  lulo: [30, 210, 90, 240, true],
+  uchuva: [30, 120, 60, 240, true],
+  fresa: [20, 60, 30, 180, true],
+  maracuya: [30, 240, 75, 180, true],
+  granadilla: [30, 270, 80, 180, true],
+  gulupa: [30, 270, 80, 180, true],
+  naranja: [30, 1100, 240, 90, true],
+  mandarina: [30, 1000, 240, 90, true],
+  limon: [30, 900, 180, 120, true],
+  mango: [30, 1100, 120, 60, true],
+  pina: [30, 450, 150, 30, false],
+  tomate: [25, 45, 30, 60, false],
+  papa: [20, 40, 50, 20, false],
+  maiz: [10, 50, 60, 20, false],
+  frijol: [10, 30, 30, 20, false],
+  arveja: [10, 35, 30, 20, false],
+  cebolla: [15, 60, 45, 20, false],
+  yuca: [20, 180, 120, 30, false],
 };
 const GENERAL: [number, number, number, number, boolean] = [20, 60, 45, 30, false];
 
@@ -60,7 +60,11 @@ export function duracionDe(tipoCultivo: string | null | undefined): DuracionCult
   // "Café Castillo" o "Plátano hartón" también cuentan: se busca por la primera palabra
   const fila = TABLA[n] ?? TABLA[n.split(/\s+/)[0]];
   const [g, c, p, k, perenne] = fila ?? GENERAL;
-  return { dias: { GERMINACION: g, CRECIMIENTO: c, PRODUCCION: p, COSECHA: k }, perenne, conocido: !!fila };
+  return {
+    dias: { GERMINACION: g, CRECIMIENTO: c, PRODUCCION: p, COSECHA: k },
+    perenne,
+    conocido: !!fila,
+  };
 }
 
 export interface EstimadoCiclo {
@@ -88,10 +92,17 @@ function sumarDias(fecha: string, dias: number): string {
 export function estimarCiclo(siembra: Siembra, etapas: EtapaSiembra[], hoy: string): EstimadoCiclo {
   const duracion = duracionDe(siembra.tipoCultivo);
   const actual = siembra.estadoCultivo;
-  const vacio: EstimadoCiclo = { duracion, fechas: {}, diasNormales: null, sugerida: null, desde: null };
+  const vacio: EstimadoCiclo = {
+    duracion,
+    fechas: {},
+    diasNormales: null,
+    sugerida: null,
+    desde: null,
+  };
   if (actual === 'FINALIZADO') return vacio;
 
-  const inicio = pasosCiclo(siembra, etapas).find((p) => p.etapa === actual)?.fecha ?? siembra.fechaSiembra;
+  const inicio =
+    pasosCiclo(siembra, etapas).find((p) => p.etapa === actual)?.fecha ?? siembra.fechaSiembra;
   // Sin una fecha válida no hay desde dónde contar
   if (!inicio || !/^\d{4}-\d{2}-\d{2}/.test(inicio)) return vacio;
   const i = ORDEN.indexOf(actual as EtapaConDuracion);
@@ -100,16 +111,23 @@ export function estimarCiclo(siembra: Siembra, etapas: EtapaSiembra[], hoy: stri
   let cursor = inicio;
   for (let j = i; j < ORDEN.length; j++) {
     cursor = sumarDias(cursor, duracion.dias[ORDEN[j]]);
-    const siguiente: EtapaCultivo | undefined = ORDEN[j + 1] ?? (duracion.perenne ? undefined : 'FINALIZADO');
+    const siguiente: EtapaCultivo | undefined =
+      ORDEN[j + 1] ?? (duracion.perenne ? undefined : 'FINALIZADO');
     if (siguiente) fechas[siguiente] = cursor;
   }
 
-  const proxima: EtapaCultivo | undefined = ORDEN[i + 1] ?? (duracion.perenne ? undefined : 'FINALIZADO');
-  const desde = proxima ? fechas[proxima] ?? null : null;
+  const proxima: EtapaCultivo | undefined =
+    ORDEN[i + 1] ?? (duracion.perenne ? undefined : 'FINALIZADO');
+  const desde = proxima ? (fechas[proxima] ?? null) : null;
   // Las fechas "yyyy-MM-dd" se comparan como texto
   const llego = !!proxima && !!desde && desde <= hoy;
-  return { duracion, fechas, diasNormales: duracion.dias[actual as EtapaConDuracion],
-    sugerida: llego ? proxima! : null, desde: llego ? desde : null };
+  return {
+    duracion,
+    fechas,
+    diasNormales: duracion.dias[actual as EtapaConDuracion],
+    sugerida: llego ? proxima! : null,
+    desde: llego ? desde : null,
+  };
 }
 
 /** Las etapas con sus días, para mostrar de dónde salen las fechas */

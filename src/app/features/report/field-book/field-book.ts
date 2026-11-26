@@ -28,8 +28,14 @@ export class CuadernoCampoComponent extends ReportBase {
     this.descargando.set(true);
     this.error.set(false);
     this.reportes.downloadFieldBookPdf(this.fincaId()).subscribe({
-      next: (b) => { this.descargar(b, 'cuaderno-de-campo.pdf'); this.descargando.set(false); },
-      error: () => { this.descargando.set(false); this.error.set(true); },
+      next: (b) => {
+        this.descargar(b, 'cuaderno-de-campo.pdf');
+        this.descargando.set(false);
+      },
+      error: () => {
+        this.descargando.set(false);
+        this.error.set(true);
+      },
     });
   }
 }

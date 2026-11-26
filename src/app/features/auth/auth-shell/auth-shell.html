@@ -1,12 +1,23 @@
 <div class="auth">
   <header class="top">
-    <a class="brand ar-titulo" routerLink="/auth/login"><span class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></span>AgroRuta</a>
+    <a class="brand ar-titulo" routerLink="/auth/login"
+      ><span class="logo" aria-hidden="true"><i class="ti ti-plant-2"></i></span>AgroRuta</a
+    >
     <div class="barra">
       <app-language-switcher />
-      <button type="button" class="ib" (click)="tema.alternar()"
-              [title]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate"
-              [attr.aria-label]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate">
-        <i class="ti" [class.ti-moon]="!tema.oscuro()" [class.ti-sun]="tema.oscuro()" aria-hidden="true"></i>
+      <button
+        type="button"
+        class="ib"
+        (click)="tema.alternar()"
+        [title]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate"
+        [attr.aria-label]="(tema.oscuro() ? 'theme.toLight' : 'theme.toDark') | translate"
+      >
+        <i
+          class="ti"
+          [class.ti-moon]="!tema.oscuro()"
+          [class.ti-sun]="tema.oscuro()"
+          aria-hidden="true"
+        ></i>
       </button>
     </div>
   </header>
@@ -21,5 +32,7 @@
     </main>
   </div>
 
-  <footer class="pie">© {{ anio }} AgroRuta · <a routerLink="/privacy">{{ 'auth.privacy' | translate }}</a></footer>
+  <footer class="pie">
+    © {{ anio }} AgroRuta · <a routerLink="/privacy">{{ 'auth.privacy' | translate }}</a>
+  </footer>
 </div>

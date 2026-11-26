@@ -1,18 +1,42 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, effect, inject, input, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DiagnosticoService } from '../../../../core/services/diagnosis.service';
 import { LanguageService } from '../../../../core/services/language.service';
-import { DiagnosticoPlaga, DiagnosticosSiembra, TipoProblema } from '../../../../core/models/diagnosis.model';
+import {
+  DiagnosticoPlaga,
+  DiagnosticosSiembra,
+  TipoProblema,
+} from '../../../../core/models/diagnosis.model';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { localeDe } from '../../../../shared/format';
 import { reducirFoto, revisarArchivo } from '../../../../shared/photo';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 const ICONO: Record<TipoProblema, string> = {
-  PLAGA: 'ti-bug', ENFERMEDAD: 'ti-virus', DEFICIENCIA: 'ti-flask', DANO_AMBIENTAL: 'ti-sun', SANA: 'ti-leaf', INDETERMINADO: 'ti-help',
+  PLAGA: 'ti-bug',
+  ENFERMEDAD: 'ti-virus',
+  DEFICIENCIA: 'ti-flask',
+  DANO_AMBIENTAL: 'ti-sun',
+  SANA: 'ti-leaf',
+  INDETERMINADO: 'ti-help',
 };
 const TONO: Record<TipoProblema, string> = {
-  PLAGA: 'ambar', ENFERMEDAD: 'rojo', DEFICIENCIA: 'azul', DANO_AMBIENTAL: 'ambar', SANA: 'verde', INDETERMINADO: 'gris',
+  PLAGA: 'ambar',
+  ENFERMEDAD: 'rojo',
+  DEFICIENCIA: 'azul',
+  DANO_AMBIENTAL: 'ambar',
+  SANA: 'verde',
+  INDETERMINADO: 'gris',
 };
 
 /**
@@ -144,10 +168,12 @@ export class DiagnosticoSiembraComponent implements OnDestroy {
           this.error.set('diagnostico.errors.offline');
           return;
         }
-        this.error.set(e.error?.message || 'diagnostico.errors.generic');
+        this.error.set(mensajeDeError(e, 'diagnostico.errors.generic'));
         // Una foto que no sirvió también gasta un análisis: se trae la cuenta al día
         this.servicio.listar(id).subscribe({
-          next: (actual) => { if (this.siembraId() === id) this.estado.set(actual); },
+          next: (actual) => {
+            if (this.siembraId() === id) this.estado.set(actual);
+          },
           error: () => undefined,
         });
       },
@@ -175,14 +201,22 @@ export class DiagnosticoSiembraComponent implements OnDestroy {
     this.servicio.eliminar(this.siembraId(), d.id).subscribe({
       next: () => {
         const actual = this.estado();
-        if (actual) this.estado.set({ ...actual, diagnosticos: actual.diagnosticos.filter((x) => x.id !== d.id) });
+        if (actual)
+          this.estado.set({
+            ...actual,
+            diagnosticos: actual.diagnosticos.filter((x) => x.id !== d.id),
+          });
         const url = this.fotos()[d.id];
         if (url) {
           URL.revokeObjectURL(url);
-          this.fotos.update((f) => { const { [d.id]: _, ...resto } = f; return resto; });
+          this.fotos.update((f) => {
+            const { [d.id]: _, ...resto } = f;
+            return resto;
+          });
         }
       },
-      error: (e: HttpErrorResponse) => this.error.set(e.status === 0 ? 'diagnostico.errors.offline' : 'diagnostico.errors.delete'),
+      error: (e: HttpErrorResponse) =>
+        this.error.set(e.status === 0 ? 'diagnostico.errors.offline' : 'diagnostico.errors.delete'),
     });
   }
 
@@ -199,7 +233,11 @@ export class DiagnosticoSiembraComponent implements OnDestroy {
     const f = new Date(valor);
     if (Number.isNaN(f.getTime())) return '';
     return new Intl.DateTimeFormat(localeDe(this.lang.current()), {
-      day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
     }).format(f);
   }
 

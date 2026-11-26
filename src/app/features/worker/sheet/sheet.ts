@@ -1,10 +1,24 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, computed, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import {
-  CasillaPlanilla, CultivoDisponible, FilaPlanilla, JornalService, LaborService, Planilla,
+  CasillaPlanilla,
+  CultivoDisponible,
+  FilaPlanilla,
+  JornalService,
+  LaborService,
+  Planilla,
 } from '../../../core/services/worker.service';
 import { Labor } from '../../../core/models/worker.model';
 import { UltimoUsadoService } from '../../../core/services/last-used.service';
@@ -12,14 +26,34 @@ import { AvisosService } from '../../../core/services/toast.service';
 import { PeriodoPipe, PesosPipe } from '../../../shared/format.pipe';
 import { LanguageService } from '../../../core/services/language.service';
 import { localeDe } from '../../../shared/format';
-import { bloqueado, clave, deIso, diasDeSemana, indexar, isoLocal, lunesDe, porQuitar, sumarDias, totalDia, totalFila } from './sheet.logic';
+import {
+  bloqueado,
+  clave,
+  deIso,
+  diasDeSemana,
+  indexar,
+  isoLocal,
+  lunesDe,
+  porQuitar,
+  sumarDias,
+  totalDia,
+  totalFila,
+} from './sheet.logic';
 import { esPendiente } from '../../../core/offline/offline-queue.service';
+import { mensajeDeError } from '../../../shared/error-message';
 
 /** Lo que se recuerda de la planilla: el cultivo y las labores con que se anota */
-interface UltimaPlanilla { cultivoId?: number; actividadIds?: number[] }
+interface UltimaPlanilla {
+  cultivoId?: number;
+  actividadIds?: number[];
+}
 
 /** Casilla esperando los kilos (trabajadores que se pagan por kilo) */
-interface PidiendoKilos { trabajador: FilaPlanilla; fecha: string; kilos: number | null }
+interface PidiendoKilos {
+  trabajador: FilaPlanilla;
+  fecha: string;
+  kilos: number | null;
+}
 
 /**
  * Planilla semanal: trabajadores por días. Un toque en una casilla anota el jornal con el cultivo y
@@ -30,7 +64,13 @@ interface PidiendoKilos { trabajador: FilaPlanilla; fecha: string; kilos: number
   standalone: true,
   imports: [FormsModule, RouterLink, TranslatePipe, PesosPipe, PeriodoPipe],
   templateUrl: './sheet.html',
-  styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../worker-ui.css', '../worker-panel.css', './sheet.css'],
+  styleUrls: [
+    '../../crop/crop-ui.css',
+    '../../crop/crop-blocks.css',
+    '../worker-ui.css',
+    '../worker-panel.css',
+    './sheet.css',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlanillaComponent implements OnInit {
@@ -59,17 +99,26 @@ export class PlanillaComponent implements OnInit {
 
   readonly listo = computed(() => this.cultivoId() != null && this.elegidas().size > 0);
   readonly indice = computed(() => indexar(this.planilla()?.jornales ?? []));
-  readonly totalSemana = computed(() => (this.planilla()?.jornales ?? []).reduce((s, j) => s + (j.valor ?? 0), 0));
+  readonly totalSemana = computed(() =>
+    (this.planilla()?.jornales ?? []).reduce((s, j) => s + (j.valor ?? 0), 0),
+  );
   readonly esEstaSemana = computed(() => this.lunes() === isoLocal(lunesDe(new Date())));
 
   ngOnInit(): void {
-    forkJoin({ cultivos: this.jornales.cultivosDisponibles(), labores: this.labores.listar() }).subscribe({
+    forkJoin({
+      cultivos: this.jornales.cultivosDisponibles(),
+      labores: this.labores.listar(),
+    }).subscribe({
       next: ({ cultivos, labores }) => {
         this.cultivos.set(cultivos);
         const activas = labores.filter((l) => l.activa !== false);
         this.actividades.set(activas);
-        const u = this.ultimo.leer<UltimaPlanilla>('planilla') ?? this.ultimo.leer<UltimaPlanilla>('jornal');
-        const cultivo = cultivos.find((c) => c.id === u?.cultivoId) ?? (cultivos.length === 1 ? cultivos[0] : undefined);
+        const u =
+          this.ultimo.leer<UltimaPlanilla>('planilla') ??
+          this.ultimo.leer<UltimaPlanilla>('jornal');
+        const cultivo =
+          cultivos.find((c) => c.id === u?.cultivoId) ??
+          (cultivos.length === 1 ? cultivos[0] : undefined);
         if (cultivo) this.cultivoId.set(cultivo.id);
         const ids = (u?.actividadIds ?? []).filter((id) => activas.some((a) => a.id === id));
         this.elegidas.set(new Set(ids.length ? ids : activas.length === 1 ? [activas[0].id!] : []));
@@ -83,8 +132,16 @@ export class PlanillaComponent implements OnInit {
     const dias = this.dias();
     this.cargando.set(true);
     this.jornales.planilla(dias[0], dias[6]).subscribe({
-      next: (p) => { this.planilla.set(p); this.cargando.set(false); this.error.set(null); setTimeout(() => this.mostrarHoy()); },
-      error: () => { this.cargando.set(false); this.error.set('workers.sheet.errors.load'); },
+      next: (p) => {
+        this.planilla.set(p);
+        this.cargando.set(false);
+        this.error.set(null);
+        setTimeout(() => this.mostrarHoy());
+      },
+      error: () => {
+        this.cargando.set(false);
+        this.error.set('workers.sheet.errors.load');
+      },
     });
   }
 
@@ -101,7 +158,12 @@ export class PlanillaComponent implements OnInit {
   /** Vuelve a leer la semana sin el efecto de carga (para ver en qué nómina quedó cada jornal) */
   private refrescar(): void {
     const dias = this.dias();
-    this.jornales.planilla(dias[0], dias[6]).subscribe({ next: (p) => this.planilla.set(p), error: () => {} });
+    this.jornales.planilla(dias[0], dias[6]).subscribe({
+      next: (p) => this.planilla.set(p),
+      error: () => {
+        // Si falla, la planilla sigue con lo que ya mostraba
+      },
+    });
   }
 
   semana(delta: number): void {
@@ -122,13 +184,17 @@ export class PlanillaComponent implements OnInit {
   alternarLabor(id: number | undefined): void {
     if (id == null) return;
     const s = new Set(this.elegidas());
-    if (s.has(id)) s.delete(id); else s.add(id);
+    if (s.has(id)) s.delete(id);
+    else s.add(id);
     this.elegidas.set(s);
     this.recordar();
   }
 
   private recordar(): void {
-    this.ultimo.guardar<UltimaPlanilla>('planilla', { cultivoId: this.cultivoId() ?? undefined, actividadIds: [...this.elegidas()] });
+    this.ultimo.guardar<UltimaPlanilla>('planilla', {
+      cultivoId: this.cultivoId() ?? undefined,
+      actividadIds: [...this.elegidas()],
+    });
   }
 
   casilla(t: FilaPlanilla, fecha: string): CasillaPlanilla[] {
@@ -165,10 +231,19 @@ export class PlanillaComponent implements OnInit {
   tocar(t: FilaPlanilla, fecha: string): void {
     if (this.futuro(fecha) || this.ocupada(t, fecha)) return;
     const hay = this.casilla(t, fecha);
-    if (hay.length) { this.quitar(t, fecha, hay); return; }
+    if (hay.length) {
+      this.quitar(t, fecha, hay);
+      return;
+    }
     if (!t.activo) return;
-    if (!this.listo()) { this.error.set('workers.sheet.chooseFirst'); return; }
-    if (t.modalidadPago === 'KILO') { this.pidiendo.set({ trabajador: t, fecha, kilos: null }); return; }
+    if (!this.listo()) {
+      this.error.set('workers.sheet.chooseFirst');
+      return;
+    }
+    if (t.modalidadPago === 'KILO') {
+      this.pidiendo.set({ trabajador: t, fecha, kilos: null });
+      return;
+    }
     this.anotar([{ trabajadorId: t.id, fecha }]);
   }
 
@@ -182,47 +257,83 @@ export class PlanillaComponent implements OnInit {
   /** Cabeza de un día: anota a todos los activos que se pagan por día y no tienen jornal ese día */
   todosElDia(fecha: string): void {
     if (this.futuro(fecha)) return;
-    if (!this.listo()) { this.error.set('workers.sheet.chooseFirst'); return; }
-    const faltan = (this.planilla()?.trabajadores ?? [])
-      .filter((t) => t.activo && t.modalidadPago !== 'KILO' && !this.casilla(t, fecha).length);
+    if (!this.listo()) {
+      this.error.set('workers.sheet.chooseFirst');
+      return;
+    }
+    const faltan = (this.planilla()?.trabajadores ?? []).filter(
+      (t) => t.activo && t.modalidadPago !== 'KILO' && !this.casilla(t, fecha).length,
+    );
     if (!faltan.length) return;
     this.anotar(faltan.map((t) => ({ trabajadorId: t.id, fecha })));
   }
 
-  private anotar(entradas: { trabajadorId: number; fecha: string; kilos?: number | null }[], silencioso = false): void {
+  private anotar(
+    entradas: { trabajadorId: number; fecha: string; kilos?: number | null }[],
+    silencioso = false,
+  ): void {
     const cultivoId = this.cultivoId();
     if (cultivoId == null) return;
-    this.marcar(entradas.map((e) => clave(e.trabajadorId, e.fecha)), true);
+    this.marcar(
+      entradas.map((e) => clave(e.trabajadorId, e.fecha)),
+      true,
+    );
     this.error.set(null);
-    this.jornales.registrarVarios({ cultivoId, actividadIds: [...this.elegidas()], entradas }).subscribe({
-      next: (respuesta) => {
-        this.marcar(entradas.map((e) => clave(e.trabajadorId, e.fecha)), false);
-        // Sin señal la planilla quedó en el teléfono: se envía sola y el aviso lo dice
-        if (esPendiente(respuesta)) { this.avisos.exito('workers.sheet.added', { count: entradas.length }); return; }
-        const creados = respuesta;
-        const p = this.planilla();
-        if (p) {
-          const nuevas: CasillaPlanilla[] = creados.map((j) => ({
-            id: j.id!, trabajadorId: j.trabajador!.id!, fecha: String(j.fecha), cultivoId: j.cultivoId!,
-            nombreCultivo: j.nombreCultivo ?? '', valor: j.valorJornal ?? 0, kilos: j.kilos ?? null,
-            liquidado: !!j.liquidado, enNomina: false, nominaEstado: null,
-          }));
-          this.planilla.set({ ...p, jornales: [...p.jornales, ...nuevas] });
-        }
-        if (!silencioso && creados.length > 1) this.avisos.exito('workers.sheet.added', { count: creados.length });
-        // Si el trabajador tenía una nómina pendiente de esas fechas, el jornal entró en ella
-        if (creados.length && (this.planilla()?.jornales ?? []).some((j) => j.nominaEstado === 'PENDIENTE')) this.refrescar();
-      },
-      error: (e) => {
-        this.marcar(entradas.map((x) => clave(x.trabajadorId, x.fecha)), false);
-        this.error.set(e?.error?.message || 'workers.sheet.errors.save');
-      },
-    });
+    this.jornales
+      .registrarVarios({ cultivoId, actividadIds: [...this.elegidas()], entradas })
+      .subscribe({
+        next: (respuesta) => {
+          this.marcar(
+            entradas.map((e) => clave(e.trabajadorId, e.fecha)),
+            false,
+          );
+          // Sin señal la planilla quedó en el teléfono: se envía sola y el aviso lo dice
+          if (esPendiente(respuesta)) {
+            this.avisos.exito('workers.sheet.added', { count: entradas.length });
+            return;
+          }
+          const creados = respuesta;
+          const p = this.planilla();
+          if (p) {
+            const nuevas: CasillaPlanilla[] = creados.map((j) => ({
+              id: j.id!,
+              trabajadorId: j.trabajador!.id!,
+              fecha: String(j.fecha),
+              cultivoId: j.cultivoId!,
+              nombreCultivo: j.nombreCultivo ?? '',
+              valor: j.valorJornal ?? 0,
+              kilos: j.kilos ?? null,
+              liquidado: !!j.liquidado,
+              enNomina: false,
+              nominaEstado: null,
+            }));
+            this.planilla.set({ ...p, jornales: [...p.jornales, ...nuevas] });
+          }
+          if (!silencioso && creados.length > 1)
+            this.avisos.exito('workers.sheet.added', { count: creados.length });
+          // Si el trabajador tenía una nómina pendiente de esas fechas, el jornal entró en ella
+          if (
+            creados.length &&
+            (this.planilla()?.jornales ?? []).some((j) => j.nominaEstado === 'PENDIENTE')
+          )
+            this.refrescar();
+        },
+        error: (e) => {
+          this.marcar(
+            entradas.map((x) => clave(x.trabajadorId, x.fecha)),
+            false,
+          );
+          this.error.set(mensajeDeError(e, 'workers.sheet.errors.save'));
+        },
+      });
   }
 
   private quitar(t: FilaPlanilla, fecha: string, hay: CasillaPlanilla[]): void {
     const j = porQuitar(hay, this.cultivoId());
-    if (!j) { this.error.set('workers.sheet.inPayroll'); return; }
+    if (!j) {
+      this.error.set('workers.sheet.inPayroll');
+      return;
+    }
     const k = clave(t.id, fecha);
     this.marcar([k], true);
     this.jornales.eliminar(j.id).subscribe({
@@ -232,15 +343,21 @@ export class PlanillaComponent implements OnInit {
         if (p) this.planilla.set({ ...p, jornales: p.jornales.filter((x) => x.id !== j.id) });
         // Deshacer: se vuelve a anotar con el mismo cultivo y las labores de ahora
         const antes = this.cultivoId();
-        this.avisos.conDeshacer(j.nominaEstado === 'PENDIENTE' ? 'workers.sheet.removedFromPayroll' : 'workers.sheet.removed', { name: t.nombreCompleto }, () => {
-          this.cultivoId.set(j.cultivoId);
-          this.anotar([{ trabajadorId: t.id, fecha, kilos: j.kilos }], true);
-          this.cultivoId.set(antes);
-        });
+        this.avisos.conDeshacer(
+          j.nominaEstado === 'PENDIENTE'
+            ? 'workers.sheet.removedFromPayroll'
+            : 'workers.sheet.removed',
+          { name: t.nombreCompleto },
+          () => {
+            this.cultivoId.set(j.cultivoId);
+            this.anotar([{ trabajadorId: t.id, fecha, kilos: j.kilos }], true);
+            this.cultivoId.set(antes);
+          },
+        );
       },
       error: (e) => {
         this.marcar([k], false);
-        this.error.set(e?.error?.message || 'workers.sheet.errors.remove');
+        this.error.set(mensajeDeError(e, 'workers.sheet.errors.remove'));
       },
     });
   }

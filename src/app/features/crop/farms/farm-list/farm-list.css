@@ -1,65 +1,234 @@
 /* Tarjetas de finca y marcadores del mapa */
-.sin-ubic { color: var(--ar-ambar); }
-.fincas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: .9rem; }
+.sin-ubic {
+  color: var(--ar-ambar);
+}
+.fincas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.9rem;
+}
 .finca {
-  background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1);
-  display: flex; flex-direction: column; overflow: hidden; animation: subir .4s ease-out both;
-  transition: transform .15s, box-shadow .15s, border-color .15s;
+  background: var(--ar-superficie);
+  border: 1px solid var(--ar-borde);
+  border-radius: 16px;
+  box-shadow: var(--ar-sombra-1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: subir 0.4s ease-out both;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s,
+    border-color 0.15s;
 }
-.finca:hover, .finca.activa { transform: translateY(-2px); box-shadow: var(--ar-sombra-2); border-color: var(--ar-borde-fuerte); }
+.finca:hover,
+.finca.activa {
+  transform: translateY(-2px);
+  box-shadow: var(--ar-sombra-2);
+  border-color: var(--ar-borde-fuerte);
+}
 .finca-cuerpo {
-  display: flex; align-items: center; gap: .8rem; padding: 1rem 1rem .8rem; border: 0; background: none;
-  font: inherit; color: inherit; text-align: left; cursor: pointer; width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1rem 0.8rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
 }
-.finca-cuerpo:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: -2px; }
-.finca-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .15rem; }
-.finca-txt strong { font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.finca-txt small { font-size: .82rem; color: var(--ar-tinta-2); display: flex; align-items: center; gap: .25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.flecha { color: var(--ar-tinta-3); transition: transform .15s; }
-.finca:hover .flecha { transform: translateX(3px); color: var(--ar-verde-600); }
+.finca-cuerpo:focus-visible {
+  outline: 2px solid var(--ar-verde-600);
+  outline-offset: -2px;
+}
+.finca-txt {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.finca-txt strong {
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.finca-txt small {
+  font-size: 0.82rem;
+  color: var(--ar-tinta-2);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.flecha {
+  color: var(--ar-tinta-3);
+  transition: transform 0.15s;
+}
+.finca:hover .flecha {
+  transform: translateX(3px);
+  color: var(--ar-verde-600);
+}
 .finca-pie {
-  display: flex; align-items: center; gap: .4rem .8rem; flex-wrap: wrap;
-  padding: .55rem .6rem .55rem 1rem; border-top: 1px solid var(--ar-borde); background: var(--ar-superficie-2);
-  font-size: .8rem; color: var(--ar-tinta-2);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem 0.8rem;
+  flex-wrap: wrap;
+  padding: 0.55rem 0.6rem 0.55rem 1rem;
+  border-top: 1px solid var(--ar-borde);
+  background: var(--ar-superficie-2);
+  font-size: 0.8rem;
+  color: var(--ar-tinta-2);
 }
-.finca-pie > span { display: inline-flex; align-items: center; gap: .25rem; }
-.finca-btns { margin-left: auto; }
+.finca-pie > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.finca-btns {
+  margin-left: auto;
+}
 
 :host ::ng-deep .marcador-finca {
-  width: 36px; height: 36px; border-radius: 50% 50% 50% 6px; transform: rotate(-45deg);
-  display: grid; place-items: center; background: #2e7d32; color: #fff; border: 2px solid var(--ar-superficie);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, .35); transition: transform .15s, background .15s; cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50% 50% 50% 6px;
+  transform: rotate(-45deg);
+  display: grid;
+  place-items: center;
+  background: #2e7d32;
+  color: #fff;
+  border: 2px solid var(--ar-superficie);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  transition:
+    transform 0.15s,
+    background 0.15s;
+  cursor: pointer;
 }
-:host ::ng-deep .marcador-finca .ti { transform: rotate(45deg); font-size: 18px; }
-:host ::ng-deep .marcador-finca:hover, :host ::ng-deep .marcador-finca--activo { transform: rotate(-45deg) scale(1.2); background: #1b5e20; }
-:host ::ng-deep .popup-finca { font-family: inherit; }
-:host ::ng-deep .popup-finca-header { font-weight: 700; font-size: .95rem; padding: .2rem 0 .3rem; color: var(--ar-tinta); }
-:host ::ng-deep .popup-finca-body { font-size: .82rem; color: #4b5a51; line-height: 1.5; }
+:host ::ng-deep .marcador-finca .ti {
+  transform: rotate(45deg);
+  font-size: 18px;
+}
+:host ::ng-deep .marcador-finca:hover,
+:host ::ng-deep .marcador-finca--activo {
+  transform: rotate(-45deg) scale(1.2);
+  background: #1b5e20;
+}
+:host ::ng-deep .popup-finca {
+  font-family: inherit;
+}
+:host ::ng-deep .popup-finca-header {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.2rem 0 0.3rem;
+  color: var(--ar-tinta);
+}
+:host ::ng-deep .popup-finca-body {
+  font-size: 0.82rem;
+  color: #4b5a51;
+  line-height: 1.5;
+}
 :host ::ng-deep .popup-finca-btn {
-  display: block; width: 100%; margin-top: .6rem; padding: .45rem; border: 0; border-radius: 8px; cursor: pointer;
-  background: #2e7d32; color: #fff; font: inherit; font-weight: 600;
+  display: block;
+  width: 100%;
+  margin-top: 0.6rem;
+  padding: 0.45rem;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #2e7d32;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
 }
-:host ::ng-deep .popup-finca-btn:hover { background: #1b5e20; }
+:host ::ng-deep .popup-finca-btn:hover {
+  background: #1b5e20;
+}
 
 /* Leyenda de colores de los lotes en el mapa */
-.leyenda { display: inline-flex; flex-wrap: wrap; gap: .3rem .8rem; }
-.leyenda > span { display: inline-flex; align-items: center; gap: .35rem; }
-.leyenda .chip { width: 12px; height: 12px; border-radius: 4px; opacity: .85; }
+.leyenda {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.8rem;
+}
+.leyenda > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.leyenda .chip {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  opacity: 0.85;
+}
 
 /* Siembras en curso de todas las fincas */
-.seccion-titulo small { font-family: var(--ar-fuente); font-size: .8rem; font-weight: 700; color: var(--ar-tinta-3); margin-left: .35rem; }
-.activas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: .75rem; margin-bottom: 1.5rem; }
-.activa {
-  display: flex; align-items: center; gap: .75rem; padding: .8rem 1rem; border-radius: 14px; text-decoration: none; color: inherit;
-  background: var(--ar-superficie); border: 1px solid var(--ar-borde); box-shadow: var(--ar-sombra-1); transition: border-color .15s, transform .15s;
+.seccion-titulo small {
+  font-family: var(--ar-fuente);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ar-tinta-3);
+  margin-left: 0.35rem;
 }
-.activa:hover { border-color: var(--ar-verde-600); transform: translateY(-1px); }
-.activa-txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
-.activa-txt strong { font-size: .95rem; }
-.activa-txt small { font-size: .8rem; color: var(--ar-tinta-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.activa .flecha { color: var(--ar-tinta-3); }
+.activas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.activa {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  background: var(--ar-superficie);
+  border: 1px solid var(--ar-borde);
+  box-shadow: var(--ar-sombra-1);
+  transition:
+    border-color 0.15s,
+    transform 0.15s;
+}
+.activa:hover {
+  border-color: var(--ar-verde-600);
+  transform: translateY(-1px);
+}
+.activa-txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.activa-txt strong {
+  font-size: 0.95rem;
+}
+.activa-txt small {
+  font-size: 0.8rem;
+  color: var(--ar-tinta-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.activa .flecha {
+  color: var(--ar-tinta-3);
+}
 
 /* Celular: la ubicación de la finca y el lote de cada siembra, completos */
 @media (max-width: 760px) {
-  .finca-txt small, .activa-txt small { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .finca-txt small,
+  .activa-txt small {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
 }

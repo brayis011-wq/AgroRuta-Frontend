@@ -29,7 +29,11 @@ export class LanguageService {
 
   set(lang: Lang): void {
     this.translate.use(lang);
-    try { localStorage.setItem(CLAVE, lang); } catch { /* sin almacenamiento */ }
+    try {
+      localStorage.setItem(CLAVE, lang);
+    } catch {
+      /* sin almacenamiento */
+    }
     document.documentElement.lang = lang;
     this.current.set(lang);
   }

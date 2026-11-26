@@ -15,15 +15,14 @@ describe('ProfileService', () => {
 
   const mockPerfil: Perfil = { id: 1, nombre: 'Juan', email: 'juan@test.com' } as any;
   const mockUpdateRequest: UpdateProfileRequest = { nombre: 'Juan Updated' } as any;
-  const mockPasswordRequest: ChangePasswordRequest = { currentPassword: '123', newPassword: '456' } as any;
+  const mockPasswordRequest: ChangePasswordRequest = {
+    currentPassword: '123',
+    newPassword: '456',
+  } as any;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        ProfileService,
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), ProfileService],
     });
     service = TestBed.inject(ProfileService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -36,14 +35,14 @@ describe('ProfileService', () => {
   });
 
   it('getPerfil() should GET perfil', () => {
-    service.getPerfil().subscribe(r => expect(r).toEqual(mockPerfil));
+    service.getPerfil().subscribe((r) => expect(r).toEqual(mockPerfil));
     const req = httpMock.expectOne(`${base}/profile`);
     expect(req.request.method).toBe('GET');
     req.flush(mockPerfil);
   });
 
   it('updatePerfil() should PUT and return updated perfil', () => {
-    service.updatePerfil(mockUpdateRequest).subscribe(r => expect(r).toEqual(mockPerfil));
+    service.updatePerfil(mockUpdateRequest).subscribe((r) => expect(r).toEqual(mockPerfil));
     const req = httpMock.expectOne(`${base}/profile`);
     expect(req.request.method).toBe('PUT');
     expect(req.request.body).toEqual(mockUpdateRequest);
@@ -51,7 +50,7 @@ describe('ProfileService', () => {
   });
 
   it('changePassword() should PATCH password', () => {
-    service.changePassword(mockPasswordRequest).subscribe(r => expect(r).toBeUndefined());
+    service.changePassword(mockPasswordRequest).subscribe((r) => expect(r).toBeUndefined());
     const req = httpMock.expectOne(`${base}/profile/password`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual(mockPasswordRequest);

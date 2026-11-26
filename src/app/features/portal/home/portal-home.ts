@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -8,13 +8,18 @@ import { PortalService } from '../../../core/services/portal.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { EstadoPortal, MiJornal, MiNomina, MiPago } from '../../../core/models/portal.model';
 import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/format';
+import { mensajeDeError } from '../../../shared/error-message';
 
 @Component({
   selector: 'app-portal-inicio',
   standalone: true,
-  imports: [CommonModule, AsyncPipe, FormsModule, RouterModule, TranslatePipe],
+  imports: [AsyncPipe, FormsModule, RouterModule, TranslatePipe],
   templateUrl: './portal-home.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './portal-home.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    './portal-home.css',
+  ],
 })
 export class PortalInicioComponent implements OnInit {
   readonly portal = inject(PortalService);
@@ -44,7 +49,11 @@ export class PortalInicioComponent implements OnInit {
     this.datosCargados = true;
     this.cargandoDatos = true;
     this.errorDatos = false;
-    forkJoin({ j: this.portal.jornales(), n: this.portal.nominas(), p: this.portal.pagos() }).subscribe({
+    forkJoin({
+      j: this.portal.jornales(),
+      n: this.portal.nominas(),
+      p: this.portal.pagos(),
+    }).subscribe({
       next: ({ j, n, p }) => {
         this.jornales = j;
         this.nominas = n;
@@ -81,7 +90,7 @@ export class PortalInicioComponent implements OnInit {
       },
       error: (err) => {
         this.enviando = false;
-        this.errorSolicitud = err?.error?.message || 'portal.request.error';
+        this.errorSolicitud = mensajeDeError(err, 'portal.request.error');
         this.cdr.detectChanges();
       },
     });
@@ -111,15 +120,23 @@ export class PortalInicioComponent implements OnInit {
 
   /** Los 5 jornales más recientes */
   get recientes(): MiJornal[] {
-    return [...this.jornales].sort((a, b) => (b.fecha ?? '').localeCompare(a.fecha ?? '')).slice(0, 5);
+    return [...this.jornales]
+      .sort((a, b) => (b.fecha ?? '').localeCompare(a.fecha ?? ''))
+      .slice(0, 5);
   }
 
   /** "16 de oct – 31 de oct de 2026": el año solo una vez si es el mismo */
   periodo(inicio: string, fin: string): string {
     if (!inicio || !fin) return this.fecha(inicio || fin);
     if (inicio.slice(0, 4) !== fin.slice(0, 4)) return `${this.fecha(inicio)} – ${this.fecha(fin)}`;
-    const d = new Date(Number(inicio.slice(0, 4)), Number(inicio.slice(5, 7)) - 1, Number(inicio.slice(8, 10)));
-    const corto = d.toLocaleDateString(this.lang.current(), { day: 'numeric', month: 'short' }).replace('.', '');
+    const d = new Date(
+      Number(inicio.slice(0, 4)),
+      Number(inicio.slice(5, 7)) - 1,
+      Number(inicio.slice(8, 10)),
+    );
+    const corto = d
+      .toLocaleDateString(this.lang.current(), { day: 'numeric', month: 'short' })
+      .replace('.', '');
     return `${corto} – ${this.fecha(fin)}`;
   }
 

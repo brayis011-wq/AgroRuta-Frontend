@@ -1,8 +1,21 @@
 import { diasDelMes, diasHasta, ordenAgenda, esPorVenir } from './events';
 import { EventoCalendario } from '../../../core/models/crop.model';
 
-const ev = (fecha: string, estado: EventoCalendario['estado'], tipo: EventoCalendario['tipo'] = 'ACTIVIDAD'): EventoCalendario => ({
-  fecha, estado, tipo, titulo: null, detalle: null, siembraId: 1, loteId: 1, loteNombre: 'L', cultivo: 'C', refId: null,
+const ev = (
+  fecha: string,
+  estado: EventoCalendario['estado'],
+  tipo: EventoCalendario['tipo'] = 'ACTIVIDAD',
+): EventoCalendario => ({
+  fecha,
+  estado,
+  tipo,
+  titulo: null,
+  detalle: null,
+  siembraId: 1,
+  loteId: 1,
+  loteNombre: 'L',
+  cultivo: 'C',
+  refId: null,
 });
 
 describe('eventos del calendario', () => {
@@ -24,8 +37,16 @@ describe('eventos del calendario', () => {
   });
 
   it('en la agenda lo atrasado va primero y luego por fecha', () => {
-    const lista = [ev('2026-11-08', 'PENDIENTE'), ev('2026-11-04', 'ATRASADO', 'FUMIGACION_SUGERIDA'), ev('2026-11-05', 'ESTIMADO')];
-    expect(lista.sort(ordenAgenda).map((e) => e.estado)).toEqual(['ATRASADO', 'ESTIMADO', 'PENDIENTE']);
+    const lista = [
+      ev('2026-11-08', 'PENDIENTE'),
+      ev('2026-11-04', 'ATRASADO', 'FUMIGACION_SUGERIDA'),
+      ev('2026-11-05', 'ESTIMADO'),
+    ];
+    expect(lista.sort(ordenAgenda).map((e) => e.estado)).toEqual([
+      'ATRASADO',
+      'ESTIMADO',
+      'PENDIENTE',
+    ]);
     expect(esPorVenir(ev('2026-11-01', 'HECHO'))).toBe(false);
   });
 });

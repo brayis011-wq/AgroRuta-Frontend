@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
+import { NgClass } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PortalService } from '../../../core/services/portal.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -7,11 +13,16 @@ import { MiNomina } from '../../../core/models/portal.model';
 import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/format';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-portal-nominas',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [NgClass, TranslatePipe],
   templateUrl: './portal-payrolls.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', '../portal-lists.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    '../portal-lists.css',
+  ],
 })
 export class PortalNominasComponent implements OnInit {
   private readonly portal = inject(PortalService);
@@ -49,9 +60,11 @@ export class PortalNominasComponent implements OnInit {
 
   /** Texto de ayuda según el estado: qué significa para el trabajador. */
   ayuda(estado: MiNomina['estado']): string {
-    return estado === 'PAGADA' ? 'portal.rosters.help.paid'
-      : estado === 'APROBADA' ? 'portal.rosters.help.approved'
-      : 'portal.rosters.help.pending';
+    return estado === 'PAGADA'
+      ? 'portal.rosters.help.paid'
+      : estado === 'APROBADA'
+        ? 'portal.rosters.help.approved'
+        : 'portal.rosters.help.pending';
   }
 
   num(v: number): string {

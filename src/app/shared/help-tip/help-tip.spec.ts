@@ -4,17 +4,24 @@ import { AyudaComponent, posicionBurbuja } from './help-tip';
 
 describe('posicionBurbuja', () => {
   it('queda centrada debajo del botón', () => {
-    expect(posicionBurbuja({ top: 100, bottom: 122, left: 500, width: 22 }, 1366, 800)).toEqual({ top: 130, left: 371 });
+    expect(posicionBurbuja({ top: 100, bottom: 122, left: 500, width: 22 }, 1366, 800)).toEqual({
+      top: 130,
+      left: 371,
+    });
   });
 
   it('no se sale por los bordes de la pantalla', () => {
     expect(posicionBurbuja({ top: 100, bottom: 122, left: 2, width: 22 }, 390, 800).left).toBe(12);
     // A la derecha de un celular: 390 - 280 - 12
-    expect(posicionBurbuja({ top: 100, bottom: 122, left: 370, width: 22 }, 390, 800).left).toBe(98);
+    expect(posicionBurbuja({ top: 100, bottom: 122, left: 370, width: 22 }, 390, 800).left).toBe(
+      98,
+    );
   });
 
   it('se abre hacia arriba si no cabe abajo', () => {
-    expect(posicionBurbuja({ top: 760, bottom: 782, left: 100, width: 22 }, 1366, 800).top).toBe(632);
+    expect(posicionBurbuja({ top: 760, bottom: 782, left: 100, width: 22 }, 1366, 800).top).toBe(
+      632,
+    );
   });
 });
 

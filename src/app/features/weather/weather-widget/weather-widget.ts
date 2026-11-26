@@ -1,5 +1,13 @@
-import { Component, OnInit, inject, signal, input, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+  input,
+  computed,
+} from '@angular/core';
+import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { WeatherService } from '../../../core/services/weather.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -10,9 +18,10 @@ import { iconoClima } from '../../../shared/weather';
 const CODIGOS_CLIMA = ['01', '02', '03', '04', '09', '10', '11', '13', '50'];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-weather-widget',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [DecimalPipe, TitleCasePipe, TranslatePipe],
   templateUrl: './weather-widget.html',
   styleUrl: './weather-widget.css',
   // Versión ancha y bajita (una sola fila): la usa el Inicio cuando el clima va abajo a lo ancho
@@ -22,15 +31,15 @@ export class WeatherWidgetComponent implements OnInit {
   private weatherService: WeatherService = inject(WeatherService);
   private lang = inject(LanguageService);
 
-  city         = input<string>('Bogotá');
-  lat          = input<number | null>(null);
-  lng          = input<number | null>(null);
+  city = input<string>('Bogotá');
+  lat = input<number | null>(null);
+  lng = input<number | null>(null);
   locationName = input<string | null>(null);
-  horizontal   = input(false);
+  horizontal = input(false);
 
   weather = signal<Weather | null>(null);
   loading = signal(true);
-  error   = signal<string | null>(null); // guarda la clave de traducción
+  error = signal<string | null>(null); // guarda la clave de traducción
 
   // Nombre a mostrar: prioridad locationName > nombre de la API
   displayCity = computed(() => {
@@ -39,7 +48,8 @@ export class WeatherWidgetComponent implements OnInit {
 
   /** "Finca Silvania, CO" sin espacios sobrantes ni coma suelta cuando falta el país */
   lugar = computed(() =>
-    [this.displayCity().trim(), (this.weather()?.country ?? '').trim()].filter(Boolean).join(', '));
+    [this.displayCity().trim(), (this.weather()?.country ?? '').trim()].filter(Boolean).join(', '),
+  );
 
   /**
    * Clave de traducción de la condición del clima, según el código del ícono
@@ -51,9 +61,7 @@ export class WeatherWidgetComponent implements OnInit {
     if (!w || this.lang.current() === 'es') return null;
     const archivo = w.iconUrl?.split('/').pop() ?? '';
     const codigo = /^(\d{2})[dn]/.exec(archivo)?.[1];
-    return codigo && CODIGOS_CLIMA.includes(codigo)
-      ? `weather.conditions.c${codigo}`
-      : null;
+    return codigo && CODIGOS_CLIMA.includes(codigo) ? `weather.conditions.c${codigo}` : null;
   });
 
   /** Ícono de la app según el clima (la descripción ya va escrita debajo de la temperatura) */
@@ -70,9 +78,10 @@ export class WeatherWidgetComponent implements OnInit {
     const latVal = this.lat();
     const lngVal = this.lng();
 
-    const obs = (latVal !== null && lngVal !== null)
-      ? this.weatherService.getByCoordinates(latVal, lngVal)
-      : this.weatherService.getByCity(this.city());
+    const obs =
+      latVal !== null && lngVal !== null
+        ? this.weatherService.getByCoordinates(latVal, lngVal)
+        : this.weatherService.getByCity(this.city());
 
     obs.subscribe({
       next: (data: Weather) => {
@@ -82,7 +91,7 @@ export class WeatherWidgetComponent implements OnInit {
       error: () => {
         this.error.set('weather.error');
         this.loading.set(false);
-      }
+      },
     });
   }
 }

@@ -1,18 +1,37 @@
 <div class="inicio">
-
   <!-- Saludo y acciones rápidas -->
   <section class="hero" [attr.data-momento]="saludo">
     <span class="astro" aria-hidden="true">
-      <i class="ti" [class.ti-sun]="saludo === 'morning'" [class.ti-sunset-2]="saludo === 'afternoon'" [class.ti-moon-stars]="saludo === 'evening'"></i>
+      <i
+        class="ti"
+        [class.ti-sun]="saludo === 'morning'"
+        [class.ti-sunset-2]="saludo === 'afternoon'"
+        [class.ti-moon-stars]="saludo === 'evening'"
+      ></i>
     </span>
     <!-- Clima de hoy, en la esquina junto al sol (o la luna): temperatura, cielo, si conviene fumigar y dónde -->
     @if (climaHoy(); as c) {
-      <div class="hero-clima" [attr.data-consejo]="consejoHoy()" role="group" [attr.aria-label]="'dashboard.weatherToday' | translate">
+      <div
+        class="hero-clima"
+        [attr.data-consejo]="consejoHoy()"
+        role="group"
+        [attr.aria-label]="'dashboard.weatherToday' | translate"
+      >
         <i [class]="'ti ' + iconoHoy()" aria-hidden="true"></i>
         <p>
-          <strong>{{ grados(c) }}°C <span>{{ cielo(c) }}</span></strong>
-          <small>@if (consejoHoy(); as k) { {{ 'layout.weather.' + k | translate }} · }{{ climaLugar() || c.city }}</small>
-          <small class="detalle"><i class="ti ti-droplet" aria-hidden="true"></i> {{ c.humidity }}% · <i class="ti ti-wind" aria-hidden="true"></i> {{ c.windSpeed }} m/s</small>
+          <strong
+            >{{ grados(c) }}°C <span>{{ cielo(c) }}</span></strong
+          >
+          <small>
+            @if (consejoHoy(); as k) {
+              {{ 'layout.weather.' + k | translate }} ·
+            }
+            {{ climaLugar() || c.city }}</small
+          >
+          <small class="detalle"
+            ><i class="ti ti-droplet" aria-hidden="true"></i> {{ c.humidity }}% ·
+            <i class="ti ti-wind" aria-hidden="true"></i> {{ c.windSpeed }} m/s</small
+          >
         </p>
       </div>
     }
@@ -23,28 +42,60 @@
         @if (cargando()) {
           {{ 'dashboard.loadingSummary' | translate }}
         } @else if (resumen()?.pendientes) {
-          {{ (resumen()!.pendientes === 1 ? 'dashboard.pendingOne' : 'dashboard.pendingMany') | translate: { count: resumen()!.pendientes } }}
+          {{
+            (resumen()!.pendientes === 1 ? 'dashboard.pendingOne' : 'dashboard.pendingMany')
+              | translate: { count: resumen()!.pendientes }
+          }}
         } @else {
           {{ 'dashboard.allClear' | translate }}
         }
       </p>
     </div>
     <div class="acciones">
-      <a class="accion principal" routerLink="/worker/workdays/new"><i class="ti ti-calendar-plus" aria-hidden="true"></i>{{ 'dashboard.actions.wage' | translate }}</a>
-      <a class="accion" routerLink="/worker/payrolls"><i class="ti ti-file-invoice" aria-hidden="true"></i>{{ 'dashboard.actions.payroll' | translate }}</a>
-      <a class="accion" routerLink="/crops"><i class="ti ti-seeding" aria-hidden="true"></i>{{ 'dashboard.actions.plant' | translate }}</a>
-      <a class="accion" routerLink="/crops/new-farm"><i class="ti ti-map-pin-plus" aria-hidden="true"></i>{{ 'dashboard.actions.farm' | translate }}</a>
-      <a class="accion" routerLink="/crops/inventory"><i class="ti ti-building-warehouse" aria-hidden="true"></i>{{ 'inventario.nav' | translate }}</a>
+      <a class="accion principal" routerLink="/worker/workdays/new"
+        ><i class="ti ti-calendar-plus" aria-hidden="true"></i
+        >{{ 'dashboard.actions.wage' | translate }}</a
+      >
+      <a class="accion" routerLink="/worker/payrolls"
+        ><i class="ti ti-file-invoice" aria-hidden="true"></i
+        >{{ 'dashboard.actions.payroll' | translate }}</a
+      >
+      <a class="accion" routerLink="/crops"
+        ><i class="ti ti-seeding" aria-hidden="true"></i
+        >{{ 'dashboard.actions.plant' | translate }}</a
+      >
+      <a class="accion" routerLink="/crops/new-farm"
+        ><i class="ti ti-map-pin-plus" aria-hidden="true"></i
+        >{{ 'dashboard.actions.farm' | translate }}</a
+      >
+      <a class="accion" routerLink="/crops/inventory"
+        ><i class="ti ti-building-warehouse" aria-hidden="true"></i
+        >{{ 'inventario.nav' | translate }}</a
+      >
     </div>
     <!-- Almanaque del día: la luna y un dicho del campo -->
     <div class="almanaque" role="group" [attr.aria-label]="'almanaque.title' | translate">
       <div class="alm-luna">
-        <svg viewBox="-12 -12 24 24" role="img" [attr.aria-label]="'almanaque.moonLabel' | translate: { phase: ('almanaque.phase.' + almanaque.fase | translate) }">
-          <circle r="10" class="luna-sombra" /><path [attr.d]="almanaque.camino" class="luna-luz" />
+        <svg
+          viewBox="-12 -12 24 24"
+          role="img"
+          [attr.aria-label]="
+            'almanaque.moonLabel'
+              | translate: { phase: ('almanaque.phase.' + almanaque.fase | translate) }
+          "
+        >
+          <circle r="10" class="luna-sombra" />
+          <path [attr.d]="almanaque.camino" class="luna-luz" />
         </svg>
-        <p><strong>{{ 'almanaque.phase.' + almanaque.fase | translate }}</strong><small>{{ 'almanaque.lore.' + almanaque.fase | translate }}</small></p>
+        <p>
+          <strong>{{ 'almanaque.phase.' + almanaque.fase | translate }}</strong
+          ><small>{{ 'almanaque.lore.' + almanaque.fase | translate }}</small>
+        </p>
       </div>
-      <p class="alm-dicho"><small>{{ 'almanaque.sayingLabel' | translate }}</small><q>{{ 'almanaque.sayings.s' + almanaque.dicho | translate }}</q></p>
+      <p class="alm-dicho">
+        <small>{{ 'almanaque.sayingLabel' | translate }}</small
+        ><q>{{ 'almanaque.sayings.s' + almanaque.dicho | translate }}</q>
+      </p>
     </div>
     <!-- Paisaje de la marca: loma con curvas de nivel y un campo arado con sus primeros brotes -->
     <svg class="campo" viewBox="0 0 440 190" aria-hidden="true">
@@ -53,14 +104,25 @@
       <path class="curva" d="M34 158C88 124 138 114 194 130s110 38 246 14" />
       <path class="tierra" d="M112 190C186 136 300 124 440 148V190Z" />
       <g class="surcos">
-        <path d="M168 190Q322 156 440 151" /><path d="M224 190Q350 163 440 157" /><path d="M284 190Q378 170 440 164" />
-        <path d="M344 190Q402 177 440 172" /><path d="M400 190Q424 184 440 181" />
+        <path d="M168 190Q322 156 440 151" />
+        <path d="M224 190Q350 163 440 157" />
+        <path d="M284 190Q378 170 440 164" />
+        <path d="M344 190Q402 177 440 172" />
+        <path d="M400 190Q424 184 440 181" />
       </g>
       <g class="brotes">
-        <use href="#ar-brote" x="214" y="176" /><use href="#ar-brote" x="270" y="170" /><use href="#ar-brote" x="322" y="176" />
-        <use href="#ar-brote" x="366" y="166" /><use href="#ar-brote" x="408" y="172" />
+        <use href="#ar-brote" x="214" y="176" />
+        <use href="#ar-brote" x="270" y="170" />
+        <use href="#ar-brote" x="322" y="176" />
+        <use href="#ar-brote" x="366" y="166" />
+        <use href="#ar-brote" x="408" y="172" />
       </g>
-      <defs><path id="ar-brote" d="M0 0v-9M0-4c-5 0-7-2.5-7-6 5 0 7 2.5 7 6ZM0-6c5 0 7-2.5 7-6-5 0-7 2.5-7 6Z" /></defs>
+      <defs>
+        <path
+          id="ar-brote"
+          d="M0 0v-9M0-4c-5 0-7-2.5-7-6 5 0 7 2.5 7 6ZM0-6c5 0 7-2.5 7-6-5 0-7 2.5-7 6Z"
+        />
+      </defs>
     </svg>
   </section>
 
@@ -93,19 +155,40 @@
         <div>
           <small>{{ 'dashboard.kpi.workers' | translate }}</small>
           <strong [arContar]="r.trabajadoresActivos" [formato]="comoNumero"></strong>
-          <em class="neutro">{{ (r.trabajadoresActivos === 0 ? 'dashboard.kpi.noWorkers' : r.sinJornalHoy === 0 ? 'dashboard.kpi.allHaveWage' : 'dashboard.kpi.withoutWageToday') | translate: { count: r.sinJornalHoy } }}</em>
+          <em class="neutro">{{
+            (r.trabajadoresActivos === 0
+              ? 'dashboard.kpi.noWorkers'
+              : r.sinJornalHoy === 0
+                ? 'dashboard.kpi.allHaveWage'
+                : 'dashboard.kpi.withoutWageToday'
+            ) | translate: { count: r.sinJornalHoy }
+          }}</em>
         </div>
       </article>
       <article class="kpi">
         <span class="kpi-ic verde"><i class="ti ti-plant" aria-hidden="true"></i></span>
         <div>
           <small>{{ 'dashboard.kpi.lots' | translate }}</small>
-          <strong><span [arContar]="r.lotesEnCultivo" [formato]="comoNumero"></span><span class="de"> / {{ numero(r.lotesTotal) }}</span></strong>
-          <em class="neutro">{{ (r.lotesTotal === 0 ? 'dashboard.kpi.noLots' : r.lotesDisponibles === 0 ? 'dashboard.kpi.allPlanted' : r.lotesDisponibles === 1 ? 'dashboard.kpi.freeLotsOne' : 'dashboard.kpi.freeLots') | translate: { count: r.lotesDisponibles } }}</em>
+          <strong
+            ><span [arContar]="r.lotesEnCultivo" [formato]="comoNumero"></span
+            ><span class="de"> / {{ numero(r.lotesTotal) }}</span></strong
+          >
+          <em class="neutro">{{
+            (r.lotesTotal === 0
+              ? 'dashboard.kpi.noLots'
+              : r.lotesDisponibles === 0
+                ? 'dashboard.kpi.allPlanted'
+                : r.lotesDisponibles === 1
+                  ? 'dashboard.kpi.freeLotsOne'
+                  : 'dashboard.kpi.freeLots'
+            ) | translate: { count: r.lotesDisponibles }
+          }}</em>
         </div>
       </article>
     } @else {
-      @for (i of [1, 2, 3, 4]; track i) { <div class="kpi esqueleto"></div> }
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="kpi esqueleto"></div>
+      }
     }
   </section>
 
@@ -114,49 +197,85 @@
       <!-- Cultivos en curso -->
       <section class="tarjeta sec-cultivos">
         <header>
-          <h2><i class="ti ti-plant-2" aria-hidden="true"></i> {{ 'dashboard.crops.title' | translate }}</h2>
-          <a class="ver" routerLink="/crops">{{ 'dashboard.crops.all' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+          <h2>
+            <i class="ti ti-plant-2" aria-hidden="true"></i>
+            {{ 'dashboard.crops.title' | translate }}
+          </h2>
+          <a class="ver" routerLink="/crops"
+            >{{ 'dashboard.crops.all' | translate }}
+            <i class="ti ti-arrow-right" aria-hidden="true"></i
+          ></a>
         </header>
         @if (cultivos() === null) {
-          @for (i of [1, 2, 3]; track i) { <div class="fila esqueleto"></div> }
+          @for (i of [1, 2, 3]; track i) {
+            <div class="fila esqueleto"></div>
+          }
         } @else {
           <div class="cultivos">
             @for (c of cultivos(); track c.siembra.id; let i = $index) {
-              <a class="cultivo" [routerLink]="['/crops/planting', c.siembra.id]" [arPrecargar]="{ tipo: 'planting', id: c.siembra.id }" [style.animation-delay.ms]="i * 50">
+              <a
+                class="cultivo"
+                [routerLink]="['/crops/planting', c.siembra.id]"
+                [arPrecargar]="{ tipo: 'planting', id: c.siembra.id }"
+                [style.animation-delay.ms]="i * 50"
+              >
                 <span class="cul-ic"><i class="ti ti-seedling" aria-hidden="true"></i></span>
                 <span class="cul-txt">
-                  <strong>{{ c.siembra.tipoCultivo || ('dashboard.crops.crop' | translate) }}@if (c.siembra.variedad) { · {{ c.siembra.variedad }} }</strong>
+                  <strong
+                    >{{ c.siembra.tipoCultivo || ('dashboard.crops.crop' | translate) }}
+                    @if (c.siembra.variedad) {
+                      · {{ c.siembra.variedad }}
+                    }
+                  </strong>
                   <small>{{ c.lote.nombre }} · {{ c.lote.fincaNombre }}</small>
                 </span>
                 <span class="cul-etapa">
-                  <span class="pasos" [attr.aria-label]="'enums.etapaCultivo.' + c.siembra.estadoCultivo | translate">
-                    @for (e of etapas; track e; let k = $index) { <span [class.on]="k < c.paso"></span> }
+                  <span
+                    class="pasos"
+                    [attr.aria-label]="'enums.etapaCultivo.' + c.siembra.estadoCultivo | translate"
+                  >
+                    @for (e of etapas; track e; let k = $index) {
+                      <span [class.on]="k < c.paso"></span>
+                    }
                   </span>
                   <small>{{ 'enums.etapaCultivo.' + c.siembra.estadoCultivo | translate }}</small>
                 </span>
-                <span class="cul-dias"><strong>{{ numero(c.dias) }}</strong><small>{{ 'dashboard.crops.days' | translate }}</small></span>
+                <span class="cul-dias"
+                  ><strong>{{ numero(c.dias) }}</strong
+                  ><small>{{ 'dashboard.crops.days' | translate }}</small></span
+                >
                 <i class="ti ti-chevron-right cul-fin" aria-hidden="true"></i>
               </a>
             } @empty {
               <div class="al-dia">
                 <span class="check gris"><i class="ti ti-plant-off" aria-hidden="true"></i></span>
                 <strong>{{ 'dashboard.crops.none' | translate }}</strong>
-                <a class="accion principal chica" routerLink="/crops"><i class="ti ti-seeding" aria-hidden="true"></i>{{ 'dashboard.actions.plant' | translate }}</a>
+                <a class="accion principal chica" routerLink="/crops"
+                  ><i class="ti ti-seeding" aria-hidden="true"></i
+                  >{{ 'dashboard.actions.plant' | translate }}</a
+                >
               </div>
             }
           </div>
         }
       </section>
 
-
       <!-- Lo que viene en el calendario -->
       <section class="tarjeta sec-agenda">
         <header>
-          <h2><i class="ti ti-calendar-event" aria-hidden="true"></i> {{ 'dashboard.agenda.title' | translate }}</h2>
-          <a class="ver" routerLink="/crops/calendar">{{ 'temporadas.cal.open' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+          <h2>
+            <i class="ti ti-calendar-event" aria-hidden="true"></i>
+            {{ 'dashboard.agenda.title' | translate }}
+          </h2>
+          <a class="ver" routerLink="/crops/calendar"
+            >{{ 'temporadas.cal.open' | translate }}
+            <i class="ti ti-arrow-right" aria-hidden="true"></i
+          ></a>
         </header>
         @if (agenda() === null) {
-          @for (i of [1, 2]; track i) { <div class="fila esqueleto"></div> }
+          @for (i of [1, 2]; track i) {
+            <div class="fila esqueleto"></div>
+          }
         } @else if (agenda()!.length === 0) {
           <div class="al-dia">
             <span class="check gris"><i class="ti ti-calendar-check" aria-hidden="true"></i></span>
@@ -167,10 +286,17 @@
           <ul class="agenda" [class.pocos]="agenda()!.length <= 2">
             @for (e of agenda(); track $index) {
               <li [class.atrasado]="e.estado === 'ATRASADO'">
-                <span class="fila-ic" [class]="'fila-ic ' + tonoEvento[e.tipo]"><i class="ti {{ iconoEvento[e.tipo] }}" aria-hidden="true"></i></span>
+                <span class="fila-ic" [class]="'fila-ic ' + tonoEvento[e.tipo]"
+                  ><i class="ti {{ iconoEvento[e.tipo] }}" aria-hidden="true"></i
+                ></span>
                 <span class="fila-txt">
                   <strong>{{ textoEvento(e).titulo }}</strong>
-                  <small>{{ e.loteNombre ?? e.cultivo }}@if (textoEvento(e).sub) { · {{ textoEvento(e).sub }} }</small>
+                  <small
+                    >{{ e.loteNombre ?? e.cultivo }}
+                    @if (textoEvento(e).sub) {
+                      · {{ textoEvento(e).sub }}
+                    }
+                  </small>
                 </span>
                 <span class="cuando">{{ cuando(e) }}</span>
               </li>
@@ -181,24 +307,40 @@
 
       <!-- Consejos del clima para lo programado: "Fumiga hoy entre las 7 y las 10, llueve en 12 horas" (solo si hay algo que avisar) -->
       <app-weather-advice class="consejos-clima" />
-
     </div>
 
     <div class="col-lateral">
       <!-- Pendientes: lo primero que se ve a la derecha (en el celular, lo primero después del saludo) -->
       <section class="tarjeta pendientes">
-        <header><h2><i class="ti ti-bell" aria-hidden="true"></i> {{ 'dashboard.pending.title' | translate }}</h2></header>
+        <header>
+          <h2>
+            <i class="ti ti-bell" aria-hidden="true"></i>
+            {{ 'dashboard.pending.title' | translate }}
+          </h2>
+        </header>
         @if (cargando()) {
-          @for (i of [1, 2, 3]; track i) { <div class="fila esqueleto"></div> }
+          @for (i of [1, 2, 3]; track i) {
+            <div class="fila esqueleto"></div>
+          }
         } @else {
           @for (p of pendientes(); track p.clave; let i = $index) {
             <a class="fila" [routerLink]="p.ruta" [style.animation-delay.ms]="i * 60">
-              <span class="fila-ic" [class]="'fila-ic ' + p.tono"><i class="ti {{ p.icono }}" aria-hidden="true"></i></span>
+              <span class="fila-ic" [class]="'fila-ic ' + p.tono"
+                ><i class="ti {{ p.icono }}" aria-hidden="true"></i
+              ></span>
               <span class="fila-txt">
-                <strong>{{ 'dashboard.pending.' + p.clave + (p.n === 1 ? 'One' : '') | translate: { count: p.n } }}</strong>
-                @if (p.monto) { <small>{{ pesos(p.monto) }}</small> }
+                <strong>{{
+                  'dashboard.pending.' + p.clave + (p.n === 1 ? 'One' : '')
+                    | translate: { count: p.n }
+                }}</strong>
+                @if (p.monto) {
+                  <small>{{ pesos(p.monto) }}</small>
+                }
               </span>
-              <span class="fila-accion">{{ 'dashboard.pending.actions.' + p.accion | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></span>
+              <span class="fila-accion"
+                >{{ 'dashboard.pending.actions.' + p.accion | translate }}
+                <i class="ti ti-arrow-right" aria-hidden="true"></i
+              ></span>
             </a>
           } @empty {
             <div class="al-dia">
@@ -209,21 +351,32 @@
           }
         }
       </section>
-
     </div>
   </div>
-
 </div>
-
 
 <ng-template #tend let-t="t">
   @if (t.porcentaje === null) {
-    <em class="neutro">{{ (t.actual === 0 ? 'dashboard.kpi.noneYet' : 'dashboard.kpi.noPrevious') | translate }}</em>
+    <em class="neutro">{{
+      (t.actual === 0 ? 'dashboard.kpi.noneYet' : 'dashboard.kpi.noPrevious') | translate
+    }}</em>
   } @else {
-    <em [class.sube]="t.porcentaje > 0" [class.baja]="t.porcentaje < 0" [class.neutro]="t.porcentaje === 0">
-      <i class="ti" [class.ti-trending-up]="t.porcentaje > 0" [class.ti-trending-down]="t.porcentaje < 0"
-         [class.ti-minus]="t.porcentaje === 0" aria-hidden="true"></i>
-      {{ 'dashboard.kpi.vsLastMonth' | translate: { pct: (t.porcentaje > 0 ? '+' : '') + t.porcentaje } }}
+    <em
+      [class.sube]="t.porcentaje > 0"
+      [class.baja]="t.porcentaje < 0"
+      [class.neutro]="t.porcentaje === 0"
+    >
+      <i
+        class="ti"
+        [class.ti-trending-up]="t.porcentaje > 0"
+        [class.ti-trending-down]="t.porcentaje < 0"
+        [class.ti-minus]="t.porcentaje === 0"
+        aria-hidden="true"
+      ></i>
+      {{
+        'dashboard.kpi.vsLastMonth'
+          | translate: { pct: (t.porcentaje > 0 ? '+' : '') + t.porcentaje }
+      }}
     </em>
   }
 </ng-template>

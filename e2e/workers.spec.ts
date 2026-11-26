@@ -18,7 +18,6 @@ async function irAWorkerYEsperar(page: any) {
 }
 
 test.describe('Workers - Flujo completo', () => {
-
   test('Crear nuevo trabajador', async ({ page }) => {
     await login(page);
     await irAWorkerYEsperar(page);
@@ -33,7 +32,9 @@ test.describe('Workers - Flujo completo', () => {
     await page.getByRole('combobox').nth(1).selectOption('3: 6');
     await page.getByRole('button', { name: 'Registrar trabajador' }).click();
 
-    await expect(page.getByText('Pedro Neto', { exact: false }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Pedro Neto', { exact: false }).first()).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test('Registrar jornal a trabajador', async ({ page }) => {
@@ -47,12 +48,16 @@ test.describe('Workers - Flujo completo', () => {
     await page.locator('input[type="date"]').fill('2026-05-26');
     await page.getByPlaceholder('ID del cultivo').fill('1');
     await page.getByRole('textbox', { name: 'Ej: Café Arábiga Lote' }).fill('uchuva');
-    await page.getByRole('textbox', { name: 'Notas adicionales (opcional)' }).fill('cumple en sus horas');
+    await page
+      .getByRole('textbox', { name: 'Notas adicionales (opcional)' })
+      .fill('cumple en sus horas');
     await page.getByText('○').click();
     await page.getByRole('button', { name: 'Registrar Jornal' }).click();
 
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Seraldine', { exact: false }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Seraldine', { exact: false }).first()).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test('Ver nóminas y detalle de pago', async ({ page }) => {
@@ -79,10 +84,12 @@ test.describe('Workers - Flujo completo', () => {
     await page.getByRole('button', { name: '📋 Generar Nómina', exact: true }).click();
     await page.getByRole('button', { name: 'Ver nóminas del trabajador →' }).click();
 
-    page.once('dialog', dialog => dialog.accept());
+    page.once('dialog', (dialog) => dialog.accept());
     await page.getByRole('button', { name: '✔' }).click();
 
-    await expect(page.getByText('Seraldine', { exact: false }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Seraldine', { exact: false }).first()).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test('Editar datos de trabajador', async ({ page }) => {
@@ -97,7 +104,8 @@ test.describe('Workers - Flujo completo', () => {
     await page.getByRole('combobox').selectOption('TEMPORAL');
     await page.getByRole('button', { name: 'Guardar cambios' }).click();
 
-    await expect(page.getByText('Carlos', { exact: false }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Carlos', { exact: false }).first()).toBeVisible({
+      timeout: 10000,
+    });
   });
-
 });

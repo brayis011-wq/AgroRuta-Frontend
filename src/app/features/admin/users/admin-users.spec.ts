@@ -6,7 +6,13 @@ import { AuthService } from '../../../core/services/auth.service';
 import { UsuarioAdmin } from '../../../core/models/admin.model';
 
 const u = (id: number, nombre: string, rol: any, activo = true): UsuarioAdmin => ({
-  id, nombre, email: `${nombre.toLowerCase()}@agroruta.com`, rol, activo, telefono: null, fechaCreacion: '2026-01-10T10:00:00',
+  id,
+  nombre,
+  email: `${nombre.toLowerCase()}@agroruta.com`,
+  rol,
+  activo,
+  telefono: null,
+  fechaCreacion: '2026-01-10T10:00:00',
 });
 
 describe('AdminUsuariosComponent', () => {
@@ -87,11 +93,17 @@ describe('AdminUsuariosComponent', () => {
 
   it('shows the backend message when the change is rejected', () => {
     adminSvc.cambiarEstado.mockReturnValue(
-      throwError(() => ({ status: 422, error: { message: 'Debe quedar al menos un administrador activo.' } })),
+      throwError(() => ({
+        status: 422,
+        error: { message: 'Debe quedar al menos un administrador activo.' },
+      })),
     );
     component.pedirCambioEstado(lista[1]);
     component.confirmar();
-    expect(component.mensaje).toEqual({ tipo: 'error', texto: 'Debe quedar al menos un administrador activo.' });
+    expect(component.mensaje).toEqual({
+      tipo: 'error',
+      texto: 'Debe quedar al menos un administrador activo.',
+    });
   });
 
   it('cancel closes the dialog without saving', () => {

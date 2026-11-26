@@ -10,7 +10,9 @@ describe('CatalogoCultivoService', () => {
   const api = `${environment.apiUrl}/api/crop-catalog`;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     service = TestBed.inject(CatalogoCultivoService);
     http = TestBed.inject(HttpTestingController);
   });

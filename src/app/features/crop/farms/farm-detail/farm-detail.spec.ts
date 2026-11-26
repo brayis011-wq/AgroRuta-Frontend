@@ -5,6 +5,9 @@ import { vi } from 'vitest';
 import { DetalleFincaComponent } from './farm-detail';
 import { Finca, Lote } from '../../../../core/models/crop.model';
 import { FincaActivaService } from '../../../../core/services/active-farm.service';
+import { ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CultivoService } from '../../../../core/services/crop.service';
 
 describe('DetalleFincaComponent', () => {
   let component: DetalleFincaComponent;
@@ -13,28 +16,41 @@ describe('DetalleFincaComponent', () => {
   let routeMock: any;
   let cdrMock: any;
 
-  const fincaMock: Finca = { id: 1, nombre: 'Finca El Rosal', ubicacion: 'Huila', hectareas: 10, agricultorId: 101 };
+  const fincaMock: Finca = {
+    id: 1,
+    nombre: 'Finca El Rosal',
+    ubicacion: 'Huila',
+    hectareas: 10,
+    agricultorId: 101,
+  };
   const lotesMock: Lote[] = [
     { id: 10, nombre: 'Lote A', estado: 'DISPONIBLE', fincaId: 1, area: 5 },
-    { id: 11, nombre: 'Lote B', estado: 'EN_CULTIVO',  fincaId: 1, area: 4 },
+    { id: 11, nombre: 'Lote B', estado: 'EN_CULTIVO', fincaId: 1, area: 4 },
   ];
 
   beforeEach(() => {
     cultivoServiceMock = {
-      buscarFinca:         vi.fn().mockReturnValue(of(fincaMock)),
+      buscarFinca: vi.fn().mockReturnValue(of(fincaMock)),
       listarLotesPorFinca: vi.fn().mockReturnValue(of(lotesMock)),
-      eliminarLote:        vi.fn().mockReturnValue(of(void 0)),
+      eliminarLote: vi.fn().mockReturnValue(of(void 0)),
       buscarSiembraPorLote: vi.fn().mockReturnValue(of(null)),
     };
 
     routerMock = { navigate: vi.fn() };
-    routeMock  = { snapshot: { paramMap: { get: () => '1' } } };
-    cdrMock    = { detectChanges: vi.fn() };
+    routeMock = { snapshot: { paramMap: { get: () => '1' } } };
+    cdrMock = { detectChanges: vi.fn() };
 
     // La pantalla pide algunos servicios con inject(): se crea dentro del contexto de Angular
-    TestBed.configureTestingModule({ providers: [{ provide: FincaActivaService, useValue: { cargar: vi.fn() } }] });
-    component = TestBed.runInInjectionContext(
-      () => new DetalleFincaComponent(routeMock, routerMock, cultivoServiceMock, cdrMock));
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: FincaActivaService, useValue: { cargar: vi.fn() } },
+        { provide: ActivatedRoute, useValue: routeMock },
+        { provide: Router, useValue: routerMock },
+        { provide: CultivoService, useValue: cultivoServiceMock },
+        { provide: ChangeDetectorRef, useValue: cdrMock },
+      ],
+    });
+    component = TestBed.runInInjectionContext(() => new DetalleFincaComponent());
   });
 
   it('should create', () => {
@@ -106,7 +122,7 @@ describe('DetalleFincaComponent', () => {
   });
 
   it('cancelarEliminacion limpia el lote y el texto', () => {
-    component.loteAEliminar     = lotesMock[0];
+    component.loteAEliminar = lotesMock[0];
     component.textoConfirmacion = component.palabraConfirmacion;
 
     component.cancelarEliminacion();
@@ -116,7 +132,7 @@ describe('DetalleFincaComponent', () => {
   });
 
   it('confirmarEliminacionLote no actúa si el texto es incorrecto', () => {
-    component.loteAEliminar     = lotesMock[0];
+    component.loteAEliminar = lotesMock[0];
     component.textoConfirmacion = 'mal escrito';
 
     component.confirmarEliminacionLote();
@@ -125,8 +141,8 @@ describe('DetalleFincaComponent', () => {
   });
 
   it('confirmarEliminacionLote elimina el lote de la lista', () => {
-    component.lotes             = [...lotesMock];
-    component.loteAEliminar     = lotesMock[0];
+    component.lotes = [...lotesMock];
+    component.loteAEliminar = lotesMock[0];
     component.textoConfirmacion = component.palabraConfirmacion;
 
     component.confirmarEliminacionLote();
@@ -140,8 +156,8 @@ describe('DetalleFincaComponent', () => {
 
   it('confirmarEliminacionLote muestra error si el servicio falla', () => {
     cultivoServiceMock.eliminarLote = vi.fn().mockReturnValue(throwError(() => new Error()));
-    component.lotes             = [...lotesMock];
-    component.loteAEliminar     = lotesMock[0];
+    component.lotes = [...lotesMock];
+    component.loteAEliminar = lotesMock[0];
     component.textoConfirmacion = component.palabraConfirmacion;
 
     component.confirmarEliminacionLote();

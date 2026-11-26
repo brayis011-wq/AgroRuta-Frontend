@@ -26,13 +26,23 @@
       <p class="sub">{{ 'auth.verify.invalid' | translate }}</p>
     </div>
     @if (reenviado()) {
-      <p class="aviso ok" role="status"><i class="ti ti-circle-check" aria-hidden="true"></i><span>{{ 'auth.verify.resent' | translate }}</span></p>
+      <p class="aviso ok" role="status">
+        <i class="ti ti-circle-check" aria-hidden="true"></i
+        ><span>{{ 'auth.verify.resent' | translate }}</span>
+      </p>
     } @else {
       <form (ngSubmit)="reenviar()">
         <div class="campo">
           <label for="email">{{ 'auth.login.email' | translate }}</label>
-          <input id="email" type="email" [(ngModel)]="email" name="email" autocomplete="email"
-                 [placeholder]="'auth.login.emailPlaceholder' | translate" required />
+          <input
+            id="email"
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            autocomplete="email"
+            [placeholder]="'auth.login.emailPlaceholder' | translate"
+            required
+          />
         </div>
         <button type="submit" class="btn-prim" [disabled]="reenviando() || !email.trim()">
           {{ (reenviando() ? 'auth.forgot.sending' : 'auth.verify.resend') | translate }}
@@ -42,4 +52,6 @@
   }
 }
 
-<p class="link"><a routerLink="/auth/login">{{ 'auth.forgot.back' | translate }}</a></p>
+<p class="link">
+  <a routerLink="/auth/login">{{ 'auth.forgot.back' | translate }}</a>
+</p>

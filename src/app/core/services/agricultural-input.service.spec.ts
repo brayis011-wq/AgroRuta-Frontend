@@ -13,15 +13,14 @@ describe('AgriculturalInputService', () => {
   const baseUrl = `${environment.apiUrl}/api/agricultural-inputs`;
 
   const mockInput: AgriculturalInput = { id: 1, name: 'Fertilizante A', type: 'fertilizer' } as any;
-  const mockRequest: AgriculturalInputRequest = { name: 'Fertilizante A', type: 'fertilizer' } as any;
+  const mockRequest: AgriculturalInputRequest = {
+    name: 'Fertilizante A',
+    type: 'fertilizer',
+  } as any;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        AgriculturalInputService,
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), AgriculturalInputService],
     });
     service = TestBed.inject(AgriculturalInputService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -34,7 +33,7 @@ describe('AgriculturalInputService', () => {
   });
 
   it('getAll() should return all inputs via GET', () => {
-    service.getAll().subscribe(result => {
+    service.getAll().subscribe((result) => {
       expect(result).toEqual([mockInput]);
     });
 
@@ -44,7 +43,7 @@ describe('AgriculturalInputService', () => {
   });
 
   it('search() should send query param and return results', () => {
-    service.search('fertilizante').subscribe(result => {
+    service.search('fertilizante').subscribe((result) => {
       expect(result).toEqual([mockInput]);
     });
 
@@ -54,7 +53,7 @@ describe('AgriculturalInputService', () => {
   });
 
   it('getById() should return a single input via GET', () => {
-    service.getById(1).subscribe(result => {
+    service.getById(1).subscribe((result) => {
       expect(result).toEqual(mockInput);
     });
 
@@ -64,7 +63,7 @@ describe('AgriculturalInputService', () => {
   });
 
   it('create() should send POST and return created input', () => {
-    service.create(mockRequest).subscribe(result => {
+    service.create(mockRequest).subscribe((result) => {
       expect(result).toEqual(mockInput);
     });
 
@@ -75,7 +74,7 @@ describe('AgriculturalInputService', () => {
   });
 
   it('update() should send PUT and return updated input', () => {
-    service.update(1, mockRequest).subscribe(result => {
+    service.update(1, mockRequest).subscribe((result) => {
       expect(result).toEqual(mockInput);
     });
 
@@ -86,7 +85,7 @@ describe('AgriculturalInputService', () => {
   });
 
   it('delete() should send DELETE request', () => {
-    service.delete(1).subscribe(result => {
+    service.delete(1).subscribe((result) => {
       expect(result).toBeNull();
     });
 

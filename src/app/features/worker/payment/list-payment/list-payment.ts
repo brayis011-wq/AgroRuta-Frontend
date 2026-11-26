@@ -1,26 +1,57 @@
 // src/app/features/worker/payment/list-payment/list-payment.ts
 
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
+
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { guardarEnUrl } from '../../../../shared/url-state';
 import { FiltroTrabajadorComponent } from '../../worker-filter/worker-filter';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PesosPipe, FechaPipe, PeriodoPipe } from '../../../../shared/format.pipe';
-import { PagoService, NominaService, TrabajadorService } from '../../../../core/services/worker.service';
+import {
+  PagoService,
+  NominaService,
+  TrabajadorService,
+} from '../../../../core/services/worker.service';
 import { Pago, Nomina, ResumenPagos, Trabajador } from '../../../../core/models/worker.model';
 import { descargarArchivo, numeroComprobante } from '../../../../shared/download';
 import { iniciales as inicialesDe } from '../../../../shared/iniciales';
 import { FlujoPagoComponent } from '../../pay-flow/pay-flow';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-pagos',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe, PesosPipe, FechaPipe, PeriodoPipe, FlujoPagoComponent, FiltroTrabajadorComponent],
+  imports: [
+    RouterModule,
+    TranslatePipe,
+    PesosPipe,
+    FechaPipe,
+    PeriodoPipe,
+    FlujoPagoComponent,
+    FiltroTrabajadorComponent,
+  ],
   templateUrl: './list-payment.html',
-  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../../report/report-table.css', '../../worker-ui.css', '../../worker-panel.css', './list-payment.css']
+  styleUrls: [
+    '../../../crop/crop-ui.css',
+    '../../../crop/crop-blocks.css',
+    '../../../report/report-table.css',
+    '../../worker-ui.css',
+    '../../worker-panel.css',
+    './list-payment.css',
+  ],
 })
 export class ListaPagosComponent implements OnInit {
+  private readonly pagoService = inject(PagoService);
+  private readonly nominaService = inject(NominaService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   /** Pagos cargados hasta ahora, del más reciente al más antiguo (se suman páginas con "Cargar más") */
   pagos: Pago[] = [];
   /** Pagos en total con el filtro actual, en todas las páginas */
@@ -30,7 +61,7 @@ export class ListaPagosComponent implements OnInit {
   /** Totales calculados en el servidor (no dependen de las páginas cargadas) */
   resumen: ResumenPagos = { cantidad: 0, total: 0, trabajadores: 0 };
   cargando = false;
-  error = '';   // clave de traducción
+  error = ''; // clave de traducción
 
   // Filtro por nominaId desde query param
   nominaIdFiltro: number | null = null;
@@ -48,25 +79,30 @@ export class ListaPagosComponent implements OnInit {
   descargando: number | null = null;
   errorComprobante = false;
 
-  get totalGlobal(): number { return this.resumen.total; }
+  get totalGlobal(): number {
+    return this.resumen.total;
+  }
 
-  get totalPagos(): number { return this.resumen.cantidad; }
+  get totalPagos(): number {
+    return this.resumen.cantidad;
+  }
 
-  get totalTrabajadores(): number { return this.resumen.trabajadores; }
+  get totalTrabajadores(): number {
+    return this.resumen.trabajadores;
+  }
 
   /** Ya vienen filtrados por nómina y ordenados desde el servidor */
-  get visibles(): Pago[] { return this.pagos; }
+  get visibles(): Pago[] {
+    return this.pagos;
+  }
 
-  get ultimoPago(): Pago | null { return this.pagos[0] ?? null; }
+  get ultimoPago(): Pago | null {
+    return this.pagos[0] ?? null;
+  }
 
-  get hayMas(): boolean { return this.pagos.length < this.total; }
-
-  constructor(
-    private pagoService: PagoService,
-    private nominaService: NominaService,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
-  ) {}
+  get hayMas(): boolean {
+    return this.pagos.length < this.total;
+  }
 
   ngOnInit(): void {
     const nominaParam = this.route.snapshot.queryParamMap.get('nominaId');
@@ -74,8 +110,13 @@ export class ListaPagosComponent implements OnInit {
     const trabajadorParam = this.route.snapshot.queryParamMap.get('trabajadorId');
     this.trabajadorIdFiltro = trabajadorParam ? Number(trabajadorParam) : null;
     this.trabajadorService.listarTodos().subscribe({
-      next: (t) => { this.trabajadores = t; this.cdr.detectChanges(); },
-      error: () => {},
+      next: (t) => {
+        this.trabajadores = t;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
 
     this.cargar();
@@ -85,8 +126,13 @@ export class ListaPagosComponent implements OnInit {
   cargar(): void {
     this.cargarPagina(0);
     this.pagoService.resumen(this.nominaIdFiltro, this.trabajadorIdFiltro).subscribe({
-      next: (r) => { this.resumen = r; this.cdr.detectChanges(); },
-      error: () => {}
+      next: (r) => {
+        this.resumen = r;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
   }
 
@@ -96,23 +142,26 @@ export class ListaPagosComponent implements OnInit {
   }
 
   private cargarPagina(pagina: number): void {
-    if (pagina === 0) this.cargando = true; else this.cargandoMas = true;
-    this.pagoService.pagina(pagina, this.nominaIdFiltro, undefined, this.trabajadorIdFiltro).subscribe({
-      next: (p) => {
-        this.pagos = pagina === 0 ? p.contenido : [...this.pagos, ...p.contenido];
-        this.total = p.total;
-        this.pagina = pagina;
-        this.cargando = false;
-        this.cargandoMas = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.error = 'workers.payments.errors.load';
-        this.cargando = false;
-        this.cargandoMas = false;
-        this.cdr.detectChanges();
-      }
-    });
+    if (pagina === 0) this.cargando = true;
+    else this.cargandoMas = true;
+    this.pagoService
+      .pagina(pagina, this.nominaIdFiltro, undefined, this.trabajadorIdFiltro)
+      .subscribe({
+        next: (p) => {
+          this.pagos = pagina === 0 ? p.contenido : [...this.pagos, ...p.contenido];
+          this.total = p.total;
+          this.pagina = pagina;
+          this.cargando = false;
+          this.cargandoMas = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.error = 'workers.payments.errors.load';
+          this.cargando = false;
+          this.cargandoMas = false;
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   verTodos(): void {
@@ -146,7 +195,7 @@ export class ListaPagosComponent implements OnInit {
         error: () => {
           this.cargandoDetalle = false;
           this.cdr.detectChanges();
-        }
+        },
       });
     } else {
       this.cargandoDetalle = false;
@@ -182,7 +231,9 @@ export class ListaPagosComponent implements OnInit {
   /** Ícono (Tabler) del método de pago */
   metodoIcono(metodo?: string): string {
     const iconos: Record<string, string> = {
-      EFECTIVO: 'ti-cash', TRANSFERENCIA: 'ti-building-bank', CHEQUE: 'ti-file-dollar',
+      EFECTIVO: 'ti-cash',
+      TRANSFERENCIA: 'ti-building-bank',
+      CHEQUE: 'ti-file-dollar',
     };
     return metodo ? (iconos[metodo] ?? 'ti-credit-card') : 'ti-credit-card';
   }

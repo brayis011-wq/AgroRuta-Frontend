@@ -1,5 +1,17 @@
 import { ATAJOS, IR_A, escribiendoEn, nuevoSegun } from './shortcuts';
-import { Component, DestroyRef, ElementRef, HostListener, NgZone, afterNextRender, computed, effect, inject, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostListener,
+  NgZone,
+  afterNextRender,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DecimalPipe, Location, NgTemplateOutlet, UpperCasePipe } from '@angular/common';
@@ -54,7 +66,19 @@ export interface ItemSubmenu {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterModule, TranslatePipe, UpperCasePipe, DecimalPipe, NgTemplateOutlet, BuscadorComponent, OfflineStatusComponent, ProgresoComponent, AvisoComponent, DeslizaCierraDirective, CampanaComponent],
+  imports: [
+    RouterModule,
+    TranslatePipe,
+    UpperCasePipe,
+    DecimalPipe,
+    NgTemplateOutlet,
+    BuscadorComponent,
+    OfflineStatusComponent,
+    ProgresoComponent,
+    AvisoComponent,
+    DeslizaCierraDirective,
+    CampanaComponent,
+  ],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css', './layout-movil.css', './layout-extras.css', './layout-anim.css'],
 })
@@ -80,8 +104,13 @@ export class LayoutComponent {
 
   /** Clima de la finca activa (o de la primera con ubicación) */
   readonly clima = signal<Weather | null>(null);
-  readonly lugarClima = computed(() => municipio(this.fincaActiva.paraClima()) || this.clima()?.city || '');
-  readonly consejo = computed(() => { const c = this.clima(); return c ? consejoFumigacion(c) : null; });
+  readonly lugarClima = computed(
+    () => municipio(this.fincaActiva.paraClima()) || this.clima()?.city || '',
+  );
+  readonly consejo = computed(() => {
+    const c = this.clima();
+    return c ? consejoFumigacion(c) : null;
+  });
   readonly iconoClima = computed(() => iconoClima(this.clima()?.iconUrl));
   /** En el Inicio el clima ya sale en grande: el menú no lo repite */
   readonly enInicio = signal(false);
@@ -132,12 +161,22 @@ export class LayoutComponent {
       { ruta: '/crops/inventory', clave: 'inventario.nav', exacto: true },
     ];
     if (finca) {
-      items.push({ ruta: `/crops/farm/${finca.id}`, clave: 'layout.nav.farmSummary', exacto: true });
+      items.push({
+        ruta: `/crops/farm/${finca.id}`,
+        clave: 'layout.nav.farmSummary',
+        exacto: true,
+      });
       items.push({ ruta: '/crops/calendar', clave: 'temporadas.cal.menu', exacto: true });
       const lotes = this.fincaActiva.lotes();
       if (lotes.length) {
         items.push({ ruta: '#lotes', titulo: true, clave: 'layout.nav.plots' });
-        items.push(...lotes.slice(0, MAX_LOTES_MENU).map((l) => ({ ruta: `/crops/plot/${l.id}`, texto: l.nombre, icono: 'ti-point-filled' })));
+        items.push(
+          ...lotes.slice(0, MAX_LOTES_MENU).map((l) => ({
+            ruta: `/crops/plot/${l.id}`,
+            texto: l.nombre,
+            icono: 'ti-point-filled',
+          })),
+        );
       }
     }
     return items;
@@ -149,14 +188,17 @@ export class LayoutComponent {
     effect(() => this.cargarClima(this.fincaActiva.paraClima()));
     this.alNavegar(this.router.url);
     this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd), takeUntilDestroyed(inject(DestroyRef)))
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        takeUntilDestroyed(inject(DestroyRef)),
+      )
       .subscribe((e) => this.alNavegar((e as NavigationEnd).urlAfterRedirects));
 
     // Fuera de Angular: el desplazamiento dispara muchos eventos y solo interesa cuando cambia el estado
     const alDeslizar = () => this.seguirDesplazamiento();
     const zona = inject(NgZone);
     const raiz = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    let dejarDeVigilar = () => {};
+    let dejarDeVigilar: () => void = () => undefined;
     zona.runOutsideAngular(() => window.addEventListener('scroll', alDeslizar, { passive: true }));
     afterNextRender(() => {
       const contenido = raiz.querySelector<HTMLElement>('.main');
@@ -198,19 +240,29 @@ export class LayoutComponent {
 
   /** En el navegador ya existen estos gestos (volver, actualizar): solo se agregan en la app instalada */
   private esAppInstalada(): boolean {
-    return window.matchMedia?.('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true;
+    return (
+      window.matchMedia?.('(display-mode: standalone)').matches ||
+      (navigator as { standalone?: boolean }).standalone === true
+    );
   }
 
   @HostListener('document:touchstart', ['$event'])
   alEmpezarToque(e: TouchEvent): void {
     const p = e.touches[0];
-    const instalada = this.esAppInstalada() && window.innerWidth <= 760 && !this.cajonAbierto() && !document.body.classList.contains('con-panel');
+    const instalada =
+      this.esAppInstalada() &&
+      window.innerWidth <= 760 &&
+      !this.cajonAbierto() &&
+      !document.body.classList.contains('con-panel');
     // Volver: desde el borde izquierdo
-    this.toqueInicio = instalada && p && p.clientX <= 24 ? { x: p.clientX, y: p.clientY, t: Date.now() } : null;
+    this.toqueInicio =
+      instalada && p && p.clientX <= 24 ? { x: p.clientX, y: p.clientY, t: Date.now() } : null;
     // Actualizar: con la página arriba del todo
     this.tironInicio = instalada && p && window.scrollY <= 0 ? p.clientY : null;
     if (this.tironInicio !== null) {
-      this.zonaToques.runOutsideAngular(() => document.addEventListener('touchmove', this.moverToque, { passive: true }));
+      this.zonaToques.runOutsideAngular(() =>
+        document.addEventListener('touchmove', this.moverToque, { passive: true }),
+      );
     }
   }
 
@@ -222,7 +274,9 @@ export class LayoutComponent {
     if (this.tironInicio === null) return;
     const dy = (e.touches[0]?.clientY ?? 0) - this.tironInicio;
     // Con resistencia: el indicador baja menos que el dedo
-    this.tiron.set(dy > 0 && window.scrollY <= 0 ? Math.min(dy * 0.5, DISTANCIA_ACTUALIZAR * 1.4) : 0);
+    this.tiron.set(
+      dy > 0 && window.scrollY <= 0 ? Math.min(dy * 0.5, DISTANCIA_ACTUALIZAR * 1.4) : 0,
+    );
   }
 
   @HostListener('document:touchend', ['$event'])
@@ -233,10 +287,14 @@ export class LayoutComponent {
     this.tironInicio = null;
     document.removeEventListener('touchmove', this.moverToque);
     this.tiron.set(0);
-    if (tiro >= DISTANCIA_ACTUALIZAR) { window.location.reload(); return; }
+    if (tiro >= DISTANCIA_ACTUALIZAR) {
+      window.location.reload();
+      return;
+    }
     const p = e.changedTouches[0];
     if (!ini || !p || this.ruta() === '/dashboard') return;
-    if (esDeslizarParaVolver(ini, { x: p.clientX, y: p.clientY, t: Date.now() })) this.ubicacion.back();
+    if (esDeslizarParaVolver(ini, { x: p.clientX, y: p.clientY, t: Date.now() }))
+      this.ubicacion.back();
   }
 
   // ── Atajos de teclado (computador) ──────────────────────────────────
@@ -248,7 +306,14 @@ export class LayoutComponent {
 
   @HostListener('document:keydown', ['$event'])
   alTeclear(e: KeyboardEvent): void {
-    if (e.ctrlKey || e.metaKey || e.altKey || escribiendoEn(e.target) || document.querySelector('dialog[open], .caja[role=dialog]')) return;
+    if (
+      e.ctrlKey ||
+      e.metaKey ||
+      e.altKey ||
+      escribiendoEn(e.target) ||
+      document.querySelector('dialog[open], .caja[role=dialog]')
+    )
+      return;
     const k = e.key.toLowerCase();
     if (this.esperandoDestino && Date.now() - this.esperandoDestino < 1200 && IR_A[k]) {
       e.preventDefault();
@@ -257,9 +322,20 @@ export class LayoutComponent {
       return;
     }
     this.esperandoDestino = 0;
-    if (k === 'g') { this.esperandoDestino = Date.now(); return; }
-    if (e.key === '/') { e.preventDefault(); this.buscador()?.abrir(); return; }
-    if (e.key === '?') { e.preventDefault(); this.ayudaAtajos.set(!this.ayudaAtajos()); return; }
+    if (k === 'g') {
+      this.esperandoDestino = Date.now();
+      return;
+    }
+    if (e.key === '/') {
+      e.preventDefault();
+      this.buscador()?.abrir();
+      return;
+    }
+    if (e.key === '?') {
+      e.preventDefault();
+      this.ayudaAtajos.set(!this.ayudaAtajos());
+      return;
+    }
     if (k === 'n' && !document.body.classList.contains('con-panel')) {
       e.preventDefault();
       const destino = nuevoSegun(this.ruta());
@@ -312,14 +388,23 @@ export class LayoutComponent {
     this.fincaActiva.cargar();
   }
 
-  private cargarClima(f: { centroideLat?: number; centroideLng?: number; ubicacion?: string } | null): void {
-    if (!f) { this.clima.set(null); return; }
-    const obs = f.centroideLat != null && f.centroideLng != null
-      ? this.weatherService.getByCoordinates(f.centroideLat, f.centroideLng)
-      : municipio(f as { ubicacion: string })
-        ? this.weatherService.getByCity(municipio(f as { ubicacion: string }))
-        : null;
-    if (!obs) { this.clima.set(null); return; }
+  private cargarClima(
+    f: { centroideLat?: number; centroideLng?: number; ubicacion?: string } | null,
+  ): void {
+    if (!f) {
+      this.clima.set(null);
+      return;
+    }
+    const obs =
+      f.centroideLat != null && f.centroideLng != null
+        ? this.weatherService.getByCoordinates(f.centroideLat, f.centroideLng)
+        : municipio(f as { ubicacion: string })
+          ? this.weatherService.getByCity(municipio(f as { ubicacion: string }))
+          : null;
+    if (!obs) {
+      this.clima.set(null);
+      return;
+    }
     obs.subscribe({ next: (w) => this.clima.set(w), error: () => this.clima.set(null) });
   }
 
@@ -342,7 +427,8 @@ export class LayoutComponent {
   private cargarPendientes(): void {
     // Solo el conteo por estado: antes se traían todas las nóminas para contarlas aquí
     this.nominaService.resumen().subscribe({
-      next: (r) => this.nominasPendientes.set(r.find((x) => x.estado === 'PENDIENTE')?.cantidad ?? 0),
+      next: (r) =>
+        this.nominasPendientes.set(r.find((x) => x.estado === 'PENDIENTE')?.cantidad ?? 0),
       error: () => this.nominasPendientes.set(0),
     });
   }
@@ -350,7 +436,11 @@ export class LayoutComponent {
   alternarColapsado(): void {
     const valor = !this.colapsado();
     this.colapsado.set(valor);
-    try { localStorage.setItem(CLAVE_COLAPSADO, String(valor)); } catch { /* sin almacenamiento */ }
+    try {
+      localStorage.setItem(CLAVE_COLAPSADO, String(valor));
+    } catch {
+      /* sin almacenamiento */
+    }
   }
 
   alternar(g: IdGrupo): void {
@@ -361,7 +451,8 @@ export class LayoutComponent {
     }
     this.abiertos.update((s) => {
       const n = new Set(s);
-      n.has(g) ? n.delete(g) : n.add(g);
+      if (n.has(g)) n.delete(g);
+      else n.add(g);
       return n;
     });
   }
@@ -387,7 +478,12 @@ export class LayoutComponent {
   }
 }
 
-const RUTA_GRUPO: Record<IdGrupo, string> = { cultivos: '/crops', trabajadores: '/worker', finanzas: '/finance', reportes: '/reports' };
+const RUTA_GRUPO: Record<IdGrupo, string> = {
+  cultivos: '/crops',
+  trabajadores: '/worker',
+  finanzas: '/finance',
+  reportes: '/reports',
+};
 
 function grupoDeUrl(url: string): IdGrupo | null {
   if (url.startsWith('/crops')) return 'cultivos';
@@ -398,5 +494,9 @@ function grupoDeUrl(url: string): IdGrupo | null {
 }
 
 function leerColapsado(): boolean {
-  try { return localStorage.getItem(CLAVE_COLAPSADO) === 'true'; } catch { return false; }
+  try {
+    return localStorage.getItem(CLAVE_COLAPSADO) === 'true';
+  } catch {
+    return false;
+  }
 }

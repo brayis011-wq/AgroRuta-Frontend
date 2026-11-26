@@ -1,5 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -9,9 +16,16 @@ import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.servic
 import { formatoFecha } from '../../../../shared/format';
 import { EtapaSiembra, Siembra, siembraActiva } from '../../../../core/models/crop.model';
 import {
-  diasEnEtapa, diasEntre, fechaMinima, hoyIso, pasosCiclo, progresoCiclo, siguienteEtapa,
+  diasEnEtapa,
+  diasEntre,
+  fechaMinima,
+  hoyIso,
+  pasosCiclo,
+  progresoCiclo,
+  siguienteEtapa,
 } from './stage-cycle.logic';
 import { estimarCiclo, etapasConDias } from './cycle-estimate';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 type Panel = 'avanzar' | 'terminar' | null;
 
@@ -53,7 +67,9 @@ export class CicloEtapasComponent {
   readonly siguiente = computed(() => siguienteEtapa(this.siembra().estadoCultivo));
   readonly minimo = computed(() => fechaMinima(this.siembra(), this.etapas()));
   readonly diasEtapa = computed(() => diasEnEtapa(this.siembra(), this.etapas()));
-  readonly duracion = computed(() => diasEntre(this.siembra().fechaSiembra, this.siembra().fechaFin ?? this.hoy));
+  readonly duracion = computed(() =>
+    diasEntre(this.siembra().fechaSiembra, this.siembra().fechaFin ?? this.hoy),
+  );
   readonly puedeDeshacer = computed(() => this.siembra().estadoCultivo !== 'GERMINACION');
   /** Avance de la línea hasta el punto de la etapa actual */
   readonly progreso = computed(() => progresoCiclo(this.siembra().estadoCultivo));
@@ -114,11 +130,18 @@ export class CicloEtapasComponent {
     if (!s.id || this.guardando()) return;
     const reabrir = !this.activa();
     const ok = await this.confirm.preguntar({
-      titulo: this.translate.instant(reabrir ? 'temporadas.ciclo.reopenTitle' : 'temporadas.ciclo.undoTitle'),
-      mensaje: this.translate.instant(reabrir ? 'temporadas.ciclo.reopenMsg' : 'temporadas.ciclo.undoMsg', {
-        etapa: this.translate.instant('enums.etapaCultivo.' + s.estadoCultivo),
-      }),
-      confirmar: this.translate.instant(reabrir ? 'temporadas.ciclo.reopen' : 'temporadas.ciclo.undo'),
+      titulo: this.translate.instant(
+        reabrir ? 'temporadas.ciclo.reopenTitle' : 'temporadas.ciclo.undoTitle',
+      ),
+      mensaje: this.translate.instant(
+        reabrir ? 'temporadas.ciclo.reopenMsg' : 'temporadas.ciclo.undoMsg',
+        {
+          etapa: this.translate.instant('enums.etapaCultivo.' + s.estadoCultivo),
+        },
+      ),
+      confirmar: this.translate.instant(
+        reabrir ? 'temporadas.ciclo.reopen' : 'temporadas.ciclo.undo',
+      ),
     });
     if (ok) this.ejecutar(this.cultivo.retrocederEtapa(s.id));
   }
@@ -134,7 +157,7 @@ export class CicloEtapasComponent {
       },
       error: (err) => {
         this.guardando.set(false);
-        this.error.set(err?.error?.message || 'temporadas.ciclo.error');
+        this.error.set(mensajeDeError(err, 'temporadas.ciclo.error'));
       },
     });
   }

@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
+import { NgClass } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
@@ -10,11 +16,16 @@ import { formatoFecha, formatoNumero, formatoPesos } from '../../../shared/forma
 type Pestana = 'fincas' | 'trabajadores' | 'nominas';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-agricultor-detalle',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [NgClass, RouterModule, TranslatePipe],
   templateUrl: './admin-farmer-detail.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', './admin-farmer-detail.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    './admin-farmer-detail.css',
+  ],
 })
 export class AdminAgricultorDetalleComponent implements OnInit {
   private readonly adminService = inject(AdminService);
@@ -51,18 +62,25 @@ export class AdminAgricultorDetalleComponent implements OnInit {
 
   claseEstadoNomina(estado: string | null): string {
     switch (estado) {
-      case 'PAGADA': return 'ok';
-      case 'APROBADA': return 'info';
-      case 'PENDIENTE': return 'warn';
-      default: return 'off';
+      case 'PAGADA':
+        return 'ok';
+      case 'APROBADA':
+        return 'info';
+      case 'PENDIENTE':
+        return 'warn';
+      default:
+        return 'off';
     }
   }
 
   claseEstadoTrabajador(estado: string | null): string {
     switch (estado) {
-      case 'ACTIVO': return 'ok';
-      case 'SUSPENDIDO': return 'warn';
-      default: return 'off';
+      case 'ACTIVO':
+        return 'ok';
+      case 'SUSPENDIDO':
+        return 'warn';
+      default:
+        return 'off';
     }
   }
 

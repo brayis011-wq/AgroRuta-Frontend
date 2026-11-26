@@ -7,12 +7,27 @@ import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.servic
 import { DiagnosticoPlaga } from '../../../../core/models/diagnosis.model';
 
 const roya: DiagnosticoPlaga = {
-  id: 5, siembraId: 1, fecha: '2026-11-10T09:30:00', nota: 'polvo naranja', problema: 'Roya del café',
-  tipo: 'ENFERMEDAD', confianza: 'MEDIA', sintomas: 'Polvillo anaranjado en el envés.',
-  recomendaciones: ['Revisa el resto del lote.', 'Retira las hojas afectadas.'], otrasPosibilidades: ['Mancha de hierro'],
+  id: 5,
+  siembraId: 1,
+  fecha: '2026-11-10T09:30:00',
+  nota: 'polvo naranja',
+  problema: 'Roya del café',
+  tipo: 'ENFERMEDAD',
+  confianza: 'MEDIA',
+  sintomas: 'Polvillo anaranjado en el envés.',
+  recomendaciones: ['Revisa el resto del lote.', 'Retira las hojas afectadas.'],
+  otrasPosibilidades: ['Mancha de hierro'],
   advertencia: 'Puede extenderse rápido con la lluvia.',
 };
-const broca: DiagnosticoPlaga = { ...roya, id: 9, problema: 'Broca del café', tipo: 'PLAGA', confianza: 'ALTA', nota: null, advertencia: null };
+const broca: DiagnosticoPlaga = {
+  ...roya,
+  id: 9,
+  problema: 'Broca del café',
+  tipo: 'PLAGA',
+  confianza: 'ALTA',
+  nota: null,
+  advertencia: null,
+};
 
 describe('DiagnosticoSiembraComponent', () => {
   const servicio = { listar: vi.fn(), diagnosticar: vi.fn(), foto: vi.fn(), eliminar: vi.fn() };
@@ -38,7 +53,9 @@ describe('DiagnosticoSiembraComponent', () => {
     direcciones = 0;
     URL.createObjectURL = vi.fn(() => 'blob:prueba-' + ++direcciones);
     URL.revokeObjectURL = vi.fn();
-    servicio.listar.mockReturnValue(of({ disponible: true, restantesHoy: 3, diagnosticos: [roya] }));
+    servicio.listar.mockReturnValue(
+      of({ disponible: true, restantesHoy: 3, diagnosticos: [roya] }),
+    );
   });
 
   afterEach(() => vi.clearAllMocks());
@@ -73,7 +90,10 @@ describe('DiagnosticoSiembraComponent', () => {
 
   it('no deja elegir archivos que no son imágenes', async () => {
     const c = crear().componentInstance;
-    const campo = { files: [new File(['x'], 'notas.pdf', { type: 'application/pdf' })], value: 'x' };
+    const campo = {
+      files: [new File(['x'], 'notas.pdf', { type: 'application/pdf' })],
+      value: 'x',
+    };
     await c.elegir({ target: campo } as unknown as Event);
     expect(c.error()).toBe('diagnostico.errors.tipo');
     expect(c.fase()).toBe('inicio');
@@ -101,14 +121,23 @@ describe('DiagnosticoSiembraComponent', () => {
     // Queda abierto y con la foto que ya estaba en el dispositivo
     expect(c.abierto()).toBe(9);
     expect(servicio.foto).not.toHaveBeenCalled();
-    expect(f.nativeElement.querySelector('.detalle img')?.getAttribute('src')).toBe('blob:prueba-1');
+    expect(f.nativeElement.querySelector('.detalle img')?.getAttribute('src')).toBe(
+      'blob:prueba-1',
+    );
   });
 
   it('si el servidor rechaza la foto muestra su mensaje y actualiza cuántas quedan', () => {
-    servicio.diagnosticar.mockReturnValue(throwError(() => ({ status: 422, error: { message: 'En la foto no se distingue un cultivo.' } })));
+    servicio.diagnosticar.mockReturnValue(
+      throwError(() => ({
+        status: 422,
+        error: { message: 'En la foto no se distingue un cultivo.' },
+      })),
+    );
     const c = crear().componentInstance;
     c.usar(new Blob(['jpeg']));
-    servicio.listar.mockReturnValue(of({ disponible: true, restantesHoy: 2, diagnosticos: [roya] }));
+    servicio.listar.mockReturnValue(
+      of({ disponible: true, restantesHoy: 2, diagnosticos: [roya] }),
+    );
 
     c.analizar();
 

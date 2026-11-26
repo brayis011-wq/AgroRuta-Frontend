@@ -30,21 +30,42 @@ export function calcularPrimerosPasos(d: DatosPasos): PasoInicial[] {
   // Un lote que no está disponible ya tuvo (o tiene) una siembra
   const haSembrado = d.lotes.some((l) => l.estado === 'EN_CULTIVO' || l.estado === 'EN_DESCANSO');
   const hayNominas = d.nominas.some((n) => n.cantidad > 0);
-  const hayJornales = (d.jornales?.mesActual ?? 0) + (d.jornales?.mesAnterior ?? 0) > 0 || hayNominas;
+  const hayJornales =
+    (d.jornales?.mesActual ?? 0) + (d.jornales?.mesAnterior ?? 0) > 0 || hayNominas;
 
   return [
-    { clave: 'farm', icono: 'ti-map-pin-plus', hecho: d.fincas.length > 0, ruta: ['/crops/new-farm'] },
     {
-      clave: 'plot', icono: 'ti-square-plus', hecho: d.lotes.length > 0,
+      clave: 'farm',
+      icono: 'ti-map-pin-plus',
+      hecho: d.fincas.length > 0,
+      ruta: ['/crops/new-farm'],
+    },
+    {
+      clave: 'plot',
+      icono: 'ti-square-plus',
+      hecho: d.lotes.length > 0,
       ruta: primeraFinca ? ['/crops/farm', primeraFinca.id!, 'new-plot'] : ['/crops'],
     },
     {
-      clave: 'planting', icono: 'ti-seeding', hecho: haSembrado,
+      clave: 'planting',
+      icono: 'ti-seeding',
+      hecho: haSembrado,
       // El lote libre tiene el botón para sembrar
       ruta: loteLibre ? ['/crops/plot', loteLibre.id!] : ['/crops'],
     },
-    { clave: 'worker', icono: 'ti-user-plus', hecho: d.trabajadores.length > 0, ruta: ['/worker'], query: { nuevo: 1 } },
-    { clave: 'wage', icono: 'ti-calendar-plus', hecho: hayJornales, ruta: ['/worker/workdays/new'] },
+    {
+      clave: 'worker',
+      icono: 'ti-user-plus',
+      hecho: d.trabajadores.length > 0,
+      ruta: ['/worker'],
+      query: { nuevo: 1 },
+    },
+    {
+      clave: 'wage',
+      icono: 'ti-calendar-plus',
+      hecho: hayJornales,
+      ruta: ['/worker/workdays/new'],
+    },
   ];
 }
 

@@ -40,14 +40,21 @@ export function nivel(t: string[]): number {
 export function esPanelDeSiembra(desde: string[], hasta: string[]): boolean {
   const PANELES = ['activity', 'spraying', 'harvest'];
   // La ficha sola o con uno de sus paneles abierto (editar la siembra es otra página)
-  const ficha = (t: string[]) => t[0] === 'crops' && t[1] === 'planting' && !!t[2] && (t.length === 3 || PANELES.includes(t[3]));
-  return ficha(desde) && ficha(hasta) && desde[2] === hasta[2] && (desde.length > 3 || hasta.length > 3);
+  const ficha = (t: string[]) =>
+    t[0] === 'crops' && t[1] === 'planting' && !!t[2] && (t.length === 3 || PANELES.includes(t[3]));
+  return (
+    ficha(desde) && ficha(hasta) && desde[2] === hasta[2] && (desde.length > 3 || hasta.length > 3)
+  );
 }
 
 /** Marca el sentido en <html data-nav> mientras dura la transición, para que el CSS mueva la página hacia ese lado */
 export function marcarSentido({ transition, from, to }: ViewTransitionInfo): void {
-  const desde = tramos(from), hasta = tramos(to);
-  if (esPanelDeSiembra(desde, hasta)) { transition.skipTransition(); return; }
+  const desde = tramos(from),
+    hasta = tramos(to);
+  if (esPanelDeSiembra(desde, hasta)) {
+    transition.skipTransition();
+    return;
+  }
   const raiz = document.documentElement;
   raiz.dataset['nav'] = sentido(desde, hasta);
   const limpiar = () => delete raiz.dataset['nav'];

@@ -9,9 +9,19 @@ describe('AdminResumenComponent', () => {
   let adminSvc: any;
 
   const resumen = {
-    usuariosActivos: 8, usuariosInactivos: 2, administradores: 1, agricultores: 5, trabajadoresUsuarios: 2,
-    fincas: 6, hectareas: 42.5, lotes: 14, siembrasActivas: 9, cosechaKg: 1250, trabajadoresActivos: 20,
-    nominasPorPagar: 3, totalPagado: 4500000,
+    usuariosActivos: 8,
+    usuariosInactivos: 2,
+    administradores: 1,
+    agricultores: 5,
+    trabajadoresUsuarios: 2,
+    fincas: 6,
+    hectareas: 42.5,
+    lotes: 14,
+    siembrasActivas: 9,
+    cosechaKg: 1250,
+    trabajadoresActivos: 20,
+    nominasPorPagar: 3,
+    totalPagado: 4500000,
   };
 
   async function crear() {
@@ -24,7 +34,11 @@ describe('AdminResumenComponent', () => {
   }
 
   it('shows the totals', async () => {
-    adminSvc = { resumen: vi.fn().mockReturnValue(of(resumen)), agricultores: vi.fn().mockReturnValue(of([])), usuarios: vi.fn().mockReturnValue(of([])) };
+    adminSvc = {
+      resumen: vi.fn().mockReturnValue(of(resumen)),
+      agricultores: vi.fn().mockReturnValue(of([])),
+      usuarios: vi.fn().mockReturnValue(of([])),
+    };
     await crear();
     expect(fixture.componentInstance.totalUsuarios).toBe(10);
     const texto = fixture.nativeElement.textContent as string;
@@ -32,7 +46,11 @@ describe('AdminResumenComponent', () => {
   });
 
   it('flags the error when the request fails', async () => {
-    adminSvc = { resumen: vi.fn().mockReturnValue(throwError(() => new Error())), agricultores: vi.fn().mockReturnValue(of([])), usuarios: vi.fn().mockReturnValue(of([])) };
+    adminSvc = {
+      resumen: vi.fn().mockReturnValue(throwError(() => new Error())),
+      agricultores: vi.fn().mockReturnValue(of([])),
+      usuarios: vi.fn().mockReturnValue(of([])),
+    };
     await crear();
     expect(fixture.componentInstance.error).toBe(true);
   });

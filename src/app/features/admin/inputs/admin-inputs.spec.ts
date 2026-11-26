@@ -9,8 +9,15 @@ describe('AdminInsumosComponent', () => {
   let svc: any;
 
   const mancozeb: any = {
-    id: 1, nombre: 'Mancozeb', tipo: 'FUNGICIDA', tipoDisplay: 'Fungicida', unidadSugerida: 'GRAMOS',
-    dosisSugerida: 2.5, reentradaHoras: 24, activo: true, creadoEn: '2026-01-01T00:00:00',
+    id: 1,
+    nombre: 'Mancozeb',
+    tipo: 'FUNGICIDA',
+    tipoDisplay: 'Fungicida',
+    unidadSugerida: 'GRAMOS',
+    dosisSugerida: 2.5,
+    reentradaHoras: 24,
+    activo: true,
+    creadoEn: '2026-01-01T00:00:00',
   };
 
   beforeEach(async () => {
@@ -40,9 +47,16 @@ describe('AdminInsumosComponent', () => {
   it('creates a new input and adds it to the list', () => {
     svc.create.mockReturnValue(of({ ...mancozeb, id: 2, nombre: 'Glifosato', tipo: 'HERBICIDA' }));
     component.nuevo();
-    component.form.patchValue({ nombre: '  Glifosato ', tipo: 'HERBICIDA', dosisSugerida: 3, reentradaHoras: 12 });
+    component.form.patchValue({
+      nombre: '  Glifosato ',
+      tipo: 'HERBICIDA',
+      dosisSugerida: 3,
+      reentradaHoras: 12,
+    });
     component.guardar();
-    expect(svc.create).toHaveBeenCalledWith(expect.objectContaining({ nombre: 'Glifosato', tipo: 'HERBICIDA' }));
+    expect(svc.create).toHaveBeenCalledWith(
+      expect.objectContaining({ nombre: 'Glifosato', tipo: 'HERBICIDA' }),
+    );
     expect(component.insumos.length).toBe(2);
     expect(component.formularioAbierto).toBe(false);
   });

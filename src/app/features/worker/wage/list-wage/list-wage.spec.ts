@@ -5,26 +5,41 @@ import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { Subject } from 'rxjs';
 import { ListaJornalesComponent } from './list-wage';
-import { JornalService, TrabajadorService, NominaService } from '../../../../core/services/worker.service';
+import {
+  JornalService,
+  TrabajadorService,
+  NominaService,
+} from '../../../../core/services/worker.service';
 import { vi } from 'vitest';
 
 const mkJornal = (liquidado = false): any => ({
-  id: 1, trabajadorId: 1, cultivoId: 2, nombreCultivo: 'Maiz',
-  fecha: '2024-01-10', valorJornal: 50000, liquidado,
-  trabajador: { nombreCompleto: 'Juan Perez' }
+  id: 1,
+  trabajadorId: 1,
+  cultivoId: 2,
+  nombreCultivo: 'Maiz',
+  fecha: '2024-01-10',
+  valorJornal: 50000,
+  liquidado,
+  trabajador: { nombreCompleto: 'Juan Perez' },
 });
 const mkTrabajador = (): any => ({ id: 1, nombreCompleto: 'Juan Perez' });
-const mkNomina     = (): any => ({ id: 1, trabajadorId: 1, valorTotal: 100000, estado: 'PENDIENTE' });
+const mkNomina = (): any => ({ id: 1, trabajadorId: 1, valorTotal: 100000, estado: 'PENDIENTE' });
 
 /** Respuesta de GET /api/workdays/worker/{id}/page con todo en una sola página */
-const pag = (lista: any[]): any => ({ contenido: lista, pagina: 0, tamano: 20, total: lista.length, totalPaginas: 1 });
+const pag = (lista: any[]): any => ({
+  contenido: lista,
+  pagina: 0,
+  tamano: 20,
+  total: lista.length,
+  totalPaginas: 1,
+});
 
 describe('ListaJornalesComponent', () => {
   let component: ListaJornalesComponent;
-  let fixture:   ComponentFixture<ListaJornalesComponent>;
-  let jornalSvc:    any;
+  let fixture: ComponentFixture<ListaJornalesComponent>;
+  let jornalSvc: any;
   let trabajadorSvc: any;
-  let nominaSvc:    any;
+  let nominaSvc: any;
   let queryParamsSubject: Subject<any>;
 
   beforeEach(async () => {
@@ -33,36 +48,36 @@ describe('ListaJornalesComponent', () => {
     jornalSvc = {
       paginaEquipo: vi.fn().mockReturnValue(of(pag([mkJornal()]))),
       // Sin resumen, los totales se calculan con los jornales cargados (así lo esperan varias pruebas)
-      resumenEquipo: vi.fn().mockReturnValue(of(null))
+      resumenEquipo: vi.fn().mockReturnValue(of(null)),
     };
     trabajadorSvc = {
       buscarPorId: vi.fn().mockReturnValue(of(mkTrabajador())),
-      listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()]))
+      listarTodos: vi.fn().mockReturnValue(of([mkTrabajador()])),
     };
     nominaSvc = {
-      generar: vi.fn()
+      generar: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
       imports: [ListaJornalesComponent, ReactiveFormsModule, FormsModule],
       providers: [
         provideRouter([]),
-        { provide: JornalService,     useValue: jornalSvc },
+        { provide: JornalService, useValue: jornalSvc },
         { provide: TrabajadorService, useValue: trabajadorSvc },
-        { provide: NominaService,     useValue: nominaSvc },
+        { provide: NominaService, useValue: nominaSvc },
         {
           provide: ActivatedRoute,
-          useValue: { queryParams: queryParamsSubject.asObservable() }
-        }
-      ]
+          useValue: { queryParams: queryParamsSubject.asObservable() },
+        },
+      ],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(ListaJornalesComponent);
+    fixture = TestBed.createComponent(ListaJornalesComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();           // 👈 detectChanges ANTES de emitir queryParams
+    fixture.detectChanges(); // 👈 detectChanges ANTES de emitir queryParams
     queryParamsSubject.next({});
     await fixture.whenStable();
-    fixture.detectChanges();           // 👈 segundo detectChanges para estabilizar
+    fixture.detectChanges(); // 👈 segundo detectChanges para estabilizar
   });
 
   it('should create', () => expect(component).toBeTruthy());
@@ -72,7 +87,11 @@ describe('ListaJornalesComponent', () => {
     trabajadorSvc.buscarPorId.mockClear();
     queryParamsSubject.next({ trabajadorId: '1' });
     await fixture.whenStable();
-    expect(jornalSvc.paginaEquipo).toHaveBeenCalledWith(0, { trabajadorId: 1, inicio: undefined, fin: undefined });
+    expect(jornalSvc.paginaEquipo).toHaveBeenCalledWith(0, {
+      trabajadorId: 1,
+      inicio: undefined,
+      fin: undefined,
+    });
     expect(component.jornales.length).toBe(1);
   });
 
@@ -80,7 +99,11 @@ describe('ListaJornalesComponent', () => {
     jornalSvc.paginaEquipo.mockClear();
     queryParamsSubject.next({});
     expect(component.trabajadorId).toBeNull();
-    expect(jornalSvc.paginaEquipo).toHaveBeenCalledWith(0, { trabajadorId: null, inicio: undefined, fin: undefined });
+    expect(jornalSvc.paginaEquipo).toHaveBeenCalledWith(0, {
+      trabajadorId: null,
+      inicio: undefined,
+      fin: undefined,
+    });
   });
 
   it('cargarTrabajador() should load trabajador data', () => {
@@ -102,7 +125,11 @@ describe('ListaJornalesComponent', () => {
     component.trabajadorId = null;
     component.cargarJornales();
     expect(jornalSvc.paginaEquipo).toHaveBeenCalled();
-    expect(jornalSvc.resumenEquipo).toHaveBeenCalledWith({ trabajadorId: null, inicio: undefined, fin: undefined });
+    expect(jornalSvc.resumenEquipo).toHaveBeenCalledWith({
+      trabajadorId: null,
+      inicio: undefined,
+      fin: undefined,
+    });
   });
 
   it('filtrados should return all when busqueda is empty', () => {
@@ -144,7 +171,7 @@ describe('ListaJornalesComponent', () => {
   it('limpiarFiltros() should reset dates and reload', () => {
     component.trabajadorId = 1;
     component.fechaInicio = '2024-01-01';
-    component.fechaFin    = '2024-01-31';
+    component.fechaFin = '2024-01-31';
     jornalSvc.paginaEquipo.mockClear();
     component.limpiarFiltros();
     expect(component.fechaInicio).toBe('');
@@ -222,7 +249,7 @@ describe('ListaJornalesComponent', () => {
     component.verNominaCompleta();
     expect(router.navigate).toHaveBeenCalledWith(
       ['/worker/payrolls'],
-      expect.objectContaining({ queryParams: { trabajadorId: 1 } })
+      expect.objectContaining({ queryParams: { trabajadorId: 1 } }),
     );
   });
 
@@ -239,10 +266,9 @@ describe('ListaJornalesComponent', () => {
     vi.spyOn(router, 'navigate');
     component.trabajadorId = 1;
     component.irANuevoJornal();
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/worker/workdays/new'],
-      { queryParams: { trabajadorId: 1 } }
-    );
+    expect(router.navigate).toHaveBeenCalledWith(['/worker/workdays/new'], {
+      queryParams: { trabajadorId: 1 },
+    });
   });
 
   it('irANuevoJornal() should navigate without queryParams when no trabajadorId', () => {
@@ -250,10 +276,7 @@ describe('ListaJornalesComponent', () => {
     vi.spyOn(router, 'navigate');
     component.trabajadorId = null;
     component.irANuevoJornal();
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/worker/workdays/new'],
-      { queryParams: {} }
-    );
+    expect(router.navigate).toHaveBeenCalledWith(['/worker/workdays/new'], { queryParams: {} });
   });
 
   it('volver() should navigate to /worker', () => {
@@ -271,34 +294,60 @@ describe('ListaJornalesComponent', () => {
 
   it('con resumen, los totales y el periodo de la nómina salen del servidor', () => {
     component.jornales = [mkJornal()];
-    component.resumen = { cantidad: 45, valorTotal: 3600000, pendientes: 30, valorPendiente: 2400000,
-      primeraPendiente: '2024-03-01', ultimaPendiente: '2024-04-15' };
+    component.resumen = {
+      cantidad: 45,
+      valorTotal: 3600000,
+      pendientes: 30,
+      valorPendiente: 2400000,
+      primeraPendiente: '2024-03-01',
+      ultimaPendiente: '2024-04-15',
+    };
     expect(component.cantidadJornales).toBe(45);
     expect(component.totalJornales).toBe(3600000);
     expect(component.pendientes).toBe(30);
     expect(component.totalPendiente).toBe(2400000);
     component.abrirGenerarNomina();
-    expect(component.formNomina.value).toEqual({ periodoInicio: '2024-03-01', periodoFin: '2024-04-15' });
+    expect(component.formNomina.value).toEqual({
+      periodoInicio: '2024-03-01',
+      periodoFin: '2024-04-15',
+    });
   });
 
   it('cargarMas() pide la página siguiente con el mismo rango de fechas', () => {
     component.trabajadorId = 1;
     component.fechaInicio = '2024-01-01';
     jornalSvc.paginaEquipo
-      .mockReturnValueOnce(of({ contenido: [mkJornal()], pagina: 0, tamano: 1, total: 2, totalPaginas: 2 }))
-      .mockReturnValueOnce(of({ contenido: [{ ...mkJornal(), id: 99 }], pagina: 1, tamano: 1, total: 2, totalPaginas: 2 }));
+      .mockReturnValueOnce(
+        of({ contenido: [mkJornal()], pagina: 0, tamano: 1, total: 2, totalPaginas: 2 }),
+      )
+      .mockReturnValueOnce(
+        of({
+          contenido: [{ ...mkJornal(), id: 99 }],
+          pagina: 1,
+          tamano: 1,
+          total: 2,
+          totalPaginas: 2,
+        }),
+      );
     component.cargarJornales();
     expect(component.hayMas).toBe(true);
     component.cargarMas();
-    expect(jornalSvc.paginaEquipo).toHaveBeenLastCalledWith(1, { trabajadorId: 1, inicio: '2024-01-01', fin: undefined });
+    expect(jornalSvc.paginaEquipo).toHaveBeenLastCalledWith(1, {
+      trabajadorId: 1,
+      inicio: '2024-01-01',
+      fin: undefined,
+    });
     expect(component.jornales.length).toBe(2);
     expect(component.hayMas).toBe(false);
   });
 
   it('loads the workers for the selector, sorted by name', () => {
-    trabajadorSvc.listarTodos.mockReturnValue(of([
-      { id: 2, nombreCompleto: 'Zoe Ruiz' }, { id: 1, nombreCompleto: 'Ana Gil' },
-    ]));
+    trabajadorSvc.listarTodos.mockReturnValue(
+      of([
+        { id: 2, nombreCompleto: 'Zoe Ruiz' },
+        { id: 1, nombreCompleto: 'Ana Gil' },
+      ]),
+    );
     TestBed.resetTestingModule();
     return TestBed.configureTestingModule({
       imports: [ListaJornalesComponent],
@@ -309,19 +358,24 @@ describe('ListaJornalesComponent', () => {
         { provide: NominaService, useValue: nominaSvc },
         { provide: ActivatedRoute, useValue: { queryParams: queryParamsSubject.asObservable() } },
       ],
-    }).compileComponents().then(() => {
-      const f = TestBed.createComponent(ListaJornalesComponent);
-      f.detectChanges();
-      expect(f.componentInstance.trabajadores.map((t) => t.id)).toEqual([1, 2]);
-      expect(f.componentInstance.cargandoTrabajadores).toBe(false);
-    });
+    })
+      .compileComponents()
+      .then(() => {
+        const f = TestBed.createComponent(ListaJornalesComponent);
+        f.detectChanges();
+        expect(f.componentInstance.trabajadores.map((t) => t.id)).toEqual([1, 2]);
+        expect(f.componentInstance.cargandoTrabajadores).toBe(false);
+      });
   });
 
   it('elegirTrabajador() keeps the user on the page and puts the worker in the URL', () => {
     const router = TestBed.inject(Router);
     const nav = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     component.elegirTrabajador(7);
-    expect(nav).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { trabajadorId: 7 } }));
+    expect(nav).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({ queryParams: { trabajadorId: 7 } }),
+    );
   });
 
   it('sin trabajador en la URL se queda en "Todos" (no salta al primero)', () => {
@@ -335,7 +389,10 @@ describe('ListaJornalesComponent', () => {
     const router = TestBed.inject(Router);
     const nav = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     component.elegirTrabajador(null);
-    expect(nav).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { trabajadorId: null } }));
+    expect(nav).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({ queryParams: { trabajadorId: null } }),
+    );
   });
 
   it('iniciales() uses first and last name', () => {

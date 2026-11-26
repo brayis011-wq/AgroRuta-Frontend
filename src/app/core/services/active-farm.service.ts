@@ -21,7 +21,8 @@ export class FincaActivaService {
   private readonly lotesCargados = signal(false);
   /** Cantidad de lotes de la finca activa (null mientras carga o con "todas") */
   readonly lotesActiva = computed<number | null>(() =>
-    this.idActiva() != null && this.lotesCargados() ? this.lotes().length : null);
+    this.idActiva() != null && this.lotesCargados() ? this.lotes().length : null,
+  );
 
   readonly activa = computed<Finca | null>(() => {
     const id = this.idActiva();
@@ -29,8 +30,13 @@ export class FincaActivaService {
   });
 
   /** Finca de referencia para el clima: la activa, o la primera con ubicación */
-  readonly paraClima = computed<Finca | null>(() =>
-    this.activa() ?? this.fincas().find((f) => f.centroideLat != null) ?? this.fincas()[0] ?? null);
+  readonly paraClima = computed<Finca | null>(
+    () =>
+      this.activa() ??
+      this.fincas().find((f) => f.centroideLat != null) ??
+      this.fincas()[0] ??
+      null,
+  );
 
   /** Vuelve a leer los lotes (p. ej. después de crear uno) */
   refrescarLotes(): void {
@@ -61,8 +67,11 @@ export class FincaActivaService {
   elegir(id: number | null): void {
     this.idActiva.set(id);
     try {
-      id == null ? localStorage.removeItem(CLAVE) : localStorage.setItem(CLAVE, String(id));
-    } catch { /* sin almacenamiento */ }
+      if (id == null) localStorage.removeItem(CLAVE);
+      else localStorage.setItem(CLAVE, String(id));
+    } catch {
+      /* sin almacenamiento */
+    }
     this.cargarLotes();
   }
 
@@ -74,7 +83,11 @@ export class FincaActivaService {
     this.cultivo.listarLotesPorFinca(id).subscribe({
       next: (l) => {
         if (this.idActiva() !== id) return;
-        this.lotes.set([...l].sort((a, b) => (a.nombre ?? '').localeCompare(b.nombre ?? '', undefined, { numeric: true })));
+        this.lotes.set(
+          [...l].sort((a, b) =>
+            (a.nombre ?? '').localeCompare(b.nombre ?? '', undefined, { numeric: true }),
+          ),
+        );
         this.lotesCargados.set(true);
       },
       error: () => this.lotesCargados.set(false),

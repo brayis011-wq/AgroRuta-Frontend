@@ -1,34 +1,165 @@
 /* Edición de la finca y tarjetas de lote */
-.editar { display: grid; grid-template-columns: 1.4fr 1.6fr .8fr; gap: .75rem; align-items: end; }
-.editar label { display: flex; flex-direction: column; gap: .3rem; font-size: .8rem; font-weight: 600; color: var(--ar-tinta-2); }
-.editar input { font: inherit; font-size: .95rem; padding: .55rem .7rem; border: 1px solid var(--ar-borde); border-radius: 10px; color: var(--ar-tinta); }
-.editar input:focus { outline: 2px solid var(--ar-verde-600); border-color: transparent; }
-.editar-botones { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: .5rem; }
-
-.lotes { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: .9rem; }
-.lote {
-  position: relative; background: var(--ar-superficie); border: 1px solid var(--ar-borde); border-radius: 16px; box-shadow: var(--ar-sombra-1);
-  display: flex; flex-direction: column; overflow: hidden; animation: subir .4s ease-out both;
-  transition: transform .15s, box-shadow .15s, border-color .15s;
+.editar {
+  display: grid;
+  grid-template-columns: 1.4fr 1.6fr 0.8fr;
+  gap: 0.75rem;
+  align-items: end;
 }
-.lote::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--ar-verde-600); }
-.lote.estado-DISPONIBLE::before { background: var(--ar-azul); }
-.lote.estado-EN_DESCANSO::before { background: var(--ar-ambar); }
-.lote:hover { transform: translateY(-2px); box-shadow: var(--ar-sombra-2); border-color: var(--ar-borde-fuerte); }
-.lote-cuerpo { flex: 1; display: flex; flex-direction: column; gap: .45rem; padding: .95rem 1rem .8rem 1.15rem; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; }
-.lote-cuerpo:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: -2px; }
-.lote-cuerpo header { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
-.lote-cuerpo strong { font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cultivo { margin: 0; font-size: .88rem; font-weight: 600; display: flex; align-items: center; gap: .3rem; }
-.cultivo .ti { color: var(--ar-verde-600); }
-.cultivo.libre { font-weight: 400; color: var(--ar-tinta-3); }
-.barra { height: 6px; border-radius: 99px; background: var(--ar-verde-100); overflow: hidden; }
-.barra span { display: block; height: 100%; min-width: 6px; border-radius: 99px; background: linear-gradient(90deg, #43a047, var(--ar-verde-700)); }
-.etapa { margin: 0; font-size: .76rem; color: var(--ar-tinta-3); }
-.esq.linea { min-height: 38px; border-radius: 8px; }
-.lote footer { display: flex; align-items: center; gap: .6rem; padding: .4rem .5rem .4rem 1.15rem; border-top: 1px solid var(--ar-borde); background: var(--ar-superficie-2); font-size: .8rem; color: var(--ar-tinta-2); }
-.lote footer span { display: inline-flex; align-items: center; gap: .25rem; }
-.lote footer .btn-ic { margin-left: auto; }
-.sin-mapa { color: var(--ar-ambar); }
+.editar label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ar-tinta-2);
+}
+.editar input {
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--ar-borde);
+  border-radius: 10px;
+  color: var(--ar-tinta);
+}
+.editar input:focus {
+  outline: 2px solid var(--ar-verde-600);
+  border-color: transparent;
+}
+.editar-botones {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
 
-@media (max-width: 720px) { .editar { grid-template-columns: 1fr; } }
+.lotes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.9rem;
+}
+.lote {
+  position: relative;
+  background: var(--ar-superficie);
+  border: 1px solid var(--ar-borde);
+  border-radius: 16px;
+  box-shadow: var(--ar-sombra-1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: subir 0.4s ease-out both;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s,
+    border-color 0.15s;
+}
+.lote::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--ar-verde-600);
+}
+.lote.estado-DISPONIBLE::before {
+  background: var(--ar-azul);
+}
+.lote.estado-EN_DESCANSO::before {
+  background: var(--ar-ambar);
+}
+.lote:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ar-sombra-2);
+  border-color: var(--ar-borde-fuerte);
+}
+.lote-cuerpo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.95rem 1rem 0.8rem 1.15rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.lote-cuerpo:focus-visible {
+  outline: 2px solid var(--ar-verde-600);
+  outline-offset: -2px;
+}
+.lote-cuerpo header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+.lote-cuerpo strong {
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cultivo {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.cultivo .ti {
+  color: var(--ar-verde-600);
+}
+.cultivo.libre {
+  font-weight: 400;
+  color: var(--ar-tinta-3);
+}
+.barra {
+  height: 6px;
+  border-radius: 99px;
+  background: var(--ar-verde-100);
+  overflow: hidden;
+}
+.barra span {
+  display: block;
+  height: 100%;
+  min-width: 6px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--ar-verde-500), var(--ar-verde-700));
+}
+.etapa {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--ar-tinta-3);
+}
+.esq.linea {
+  min-height: 38px;
+  border-radius: 8px;
+}
+.lote footer {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.5rem 0.4rem 1.15rem;
+  border-top: 1px solid var(--ar-borde);
+  background: var(--ar-superficie-2);
+  font-size: 0.8rem;
+  color: var(--ar-tinta-2);
+}
+.lote footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.lote footer .btn-ic {
+  margin-left: auto;
+}
+.sin-mapa {
+  color: var(--ar-ambar);
+}
+
+@media (max-width: 720px) {
+  .editar {
+    grid-template-columns: 1fr;
+  }
+}

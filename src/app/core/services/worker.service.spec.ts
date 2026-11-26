@@ -15,12 +15,24 @@ import { environment } from '../../../environments/environment';
 const api = environment.apiUrl;
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
-const mockActividad: any  = { id: 1, nombre: 'Riego', descripcion: 'Regar cultivo' };
-const mockCargo: any      = { id: 1, nombre: 'Jornalero', descripcion: 'Campo', valorJornal: 50000 };
-const mockTrabajador: any = { id: 1, nombre: 'Juan', apellido: 'Perez', cedula: '123', estado: 'ACTIVO' };
-const mockNomina: any     = { id: 1, trabajadorId: 1, valorTotal: 200000, estado: 'PENDIENTE' };
-const mockJornal: any     = { id: 1, trabajadorId: 1, cultivoId: 2, fecha: '2024-01-10', valorJornal: 50000 };
-const mockPago: any       = { id: 1, nominaId: 1, monto: 200000, metodoPago: 'EFECTIVO' };
+const mockActividad: any = { id: 1, nombre: 'Riego', descripcion: 'Regar cultivo' };
+const mockCargo: any = { id: 1, nombre: 'Jornalero', descripcion: 'Campo', valorJornal: 50000 };
+const mockTrabajador: any = {
+  id: 1,
+  nombre: 'Juan',
+  apellido: 'Perez',
+  cedula: '123',
+  estado: 'ACTIVO',
+};
+const mockNomina: any = { id: 1, trabajadorId: 1, valorTotal: 200000, estado: 'PENDIENTE' };
+const mockJornal: any = {
+  id: 1,
+  trabajadorId: 1,
+  cultivoId: 2,
+  fecha: '2024-01-10',
+  valorJornal: 50000,
+};
+const mockPago: any = { id: 1, nominaId: 1, monto: 200000, metodoPago: 'EFECTIVO' };
 
 // ═══════════════════════════════════════════════════════════════════════════
 // LaborService
@@ -35,35 +47,39 @@ describe('LaborService', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), LaborService],
     });
     service = TestBed.inject(LaborService);
-    http    = TestBed.inject(HttpTestingController);
+    http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
 
   it('should be created', () => expect(service).toBeTruthy());
 
   it('listar() should GET all actividades', () => {
-    service.listar().subscribe(r => expect(r).toEqual([mockActividad]));
+    service.listar().subscribe((r) => expect(r).toEqual([mockActividad]));
     const req = http.expectOne(base);
     expect(req.request.method).toBe('GET');
     req.flush([mockActividad]);
   });
 
   it('crear() should POST actividad', () => {
-    service.crear({ nombre: 'Riego', descripcion: 'desc' }).subscribe(r => expect(r).toEqual(mockActividad));
+    service
+      .crear({ nombre: 'Riego', descripcion: 'desc' })
+      .subscribe((r) => expect(r).toEqual(mockActividad));
     const req = http.expectOne(base);
     expect(req.request.method).toBe('POST');
     req.flush(mockActividad);
   });
 
   it('actualizar() should PUT actividad by id', () => {
-    service.actualizar(1, { nombre: 'Fumigacion' }).subscribe(r => expect(r).toEqual(mockActividad));
+    service
+      .actualizar(1, { nombre: 'Fumigacion' })
+      .subscribe((r) => expect(r).toEqual(mockActividad));
     const req = http.expectOne(`${base}/1`);
     expect(req.request.method).toBe('PUT');
     req.flush(mockActividad);
   });
 
   it('desactivar() should PATCH actividad deactivate', () => {
-    service.desactivar(1).subscribe(r => expect(r).toBeNull());
+    service.desactivar(1).subscribe((r) => expect(r).toBeNull());
     const req = http.expectOne(`${base}/1/deactivate`);
     expect(req.request.method).toBe('PATCH');
     req.flush(null);
@@ -83,21 +99,21 @@ describe('CargoService', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), CargoService],
     });
     service = TestBed.inject(CargoService);
-    http    = TestBed.inject(HttpTestingController);
+    http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
 
   it('should be created', () => expect(service).toBeTruthy());
 
   it('listar() should GET all cargos', () => {
-    service.listar().subscribe(r => expect(r).toEqual([mockCargo]));
+    service.listar().subscribe((r) => expect(r).toEqual([mockCargo]));
     const req = http.expectOne(base);
     expect(req.request.method).toBe('GET');
     req.flush([mockCargo]);
   });
 
   it('buscarPorId() should GET cargo by id', () => {
-    service.buscarPorId(1).subscribe(r => expect(r).toEqual(mockCargo));
+    service.buscarPorId(1).subscribe((r) => expect(r).toEqual(mockCargo));
     const req = http.expectOne(`${base}/1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockCargo);
@@ -105,7 +121,7 @@ describe('CargoService', () => {
 
   it('crear() should POST cargo', () => {
     const body = { nombre: 'Jornalero', descripcion: 'Campo', valorJornal: 50000 };
-    service.crear(body).subscribe(r => expect(r).toEqual(mockCargo));
+    service.crear(body).subscribe((r) => expect(r).toEqual(mockCargo));
     const req = http.expectOne(base);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(body);
@@ -114,14 +130,14 @@ describe('CargoService', () => {
 
   it('actualizar() should PUT cargo by id', () => {
     const body = { nombre: 'Supervisor', descripcion: 'Sup', valorJornal: 80000 };
-    service.actualizar(1, body).subscribe(r => expect(r).toEqual(mockCargo));
+    service.actualizar(1, body).subscribe((r) => expect(r).toEqual(mockCargo));
     const req = http.expectOne(`${base}/1`);
     expect(req.request.method).toBe('PUT');
     req.flush(mockCargo);
   });
 
   it('desactivar() should PATCH cargo deactivate', () => {
-    service.desactivar(1).subscribe(r => expect(r).toBeNull());
+    service.desactivar(1).subscribe((r) => expect(r).toBeNull());
     const req = http.expectOne(`${base}/1/deactivate`);
     expect(req.request.method).toBe('PATCH');
     req.flush(null);
@@ -141,36 +157,43 @@ describe('TrabajadorService', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), TrabajadorService],
     });
     service = TestBed.inject(TrabajadorService);
-    http    = TestBed.inject(HttpTestingController);
+    http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
 
   it('should be created', () => expect(service).toBeTruthy());
 
   it('listar() should GET trabajadores activos', () => {
-    service.listar().subscribe(r => expect(r).toEqual([mockTrabajador]));
+    service.listar().subscribe((r) => expect(r).toEqual([mockTrabajador]));
     const req = http.expectOne(base);
     expect(req.request.method).toBe('GET');
     req.flush([mockTrabajador]);
   });
 
   it('listarTodos() should GET all trabajadores', () => {
-    service.listarTodos().subscribe(r => expect(r).toEqual([mockTrabajador]));
+    service.listarTodos().subscribe((r) => expect(r).toEqual([mockTrabajador]));
     const req = http.expectOne(`${base}/all`);
     expect(req.request.method).toBe('GET');
     req.flush([mockTrabajador]);
   });
 
   it('buscarPorId() should GET trabajador by id', () => {
-    service.buscarPorId(1).subscribe(r => expect(r).toEqual(mockTrabajador));
+    service.buscarPorId(1).subscribe((r) => expect(r).toEqual(mockTrabajador));
     const req = http.expectOne(`${base}/1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockTrabajador);
   });
 
   it('registrar() should POST trabajador', () => {
-    const req: any = { nombre: 'Juan', apellido: 'Perez', cedula: '123', fechaIngreso: '2024-01-01', tipoContrato: 'FIJO', cargoId: 1 };
-    service.registrar(req).subscribe(r => expect(r).toEqual(mockTrabajador));
+    const req: any = {
+      nombre: 'Juan',
+      apellido: 'Perez',
+      cedula: '123',
+      fechaIngreso: '2024-01-01',
+      tipoContrato: 'FIJO',
+      cargoId: 1,
+    };
+    service.registrar(req).subscribe((r) => expect(r).toEqual(mockTrabajador));
     const httpReq = http.expectOne(base);
     expect(httpReq.request.method).toBe('POST');
     httpReq.flush(mockTrabajador);
@@ -178,35 +201,35 @@ describe('TrabajadorService', () => {
 
   it('actualizar() should PUT trabajador by id', () => {
     const body: any = { nombre: 'Juan', apellido: 'Lopez', tipoContrato: 'TEMPORAL' };
-    service.actualizar(1, body).subscribe(r => expect(r).toEqual(mockTrabajador));
+    service.actualizar(1, body).subscribe((r) => expect(r).toEqual(mockTrabajador));
     const req = http.expectOne(`${base}/1`);
     expect(req.request.method).toBe('PUT');
     req.flush(mockTrabajador);
   });
 
   it('cambiarCargo() should PATCH cargo of trabajador', () => {
-    service.cambiarCargo(1, 2).subscribe(r => expect(r).toEqual(mockTrabajador));
+    service.cambiarCargo(1, 2).subscribe((r) => expect(r).toEqual(mockTrabajador));
     const req = http.expectOne(`${base}/1/position/2`);
     expect(req.request.method).toBe('PATCH');
     req.flush(mockTrabajador);
   });
 
   it('desactivar() should PATCH desactivar trabajador', () => {
-    service.desactivar(1).subscribe(r => expect(r).toBeNull());
+    service.desactivar(1).subscribe((r) => expect(r).toBeNull());
     const req = http.expectOne(`${base}/1/deactivate`);
     expect(req.request.method).toBe('PATCH');
     req.flush(null);
   });
 
   it('suspender() should PATCH suspender trabajador', () => {
-    service.suspender(1).subscribe(r => expect(r).toBeNull());
+    service.suspender(1).subscribe((r) => expect(r).toBeNull());
     const req = http.expectOne(`${base}/1/suspend`);
     expect(req.request.method).toBe('PATCH');
     req.flush(null);
   });
 
   it('reactivar() should PATCH reactivar trabajador', () => {
-    service.reactivar(1).subscribe(r => expect(r).toBeNull());
+    service.reactivar(1).subscribe((r) => expect(r).toBeNull());
     const req = http.expectOne(`${base}/1/reactivate`);
     expect(req.request.method).toBe('PATCH');
     req.flush(null);
@@ -226,7 +249,7 @@ describe('NominaService', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), NominaService],
     });
     service = TestBed.inject(NominaService);
-    http    = TestBed.inject(HttpTestingController);
+    http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
 
@@ -234,21 +257,21 @@ describe('NominaService', () => {
 
   it('resumen() should GET the totals by state', () => {
     const totales = [{ estado: 'PENDIENTE', cantidad: 2, total: 150000 }];
-    service.resumen().subscribe(r => expect(r).toEqual(totales));
+    service.resumen().subscribe((r) => expect(r).toEqual(totales));
     const req = http.expectOne(`${base}/summary`);
     expect(req.request.method).toBe('GET');
     req.flush(totales);
   });
 
   it('listarPorTrabajador() should GET nominas by trabajador', () => {
-    service.listarPorTrabajador(1).subscribe(r => expect(r).toEqual([mockNomina]));
+    service.listarPorTrabajador(1).subscribe((r) => expect(r).toEqual([mockNomina]));
     const req = http.expectOne(`${base}/worker/1`);
     expect(req.request.method).toBe('GET');
     req.flush([mockNomina]);
   });
 
   it('obtener() should GET nomina by id', () => {
-    service.obtener(1).subscribe(r => expect(r).toEqual(mockNomina));
+    service.obtener(1).subscribe((r) => expect(r).toEqual(mockNomina));
     const req = http.expectOne(`${base}/1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockNomina);
@@ -256,35 +279,35 @@ describe('NominaService', () => {
 
   it('generar() should POST generar nomina', () => {
     const body = { trabajadorId: 1, periodoInicio: '2024-01-01', periodoFin: '2024-01-31' };
-    service.generar(body).subscribe(r => expect(r).toEqual(mockNomina));
+    service.generar(body).subscribe((r) => expect(r).toEqual(mockNomina));
     const req = http.expectOne(`${base}/generate`);
     expect(req.request.method).toBe('POST');
     req.flush(mockNomina);
   });
 
   it('aprobar() should PATCH aprobar nomina', () => {
-    service.aprobar(1).subscribe(r => expect(r).toEqual(mockNomina));
+    service.aprobar(1).subscribe((r) => expect(r).toEqual(mockNomina));
     const req = http.expectOne(`${base}/1/approve`);
     expect(req.request.method).toBe('PATCH');
     req.flush(mockNomina);
   });
 
   it('anular() should PATCH anular nomina', () => {
-    service.anular(1).subscribe(r => expect(r).toBeNull());
+    service.anular(1).subscribe((r) => expect(r).toBeNull());
     const req = http.expectOne(`${base}/1/void`);
     expect(req.request.method).toBe('PATCH');
     req.flush(null);
   });
 
   it('reactivar() should PATCH reactivar nomina', () => {
-    service.reactivar(1).subscribe(r => expect(r).toEqual(mockNomina));
+    service.reactivar(1).subscribe((r) => expect(r).toEqual(mockNomina));
     const req = http.expectOne(`${base}/1/reactivate`);
     expect(req.request.method).toBe('PATCH');
     req.flush(mockNomina);
   });
 
   it('eliminar() should DELETE nomina by id', () => {
-    service.eliminar(1).subscribe(r => expect(r).toBeNull());
+    service.eliminar(1).subscribe((r) => expect(r).toBeNull());
     const req = http.expectOne(`${base}/1`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
@@ -304,30 +327,36 @@ describe('JornalService', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), JornalService],
     });
     service = TestBed.inject(JornalService);
-    http    = TestBed.inject(HttpTestingController);
+    http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
 
   it('should be created', () => expect(service).toBeTruthy());
 
   it('registrar() should POST jornal', () => {
-    const body: any = { trabajadorId: 1, cultivoId: 2, nombreCultivo: 'Maiz', fecha: '2024-01-10', actividadIds: [1] };
-    service.registrar(body).subscribe(r => expect(r).toEqual(mockJornal));
+    const body: any = {
+      trabajadorId: 1,
+      cultivoId: 2,
+      nombreCultivo: 'Maiz',
+      fecha: '2024-01-10',
+      actividadIds: [1],
+    };
+    service.registrar(body).subscribe((r) => expect(r).toEqual(mockJornal));
     const req = http.expectOne(base);
     expect(req.request.method).toBe('POST');
     req.flush(mockJornal);
   });
 
   it('buscarPorId() should GET jornal by id', () => {
-    service.buscarPorId(1).subscribe(r => expect(r).toEqual(mockJornal));
+    service.buscarPorId(1).subscribe((r) => expect(r).toEqual(mockJornal));
     const req = http.expectOne(`${base}/1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockJornal);
   });
 
   it('porTrabajador() should GET jornales without date filters', () => {
-    service.porTrabajador(1).subscribe(r => expect(r).toEqual([mockJornal]));
-    const req = http.expectOne(r => r.url === `${base}/worker/1`);
+    service.porTrabajador(1).subscribe((r) => expect(r).toEqual([mockJornal]));
+    const req = http.expectOne((r) => r.url === `${base}/worker/1`);
     expect(req.request.method).toBe('GET');
     expect(req.request.params.has('inicio')).toBe(false);
     expect(req.request.params.has('fin')).toBe(false);
@@ -335,38 +364,42 @@ describe('JornalService', () => {
   });
 
   it('porTrabajador() should GET jornales with date filters', () => {
-    service.porTrabajador(1, '2024-01-01', '2024-01-31').subscribe(r => expect(r).toEqual([mockJornal]));
-    const req = http.expectOne(r => r.url === `${base}/worker/1`);
+    service
+      .porTrabajador(1, '2024-01-01', '2024-01-31')
+      .subscribe((r) => expect(r).toEqual([mockJornal]));
+    const req = http.expectOne((r) => r.url === `${base}/worker/1`);
     expect(req.request.params.get('inicio')).toBe('2024-01-01');
     expect(req.request.params.get('fin')).toBe('2024-01-31');
     req.flush([mockJornal]);
   });
 
   it('porCultivo() should GET jornales without date filters', () => {
-    service.porCultivo(2).subscribe(r => expect(r).toEqual([mockJornal]));
-    const req = http.expectOne(r => r.url === `${base}/planting/2`);
+    service.porCultivo(2).subscribe((r) => expect(r).toEqual([mockJornal]));
+    const req = http.expectOne((r) => r.url === `${base}/planting/2`);
     expect(req.request.method).toBe('GET');
     expect(req.request.params.has('inicio')).toBe(false);
     req.flush([mockJornal]);
   });
 
   it('porCultivo() should GET jornales with date filters', () => {
-    service.porCultivo(2, '2024-01-01', '2024-01-31').subscribe(r => expect(r).toEqual([mockJornal]));
-    const req = http.expectOne(r => r.url === `${base}/planting/2`);
+    service
+      .porCultivo(2, '2024-01-01', '2024-01-31')
+      .subscribe((r) => expect(r).toEqual([mockJornal]));
+    const req = http.expectOne((r) => r.url === `${base}/planting/2`);
     expect(req.request.params.get('inicio')).toBe('2024-01-01');
     expect(req.request.params.get('fin')).toBe('2024-01-31');
     req.flush([mockJornal]);
   });
 
   it('agregarActividad() should PATCH add actividad to jornal', () => {
-    service.agregarActividad(1, 3).subscribe(r => expect(r).toEqual(mockJornal));
+    service.agregarActividad(1, 3).subscribe((r) => expect(r).toEqual(mockJornal));
     const req = http.expectOne(`${base}/1/activities/3`);
     expect(req.request.method).toBe('PATCH');
     req.flush(mockJornal);
   });
 
   it('removerActividad() should DELETE actividad from jornal', () => {
-    service.removerActividad(1, 3).subscribe(r => expect(r).toEqual(mockJornal));
+    service.removerActividad(1, 3).subscribe((r) => expect(r).toEqual(mockJornal));
     const req = http.expectOne(`${base}/1/activities/3`);
     expect(req.request.method).toBe('DELETE');
     req.flush(mockJornal);
@@ -386,7 +419,7 @@ describe('PagoService', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), PagoService],
     });
     service = TestBed.inject(PagoService);
-    http    = TestBed.inject(HttpTestingController);
+    http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
 
@@ -394,21 +427,23 @@ describe('PagoService', () => {
 
   it('porMes() should GET what was paid each month since a date', () => {
     const meses = [{ mes: '2026-10', total: 200000, cantidad: 2 }];
-    service.porMes('2026-10-01').subscribe(r => expect(r).toEqual(meses));
-    const req = http.expectOne(r => r.url === `${base}/monthly` && r.params.get('since') === '2026-10-01');
+    service.porMes('2026-10-01').subscribe((r) => expect(r).toEqual(meses));
+    const req = http.expectOne(
+      (r) => r.url === `${base}/monthly` && r.params.get('since') === '2026-10-01',
+    );
     expect(req.request.method).toBe('GET');
     req.flush(meses);
   });
 
   it('buscarPorId() should GET pago by id', () => {
-    service.buscarPorId(1).subscribe(r => expect(r).toEqual(mockPago));
+    service.buscarPorId(1).subscribe((r) => expect(r).toEqual(mockPago));
     const req = http.expectOne(`${base}/1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockPago);
   });
 
   it('historialPorTrabajador() should GET pagos by trabajador', () => {
-    service.historialPorTrabajador(1).subscribe(r => expect(r).toEqual([mockPago]));
+    service.historialPorTrabajador(1).subscribe((r) => expect(r).toEqual([mockPago]));
     const req = http.expectOne(`${base}/worker/1`);
     expect(req.request.method).toBe('GET');
     req.flush([mockPago]);
@@ -416,7 +451,7 @@ describe('PagoService', () => {
 
   it('registrar() should POST pago', () => {
     const body: any = { nominaId: 1, monto: 200000, metodoPago: 'EFECTIVO' };
-    service.registrar(body).subscribe(r => expect(r).toEqual(mockPago));
+    service.registrar(body).subscribe((r) => expect(r).toEqual(mockPago));
     const req = http.expectOne(base);
     expect(req.request.method).toBe('POST');
     req.flush(mockPago);

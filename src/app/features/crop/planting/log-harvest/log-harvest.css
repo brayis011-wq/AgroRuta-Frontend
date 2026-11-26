@@ -1,46 +1,238 @@
 /* La cosecha usa los estilos comunes de los formularios (crop-form.css) y estos propios */
-.form-header__icon { background: var(--ar-ambar-bg); color: var(--ar-ambar); }
-.alert--carencia { grid-column: 1 / -1; background: var(--ar-ambar-bg); color: var(--ar-ambar); border: 1px solid var(--ar-ambar-borde); }
-.carencia-cuerpo { display: flex; flex-direction: column; gap: .5rem; }
-.carencia-confirmar { display: flex; align-items: flex-start; gap: .5rem; font-weight: 600; color: var(--ar-tinta); cursor: pointer; }
-.carencia-confirmar input { margin-top: .15rem; width: 1.05rem; height: 1.05rem; accent-color: var(--ar-ambar); flex: none; }
+.form-header__icon {
+  background: var(--ar-ambar-bg);
+  color: var(--ar-ambar);
+}
+.alert--carencia {
+  grid-column: 1 / -1;
+  background: var(--ar-ambar-bg);
+  color: var(--ar-ambar);
+  border: 1px solid var(--ar-ambar-borde);
+}
+.carencia-cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.carencia-confirmar {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--ar-tinta);
+  cursor: pointer;
+}
+.carencia-confirmar input {
+  margin-top: 0.15rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--ar-ambar);
+  flex: none;
+}
 
 /* Quién la recogió: una tarjeta por persona con su forma de pago */
-.recolectores { gap: .55rem; }
-.recolector { display: flex; flex-direction: column; gap: .5rem; padding: .65rem .7rem; border: 1px solid var(--ar-borde); border-radius: 12px; background: var(--ar-superficie); }
-.recolector-fila { display: flex; align-items: center; gap: .5rem; min-width: 0; }
-.recolector-fila > select { flex: 1; min-width: 0; }
-.modo { display: inline-flex; flex: none; border: 1px solid var(--ar-borde); border-radius: 10px; overflow: hidden; }
-.modo button { border: 0; background: var(--ar-superficie); font: inherit; font-size: .82rem; font-weight: 600; color: var(--ar-tinta-2); padding: .55rem .7rem; cursor: pointer; white-space: nowrap; }
-.modo button + button { border-left: 1px solid var(--ar-borde); }
-.modo button.on { background: var(--ar-verde-50); color: var(--ar-verde-700); box-shadow: inset 0 0 0 1px var(--ar-verde-600); }
-.modo button:focus-visible, .quitar:focus-visible, .btn-agregar:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; }
-.quitar { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--ar-borde); border-radius: 9px; background: var(--ar-superficie); color: var(--ar-tinta-3); cursor: pointer; font-size: 16px; }
-.quitar:hover { color: var(--ar-rojo); border-color: var(--ar-borde-fuerte); }
-.valores { align-items: flex-end; flex-wrap: wrap; }
-.mini { display: flex; flex-direction: column; gap: .25rem; flex: 1 1 8rem; min-width: 0; }
-.mini span { font-size: .74rem; font-weight: 600; color: var(--ar-tinta-3); }
-.mini input { padding: .5rem .65rem; }
-.recolector-total { flex: none; min-width: 6.5rem; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; padding-bottom: .55rem; }
-.recolector.fijo { flex-direction: row; flex-wrap: wrap; align-items: center; gap: .3rem .8rem; background: var(--ar-fondo); }
-.recolector-nombre { font-weight: 700; }
-.recolector-detalle { color: var(--ar-tinta-2); font-size: .86rem; }
-.recolector-nomina { margin-left: auto; font-size: .76rem; font-weight: 600; color: var(--ar-ambar); display: inline-flex; align-items: center; gap: .25rem; }
-.btn-agregar { align-self: flex-start; display: inline-flex; align-items: center; gap: .35rem; border: 1px dashed var(--ar-borde-fuerte); background: none; border-radius: 10px; padding: .5rem .8rem; font: inherit; font-size: .86rem; font-weight: 600; color: var(--ar-verde-700); cursor: pointer; }
-.btn-agregar:hover { background: var(--ar-verde-50); }
-.recolectores-resumen { margin: 0; font-size: .84rem; color: var(--ar-tinta-2); }
-.sin-equipo { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; padding: .55rem .75rem; border-radius: 10px; background: var(--ar-fondo); font-size: .85rem; color: var(--ar-tinta-2); }
-.sin-equipo a { font-weight: 700; color: var(--ar-verde-700); }
-.btn-link { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--ar-verde-700); text-decoration: underline; cursor: pointer; }
-.btn-link:focus-visible { outline: 2px solid var(--ar-verde-600); outline-offset: 2px; border-radius: 4px; }
+.recolectores {
+  gap: 0.55rem;
+}
+.recolector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid var(--ar-borde);
+  border-radius: 12px;
+  background: var(--ar-superficie);
+}
+.recolector-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.recolector-fila > select {
+  flex: 1;
+  min-width: 0;
+}
+.modo {
+  display: inline-flex;
+  flex: none;
+  border: 1px solid var(--ar-borde);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.modo button {
+  border: 0;
+  background: var(--ar-superficie);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ar-tinta-2);
+  padding: 0.55rem 0.7rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.modo button + button {
+  border-left: 1px solid var(--ar-borde);
+}
+.modo button.on {
+  background: var(--ar-verde-50);
+  color: var(--ar-verde-700);
+  box-shadow: inset 0 0 0 1px var(--ar-verde-600);
+}
+.modo button:focus-visible,
+.quitar:focus-visible,
+.btn-agregar:focus-visible {
+  outline: 2px solid var(--ar-verde-600);
+  outline-offset: 2px;
+}
+.quitar {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--ar-borde);
+  border-radius: 9px;
+  background: var(--ar-superficie);
+  color: var(--ar-tinta-3);
+  cursor: pointer;
+  font-size: 16px;
+}
+.quitar:hover {
+  color: var(--ar-rojo);
+  border-color: var(--ar-borde-fuerte);
+}
+.valores {
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.mini {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1 1 8rem;
+  min-width: 0;
+}
+.mini span {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--ar-tinta-3);
+}
+.mini input {
+  padding: 0.5rem 0.65rem;
+}
+.recolector-total {
+  flex: none;
+  min-width: 6.5rem;
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding-bottom: 0.55rem;
+}
+.recolector.fijo {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.8rem;
+  background: var(--ar-fondo);
+}
+.recolector-nombre {
+  font-weight: 700;
+}
+.recolector-detalle {
+  color: var(--ar-tinta-2);
+  font-size: 0.86rem;
+}
+.recolector-nomina {
+  margin-left: auto;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ar-ambar);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.btn-agregar {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px dashed var(--ar-borde-fuerte);
+  background: none;
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--ar-verde-700);
+  cursor: pointer;
+}
+.btn-agregar:hover {
+  background: var(--ar-verde-50);
+}
+.recolectores-resumen {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--ar-tinta-2);
+}
+.sin-equipo {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  background: var(--ar-fondo);
+  font-size: 0.85rem;
+  color: var(--ar-tinta-2);
+}
+.sin-equipo a {
+  font-weight: 700;
+  color: var(--ar-verde-700);
+}
+.btn-link {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ar-verde-700);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.btn-link:focus-visible {
+  outline: 2px solid var(--ar-verde-600);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 
 /* Cosecha de antes con precio: se conserva como valor estimado */
-.estimado { grid-column: 1 / -1; margin: 0; display: flex; align-items: center; gap: .45rem; padding: .55rem .75rem; border-radius: 10px; background: var(--ar-azul-bg); color: var(--ar-azul); font-size: .84rem; }
+.estimado {
+  grid-column: 1 / -1;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  background: var(--ar-azul-bg);
+  color: var(--ar-azul);
+  font-size: 0.84rem;
+}
 
 /* Panel angosto (celular): quién arriba, y debajo la forma de pago con el botón de quitar */
 @container (max-width: 520px) {
-  .recolector-fila:first-child { flex-wrap: wrap; }
-  .recolector-fila:first-child > select { flex: 1 1 100%; }
-  .modo { flex: 1; }
-  .modo button { flex: 1; }
+  .recolector-fila:first-child {
+    flex-wrap: wrap;
+  }
+  .recolector-fila:first-child > select {
+    flex: 1 1 100%;
+  }
+  .modo {
+    flex: 1;
+  }
+  .modo button {
+    flex: 1;
+  }
 }

@@ -1,97 +1,174 @@
 <div class="report-home">
   <div class="barra-sup">
-  <div class="tabs-wrap">
-    <button class="tab-btn payroll" [class.active]="activeTab === 'payroll'" (click)="setTab('payroll')">
-      <div class="tab-icon"><i class="ti ti-report-money"></i></div>
-      <div class="tab-label">
-        <span class="tab-name">{{ 'reports.tabs.payroll.name' | translate }}</span>
-        <span class="tab-sub">{{ 'reports.tabs.payroll.sub' | translate }}</span>
-      </div>
-    </button>
-    <button class="tab-btn crops" [class.active]="activeTab === 'crops'" (click)="setTab('crops')">
-      <div class="tab-icon"><i class="ti ti-plant"></i></div>
-      <div class="tab-label">
-        <span class="tab-name">{{ 'reports.tabs.crops.name' | translate }}</span>
-        <span class="tab-sub">{{ 'reports.tabs.crops.sub' | translate }}</span>
-      </div>
-    </button>
-    <button class="tab-btn costs" [class.active]="activeTab === 'costs'" (click)="setTab('costs')">
-      <div class="tab-icon"><i class="ti ti-coins"></i></div>
-      <div class="tab-label">
-        <span class="tab-name">{{ 'reports.tabs.costs.name' | translate }}</span>
-        <span class="tab-sub">{{ 'reports.tabs.costs.sub' | translate }}</span>
-      </div>
-    </button>
-    <button class="tab-btn profitability" [class.active]="activeTab === 'profitability'" (click)="setTab('profitability')">
-      <div class="tab-icon"><i class="ti ti-chart-bar"></i></div>
-      <div class="tab-label">
-        <span class="tab-name">{{ 'reports.tabs.profitability.name' | translate }}</span>
-        <span class="tab-sub">{{ 'reports.tabs.profitability.sub' | translate }}</span>
-      </div>
-    </button>
-    <button class="tab-btn fieldbook" [class.active]="activeTab === 'fieldbook'" (click)="setTab('fieldbook')">
-      <div class="tab-icon"><i class="ti ti-notebook"></i></div>
-      <div class="tab-label">
-        <span class="tab-name">{{ 'reports.tabs.fieldbook.name' | translate }}</span>
-        <span class="tab-sub">{{ 'reports.tabs.fieldbook.sub' | translate }}</span>
-      </div>
-    </button>
-  </div>
+    <div class="tabs-wrap">
+      <button
+        class="tab-btn payroll"
+        [class.active]="activeTab() === 'payroll'"
+        (click)="setTab('payroll')"
+      >
+        <div class="tab-icon"><i class="ti ti-report-money"></i></div>
+        <div class="tab-label">
+          <span class="tab-name">{{ 'reports.tabs.payroll.name' | translate }}</span>
+          <span class="tab-sub">{{ 'reports.tabs.payroll.sub' | translate }}</span>
+        </div>
+      </button>
+      <button
+        class="tab-btn crops"
+        [class.active]="activeTab() === 'crops'"
+        (click)="setTab('crops')"
+      >
+        <div class="tab-icon"><i class="ti ti-plant"></i></div>
+        <div class="tab-label">
+          <span class="tab-name">{{ 'reports.tabs.crops.name' | translate }}</span>
+          <span class="tab-sub">{{ 'reports.tabs.crops.sub' | translate }}</span>
+        </div>
+      </button>
+      <button
+        class="tab-btn costs"
+        [class.active]="activeTab() === 'costs'"
+        (click)="setTab('costs')"
+      >
+        <div class="tab-icon"><i class="ti ti-coins"></i></div>
+        <div class="tab-label">
+          <span class="tab-name">{{ 'reports.tabs.costs.name' | translate }}</span>
+          <span class="tab-sub">{{ 'reports.tabs.costs.sub' | translate }}</span>
+        </div>
+      </button>
+      <button
+        class="tab-btn profitability"
+        [class.active]="activeTab() === 'profitability'"
+        (click)="setTab('profitability')"
+      >
+        <div class="tab-icon"><i class="ti ti-chart-bar"></i></div>
+        <div class="tab-label">
+          <span class="tab-name">{{ 'reports.tabs.profitability.name' | translate }}</span>
+          <span class="tab-sub">{{ 'reports.tabs.profitability.sub' | translate }}</span>
+        </div>
+      </button>
+      <button
+        class="tab-btn fieldbook"
+        [class.active]="activeTab() === 'fieldbook'"
+        (click)="setTab('fieldbook')"
+      >
+        <div class="tab-icon"><i class="ti ti-notebook"></i></div>
+        <div class="tab-label">
+          <span class="tab-name">{{ 'reports.tabs.fieldbook.name' | translate }}</span>
+          <span class="tab-sub">{{ 'reports.tabs.fieldbook.sub' | translate }}</span>
+        </div>
+      </button>
+    </div>
 
-  <!-- Todo en un solo PDF: se abre desde el menú Descargar de cada reporte y aquí se eligen las partes -->
-  <div class="completo">
-    @if (panelCompleto()) {
-      <div class="panel-completo" id="panel-completo" role="group" [attr.aria-label]="'reports.full.title' | translate">
-        <button type="button" class="cerrar-completo" (click)="panelCompleto.set(false)" [attr.aria-label]="'common.cancel' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
-        <strong>{{ 'reports.full.title' | translate }}</strong>
-        <p>{{ 'reports.full.hint' | translate }}</p>
-        @for (p of partes; track p) {
-          <label class="parte">
-            <input type="checkbox" [checked]="elegidas().has(p)" (change)="alternarParte(p)" />
-            <span>{{ 'reports.tabs.' + p + '.name' | translate }}</span>
-          </label>
-        }
-        @if (errorCompleto()) { <div class="aviso-completo" role="alert">{{ 'reports.downloadError' | translate }}</div> }
-        <button type="button" class="btn-pdf" (click)="descargarCompleto()" [disabled]="descargandoCompleto() || !elegidas().size">
-          <i class="ti" [class.ti-file-type-pdf]="!descargandoCompleto()" [class.ti-loader-2]="descargandoCompleto()" [class.gira]="descargandoCompleto()" aria-hidden="true"></i>
-          {{ (descargandoCompleto() ? 'reports.downloading' : (elegidas().size ? 'reports.full.download' : 'reports.full.needOne')) | translate }}
-        </button>
-      </div>
-    }
-  </div>
+    <!-- Todo en un solo PDF: se abre desde el menú Descargar de cada reporte y aquí se eligen las partes -->
+    <div class="completo">
+      @if (panelCompleto()) {
+        <div
+          class="panel-completo"
+          id="panel-completo"
+          role="group"
+          [attr.aria-label]="'reports.full.title' | translate"
+        >
+          <button
+            type="button"
+            class="cerrar-completo"
+            (click)="panelCompleto.set(false)"
+            [attr.aria-label]="'common.cancel' | translate"
+          >
+            <i class="ti ti-x" aria-hidden="true"></i>
+          </button>
+          <strong>{{ 'reports.full.title' | translate }}</strong>
+          <p>{{ 'reports.full.hint' | translate }}</p>
+          @for (p of partes; track p) {
+            <label class="parte">
+              <input type="checkbox" [checked]="elegidas().has(p)" (change)="alternarParte(p)" />
+              <span>{{ 'reports.tabs.' + p + '.name' | translate }}</span>
+            </label>
+          }
+          @if (errorCompleto()) {
+            <div class="aviso-completo" role="alert">{{ 'reports.downloadError' | translate }}</div>
+          }
+          <button
+            type="button"
+            class="btn-pdf"
+            (click)="descargarCompleto()"
+            [disabled]="descargandoCompleto() || !elegidas().size"
+          >
+            <i
+              class="ti"
+              [class.ti-file-type-pdf]="!descargandoCompleto()"
+              [class.ti-loader-2]="descargandoCompleto()"
+              [class.gira]="descargandoCompleto()"
+              aria-hidden="true"
+            ></i>
+            {{
+              (descargandoCompleto()
+                ? 'reports.downloading'
+                : elegidas().size
+                  ? 'reports.full.download'
+                  : 'reports.full.needOne'
+              ) | translate
+            }}
+          </button>
+        </div>
+      }
+    </div>
   </div>
 
   <!-- Periodo: la nómina cuenta los pagos de esas fechas; lo demás, las temporadas que estuvieron en el campo -->
   <div class="periodo" role="group" [attr.aria-label]="'reports.period.label' | translate">
-    <span class="periodo-titulo"><i class="ti ti-calendar" aria-hidden="true"></i> {{ 'reports.period.label' | translate }}</span>
+    <span class="periodo-titulo"
+      ><i class="ti ti-calendar" aria-hidden="true"></i>
+      {{ 'reports.period.label' | translate }}</span
+    >
     <div class="periodo-opciones">
       @for (p of clavesPeriodo; track p) {
-        <button type="button" [class.on]="periodo() === p" [attr.aria-pressed]="periodo() === p" (click)="elegirPeriodo(p)">
+        <button
+          type="button"
+          [class.on]="periodo() === p"
+          [attr.aria-pressed]="periodo() === p"
+          (click)="elegirPeriodo(p)"
+        >
           {{ 'reports.period.' + p | translate }}
         </button>
       }
     </div>
     @if (periodo() !== 'todo') {
-      <small class="periodo-nota">{{ (activeTab === 'payroll' ? 'reports.period.notePayroll' : activeTab === 'fieldbook' ? 'reports.period.noteFieldBook' : 'reports.period.noteSeasons') | translate }}</small>
+      <small class="periodo-nota">{{
+        (activeTab() === 'payroll'
+          ? 'reports.period.notePayroll'
+          : activeTab() === 'fieldbook'
+            ? 'reports.period.noteFieldBook'
+            : 'reports.period.noteSeasons'
+        ) | translate
+      }}</small>
     }
   </div>
 
   <!-- Al cambiar el periodo se vuelve a armar el reporte con las fechas nuevas -->
   @for (p of [periodo()]; track p) {
-    <div *ngIf="activeTab === 'payroll'">
-      <app-payroll-report />
-    </div>
-    <div *ngIf="activeTab === 'crops'">
-      <app-crop-report />
-    </div>
-    <div *ngIf="activeTab === 'costs'">
-      <app-costs-report [siembraInicial]="siembra" />
-    </div>
-    <div *ngIf="activeTab === 'profitability'">
-      <app-profitability-report />
-    </div>
-    <div *ngIf="activeTab === 'fieldbook'">
-      <app-cuaderno-campo />
-    </div>
+    @if (activeTab() === 'payroll') {
+      <div>
+        <app-payroll-report />
+      </div>
+    }
+    @if (activeTab() === 'crops') {
+      <div>
+        <app-crop-report />
+      </div>
+    }
+    @if (activeTab() === 'costs') {
+      <div>
+        <app-costs-report [siembraInicial]="siembra()" />
+      </div>
+    }
+    @if (activeTab() === 'profitability') {
+      <div>
+        <app-profitability-report />
+      </div>
+    }
+    @if (activeTab() === 'fieldbook') {
+      <div>
+        <app-cuaderno-campo />
+      </div>
+    }
   }
 </div>

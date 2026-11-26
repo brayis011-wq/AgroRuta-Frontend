@@ -3,9 +3,26 @@
     <div>
       <h3>{{ 'temporadas.ciclo.title' | translate }}</h3>
       @if (activa()) {
-        <p>{{ 'temporadas.ciclo.inStage' | translate: { etapa: ('enums.etapaCultivo.' + siembra().estadoCultivo | translate), days: diasEtapa() } }}@if (estimado().diasNormales; as n) { · {{ 'temporadas.ciclo.normalDays' | translate: { days: n } }} }</p>
+        <p>
+          {{
+            'temporadas.ciclo.inStage'
+              | translate
+                : {
+                    etapa: ('enums.etapaCultivo.' + siembra().estadoCultivo | translate),
+                    days: diasEtapa(),
+                  }
+          }}
+          @if (estimado().diasNormales; as n) {
+            · {{ 'temporadas.ciclo.normalDays' | translate: { days: n } }}
+          }
+        </p>
       } @else {
-        <p>{{ 'temporadas.ciclo.finishedOn' | translate: { date: fmt(siembra().fechaFin ?? null), days: duracion() } }}</p>
+        <p>
+          {{
+            'temporadas.ciclo.finishedOn'
+              | translate: { date: fmt(siembra().fechaFin ?? null), days: duracion() }
+          }}
+        </p>
       }
     </div>
     <span class="ciclo-pct">{{ progreso() }}%</span>
@@ -15,16 +32,22 @@
     @for (p of pasos(); track p.etapa) {
       <li class="paso" [class]="p.estado">
         <span class="punto" aria-hidden="true">
-          @if (p.estado === 'hecho') { <i class="ti ti-check"></i> }
+          @if (p.estado === 'hecho') {
+            <i class="ti ti-check"></i>
+          }
         </span>
         <span class="nombre">{{ 'enums.etapaCultivo.' + p.etapa | translate }}</span>
         @if (p.fecha) {
           <span class="fecha">{{ fmt(p.fecha) }}</span>
         } @else if (p.estado === 'pendiente' && estimado().fechas[p.etapa]; as f) {
           <!-- Fecha estimada según lo normal del cultivo -->
-          <span class="fecha estimada" [title]="'temporadas.ciclo.estimatedTitle' | translate">≈ {{ fmt(f) }}</span>
+          <span class="fecha estimada" [title]="'temporadas.ciclo.estimatedTitle' | translate"
+            >≈ {{ fmt(f) }}</span
+          >
         } @else {
-          <span class="fecha">{{ p.estado === 'pendiente' ? '' : ('temporadas.ciclo.noDate' | translate) }}</span>
+          <span class="fecha">{{
+            p.estado === 'pendiente' ? '' : ('temporadas.ciclo.noDate' | translate)
+          }}</span>
         }
       </li>
     }
@@ -36,13 +59,28 @@
       <i class="ti ti-calendar-time" aria-hidden="true"></i>
       <p>
         @if (sug === 'FINALIZADO') {
-          {{ 'temporadas.ciclo.suggestFinish' | translate: { crop: (siembra().tipoCultivo || '').toLowerCase(), date: fmt(estimado().desde) } }}
+          {{
+            'temporadas.ciclo.suggestFinish'
+              | translate
+                : { crop: (siembra().tipoCultivo || '').toLowerCase(), date: fmt(estimado().desde) }
+          }}
         } @else {
-          {{ 'temporadas.ciclo.suggestStage' | translate: { crop: (siembra().tipoCultivo || '').toLowerCase(), etapa: ('enums.etapaCultivo.' + sug | translate), date: fmt(estimado().desde) } }}
+          {{
+            'temporadas.ciclo.suggestStage'
+              | translate
+                : {
+                    crop: (siembra().tipoCultivo || '').toLowerCase(),
+                    etapa: ('enums.etapaCultivo.' + sug | translate),
+                    date: fmt(estimado().desde),
+                  }
+          }}
         }
       </p>
       <button type="button" class="btn btn-primario" (click)="aceptarSugerencia()">
-        {{ (sug === 'FINALIZADO' ? 'temporadas.ciclo.finish' : 'temporadas.ciclo.advanceTo') | translate: { etapa: ('enums.etapaCultivo.' + sug | translate) } }}
+        {{
+          (sug === 'FINALIZADO' ? 'temporadas.ciclo.finish' : 'temporadas.ciclo.advanceTo')
+            | translate: { etapa: ('enums.etapaCultivo.' + sug | translate) }
+        }}
       </button>
     </div>
   }
@@ -50,13 +88,31 @@
   @if (activa()) {
     <details class="dias-normales">
       <summary>{{ 'temporadas.ciclo.whereDays' | translate }}</summary>
-      <p>{{ (estimado().duracion.conocido ? 'temporadas.ciclo.daysOf' : 'temporadas.ciclo.daysGeneral') | translate: { crop: (siembra().tipoCultivo || '').toLowerCase() } }}</p>
+      <p>
+        {{
+          (estimado().duracion.conocido
+            ? 'temporadas.ciclo.daysOf'
+            : 'temporadas.ciclo.daysGeneral'
+          ) | translate: { crop: (siembra().tipoCultivo || '').toLowerCase() }
+        }}
+      </p>
       <ul>
         @for (d of tablaDias(); track d.etapa) {
-          <li><span>{{ 'enums.etapaCultivo.' + d.etapa | translate }}</span><b>{{ 'temporadas.ciclo.aboutDays' | translate: { days: d.dias } }}</b></li>
+          <li>
+            <span>{{ 'enums.etapaCultivo.' + d.etapa | translate }}</span
+            ><b>{{ 'temporadas.ciclo.aboutDays' | translate: { days: d.dias } }}</b>
+          </li>
         }
       </ul>
-      <p class="suave">{{ (estimado().duracion.perenne ? 'temporadas.ciclo.perennial' : 'temporadas.ciclo.shortCycle') | translate }} {{ 'temporadas.ciclo.disclaimer' | translate }}</p>
+      <p class="suave">
+        {{
+          (estimado().duracion.perenne
+            ? 'temporadas.ciclo.perennial'
+            : 'temporadas.ciclo.shortCycle'
+          ) | translate
+        }}
+        {{ 'temporadas.ciclo.disclaimer' | translate }}
+      </p>
     </details>
   }
 
@@ -64,12 +120,26 @@
     <div class="acciones">
       @if (activa()) {
         @if (siguiente(); as sig) {
-          <button type="button" class="btn btn-primario" (click)="abrir('avanzar')" [attr.aria-expanded]="panel() === 'avanzar'">
+          <button
+            type="button"
+            class="btn btn-primario"
+            (click)="abrir('avanzar')"
+            [attr.aria-expanded]="panel() === 'avanzar'"
+          >
             <i class="ti ti-arrow-right"></i>
-            {{ 'temporadas.ciclo.advanceTo' | translate: { etapa: ('enums.etapaCultivo.' + sig | translate) } }}
+            {{
+              'temporadas.ciclo.advanceTo'
+                | translate: { etapa: ('enums.etapaCultivo.' + sig | translate) }
+            }}
           </button>
         }
-        <button type="button" class="btn" [class.btn-primario]="!siguiente()" (click)="abrir('terminar')" [attr.aria-expanded]="panel() === 'terminar'">
+        <button
+          type="button"
+          class="btn"
+          [class.btn-primario]="!siguiente()"
+          (click)="abrir('terminar')"
+          [attr.aria-expanded]="panel() === 'terminar'"
+        >
           <i class="ti ti-flag-check"></i> {{ 'temporadas.ciclo.finish' | translate }}
         </button>
         @if (puedeDeshacer()) {
@@ -87,11 +157,23 @@
     @if (panel() === 'avanzar' && siguiente(); as sig) {
       <form class="panel" (ngSubmit)="avanzar()">
         <label>
-          <span>{{ 'temporadas.ciclo.whenStarted' | translate: { etapa: ('enums.etapaCultivo.' + sig | translate) } }}</span>
-          <input type="date" name="fecha" [(ngModel)]="fecha" [min]="minimo()" [max]="hoy" required>
+          <span>{{
+            'temporadas.ciclo.whenStarted'
+              | translate: { etapa: ('enums.etapaCultivo.' + sig | translate) }
+          }}</span>
+          <input
+            type="date"
+            name="fecha"
+            [(ngModel)]="fecha"
+            [min]="minimo()"
+            [max]="hoy"
+            required
+          />
         </label>
         <div class="panel-botones">
-          <button type="button" class="btn btn-texto" (click)="panel.set(null)">{{ 'common.cancel' | translate }}</button>
+          <button type="button" class="btn btn-texto" (click)="panel.set(null)">
+            {{ 'common.cancel' | translate }}
+          </button>
           <button type="submit" class="btn btn-primario" [disabled]="guardando() || !fecha">
             {{ (guardando() ? 'temporadas.saving' : 'temporadas.ciclo.confirm') | translate }}
           </button>
@@ -103,23 +185,36 @@
       <form class="panel" (ngSubmit)="terminar()">
         <label>
           <span>{{ 'temporadas.ciclo.finishDate' | translate }}</span>
-          <input type="date" name="fecha" [(ngModel)]="fecha" [min]="minimo()" [max]="hoy" required>
+          <input
+            type="date"
+            name="fecha"
+            [(ngModel)]="fecha"
+            [min]="minimo()"
+            [max]="hoy"
+            required
+          />
         </label>
         <fieldset class="opciones">
           <legend>{{ 'temporadas.ciclo.lotAfter' | translate }}</legend>
           <label class="opcion">
-            <input type="radio" name="descanso" [value]="false" [(ngModel)]="dejarEnDescanso">
-            <span><strong>{{ 'temporadas.lote.estado.DISPONIBLE' | translate }}</strong>
-              <small>{{ 'temporadas.ciclo.availableHint' | translate }}</small></span>
+            <input type="radio" name="descanso" [value]="false" [(ngModel)]="dejarEnDescanso" />
+            <span
+              ><strong>{{ 'temporadas.lote.estado.DISPONIBLE' | translate }}</strong>
+              <small>{{ 'temporadas.ciclo.availableHint' | translate }}</small></span
+            >
           </label>
           <label class="opcion">
-            <input type="radio" name="descanso" [value]="true" [(ngModel)]="dejarEnDescanso">
-            <span><strong>{{ 'temporadas.lote.estado.EN_DESCANSO' | translate }}</strong>
-              <small>{{ 'temporadas.ciclo.restHint' | translate }}</small></span>
+            <input type="radio" name="descanso" [value]="true" [(ngModel)]="dejarEnDescanso" />
+            <span
+              ><strong>{{ 'temporadas.lote.estado.EN_DESCANSO' | translate }}</strong>
+              <small>{{ 'temporadas.ciclo.restHint' | translate }}</small></span
+            >
           </label>
         </fieldset>
         <div class="panel-botones">
-          <button type="button" class="btn btn-texto" (click)="panel.set(null)">{{ 'common.cancel' | translate }}</button>
+          <button type="button" class="btn btn-texto" (click)="panel.set(null)">
+            {{ 'common.cancel' | translate }}
+          </button>
           <button type="submit" class="btn btn-primario" [disabled]="guardando() || !fecha">
             {{ (guardando() ? 'temporadas.saving' : 'temporadas.ciclo.finishConfirm') | translate }}
           </button>

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -6,6 +6,7 @@ import { AuthService } from '../../../core/services/auth.service';
 
 /** "Olvidé mi contraseña": pide el correo y manda el enlace. */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recuperar',
   standalone: true,
   imports: [FormsModule, RouterLink, TranslatePipe],

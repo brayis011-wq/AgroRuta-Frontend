@@ -7,34 +7,55 @@
     </div>
   </header>
 
-  <div class="card estado" *ngIf="cargando">{{ 'common.loading' | translate }}</div>
-  <div class="banner error" *ngIf="error">
-    <span>{{ 'portal.loadDataError' | translate }}</span>
-    <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">{{ 'common.retry' | translate }}</button>
-  </div>
-  <div class="card estado" *ngIf="!cargando && !error && grupos.length === 0">{{ 'portal.wages.empty' | translate }}</div>
-
-  <div class="card grupo" *ngFor="let g of grupos">
-    <div class="card-head">
-      <h2 class="card-title">{{ g.titulo }}</h2>
-      <span class="grupo-total">{{ 'portal.wages.monthTotal' | translate: { count: g.jornales.length, amount: pesos(g.total) } }}</span>
+  @if (cargando) {
+    <div class="card estado">{{ 'common.loading' | translate }}</div>
+  }
+  @if (error) {
+    <div class="banner error">
+      <span>{{ 'portal.loadDataError' | translate }}</span>
+      <button type="button" class="btn btn-sm btn-ghost" (click)="cargar()">
+        {{ 'common.retry' | translate }}
+      </button>
     </div>
-    <ul class="lista">
-      <li *ngFor="let j of g.jornales" class="item">
-        <div class="item-main">
-          <span class="item-title">{{ fecha(j.fecha) }}</span>
-          <span class="item-sub">{{ j.cultivo || '—' }}</span>
-          <span class="chips" *ngIf="j.actividades.length > 0">
-            <span class="chip" *ngFor="let a of j.actividades">{{ a }}</span>
-          </span>
-        </div>
-        <div class="item-side">
-          <span class="item-amount">{{ pesos(j.valor) }}</span>
-          <span class="pill" [class.ok]="j.liquidado" [class.warn]="!j.liquidado">
-            {{ (j.liquidado ? 'portal.wages.paid' : 'portal.wages.unpaid') | translate }}
-          </span>
-        </div>
-      </li>
-    </ul>
-  </div>
+  }
+  @if (!cargando && !error && grupos.length === 0) {
+    <div class="card estado">
+      {{ 'portal.wages.empty' | translate }}
+    </div>
+  }
+
+  @for (g of grupos; track g) {
+    <div class="card grupo">
+      <div class="card-head">
+        <h2 class="card-title">{{ g.titulo }}</h2>
+        <span class="grupo-total">{{
+          'portal.wages.monthTotal'
+            | translate: { count: g.jornales.length, amount: pesos(g.total) }
+        }}</span>
+      </div>
+      <ul class="lista">
+        @for (j of g.jornales; track j) {
+          <li class="item">
+            <div class="item-main">
+              <span class="item-title">{{ fecha(j.fecha) }}</span>
+              <span class="item-sub">{{ j.cultivo || '—' }}</span>
+              @if (j.actividades.length > 0) {
+                <span class="chips">
+                  @for (a of j.actividades; track a) {
+                    <span class="chip">{{ a }}</span>
+                  }
+                </span>
+              }
+            </div>
+            <div class="item-side">
+              <span class="item-amount">{{ pesos(j.valor) }}</span>
+              <span class="pill" [class.ok]="j.liquidado" [class.warn]="!j.liquidado">
+                {{ (j.liquidado ? 'portal.wages.paid' : 'portal.wages.unpaid') | translate }}
+              </span>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  }
 </section>

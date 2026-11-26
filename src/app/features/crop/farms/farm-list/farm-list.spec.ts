@@ -32,7 +32,11 @@ vi.mock('leaflet', () => {
     addLayer: vi.fn().mockReturnThis(),
     getLayers: vi.fn().mockReturnValue([]),
   };
-  const poligonoMock = { bindTooltip: vi.fn().mockReturnThis(), on: vi.fn().mockReturnThis(), setStyle: vi.fn() };
+  const poligonoMock = {
+    bindTooltip: vi.fn().mockReturnThis(),
+    on: vi.fn().mockReturnThis(),
+    setStyle: vi.fn(),
+  };
   const tileMock = { addTo: vi.fn().mockReturnThis() };
   const controlLayersMock = { addTo: vi.fn().mockReturnThis() };
 
@@ -57,8 +61,22 @@ describe('ListaFincasComponent', () => {
 
   const mockUsuario: any = { id: 1, nombre: 'Juan' };
   const mockFincas: any[] = [
-    { id: 1, nombre: 'Finca A', hectareas: 10, centroideLat: 4.5, centroideLng: -74.1, ubicacion: 'Bogotá' },
-    { id: 2, nombre: 'Finca B', hectareas: 5,  centroideLat: null, centroideLng: null, ubicacion: 'Medellín' },
+    {
+      id: 1,
+      nombre: 'Finca A',
+      hectareas: 10,
+      centroideLat: 4.5,
+      centroideLng: -74.1,
+      ubicacion: 'Bogotá',
+    },
+    {
+      id: 2,
+      nombre: 'Finca B',
+      hectareas: 5,
+      centroideLat: null,
+      centroideLng: null,
+      ubicacion: 'Medellín',
+    },
   ];
 
   beforeEach(async () => {
@@ -76,13 +94,13 @@ describe('ListaFincasComponent', () => {
       providers: [
         provideRouter([]),
         { provide: CultivoService, useValue: cultivoServiceMock },
-        { provide: AuthService,    useValue: authServiceMock    },
+        { provide: AuthService, useValue: authServiceMock },
       ],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(ListaFincasComponent);
+    fixture = TestBed.createComponent(ListaFincasComponent);
     component = fixture.componentInstance;
-    router    = TestBed.inject(Router);
+    router = TestBed.inject(Router);
   });
 
   afterEach(() => vi.restoreAllMocks());

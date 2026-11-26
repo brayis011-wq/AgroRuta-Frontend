@@ -1,4 +1,10 @@
-import { enUnidadGrande, formatoCantidad, unidadBaseDe, unidadGrande, unidadesDe } from './inventory.model';
+import {
+  enUnidadGrande,
+  formatoCantidad,
+  unidadBaseDe,
+  unidadGrande,
+  unidadesDe,
+} from './inventory.model';
 
 describe('inventario.model', () => {
   it('formatoCantidad pasa a litros o kilos desde 1000', () => {

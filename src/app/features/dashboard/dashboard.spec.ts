@@ -6,7 +6,12 @@ import { DashboardComponent } from './dashboard';
 import { AuthService } from '../../core/services/auth.service';
 import { CultivoService } from '../../core/services/crop.service';
 import { FincaActivaService } from '../../core/services/active-farm.service';
-import { JornalService, NominaService, PagoService, TrabajadorService } from '../../core/services/worker.service';
+import {
+  JornalService,
+  NominaService,
+  PagoService,
+  TrabajadorService,
+} from '../../core/services/worker.service';
 
 describe('DashboardComponent', () => {
   let svc: Record<string, any>;
@@ -17,13 +22,19 @@ describe('DashboardComponent', () => {
       imports: [DashboardComponent],
       providers: [
         provideRouter([]),
-        { provide: AuthService, useValue: { getUsuario: () => ({ id: 3, nombre: 'Ana Rodríguez' }) } },
+        {
+          provide: AuthService,
+          useValue: { getUsuario: () => ({ id: 3, nombre: 'Ana Rodríguez' }) },
+        },
         { provide: CultivoService, useValue: svc['cultivo'] },
         { provide: NominaService, useValue: svc['nominas'] },
         { provide: PagoService, useValue: svc['pagos'] },
         { provide: TrabajadorService, useValue: svc['trabajadores'] },
         { provide: JornalService, useValue: svc['jornales'] },
-        { provide: FincaActivaService, useValue: { paraClima: signal(null), idActiva: signal(null) } },
+        {
+          provide: FincaActivaService,
+          useValue: { paraClima: signal(null), idActiva: signal(null) },
+        },
       ],
     });
     const c = TestBed.createComponent(DashboardComponent).componentInstance;
@@ -35,17 +46,41 @@ describe('DashboardComponent', () => {
     svc = {
       cultivo: {
         listarFincasPorAgricultor: vi.fn(() => of([{ id: 1, nombre: 'La Esperanza' }])),
-        listarLotesPorFinca: vi.fn(() => of([{ id: 2, nombre: 'Lote 2', estado: 'DISPONIBLE' }, { id: 3, nombre: 'Lote 3', estado: 'EN_CULTIVO' }])),
-        buscarSiembraPorLote: vi.fn(() => of({ id: 9, fechaSiembra: '2026-01-01', estadoCultivo: 'CRECIMIENTO', variedad: 'Criolla', loteId: 3 })),
-        calendarioFinca: vi.fn(() => of([
-          { fecha: '2026-01-10', tipo: 'COSECHA', estado: 'HECHO', siembraId: 9 },
-          { fecha: '2026-01-12', tipo: 'FUMIGACION_SUGERIDA', estado: 'ATRASADO', siembraId: 9 },
-        ])),
+        listarLotesPorFinca: vi.fn(() =>
+          of([
+            { id: 2, nombre: 'Lote 2', estado: 'DISPONIBLE' },
+            { id: 3, nombre: 'Lote 3', estado: 'EN_CULTIVO' },
+          ]),
+        ),
+        buscarSiembraPorLote: vi.fn(() =>
+          of({
+            id: 9,
+            fechaSiembra: '2026-01-01',
+            estadoCultivo: 'CRECIMIENTO',
+            variedad: 'Criolla',
+            loteId: 3,
+          }),
+        ),
+        calendarioFinca: vi.fn(() =>
+          of([
+            { fecha: '2026-01-10', tipo: 'COSECHA', estado: 'HECHO', siembraId: 9 },
+            { fecha: '2026-01-12', tipo: 'FUMIGACION_SUGERIDA', estado: 'ATRASADO', siembraId: 9 },
+          ]),
+        ),
       },
       nominas: { resumen: vi.fn(() => of([{ estado: 'PENDIENTE', cantidad: 1, total: 10 }])) },
       pagos: { porMes: vi.fn(() => of([])) },
-      trabajadores: { listarTodos: vi.fn(() => of([{ id: 5, estado: 'ACTIVO' }, { id: 6, estado: 'INACTIVO' }])) },
-      jornales: { resumenInicio: vi.fn(() => of({ mesActual: 4, mesAnterior: 2, trabajadoresHoy: [] })) },
+      trabajadores: {
+        listarTodos: vi.fn(() =>
+          of([
+            { id: 5, estado: 'ACTIVO' },
+            { id: 6, estado: 'INACTIVO' },
+          ]),
+        ),
+      },
+      jornales: {
+        resumenInicio: vi.fn(() => of({ mesActual: 4, mesAnterior: 2, trabajadoresHoy: [] })),
+      },
     };
   });
 

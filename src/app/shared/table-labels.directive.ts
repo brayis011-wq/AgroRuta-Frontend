@@ -16,7 +16,11 @@ export class EtiquetasTablaDirective implements AfterViewInit, OnDestroy {
     this.poner();
     if (typeof MutationObserver === 'undefined') return;
     this.observador = new MutationObserver(() => this.poner());
-    this.observador.observe(this.tabla.nativeElement, { childList: true, subtree: true, characterData: true });
+    this.observador.observe(this.tabla.nativeElement, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
   }
 
   ngOnDestroy(): void {
@@ -26,12 +30,15 @@ export class EtiquetasTablaDirective implements AfterViewInit, OnDestroy {
   /** La primera columna (el nombre) no lleva etiqueta; las celdas que ya tienen una se respetan */
   private poner(): void {
     const t = this.tabla.nativeElement;
-    const titulos = Array.from(t.querySelectorAll('thead th')).map((th) => th.textContent?.trim() ?? '');
+    const titulos = Array.from(t.querySelectorAll('thead th')).map(
+      (th) => th.textContent?.trim() ?? '',
+    );
     t.querySelectorAll('tbody tr, tfoot tr').forEach((tr) => {
       let col = 0;
       for (const td of Array.from(tr.children)) {
         const titulo = titulos[col];
-        if (col > 0 && titulo && td.getAttribute('data-l') !== titulo) td.setAttribute('data-l', titulo);
+        if (col > 0 && titulo && td.getAttribute('data-l') !== titulo)
+          td.setAttribute('data-l', titulo);
         col += Number(td.getAttribute('colspan') || 1);
       }
     });

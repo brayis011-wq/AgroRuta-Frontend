@@ -43,7 +43,7 @@ describe('AvisosService', () => {
     vi.advanceTimersByTime(AVISO_SALIDA_MS);
     expect(avisos.actual()).toBeNull();
 
-    avisos.cerrar();   // sin aviso no hace nada
+    avisos.cerrar(); // sin aviso no hace nada
     expect(avisos.saliendo()).toBe(false);
   });
 });

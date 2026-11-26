@@ -2,8 +2,16 @@ import { Injectable } from '@angular/core';
 
 /** Qué clase de registro quedó guardado en el dispositivo */
 export type TipoPendiente =
-  | 'jornal' | 'planilla' | 'fumigacion' | 'cosecha' | 'actividad'
-  | 'venta' | 'abono' | 'gasto' | 'compra' | 'lluvia';
+  | 'jornal'
+  | 'planilla'
+  | 'fumigacion'
+  | 'cosecha'
+  | 'actividad'
+  | 'venta'
+  | 'abono'
+  | 'gasto'
+  | 'compra'
+  | 'lluvia';
 
 /** Un registro hecho sin conexión que todavía no llega al servidor */
 export interface Pendiente {
@@ -35,7 +43,8 @@ export interface Lectura {
  */
 @Injectable({
   providedIn: 'root',
-  useFactory: () => (typeof indexedDB !== 'undefined' ? new AlmacenIndexedDb() : new AlmacenEnMemoria()),
+  useFactory: () =>
+    typeof indexedDB !== 'undefined' ? new AlmacenIndexedDb() : new AlmacenEnMemoria(),
 })
 export abstract class AlmacenSinConexion {
   abstract guardarLectura(clave: string, valor: unknown): Promise<void>;
@@ -65,7 +74,10 @@ export class AlmacenEnMemoria extends AlmacenSinConexion {
     this.cola.set(p.id, { ...p });
   }
   async pendientes(usuarioId: number): Promise<Pendiente[]> {
-    return [...this.cola.values()].filter((p) => p.usuarioId === usuarioId).sort(porFecha).map((p) => ({ ...p }));
+    return [...this.cola.values()]
+      .filter((p) => p.usuarioId === usuarioId)
+      .sort(porFecha)
+      .map((p) => ({ ...p }));
   }
   async quitarPendiente(id: string): Promise<void> {
     this.cola.delete(id);
@@ -88,9 +100,13 @@ export class AlmacenIndexedDb extends AlmacenSinConexion {
         peticion.onupgradeneeded = () => {
           const bd = peticion.result;
           if (!bd.objectStoreNames.contains(LECTURAS)) {
-            bd.createObjectStore(LECTURAS, { keyPath: 'clave' }).createIndex('guardadoEn', 'guardadoEn');
+            bd.createObjectStore(LECTURAS, { keyPath: 'clave' }).createIndex(
+              'guardadoEn',
+              'guardadoEn',
+            );
           }
-          if (!bd.objectStoreNames.contains(PENDIENTES)) bd.createObjectStore(PENDIENTES, { keyPath: 'id' });
+          if (!bd.objectStoreNames.contains(PENDIENTES))
+            bd.createObjectStore(PENDIENTES, { keyPath: 'id' });
         };
         peticion.onsuccess = () => resolve(peticion.result);
         peticion.onerror = () => reject(peticion.error);
@@ -101,7 +117,11 @@ export class AlmacenIndexedDb extends AlmacenSinConexion {
     return this.bd;
   }
 
-  private async en<T>(almacen: string, modo: IDBTransactionMode, accion: (s: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+  private async en<T>(
+    almacen: string,
+    modo: IDBTransactionMode,
+    accion: (s: IDBObjectStore) => IDBRequest<T>,
+  ): Promise<T> {
     const bd = await this.abrir();
     return new Promise<T>((resolve, reject) => {
       const tx = bd.transaction(almacen, modo);
@@ -113,12 +133,18 @@ export class AlmacenIndexedDb extends AlmacenSinConexion {
   }
 
   async guardarLectura(clave: string, valor: unknown): Promise<void> {
-    await this.en(LECTURAS, 'readwrite', (s) => s.put({ clave, valor, guardadoEn: new Date().toISOString() }));
+    await this.en(LECTURAS, 'readwrite', (s) =>
+      s.put({ clave, valor, guardadoEn: new Date().toISOString() }),
+    );
     if (Math.random() < 0.03) void this.soltarLecturasViejas().catch(() => undefined);
   }
 
   async leerLectura(clave: string): Promise<Lectura | null> {
-    const fila = await this.en<{ valor: unknown; guardadoEn: string } | undefined>(LECTURAS, 'readonly', (s) => s.get(clave));
+    const fila = await this.en<{ valor: unknown; guardadoEn: string } | undefined>(
+      LECTURAS,
+      'readonly',
+      (s) => s.get(clave),
+    );
     return fila ? { valor: fila.valor, guardadoEn: fila.guardadoEn } : null;
   }
 
@@ -142,7 +168,9 @@ export class AlmacenIndexedDb extends AlmacenSinConexion {
   private async soltarLecturasViejas(): Promise<void> {
     const total = await this.en<number>(LECTURAS, 'readonly', (s) => s.count());
     if (total <= MAX_LECTURAS) return;
-    const claves = await this.en<IDBValidKey[]>(LECTURAS, 'readonly', (s) => s.index('guardadoEn').getAllKeys(null, total - MAX_LECTURAS + 50));
+    const claves = await this.en<IDBValidKey[]>(LECTURAS, 'readonly', (s) =>
+      s.index('guardadoEn').getAllKeys(null, total - MAX_LECTURAS + 50),
+    );
     const bd = await this.abrir();
     const tx = bd.transaction(LECTURAS, 'readwrite');
     claves.forEach((c) => tx.objectStore(LECTURAS).delete(c));

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
@@ -15,7 +15,6 @@ describe('RegistrarActividad', () => {
     cultivoServiceMock = {
       registrarActividad: vi.fn().mockReturnValue(of({})),
     };
-
 
     await TestBed.configureTestingModule({
       imports: [RegistrarActividad],
@@ -56,7 +55,13 @@ describe('RegistrarActividad', () => {
 
   it('should have correct tiposActividad list', () => {
     expect(component.tiposActividad).toEqual([
-      'ABONADO', 'PODA', 'TUTOREO', 'DESHIERBE', 'RIEGO', 'REVISION', 'OTRO'
+      'ABONADO',
+      'PODA',
+      'TUTOREO',
+      'DESHIERBE',
+      'RIEGO',
+      'REVISION',
+      'OTRO',
     ]);
   });
 
@@ -75,15 +80,37 @@ describe('RegistrarActividad', () => {
       descripcion: 'Riego manual',
       fecha: '2024-04-01',
       siembraId: 7,
+      costo: null,
+      producto: '',
+      agriculturalInputId: null,
+      cantidadUsada: null,
+      unidadCantidad: null,
     };
     component.onSubmit();
-    expect(cultivoServiceMock.registrarActividad).toHaveBeenCalledWith(
-      { ...component.form, producto: null, agriculturalInputId: null, cantidadUsada: null, unidadCantidad: null });
+    expect(cultivoServiceMock.registrarActividad).toHaveBeenCalledWith({
+      ...component.form,
+      producto: null,
+      agriculturalInputId: null,
+      cantidadUsada: null,
+      unidadCantidad: null,
+    });
   });
 
   it('el abonado abre el insumo y manda el producto de la bodega con su cantidad', () => {
-    component.bodega = [{ insumoId: 9, nombre: 'Abono 15-15-15', tipo: 'FERTILIZANTE_SUELO', unidadBase: 'GRAMOS', cantidad: 100000,
-      stockMinimo: null, costoPromedio: 3, valorStock: 300000, estado: 'OK', ultimoMovimiento: null } as any];
+    component.bodega = [
+      {
+        insumoId: 9,
+        nombre: 'Abono 15-15-15',
+        tipo: 'FERTILIZANTE_SUELO',
+        unidadBase: 'GRAMOS',
+        cantidad: 100000,
+        stockMinimo: null,
+        costoPromedio: 3,
+        valorStock: 300000,
+        estado: 'OK',
+        ultimoMovimiento: null,
+      } as any,
+    ];
     component.form = { ...component.form, descripcion: '', fecha: '2024-04-01', siembraId: 7 };
     component.elegirTipo('ABONADO');
     expect(component.conInsumo).toBe(true);
@@ -92,22 +119,34 @@ describe('RegistrarActividad', () => {
     expect(component.unidades).toEqual(['KG', 'GRAMOS']);
     component.form.cantidadUsada = 50;
     component.onSubmit();
-    expect(cultivoServiceMock.registrarActividad).toHaveBeenCalledWith(expect.objectContaining({
-      tipo: 'ABONADO', producto: 'Abono 15-15-15', agriculturalInputId: 9, cantidadUsada: 50, unidadCantidad: 'KG' }));
+    expect(cultivoServiceMock.registrarActividad).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tipo: 'ABONADO',
+        producto: 'Abono 15-15-15',
+        agriculturalInputId: 9,
+        cantidadUsada: 50,
+        unidadCantidad: 'KG',
+      }),
+    );
   });
   it('onSubmit() should set exito and navigate on success', () => {
     const orig = globalThis.setTimeout;
-    globalThis.setTimeout = ((fn: any) => { fn(); return 0; }) as any;
+    globalThis.setTimeout = ((fn: any) => {
+      fn();
+      return 0;
+    }) as any;
     component.onSubmit();
     expect(component.exito).toBeTruthy();
     expect(component.cargando).toBe(false);
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 7], { queryParams: expect.objectContaining({ tab: 'registros' }) });
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/crops/planting', 7], {
+      queryParams: expect.objectContaining({ tab: 'registros' }),
+    });
     globalThis.setTimeout = orig;
   });
 
   it('onSubmit() should set error message on failure with server message', () => {
     cultivoServiceMock.registrarActividad.mockReturnValue(
-      throwError(() => ({ error: { message: 'Tipo inválido' } }))
+      throwError(() => ({ error: { message: 'Tipo inválido' } })),
     );
     component.onSubmit();
     expect(component.error).toBe('Tipo inválido');
@@ -115,9 +154,7 @@ describe('RegistrarActividad', () => {
   });
 
   it('onSubmit() should set generic error message on failure without server message', () => {
-    cultivoServiceMock.registrarActividad.mockReturnValue(
-      throwError(() => ({ error: {} }))
-    );
+    cultivoServiceMock.registrarActividad.mockReturnValue(throwError(() => ({ error: {} })));
     component.onSubmit();
     expect(component.error).toBe('siembra.activity.errors.register');
   });
@@ -134,5 +171,4 @@ describe('RegistrarActividad', () => {
     component.onSubmit();
     expect(component.cargando).toBe(false);
   });
-
 });

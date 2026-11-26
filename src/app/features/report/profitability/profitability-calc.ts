@@ -54,7 +54,8 @@ export interface ResumenRentabilidad {
   peorLote: RentabilidadLote | null;
 }
 
-const pct = (parte: number, total: number): number | null => (total > 0 ? (parte / total) * 100 : null);
+const pct = (parte: number, total: number): number | null =>
+  total > 0 ? (parte / total) * 100 : null;
 
 /** Agrupa las temporadas por lote y compara cada una con la anterior del mismo lote */
 export function rentabilidadPorLote(filas: FilaCostos[]): RentabilidadLote[] {
@@ -62,14 +63,19 @@ export function rentabilidadPorLote(filas: FilaCostos[]): RentabilidadLote[] {
   for (const f of filas) {
     if (!f.costos) continue;
     // Las siembras antiguas no traen loteId: se agrupan por nombre de finca y lote
-    const clave = f.siembra.loteId != null ? 'id' + f.siembra.loteId : `n${f.siembra.fincaNombre ?? ''}|${f.siembra.loteNombre ?? ''}`;
+    const clave =
+      f.siembra.loteId != null
+        ? 'id' + f.siembra.loteId
+        : `n${f.siembra.fincaNombre ?? ''}|${f.siembra.loteNombre ?? ''}`;
     grupos.set(clave, [...(grupos.get(clave) ?? []), f]);
   }
 
   const lotes: RentabilidadLote[] = [];
   for (const [clave, grupo] of grupos) {
     const area = grupo.map((f) => f.siembra.loteAreaHa).find((a) => a != null && a > 0) ?? null;
-    const antiguaPrimero = [...grupo].sort((a, b) => (a.siembra.fechaSiembra ?? '').localeCompare(b.siembra.fechaSiembra ?? ''));
+    const antiguaPrimero = [...grupo].sort((a, b) =>
+      (a.siembra.fechaSiembra ?? '').localeCompare(b.siembra.fechaSiembra ?? ''),
+    );
     const temporadas: TemporadaLote[] = [];
     let anterior: TemporadaLote | null = null;
     for (const f of antiguaPrimero) {
@@ -103,21 +109,28 @@ export function rentabilidadPorLote(filas: FilaCostos[]): RentabilidadLote[] {
     const ingresos = temporadas.reduce((s, t) => s + t.ingresos, 0);
     const conGanancia = temporadas.filter((t) => t.ganancia != null);
     const ganancia = conGanancia.length ? ingresos - costo : null;
-    const mejor = conGanancia.length > 1 ? conGanancia.reduce((m, t) => (t.ganancia! > m.ganancia! ? t : m)) : null;
+    const mejor =
+      conGanancia.length > 1
+        ? conGanancia.reduce((m, t) => (t.ganancia! > m.ganancia! ? t : m))
+        : null;
     lotes.push({
       clave,
       loteNombre: grupo[0].siembra.loteNombre ?? '—',
       fincaNombre: grupo[0].siembra.fincaNombre ?? null,
       areaHa: area,
       temporadas: temporadas.reverse(),
-      costo, ingresos, ganancia,
+      costo,
+      ingresos,
+      ganancia,
       margen: ganancia != null ? pct(ganancia, ingresos) : null,
       gananciaPorHa: ganancia != null && area ? ganancia / area : null,
       mejorId: mejor?.siembraId ?? null,
     });
   }
   // Primero los lotes que más dejaron; al final los que no tienen ventas
-  return lotes.sort((a, b) => (b.ganancia ?? Number.NEGATIVE_INFINITY) - (a.ganancia ?? Number.NEGATIVE_INFINITY));
+  return lotes.sort(
+    (a, b) => (b.ganancia ?? Number.NEGATIVE_INFINITY) - (a.ganancia ?? Number.NEGATIVE_INFINITY),
+  );
 }
 
 export function resumenRentabilidad(lotes: RentabilidadLote[]): ResumenRentabilidad {
@@ -141,5 +154,7 @@ export function resumenRentabilidad(lotes: RentabilidadLote[]): ResumenRentabili
 /** Ancho de la barra (0–100) de una temporada frente a la mayor ganancia o pérdida del lote */
 export function anchoBarra(t: TemporadaLote, lote: RentabilidadLote): number {
   const max = Math.max(...lote.temporadas.map((x) => Math.abs(x.ganancia ?? 0)));
-  return max > 0 && t.ganancia != null ? Math.max(4, Math.round((Math.abs(t.ganancia) / max) * 100)) : 0;
+  return max > 0 && t.ganancia != null
+    ? Math.max(4, Math.round((Math.abs(t.ganancia) / max) * 100))
+    : 0;
 }

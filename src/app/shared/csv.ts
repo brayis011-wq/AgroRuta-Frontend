@@ -13,9 +13,12 @@ export function armarCsv(encabezados: string[], filas: Celda[][], lang: string):
   const sep = es ? ';' : ',';
   const celda = (v: Celda): string => {
     if (v === null || v === undefined) return '';
-    let s = typeof v === 'number'
-      ? (Number.isFinite(v) ? String(Math.round(v * 100) / 100) : '')
-      : String(v);
+    let s =
+      typeof v === 'number'
+        ? Number.isFinite(v)
+          ? String(Math.round(v * 100) / 100)
+          : ''
+        : String(v);
     if (typeof v === 'number' && es) s = s.replace('.', ',');
     // Comillas si hace falta; y una fórmula escrita como texto no se ejecuta al abrir en Excel
     if (typeof v === 'string' && /^[=+\-@]/.test(s)) s = `'${s}`;
@@ -27,7 +30,13 @@ export function armarCsv(encabezados: string[], filas: Celda[][], lang: string):
 }
 
 /** Arma el CSV y lo guarda en el dispositivo: "reporte-nomina-2026-11-18.csv" */
-export function descargarCsv(base: string, encabezados: string[], filas: Celda[][], lang: string, hoy = new Date()): void {
+export function descargarCsv(
+  base: string,
+  encabezados: string[],
+  filas: Celda[][],
+  lang: string,
+  hoy = new Date(),
+): void {
   const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
   const blob = new Blob([armarCsv(encabezados, filas, lang)], { type: 'text/csv;charset=utf-8' });
   descargarArchivo(blob, `${base}-${fecha}.csv`);

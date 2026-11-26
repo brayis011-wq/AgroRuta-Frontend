@@ -1,92 +1,119 @@
 /* src/styles.css */
 :root {
   /* ── Tokens de diseño de AgroRuta ─────────────────────── */
-  --ar-fuente:      'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ar-fuente: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   /* Títulos: una serif cálida, de almanaque. El texto y los números siguen en Inter, que se lee mejor en pequeño */
   --ar-fuente-titulo: 'Fraunces Variable', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-  --ar-verde-900:   #123d17;
-  --ar-verde-800:   #1b5e20;
-  --ar-verde-700:   #236b28;
-  --ar-verde-600:   #2e7d32;
-  --ar-verde-100:   #e6f2e7;
-  --ar-verde-50:    #f3f8f3;
-  --ar-tinta:       #1a231c;
-  --ar-tinta-2:     #4c564d;
-  --ar-tinta-3:     #7a8279;
+  --ar-verde-900: #123d17;
+  --ar-verde-800: #1b5e20;
+  --ar-verde-700: #236b28;
+  --ar-verde-600: #2e7d32;
+  --ar-verde-100: #e6f2e7;
+  --ar-verde-50: #f3f8f3;
+  --ar-tinta: #1a231c;
+  --ar-tinta-2: #4c564d;
+  --ar-tinta-3: #7a8279;
   /* Fondo de papel: tonos cálidos en vez de grises, para que el verde y la tierra resalten */
-  --ar-borde:       #e6e1d3;
-  --ar-fondo:       #f5f2e9;
-  --ar-superficie:  #fffdf9;
-  --ar-ambar:       #b26a00;
-  --ar-ambar-bg:    #fff4dc;
-  --ar-rojo:        #c62828;
-  --ar-rojo-bg:     #fdecec;
-  --ar-azul:        #1f5fa8;
-  --ar-azul-bg:     #e8f0fb;
+  --ar-borde: #e6e1d3;
+  --ar-fondo: #f5f2e9;
+  --ar-superficie: #fffdf9;
+  --ar-ambar: #b26a00;
+  --ar-ambar-bg: #fff4dc;
+  --ar-rojo: #c62828;
+  --ar-rojo-bg: #fdecec;
+  --ar-azul: #1f5fa8;
+  --ar-azul-bg: #e8f0fb;
   /* Acentos de la marca: tierra (rótulos y detalles) y maíz (solo decoración, no para texto) */
-  --ar-tierra:      #8a4b23;
-  --ar-tierra-bg:   #f6e8da;
+  --ar-tierra: #8a4b23;
+  --ar-tierra-bg: #f6e8da;
   --ar-tierra-borde: #e8cdb3;
-  --ar-maiz:        #e0a326;
+  --ar-maiz: #e0a326;
   /* Tonos de apoyo (también cambian con el modo oscuro) */
   --ar-superficie-2: #faf7f0;
-  --ar-linea:       #efebdf;
-  --ar-seg:         #f0ece0;
-  --ar-gris-bg:     #f0ede4;
-  --ar-pista:       #e5e1d3;
+  --ar-linea: #efebdf;
+  --ar-seg: #f0ece0;
+  --ar-gris-bg: #f0ede4;
+  --ar-pista: #e5e1d3;
   --ar-borde-fuerte: #bcd9be;
   --ar-ambar-borde: #f1dcae;
-  --ar-rojo-borde:  #f1c4c0;
+  --ar-rojo-borde: #f1c4c0;
+  /* Brillo de los botones verdes (arriba del degradado) */
+  --ar-verde-brillo: #38923d;
+  --ar-verde-500: #43a047;
+  /* Etiquetas de tipos de producto (fumigación) */
+  --ar-rosa: #a3326e;
+  --ar-rosa-bg: #fbe9f3;
+  --ar-morado: #6a3fb0;
+  --ar-morado-bg: #f1ebfa;
+  --ar-turquesa: #127280;
+  --ar-turquesa-bg: #e3f4f6;
+  --ar-gris: #4b5560;
+  --ar-gris-etiqueta-bg: #eef0f2;
   /* Recuadros semitransparentes sobre fondos de color */
-  --ar-vidrio:      rgba(255, 255, 255, .75);
-  --ar-radio:       14px;
-  --ar-sombra-1:    0 1px 2px rgba(18, 40, 24, .06), 0 1px 3px rgba(18, 40, 24, .08);
-  --ar-sombra-2:    0 4px 14px rgba(18, 40, 24, .08), 0 1px 3px rgba(18, 40, 24, .06);
+  --ar-vidrio: rgba(255, 255, 255, 0.75);
+  --ar-radio: 14px;
+  --ar-sombra-1: 0 1px 2px rgba(18, 40, 24, 0.06), 0 1px 3px rgba(18, 40, 24, 0.08);
+  --ar-sombra-2: 0 4px 14px rgba(18, 40, 24, 0.08), 0 1px 3px rgba(18, 40, 24, 0.06);
 
   color-scheme: light;
 }
 
 /* Modo oscuro: mismos nombres, otros valores. Lo activa TemaService con data-tema en <html> */
-:root[data-tema="oscuro"] {
+:root[data-tema='oscuro'] {
   color-scheme: dark;
-  --ar-verde-900:   #dff3e0;
-  --ar-verde-800:   #a8dcab;
-  --ar-verde-700:   #8ad08f;
-  --ar-verde-600:   #3f9a45;
-  --ar-verde-100:   #1e3524;
-  --ar-verde-50:    #18261c;
-  --ar-tinta:       #e4ebe6;
-  --ar-tinta-2:     #b2bfb7;
-  --ar-tinta-3:     #869489;
-  --ar-borde:       #2c342b;
-  --ar-fondo:       #10130f;
-  --ar-superficie:  #181d17;
+  --ar-verde-900: #dff3e0;
+  --ar-verde-800: #a8dcab;
+  --ar-verde-700: #8ad08f;
+  --ar-verde-600: #3f9a45;
+  --ar-verde-100: #1e3524;
+  --ar-verde-50: #18261c;
+  --ar-tinta: #e4ebe6;
+  --ar-tinta-2: #b2bfb7;
+  --ar-tinta-3: #869489;
+  --ar-borde: #2c342b;
+  --ar-fondo: #10130f;
+  --ar-superficie: #181d17;
   --ar-superficie-2: #1c221b;
-  --ar-linea:       #242b23;
-  --ar-seg:         #232a22;
-  --ar-gris-bg:     #262d25;
-  --ar-pista:       #2e362c;
+  --ar-linea: #242b23;
+  --ar-seg: #232a22;
+  --ar-gris-bg: #262d25;
+  --ar-pista: #2e362c;
   --ar-borde-fuerte: #3d6343;
-  --ar-ambar:       #f2b55a;
-  --ar-ambar-bg:    #33270f;
+  --ar-ambar: #f2b55a;
+  --ar-ambar-bg: #33270f;
   --ar-ambar-borde: #5a4418;
-  --ar-rojo:        #ff8f85;
-  --ar-rojo-bg:     #3a1b1b;
-  --ar-rojo-borde:  #6a2c2a;
-  --ar-vidrio:      rgba(255, 255, 255, .05);
-  --ar-azul:        #8db8f5;
-  --ar-azul-bg:     #182a42;
-  --ar-tierra:      #e2a779;
-  --ar-tierra-bg:   #33251a;
+  --ar-rojo: #ff8f85;
+  --ar-rojo-bg: #3a1b1b;
+  --ar-rojo-borde: #6a2c2a;
+  --ar-vidrio: rgba(255, 255, 255, 0.05);
+  --ar-azul: #8db8f5;
+  --ar-azul-bg: #182a42;
+  --ar-tierra: #e2a779;
+  --ar-tierra-bg: #33251a;
   --ar-tierra-borde: #5a402c;
-  --ar-maiz:        #f0bd4f;
-  --ar-sombra-1:    0 1px 2px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .3);
-  --ar-sombra-2:    0 4px 16px rgba(0, 0, 0, .45), 0 1px 3px rgba(0, 0, 0, .35);
+  --ar-maiz: #f0bd4f;
+  --ar-verde-brillo: #4aa651;
+  --ar-verde-500: #4caf50;
+  --ar-rosa: #f08cc0;
+  --ar-rosa-bg: #3a1a2c;
+  --ar-morado: #c3a5f5;
+  --ar-morado-bg: #2a2140;
+  --ar-turquesa: #7fd3df;
+  --ar-turquesa-bg: #142e33;
+  --ar-gris: #b9c2cc;
+  --ar-gris-etiqueta-bg: #262b30;
+  --ar-sombra-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --ar-sombra-2: 0 4px 16px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 /* Imágenes de mapa y fotos sin cambiar; solo se oscurece la interfaz */
-:root[data-tema="oscuro"] .leaflet-container { background: #10130f; }
+:root[data-tema='oscuro'] .leaflet-container {
+  background: #10130f;
+}
 
-html, body { margin: 0; }
+html,
+body {
+  margin: 0;
+}
 body {
   font-family: var(--ar-fuente);
   background: var(--ar-fondo);
@@ -96,120 +123,390 @@ body {
 
 /* Títulos de página y de tarjeta con la fuente de la marca. :where() deja que cada pantalla decida tamaño y peso;
    SOFT redondea los remates de la letra y la hace más amable */
-:where(h1, h2, h3, .ar-titulo) { font-family: var(--ar-fuente-titulo); font-variation-settings: 'SOFT' 100; font-weight: 650; letter-spacing: -.012em; }
+:where(h1, h2, h3, .ar-titulo) {
+  font-family: var(--ar-fuente-titulo);
+  font-variation-settings: 'SOFT' 100;
+  font-weight: 650;
+  letter-spacing: -0.012em;
+}
 
 /* Los controles de formulario no heredan la fuente por defecto (salían en Arial) */
-button, input, select, textarea, optgroup { font-family: inherit; }
-input::placeholder, textarea::placeholder { color: var(--ar-tinta-3); opacity: 1; }
-/* En modo oscuro, los campos que no tienen estilo propio toman la superficie del tema (sin ganar a los estilos de cada pantalla) */
-:where(:root[data-tema="oscuro"]) :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) {
-  background-color: var(--ar-superficie-2); color: var(--ar-tinta); border-color: var(--ar-borde);
+button,
+input,
+select,
+textarea,
+optgroup {
+  font-family: inherit;
 }
-:focus-visible { outline-color: var(--ar-verde-600); }
+input::placeholder,
+textarea::placeholder {
+  color: var(--ar-tinta-3);
+  opacity: 1;
+}
+/* En modo oscuro, los campos que no tienen estilo propio toman la superficie del tema (sin ganar a los estilos de cada pantalla) */
+:where(:root[data-tema='oscuro'])
+  :where(input:not([type='checkbox']):not([type='radio']):not([type='range']), select, textarea) {
+  background-color: var(--ar-superficie-2);
+  color: var(--ar-tinta);
+  border-color: var(--ar-borde);
+}
+:focus-visible {
+  outline-color: var(--ar-verde-600);
+}
 
 /* Transición entre páginas: solo se anima el contenido, el menú lateral queda fijo */
-.main { view-transition-name: contenido; }
-::view-transition-old(root), ::view-transition-new(root) { animation: none; }
-::view-transition-old(contenido) { animation: salir-pagina .14s ease-in both; }
-::view-transition-new(contenido) { animation: entrar-pagina .28s .04s cubic-bezier(.2, .8, .2, 1) both; }
-@keyframes salir-pagina { to { opacity: 0; transform: translateY(-4px); } }
-@keyframes entrar-pagina { from { opacity: 0; transform: translateY(8px); } }
+.main {
+  view-transition-name: contenido;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+::view-transition-old(contenido) {
+  animation: salir-pagina 0.14s ease-in both;
+}
+::view-transition-new(contenido) {
+  animation: entrar-pagina 0.28s 0.04s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes salir-pagina {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes entrar-pagina {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
 /* Con sentido: entrar a un detalle llega desde la derecha y volver a la lista, desde la izquierda (lo marca nav-direction.ts) */
-:root[data-nav="adelante"]::view-transition-old(contenido) { animation-name: salir-adelante; }
-:root[data-nav="adelante"]::view-transition-new(contenido) { animation-name: entrar-adelante; }
-:root[data-nav="atras"]::view-transition-old(contenido) { animation-name: salir-atras; }
-:root[data-nav="atras"]::view-transition-new(contenido) { animation-name: entrar-atras; }
-@keyframes salir-adelante { to { opacity: 0; transform: translateX(-14px); } }
-@keyframes entrar-adelante { from { opacity: 0; transform: translateX(22px); } }
-@keyframes salir-atras { to { opacity: 0; transform: translateX(14px); } }
-@keyframes entrar-atras { from { opacity: 0; transform: translateX(-22px); } }
+:root[data-nav='adelante']::view-transition-old(contenido) {
+  animation-name: salir-adelante;
+}
+:root[data-nav='adelante']::view-transition-new(contenido) {
+  animation-name: entrar-adelante;
+}
+:root[data-nav='atras']::view-transition-old(contenido) {
+  animation-name: salir-atras;
+}
+:root[data-nav='atras']::view-transition-new(contenido) {
+  animation-name: entrar-atras;
+}
+@keyframes salir-adelante {
+  to {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+}
+@keyframes entrar-adelante {
+  from {
+    opacity: 0;
+    transform: translateX(22px);
+  }
+}
+@keyframes salir-atras {
+  to {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+}
+@keyframes entrar-atras {
+  from {
+    opacity: 0;
+    transform: translateX(-22px);
+  }
+}
 /* El resaltado del menú se desliza de la opción anterior a la nueva (el nombre lo ponen los estilos del panel) */
-::view-transition-group(nav-activo), ::view-transition-group(barra-activa) { animation-duration: .34s; animation-timing-function: cubic-bezier(.3, 1.2, .4, 1); }
-::view-transition-old(nav-activo), ::view-transition-new(nav-activo),
-::view-transition-old(barra-activa), ::view-transition-new(barra-activa) { height: 100%; width: 100%; object-fit: none; object-position: 0 50%; }
-::view-transition-old(barra-activa), ::view-transition-new(barra-activa) { object-position: 50% 50%; }
+::view-transition-group(nav-activo),
+::view-transition-group(barra-activa) {
+  animation-duration: 0.34s;
+  animation-timing-function: cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+::view-transition-old(nav-activo),
+::view-transition-new(nav-activo),
+::view-transition-old(barra-activa),
+::view-transition-new(barra-activa) {
+  height: 100%;
+  width: 100%;
+  object-fit: none;
+  object-position: 0 50%;
+}
+::view-transition-old(barra-activa),
+::view-transition-new(barra-activa) {
+  object-position: 50% 50%;
+}
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(contenido), ::view-transition-new(contenido),
-  ::view-transition-group(nav-activo), ::view-transition-group(barra-activa) { animation: none; }
+  ::view-transition-old(contenido),
+  ::view-transition-new(contenido),
+  ::view-transition-group(nav-activo),
+  ::view-transition-group(barra-activa) {
+    animation: none;
+  }
 }
 
 /* ── Respuesta al toque ─────────────────────────────────
    Todo lo que se puede pulsar se hunde un poco al presionarlo. Se usa "scale" (no "transform") para no
    chocar con los movimientos que cada pantalla ya tiene, y :where() para que cualquier estilo propio gane. */
-:where(button, a, summary, label, [role="button"], [role="tab"], [role="option"]) { -webkit-tap-highlight-color: transparent; }
-:where(button:not(:disabled), [role="button"], [role="tab"], a.btn, a.accion, a.item, a.btn-prim, a.btn-submit, a.tab, a.chip) { transition: scale .14s cubic-bezier(.3, .7, .4, 1); }
-:where(button:not(:disabled), [role="button"], [role="tab"], a.btn, a.accion, a.item, a.btn-prim, a.btn-submit, a.tab, a.chip):active { scale: .965; }
+:where(button, a, summary, label, [role='button'], [role='tab'], [role='option']) {
+  -webkit-tap-highlight-color: transparent;
+}
+:where(
+  button:not(:disabled),
+  [role='button'],
+  [role='tab'],
+  a.btn,
+  a.accion,
+  a.item,
+  a.btn-prim,
+  a.btn-submit,
+  a.tab,
+  a.chip
+) {
+  transition: scale 0.14s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+:where(
+  button:not(:disabled),
+  [role='button'],
+  [role='tab'],
+  a.btn,
+  a.accion,
+  a.item,
+  a.btn-prim,
+  a.btn-submit,
+  a.tab,
+  a.chip
+):active {
+  scale: 0.965;
+}
 @media (prefers-reduced-motion: reduce) {
-  :where(button, [role="button"], [role="tab"], a):active { scale: none; }
+  :where(button, [role='button'], [role='tab'], a):active {
+    scale: none;
+  }
 }
 /* Acceso: al pasar de login a registro la tarjeta cambia de tamaño con suavidad y el contenido se funde */
-::view-transition-group(auth-caja), ::view-transition-group(auth-arte) { animation-duration: .38s; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
-::view-transition-old(auth-caja), ::view-transition-new(auth-caja),
-::view-transition-old(auth-arte), ::view-transition-new(auth-arte) { height: 100%; width: 100%; object-fit: none; object-position: 50% 50%; }
-::view-transition-old(auth-caja) { animation: salir-pagina .16s ease-in both; }
-::view-transition-new(auth-caja) { animation: entrar-pagina .3s .08s cubic-bezier(.2, .8, .2, 1) both; }
-::view-transition-old(auth-arte) { animation: none; opacity: 0; }
-::view-transition-new(auth-arte) { animation: none; }
-@media (prefers-reduced-motion: reduce) { ::view-transition-group(auth-caja), ::view-transition-group(auth-arte), ::view-transition-new(auth-caja), ::view-transition-old(auth-caja) { animation: none; } }
+::view-transition-group(auth-caja),
+::view-transition-group(auth-arte) {
+  animation-duration: 0.38s;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+::view-transition-old(auth-caja),
+::view-transition-new(auth-caja),
+::view-transition-old(auth-arte),
+::view-transition-new(auth-arte) {
+  height: 100%;
+  width: 100%;
+  object-fit: none;
+  object-position: 50% 50%;
+}
+::view-transition-old(auth-caja) {
+  animation: salir-pagina 0.16s ease-in both;
+}
+::view-transition-new(auth-caja) {
+  animation: entrar-pagina 0.3s 0.08s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+::view-transition-old(auth-arte) {
+  animation: none;
+  opacity: 0;
+}
+::view-transition-new(auth-arte) {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(auth-caja),
+  ::view-transition-group(auth-arte),
+  ::view-transition-new(auth-caja),
+  ::view-transition-old(auth-caja) {
+    animation: none;
+  }
+}
 
 /* ── Celular: lo que entra en pantalla al deslizar asoma con suavidad ─────
    La marca data-asoma la pone y la quita features/layout/reveal.ts, una sola vez por bloque.
    :where() deja ganar a cualquier animación propia de cada pantalla. */
 @media (max-width: 760px) and (prefers-reduced-motion: no-preference) {
-  .main :where([data-asoma]) { animation: asomar .5s cubic-bezier(.2, .8, .3, 1); }
+  .main :where([data-asoma]) {
+    animation: asomar 0.5s cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
 }
-@keyframes asomar { from { opacity: 0; translate: 0 22px; scale: .975; } }
+@keyframes asomar {
+  from {
+    opacity: 0;
+    translate: 0 22px;
+    scale: 0.975;
+  }
+}
 
 /* ── Celular: las cifras de arriba de cada pantalla, todas a la vista en una cuadrícula de dos ─────
    (antes iban en una tira que se deslizaba y no se veían todas). Tarjetas compactas: el icono arriba
    y la cifra debajo, para que los valores en pesos quepan. "body .main" gana a los estilos de cada pantalla. */
 @media (max-width: 760px) {
-  body .main .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; overflow: visible; }
-  body .main .kpis > * { min-width: 0; padding: .7rem .75rem; gap: .45rem; flex-direction: column; align-items: flex-start; position: relative; }
+  body .main .kpis {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    overflow: visible;
+  }
+  body .main .kpis > * {
+    min-width: 0;
+    padding: 0.7rem 0.75rem;
+    gap: 0.45rem;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+  }
   /* Si quedan impares, la última ocupa la fila entera */
-  body .main .kpis > *:last-child:nth-child(odd) { grid-column: 1 / -1; }
-  body .main .kpis > * strong { font-size: 1.1rem; overflow-wrap: normal; white-space: nowrap; }
-  body .main .kpis > * small, body .main .kpis > * em { font-size: .72rem; }
-  body .main .kpis .ic, body .main .kpis .kpi-ic { width: 30px; height: 30px; font-size: 16px; border-radius: 9px; position: static; }
-  body .main .kpis .kpi small { padding-right: 0; }
+  body .main .kpis > *:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+  body .main .kpis > * strong {
+    font-size: 1.1rem;
+    overflow-wrap: normal;
+    white-space: nowrap;
+  }
+  body .main .kpis > * small,
+  body .main .kpis > * em {
+    font-size: 0.72rem;
+  }
+  body .main .kpis .ic,
+  body .main .kpis .kpi-ic {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    border-radius: 9px;
+    position: static;
+  }
+  body .main .kpis .kpi small {
+    padding-right: 0;
+  }
 
   /* Filtros y opciones de una línea (Todas / Pendientes...): pasan a la línea siguiente en vez de esconderse */
-  body .main .seg { flex-wrap: wrap; overflow: visible; max-width: 100%; }
-  body .main .seg button { flex: 1 1 auto; }
+  body .main .seg {
+    flex-wrap: wrap;
+    overflow: visible;
+    max-width: 100%;
+  }
+  body .main .seg button {
+    flex: 1 1 auto;
+  }
 
   /* Tablas que pasan a tarjetas: los botones de cada fila bajan a su propia línea y se acomodan */
-  body .main .tabla.resp td.acc { flex: 1 1 100%; margin-left: 0; white-space: normal; text-align: right; }
-  body .main .tabla.resp td.acc .acc-in { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: .35rem; }
+  body .main .tabla.resp td.acc {
+    flex: 1 1 100%;
+    margin-left: 0;
+    white-space: normal;
+    text-align: right;
+  }
+  body .main .tabla.resp td.acc .acc-in {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.35rem;
+  }
   /* Y cada cifra dice qué es (en la tabla lo decía el encabezado, que en el celular no se ve) */
-  body .main .tabla.resp td[data-l]::before { content: attr(data-l); display: block; font-size: .66rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ar-tinta-3); }
+  body .main .tabla.resp td[data-l]::before {
+    content: attr(data-l);
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ar-tinta-3);
+  }
 }
 
 /* Botones de fila con icono y una palabra en el celular (en escritorio el nombre sale al pasar el ratón y la fila no cabe con texto). "body" gana a los estilos de cada pantalla. */
-body .btn-ic.con-texto { width: auto; min-width: 0; padding: 0 .6rem; gap: .3rem; display: inline-flex; align-items: center; font-size: .78rem; font-weight: 600; white-space: nowrap; }
-body .btn-ic.con-texto .txt-corto { line-height: 1; }
-@media (min-width: 761px) { body .btn-ic.con-texto .txt-corto { display: none; } body .btn-ic.con-texto { padding: 0; width: 34px; justify-content: center; } }
+body .btn-ic.con-texto {
+  width: auto;
+  min-width: 0;
+  padding: 0 0.6rem;
+  gap: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+body .btn-ic.con-texto .txt-corto {
+  line-height: 1;
+}
+@media (min-width: 761px) {
+  body .btn-ic.con-texto .txt-corto {
+    display: none;
+  }
+  body .btn-ic.con-texto {
+    padding: 0;
+    width: 34px;
+    justify-content: center;
+  }
+}
 
 /* Formularios de registro dentro del panel de la siembra: sin migas (la siembra está detrás) ni márgenes de página */
-body .panel-hoja app-migas-cultivo { display: none; }
-/* El formulario llena el panel: encabezado fijo arriba (como los paneles de Trabajadores), sin tarjeta dentro de la hoja */
-body .panel-hoja .page-bg { padding: 0 1.25rem 1.5rem; min-height: 0; background: none; container-type: inline-size; }
-body .panel-hoja .page-bg.registro .container { max-width: none; padding: 0; gap: 1.1rem; animation: none; }
-body .panel-hoja .page-bg .form-header {
-  position: sticky; top: 0; z-index: 5; margin: 0 -1.25rem; padding: 1rem 4.25rem 1rem 1.25rem;
-  background: var(--ar-superficie); border-bottom: 1px solid var(--ar-borde);
+body .panel-hoja app-migas-cultivo {
+  display: none;
 }
-body .panel-hoja .page-bg .form-header__icon { width: 42px; height: 42px; font-size: 21px; border-radius: 12px; }
-body .panel-hoja .page-bg .form-header h2 { font-size: 1.2rem; }
-body .panel-hoja .page-bg .form-card { padding: 0; border: 0; border-radius: 0; box-shadow: none; background: none; }
+/* El formulario llena el panel: encabezado fijo arriba (como los paneles de Trabajadores), sin tarjeta dentro de la hoja */
+body .panel-hoja .page-bg {
+  padding: 0 1.25rem 1.5rem;
+  min-height: 0;
+  background: none;
+  container-type: inline-size;
+}
+body .panel-hoja .page-bg.registro .container {
+  max-width: none;
+  padding: 0;
+  gap: 1.1rem;
+  animation: none;
+}
+body .panel-hoja .page-bg .form-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 0 -1.25rem;
+  padding: 1rem 4.25rem 1rem 1.25rem;
+  background: var(--ar-superficie);
+  border-bottom: 1px solid var(--ar-borde);
+}
+body .panel-hoja .page-bg .form-header__icon {
+  width: 42px;
+  height: 42px;
+  font-size: 21px;
+  border-radius: 12px;
+}
+body .panel-hoja .page-bg .form-header h2 {
+  font-size: 1.2rem;
+}
+body .panel-hoja .page-bg .form-card {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+}
 /* Cancelar y Registrar quedan fijos al pie del panel, con el aviso de error encima */
 body .panel-hoja .page-bg form > .form-actions {
-  position: sticky; bottom: 0; z-index: 4; margin: .3rem -1.25rem -1.5rem; padding: .85rem 1.25rem;
-  background: var(--ar-superficie); border-top: 1px solid var(--ar-borde);
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  margin: 0.3rem -1.25rem -1.5rem;
+  padding: 0.85rem 1.25rem;
+  background: var(--ar-superficie);
+  border-top: 1px solid var(--ar-borde);
 }
 @media (max-width: 760px) {
-  body .panel-hoja .page-bg { padding: 0 1rem 1.25rem; }
-  body .panel-hoja .page-bg .form-header { margin: 0 -1rem; padding: .6rem 3.75rem .8rem 1rem; }
-  body .panel-hoja .page-bg form > .form-actions { margin: .3rem -1rem -1.25rem; padding: .75rem 1rem calc(.75rem + env(safe-area-inset-bottom, 0px)); }
+  body .panel-hoja .page-bg {
+    padding: 0 1rem 1.25rem;
+  }
+  body .panel-hoja .page-bg .form-header {
+    margin: 0 -1rem;
+    padding: 0.6rem 3.75rem 0.8rem 1rem;
+  }
+  body .panel-hoja .page-bg form > .form-actions {
+    margin: 0.3rem -1rem -1.25rem;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 /* Con el panel de registro abierto, la barra inferior del celular no tapa el final del formulario */
-body.con-panel .barra { display: none !important; }
+body.con-panel .barra {
+  display: none !important;
+}

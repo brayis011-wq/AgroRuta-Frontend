@@ -1,5 +1,4 @@
 <div class="cv">
-
   <header class="cv-head">
     <div>
       <p class="eyebrow">{{ 'workers.home.title' | translate }}</p>
@@ -7,24 +6,49 @@
       @if (seleccionado; as s) {
         <p class="cv-sub">
           <span><i class="ti ti-user" aria-hidden="true"></i> {{ s.nombreCompleto }}</span>
-          @if (s.cargo) { <span><i class="ti ti-tag" aria-hidden="true"></i> {{ s.cargo.nombre }} · @if (s.cargo.modalidadPago === 'KILO') {{{ s.cargo.valorKilo | pesos }} {{ 'workers.posts.perKilo' | translate }}} @else {{{ s.cargo.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}}</span> }
-          @if (s.estado && s.estado !== 'ACTIVO') { <span class="est" [class]="s.estado">{{ 'enums.estadoTrabajador.' + s.estado | translate }}</span> }
+          @if (s.cargo) {
+            <span
+              ><i class="ti ti-tag" aria-hidden="true"></i> {{ s.cargo.nombre }} ·
+              @if (s.cargo.modalidadPago === 'KILO') {
+                {{ s.cargo.valorKilo | pesos }} {{ 'workers.posts.perKilo' | translate }}
+              } @else {
+                {{ s.cargo.valorJornal | pesos }}{{ 'workers.home.list.perDay' | translate }}
+              }
+            </span>
+          }
+          @if (s.estado && s.estado !== 'ACTIVO') {
+            <span class="est" [class]="s.estado">{{
+              'enums.estadoTrabajador.' + s.estado | translate
+            }}</span>
+          }
         </p>
       } @else {
-        <p class="cv-sub"><span><i class="ti ti-users-group" aria-hidden="true"></i> {{ 'workers.wages.list.subtitleAll' | translate }}</span></p>
+        <p class="cv-sub">
+          <span
+            ><i class="ti ti-users-group" aria-hidden="true"></i>
+            {{ 'workers.wages.list.subtitleAll' | translate }}</span
+          >
+        </p>
       }
     </div>
     <div class="cv-acciones">
       @if (!trabajadorId && pendientes > 0) {
-        <a class="btn" routerLink="/worker/payrolls" [queryParams]="{ team: 1 }"><i class="ti ti-users-group" aria-hidden="true"></i> {{ 'workers.rosters.team.open' | translate }}</a>
+        <a class="btn" routerLink="/worker/payrolls" [queryParams]="{ team: 1 }"
+          ><i class="ti ti-users-group" aria-hidden="true"></i>
+          {{ 'workers.rosters.team.open' | translate }}</a
+        >
       }
       @if (trabajadorId && pendientes > 0) {
         <button type="button" class="btn" (click)="abrirGenerarNomina()">
-          <i class="ti ti-file-invoice" aria-hidden="true"></i> {{ 'workers.wages.list.generatePayroll' | translate }}
+          <i class="ti ti-file-invoice" aria-hidden="true"></i>
+          {{ 'workers.wages.list.generatePayroll' | translate }}
           <span class="contador">{{ pendientes }}</span>
         </button>
       }
-      <button type="button" class="btn btn-prim" (click)="irANuevoJornal()"><i class="ti ti-calendar-plus" aria-hidden="true"></i> {{ 'workers.wages.list.register' | translate }}</button>
+      <button type="button" class="btn btn-prim" (click)="irANuevoJornal()">
+        <i class="ti ti-calendar-plus" aria-hidden="true"></i>
+        {{ 'workers.wages.list.register' | translate }}
+      </button>
     </div>
   </header>
 
@@ -36,50 +60,105 @@
       <div class="vacio">
         <i class="ti ti-users" aria-hidden="true"></i>
         <h3>{{ 'workers.wages.list.noWorkers' | translate }}</h3>
-        <button type="button" class="btn btn-prim" (click)="volver()">{{ 'workers.wages.list.goToWorkers' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+        <button type="button" class="btn btn-prim" (click)="volver()">
+          {{ 'workers.wages.list.goToWorkers' | translate }}
+          <i class="ti ti-arrow-right" aria-hidden="true"></i>
+        </button>
       </div>
     </section>
   } @else {
-    <app-filtro-trabajador [trabajadores]="trabajadores" [valor]="trabajadorId" (cambio)="elegirTrabajador($event)" />
+    <app-filtro-trabajador
+      [trabajadores]="trabajadores"
+      [valor]="trabajadorId"
+      (cambio)="elegirTrabajador($event)"
+    />
   }
 
   @if (trabajadores.length > 0) {
     <section class="kpis" [attr.aria-label]="'workers.ui.summary' | translate">
       <div class="kpi">
         <span class="ic verde"><i class="ti ti-calendar-week" aria-hidden="true"></i></span>
-        <div><small>{{ 'workers.wages.list.stats.total' | translate }}</small><strong>{{ cantidadJornales }}</strong></div>
+        <div>
+          <small>{{ 'workers.wages.list.stats.total' | translate }}</small
+          ><strong>{{ cantidadJornales }}</strong>
+        </div>
       </div>
       <div class="kpi">
         <span class="ic ambar"><i class="ti ti-hourglass" aria-hidden="true"></i></span>
-        <div><small>{{ 'workers.wages.list.stats.unsettled' | translate }}</small><strong>{{ pendientes }}</strong></div>
+        <div>
+          <small>{{ 'workers.wages.list.stats.unsettled' | translate }}</small
+          ><strong>{{ pendientes }}</strong>
+        </div>
       </div>
       <div class="kpi">
         <span class="ic azul"><i class="ti ti-receipt" aria-hidden="true"></i></span>
-        <div><small>{{ 'workers.wages.list.stats.pendingPay' | translate }}</small><strong>{{ totalPendiente | pesos }}</strong></div>
+        <div>
+          <small>{{ 'workers.wages.list.stats.pendingPay' | translate }}</small
+          ><strong>{{ totalPendiente | pesos }}</strong>
+        </div>
       </div>
       <div class="kpi">
         <span class="ic verde"><i class="ti ti-cash" aria-hidden="true"></i></span>
-        <div><small>{{ 'workers.wages.list.stats.accumulated' | translate }}</small><strong>{{ totalJornales | pesos }}</strong></div>
+        <div>
+          <small>{{ 'workers.wages.list.stats.accumulated' | translate }}</small
+          ><strong>{{ totalJornales | pesos }}</strong>
+        </div>
       </div>
     </section>
 
-    @if (error && !panelNomina) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+    @if (error && !panelNomina) {
+      <p class="aviso error" role="alert">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+      </p>
+    }
 
     <section class="tarjeta">
       <header class="tabla-head">
-        <h2><i class="ti ti-list-details" aria-hidden="true"></i> {{ 'workers.ui.workDays' | translate }}</h2>
+        <h2>
+          <i class="ti ti-list-details" aria-hidden="true"></i>
+          {{ 'workers.ui.workDays' | translate }}
+        </h2>
         <div class="herramientas">
           <label class="buscar-t">
             <i class="ti ti-search" aria-hidden="true"></i>
             <span class="sr-only">{{ 'workers.wages.list.filters.search' | translate }}</span>
-            <input type="search" [placeholder]="(trabajadorId ? 'workers.ui.searchCrop' : 'workers.filter.searchWorkerCrop') | translate" [(ngModel)]="busqueda" />
+            <input
+              type="search"
+              [placeholder]="
+                (trabajadorId ? 'workers.ui.searchCrop' : 'workers.filter.searchWorkerCrop')
+                  | translate
+              "
+              [(ngModel)]="busqueda"
+            />
           </label>
           <div class="fechas">
-            <label><span class="sr-only">{{ 'workers.wages.list.filters.from' | translate }}</span><input type="date" [(ngModel)]="fechaInicio" (change)="filtrarFechas()" [attr.aria-label]="'workers.wages.list.filters.from' | translate" /></label>
+            <label
+              ><span class="sr-only">{{ 'workers.wages.list.filters.from' | translate }}</span
+              ><input
+                type="date"
+                [(ngModel)]="fechaInicio"
+                (change)="filtrarFechas()"
+                [attr.aria-label]="'workers.wages.list.filters.from' | translate"
+            /></label>
             <span aria-hidden="true">–</span>
-            <label><span class="sr-only">{{ 'workers.wages.list.filters.to' | translate }}</span><input type="date" [(ngModel)]="fechaFin" (change)="filtrarFechas()" [attr.aria-label]="'workers.wages.list.filters.to' | translate" /></label>
+            <label
+              ><span class="sr-only">{{ 'workers.wages.list.filters.to' | translate }}</span
+              ><input
+                type="date"
+                [(ngModel)]="fechaFin"
+                (change)="filtrarFechas()"
+                [attr.aria-label]="'workers.wages.list.filters.to' | translate"
+            /></label>
             @if (fechaInicio || fechaFin) {
-              <button type="button" class="btn-ic" (click)="limpiarFiltros()" [title]="'workers.wages.list.filters.clear' | translate" [attr.aria-label]="'workers.wages.list.filters.clear' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+              <button
+                type="button"
+                class="btn-ic"
+                (click)="limpiarFiltros()"
+                [title]="'workers.wages.list.filters.clear' | translate"
+                [attr.aria-label]="'workers.wages.list.filters.clear' | translate"
+              >
+                <i class="ti ti-x" aria-hidden="true"></i>
+              </button>
             }
           </div>
         </div>
@@ -92,7 +171,10 @@
         <div class="vacio">
           <i class="ti ti-calendar-off" aria-hidden="true"></i>
           <p>{{ 'workers.wages.list.empty' | translate }}</p>
-          <button type="button" class="btn btn-prim" (click)="irANuevoJornal()"><i class="ti ti-calendar-plus" aria-hidden="true"></i> {{ 'workers.wages.list.registerFirst' | translate }}</button>
+          <button type="button" class="btn btn-prim" (click)="irANuevoJornal()">
+            <i class="ti ti-calendar-plus" aria-hidden="true"></i>
+            {{ 'workers.wages.list.registerFirst' | translate }}
+          </button>
         </div>
       } @else {
         <div class="tabla-wrap">
@@ -100,7 +182,9 @@
             <thead>
               <tr>
                 <th>{{ 'workers.wages.list.table.date' | translate }}</th>
-                @if (!trabajadorId) { <th>{{ 'workers.ui.col.worker' | translate }}</th> }
+                @if (!trabajadorId) {
+                  <th>{{ 'workers.ui.col.worker' | translate }}</th>
+                }
                 <th>{{ 'workers.wages.list.table.crop' | translate }}</th>
                 <th>{{ 'workers.wages.list.table.activities' | translate }}</th>
                 <th class="num">{{ 'workers.wages.list.table.value' | translate }}</th>
@@ -111,17 +195,47 @@
               @for (j of filtrados; track j.id) {
                 <tr [class.apagada]="j.liquidado">
                   <td class="suave">{{ j.fecha | fecha }}</td>
-                  @if (!trabajadorId) { <td class="prin"><a class="persona enlace" [routerLink]="[]" [queryParams]="{ trabajadorId: j.trabajador?.id }"><span class="av" aria-hidden="true">{{ j.trabajador ? iniciales(j.trabajador) : '?' }}</span><span>{{ j.trabajador?.nombreCompleto }}</span></a></td> }
+                  @if (!trabajadorId) {
+                    <td class="prin">
+                      <a
+                        class="persona enlace"
+                        [routerLink]="[]"
+                        [queryParams]="{ trabajadorId: j.trabajador?.id }"
+                        ><span class="av" aria-hidden="true">{{
+                          j.trabajador ? iniciales(j.trabajador) : '?'
+                        }}</span
+                        ><span>{{ j.trabajador?.nombreCompleto }}</span></a
+                      >
+                    </td>
+                  }
                   <td class="fuerte-n">{{ j.nombreCultivo }}</td>
-                  <td><span class="etqs">@for (a of j.actividades; track a.id) { <span class="etq">{{ a.nombre }}</span> }</span></td>
-                  <td class="num fuerte-n">{{ j.valorJornal | pesos }}@if (j.kilos) { <small class="suave kg-j">{{ j.kilos }} kg</small> }</td>
-                  <td><span class="est" [class.si]="j.liquidado" [class.PENDIENTE]="!j.liquidado">{{ (j.liquidado ? 'workers.wages.list.settled' : 'workers.wages.list.pending') | translate }}</span></td>
+                  <td>
+                    <span class="etqs">
+                      @for (a of j.actividades; track a.id) {
+                        <span class="etq">{{ a.nombre }}</span>
+                      }
+                    </span>
+                  </td>
+                  <td class="num fuerte-n">
+                    {{ j.valorJornal | pesos }}
+                    @if (j.kilos) {
+                      <small class="suave kg-j">{{ j.kilos }} kg</small>
+                    }
+                  </td>
+                  <td>
+                    <span class="est" [class.si]="j.liquidado" [class.PENDIENTE]="!j.liquidado">{{
+                      (j.liquidado ? 'workers.wages.list.settled' : 'workers.wages.list.pending')
+                        | translate
+                    }}</span>
+                  </td>
                 </tr>
               }
             </tbody>
             <tfoot>
               <tr>
-                <td [attr.colspan]="trabajadorId ? 3 : 4">{{ 'workers.wages.list.table.total' | translate }}</td>
+                <td [attr.colspan]="trabajadorId ? 3 : 4">
+                  {{ 'workers.wages.list.table.total' | translate }}
+                </td>
                 <td class="num">{{ totalJornales | pesos }}</td>
                 <td class="ocultar-m"></td>
               </tr>
@@ -131,9 +245,17 @@
         @if (hayMas) {
           <div class="cargar-mas">
             <button type="button" class="btn" [disabled]="cargandoMas" (click)="cargarMas()">
-              <i class="ti" [class.ti-chevron-down]="!cargandoMas" [class.ti-loader-2]="cargandoMas" aria-hidden="true"></i> {{ 'common.loadMore' | translate }}
+              <i
+                class="ti"
+                [class.ti-chevron-down]="!cargandoMas"
+                [class.ti-loader-2]="cargandoMas"
+                aria-hidden="true"
+              ></i>
+              {{ 'common.loadMore' | translate }}
             </button>
-            <small>{{ 'common.showingOf' | translate: { shown: jornales.length, total: total } }}</small>
+            <small>{{
+              'common.showingOf' | translate: { shown: jornales.length, total: total }
+            }}</small>
           </div>
         }
       }
@@ -143,38 +265,89 @@
 
 <!-- Panel: generar nómina -->
 @if (panelNomina) {
-  <button type="button" class="overlay-l" (click)="cerrarPanel()" [attr.aria-label]="'workers.wages.list.panel.close' | translate"></button>
+  <button
+    type="button"
+    class="overlay-l"
+    (click)="cerrarPanel()"
+    [attr.aria-label]="'workers.wages.list.panel.close' | translate"
+  ></button>
   <dialog class="lado" open (click)="$event.stopPropagation()" (keydown.escape)="cerrarPanel()">
     <header class="lado-head">
       <span class="ic azul" aria-hidden="true"><i class="ti ti-file-invoice"></i></span>
-      <div><h2>{{ 'workers.wages.list.panel.title' | translate }}</h2>@if (seleccionado; as s) { <p>{{ s.nombreCompleto }}</p> }</div>
-      <button type="button" class="btn-ic" (click)="cerrarPanel()" [attr.aria-label]="'workers.wages.list.panel.close' | translate"><i class="ti ti-x" aria-hidden="true"></i></button>
+      <div>
+        <h2>{{ 'workers.wages.list.panel.title' | translate }}</h2>
+        @if (seleccionado; as s) {
+          <p>{{ s.nombreCompleto }}</p>
+        }
+      </div>
+      <button
+        type="button"
+        class="btn-ic"
+        (click)="cerrarPanel()"
+        [attr.aria-label]="'workers.wages.list.panel.close' | translate"
+      >
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
     </header>
 
     @if (!nominaGenerada) {
       <form class="lado-cuerpo" [formGroup]="formNomina" (ngSubmit)="generarNomina()">
         <dl class="resumen">
-          <div><dt>{{ 'workers.wages.list.panel.unsettledWages' | translate }}</dt><dd>{{ pendientes }}</dd></div>
-          <div class="tot"><dt>{{ 'workers.wages.list.panel.totalToGenerate' | translate }}</dt><dd>{{ totalPendiente | pesos }}</dd></div>
+          <div>
+            <dt>{{ 'workers.wages.list.panel.unsettledWages' | translate }}</dt>
+            <dd>{{ pendientes }}</dd>
+          </div>
+          <div class="tot">
+            <dt>{{ 'workers.wages.list.panel.totalToGenerate' | translate }}</dt>
+            <dd>{{ totalPendiente | pesos }}</dd>
+          </div>
         </dl>
-        @if (error) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}</p> }
+        @if (error) {
+          <p class="aviso error" role="alert">
+            <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error | translate }}
+          </p>
+        }
         <fieldset class="grupo">
           <legend>{{ 'workers.wages.list.panel.periodTitle' | translate }}</legend>
           <p class="suave">{{ 'workers.wages.list.panel.periodHelp' | translate }}</p>
           <div class="campos">
-            <label class="campo"><span>{{ 'workers.wages.list.panel.startDate' | translate }}</span>
-              <input formControlName="periodoInicio" type="date" [class.invalido]="invalido('periodoInicio')" />
-              @if (invalido('periodoInicio')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            <label class="campo"
+              ><span>{{ 'workers.wages.list.panel.startDate' | translate }}</span>
+              <input
+                formControlName="periodoInicio"
+                type="date"
+                [class.invalido]="invalido('periodoInicio')"
+              />
+              @if (invalido('periodoInicio')) {
+                <em class="err">{{ 'common.required' | translate }}</em>
+              }
             </label>
-            <label class="campo"><span>{{ 'workers.wages.list.panel.endDate' | translate }}</span>
-              <input formControlName="periodoFin" type="date" [class.invalido]="invalido('periodoFin')" />
-              @if (invalido('periodoFin')) { <em class="err">{{ 'common.required' | translate }}</em> }
+            <label class="campo"
+              ><span>{{ 'workers.wages.list.panel.endDate' | translate }}</span>
+              <input
+                formControlName="periodoFin"
+                type="date"
+                [class.invalido]="invalido('periodoFin')"
+              />
+              @if (invalido('periodoFin')) {
+                <em class="err">{{ 'common.required' | translate }}</em>
+              }
             </label>
           </div>
         </fieldset>
         <footer class="lado-pie">
-          <button type="button" class="btn btn-texto" (click)="cerrarPanel()">{{ 'common.cancel' | translate }}</button>
-          <button type="submit" class="btn btn-prim" [disabled]="generando"><i class="ti ti-check" aria-hidden="true"></i> {{ (generando ? 'workers.wages.list.panel.generating' : 'workers.wages.list.panel.generate') | translate }}</button>
+          <button type="button" class="btn btn-texto" (click)="cerrarPanel()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="btn btn-prim" [disabled]="generando">
+            <i class="ti ti-check" aria-hidden="true"></i>
+            {{
+              (generando
+                ? 'workers.wages.list.panel.generating'
+                : 'workers.wages.list.panel.generate'
+              ) | translate
+            }}
+          </button>
         </footer>
       </form>
     } @else {
@@ -184,15 +357,39 @@
           <h3>{{ 'workers.wages.list.panel.success' | translate }}</h3>
         </div>
         <dl class="resumen">
-          <div><dt>{{ 'workers.wages.list.panel.payrollNo' | translate }}</dt><dd>{{ nominaGenerada.id }}</dd></div>
-          <div><dt>{{ 'workers.wages.list.panel.period' | translate }}</dt><dd>{{ nominaGenerada.periodoInicio | periodo: nominaGenerada.periodoFin }}</dd></div>
-          <div><dt>{{ 'workers.wages.list.panel.includedWages' | translate }}</dt><dd>{{ nominaGenerada.totalJornales }}</dd></div>
-          <div><dt>{{ 'common.status' | translate }}</dt><dd><span class="est" [class]="nominaGenerada.estado">{{ 'enums.estadoNomina.' + nominaGenerada.estado | translate }}</span></dd></div>
-          <div class="tot"><dt>{{ 'workers.wages.list.panel.total' | translate }}</dt><dd>{{ nominaGenerada.valorTotal | pesos }}</dd></div>
+          <div>
+            <dt>{{ 'workers.wages.list.panel.payrollNo' | translate }}</dt>
+            <dd>{{ nominaGenerada.id }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'workers.wages.list.panel.period' | translate }}</dt>
+            <dd>{{ nominaGenerada.periodoInicio | periodo: nominaGenerada.periodoFin }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'workers.wages.list.panel.includedWages' | translate }}</dt>
+            <dd>{{ nominaGenerada.totalJornales }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'common.status' | translate }}</dt>
+            <dd>
+              <span class="est" [class]="nominaGenerada.estado">{{
+                'enums.estadoNomina.' + nominaGenerada.estado | translate
+              }}</span>
+            </dd>
+          </div>
+          <div class="tot">
+            <dt>{{ 'workers.wages.list.panel.total' | translate }}</dt>
+            <dd>{{ nominaGenerada.valorTotal | pesos }}</dd>
+          </div>
         </dl>
         <footer class="lado-pie">
-          <button type="button" class="btn btn-texto" (click)="cerrarPanel()">{{ 'workers.wages.list.panel.close2' | translate }}</button>
-          <button type="button" class="btn btn-prim" (click)="verNominaCompleta()">{{ 'workers.wages.list.panel.viewPayrolls' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-texto" (click)="cerrarPanel()">
+            {{ 'workers.wages.list.panel.close2' | translate }}
+          </button>
+          <button type="button" class="btn btn-prim" (click)="verNominaCompleta()">
+            {{ 'workers.wages.list.panel.viewPayrolls' | translate }}
+            <i class="ti ti-arrow-right" aria-hidden="true"></i>
+          </button>
         </footer>
       </div>
     }

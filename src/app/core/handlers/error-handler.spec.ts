@@ -49,14 +49,24 @@ describe('GlobalErrorHandler', () => {
   });
 
   it('reconoce el fallo al descargar una pantalla de una versión que ya no existe', () => {
-    expect(esFalloDeDescarga(new TypeError('Failed to fetch dynamically imported module: https://x/chunk-ABC.js'))).toBe(true);
-    expect(esFalloDeDescarga(new Error('Uncaught (in promise): TypeError: error loading dynamically imported module'))).toBe(true);
+    expect(
+      esFalloDeDescarga(
+        new TypeError('Failed to fetch dynamically imported module: https://x/chunk-ABC.js'),
+      ),
+    ).toBe(true);
+    expect(
+      esFalloDeDescarga(
+        new Error('Uncaught (in promise): TypeError: error loading dynamically imported module'),
+      ),
+    ).toBe(true);
     expect(esFalloDeDescarga(new Error('Cannot read properties of undefined'))).toBe(false);
     expect(esFalloDeDescarga('Failed to fetch dynamically imported module')).toBe(false);
   });
 
   it('recarga una sola vez cuando no se puede descargar una pantalla', () => {
-    const fallo = new TypeError('Failed to fetch dynamically imported module: https://x/chunk-ABC.js');
+    const fallo = new TypeError(
+      'Failed to fetch dynamically imported module: https://x/chunk-ABC.js',
+    );
     handler.handleError(fallo);
     handler.handleError(fallo);
     expect(handler.recargas).toBe(1);
@@ -64,7 +74,9 @@ describe('GlobalErrorHandler', () => {
 
   it('no recarga si no hay conexión', () => {
     vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
-    handler.handleError(new TypeError('Failed to fetch dynamically imported module: https://x/chunk-ABC.js'));
+    handler.handleError(
+      new TypeError('Failed to fetch dynamically imported module: https://x/chunk-ABC.js'),
+    );
     expect(handler.recargas).toBe(0);
   });
 });

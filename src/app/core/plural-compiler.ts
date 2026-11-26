@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import {
-  InterpolatableTranslationObject, InterpolationParameters, TranslateCompiler, TranslateDefaultParser, TranslationObject,
+  InterpolatableTranslationObject,
+  InterpolationParameters,
+  TranslateCompiler,
+  TranslateDefaultParser,
+  TranslationObject,
 } from '@ngx-translate/core';
 
 /**
@@ -23,7 +27,10 @@ export class CompiladorPlurales extends TranslateCompiler {
   }
 }
 
-export function conSingular(arbol: TranslationObject, parser: TranslateDefaultParser): InterpolatableTranslationObject {
+export function conSingular(
+  arbol: TranslationObject,
+  parser: TranslateDefaultParser,
+): InterpolatableTranslationObject {
   const salida: InterpolatableTranslationObject = {};
   for (const [clave, valor] of Object.entries(arbol)) {
     const uno = arbol[clave + 'One'];

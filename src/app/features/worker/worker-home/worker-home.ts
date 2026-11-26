@@ -1,7 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { guardarEnUrl, leerDeUrl } from '../../../shared/url-state';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ContarDirective } from '../../../shared/count-up.directive';
@@ -13,27 +19,52 @@ import {
   CargoService,
   TrabajadorRequest,
   TrabajadorUpdateRequest,
-  NominaRequest
+  NominaRequest,
 } from '../../../core/services/worker.service';
 import { Trabajador, Nomina, Cargo, ResumenPagos } from '../../../core/models/worker.model';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { PesosPipe, FechaPipe } from '../../../shared/format.pipe';
 import { iniciales as inicialesDe } from '../../../shared/iniciales';
+import { mensajeDeError } from '../../../shared/error-message';
+import { filtrarTrabajadores } from './worker-filter';
 
 type ModoPanel = 'detalle' | 'nuevo' | 'editar' | 'cambiarCargo' | null;
 
 @Component({
   selector: 'app-worker-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, PesosPipe, FechaPipe, ContarDirective, AyudaComponent],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    TranslatePipe,
+    PesosPipe,
+    FechaPipe,
+    ContarDirective,
+    AyudaComponent,
+  ],
   templateUrl: './worker-home.html',
-  styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../worker-ui.css', '../worker-panel.css']
+  styleUrls: [
+    '../../crop/crop-ui.css',
+    '../../crop/crop-blocks.css',
+    '../../report/report-table.css',
+    '../worker-ui.css',
+    '../worker-panel.css',
+  ],
 })
 export class WorkerHomeComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
+  private readonly trabajadorService = inject(TrabajadorService);
+  private readonly cargoService = inject(CargoService);
+  private readonly nominaService = inject(NominaService);
+  private readonly pagoService = inject(PagoService);
+
   private readonly confirmService = inject(ConfirmService);
 
   trabajadores: Trabajador[] = [];
-  cargos:  Cargo[]  = [];
+  cargos: Cargo[] = [];
   /** Totales que muestran las tarjetas; la base los cuenta, no se traen las listas completas */
   nominasPendientes = 0;
   resumenPagos: ResumenPagos = { cantidad: 0, total: 0, trabajadores: 0 };
@@ -42,46 +73,42 @@ export class WorkerHomeComponent implements OnInit {
 
   // Búsqueda y estado van en la dirección (?q=ana&estado=SUSPENDIDO): al volver se ve lo mismo
   private _busqueda = '';
-  get busqueda(): string { return this._busqueda; }
-  set busqueda(v: string) { this._busqueda = v; guardarEnUrl(this.router, this.route, { q: v.trim() || null }); }
+  get busqueda(): string {
+    return this._busqueda;
+  }
+  set busqueda(v: string) {
+    this._busqueda = v;
+    guardarEnUrl(this.router, this.route, { q: v.trim() || null });
+  }
   private _filtroEstado: 'TODOS' | 'ACTIVO' | 'SUSPENDIDO' = 'ACTIVO';
-  get filtroEstado(): 'TODOS' | 'ACTIVO' | 'SUSPENDIDO' { return this._filtroEstado; }
+  get filtroEstado(): 'TODOS' | 'ACTIVO' | 'SUSPENDIDO' {
+    return this._filtroEstado;
+  }
   set filtroEstado(v: 'TODOS' | 'ACTIVO' | 'SUSPENDIDO') {
     this._filtroEstado = v;
     guardarEnUrl(this.router, this.route, { estado: v === 'ACTIVO' ? null : v });
   }
-  cargando  = true;
+  cargando = true;
   guardando = false;
-  error     = '';                                   // clave de traducción
-  exito     = '';                                   // clave de traducción
-  exitoParams: Record<string, unknown> = {};        // parámetros de la clave de éxito
+  error = ''; // clave de traducción
+  exito = ''; // clave de traducción
+  exitoParams: Record<string, unknown> = {}; // parámetros de la clave de éxito
 
   modoPanel: ModoPanel = null;
   trabajadorSeleccionado: Trabajador | null = null;
 
-  formNuevo!:  FormGroup;
+  formNuevo!: FormGroup;
   formEditar!: FormGroup;
-  formCargo!:  FormGroup;
+  formCargo!: FormGroup;
 
   // ✅ NUEVO — formulario generar nómina
-  formNomina!:       FormGroup;
-  mostrarFormNomina  = false;
-  guardandoNomina    = false;
-  exitoNomina        = '';   // clave de traducción
-  errorNomina        = '';   // clave de traducción (o mensaje crudo del backend)
+  formNomina!: FormGroup;
+  mostrarFormNomina = false;
+  guardandoNomina = false;
+  exitoNomina = ''; // clave de traducción
+  errorNomina = ''; // clave de traducción (o mensaje crudo del backend)
 
   tiposContrato = ['FIJO', 'TEMPORAL', 'JORNAL'];
-
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private trabajadorService: TrabajadorService,
-    private cargoService: CargoService,
-    private nominaService: NominaService,
-    private pagoService: PagoService
-  ) {}
 
   /** Opcional: algunas pruebas montan la pantalla sin rutas */
   private readonly route = inject(ActivatedRoute, { optional: true });
@@ -92,34 +119,36 @@ export class WorkerHomeComponent implements OnInit {
     // /worker?nuevo=1 abre el formulario de una vez (lo usa "Primeros pasos" del inicio)
     if (this.route?.snapshot?.queryParamMap?.get('nuevo')) this.abrirNuevo();
     this._busqueda = leerDeUrl(this.route, 'q') ?? '';
-    this._filtroEstado = (leerDeUrl(this.route, 'estado', ['TODOS', 'SUSPENDIDO']) as 'TODOS' | 'SUSPENDIDO' | null) ?? 'ACTIVO';
+    this._filtroEstado =
+      (leerDeUrl(this.route, 'estado', ['TODOS', 'SUSPENDIDO']) as 'TODOS' | 'SUSPENDIDO' | null) ??
+      'ACTIVO';
   }
 
   iniciarForms(): void {
     this.formNuevo = this.fb.group({
-      nombre:       ['', Validators.required],
-      apellido:     ['', Validators.required],
-      cedula:       ['', Validators.required],
-      telefono:     [''],
-      direccion:    [''],
+      nombre: ['', Validators.required],
+      apellido: ['', Validators.required],
+      cedula: ['', Validators.required],
+      telefono: [''],
+      direccion: [''],
       fechaIngreso: ['', Validators.required],
       tipoContrato: ['FIJO', Validators.required],
-      cargoId:      [null, Validators.required]
+      cargoId: [null, Validators.required],
     });
     this.formEditar = this.fb.group({
-      nombre:       ['', Validators.required],
-      apellido:     ['', Validators.required],
-      telefono:     [''],
-      direccion:    [''],
-      tipoContrato: ['FIJO', Validators.required]
+      nombre: ['', Validators.required],
+      apellido: ['', Validators.required],
+      telefono: [''],
+      direccion: [''],
+      tipoContrato: ['FIJO', Validators.required],
     });
     this.formCargo = this.fb.group({
-      cargoId: [null, Validators.required]
+      cargoId: [null, Validators.required],
     });
     // ✅ NUEVO
     this.formNomina = this.fb.group({
       periodoInicio: ['', Validators.required],
-      periodoFin:    ['', Validators.required]
+      periodoFin: ['', Validators.required],
     });
   }
 
@@ -127,53 +156,69 @@ export class WorkerHomeComponent implements OnInit {
     this.cargando = true;
 
     this.trabajadorService.listarTodos().subscribe({
-      next: (t) => { this.trabajadores = t; this.cargando = false; this.cdr.detectChanges(); },
-      error: () => { this.error = 'workers.home.errors.load'; this.cargando = false; this.cdr.detectChanges(); }
+      next: (t) => {
+        this.trabajadores = t;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.error = 'workers.home.errors.load';
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
     });
 
     this.cargoService.listar().subscribe({
-      next: (c) => { this.cargos = c; this.cdr.detectChanges(); },
-      error: () => {}
+      next: (c) => {
+        this.cargos = c;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
 
     this.nominaService.resumen().subscribe({
       next: (r) => {
-        this.nominasPendientes = r.find(x => x.estado === 'PENDIENTE')?.cantidad ?? 0;
+        this.nominasPendientes = r.find((x) => x.estado === 'PENDIENTE')?.cantidad ?? 0;
         this.cdr.detectChanges();
       },
-      error: () => {}
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
 
     this.pagoService.resumen().subscribe({
-      next: (r) => { this.resumenPagos = r; this.cdr.detectChanges(); },
-      error: () => {}
+      next: (r) => {
+        this.resumenPagos = r;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Si falla, la pantalla sigue con lo que ya mostraba
+      },
     });
   }
 
   // ── Getters ──────────────────────────────────────────────────────────────
 
   get trabajadoresFiltrados(): Trabajador[] {
-    let lista = this.trabajadores;
-    if (this.filtroEstado !== 'TODOS') {
-      lista = lista.filter(t => t.estado === this.filtroEstado);
-    }
-    const q = this.busqueda.toLowerCase();
-    if (!q) return lista;
-    return lista.filter(t =>
-      t.nombreCompleto?.toLowerCase().includes(q) ||
-      t.cedula?.toLowerCase().includes(q) ||
-      t.cargo?.nombre?.toLowerCase().includes(q)
-    );
+    return filtrarTrabajadores(this.trabajadores, this.filtroEstado, this.busqueda);
   }
 
   /** Trabajadores que pidieron acceso a su portal y esperan aprobación. */
   get solicitudesAcceso(): Trabajador[] {
-    return this.trabajadores.filter(t => t.accesoEstado === 'PENDIENTE');
+    return this.trabajadores.filter((t) => t.accesoEstado === 'PENDIENTE');
   }
 
-  get cantidadActivos():     number { return this.trabajadores.filter(t => t.estado === 'ACTIVO').length; }
-  get cantidadSuspendidos(): number { return this.trabajadores.filter(t => t.estado === 'SUSPENDIDO').length; }
-  get totalPagado():         number { return this.resumenPagos.total ?? 0; }
+  get cantidadActivos(): number {
+    return this.trabajadores.filter((t) => t.estado === 'ACTIVO').length;
+  }
+  get cantidadSuspendidos(): number {
+    return this.trabajadores.filter((t) => t.estado === 'SUSPENDIDO').length;
+  }
+  get totalPagado(): number {
+    return this.resumenPagos.total ?? 0;
+  }
 
   // ── Panel ────────────────────────────────────────────────────────────────
 
@@ -198,11 +243,11 @@ export class WorkerHomeComponent implements OnInit {
   abrirEditar(t: Trabajador): void {
     this.trabajadorSeleccionado = t;
     this.formEditar.patchValue({
-      nombre:       t.nombre,
-      apellido:     t.apellido,
-      telefono:     t.telefono  ?? '',
-      direccion:    t.direccion ?? '',
-      tipoContrato: t.tipoContrato ?? 'FIJO'
+      nombre: t.nombre,
+      apellido: t.apellido,
+      telefono: t.telefono ?? '',
+      direccion: t.direccion ?? '',
+      tipoContrato: t.tipoContrato ?? 'FIJO',
     });
     this.modoPanel = 'editar';
     this.limpiarMensajes();
@@ -247,7 +292,9 @@ export class WorkerHomeComponent implements OnInit {
     this.router.navigate(['/worker/payrolls'], { queryParams: { trabajadorId: t.id } });
   }
 
-  irA(ruta: string): void { this.router.navigate(['/worker', ruta]); }
+  irA(ruta: string): void {
+    this.router.navigate(['/worker', ruta]);
+  }
 
   // ── Generar nómina desde el panel ────────────────────────────────────────
 
@@ -273,9 +320,9 @@ export class WorkerHomeComponent implements OnInit {
     this.guardandoNomina = true;
     const val = this.formNomina.value;
     const req: NominaRequest = {
-      trabajadorId:  this.trabajadorSeleccionado.id,
+      trabajadorId: this.trabajadorSeleccionado.id,
       periodoInicio: val.periodoInicio,
-      periodoFin:    val.periodoFin
+      periodoFin: val.periodoFin,
     };
     this.nominaService.generar(req).subscribe({
       next: (n: Nomina) => {
@@ -285,13 +332,16 @@ export class WorkerHomeComponent implements OnInit {
         this.formNomina.reset();
         this.exitoNomina = 'workers.home.success.rosterGenerated';
         this.cdr.detectChanges();
-        setTimeout(() => { this.exitoNomina = ''; this.cdr.detectChanges(); }, 3500);
+        setTimeout(() => {
+          this.exitoNomina = '';
+          this.cdr.detectChanges();
+        }, 3500);
       },
       error: (err) => {
         this.guardandoNomina = false;
-        this.errorNomina = err?.error?.message ?? 'workers.home.errors.generateRoster';
+        this.errorNomina = mensajeDeError(err, 'workers.home.errors.generateRoster');
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -306,13 +356,19 @@ export class WorkerHomeComponent implements OnInit {
     this.exito = clave;
     this.exitoParams = params;
     this.cdr.detectChanges();
-    setTimeout(() => { this.exito = ''; this.cdr.detectChanges(); }, 3500);
+    setTimeout(() => {
+      this.exito = '';
+      this.cdr.detectChanges();
+    }, 3500);
   }
 
   // ── CRUD ─────────────────────────────────────────────────────────────────
 
   guardarNuevo(): void {
-    if (this.formNuevo.invalid) { this.formNuevo.markAllAsTouched(); return; }
+    if (this.formNuevo.invalid) {
+      this.formNuevo.markAllAsTouched();
+      return;
+    }
     this.guardando = true;
     const req: TrabajadorRequest = this.formNuevo.value;
     this.trabajadorService.registrar(req).subscribe({
@@ -322,24 +378,33 @@ export class WorkerHomeComponent implements OnInit {
         this.modoPanel = null;
         this.mostrarExito('workers.home.success.registered', { name: t.nombreCompleto });
       },
-      error: () => { this.error = 'workers.home.errors.register'; this.guardando = false; this.cdr.detectChanges(); }
+      error: () => {
+        this.error = 'workers.home.errors.register';
+        this.guardando = false;
+        this.cdr.detectChanges();
+      },
     });
   }
 
   guardarEdicion(): void {
     if (this.formEditar.invalid || !this.trabajadorSeleccionado?.id) {
-      this.formEditar.markAllAsTouched(); return;
+      this.formEditar.markAllAsTouched();
+      return;
     }
     this.guardando = true;
     const req: TrabajadorUpdateRequest = this.formEditar.value;
     this.trabajadorService.actualizar(this.trabajadorSeleccionado.id, req).subscribe({
       next: (t) => {
-        this.trabajadores = this.trabajadores.map(x => x.id === t.id ? t : x);
+        this.trabajadores = this.trabajadores.map((x) => (x.id === t.id ? t : x));
         this.guardando = false;
         this.modoPanel = null;
         this.mostrarExito('workers.home.success.updated');
       },
-      error: () => { this.error = 'workers.home.errors.update'; this.guardando = false; this.cdr.detectChanges(); }
+      error: () => {
+        this.error = 'workers.home.errors.update';
+        this.guardando = false;
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -349,12 +414,16 @@ export class WorkerHomeComponent implements OnInit {
     const cargoId = Number(this.formCargo.value.cargoId);
     this.trabajadorService.cambiarCargo(this.trabajadorSeleccionado.id, cargoId).subscribe({
       next: (t) => {
-        this.trabajadores = this.trabajadores.map(x => x.id === t.id ? t : x);
+        this.trabajadores = this.trabajadores.map((x) => (x.id === t.id ? t : x));
         this.guardando = false;
         this.modoPanel = null;
         this.mostrarExito('workers.home.success.postUpdated');
       },
-      error: () => { this.error = 'workers.home.errors.changePost'; this.guardando = false; this.cdr.detectChanges(); }
+      error: () => {
+        this.error = 'workers.home.errors.changePost';
+        this.guardando = false;
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -362,11 +431,14 @@ export class WorkerHomeComponent implements OnInit {
     if (!t.id || !(await this.preguntar('workers.home.confirm.deactivate', t, true))) return;
     this.trabajadorService.desactivar(t.id).subscribe({
       next: () => {
-        this.trabajadores = this.trabajadores.filter(x => x.id !== t.id);
+        this.trabajadores = this.trabajadores.filter((x) => x.id !== t.id);
         this.cerrarPanel();
         this.mostrarExito('workers.home.success.deactivated');
       },
-      error: () => { this.error = 'workers.home.errors.deactivate'; this.cdr.detectChanges(); }
+      error: () => {
+        this.error = 'workers.home.errors.deactivate';
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -374,13 +446,16 @@ export class WorkerHomeComponent implements OnInit {
     if (!t.id || !(await this.preguntar('workers.home.confirm.suspend', t, true))) return;
     this.trabajadorService.suspender(t.id).subscribe({
       next: () => {
-        this.trabajadores = this.trabajadores.map(x =>
-          x.id === t.id ? { ...x, estado: 'SUSPENDIDO' } : x
+        this.trabajadores = this.trabajadores.map((x) =>
+          x.id === t.id ? { ...x, estado: 'SUSPENDIDO' } : x,
         );
-        this.trabajadorSeleccionado = this.trabajadores.find(x => x.id === t.id) ?? null;
+        this.trabajadorSeleccionado = this.trabajadores.find((x) => x.id === t.id) ?? null;
         this.mostrarExito('workers.home.success.suspended');
       },
-      error: () => { this.error = 'workers.home.errors.suspend'; this.cdr.detectChanges(); }
+      error: () => {
+        this.error = 'workers.home.errors.suspend';
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -388,13 +463,16 @@ export class WorkerHomeComponent implements OnInit {
     if (!t.id || !(await this.preguntar('workers.home.confirm.reactivate', t))) return;
     this.trabajadorService.reactivar(t.id).subscribe({
       next: () => {
-        this.trabajadores = this.trabajadores.map(x =>
-          x.id === t.id ? { ...x, estado: 'ACTIVO' } : x
+        this.trabajadores = this.trabajadores.map((x) =>
+          x.id === t.id ? { ...x, estado: 'ACTIVO' } : x,
         );
-        this.trabajadorSeleccionado = this.trabajadores.find(x => x.id === t.id) ?? null;
+        this.trabajadorSeleccionado = this.trabajadores.find((x) => x.id === t.id) ?? null;
         this.mostrarExito('workers.home.success.reactivated');
       },
-      error: () => { this.error = 'workers.home.errors.reactivate'; this.cdr.detectChanges(); }
+      error: () => {
+        this.error = 'workers.home.errors.reactivate';
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -405,26 +483,44 @@ export class WorkerHomeComponent implements OnInit {
     this.guardando = true;
     this.trabajadorService.aprobarAcceso(t.id).subscribe({
       next: (actualizado) => this.actualizarAcceso(actualizado, 'workers.home.access.approved'),
-      error: () => { this.guardando = false; this.error = 'workers.home.access.errors.approve'; this.cdr.detectChanges(); }
+      error: () => {
+        this.guardando = false;
+        this.error = 'workers.home.access.errors.approve';
+        this.cdr.detectChanges();
+      },
     });
   }
 
   async rechazarAcceso(t: Trabajador): Promise<void> {
     if (!t.id) return;
-    const clave = t.accesoEstado === 'APROBADO' ? 'workers.home.access.confirmRevoke' : 'workers.home.access.confirmReject';
+    const clave =
+      t.accesoEstado === 'APROBADO'
+        ? 'workers.home.access.confirmRevoke'
+        : 'workers.home.access.confirmReject';
     if (!(await this.preguntar(clave, t, true))) return;
     this.guardando = true;
     this.trabajadorService.rechazarAcceso(t.id).subscribe({
-      next: (actualizado) => this.actualizarAcceso(actualizado,
-        t.accesoEstado === 'APROBADO' ? 'workers.home.access.revoked' : 'workers.home.access.rejected'),
-      error: () => { this.guardando = false; this.error = 'workers.home.access.errors.reject'; this.cdr.detectChanges(); }
+      next: (actualizado) =>
+        this.actualizarAcceso(
+          actualizado,
+          t.accesoEstado === 'APROBADO'
+            ? 'workers.home.access.revoked'
+            : 'workers.home.access.rejected',
+        ),
+      error: () => {
+        this.guardando = false;
+        this.error = 'workers.home.access.errors.reject';
+        this.cdr.detectChanges();
+      },
     });
   }
 
   private actualizarAcceso(actualizado: Trabajador, claveExito: string): void {
     this.guardando = false;
-    this.trabajadores = this.trabajadores.map(x => x.id === actualizado.id ? { ...x, ...actualizado } : x);
-    this.trabajadorSeleccionado = this.trabajadores.find(x => x.id === actualizado.id) ?? null;
+    this.trabajadores = this.trabajadores.map((x) =>
+      x.id === actualizado.id ? { ...x, ...actualizado } : x,
+    );
+    this.trabajadorSeleccionado = this.trabajadores.find((x) => x.id === actualizado.id) ?? null;
     this.mostrarExito(claveExito);
   }
 

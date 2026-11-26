@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-   testMode: false,
+  testMode: false,
   apiUrl: 'http://localhost:8080',
   /** Instancia de Sentinel Hub (Copernicus Data Space) que sirve la capa NDVI. */
   sentinelInstanceId: '5838490d-ec4b-482d-84b8-f3ebc19fb69c',

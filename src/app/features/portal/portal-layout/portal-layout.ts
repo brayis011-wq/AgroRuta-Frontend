@@ -34,11 +34,16 @@ export class PortalLayoutComponent implements OnInit {
   readonly cajonAbierto = signal(false);
   /** Nóminas aprobadas o pendientes que todavía no le han pagado (contador del menú) */
   readonly porCobrar = signal(0);
-  errorEstado = false;
+  readonly errorEstado = signal(false);
 
   readonly pestanas = [
     { ruta: 'home', icono: 'ti-home', etiqueta: 'portal.nav.home', soloAprobado: false },
-    { ruta: 'workdays', icono: 'ti-calendar-event', etiqueta: 'portal.nav.wages', soloAprobado: true },
+    {
+      ruta: 'workdays',
+      icono: 'ti-calendar-event',
+      etiqueta: 'portal.nav.wages',
+      soloAprobado: true,
+    },
     { ruta: 'payrolls', icono: 'ti-receipt-2', etiqueta: 'portal.nav.rosters', soloAprobado: true },
     { ruta: 'payments', icono: 'ti-cash', etiqueta: 'portal.nav.payments', soloAprobado: true },
   ];
@@ -47,23 +52,29 @@ export class PortalLayoutComponent implements OnInit {
     this.perfil.cargarFoto();
     // En el celular el menú se cierra solo al cambiar de página
     this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd), takeUntilDestroyed(inject(DestroyRef)))
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        takeUntilDestroyed(inject(DestroyRef)),
+      )
       .subscribe(() => this.cajonAbierto.set(false));
   }
 
   ngOnInit(): void {
-    this.errorEstado = false;
+    this.errorEstado.set(false);
     this.portal.cargarEstado().subscribe({
       next: (e) => {
         if (e?.estado === 'APROBADO') this.contarPorCobrar();
       },
-      error: () => (this.errorEstado = true),
+      error: () => this.errorEstado.set(true),
     });
   }
 
   private contarPorCobrar(): void {
     this.portal.nominas().subscribe({
-      next: (lista) => this.porCobrar.set(lista.filter((n) => n.estado === 'PENDIENTE' || n.estado === 'APROBADA').length),
+      next: (lista) =>
+        this.porCobrar.set(
+          lista.filter((n) => n.estado === 'PENDIENTE' || n.estado === 'APROBADA').length,
+        ),
       error: () => this.porCobrar.set(0),
     });
   }
@@ -75,7 +86,11 @@ export class PortalLayoutComponent implements OnInit {
   alternarColapsado(): void {
     const valor = !this.colapsado();
     this.colapsado.set(valor);
-    try { localStorage.setItem(CLAVE_COLAPSADO, String(valor)); } catch { /* sin almacenamiento */ }
+    try {
+      localStorage.setItem(CLAVE_COLAPSADO, String(valor));
+    } catch {
+      /* sin almacenamiento */
+    }
   }
 
   cerrarSesion(): void {
@@ -87,5 +102,9 @@ export class PortalLayoutComponent implements OnInit {
 }
 
 function leerColapsado(): boolean {
-  try { return localStorage.getItem(CLAVE_COLAPSADO) === 'true'; } catch { return false; }
+  try {
+    return localStorage.getItem(CLAVE_COLAPSADO) === 'true';
+  } catch {
+    return false;
+  }
 }

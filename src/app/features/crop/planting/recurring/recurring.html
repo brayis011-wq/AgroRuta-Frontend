@@ -1,37 +1,79 @@
 <section class="tarjeta repetir">
   <header>
-    <h2><i class="ti ti-repeat" aria-hidden="true"></i> {{ 'temporadas.repetir.title' | translate }}</h2>
+    <h2>
+      <i class="ti ti-repeat" aria-hidden="true"></i> {{ 'temporadas.repetir.title' | translate }}
+    </h2>
     @if (activa() && !borrador()) {
-      <button type="button" class="btn chico" (click)="nueva()"><i class="ti ti-plus" aria-hidden="true"></i> {{ 'temporadas.repetir.add' | translate }}</button>
+      <button type="button" class="btn chico" (click)="nueva()">
+        <i class="ti ti-plus" aria-hidden="true"></i> {{ 'temporadas.repetir.add' | translate }}
+      </button>
     }
   </header>
 
   @if (lista() === null) {
     <div class="esq" style="height: 60px; border-radius: 10px"></div>
   } @else if (!lista()!.length && !borrador()) {
-    <p class="nada">{{ (activa() ? 'temporadas.repetir.empty' : 'temporadas.cal.closedSeason') | translate }}</p>
+    <p class="nada">
+      {{ (activa() ? 'temporadas.repetir.empty' : 'temporadas.cal.closedSeason') | translate }}
+    </p>
   } @else {
     <ul class="lista">
       @for (p of lista(); track p.id) {
         <li [class.atrasada]="p.atrasada">
           <span class="ic verde" aria-hidden="true"><i class="ti ti-repeat"></i></span>
           <span class="txt">
-            <strong>{{ 'enums.tipoActividad.' + p.tipo | translate }} · {{ 'temporadas.repetir.every' | translate: { days: p.cadaDias } }}</strong>
+            <strong
+              >{{ 'enums.tipoActividad.' + p.tipo | translate }} ·
+              {{ 'temporadas.repetir.every' | translate: { days: p.cadaDias } }}</strong
+            >
             <small>
               @if (p.proxima) {
-                @if (p.atrasada) { <b class="tarde">{{ 'temporadas.repetir.overdue' | translate: { days: p.diasAtraso } }}</b> }
-                @else { {{ 'temporadas.repetir.next' | translate }} {{ p.proxima | fecha }} }
-              } @else { {{ 'temporadas.repetir.ended' | translate }} }
-              @if (p.ultimaVez) { · {{ 'temporadas.repetir.last' | translate }} {{ p.ultimaVez | fecha }} }
-              @if (p.descripcion) { · {{ p.descripcion }} }
+                @if (p.atrasada) {
+                  <b class="tarde">{{
+                    'temporadas.repetir.overdue' | translate: { days: p.diasAtraso }
+                  }}</b>
+                } @else {
+                  {{ 'temporadas.repetir.next' | translate }} {{ p.proxima | fecha }}
+                }
+              } @else {
+                {{ 'temporadas.repetir.ended' | translate }}
+              }
+              @if (p.ultimaVez) {
+                · {{ 'temporadas.repetir.last' | translate }} {{ p.ultimaVez | fecha }}
+              }
+              @if (p.descripcion) {
+                · {{ p.descripcion }}
+              }
             </small>
           </span>
           <span class="acc">
             @if (activa() && p.proxima) {
-              <a class="btn chico" [routerLink]="[registrar(p).ruta]" [queryParams]="registrar(p).query"><i class="ti ti-check" aria-hidden="true"></i> {{ 'temporadas.repetir.doNow' | translate }}</a>
+              <a
+                class="btn chico"
+                [routerLink]="[registrar(p).ruta]"
+                [queryParams]="registrar(p).query"
+                ><i class="ti ti-check" aria-hidden="true"></i>
+                {{ 'temporadas.repetir.doNow' | translate }}</a
+              >
             }
-            <button type="button" class="btn-ic" (click)="editar(p)" [attr.aria-label]="'common.edit' | translate" [title]="'common.edit' | translate"><i class="ti ti-pencil" aria-hidden="true"></i></button>
-            <button type="button" class="btn-ic peligro" (click)="quitar(p)" [attr.aria-label]="'common.delete' | translate" [title]="'common.delete' | translate"><i class="ti ti-trash" aria-hidden="true"></i></button>
+            <button
+              type="button"
+              class="btn-ic"
+              (click)="editar(p)"
+              [attr.aria-label]="'common.edit' | translate"
+              [title]="'common.edit' | translate"
+            >
+              <i class="ti ti-pencil" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="btn-ic peligro"
+              (click)="quitar(p)"
+              [attr.aria-label]="'common.delete' | translate"
+              [title]="'common.delete' | translate"
+            >
+              <i class="ti ti-trash" aria-hidden="true"></i>
+            </button>
           </span>
         </li>
       }
@@ -40,34 +82,88 @@
 
   @if (borrador(); as b) {
     <form class="form-repetir" (ngSubmit)="guardar()">
-      @if (error()) { <p class="aviso error" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error()! | translate }}</p> }
-      <label class="campo"><span>{{ 'temporadas.repetir.what' | translate }}</span>
+      @if (error()) {
+        <p class="aviso error" role="alert">
+          <i class="ti ti-alert-circle" aria-hidden="true"></i> {{ error()! | translate }}
+        </p>
+      }
+      <label class="campo"
+        ><span>{{ 'temporadas.repetir.what' | translate }}</span>
         <select name="tipo" [ngModel]="b.tipo" (ngModelChange)="cambiar('tipo', $event)">
-          @for (t of tipos; track t) { <option [value]="t">{{ 'enums.tipoActividad.' + t | translate }}</option> }
+          @for (t of tipos; track t) {
+            <option [value]="t">{{ 'enums.tipoActividad.' + t | translate }}</option>
+          }
         </select>
       </label>
-      <div class="campo"><span>{{ 'temporadas.repetir.howOften' | translate }}</span>
+      <div class="campo">
+        <span>{{ 'temporadas.repetir.howOften' | translate }}</span>
         <div class="dias">
           @for (d of sugeridos; track d) {
-            <button type="button" class="dia" [class.on]="b.cadaDias === d" (click)="cambiar('cadaDias', d)">{{ d }}</button>
+            <button
+              type="button"
+              class="dia"
+              [class.on]="b.cadaDias === d"
+              (click)="cambiar('cadaDias', d)"
+            >
+              {{ d }}
+            </button>
           }
-          <input type="number" name="cada" min="1" max="365" inputmode="numeric" [ngModel]="b.cadaDias" (ngModelChange)="cambiar('cadaDias', $event)" [attr.aria-label]="'temporadas.repetir.howOften' | translate" />
+          <input
+            type="number"
+            name="cada"
+            min="1"
+            max="365"
+            inputmode="numeric"
+            [ngModel]="b.cadaDias"
+            (ngModelChange)="cambiar('cadaDias', $event)"
+            [attr.aria-label]="'temporadas.repetir.howOften' | translate"
+          />
           <span class="suave">{{ 'temporadas.repetir.days' | translate }}</span>
         </div>
       </div>
-      <label class="campo"><span>{{ 'temporadas.repetir.from' | translate }}</span>
-        <input type="date" name="desde" [ngModel]="b.desde" (ngModelChange)="cambiar('desde', $event)" required />
+      <label class="campo"
+        ><span>{{ 'temporadas.repetir.from' | translate }}</span>
+        <input
+          type="date"
+          name="desde"
+          [ngModel]="b.desde"
+          (ngModelChange)="cambiar('desde', $event)"
+          required
+        />
       </label>
-      <label class="campo"><span>{{ 'temporadas.repetir.until' | translate }}</span>
-        <input type="date" name="hasta" [ngModel]="b.hasta" (ngModelChange)="cambiar('hasta', $event)" [min]="b.desde" />
+      <label class="campo"
+        ><span>{{ 'temporadas.repetir.until' | translate }}</span>
+        <input
+          type="date"
+          name="hasta"
+          [ngModel]="b.hasta"
+          (ngModelChange)="cambiar('hasta', $event)"
+          [min]="b.desde"
+        />
       </label>
-      <label class="campo ancho"><span>{{ 'temporadas.repetir.note' | translate }}</span>
-        <input type="text" name="desc" maxlength="255" [ngModel]="b.descripcion" (ngModelChange)="cambiar('descripcion', $event)" [placeholder]="'temporadas.repetir.notePlaceholder' | translate" />
+      <label class="campo ancho"
+        ><span>{{ 'temporadas.repetir.note' | translate }}</span>
+        <input
+          type="text"
+          name="desc"
+          maxlength="255"
+          [ngModel]="b.descripcion"
+          (ngModelChange)="cambiar('descripcion', $event)"
+          [placeholder]="'temporadas.repetir.notePlaceholder' | translate"
+        />
       </label>
-      <p class="ayuda ancho"><i class="ti ti-info-circle" aria-hidden="true"></i> {{ 'temporadas.repetir.help' | translate }}</p>
+      <p class="ayuda ancho">
+        <i class="ti ti-info-circle" aria-hidden="true"></i>
+        {{ 'temporadas.repetir.help' | translate }}
+      </p>
       <footer class="ancho">
-        <button type="button" class="btn btn-texto" (click)="borrador.set(null)">{{ 'common.cancel' | translate }}</button>
-        <button type="submit" class="btn btn-prim" [disabled]="guardando()"><i class="ti ti-check" aria-hidden="true"></i> {{ (guardando() ? 'common.saving' : 'common.save') | translate }}</button>
+        <button type="button" class="btn btn-texto" (click)="borrador.set(null)">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="btn btn-prim" [disabled]="guardando()">
+          <i class="ti ti-check" aria-hidden="true"></i>
+          {{ (guardando() ? 'common.saving' : 'common.save') | translate }}
+        </button>
       </footer>
     </form>
   }

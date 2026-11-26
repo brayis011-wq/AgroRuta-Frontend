@@ -1,9 +1,17 @@
 import { UltimoUsadoService } from '../../../../core/services/last-used.service';
 
 import { SiguienteCampoDirective } from '../../../../shared/next-field.directive';
-import { ChangeDetectorRef, Component, OnInit, inject, HostListener } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+  HostListener,
+  DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AvisosService } from '../../../../core/services/toast.service';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -13,26 +21,46 @@ import {
   JornalRequest,
   CultivoDisponible,
   TrabajadorService,
-  LaborService
+  LaborService,
 } from '../../../../core/services/worker.service';
 import { Trabajador, Labor } from '../../../../core/models/worker.model';
+import { mensajeDeError } from '../../../../shared/error-message';
 
 /** Lo que se recuerda del último jornal registrado */
-interface UltimoJornal { fincaId?: number; cultivoId?: number; actividadIds?: number[] }
+interface UltimoJornal {
+  fincaId?: number;
+  cultivoId?: number;
+  actividadIds?: number[];
+}
 
 @Component({
   selector: 'app-nuevo-jornal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe, SiguienteCampoDirective],
+  imports: [ReactiveFormsModule, RouterModule, TranslatePipe, PesosPipe, SiguienteCampoDirective],
   templateUrl: './new-wage.html',
-  styleUrls: ['../../../crop/crop-ui.css', '../../../crop/crop-blocks.css', '../../worker-ui.css', '../../worker-panel.css', '../../../../shared/styles/opciones.css', './new-wage.css']
+  styleUrls: [
+    '../../../crop/crop-ui.css',
+    '../../../crop/crop-blocks.css',
+    '../../worker-ui.css',
+    '../../worker-panel.css',
+    '../../../../shared/styles/opciones.css',
+    './new-wage.css',
+  ],
 })
 export class NuevoJornalComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly fb = inject(FormBuilder);
+  private readonly jornalService = inject(JornalService);
+  private readonly trabajadorService = inject(TrabajadorService);
+  private readonly actividadService = inject(LaborService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
   private readonly avisos = inject(AvisosService);
   form!: FormGroup;
   trabajadores: Trabajador[] = [];
   actividades: Labor[] = [];
-  actividadesSeleccionadas: Set<number> = new Set();
+  actividadesSeleccionadas = new Set<number>();
 
   /** Cultivos activos del agricultor y las fincas donde están */
   cultivos: CultivoDisponible[] = [];
@@ -42,19 +70,10 @@ export class NuevoJornalComponent implements OnInit {
   readonly hoy = fechaLocal(new Date());
   private readonly cdr = inject(ChangeDetectorRef);
   guardando = false;
-  error = '';   // clave de traducción
+  error = ''; // clave de traducción
 
   // Guardamos el trabajadorId que vino por queryParam para redirigir de vuelta
   private trabajadorIdOrigen: number | null = null;
-
-  constructor(
-    private fb: FormBuilder,
-    private jornalService: JornalService,
-    private trabajadorService: TrabajadorService,
-    private actividadService: LaborService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}
 
   private readonly ultimo = inject(UltimoUsadoService);
 
@@ -75,21 +94,24 @@ export class NuevoJornalComponent implements OnInit {
   ngOnInit(): void {
     // ✅ Fix: fb.group estaba como link markdown corrupto
     this.form = this.fb.group({
-      trabajadorId:  [null, Validators.required],
-      fincaId:       [null, Validators.required],
-      cultivoId:     [{ value: null, disabled: true }, Validators.required],
-      fecha:         [this.hoy, Validators.required],
-      kilos:         [null],
-      observaciones: ['']
+      trabajadorId: [null, Validators.required],
+      fincaId: [null, Validators.required],
+      cultivoId: [{ value: null, disabled: true }, Validators.required],
+      fecha: [this.hoy, Validators.required],
+      kilos: [null],
+      observaciones: [''],
     });
     // Si el cargo se paga por kilo, los kilos son obligatorios
-    this.form.get('trabajadorId')!.valueChanges.subscribe(() => this.ajustarKilos());
+    this.form
+      .get('trabajadorId')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.ajustarKilos());
 
     // ✅ Fix: usar listarTodos() igual que en worker-home
     this.trabajadorService.listarTodos().subscribe({
       next: (t: Trabajador[]) => {
         // Solo trabajadores activos pueden tener jornales nuevos
-        this.trabajadores = t.filter(w => w.estado === 'ACTIVO');
+        this.trabajadores = t.filter((w) => w.estado === 'ACTIVO');
 
         const idParam = this.route.snapshot.queryParamMap.get('trabajadorId');
         if (idParam) {
@@ -99,32 +121,41 @@ export class NuevoJornalComponent implements OnInit {
         }
         this.cdr.markForCheck();
       },
-      error: () => { this.error = 'workers.wages.new.errors.loadWorkers'; this.cdr.markForCheck(); }
+      error: () => {
+        this.error = 'workers.wages.new.errors.loadWorkers';
+        this.cdr.markForCheck();
+      },
     });
 
     // Al cambiar de finca se reinicia el cultivo elegido
-    this.form.get('fincaId')!.valueChanges.subscribe((id) => this.alCambiarFinca(id));
+    this.form
+      .get('fincaId')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((id) => this.alCambiarFinca(id));
 
     this.jornalService.cultivosDisponibles().subscribe({
       next: (c: CultivoDisponible[]) => {
         this.cultivos = c;
         const porId = new Map<number, string>();
-        c.forEach(x => porId.set(x.fincaId, x.fincaNombre));
-        this.fincas = [...porId].map(([id, nombre]) => ({ id, nombre }))
+        c.forEach((x) => porId.set(x.fincaId, x.fincaNombre));
+        this.fincas = [...porId]
+          .map(([id, nombre]) => ({ id, nombre }))
           .sort((a, b) => a.nombre.localeCompare(b.nombre));
         this.cargandoCultivos = false;
         // Con una sola finca no hay nada que elegir; si no, la finca y el cultivo del último jornal
         const ultimo = this.ultimo.leer<UltimoJornal>('jornal');
         if (this.fincas.length === 1) this.elegirFinca(this.fincas[0].id);
-        else if (ultimo?.fincaId && this.fincas.some((x) => x.id === ultimo.fincaId)) this.elegirFinca(ultimo.fincaId);
-        if (ultimo?.cultivoId && this.cultivosDeFinca.some((x) => x.id === ultimo.cultivoId)) this.form.patchValue({ cultivoId: ultimo.cultivoId });
+        else if (ultimo?.fincaId && this.fincas.some((x) => x.id === ultimo.fincaId))
+          this.elegirFinca(ultimo.fincaId);
+        if (ultimo?.cultivoId && this.cultivosDeFinca.some((x) => x.id === ultimo.cultivoId))
+          this.form.patchValue({ cultivoId: ultimo.cultivoId });
         this.cdr.markForCheck();
       },
       error: () => {
         this.cargandoCultivos = false;
         this.error = 'workers.wages.new.errors.loadCrops';
         this.cdr.markForCheck();
-      }
+      },
     });
 
     this.actividadService.listar().subscribe({
@@ -132,10 +163,15 @@ export class NuevoJornalComponent implements OnInit {
         this.actividades = a;
         // Las labores del último jornal (en temporada se repite el mismo trabajo varios días)
         const ids = this.ultimo.leer<UltimoJornal>('jornal')?.actividadIds ?? [];
-        ids.filter((id) => a.some((x) => x.id === id)).forEach((id) => this.actividadesSeleccionadas.add(id));
+        ids
+          .filter((id) => a.some((x) => x.id === id))
+          .forEach((id) => this.actividadesSeleccionadas.add(id));
         this.cdr.markForCheck();
       },
-      error: () => { this.error = 'workers.wages.new.errors.loadActivities'; this.cdr.markForCheck(); }
+      error: () => {
+        this.error = 'workers.wages.new.errors.loadActivities';
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -143,7 +179,7 @@ export class NuevoJornalComponent implements OnInit {
   /** Trabajador elegido en el formulario, para mostrar su cargo y el valor del jornal */
   get trabajadorElegido(): Trabajador | null {
     const id = this.form?.get('trabajadorId')?.value;
-    return this.trabajadores.find(t => t.id === id) ?? null;
+    return this.trabajadores.find((t) => t.id === id) ?? null;
   }
 
   /** El cargo del trabajador elegido se paga por kilo */
@@ -168,7 +204,7 @@ export class NuevoJornalComponent implements OnInit {
 
   get cultivosDeFinca(): CultivoDisponible[] {
     const fincaId = this.form?.get('fincaId')?.value;
-    return this.cultivos.filter(c => c.fincaId === fincaId);
+    return this.cultivos.filter((c) => c.fincaId === fincaId);
   }
 
   elegirFinca(id: number): void {
@@ -178,7 +214,10 @@ export class NuevoJornalComponent implements OnInit {
   private alCambiarFinca(id: number | null): void {
     const cultivo = this.form.get('cultivoId')!;
     cultivo.reset(null);
-    if (id == null) { cultivo.disable(); return; }
+    if (id == null) {
+      cultivo.disable();
+      return;
+    }
     cultivo.enable();
     const deLaFinca = this.cultivosDeFinca;
     if (deLaFinca.length === 1) cultivo.setValue(deLaFinca[0].id);
@@ -186,9 +225,8 @@ export class NuevoJornalComponent implements OnInit {
 
   toggleActividad(id: number | undefined): void {
     if (id == null) return;
-    this.actividadesSeleccionadas.has(id)
-      ? this.actividadesSeleccionadas.delete(id)
-      : this.actividadesSeleccionadas.add(id);
+    if (this.actividadesSeleccionadas.has(id)) this.actividadesSeleccionadas.delete(id);
+    else this.actividadesSeleccionadas.add(id);
   }
 
   estaSeleccionada(id: number | undefined): boolean {
@@ -209,25 +247,29 @@ export class NuevoJornalComponent implements OnInit {
 
     const v = this.form.getRawValue();
     const req: JornalRequest = {
-      trabajadorId:  Number(v.trabajadorId),
-      cultivoId:     Number(v.cultivoId),
-      fecha:         v.fecha,
-      actividadIds:  [...this.actividadesSeleccionadas],
-      kilos:         this.porKilo ? Number(v.kilos) : null,
-      observaciones: v.observaciones || undefined
+      trabajadorId: Number(v.trabajadorId),
+      cultivoId: Number(v.cultivoId),
+      fecha: v.fecha,
+      actividadIds: [...this.actividadesSeleccionadas],
+      kilos: this.porKilo ? Number(v.kilos) : null,
+      observaciones: v.observaciones || undefined,
     };
 
     this.jornalService.registrar(req).subscribe({
       next: () => {
         this.guardado = true;
-        this.ultimo.guardar<UltimoJornal>('jornal', { fincaId: v.fincaId, cultivoId: req.cultivoId, actividadIds: req.actividadIds });
+        this.ultimo.guardar<UltimoJornal>('jornal', {
+          fincaId: v.fincaId,
+          cultivoId: req.cultivoId,
+          actividadIds: req.actividadIds,
+        });
         // ✅ Fix: redirigir a la lista de jornales del trabajador
         // Si vino desde un trabajador específico, mostrar sus jornales
         // Si no, ir al home de trabajadores
         this.avisos.exito('avisos.wage');
         if (this.trabajadorIdOrigen) {
           this.router.navigate(['/worker/workdays'], {
-            queryParams: { trabajadorId: this.trabajadorIdOrigen }
+            queryParams: { trabajadorId: this.trabajadorIdOrigen },
           });
         } else {
           this.router.navigate(['/worker']);
@@ -235,9 +277,10 @@ export class NuevoJornalComponent implements OnInit {
       },
       error: (err) => {
         // El backend explica el motivo (cultivo finalizado, de otra finca, etc.)
-        this.error = err?.error?.message || 'workers.wages.new.errors.register';
+        this.error = mensajeDeError(err, 'workers.wages.new.errors.register');
         this.guardando = false;
-      }
+        this.cdr.detectChanges();
+      },
     });
   }
 

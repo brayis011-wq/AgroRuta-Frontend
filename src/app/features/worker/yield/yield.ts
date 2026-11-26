@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { JornalService } from '../../../core/services/worker.service';
@@ -40,7 +47,13 @@ export function comparar(r: RendimientoTrabajador, kiloEquipo: number | null): C
   standalone: true,
   imports: [TranslatePipe, PesosPipe, RouterLink],
   templateUrl: './yield.html',
-  styleUrls: ['../../crop/crop-ui.css', '../../crop/crop-blocks.css', '../../report/report-table.css', '../worker-ui.css', './yield.css'],
+  styleUrls: [
+    '../../crop/crop-ui.css',
+    '../../crop/crop-blocks.css',
+    '../../report/report-table.css',
+    '../worker-ui.css',
+    './yield.css',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RendimientoComponent implements OnInit {
@@ -66,23 +79,43 @@ export class RendimientoComponent implements OnInit {
     return kilos > 0 ? Math.round(pagado / kilos) : null;
   });
 
-  readonly totalKilos = computed(() => (this.lista() ?? []).reduce((s, r) => s + r.kilosPorDia + r.kilosPorKilo, 0));
-  readonly totalPagado = computed(() => (this.lista() ?? []).reduce((s, r) => s + r.pagadoPorDia + r.pagadoPorKilo, 0));
-  readonly costoKilo = computed(() => this.totalKilos() > 0 ? Math.round(this.totalPagado() / this.totalKilos()) : null);
+  readonly totalKilos = computed(() =>
+    (this.lista() ?? []).reduce((s, r) => s + r.kilosPorDia + r.kilosPorKilo, 0),
+  );
+  readonly totalPagado = computed(() =>
+    (this.lista() ?? []).reduce((s, r) => s + r.pagadoPorDia + r.pagadoPorKilo, 0),
+  );
+  readonly costoKilo = computed(() =>
+    this.totalKilos() > 0 ? Math.round(this.totalPagado() / this.totalKilos()) : null,
+  );
 
   // ── Gráficas ──
 
   /** De más a menos kilos al día (solo quien tiene días con kilos) */
-  readonly porKilos = computed(() => (this.lista() ?? []).filter((r) => r.kilosAlDia != null)
-    .sort((a, b) => (b.kilosAlDia ?? 0) - (a.kilosAlDia ?? 0)));
+  readonly porKilos = computed(() =>
+    (this.lista() ?? [])
+      .filter((r) => r.kilosAlDia != null)
+      .sort((a, b) => (b.kilosAlDia ?? 0) - (a.kilosAlDia ?? 0)),
+  );
   readonly maxKilos = computed(() => Math.max(0, ...this.porKilos().map((r) => r.kilosAlDia ?? 0)));
 
   /** Quien tiene algún costo del kilo, del más caro al más barato */
-  readonly conCosto = computed(() => (this.lista() ?? [])
-    .filter((r) => r.costoKiloPorDia != null || r.costoKiloPorKilo != null)
-    .sort((a, b) => Math.max(b.costoKiloPorDia ?? 0, b.costoKiloPorKilo ?? 0) - Math.max(a.costoKiloPorDia ?? 0, a.costoKiloPorKilo ?? 0)));
-  readonly maxCosto = computed(() => Math.max(0, this.kiloEquipo() ?? 0,
-    ...this.conCosto().map((r) => Math.max(r.costoKiloPorDia ?? 0, r.costoKiloPorKilo ?? 0))));
+  readonly conCosto = computed(() =>
+    (this.lista() ?? [])
+      .filter((r) => r.costoKiloPorDia != null || r.costoKiloPorKilo != null)
+      .sort(
+        (a, b) =>
+          Math.max(b.costoKiloPorDia ?? 0, b.costoKiloPorKilo ?? 0) -
+          Math.max(a.costoKiloPorDia ?? 0, a.costoKiloPorKilo ?? 0),
+      ),
+  );
+  readonly maxCosto = computed(() =>
+    Math.max(
+      0,
+      this.kiloEquipo() ?? 0,
+      ...this.conCosto().map((r) => Math.max(r.costoKiloPorDia ?? 0, r.costoKiloPorKilo ?? 0)),
+    ),
+  );
 
   /** Ancho de la barra en % (hasta 80%: el resto es para la cifra al final), con un mínimo para que se vea */
   ancho(valor: number | null | undefined, max: number): number {
@@ -106,8 +139,14 @@ export class RendimientoComponent implements OnInit {
     desde.setDate(hoy.getDate() - (this.periodo() - 1));
     this.lista.set(null);
     this.jornales.rendimiento(iso(desde), iso(hoy)).subscribe({
-      next: (l) => { this.lista.set(l); this.error.set(false); },
-      error: () => { this.lista.set([]); this.error.set(true); },
+      next: (l) => {
+        this.lista.set(l);
+        this.error.set(false);
+      },
+      error: () => {
+        this.lista.set([]);
+        this.error.set(true);
+      },
     });
   }
 

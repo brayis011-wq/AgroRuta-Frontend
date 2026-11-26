@@ -5,16 +5,30 @@ import { EtiquetasTablaDirective } from './table-labels.directive';
 @Component({
   standalone: true,
   imports: [EtiquetasTablaDirective],
-  template: `
-    <table class="tabla tarjetas-m" arEtiquetas>
-      <thead><tr><th>Temporada</th><th>Costo</th><th>Ingresos</th><th></th></tr></thead>
-      <tbody>
-        @for (f of filas(); track f) {
-          <tr><td>{{ f }}</td><td>$ 1</td><td>$ 2</td><td>›</td></tr>
-        }
-        <tr><td colspan="2">detalle</td><td>$ 3</td></tr>
-      </tbody>
-    </table>`,
+  template: ` <table class="tabla tarjetas-m" arEtiquetas>
+    <thead>
+      <tr>
+        <th>Temporada</th>
+        <th>Costo</th>
+        <th>Ingresos</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (f of filas(); track f) {
+        <tr>
+          <td>{{ f }}</td>
+          <td>$ 1</td>
+          <td>$ 2</td>
+          <td>›</td>
+        </tr>
+      }
+      <tr>
+        <td colspan="2">detalle</td>
+        <td>$ 3</td>
+      </tr>
+    </tbody>
+  </table>`,
 })
 class TablaPrueba {
   readonly filas = signal(['Café']);
@@ -37,6 +51,11 @@ describe('EtiquetasTablaDirective', () => {
     fx.componentInstance.filas.set(['Café', 'Fríjol']);
     fx.detectChanges();
     await new Promise((r) => setTimeout(r));
-    expect(fx.nativeElement.querySelectorAll('tbody tr')[1].querySelectorAll('td')[1].getAttribute('data-l')).toBe('Costo');
+    expect(
+      fx.nativeElement
+        .querySelectorAll('tbody tr')[1]
+        .querySelectorAll('td')[1]
+        .getAttribute('data-l'),
+    ).toBe('Costo');
   });
 });

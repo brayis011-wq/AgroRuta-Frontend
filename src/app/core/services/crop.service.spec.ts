@@ -20,11 +20,7 @@ describe('CultivoService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        CultivoService,
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), CultivoService],
     });
     service = TestBed.inject(CultivoService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -38,28 +34,28 @@ describe('CultivoService', () => {
 
   // ── FINCAS ──────────────────────────────────────────────
   it('registrarFinca() should POST and return finca', () => {
-    service.registrarFinca(mockFinca).subscribe(r => expect(r).toEqual(mockFinca));
+    service.registrarFinca(mockFinca).subscribe((r) => expect(r).toEqual(mockFinca));
     const req = httpMock.expectOne(`${api}/api/farms`);
     expect(req.request.method).toBe('POST');
     req.flush(mockFinca);
   });
 
   it('listarFincasPorAgricultor() should GET fincas by agricultor', () => {
-    service.listarFincasPorAgricultor(1).subscribe(r => expect(r).toEqual([mockFinca]));
+    service.listarFincasPorAgricultor(1).subscribe((r) => expect(r).toEqual([mockFinca]));
     const req = httpMock.expectOne(`${api}/api/farms/farmer/1`);
     expect(req.request.method).toBe('GET');
     req.flush([mockFinca]);
   });
 
   it('buscarFinca() should GET finca by id', () => {
-    service.buscarFinca(1).subscribe(r => expect(r).toEqual(mockFinca));
+    service.buscarFinca(1).subscribe((r) => expect(r).toEqual(mockFinca));
     const req = httpMock.expectOne(`${api}/api/farms/1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockFinca);
   });
 
   it('eliminarFinca() should DELETE finca by id', () => {
-    service.eliminarFinca(1).subscribe(r => expect(r).toBeNull());
+    service.eliminarFinca(1).subscribe((r) => expect(r).toBeNull());
     const req = httpMock.expectOne(`${api}/api/farms/1`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
@@ -67,7 +63,7 @@ describe('CultivoService', () => {
 
   it('actualizarCentroideFinca() should PATCH finca centroide', () => {
     const body = { centroideLat: 4.5, centroideLng: -74.1 };
-    service.actualizarCentroideFinca(1, body).subscribe(r => expect(r).toEqual(mockFinca));
+    service.actualizarCentroideFinca(1, body).subscribe((r) => expect(r).toEqual(mockFinca));
     const req = httpMock.expectOne(`${api}/api/farms/1/centroid`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual(body);
@@ -76,28 +72,28 @@ describe('CultivoService', () => {
 
   // ── LOTES ───────────────────────────────────────────────
   it('registrarLote() should POST and return lote', () => {
-    service.registrarLote(mockLote).subscribe(r => expect(r).toEqual(mockLote));
+    service.registrarLote(mockLote).subscribe((r) => expect(r).toEqual(mockLote));
     const req = httpMock.expectOne(`${api}/api/plots`);
     expect(req.request.method).toBe('POST');
     req.flush(mockLote);
   });
 
   it('listarLotesPorFinca() should GET lotes by finca', () => {
-    service.listarLotesPorFinca(1).subscribe(r => expect(r).toEqual([mockLote]));
+    service.listarLotesPorFinca(1).subscribe((r) => expect(r).toEqual([mockLote]));
     const req = httpMock.expectOne(`${api}/api/plots/farm/1`);
     expect(req.request.method).toBe('GET');
     req.flush([mockLote]);
   });
 
   it('buscarLote() should GET lote by id', () => {
-    service.buscarLote(1).subscribe(r => expect(r).toEqual(mockLote));
+    service.buscarLote(1).subscribe((r) => expect(r).toEqual(mockLote));
     const req = httpMock.expectOne(`${api}/api/plots/1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockLote);
   });
 
   it('eliminarLote() should DELETE lote by id', () => {
-    service.eliminarLote(1).subscribe(r => expect(r).toBeNull());
+    service.eliminarLote(1).subscribe((r) => expect(r).toBeNull());
     const req = httpMock.expectOne(`${api}/api/plots/1`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
@@ -105,7 +101,7 @@ describe('CultivoService', () => {
 
   it('actualizarGeometriaLote() should PATCH lote geometria', () => {
     const body = { coordenadas: '[]', area: 10, centroideLat: 4.5, centroideLng: -74.1 };
-    service.actualizarGeometriaLote(1, body).subscribe(r => expect(r).toEqual(mockLote));
+    service.actualizarGeometriaLote(1, body).subscribe((r) => expect(r).toEqual(mockLote));
     const req = httpMock.expectOne(`${api}/api/plots/1/geometry`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual(body);
@@ -114,35 +110,35 @@ describe('CultivoService', () => {
 
   // ── SIEMBRAS ────────────────────────────────────────────
   it('registrarSiembra() should POST and return siembra', () => {
-    service.registrarSiembra(mockSiembra).subscribe(r => expect(r).toEqual(mockSiembra));
+    service.registrarSiembra(mockSiembra).subscribe((r) => expect(r).toEqual(mockSiembra));
     const req = httpMock.expectOne(`${api}/api/plantings`);
     expect(req.request.method).toBe('POST');
     req.flush(mockSiembra);
   });
 
   it('buscarSiembraPorLote() should GET siembra by lote', () => {
-    service.buscarSiembraPorLote(1).subscribe(r => expect(r).toEqual(mockSiembra));
+    service.buscarSiembraPorLote(1).subscribe((r) => expect(r).toEqual(mockSiembra));
     const req = httpMock.expectOne(`${api}/api/plantings/plot/1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockSiembra);
   });
 
   it('buscarSiembra() should GET siembra by id', () => {
-    service.buscarSiembra(1).subscribe(r => expect(r).toEqual(mockSiembra));
+    service.buscarSiembra(1).subscribe((r) => expect(r).toEqual(mockSiembra));
     const req = httpMock.expectOne(`${api}/api/plantings/1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockSiembra);
   });
 
   it('avanzarEtapa() should PUT siembra etapa', () => {
-    service.avanzarEtapa(1).subscribe(r => expect(r).toEqual(mockSiembra));
+    service.avanzarEtapa(1).subscribe((r) => expect(r).toEqual(mockSiembra));
     const req = httpMock.expectOne(`${api}/api/plantings/1/advance-stage`);
     expect(req.request.method).toBe('PATCH');
     req.flush(mockSiembra);
   });
 
   it('eliminarSiembra() should DELETE siembra by id', () => {
-    service.eliminarSiembra(1).subscribe(r => expect(r).toBeNull());
+    service.eliminarSiembra(1).subscribe((r) => expect(r).toBeNull());
     const req = httpMock.expectOne(`${api}/api/plantings/1`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
@@ -150,14 +146,14 @@ describe('CultivoService', () => {
 
   // ── ACTIVIDADES ─────────────────────────────────────────
   it('registrarActividad() should POST and return actividad', () => {
-    service.registrarActividad(mockActividad).subscribe(r => expect(r).toEqual(mockActividad));
+    service.registrarActividad(mockActividad).subscribe((r) => expect(r).toEqual(mockActividad));
     const req = httpMock.expectOne(`${api}/api/activities`);
     expect(req.request.method).toBe('POST');
     req.flush(mockActividad);
   });
 
   it('listarActividades() should GET actividades by siembra', () => {
-    service.listarActividades(1).subscribe(r => expect(r).toEqual([mockActividad]));
+    service.listarActividades(1).subscribe((r) => expect(r).toEqual([mockActividad]));
     const req = httpMock.expectOne(`${api}/api/activities/planting/1`);
     expect(req.request.method).toBe('GET');
     req.flush([mockActividad]);
@@ -165,14 +161,14 @@ describe('CultivoService', () => {
 
   // ── FUMIGACIONES ────────────────────────────────────────
   it('registrarFumigacion() should POST and return fumigacion', () => {
-    service.registrarFumigacion(mockFumigacion).subscribe(r => expect(r).toEqual(mockFumigacion));
+    service.registrarFumigacion(mockFumigacion).subscribe((r) => expect(r).toEqual(mockFumigacion));
     const req = httpMock.expectOne(`${api}/api/sprayings`);
     expect(req.request.method).toBe('POST');
     req.flush(mockFumigacion);
   });
 
   it('listarFumigaciones() should GET fumigaciones by siembra', () => {
-    service.listarFumigaciones(1).subscribe(r => expect(r).toEqual([mockFumigacion]));
+    service.listarFumigaciones(1).subscribe((r) => expect(r).toEqual([mockFumigacion]));
     const req = httpMock.expectOne(`${api}/api/sprayings/planting/1`);
     expect(req.request.method).toBe('GET');
     req.flush([mockFumigacion]);
@@ -180,21 +176,21 @@ describe('CultivoService', () => {
 
   // ── COSECHAS ────────────────────────────────────────────
   it('registrarCosecha() should POST and return cosecha', () => {
-    service.registrarCosecha(mockCosecha).subscribe(r => expect(r).toEqual(mockCosecha));
+    service.registrarCosecha(mockCosecha).subscribe((r) => expect(r).toEqual(mockCosecha));
     const req = httpMock.expectOne(`${api}/api/harvests`);
     expect(req.request.method).toBe('POST');
     req.flush(mockCosecha);
   });
 
   it('listarCosechas() should GET cosechas by siembra', () => {
-    service.listarCosechas(1).subscribe(r => expect(r).toEqual([mockCosecha]));
+    service.listarCosechas(1).subscribe((r) => expect(r).toEqual([mockCosecha]));
     const req = httpMock.expectOne(`${api}/api/harvests/planting/1`);
     expect(req.request.method).toBe('GET');
     req.flush([mockCosecha]);
   });
 
   it('totalKgCosechado() should GET total kg by siembra', () => {
-    service.totalKgCosechado(1).subscribe(r => expect(r).toBe(250));
+    service.totalKgCosechado(1).subscribe((r) => expect(r).toBe(250));
     const req = httpMock.expectOne(`${api}/api/harvests/planting/1/total-kg`);
     expect(req.request.method).toBe('GET');
     req.flush(250);

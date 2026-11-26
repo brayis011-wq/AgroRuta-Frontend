@@ -1,5 +1,5 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -18,37 +18,37 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-change-password-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './change-password-form.html',
   styleUrls: ['../config-fields.css', './change-password-form.scss'],
 })
 export class ChangePasswordFormComponent {
-  @Input() loading = false;
-  @Output() changePassword = new EventEmitter<ChangePasswordRequest>();
+  private readonly fb = inject(FormBuilder);
+
+  readonly loading = input(false);
+  readonly changePassword = output<ChangePasswordRequest>();
 
   form: FormGroup;
   showActual = false;
   showNueva = false;
   showConfirmar = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
     this.form = this.fb.group(
       {
         passwordActual: ['', [Validators.required]],
         nuevaPassword: ['', [Validators.required, Validators.minLength(8)]],
         confirmarPassword: ['', [Validators.required]],
       },
-      { validators: passwordsMatch }
+      { validators: passwordsMatch },
     );
   }
 
   get mismatch(): boolean {
-    return !!(
-      this.form.hasError('mismatch') &&
-      this.form.get('confirmarPassword')?.touched
-    );
+    return !!(this.form.hasError('mismatch') && this.form.get('confirmarPassword')?.touched);
   }
 
   isInvalid(field: string): boolean {

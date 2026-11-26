@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
+
 import { TranslatePipe } from '@ngx-translate/core';
 import { PortalService } from '../../../core/services/portal.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -8,11 +14,16 @@ import { formatoFecha, formatoPesos } from '../../../shared/format';
 import { descargarArchivo, numeroComprobante } from '../../../shared/download';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-portal-pagos',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [TranslatePipe],
   templateUrl: './portal-payments.html',
-  styleUrls: ['../../../shared/styles/panel-page.css', '../../../shared/styles/panel-page-2.css', '../portal-lists.css'],
+  styleUrls: [
+    '../../../shared/styles/panel-page.css',
+    '../../../shared/styles/panel-page-2.css',
+    '../portal-lists.css',
+  ],
 })
 export class PortalPagosComponent implements OnInit {
   private readonly portal = inject(PortalService);
